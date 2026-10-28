@@ -22,151 +22,138 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .mono{font-family:'DM Mono','Courier New',monospace}
 
-/* AYNEN orbit: chronological, deliberately irregular, connected to the cat. */
+
+/* Compact comic-book game constellation. Cat at the center; older games nearest. */
 html{scroll-behavior:smooth}
 body{overflow-x:hidden}
-.desktop-scene{position:relative;min-height:2220px;width:100%;overflow:hidden;isolation:isolate;background:#fafaf7;
-background-image:radial-gradient(#cdd0c7 0.75px,transparent .75px);background-size:24px 24px}
-.desktop-scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 55% 16% at 50% 16%,#fafaf7 34%,transparent 100%),linear-gradient(180deg,rgba(250,250,247,.38),rgba(250,250,247,.8))}
-.landing-nav{position:relative;z-index:9;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:28px clamp(22px,4.8vw,80px)}
-.wordmark{font-size:clamp(21px,2.4vw,31px);font-weight:700;letter-spacing:-.075em;text-decoration:none;color:#111}
-.mark-dot{color:#e59cab}
-.nav-note,.nav-count{font:500 10px/1.3 'DM Mono',monospace;letter-spacing:.075em;color:#565b53}
-.nav-count span{margin:0 5px}
-.landing-hub{position:absolute;top:218px;left:50%;width:min(320px,32vw);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;text-align:center;z-index:2;pointer-events:none}
-.hub-rings{position:absolute;width:420px;height:420px;left:50%;top:1%;transform:translate(-50%,-25%);border:1px solid rgba(61,65,56,.13);border-radius:50%;z-index:-1;pointer-events:none}
-.hub-rings:before,.hub-rings:after{content:"";position:absolute;inset:33px;border:1px dashed rgba(61,65,56,.13);border-radius:50%}
-.hub-rings:after{inset:71px;border-style:solid;border-color:rgba(61,65,56,.1)}
-.hub-kicker,.hub-caption{font-size:9px;letter-spacing:.12em;color:#777b73}
-.hub-kicker{margin-bottom:16px}
-.hub-cat{width:clamp(188px,17.5vw,246px);height:auto;object-fit:contain;filter:drop-shadow(0 11px 8px rgba(0,0,0,.05));animation:float-cat 6s ease-in-out infinite}
-.landing-hub h1{margin:-6px 0 4px;font-size:clamp(45px,5.3vw,76px);font-weight:700;letter-spacing:-.105em;line-height:1}
-.landing-hub h1 span{color:#e3a3b4}
-.landing-hub p{font-size:12px;line-height:1.55;color:#5b5e58;margin:9px 0 15px}
-.hub-caption{border:1px solid #c2c5be;border-radius:99px;padding:7px 11px;background:#fafaf7}
-.hub-mini-arrow{font-size:14px;margin-right:6px}
-.orbit-trail{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
-.trail-stroke{fill:none;stroke:#8e9d90;stroke-width:1.5px;stroke-linecap:round;stroke-dasharray:3 9;opacity:.48}
-.orbit-cards{position:static}
-.orbit-card{position:absolute;z-index:3;left:var(--dx);top:var(--dy);width:clamp(184px,15.8vw,212px);height:208px;display:flex;flex-direction:column;border:1px solid #292b27;border-radius:5px;padding:0;overflow:hidden;background:#fff;color:#151515;text-decoration:none;text-align:left;box-shadow:4px 6px 0 rgba(25,25,25,.10);transform:rotate(var(--tilt));transform-origin:center;transition:transform .22s ease,box-shadow .22s ease;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.orbit-card:hover,.orbit-card:focus-visible{z-index:8;transform:rotate(0deg) translateY(-7px) scale(1.045);box-shadow:8px 12px 0 rgba(20,20,20,.15)}
-.orbit-card:active{transform:rotate(0deg) translateY(0) scale(.985)}
-.orbit-card-bar{height:27px;min-height:27px;background:#fff;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292b27;padding:0 10px;font:500 9px 'DM Mono',monospace;letter-spacing:.025em}
-.orbit-separator{color:#aaa;margin:0 3px}
-.orbit-corner{display:grid;place-items:center;width:18px;height:18px;border:1px solid #d3d5ce;border-radius:3px;font-size:12px;line-height:1}
-.orbit-cover{position:relative;display:block;flex:none;height:106px;overflow:hidden;border-bottom:1px solid #dfdfdb;background:#e8ebe5;color:#151515}
-.orbit-copy{display:flex;flex:1;flex-direction:column;padding:10px 10px 8px;gap:5px;overflow:hidden}
-.orbit-copy strong{font-size:clamp(12px,1.11vw,15px);line-height:1.1;letter-spacing:-.055em;font-weight:700}
-.orbit-copy>span{font-size:10px;line-height:1.35;color:#74766e;letter-spacing:-.012em}
+.desktop-scene{position:relative;height:1050px;min-height:0;overflow:hidden;isolation:isolate;background:#fffdf7}
+.landing-nav{position:relative;z-index:4;display:flex;align-items:center;padding:16px clamp(14px,3vw,42px)}
+.wordmark{font:700 clamp(23px,2.5vw,30px)/1 'Space Grotesk',sans-serif;letter-spacing:-.09em;text-decoration:none;color:#161616}
+.mark-dot{color:#ff719d}
+.landing-hub{position:absolute;left:50%;top:303px;width:clamp(145px,16vw,207px);transform:translateX(-50%);z-index:1;pointer-events:none}
+.hub-cat{display:block;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 7px 3px rgba(0,0,0,.04))}
+.orbit-cards{display:contents}
+.orbit-card{position:absolute;left:var(--dx);top:var(--dy);width:clamp(116px,11.35vw,162px);height:158px;z-index:2;display:flex;flex-direction:column;overflow:hidden;border:2px solid #181818;border-radius:3px;background:#fff;color:#111;text-decoration:none;text-align:left;box-shadow:4px 5px 0 #181818;transform:rotate(var(--tilt));transition:transform .2s ease,box-shadow .2s ease;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0}
+.orbit-card:hover,.orbit-card:focus-visible{z-index:10;transform:translateY(-6px) rotate(0deg) scale(1.05);box-shadow:7px 9px 0 #181818}
+.orbit-card:active{transform:rotate(0deg) scale(.98);box-shadow:2px 2px 0 #181818}
+.comic-index{position:absolute;top:6px;left:6px;z-index:5;min-width:25px;height:22px;padding:4px 5px;background:#fffdf7;border:2px solid #111;font:700 10px/1 'DM Mono',monospace;text-align:center;transform:rotate(-6deg)}
+.orbit-cover{display:block;position:relative;width:100%;height:111px;flex:none;overflow:hidden;border-bottom:2px solid #181818;color:#151515}
+.orbit-cover:before{content:"";position:absolute;width:85px;height:170px;right:-56px;top:-56px;background:rgba(255,255,255,.22);transform:rotate(32deg);pointer-events:none;z-index:1}
+.orbit-cover:after{content:"";position:absolute;inset:0;background-image:radial-gradient(#161616 0.8px,transparent 1px);background-size:6px 6px;opacity:.17;pointer-events:none;z-index:1}
+.orbit-copy{display:flex;align-items:center;flex:1;min-height:0;padding:5px 8px 6px;background:#fff}
+.orbit-copy strong{font-size:clamp(11px,1.07vw,14px);line-height:1.11;letter-spacing:-.055em;font-weight:700}
 .art-giant{position:absolute;top:20px;left:16px;font:700 42px/1 'Space Grotesk',sans-serif;letter-spacing:-.08em}
 .art-foot{position:absolute;left:12px;bottom:11px;font:500 8px/1.2 'DM Mono',monospace;letter-spacing:.055em}
 .art-small{font:500 12px/1 'DM Mono',monospace}
-.art-nothing{background:#ebece7}
-.art-nothing .art-giant{font-size:50px;top:18px}
-.art-no{background:#e8ebc9}
+.art-nothing{background:#ffdb55}
+.art-nothing .art-giant{font-size:clamp(30px,3.65vw,52px);top:24px}
+.art-no{background:#ff82bc}
 .art-button{position:absolute;top:22px;left:22px;display:block;border:1.5px solid #111;background:#111;color:#fff;padding:11px 17px;font-size:23px;font-weight:700;letter-spacing:-.06em;transform:rotate(-4deg)}
 .art-ask{position:absolute;right:10px;bottom:13px;transform:rotate(7deg);font-size:9px}
-.art-paper{background:#f0e9e2}
-.art-document{position:absolute;width:86px;height:110px;top:10px;left:calc(50% - 43px);background:#fff;border:1px solid #222;transform:rotate(8deg);box-shadow:3px 3px 0 #d4cbc1}
+.art-paper{background:#fd9368}
+.art-document{position:absolute;width:86px;height:110px;top:6px;left:calc(50% - 43px);background:#fff;border:1px solid #222;transform:rotate(8deg);box-shadow:3px 3px 0 #d4cbc1}
 .art-document i{position:absolute;left:11px;right:12px;height:1px;background:#b7b8b6}
 .art-document i:nth-child(1){top:17px}.art-document i:nth-child(2){top:28px}.art-document i:nth-child(3){top:39px}
 .art-document strong{position:absolute;top:50px;left:9px;border:3px double #a54e4b;color:#a54e4b;transform:rotate(-16deg);font:700 23px 'DM Mono',monospace}
-.art-message{background:#dfe9e9}
+.art-message{background:#83d9f7}
 .art-bubble{position:absolute;top:15px;left:13px;border-radius:14px 14px 14px 2px;border:1px solid #556667;background:#fff;padding:11px 13px;font-size:13px;letter-spacing:-.035em}
 .art-dots{position:absolute;bottom:13px;right:16px;font-size:12px;color:#6b8383;letter-spacing:.2em;animation:blink 2s ease infinite}
-.art-loading{background:#ece9dd}.art-loading .art-giant{top:8px;font-size:62px}
+.art-loading{background:#e1f67b}.art-loading .art-giant{top:13px;font-size:54px}
 .art-meter{position:absolute;bottom:13px;left:14px;right:14px;height:8px;border:1px solid #111}
 .art-meter i{display:block;height:100%;width:99%;background:#252621}
-.art-success{background:#e7e5f2}.art-success .art-giant{top:12px;font-size:62px}
-.art-maas{background:#e5ebdf}.art-maas .art-giant{top:8px;font-size:57px}
+.art-success{background:#c6a2f3}.art-success .art-giant{top:15px;font-size:54px}
+.art-maas{background:#84e5bb}.art-maas .art-giant{top:12px;font-size:48px}
 .art-slash{position:relative}.art-slash:after{content:"";position:absolute;width:100%;height:3px;top:53%;left:0;background:#111;transform:rotate(-24deg)}
-.art-tree{background:#e5eee2}.art-tree .art-tree{display:block}
+.art-tree{background:#9be38d}.art-tree .art-tree{display:block}
 .art-tree .art-tree i{display:block}
 .art-tree>.art-tree{position:absolute;top:22px;left:calc(50% - 28px);height:62px;width:56px;background:#6d8d73;clip-path:polygon(50% 0,70% 27%,84% 27%,70% 48%,94% 65%,5% 65%,26% 48%,12% 27%,34% 27%)}
 .art-tree>.art-tree:after{content:"";position:absolute;top:51px;left:25px;background:#5b5543;width:6px;height:15px}
-.art-algorithm{background:#f1ebd8}.art-loop{position:absolute;top:5px;left:calc(50% - 46px);font-size:91px;line-height:1;transform:rotate(-27deg);font-family:Arial}
-.art-city{background:#e0e8e2}
+.art-algorithm{background:#ffb16e}.art-loop{position:absolute;top:5px;left:calc(50% - 46px);font-size:91px;line-height:1;transform:rotate(-27deg);font-family:Arial}
+.art-city{background:#accdff}
 .art-buildings{position:absolute;bottom:0;left:12px;right:12px;height:85px;display:flex;gap:3px;align-items:flex-end}
 .art-buildings i{flex:1;height:35px;background:#617f77;border:1px solid #293d38}
 .art-buildings i:nth-child(2){height:72px}.art-buildings i:nth-child(3){height:50px}.art-buildings i:nth-child(4){height:93px}.art-buildings i:nth-child(5){height:59px}.art-buildings i:nth-child(6){height:78px}
-.art-city .art-foot{background:#e0e8e2;padding:2px}
-.art-offside{background:linear-gradient(0deg,#a7bda8,#d6e5d3)}
+.art-city .art-foot{background:#accdff;padding:2px}
+.art-offside{background:linear-gradient(135deg,#75ddac,#b1f48f)}
 .art-pitch{position:absolute;inset:10px 15px 12px;border:2px solid #fefefa;border-radius:2px;transform:skewY(-7deg)}
 .art-pitch:after{content:"";height:100%;width:2px;background:#fff;position:absolute;left:50%}
 .art-pitch i{position:absolute;width:35px;height:35px;border:2px solid #fff;border-radius:50%;left:calc(50% - 17px);top:calc(50% - 17px)}
 .art-pitch b{position:absolute;left:59%;top:24%;background:#101a14;border:2px solid #fff;width:13px;height:13px;border-radius:50%;z-index:2}
 .art-offside .art-foot{background:#d6e5d3;padding:2px}
-.art-choice{background:#ece7df}.art-versus{position:absolute;top:28px;left:12px;right:12px;text-align:center;font-size:38px;font-weight:700;letter-spacing:-.06em}
-.art-money{background:#e3eee1}
+.art-choice{background:#f9a8d9}.art-versus{position:absolute;top:28px;left:12px;right:12px;text-align:center;font-size:38px;font-weight:700;letter-spacing:-.06em}
+.art-money{background:#b7e886}
 .art-banknote{position:absolute;top:16px;left:24px;right:24px;height:68px;border:2px solid #4e7452;border-radius:2px;display:flex;justify-content:space-around;align-items:center;background:repeating-linear-gradient(135deg,#d8e9d2 0 2px,#e7f1e3 2px 7px)}
 .art-banknote b{font-size:45px;letter-spacing:-.08em}.art-banknote i{font-size:31px;font-style:normal;border:1px solid #4e7452;border-radius:50%;width:50px;height:50px;display:grid;place-items:center}
-.art-jobs{background:#ebe9e4}.art-lost{letter-spacing:-.09em;top:16px;font-size:60px}
-.art-banned{background:#f4e2df}.art-stamp{position:absolute;left:calc(50% - 62px);top:27px;border:3px solid #a25858;color:#a25858;padding:5px 9px;transform:rotate(-14deg);font:700 25px/1.1 'DM Mono',monospace}
-.art-exit{background:#e0e4e3}
+.art-jobs{background:#f9bc74}.art-lost{letter-spacing:-.09em;top:18px;font-size:52px}
+.art-banned{background:#fd8688}.art-stamp{position:absolute;left:calc(50% - 62px);top:27px;border:3px solid #a25858;color:#a25858;padding:5px 9px;transform:rotate(-14deg);font:700 25px/1.1 'DM Mono',monospace}
+.art-exit{background:#a4bdfd}
 .art-door{position:absolute;left:calc(50% - 29px);top:8px;width:58px;height:95px;background:#fafaf7;border:3px solid #424847}
 .art-door i{position:absolute;right:7px;top:46px;width:6px;height:6px;background:#424847;border-radius:50%}
-.art-exit .art-foot{bottom:9px;left:8px;background:#e0e4e3;padding:2px}
-.art-evolution{background:#e1e9cf}.art-cells{position:absolute;inset:8px}
+.art-exit .art-foot{bottom:9px;left:8px;background:#a4bdfd;padding:2px}
+.art-evolution{background:#b5e57b}.art-cells{position:absolute;inset:8px}
 .art-cells i{position:absolute;display:block;background:#a7bf8d;border:2px solid #58734f;border-radius:45% 55% 52% 48%}
 .art-cells i:nth-child(1){width:54px;height:50px;left:14px;top:18px}.art-cells i:nth-child(2){width:36px;height:34px;left:80px;top:9px}.art-cells i:nth-child(3){width:55px;height:52px;right:13px;top:24px}.art-cells i:nth-child(4){width:19px;height:19px;left:72px;top:65px}
-.art-evolution .art-foot{background:#e1e9cf;padding:2px}
-.art-life{background:#e1ebe9}
+.art-evolution .art-foot{background:#b5e57b;padding:2px}
+.art-life{background:#8be1d7}
 .art-molecule{position:absolute;left:17px;top:15px;width:160px;height:70px;border-top:2px solid #65827c;transform:rotate(-20deg);top:58px}
 .art-molecule i{position:absolute;width:22px;height:22px;border:2px solid #466761;border-radius:50%;background:#b4d0c7}
 .art-molecule i:nth-child(1){left:0;top:-12px}.art-molecule i:nth-child(2){left:32px;top:-29px}.art-molecule i:nth-child(3){left:65px;top:-12px}.art-molecule i:nth-child(4){left:99px;top:-29px}.art-molecule i:nth-child(5){left:132px;top:-11px}
-.art-life .art-foot{background:#e1ebe9;padding:2px}
-.art-einstein{background:radial-gradient(circle at 70% 47%,#414955,#1c2029 70%);color:#f8f7ec}
+.art-life .art-foot{background:#8be1d7;padding:2px}
+.art-einstein{background:radial-gradient(circle at 65% 45%,#6751a7,#26213b 76%);color:#f8f7ec}
 .art-orbit{position:absolute;left:calc(50% - 44px);top:3px;width:90px;height:90px;border:1px solid #c7d4d9;border-radius:50%;transform:rotate(-34deg) skew(28deg)}
 .art-orbit:before,.art-orbit:after{content:"";position:absolute;inset:14px;border:1px dashed #9fb7c5;border-radius:50%}
 .art-orbit:after{inset:30px}
 .art-orbit i{position:absolute;right:6px;top:13px;width:13px;height:13px;border-radius:50%;background:#e8e6d6}
 .art-formula{position:absolute;left:12px;bottom:9px;font:500 23px 'DM Mono',monospace}
-.art-physical{background:#e7e5d9}
+.art-physical{background:#fbd377}
 .art-switch{position:absolute;top:15px;left:calc(50% - 46px);width:92px;height:55px;border:2px solid #262721;border-radius:40px;background:#c6c5b7}
 .art-switch i{position:absolute;top:5px;left:5px;width:40px;height:40px;background:#252721;border-radius:50%;box-shadow:1px 1px 0 #e0e1d6}
-.orbit-finale{position:absolute;top:2075px;left:50%;transform:translateX(-50%);text-align:center;z-index:2;white-space:nowrap}
-.orbit-finale>.mono{font-size:9px;color:#8d8e85;letter-spacing:.15em}
-.orbit-finale p{margin:8px 0 18px;font-size:14px;color:#676c63;letter-spacing:-.03em}
-.orbit-finale a{font:500 10px 'DM Mono',monospace;color:#282b27;border-bottom:1px solid;text-decoration:none;padding-bottom:3px}
-@keyframes float-cat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
-@media(max-width:1150px){
- .desktop-scene{min-height:3240px}
- .orbit-card{left:var(--tx);top:var(--ty);width:clamp(174px,19vw,202px)}
- .landing-hub{top:205px;width:280px}
- .hub-cat{width:205px}
- .hub-rings{width:365px;height:365px}
- .orbit-finale{top:3098px}
+
+.art-giant{letter-spacing:-.09em;text-shadow:2px 2px 0 rgba(255,255,255,.75)}
+.art-button{border-width:2px;box-shadow:4px 4px 0 rgba(255,255,255,.8)}
+.art-document{border-width:2px;box-shadow:4px 4px 0 #1b1b1b}
+.art-bubble{border:2px solid #131313;box-shadow:3px 3px 0 #131313}
+.art-stamp{border-color:#171717;color:#171717;border-width:4px}
+.art-banknote{border-width:3px}
+.art-pitch{border-width:3px}
+.art-switch{border-width:3px}
+.art-evolution .art-foot,.art-city .art-foot,.art-life .art-foot,.art-exit .art-foot{background:rgba(255,255,255,.85);color:#111;border:1px solid #111;padding:2px}
+@media(max-width:760px){
+ .desktop-scene{height:auto;min-height:0;overflow:visible;padding-bottom:22px}
+ .landing-nav{padding:16px 16px 8px}
+ .landing-hub{position:relative;top:auto;left:auto;width:156px;transform:none;margin:-1px auto 7px}
+ .orbit-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 9px;max-width:640px;margin:0 auto;padding:0 12px}
+ .orbit-card{position:relative;top:auto;left:auto;width:100%;height:145px;transform:rotate(var(--tilt));box-shadow:3px 4px 0 #181818}
+ .orbit-card:nth-child(3n+2){margin-top:6px}
+ .orbit-card:nth-child(3n){margin-top:2px}
+ .orbit-cover{height:95px}
+ .orbit-copy{padding:5px 6px 6px}
+ .orbit-copy strong{font-size:clamp(10px,2.65vw,14px);line-height:1.12}
+ .comic-index{height:20px;min-width:23px;font-size:9px;top:4px;left:4px;padding:3px 4px}
+ .art-foot{font-size:6.5px}
+ .art-giant{font-size:37px}
+ .art-loading .art-giant,.art-success .art-giant,.art-maas .art-giant{font-size:43px}
+ .art-nothing .art-giant{font-size:clamp(29px,7.5vw,39px)}
+ .art-button{font-size:17px;left:10px;top:25px;padding:7px 10px}
+ .art-ask{font-size:8px}
+ .art-document{left:calc(50% - 36px);width:73px}
+ .art-bubble{font-size:10px;left:7px;padding:9px 6px;top:25px}
+ .art-versus{font-size:25px}
+ .art-banknote{left:7px;right:7px}
+ .art-banknote b{font-size:30px}
+ .art-banknote i{width:38px;height:38px;font-size:22px}
+ .art-stamp{left:calc(50% - 45px);font-size:17px;top:35px}
+ .art-loop{left:calc(50% - 32px);font-size:73px}
+ .art-formula{font-size:17px}
+ .art-lost{font-size:47px}
 }
-@media(max-width:640px){
- .desktop-scene{min-height:2840px;background-size:20px 20px}
- .landing-nav{padding:22px 18px 16px;align-items:flex-start}
- .wordmark{font-size:26px}
- .nav-note{display:none}
- .nav-count{font-size:8px;line-height:2.4}
- .landing-hub{top:102px;width:230px}
- .hub-kicker{font-size:8px;margin-bottom:7px}
- .hub-cat{width:175px}
- .hub-rings{width:280px;height:280px;top:10%}
- .hub-rings:before{inset:28px}.hub-rings:after{inset:57px}
- .landing-hub h1{font-size:53px}
- .landing-hub p{font-size:11px;margin:6px 0 9px}
- .hub-caption{font-size:8px;padding:5px 8px}
- .orbit-card{left:var(--mx);top:var(--my);width:43vw;max-width:210px;min-width:0;height:198px;box-shadow:3px 4px 0 rgba(25,25,25,.10)}
- .orbit-card-bar{height:24px;min-height:24px;padding:0 7px;font-size:8px}
- .orbit-cover{height:92px}
- .orbit-copy{padding:8px 7px 7px;gap:4px}
- .orbit-copy strong{font-size:clamp(11px,3.2vw,14px);letter-spacing:-.05em}
- .orbit-copy>span{font-size:9px;line-height:1.24}
- .art-giant{font-size:39px}.art-nothing .art-giant{font-size:43px}
- .art-loading .art-giant,.art-success .art-giant,.art-maas .art-giant{font-size:47px}
- .art-formula{font-size:19px}
- .art-versus{font-size:28px}
- .art-foot{font-size:7px}
- .orbit-finale{top:2720px}
- .orbit-finale p{font-size:12px}
+@media(max-width:359px){
+ .landing-hub{width:148px}
+ .orbit-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 11px;padding:0 15px}
+ .orbit-card{height:145px}
+ .orbit-copy strong{font-size:12px}
 }
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hub-cat{animation:none}.orbit-card{transition:none}.art-dots{animation:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-card{transition:none}.art-dots{animation:none}}
 
 /* The experiences retain their own compact, window-like presentation. */
 .modal{position:fixed;inset:0;background:rgba(255,255,255,.76);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
@@ -191,117 +178,108 @@ background-image:radial-gradient(#cdd0c7 0.75px,transparent .75px);background-si
 </head>
 <body>
 <main class="desktop-scene" id="top">
-<header class="landing-nav"><a href="/" aria-label="aynen.fun ana sayfa" class="wordmark">aynen<span class="mark-dot">.</span>fun</a><span class="nav-note">GEREKSİZ DERECEDE GEREKLİ</span><span class="nav-count mono">20 OYUN <span aria-hidden="true">✳</span> SIFIR ACELE</span></header>
-<svg class="orbit-trail" id="orbit-trail" aria-hidden="true" preserveAspectRatio="none"><path class="trail-stroke" id="trail-stroke"></path></svg>
-<section class="landing-hub" id="landing-hub" aria-label="aynen.fun">
-<div class="hub-rings" aria-hidden="true"></div>
-<span class="hub-kicker mono">İNTERNETTE BİR YER / 2026</span>
-<img class="hub-cat" src="./cat.webp" alt="aynen.fun'ın kedisi" width="260" height="224" fetchpriority="high">
-<h1>aynen<span>.</span></h1>
-<p>Bir sürü küçük oyun.<br>Hiçbirinin acelesi yok.</p>
-<span class="hub-caption mono"><span class="hub-mini-arrow">↶</span> BAŞLANGIÇ BURASI</span>
-</section>
-<div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye"><button class="orbit-card" type="button" data-game="nothing" style="--dx:7%;--dy:250px;--tx:4%;--ty:100px;--mx:3%;--my:370px;--tilt:-4deg" aria-label="Hiçbir Şey Yapma. oyununu aç">
+<header class="landing-nav"><a class="wordmark" href="/" aria-label="aynen.fun ana sayfa">aynen<span class="mark-dot">.</span>fun</a></header>
+<section class="landing-hub" aria-label="aynen.fun kedisi"><img class="hub-cat" src="./cat.webp" alt="aynen.fun kedisi" width="207" height="179" fetchpriority="high"></section>
+<div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye"><button class="orbit-card" type="button" data-game="nothing" style="--dx:26%;--dy:252px;--tilt:-3deg" aria-label="Hiçbir Şey Yapma. oyununu aç"><span class="comic-index" aria-hidden="true">01</span>
 <span class="orbit-card-bar"><span class="orbit-num">01 <span class="orbit-separator">/</span> NOTHING</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-nothing" aria-hidden="true"><span class="art-giant">00:00</span><span class="art-foot">PRODUCTIVITY — 0%</span></span>
-<span class="orbit-copy"><strong>Hiçbir Şey Yapma.</strong><span>En zor görev: hiçbir şey.</span></span>
+<span class="orbit-copy"><strong>Hiçbir Şey Yapma.</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="no" style="--dx:24%;--dy:110px;--tx:69%;--ty:120px;--mx:52%;--my:403px;--tilt:3deg" aria-label="Hayır Diyebilir misin? oyununu aç">
+<button class="orbit-card" type="button" data-game="no" style="--dx:63%;--dy:243px;--tilt:3deg" aria-label="Hayır Diyebilir misin? oyununu aç"><span class="comic-index" aria-hidden="true">02</span>
 <span class="orbit-card-bar"><span class="orbit-num">02 <span class="orbit-separator">/</span> NO</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-no" aria-hidden="true"><span class="art-button">HAYIR.</span><span class="art-small art-ask">EMİN MİSİN?</span></span>
-<span class="orbit-copy"><strong>Hayır Diyebilir misin?</strong><span>Bir kelime. Uzun bir süreç.</span></span>
+<span class="orbit-copy"><strong>Hayır Diyebilir misin?</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="paper" style="--dx:69%;--dy:90px;--tx:3%;--ty:345px;--mx:53%;--my:605px;--tilt:5deg" aria-label="Bir Evrak Eksik. oyununu aç">
+<button class="orbit-card" type="button" data-game="paper" style="--dx:64%;--dy:426px;--tilt:2deg" aria-label="Bir Evrak Eksik. oyununu aç"><span class="comic-index" aria-hidden="true">03</span>
 <span class="orbit-card-bar"><span class="orbit-num">03 <span class="orbit-separator">/</span> PAPER</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-paper" aria-hidden="true"><span class="art-document"><i></i><i></i><i></i><strong>RED</strong></span></span>
-<span class="orbit-copy"><strong>Bir Evrak Eksik.</strong><span>Her şey tamam. Bir şey hariç.</span></span>
+<span class="orbit-copy"><strong>Bir Evrak Eksik.</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="message" style="--dx:81%;--dy:345px;--tx:68%;--ty:365px;--mx:5%;--my:638px;--tilt:-4deg" aria-label="Bir Şey Soracağım. oyununu aç">
+<button class="orbit-card" type="button" data-game="message" style="--dx:27%;--dy:439px;--tilt:-3deg" aria-label="Bir Şey Soracağım. oyununu aç"><span class="comic-index" aria-hidden="true">04</span>
 <span class="orbit-card-bar"><span class="orbit-num">04 <span class="orbit-separator">/</span> MESSAGE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-message" aria-hidden="true"><span class="art-bubble">bi şey sorucam</span><span class="art-dots">● &nbsp;● &nbsp;●</span></span>
-<span class="orbit-copy"><strong>Bir Şey Soracağım.</strong><span>Sorunun kendisi kayıp.</span></span>
+<span class="orbit-copy"><strong>Bir Şey Soracağım.</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="loading" style="--dx:66%;--dy:590px;--tx:34%;--ty:555px;--mx:3%;--my:849px;--tilt:2deg" aria-label="Az Kaldı. oyununu aç">
+<button class="orbit-card" type="button" data-game="loading" style="--dx:29%;--dy:70px;--tilt:2deg" aria-label="Az Kaldı. oyununu aç"><span class="comic-index" aria-hidden="true">05</span>
 <span class="orbit-card-bar"><span class="orbit-num">05 <span class="orbit-separator">/</span> LOADING</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-loading" aria-hidden="true"><span class="art-giant">99<span class="art-small">%</span></span><span class="art-meter"><i></i></span></span>
-<span class="orbit-copy"><strong>Az Kaldı.</strong><span>Kalan %1 kişisel bir mesele.</span></span>
+<span class="orbit-copy"><strong>Az Kaldı.</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="success" style="--dx:27%;--dy:635px;--tx:5%;--ty:795px;--mx:53%;--my:882px;--tilt:-5deg" aria-label="Başarı Simülatörü. oyununu aç">
+<button class="orbit-card" type="button" data-game="success" style="--dx:49%;--dy:61px;--tilt:-4deg" aria-label="Başarı Simülatörü. oyununu aç"><span class="comic-index" aria-hidden="true">06</span>
 <span class="orbit-card-bar"><span class="orbit-num">06 <span class="orbit-separator">/</span> SUCCESS</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-success" aria-hidden="true"><span class="art-giant">+∞%</span><span class="art-foot">MEASURABLE SUCCESS</span></span>
-<span class="orbit-copy"><strong>Başarı Simülatörü.</strong><span>Neyi başardın? Detaylara girme.</span></span>
+<span class="orbit-copy"><strong>Başarı Simülatörü.</strong></span>
 </button>
-<a class="orbit-card" href="/maas.html" style="--dx:3%;--dy:505px;--tx:67%;--ty:795px;--mx:52%;--my:1075px;--tilt:4deg" aria-label="Maaşın Kaç Saniyede Biter? oyununu aç">
+<a class="orbit-card" href="/maas.html" style="--dx:81%;--dy:72px;--tilt:4deg" aria-label="Maaşın Kaç Saniyede Biter? oyununu aç"><span class="comic-index" aria-hidden="true">07</span>
 <span class="orbit-card-bar"><span class="orbit-num">07 <span class="orbit-separator">/</span> MAAS</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-maas" aria-hidden="true"><span class="art-giant">₺ <span class="art-slash">0</span></span><span class="art-foot">BALANCE / NOT FOUND</span></span>
-<span class="orbit-copy"><strong>Maaşın Kaç Saniyede Biter?</strong><span>Ay sonuna teorik bir yaklaşım.</span></span>
+<span class="orbit-copy"><strong>Maaşın Kaç Saniyede Biter?</strong></span>
 </a>
-<a class="orbit-card" href="/burasidami.html" style="--dx:11%;--dy:840px;--tx:35%;--ty:1015px;--mx:3%;--my:1108px;--tilt:-3deg" aria-label="İstanbul'a Bir Ağaç Dik. oyununu aç">
+<a class="orbit-card" href="/burasidami.html" style="--dx:82%;--dy:251px;--tilt:-3deg" aria-label="İstanbul'a Bir Ağaç Dik. oyununu aç"><span class="comic-index" aria-hidden="true">08</span>
 <span class="orbit-card-bar"><span class="orbit-num">08 <span class="orbit-separator">/</span> TREE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-tree" aria-hidden="true"><span class="art-tree"><i></i></span><span class="art-foot">LOCATION: ASPHALT</span></span>
-<span class="orbit-copy"><strong>İstanbul'a Bir Ağaç Dik.</strong><span>Ağaç hazır. Toprak tartışmalı.</span></span>
+<span class="orbit-copy"><strong>İstanbul'a Bir Ağaç Dik.</strong></span>
 </a>
-<a class="orbit-card" href="/algoritma.html" style="--dx:40%;--dy:880px;--tx:4%;--ty:1250px;--mx:5%;--my:1310px;--tilt:5deg" aria-label="Algoritma Sensin. oyununu aç">
+<a class="orbit-card" href="/algoritma.html" style="--dx:82%;--dy:429px;--tilt:2deg" aria-label="Algoritma Sensin. oyununu aç"><span class="comic-index" aria-hidden="true">09</span>
 <span class="orbit-card-bar"><span class="orbit-num">09 <span class="orbit-separator">/</span> ALGORITHM</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-algorithm" aria-hidden="true"><span class="art-loop">↻</span><span class="art-foot">YOU ARE THE PRODUCT</span></span>
-<span class="orbit-copy"><strong>Algoritma Sensin.</strong><span>Seçimin sana karşı kullanılacak.</span></span>
+<span class="orbit-copy"><strong>Algoritma Sensin.</strong></span>
 </a>
-<a class="orbit-card" href="/sigdir.html" style="--dx:75%;--dy:855px;--tx:68%;--ty:1260px;--mx:53%;--my:1343px;--tilt:-4deg" aria-label="İstanbul'a Sığdır. oyununu aç">
+<a class="orbit-card" href="/sigdir.html" style="--dx:82%;--dy:609px;--tilt:-4deg" aria-label="İstanbul'a Sığdır. oyununu aç"><span class="comic-index" aria-hidden="true">10</span>
 <span class="orbit-card-bar"><span class="orbit-num">10 <span class="orbit-separator">/</span> CITY</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-city" aria-hidden="true"><span class="art-buildings"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="art-foot">ROOM FOR ONE MORE?</span></span>
-<span class="orbit-copy"><strong>İstanbul'a Sığdır.</strong><span>Şehir aynı. Herkes burada.</span></span>
+<span class="orbit-copy"><strong>İstanbul'a Sığdır.</strong></span>
 </a>
-<a class="orbit-card" href="/ofsaytimsi.html" style="--dx:81%;--dy:1135px;--tx:34%;--ty:1480px;--mx:53%;--my:1554px;--tilt:2deg" aria-label="Ofsaytımsı. oyununu aç">
+<a class="orbit-card" href="/ofsaytimsi.html" style="--dx:64%;--dy:612px;--tilt:3deg" aria-label="Ofsaytımsı. oyununu aç"><span class="comic-index" aria-hidden="true">11</span>
 <span class="orbit-card-bar"><span class="orbit-num">11 <span class="orbit-separator">/</span> OFFSIDE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-offside" aria-hidden="true"><span class="art-pitch"><i></i><b></b></span><span class="art-foot">VAR / STILL CHECKING</span></span>
-<span class="orbit-copy"><strong>Ofsaytımsı.</strong><span>Çizgi kesin. Karar değil.</span></span>
+<span class="orbit-copy"><strong>Ofsaytımsı.</strong></span>
 </a>
-<a class="orbit-card" href="/omubumu.html" style="--dx:59%;--dy:1130px;--tx:5%;--ty:1715px;--mx:3%;--my:1587px;--tilt:-3deg" aria-label="O mu Bu mu? oyununu aç">
+<a class="orbit-card" href="/omubumu.html" style="--dx:45%;--dy:640px;--tilt:-2deg" aria-label="O mu Bu mu? oyununu aç"><span class="comic-index" aria-hidden="true">12</span>
 <span class="orbit-card-bar"><span class="orbit-num">12 <span class="orbit-separator">/</span> CHOICE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-choice" aria-hidden="true"><span class="art-versus">₺ ? ₺</span><span class="art-foot">CHOOSE YOUR LOSS</span></span>
-<span class="orbit-copy"><strong>O mu Bu mu?</strong><span>Mantıklı olan seçenek yok.</span></span>
+<span class="orbit-copy"><strong>O mu Bu mu?</strong></span>
 </a>
-<a class="orbit-card" href="/paranin-halleri.html" style="--dx:31%;--dy:1180px;--tx:68%;--ty:1730px;--mx:3%;--my:1780px;--tilt:4deg" aria-label="Paranın Hâlleri. oyununu aç">
+<a class="orbit-card" href="/paranin-halleri.html" style="--dx:26%;--dy:639px;--tilt:-3deg" aria-label="Paranın Hâlleri. oyununu aç"><span class="comic-index" aria-hidden="true">13</span>
 <span class="orbit-card-bar"><span class="orbit-num">13 <span class="orbit-separator">/</span> MONEY</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-money" aria-hidden="true"><span class="art-banknote"><b>1</b><i>₺</i></span><span class="art-foot">VALUE SUBJECT TO CHANGE</span></span>
-<span class="orbit-copy"><strong>Paranın Hâlleri.</strong><span>Aynı para. Farklı dram.</span></span>
+<span class="orbit-copy"><strong>Paranın Hâlleri.</strong></span>
 </a>
-<a class="orbit-card" href="/kaybolan-meslekler.html" style="--dx:4%;--dy:1120px;--tx:34%;--ty:1950px;--mx:52%;--my:1813px;--tilt:-5deg" aria-label="Kaybolan Meslekler. oyununu aç">
+<a class="orbit-card" href="/kaybolan-meslekler.html" style="--dx:5%;--dy:624px;--tilt:3deg" aria-label="Kaybolan Meslekler. oyununu aç"><span class="comic-index" aria-hidden="true">14</span>
 <span class="orbit-card-bar"><span class="orbit-num">14 <span class="orbit-separator">/</span> JOBS</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-jobs" aria-hidden="true"><span class="art-giant art-lost">404</span><span class="art-foot">OCCUPATION NOT FOUND</span></span>
-<span class="orbit-copy"><strong>Kaybolan Meslekler.</strong><span>Mesai bitti. Yaklaşık 1984'te.</span></span>
+<span class="orbit-copy"><strong>Kaybolan Meslekler.</strong></span>
 </a>
-<a class="orbit-card" href="/yasakli-miydi.html" style="--dx:9%;--dy:1450px;--tx:4%;--ty:2175px;--mx:53%;--my:2015px;--tilt:3deg" aria-label="Yasaklı mıydı? oyununu aç">
+<a class="orbit-card" href="/yasakli-miydi.html" style="--dx:5%;--dy:443px;--tilt:-4deg" aria-label="Yasaklı mıydı? oyununu aç"><span class="comic-index" aria-hidden="true">15</span>
 <span class="orbit-card-bar"><span class="orbit-num">15 <span class="orbit-separator">/</span> BANNED</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-banned" aria-hidden="true"><span class="art-stamp">YASAK?</span><span class="art-foot">TERMS MAY HAVE CHANGED</span></span>
-<span class="orbit-copy"><strong>Yasaklı mıydı?</strong><span>Cevap, yıla göre değişiyor.</span></span>
+<span class="orbit-copy"><strong>Yasaklı mıydı?</strong></span>
 </a>
-<a class="orbit-card" href="/evden-cik.html" style="--dx:36%;--dy:1495px;--tx:69%;--ty:2190px;--mx:5%;--my:2048px;--tilt:-2deg" aria-label="Evden Çık. oyununu aç">
+<a class="orbit-card" href="/evden-cik.html" style="--dx:5%;--dy:261px;--tilt:2deg" aria-label="Evden Çık. oyununu aç"><span class="comic-index" aria-hidden="true">16</span>
 <span class="orbit-card-bar"><span class="orbit-num">16 <span class="orbit-separator">/</span> EXIT</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-exit" aria-hidden="true"><span class="art-door"><i></i></span><span class="art-foot">EXIT IS AN OPTION</span></span>
-<span class="orbit-copy"><strong>Evden Çık.</strong><span>Kapı var. Kolaylık yok.</span></span>
+<span class="orbit-copy"><strong>Evden Çık.</strong></span>
 </a>
-<a class="orbit-card" href="/evolution-machine.html" style="--dx:73%;--dy:1450px;--tx:34%;--ty:2425px;--mx:3%;--my:2259px;--tilt:5deg" aria-label="Evrimsel. oyununu aç">
+<a class="orbit-card" href="/evolution-machine.html" style="--dx:6%;--dy:79px;--tilt:4deg" aria-label="Evrimsel. oyununu aç"><span class="comic-index" aria-hidden="true">17</span>
 <span class="orbit-card-bar"><span class="orbit-num">17 <span class="orbit-separator">/</span> EVOLUTION</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-evolution" aria-hidden="true"><span class="art-cells"><i></i><i></i><i></i><i></i></span><span class="art-foot">ADAPT OR ...</span></span>
-<span class="orbit-copy"><strong>Evrimsel.</strong><span>Doğa fikrini sormuyor.</span></span>
+<span class="orbit-copy"><strong>Evrimsel.</strong></span>
 </a>
-<a class="orbit-card" href="/ah-yasamak.html" style="--dx:78%;--dy:1740px;--tx:5%;--ty:2665px;--mx:53%;--my:2292px;--tilt:-4deg" aria-label="Ah Yaşamak Var Ya. oyununu aç">
+<a class="orbit-card" href="/ah-yasamak.html" style="--dx:27%;--dy:845px;--tilt:-2deg" aria-label="Ah Yaşamak Var Ya. oyununu aç"><span class="comic-index" aria-hidden="true">18</span>
 <span class="orbit-card-bar"><span class="orbit-num">18 <span class="orbit-separator">/</span> LIFE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-life" aria-hidden="true"><span class="art-molecule"><i></i><i></i><i></i><i></i><i></i></span><span class="art-foot">H₂O + TIME + CHAOS</span></span>
-<span class="orbit-copy"><strong>Ah Yaşamak Var Ya.</strong><span>Su, kimya ve sonuçları.</span></span>
+<span class="orbit-copy"><strong>Ah Yaşamak Var Ya.</strong></span>
 </a>
-<a class="orbit-card" href="/einstein-ve-sen.html" style="--dx:47%;--dy:1785px;--tx:68%;--ty:2685px;--mx:52%;--my:2485px;--tilt:3deg" aria-label="Einstein ve Sen. oyununu aç">
+<a class="orbit-card" href="/einstein-ve-sen.html" style="--dx:48%;--dy:858px;--tilt:3deg" aria-label="Einstein ve Sen. oyununu aç"><span class="comic-index" aria-hidden="true">19</span>
 <span class="orbit-card-bar"><span class="orbit-num">19 <span class="orbit-separator">/</span> EINSTEIN</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-einstein" aria-hidden="true"><span class="art-orbit"><i></i><b></b></span><span class="art-formula">E = ?</span></span>
-<span class="orbit-copy"><strong>Einstein ve Sen.</strong><span>Evrenin kurallarıyla pazarlık.</span></span>
+<span class="orbit-copy"><strong>Einstein ve Sen.</strong></span>
 </a>
-<a class="orbit-card" href="/fiziksel.html" style="--dx:17%;--dy:1880px;--tx:35%;--ty:2920px;--mx:3%;--my:2518px;--tilt:-3deg" aria-label="Fiziksel. oyununu aç">
+<a class="orbit-card" href="/fiziksel.html" style="--dx:72%;--dy:846px;--tilt:-3deg" aria-label="Fiziksel. oyununu aç"><span class="comic-index" aria-hidden="true">20</span>
 <span class="orbit-card-bar"><span class="orbit-num">20 <span class="orbit-separator">/</span> PHYSICAL</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-physical" aria-hidden="true"><span class="art-switch"><i></i></span><span class="art-foot">THE UNIVERSE IS ON</span></span>
-<span class="orbit-copy"><strong>Fiziksel.</strong><span>Sistemi kapat. Fizik devam eder.</span></span>
+<span class="orbit-copy"><strong>Fiziksel.</strong></span>
 </a></div>
-<div class="orbit-finale"><span class="mono">SON / ŞİMDİLİK</span><p>Evren genişliyor. Oyunlar da.</p><a href="#top">BAŞA DÖN ↑</a></div>
 </main>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Oyun penceresi"><div class="panel"><div class="modal-top mono"><span id="modal-label">AYNEN. / OYUN</span><button class="close" id="close" aria-label="Oyunu kapat">×</button></div><div class="stage" id="stage"></div><div class="mono" style="font-size:10px;color:#999;text-align:right" id="round">AYNEN.FUN / BETA</div></div></div>
@@ -325,38 +303,5 @@ document.querySelectorAll('[data-game]').forEach(x=>x.onclick=()=>{modal.classLi
 let requested=new URLSearchParams(location.search).get('game');if(['nothing','no','paper','message','loading','success'].includes(requested)){modal.classList.add('on');document.body.style.overflow='hidden';run(requested)};
 })();
 </script>
-<script>
-(function(){
-  const scene=document.querySelector('.desktop-scene');
-  const line=document.getElementById('trail-stroke');
-  const svg=document.getElementById('orbit-trail');
-  const hub=document.getElementById('landing-hub');
-  const cards=[...document.querySelectorAll('.orbit-card')];
-  if(!scene||!line||!svg||!hub||!cards.length)return;
-  let scheduled=false;
-  function draw(){
-    scheduled=false;
-    const root=scene.getBoundingClientRect();
-    svg.setAttribute('viewBox','0 0 '+root.width+' '+root.height);
-    const at=(el,fromBottom=false)=>{
-      const r=el.getBoundingClientRect();
-      return {x:r.left-root.left+r.width/2,y:r.top-root.top+(fromBottom?r.height*.7:r.height/2)};
-    };
-    const pts=[at(hub,true),...cards.map(c=>at(c))];
-    let d='M '+pts[0].x.toFixed(1)+' '+pts[0].y.toFixed(1);
-    for(let i=1;i<pts.length;i++){
-      const p=pts[i-1],n=pts[i],mx=(p.x+n.x)/2,my=(p.y+n.y)/2;
-      d+=' Q '+p.x.toFixed(1)+' '+p.y.toFixed(1)+' '+mx.toFixed(1)+' '+my.toFixed(1);
-    }
-    const last=pts[pts.length-1];
-    d+=' L '+last.x.toFixed(1)+' '+last.y.toFixed(1);
-    line.setAttribute('d',d);
-  }
-  function queue(){if(!scheduled){scheduled=true;requestAnimationFrame(draw)}}
-  window.addEventListener('resize',queue,{passive:true});
-  window.addEventListener('load',queue,{once:true});
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(queue);
-  queue();
-})();
-</script>
+
 </body></html>
