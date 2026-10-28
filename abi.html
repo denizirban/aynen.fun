@@ -1,0 +1,133 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fffefb"><meta name="description" content="Abi bi şey sorcam. Çok kısa."><meta property="og:title" content="Abi Bi Şey Sorcam — aynen.fun"><meta property="og:description" content="Hayır de. Üstüne kalsın."><title>Abi Bi Şey Sorcam — aynen.fun</title><link rel="icon" href="/favicon.ico?v=4"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
+:root{--black:#252525;--mute:#96958d;--line:#e9e7e1;--cream:#fffefb;--yellow:#f7e2a9}*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--cream);color:var(--black)}
+body{font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #8cad7b;outline-offset:4px}a{color:inherit;text-decoration:none}
+.mono{font-family:'DM Mono',monospace}
+.page{min-height:100svh;max-width:940px;margin:auto;padding:19px 27px;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;font:500 11px 'DM Mono',monospace}
+.top span{color:#aaa8a2}
+.head{margin:48px auto 0;text-align:center}
+.head h1{font-size:clamp(47px,8vw,83px);line-height:1;letter-spacing:-.095em;margin:0;font-weight:750}
+.head p{color:#898983;font:400 12px 'DM Mono',monospace;margin:13px 0 0}
+.game{flex:1;width:min(100%,640px);margin:36px auto 0;display:flex;flex-direction:column;align-items:stretch}
+.stats{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 1px;border-bottom:1px solid var(--line);font:500 11px 'DM Mono',monospace;color:#9b9b95}
+.stats strong{color:#242424;font-size:15px}
+.stage{flex:1;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 9px 15px}
+.scene{width:100%;height:205px;display:grid;place-items:center;position:relative;overflow:hidden;margin-bottom:18px}
+.scene svg{display:block;width:100%;height:100%}
+.scene .thing{transition:opacity .2s}
+.speaker{font:500 10px 'DM Mono',monospace;color:#999891;letter-spacing:.04em;margin-bottom:11px}
+.question{font-size:clamp(29px,5vw,45px);letter-spacing:-.065em;line-height:1.12;font-weight:700;margin:0;max-width:540px;min-height:1.2em}
+.reply{font-size:14px;line-height:1.45;color:#878680;margin:14px 0 0;min-height:41px;max-width:530px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.choice{border:1.5px solid #292929;border-radius:9px;min-height:57px;padding:13px 8px;background:#292929;color:white;font-size:14px;font-weight:700}
+.choice.secondary{background:white;color:#292929}
+.choice:hover{transform:translateY(-2px)}.choice:active{transform:none}
+.under{min-height:48px;margin:16px 0 0;display:flex;align-items:start;justify-content:center;gap:10px;text-align:center}
+.under span{font:400 11px/1.5 'DM Mono',monospace;color:#999891}
+.morework{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;max-width:550px;margin:0 auto;min-height:27px}
+.morework i{height:18px;width:24px;display:block;background:#e4c997;border:1px solid #9c8b70;box-shadow:1px 2px 0 #cab694}
+.foot{border-top:1px solid var(--line);padding:14px 0;display:flex;justify-content:space-between;gap:10px;align-items:center;font:400 10px 'DM Mono',monospace;color:#aaa8a3}
+.foot button{background:none;border:0;color:#61605b;font:500 11px 'DM Mono',monospace;padding:6px}
+.over{position:fixed;inset:0;background:#fffefbf4;z-index:20;display:none;align-items:center;justify-content:center;text-align:center;padding:24px}
+.over.on{display:flex}
+.overinside{max-width:600px}
+.over h2{font-size:clamp(42px,8vw,82px);line-height:1.04;letter-spacing:-.09em;margin:18px 0}
+.over p{color:#7b7a73;font-size:16px;line-height:1.5;margin:10px auto;max-width:490px}
+.over small{font:500 11px 'DM Mono',monospace;color:#a19f98}
+.over .actions{margin:28px auto 0;max-width:410px}
+.location{font:700 16px 'DM Mono',monospace;background:#f3e2b5;border:2px solid #36332d;border-radius:8px;padding:16px;display:inline-block;transform:rotate(-2deg)}
+@media(max-width:600px){.page{padding:17px 17px}.head{margin:50px 0 0}.head h1{font-size:clamp(45px,10.3vw,65px)}.head p{font-size:11px}.game{margin-top:23px}.stage{min-height:310px}.scene{height:155px;margin-bottom:15px}.question{font-size:clamp(28px,7.8vw,38px)}.reply{font-size:13px;min-height:38px}.actions{gap:9px}.choice{font-size:13px;min-height:55px}.foot{padding-top:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><div class="page">
+<nav class="top"><a href="/">← aynen.fun</a><span>OYUN 10</span></nav>
+<header class="head"><h1>Abi bi şey sorcam.</h1><p>Çok kısa.</p></header>
+<main class="game">
+<div class="stats"><span>ÜSTÜNE KALAN İŞ <strong id="work">0</strong></span><span id="step">01 / 10</span></div>
+<div class="stage">
+<div id="scene" class="scene" aria-hidden="true"></div>
+<div class="speaker" id="speaker">TANIMADIĞIN BİRİ</div>
+<h2 class="question" id="question">Abi müsait misin?</h2>
+<p class="reply" id="reply">Bi saniyeni alıcam.</p>
+</div>
+<div class="actions"><button class="choice" id="yes">Sor</button><button class="choice secondary" id="no">Müsait değilim</button></div>
+<div class="under"><span id="hint">Sadece bir soru.</span></div>
+<div class="morework" id="boxes" aria-hidden="true"></div>
+</main>
+<footer class="foot"><span>AYNEN.FUN / İYİ NİYET SİMÜLATÖRÜ</span><button type="button" id="reset">YENİDEN ↻</button></footer>
+</div>
+<div class="over" id="over" role="dialog" aria-modal="true" aria-label="Oyun sonucu"><div class="overinside">
+<small id="finalKicker">BİR ŞEY YOK</small>
+<h2 id="finalTitle">Abi neredesin?</h2>
+<p id="finalText">Herkes seni bekliyor.</p>
+<p id="finalDetail"></p>
+<div id="location" class="location" hidden>KONUM GÖNDERİLDİ ✓</div>
+<div class="actions" id="finalActions"><button class="choice" id="finishYes">Konum at</button><button class="choice secondary" id="finishNo">Ben yokum</button></div>
+</div></div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const dialogue=[
+{q:'Abi müsait misin?',line:'Bi saniyeni alıcam.',a:'Sor',b:'Müsait değilim',yes:'Eyvallah abi.',no:'Tamam abi çok kısa zaten.',weight:1,kind:'phone'},
+{q:'Senin araba var mı?',line:'Büyük de değil iş.',a:'Var',b:'Yok',yes:'Süper. Bagajı açarız.',no:'Araba önemli değil. Sen ol.',weight:2,kind:'car'},
+{q:'Ehliyetin var mı?',line:'Şöyle bi iş var da.',a:'Var',b:'Yok',yes:'Tamam sürersin.',no:'Sen şoförle oturursun.',weight:4,kind:'keys'},
+{q:'Şu koliyi bi tut.',line:'İki dakika.',a:'Tut',b:'Tutamam',yes:'Kalan 39 taneye de bak.',no:'Tamam, üstüne otur.',weight:6,kind:'box'},
+{q:'Abi tam şuraya gel.',line:'Yürüyerek 5 dakika.',a:'Gelirim',b:'Gelemem',yes:'Biz oradayız zaten.',no:'Biz sana geliriz.',weight:11,kind:'pin'},
+{q:'Arkadaşa bi el at.',line:'Tanımıyorsun ama iyi çocuk.',a:'Tamam',b:'Tanımıyorum',yes:'O da seni çok sevdi.',no:'Tanışırsınız. Koliler arabada.',weight:19,kind:'hand'},
+{q:'Nakliyeye bi bakabilir misin?',line:'Çocuklar sensiz başlamıyor.',a:'Bakarım',b:'Ben anlamam',yes:'Zaten sana güveniyoruz.',no:'Öğrenirsin. Çabuk çözersin.',weight:33,kind:'truck'},
+{q:'Bi imza atar mısın?',line:'Formalite.',a:'Atayım',b:'Atmam',yes:'Artık şirket ortağısın.',no:'Adını yazdım bile.',weight:61,kind:'paper'},
+{q:'Vergi dairesinden aradılar.',line:'Senin numarayı vermişim.',a:'Açayım',b:'Açmam',yes:'Şirkette yetkilisin.',no:'Bunlar tekrar arar.',weight:116,kind:'bill'},
+{q:'Abi bi de konum at.',line:'Millet aşağıda.',a:'Konum at',b:'BEN YOKUM',yes:'Herkes geliyor.',no:'Abi neredesin? Herkes seni bekliyor.',weight:208,kind:'location'}
+];
+const art={
+phone:'<rect x="168" y="22" width="94" height="163" rx="12"/><path d="M203 40h24m-16 124h9"/>',
+car:'<path d="m107 126 26-52h144l26 52 10 27H98zM135 126h138M144 75l-13 50m147-50 13 50"/><circle cx="150" cy="153" r="17"/><circle cx="264" cy="153" r="17"/>',
+keys:'<circle cx="171" cy="82" r="37"/><circle cx="171" cy="82" r="12"/><path d="M208 100l98 66 18-24-16-11-15 12-14-10 8-12-64-42"/>',
+box:'<path d="m148 62 72-32 73 32v91l-73 32-72-32zM148 62l72 35 73-35m-73 35v88M185 45l72 35"/>',
+pin:'<path d="M220 16c-46 0-77 33-77 76 0 47 77 108 77 108s77-61 77-108c0-43-31-76-77-76z"/><circle cx="220" cy="92" r="27"/>',
+hand:'<path d="m152 176-36-49 23-21 18 15-20-44c-6-15 13-23 21-9l28 42-12-56c-4-17 17-21 23-5l17 61-5-55c-2-15 20-17 23-2l8 55 1-40c1-16 23-13 23 2l-2 74c-1 26-26 47-53 47h-36z"/>',
+truck:'<rect x="75" y="67" width="216" height="99" rx="3"/><path d="M291 109h50l29 35v22h-79zM304 119h29l17 22h-46z"/><circle cx="140" cy="166" r="20"/><circle cx="324" cy="166" r="20"/><path d="M95 91h166m-166 20h166"/>',
+paper:'<path d="M150 20h118l39 40v133H150zM268 20v40h39M174 91h108m-108 29h108m-108 29h66"/><path d="m242 165 23-9 29 25" stroke="#ab8e65"/>',
+bill:'<rect x="153" y="12" width="147" height="181" rx="4"/><path d="M178 50h95m-95 29h95m-95 29h69m-69 46h95"/><text x="218" y="141" fill="#997a58" stroke="none" font-family="monospace" font-weight="700" font-size="22" text-anchor="middle">₺</text>',
+location:'<path d="M220 15c-49 0-82 36-82 80 0 49 82 103 82 103s82-54 82-103c0-44-33-80-82-80Z"/><circle cx="220" cy="96" r="28"/>'
+};
+let index=0,work=0,replies=[],gone=false;
+function paint(){
+const d=dialogue[index];
+$('step').textContent=String(index+1).padStart(2,'0')+' / '+dialogue.length;
+$('work').textContent=work.toLocaleString('tr-TR');
+$('question').textContent=d.q;
+$('reply').textContent=d.line;
+$('yes').textContent=d.a;$('no').textContent=d.b;
+$('speaker').textContent=index<3?'TANIMADIĞIN BİRİ':index<7?'ARTIK TANIŞIYORSUNUZ':'SENİN EKİP';
+$('hint').textContent=index<4?'Hâlâ küçük iş.':index<8?'Biraz büyüdü.':'Abi sen halledersin.';
+$('scene').innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 210" role="presentation"><g stroke="#333" stroke-width="3" fill="#f3dcae" stroke-linecap="round" stroke-linejoin="round">'+art[d.kind]+'</g></svg>';
+$('boxes').innerHTML=Array.from({length:Math.min(18,Math.ceil(work/24))},()=>'<i></i>').join('');
+}
+function choose(positive){
+const d=dialogue[index];
+const consequence=positive?d.yes:d.no;
+replies.push(consequence);
+work+=d.weight+(positive?0:Math.round(d.weight*.38));
+if(index===dialogue.length-1){end();return}
+index++;paint();$('reply').textContent=consequence;
+}
+function end(){
+$('over').classList.add('on');
+$('finalTitle').textContent='Abi neredesin?';
+$('finalText').textContent='Herkes seni bekliyor.';
+$('finalDetail').textContent='Üstüne kalan iş: '+work.toLocaleString('tr-TR')+' · SEN HALLEDERSİN NAKLİYAT LTD. ŞTİ.';
+$('finalKicker').textContent='TEBRİKLER. ŞİRKET AÇTIN.';
+$('location').hidden=true;$('finalActions').style.display='grid';gone=false;
+}
+function finish(yes){
+if(!gone){gone=true;$('finalTitle').textContent=yes?'Abi bi de şunları getir.':'Abi senin kapının önündeyiz.';$('finalText').textContent=yes?'Tamam herkes geliyor.':'Aşağıdayız. İn bi dakka.';$('finalDetail').textContent='Şirket borcu: ₺184.000 · Yetkili: SEN';$('location').hidden=!yes;$('finishYes').textContent='Tekrar';$('finishNo').textContent='Paylaş ↗';return}
+if(yes)reset();else share();
+}
+function reset(){index=0;work=0;replies=[];gone=false;$('over').classList.remove('on');$('finishYes').textContent='Konum at';$('finishNo').textContent='Ben yokum';paint()}
+async function share(){const msg='Abi bi şey sorcam oyununda üstüme '+work+' iş kaldı. Artık nakliyat şirketim var.';const url=location.origin+'/abi.html';try{if(navigator.share)await navigator.share({title:'Abi bi şey sorcam — aynen.fun',text:msg,url});else if(navigator.clipboard)await navigator.clipboard.writeText(msg+' '+url);else window.prompt('Paylaş:',msg+' '+url)}catch(_){}}
+$('yes').addEventListener('click',()=>choose(true));$('no').addEventListener('click',()=>choose(false));
+$('reset').addEventListener('click',reset);$('finishYes').addEventListener('click',()=>finish(true));$('finishNo').addEventListener('click',()=>finish(false));paint();
+})();
+</script></body></html>
