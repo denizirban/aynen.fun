@@ -99,7 +99,7 @@ const TOPICS=[
 ]}
 ];
 const META={
-traffic:{curious:'Trafik yine önüme düştü.',deep:'Her kavşak aynı hesaba çıkıyor.',end:'Serkan artık kavşaklara güvenmiyor.',label:'TRAFİK'},
+traffic:{curious:'Trafik yine önüme düştü.',deep:'Her kavşak aynı hesaba çıkıyor.',end:'Serkan bütün kavşakların birbirine bağlı olduğuna inanıyor.',label:'TRAFİK'},
 housing:{curious:'Ev ilanları birbirini takip ediyor.',deep:'Ev sahibinin ses kaydını analiz ediyor.',end:'Serkan artık ilan fotoğraflarını büyüteçle inceliyor.',label:'KİRA'},
 market:{curious:'Fişlerin peşine düştü.',deep:'Markete metreyle gidiyor.',end:'Serkan fişleri klasörlemeye başladı.',label:'MARKET'},
 group:{curious:'Grup mesajlarını geriye sardı.',deep:'Kim kimi gruba aldı, tablo çıkardı.',end:'Serkan apartman grubunun alt grubunu araştırıyor.',label:'WHATSAPP'},
@@ -151,8 +151,8 @@ function finish(){
 $('progress').style.width='100%';$('card').style.display='none';$('actions').style.display='none';
 const ranked=Object.entries(state.weights).sort((a,b)=>b[1]-a[1]);const lead=ranked[0],topic=lead[0],meta=META[topic];
 const d=lead[1]/ranked.reduce((s,x)=>s+x[1],0);
-const echo=d>.67&&topic!=='life';
-const t=echo?'Tebrikler. Bir yankı odası yaptın.':state.more<=3?'Serkan hâlâ normal.':'Serkan biraz değişti.';
+const echo=(d>.51||state.more>=9)&&topic!=='life';
+const t=echo?'Tebrikler. Serkan artık her şeyi çözdü.':state.more<=3?'Serkan hâlâ normal.':'Serkan bir şeye sardı.';
 const explanation=echo?meta.end+' Bir sonraki gönderi de aynı konuda.':d>.40?meta.curious+' Karşısına benzer şeyler çıkmaya devam ediyor.':meta.deep;
 $('resultTitle').textContent=t;$('resultText').textContent=explanation;
 $('moreCount').textContent=state.more;$('lessCount').textContent=state.less;$('topTopic').textContent=meta.label;
