@@ -23,270 +23,39 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 .mono{font-family:'DM Mono','Courier New',monospace}
 
 
-/* Compact comic-book game constellation. Cat at the center; older games nearest. */
-html{scroll-behavior:smooth}
-body{overflow-x:hidden}
-.desktop-scene{position:relative;height:1050px;min-height:0;overflow:hidden;isolation:isolate;background:#fffdf7}
-.landing-nav{position:relative;z-index:4;display:flex;align-items:center;padding:16px clamp(14px,3vw,42px)}
-.wordmark{font:700 clamp(23px,2.5vw,30px)/1 'Space Grotesk',sans-serif;letter-spacing:-.09em;text-decoration:none;color:#161616}
-.mark-dot{color:#ff719d}
-.landing-hub{position:absolute;left:50%;top:303px;width:clamp(145px,16vw,207px);transform:translateX(-50%);z-index:1;pointer-events:none}
-.hub-cat{display:block;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 7px 3px rgba(0,0,0,.04))}
-.orbit-cards{display:contents}
-.orbit-card{position:absolute;left:var(--dx);top:var(--dy);width:clamp(116px,11.35vw,162px);height:158px;z-index:2;display:flex;flex-direction:column;overflow:hidden;border:2px solid #181818;border-radius:3px;background:#fff;color:#111;text-decoration:none;text-align:left;box-shadow:4px 5px 0 #181818;transform:rotate(var(--tilt));transition:transform .2s ease,box-shadow .2s ease;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0}
-.orbit-card:hover,.orbit-card:focus-visible{z-index:10;transform:translateY(-6px) rotate(0deg) scale(1.05);box-shadow:7px 9px 0 #181818}
-.orbit-card:active{transform:rotate(0deg) scale(.98);box-shadow:2px 2px 0 #181818}
-.comic-index{position:absolute;top:6px;left:6px;z-index:5;min-width:25px;height:22px;padding:4px 5px;background:#fffdf7;border:2px solid #111;font:700 10px/1 'DM Mono',monospace;text-align:center;transform:rotate(-6deg)}
-.orbit-cover{display:block;position:relative;width:100%;height:111px;flex:none;overflow:hidden;border-bottom:2px solid #181818;color:#151515}
-.orbit-cover:before{content:"";position:absolute;width:85px;height:170px;right:-56px;top:-56px;background:rgba(255,255,255,.22);transform:rotate(32deg);pointer-events:none;z-index:1}
-.orbit-cover:after{content:"";position:absolute;inset:0;background-image:radial-gradient(#161616 0.8px,transparent 1px);background-size:6px 6px;opacity:.17;pointer-events:none;z-index:1}
-.orbit-copy{display:flex;align-items:center;flex:1;min-height:0;padding:5px 8px 6px;background:#fff}
-.orbit-copy strong{font-size:clamp(11px,1.07vw,14px);line-height:1.11;letter-spacing:-.055em;font-weight:700}
-.art-giant{position:absolute;top:20px;left:16px;font:700 42px/1 'Space Grotesk',sans-serif;letter-spacing:-.08em}
-.art-foot{position:absolute;left:12px;bottom:11px;font:500 8px/1.2 'DM Mono',monospace;letter-spacing:.055em}
-.art-small{font:500 12px/1 'DM Mono',monospace}
-.art-nothing{background:#ffdb55}
-.art-nothing .art-giant{font-size:clamp(30px,3.65vw,52px);top:24px}
-.art-no{background:#ff82bc}
-.art-button{position:absolute;top:22px;left:22px;display:block;border:1.5px solid #111;background:#111;color:#fff;padding:11px 17px;font-size:23px;font-weight:700;letter-spacing:-.06em;transform:rotate(-4deg)}
-.art-ask{position:absolute;right:10px;bottom:13px;transform:rotate(7deg);font-size:9px}
-.art-paper{background:#fd9368}
-.art-document{position:absolute;width:86px;height:110px;top:6px;left:calc(50% - 43px);background:#fff;border:1px solid #222;transform:rotate(8deg);box-shadow:3px 3px 0 #d4cbc1}
-.art-document i{position:absolute;left:11px;right:12px;height:1px;background:#b7b8b6}
-.art-document i:nth-child(1){top:17px}.art-document i:nth-child(2){top:28px}.art-document i:nth-child(3){top:39px}
-.art-document strong{position:absolute;top:50px;left:9px;border:3px double #a54e4b;color:#a54e4b;transform:rotate(-16deg);font:700 23px 'DM Mono',monospace}
-.art-message{background:#83d9f7}
-.art-bubble{position:absolute;top:15px;left:13px;border-radius:14px 14px 14px 2px;border:1px solid #556667;background:#fff;padding:11px 13px;font-size:13px;letter-spacing:-.035em}
-.art-dots{position:absolute;bottom:13px;right:16px;font-size:12px;color:#6b8383;letter-spacing:.2em;animation:blink 2s ease infinite}
-.art-loading{background:#e1f67b}.art-loading .art-giant{top:13px;font-size:54px}
-.art-meter{position:absolute;bottom:13px;left:14px;right:14px;height:8px;border:1px solid #111}
-.art-meter i{display:block;height:100%;width:99%;background:#252621}
-.art-success{background:#c6a2f3}.art-success .art-giant{top:15px;font-size:54px}
-.art-maas{background:#84e5bb}.art-maas .art-giant{top:12px;font-size:48px}
-.art-slash{position:relative}.art-slash:after{content:"";position:absolute;width:100%;height:3px;top:53%;left:0;background:#111;transform:rotate(-24deg)}
-.art-tree{background:#9be38d}.art-tree .art-tree{display:block}
-.art-tree .art-tree i{display:block}
-.art-tree>.art-tree{position:absolute;top:22px;left:calc(50% - 28px);height:62px;width:56px;background:#6d8d73;clip-path:polygon(50% 0,70% 27%,84% 27%,70% 48%,94% 65%,5% 65%,26% 48%,12% 27%,34% 27%)}
-.art-tree>.art-tree:after{content:"";position:absolute;top:51px;left:25px;background:#5b5543;width:6px;height:15px}
-.art-algorithm{background:#ffb16e}.art-loop{position:absolute;top:5px;left:calc(50% - 46px);font-size:91px;line-height:1;transform:rotate(-27deg);font-family:Arial}
-.art-city{background:#accdff}
-.art-buildings{position:absolute;bottom:0;left:12px;right:12px;height:85px;display:flex;gap:3px;align-items:flex-end}
-.art-buildings i{flex:1;height:35px;background:#617f77;border:1px solid #293d38}
-.art-buildings i:nth-child(2){height:72px}.art-buildings i:nth-child(3){height:50px}.art-buildings i:nth-child(4){height:93px}.art-buildings i:nth-child(5){height:59px}.art-buildings i:nth-child(6){height:78px}
-.art-city .art-foot{background:#accdff;padding:2px}
-.art-offside{background:linear-gradient(135deg,#75ddac,#b1f48f)}
-.art-pitch{position:absolute;inset:10px 15px 12px;border:2px solid #fefefa;border-radius:2px;transform:skewY(-7deg)}
-.art-pitch:after{content:"";height:100%;width:2px;background:#fff;position:absolute;left:50%}
-.art-pitch i{position:absolute;width:35px;height:35px;border:2px solid #fff;border-radius:50%;left:calc(50% - 17px);top:calc(50% - 17px)}
-.art-pitch b{position:absolute;left:59%;top:24%;background:#101a14;border:2px solid #fff;width:13px;height:13px;border-radius:50%;z-index:2}
-.art-offside .art-foot{background:#d6e5d3;padding:2px}
-.art-choice{background:#f9a8d9}.art-versus{position:absolute;top:28px;left:12px;right:12px;text-align:center;font-size:38px;font-weight:700;letter-spacing:-.06em}
-.art-money{background:#b7e886}
-.art-banknote{position:absolute;top:16px;left:24px;right:24px;height:68px;border:2px solid #4e7452;border-radius:2px;display:flex;justify-content:space-around;align-items:center;background:repeating-linear-gradient(135deg,#d8e9d2 0 2px,#e7f1e3 2px 7px)}
-.art-banknote b{font-size:45px;letter-spacing:-.08em}.art-banknote i{font-size:31px;font-style:normal;border:1px solid #4e7452;border-radius:50%;width:50px;height:50px;display:grid;place-items:center}
-.art-jobs{background:#f9bc74}.art-lost{letter-spacing:-.09em;top:18px;font-size:52px}
-.art-banned{background:#fd8688}.art-stamp{position:absolute;left:calc(50% - 62px);top:27px;border:3px solid #a25858;color:#a25858;padding:5px 9px;transform:rotate(-14deg);font:700 25px/1.1 'DM Mono',monospace}
-.art-exit{background:#a4bdfd}
-.art-door{position:absolute;left:calc(50% - 29px);top:8px;width:58px;height:95px;background:#fafaf7;border:3px solid #424847}
-.art-door i{position:absolute;right:7px;top:46px;width:6px;height:6px;background:#424847;border-radius:50%}
-.art-exit .art-foot{bottom:9px;left:8px;background:#a4bdfd;padding:2px}
-.art-evolution{background:#b5e57b}.art-cells{position:absolute;inset:8px}
-.art-cells i{position:absolute;display:block;background:#a7bf8d;border:2px solid #58734f;border-radius:45% 55% 52% 48%}
-.art-cells i:nth-child(1){width:54px;height:50px;left:14px;top:18px}.art-cells i:nth-child(2){width:36px;height:34px;left:80px;top:9px}.art-cells i:nth-child(3){width:55px;height:52px;right:13px;top:24px}.art-cells i:nth-child(4){width:19px;height:19px;left:72px;top:65px}
-.art-evolution .art-foot{background:#b5e57b;padding:2px}
-.art-life{background:#8be1d7}
-.art-molecule{position:absolute;left:17px;top:15px;width:160px;height:70px;border-top:2px solid #65827c;transform:rotate(-20deg);top:58px}
-.art-molecule i{position:absolute;width:22px;height:22px;border:2px solid #466761;border-radius:50%;background:#b4d0c7}
-.art-molecule i:nth-child(1){left:0;top:-12px}.art-molecule i:nth-child(2){left:32px;top:-29px}.art-molecule i:nth-child(3){left:65px;top:-12px}.art-molecule i:nth-child(4){left:99px;top:-29px}.art-molecule i:nth-child(5){left:132px;top:-11px}
-.art-life .art-foot{background:#8be1d7;padding:2px}
-.art-einstein{background:radial-gradient(circle at 65% 45%,#6751a7,#26213b 76%);color:#f8f7ec}
-.art-orbit{position:absolute;left:calc(50% - 44px);top:3px;width:90px;height:90px;border:1px solid #c7d4d9;border-radius:50%;transform:rotate(-34deg) skew(28deg)}
-.art-orbit:before,.art-orbit:after{content:"";position:absolute;inset:14px;border:1px dashed #9fb7c5;border-radius:50%}
-.art-orbit:after{inset:30px}
-.art-orbit i{position:absolute;right:6px;top:13px;width:13px;height:13px;border-radius:50%;background:#e8e6d6}
-.art-formula{position:absolute;left:12px;bottom:9px;font:500 23px 'DM Mono',monospace}
-.art-physical{background:#fbd377}
-.art-switch{position:absolute;top:15px;left:calc(50% - 46px);width:92px;height:55px;border:2px solid #262721;border-radius:40px;background:#c6c5b7}
-.art-switch i{position:absolute;top:5px;left:5px;width:40px;height:40px;background:#252721;border-radius:50%;box-shadow:1px 1px 0 #e0e1d6}
 
-.art-giant{letter-spacing:-.09em;text-shadow:2px 2px 0 rgba(255,255,255,.75)}
-.art-button{border-width:2px;box-shadow:4px 4px 0 rgba(255,255,255,.8)}
-.art-document{border-width:2px;box-shadow:4px 4px 0 #1b1b1b}
-.art-bubble{border:2px solid #131313;box-shadow:3px 3px 0 #131313}
-.art-stamp{border-color:#171717;color:#171717;border-width:4px}
-.art-banknote{border-width:3px}
-.art-pitch{border-width:3px}
-.art-switch{border-width:3px}
-.art-evolution .art-foot,.art-city .art-foot,.art-life .art-foot,.art-exit .art-foot{background:rgba(255,255,255,.85);color:#111;border:1px solid #111;padding:2px}
+/* Illustrated covers inspired by general editorial spot-art principles; entirely original artwork. */
+html{scroll-behavior:smooth}body{overflow-x:hidden}
+.desktop-scene{position:relative;height:1020px;overflow:hidden;isolation:isolate;background:#FCFCFA}
+.landing-nav{position:relative;z-index:5;padding:21px clamp(18px,3vw,46px)}
+.wordmark{font:700 clamp(22px,2.3vw,29px)/1 'Space Grotesk',sans-serif;letter-spacing:-.085em;text-decoration:none;color:#1F2326}
+.mark-dot{color:#D87865}
+.landing-hub{position:absolute;top:290px;left:50%;transform:translateX(-50%);width:clamp(145px,16vw,205px);pointer-events:none;z-index:1}
+.hub-cat{display:block;width:100%;height:auto;object-fit:contain}
+.orbit-cards{display:contents}
+.orbit-card{position:absolute;top:var(--dy);left:var(--dx);width:clamp(118px,11.35vw,163px);height:155px;z-index:2;display:flex;flex-direction:column;gap:7px;align-items:stretch;border:0;background:transparent;text-align:left;padding:0;color:#222629;text-decoration:none;transform:rotate(var(--tilt));transform-origin:center;cursor:pointer;transition:transform .2s ease;box-shadow:none}
+.orbit-card:hover,.orbit-card:focus-visible{z-index:10;transform:translateY(-5px) rotate(0deg) scale(1.045)}
+.orbit-card:active{transform:rotate(0deg) scale(.98)}
+.orbit-cover{position:relative;display:block;flex:none;width:100%;height:110px;border-radius:3px;overflow:hidden;box-shadow:0 3px 9px rgba(23,31,38,.075);background:#F2F1E9}
+.editorial-art{display:block;height:100%;width:100%;overflow:hidden}
+.editorial-index{position:absolute;left:6px;top:6px;z-index:2;padding:4px 5px;border-radius:2px;background:rgba(255,255,255,.86);font:500 8px/1 'DM Mono',monospace;color:#43474A;letter-spacing:.04em}
+.orbit-copy{padding:0 2px;display:flex;align-items:flex-start;justify-content:flex-start;flex:1;min-height:0;background:transparent;box-shadow:none;border:0;text-align:left;transform:none}
+.orbit-copy strong{font-size:clamp(11px,1.05vw,14px);line-height:1.2;letter-spacing:-.036em;font-weight:600}
 @media(max-width:760px){
- .desktop-scene{height:auto;min-height:0;overflow:visible;padding-bottom:22px}
- .landing-nav{padding:16px 16px 8px}
- .landing-hub{position:relative;top:auto;left:auto;width:156px;transform:none;margin:-1px auto 7px}
- .orbit-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 9px;max-width:640px;margin:0 auto;padding:0 12px}
- .orbit-card{position:relative;top:auto;left:auto;width:100%;height:145px;transform:rotate(var(--tilt));box-shadow:3px 4px 0 #181818}
+ .desktop-scene{height:auto;min-height:0;overflow:visible;padding-bottom:18px}
+ .landing-nav{padding:18px 17px 10px}
+ .landing-hub{position:relative;top:auto;left:auto;transform:none;width:150px;margin:0 auto 12px}
+ .orbit-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px 10px;padding:0 14px;max-width:640px;margin:0 auto}
+ .orbit-card{position:relative;left:auto;top:auto;width:100%;height:auto;min-height:119px;gap:5px;transform:rotate(var(--tilt))}
  .orbit-card:nth-child(3n+2){margin-top:6px}
  .orbit-card:nth-child(3n){margin-top:2px}
- .orbit-cover{height:95px}
- .orbit-copy{padding:5px 6px 6px}
- .orbit-copy strong{font-size:clamp(10px,2.65vw,14px);line-height:1.12}
- .comic-index{height:20px;min-width:23px;font-size:9px;top:4px;left:4px;padding:3px 4px}
- .art-foot{font-size:6.5px}
- .art-giant{font-size:37px}
- .art-loading .art-giant,.art-success .art-giant,.art-maas .art-giant{font-size:43px}
- .art-nothing .art-giant{font-size:clamp(29px,7.5vw,39px)}
- .art-button{font-size:17px;left:10px;top:25px;padding:7px 10px}
- .art-ask{font-size:8px}
- .art-document{left:calc(50% - 36px);width:73px}
- .art-bubble{font-size:10px;left:7px;padding:9px 6px;top:25px}
- .art-versus{font-size:25px}
- .art-banknote{left:7px;right:7px}
- .art-banknote b{font-size:30px}
- .art-banknote i{width:38px;height:38px;font-size:22px}
- .art-stamp{left:calc(50% - 45px);font-size:17px;top:35px}
- .art-loop{left:calc(50% - 32px);font-size:73px}
- .art-formula{font-size:17px}
- .art-lost{font-size:47px}
+ .orbit-cover{height:auto;aspect-ratio:240/160}
+ .orbit-copy{padding:0}
+ .orbit-copy strong{font-size:clamp(10px,2.65vw,13px);line-height:1.17}
+ .editorial-index{font-size:7px;padding:3px 4px;top:4px;left:4px}
 }
-@media(max-width:359px){
- .landing-hub{width:148px}
- .orbit-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 11px;padding:0 15px}
- .orbit-card{height:145px}
- .orbit-copy strong{font-size:12px}
-}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-card{transition:none}.art-dots{animation:none}}
-
-
-/* Hand-cut sticker covers: white die-cut rims, individual silhouettes, no window chrome. */
-.orbit-card {
-  border:0; border-radius:0; background:transparent; box-shadow:none;
-  overflow:visible; align-items:center; height:162px; transform:rotate(var(--tilt));
-}
-.orbit-card:hover,.orbit-card:focus-visible {
-  transform:translateY(-6px) rotate(0deg) scale(1.08);
-  box-shadow:none;
-}
-.orbit-card:active {box-shadow:none;transform:rotate(0deg) scale(.97)}
-.orbit-card-bar {display:none}
-.orbit-cover {
-  height:119px; overflow:visible; border:0;
-  background:transparent!important; isolation:isolate;
-  filter:drop-shadow(3px 4px 0 #171717);
-  transform:rotate(-2deg);
-  transition:transform .2s ease;
-}
-.orbit-card:nth-child(4n+2) .orbit-cover {transform:rotate(3deg)}
-.orbit-card:nth-child(4n+3) .orbit-cover {transform:rotate(-4deg)}
-.orbit-card:hover .orbit-cover {transform:rotate(0deg)}
-.orbit-cover:before,.orbit-cover:after {
-  content:"";position:absolute;z-index:0;pointer-events:none;
-  clip-path:var(--cut,polygon(7% 10%,29% 3%,49% 7%,72% 2%,93% 9%,98% 30%,95% 60%,99% 83%,81% 96%,52% 92%,27% 99%,4% 88%,6% 60%,1% 33%));
-  transform:rotate(var(--cut-rotate,0deg));
-  background:#fff;
-}
-.orbit-cover:before {inset:0}
-.orbit-cover:after {inset:6px;background:var(--sticker-color,#ffca5c)}
-.orbit-cover>* {z-index:2}
-.orbit-card:nth-child(4n+1) .orbit-cover {--cut:polygon(50% 2%,62% 9%,78% 3%,82% 19%,97% 24%,90% 40%,99% 57%,88% 73%,86% 94%,66% 89%,51% 99%,35% 89%,15% 94%,13% 75%,1% 61%,10% 44%,3% 26%,21% 17%,31% 5%)}
-.orbit-card:nth-child(4n+2) .orbit-cover {--cut:polygon(5% 20%,20% 4%,42% 6%,61% 1%,87% 10%,99% 28%,95% 57%,99% 81%,79% 96%,52% 92%,30% 99%,7% 82%,1% 57%)}
-.orbit-card:nth-child(4n+3) .orbit-cover {--cut:polygon(11% 3%,86% 1%,99% 19%,97% 82%,83% 99%,10% 94%,1% 77%,4% 22%)}
-.orbit-card:nth-child(4n) .orbit-cover {--cut:polygon(5% 13%,31% 4%,62% 7%,87% 2%,98% 19%,92% 42%,99% 68%,90% 88%,68% 95%,43% 91%,18% 98%,2% 80%,8% 51%,1% 30%)}
-.art-nothing {--sticker-color:#ffcb48}
-.art-no {--sticker-color:#fd78b7}
-.art-paper {--sticker-color:#ff956c}
-.art-message {--sticker-color:#83d9f7}
-.art-loading {--sticker-color:#dcf169}
-.art-success {--sticker-color:#bf98f7}
-.art-maas {--sticker-color:#77e2b9}
-.art-tree {--sticker-color:#a6e67d}
-.art-algorithm {--sticker-color:#fda46e}
-.art-city {--sticker-color:#9fc4ff}
-.art-offside {--sticker-color:#8cdfab}
-.art-choice {--sticker-color:#fea4d5}
-.art-money {--sticker-color:#b5e886}
-.art-jobs {--sticker-color:#f6bb6f}
-.art-banned {--sticker-color:#fc7f89}
-.art-exit {--sticker-color:#9bb7ff}
-.art-evolution {--sticker-color:#aee077}
-.art-life {--sticker-color:#83ded5}
-.art-einstein {--sticker-color:#6550a7}
-.art-physical {--sticker-color:#ffd46a}
-.orbit-card .orbit-copy{
-  display:flex;align-items:center;justify-content:center;min-height:28px;
-  padding:5px 7px;max-width:96%;flex:none;text-align:center;
-  background:#fff;color:#161616;border:2px solid #171717;
-  border-radius:6px;box-shadow:2px 3px 0 #171717;
-  transform:translateY(-3px) rotate(2deg);
-}
-.orbit-card:nth-child(3n+2) .orbit-copy{transform:translateY(-3px) rotate(-3deg)}
-.orbit-copy strong{font-size:clamp(11px,1.09vw,14px);line-height:1.14}
-.comic-index{
-  border:2px solid #181818; background:#fff; color:#181818;
-  border-radius:50%; min-width:26px; height:26px; line-height:16px;
-  top:-3px;left:0;transform:rotate(-14deg);z-index:5;
-  box-shadow:1px 2px 0 #171717;
-}
-.art-foot{
-  font:700 7px/1 'DM Mono',monospace;letter-spacing:-.015em;
-  left:14px;bottom:12px;border:1px solid #191919;border-radius:3px;
-  padding:3px 4px;background:#fff!important;color:#181818;
-  transform:rotate(-4deg);max-width:calc(100% - 26px)
-}
-.art-giant{
-  color:#171717;letter-spacing:-.09em;
-  text-shadow:2px 2px 0 #fff,-2px -2px 0 #fff,2px -2px 0 #fff,-2px 2px 0 #fff,4px 4px 0 #171717;
-  transform:rotate(-5deg)
-}
-.art-nothing .art-giant{top:30px;left:13px;font-size:clamp(30px,3.25vw,47px)}
-.art-loading .art-giant,.art-success .art-giant {top:25px;left:15px;font-size:45px}
-.art-maas .art-giant{top:27px;left:22px;font-size:41px}
-.art-jobs .art-giant{top:23px;left:17px;font-size:48px}
-.art-button{
-  background:#171717;border:3px solid #fff;color:#fff;
-  padding:9px 12px;top:30px;left:19px;
-  box-shadow:3px 4px 0 #171717;transform:rotate(-8deg)
-}
-.art-document{top:18px;border:2px solid #171717;box-shadow:5px 5px 0 #171717}
-.art-bubble{top:28px;left:11px;transform:rotate(-7deg);box-shadow:4px 5px 0 #171717}
-.art-dots{bottom:18px;right:17px;color:#171717}
-.art-meter{bottom:21px;left:18px;right:18px;border:2px solid #171717;background:#fff}
-.art-banknote{top:23px;left:19px;right:19px;transform:rotate(-8deg);box-shadow:3px 4px 0 #161616}
-.art-loop{top:14px;left:calc(50% - 42px);font-size:82px;color:#161616;text-shadow:3px 4px 0 #fff}
-.art-tree>.art-tree{top:28px;background:#2f9a56;filter:drop-shadow(3px 4px 0 #fff)}
-.art-buildings{bottom:9px;left:18px;right:18px;height:86px;transform:rotate(-4deg)}
-.art-buildings i{border:2px solid #171717;background:#3b79af}
-.art-pitch{inset:22px 16px 17px;transform:skewY(-7deg) rotate(-3deg);border:3px solid #161616}
-.art-pitch:after{background:#161616}
-.art-pitch i{border-color:#161616}
-.art-versus{top:34px;transform:rotate(-7deg);text-shadow:3px 3px 0 #fff;font-size:30px}
-.art-stamp{top:39px;left:calc(50% - 54px);transform:rotate(-16deg);font-size:22px;border:4px solid #171717;background:#fff;color:#171717;box-shadow:3px 4px 0 #171717}
-.art-door{top:20px;height:84px;transform:rotate(6deg);border:3px solid #161616;box-shadow:4px 5px 0 #161616}
-.art-cells{inset:20px 12px 5px;transform:rotate(-7deg)}
-.art-cells i{border-color:#171717;background:#6abc76;border-width:3px}
-.art-molecule{top:65px;left:10px;border-top-color:#171717;border-top-width:3px}
-.art-molecule i{border:3px solid #171717;background:#fc7c9e}
-.art-orbit{top:16px;border:3px solid #fff;transform:rotate(-24deg) skew(20deg)}
-.art-orbit:before,.art-orbit:after{border-color:#fff}
-.art-formula{left:25px;bottom:23px;background:#fff;color:#171717;border:2px solid #171717;border-radius:4px;padding:0 4px;transform:rotate(-8deg)}
-.art-switch{top:30px;background:#6b91dd;border:3px solid #171717;transform:rotate(-9deg);box-shadow:4px 5px 0 #fff}
-.art-switch i{background:#fff;border:2px solid #171717}
-@media(max-width:760px){
-  .orbit-card{height:145px;box-shadow:none}
-  .orbit-cover{height:108px}
-  .orbit-card .orbit-copy{padding:4px 5px;min-height:25px}
-  .orbit-copy strong{font-size:clamp(10px,2.65vw,13px)}
-  .comic-index{top:-1px;left:0;min-width:23px;height:23px;line-height:14px;font-size:9px}
-  .art-giant{font-size:34px}
-  .art-nothing .art-giant{font-size:clamp(26px,7vw,39px)}
-  .art-loading .art-giant,.art-success .art-giant{font-size:40px}
-  .art-maas .art-giant{font-size:35px}
-  .art-button{font-size:15px;left:13px;top:32px;padding:6px 9px}
-  .art-versus{font-size:23px}
-  .art-banknote{left:10px;right:10px}
-  .art-stamp{font-size:15px;left:calc(50% - 41px)}
-  .art-bubble{font-size:10px;left:9px;top:31px}
-  .art-loop{font-size:68px;left:calc(50% - 35px)}
-  .art-foot{font-size:6px;left:10px;bottom:15px}
-}
+@media(max-width:359px){.orbit-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 11px}.orbit-copy strong{font-size:12px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-card{transition:none}}
 
 /* The experiences retain their own compact, window-like presentation. */
 .modal{position:fixed;inset:0;background:rgba(255,255,255,.76);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
@@ -324,88 +93,88 @@ body{overflow-x:hidden}
 <main class="desktop-scene" id="top">
 <header class="landing-nav"><a class="wordmark" href="/" aria-label="aynen.fun ana sayfa">aynen<span class="mark-dot">.</span>fun</a></header>
 <section class="landing-hub" aria-label="aynen.fun kedisi"><img class="hub-cat" src="./cat.webp" alt="aynen.fun kedisi" width="207" height="179" fetchpriority="high"></section>
-<div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye"><button class="orbit-card" type="button" data-game="nothing" style="--dx:26%;--dy:252px;--tilt:-3deg" aria-label="Hiçbir Şey Yapma. oyununu aç"><span class="comic-index" aria-hidden="true">01</span>
-<span class="orbit-cover art-nothing" aria-hidden="true"><span class="art-giant">00:00</span><span class="art-foot">PRODUCTIVITY — 0%</span></span>
+<div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye"><button class="orbit-card" type="button" data-game="nothing" style="--dx:26%;--dy:252px;--tilt:-3deg" aria-label="Hiçbir Şey Yapma. oyununu aç"><span class="editorial-index mono">01</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#DCE9E2"/><ellipse cx="121" cy="146" rx="88" ry="6" fill="#C0CFC6"/><path d="M72 112L74 71Q75 52 95 52L145 52Q167 56 167 76L167 111Z" fill="#D38C77" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="67" y="98" width="103" height="32" rx="15" fill="#E3A18A" stroke="#283137" stroke-width="2"/><path d="M78 126L74 144" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M158 126L162 144" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 38L42 131" fill="none" stroke="#51786B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 39Q42 -3 70 39Z" fill="#F1C786" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="193" cy="108" r="22" fill="#F5E7C9" stroke="#283137" stroke-width="2.5"/><path d="M193 108L193 94" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M193 108L204 114" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Hiçbir Şey Yapma.</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="no" style="--dx:63%;--dy:243px;--tilt:3deg" aria-label="Hayır Diyebilir misin? oyununu aç"><span class="comic-index" aria-hidden="true">02</span>
-<span class="orbit-cover art-no" aria-hidden="true"><span class="art-button">HAYIR.</span><span class="art-small art-ask">EMİN MİSİN?</span></span>
+<button class="orbit-card" type="button" data-game="no" style="--dx:63%;--dy:243px;--tilt:3deg" aria-label="Hayır Diyebilir misin? oyununu aç"><span class="editorial-index mono">02</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F0D5D5"/><circle cx="176" cy="44" r="30" fill="#E4ADA7" stroke="none" stroke-width="1"/><path d="M105 136Q88 130 80 114L49 80Q41 71 50 65Q56 61 63 70L85 88L72 44Q69 34 78 31Q87 30 90 41L104 78L104 26Q105 16 114 18Q122 19 122 29L122 77L133 37Q136 27 144 29Q152 32 148 43L139 80L152 60Q160 50 168 56Q174 61 168 71L149 119Q137 145 105 136Z" fill="#E5AC82" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M93 137L155 138L152 160L104 160Z" fill="#547A97" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Hayır Diyebilir misin?</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="paper" style="--dx:64%;--dy:426px;--tilt:2deg" aria-label="Bir Evrak Eksik. oyununu aç"><span class="comic-index" aria-hidden="true">03</span>
-<span class="orbit-cover art-paper" aria-hidden="true"><span class="art-document"><i></i><i></i><i></i><strong>RED</strong></span></span>
+<button class="orbit-card" type="button" data-game="paper" style="--dx:64%;--dy:426px;--tilt:2deg" aria-label="Bir Evrak Eksik. oyununu aç"><span class="editorial-index mono">03</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E7E1D5"/><ellipse cx="114" cy="145" rx="91" ry="6" fill="#D2C6B8"/><rect x="49" y="38" width="99" height="105" rx="3" fill="#fff" stroke="#283137" stroke-width="2"/><rect x="60" y="26" width="100" height="110" rx="3" fill="#F5F0E5" stroke="#283137" stroke-width="2"/><rect x="75" y="14" width="103" height="112" rx="3" fill="#fff" stroke="#283137" stroke-width="2.5"/><path d="M92 41L161 41" fill="none" stroke="#BAC3C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 55L161 55" fill="none" stroke="#BAC3C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 69L161 69" fill="none" stroke="#BAC3C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 83L161 83" fill="none" stroke="#BAC3C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="159" cy="113" r="24" fill="#CC8179" stroke="#283137" stroke-width="2"/><path d="M146 114L157 124L176 102" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="41" cy="137" r="9" fill="#283137" stroke="none" stroke-width="1"/><path d="M32 146L51 146L57 161L26 161Z" fill="#4D7282" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Bir Evrak Eksik.</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="message" style="--dx:27%;--dy:439px;--tilt:-3deg" aria-label="Bir Şey Soracağım. oyununu aç"><span class="comic-index" aria-hidden="true">04</span>
-<span class="orbit-cover art-message" aria-hidden="true"><span class="art-bubble">bi şey sorucam</span><span class="art-dots">● &nbsp;● &nbsp;●</span></span>
+<button class="orbit-card" type="button" data-game="message" style="--dx:27%;--dy:439px;--tilt:-3deg" aria-label="Bir Şey Soracağım. oyununu aç"><span class="editorial-index mono">04</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#D8E8F1"/><rect x="72" y="13" width="97" height="134" rx="16" fill="#455B69" stroke="#283137" stroke-width="2.5"/><rect x="82" y="26" width="77" height="104" rx="9" fill="#FAF7EB" stroke="none" stroke-width="1"/><rect x="90" y="44" width="56" height="25" rx="12" fill="#88BDB6" stroke="none" stroke-width="1"/><circle cx="105" cy="56" r="3" fill="#fff" stroke="none" stroke-width="1"/><circle cx="118" cy="56" r="3" fill="#fff" stroke="none" stroke-width="1"/><circle cx="131" cy="56" r="3" fill="#fff" stroke="none" stroke-width="1"/><path d="M109 86Q113 65 136 66Q157 66 160 87Q181 81 190 93Q198 111 181 119Q168 128 151 114Q138 132 121 121Q105 111 109 86Z" fill="#F1D0A8" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="196" cy="50" r="6" fill="#D99194" stroke="none" stroke-width="1"/></svg></span>
 <span class="orbit-copy"><strong>Bir Şey Soracağım.</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="loading" style="--dx:29%;--dy:70px;--tilt:2deg" aria-label="Az Kaldı. oyununu aç"><span class="comic-index" aria-hidden="true">05</span>
-<span class="orbit-cover art-loading" aria-hidden="true"><span class="art-giant">99<span class="art-small">%</span></span><span class="art-meter"><i></i></span></span>
+<button class="orbit-card" type="button" data-game="loading" style="--dx:29%;--dy:70px;--tilt:2deg" aria-label="Az Kaldı. oyununu aç"><span class="editorial-index mono">05</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#EEE9D7"/><ellipse cx="119" cy="146" rx="92" ry="6" fill="#D3D0BD"/><path d="M40 122Q56 113 77 122Q98 136 112 121Q124 111 144 114Q177 114 186 132Q180 146 134 146L72 146Q45 143 40 122Z" fill="#8AAC91" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M54 102L49 71" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M71 103L74 73" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="68" r="4" fill="#283137" stroke="none" stroke-width="1"/><circle cx="75" cy="69" r="4" fill="#283137" stroke="none" stroke-width="1"/><circle cx="122" cy="81" r="48" fill="#D49A9A" stroke="#283137" stroke-width="3"/><path d="M145 90Q145 50 118 49Q88 48 91 77Q94 106 119 107Q139 109 139 83Q139 65 122 66" fill="none" stroke="#F7EAD0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="122" cy="82" r="15" fill="#F4E2BD" stroke="#283137" stroke-width="2"/><path d="M122 82L122 71" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M122 82L134 87" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Az Kaldı.</strong></span>
 </button>
-<button class="orbit-card" type="button" data-game="success" style="--dx:49%;--dy:61px;--tilt:-4deg" aria-label="Başarı Simülatörü. oyununu aç"><span class="comic-index" aria-hidden="true">06</span>
-<span class="orbit-cover art-success" aria-hidden="true"><span class="art-giant">+∞%</span><span class="art-foot">MEASURABLE SUCCESS</span></span>
+<button class="orbit-card" type="button" data-game="success" style="--dx:49%;--dy:61px;--tilt:-4deg" aria-label="Başarı Simülatörü. oyununu aç"><span class="editorial-index mono">06</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E7E0F0"/><ellipse cx="125" cy="147" rx="86" ry="6" fill="#D0CBDA"/><path d="M32 145L32 124L65 124L65 102L96 102L96 79L127 79L127 57L157 57" fill="none" stroke="#8398A1" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><path d="M155 20L203 20L200 45Q195 66 180 70Q160 66 156 44Z" fill="#E9BE73" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M156 28L138 28Q136 51 161 55M202 28L219 28Q214 51 198 55" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="176" y="70" width="8" height="16" rx="0" fill="#58748B" stroke="none" stroke-width="1"/><rect x="165" y="86" width="31" height="7" rx="1" fill="#E9BE73" stroke="#283137" stroke-width="1"/><circle cx="92" cy="121" r="9" fill="#283137" stroke="none" stroke-width="1"/><path d="M84 131L101 131L108 159L80 159Z" fill="#C87F77" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Başarı Simülatörü.</strong></span>
 </button>
-<a class="orbit-card" href="/maas.html" style="--dx:81%;--dy:72px;--tilt:4deg" aria-label="Maaşın Kaç Saniyede Biter? oyununu aç"><span class="comic-index" aria-hidden="true">07</span>
-<span class="orbit-cover art-maas" aria-hidden="true"><span class="art-giant">₺ <span class="art-slash">0</span></span><span class="art-foot">BALANCE / NOT FOUND</span></span>
+<a class="orbit-card" href="/maas.html" style="--dx:81%;--dy:72px;--tilt:4deg" aria-label="Maaşın Kaç Saniyede Biter? oyununu aç"><span class="editorial-index mono">07</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#DDE9D8"/><ellipse cx="119" cy="146" rx="96" ry="6" fill="#CAD9C7"/><path d="M38 103L178 103Q184 105 184 113L184 140L31 140L31 109Q31 103 38 103Z" fill="#5B8981" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="131" y="109" width="58" height="23" rx="5" fill="#E8D7B3" stroke="#283137" stroke-width="2"/><circle cx="166" cy="120" r="4" fill="#283137" stroke="none" stroke-width="1"/><path d="M81 85Q67 62 83 40Q100 15 122 19Q154 19 163 48Q169 73 146 88Q137 97 133 111Q128 120 122 105Q118 95 111 97Q102 108 95 91Z" fill="#E2BB68" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="120" cy="55" r="25" fill="none" stroke="#AC8A4C" stroke-width="3"/></svg></span>
 <span class="orbit-copy"><strong>Maaşın Kaç Saniyede Biter?</strong></span>
 </a>
-<a class="orbit-card" href="/burasidami.html" style="--dx:82%;--dy:251px;--tilt:-3deg" aria-label="İstanbul'a Bir Ağaç Dik. oyununu aç"><span class="comic-index" aria-hidden="true">08</span>
-<span class="orbit-cover art-tree" aria-hidden="true"><span class="art-tree"><i></i></span><span class="art-foot">LOCATION: ASPHALT</span></span>
+<a class="orbit-card" href="/burasidami.html" style="--dx:82%;--dy:251px;--tilt:-3deg" aria-label="İstanbul'a Bir Ağaç Dik. oyununu aç"><span class="editorial-index mono">08</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E6E5D9"/><rect x="0" y="126" width="240" height="34" rx="0" fill="#D4CBBC" stroke="none" stroke-width="1"/><path d="M0 131L240 131" fill="none" stroke="#ADA597" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M117 114L117 150M117 133L91 151M117 137L143 151" fill="none" stroke="#816651" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 76L116 129" fill="none" stroke="#816651" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M109 77Q76 95 58 71Q42 48 64 31Q72 8 101 17Q123 -1 149 27Q176 20 183 47Q191 74 157 80Q137 97 109 77Z" fill="#73A387" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="83" cy="43" r="12" fill="#A2C6A7" stroke="none" stroke-width="1"/><circle cx="144" cy="45" r="13" fill="#A4C4A3" stroke="none" stroke-width="1"/><circle cx="192" cy="30" r="13" fill="#EDCA89" stroke="none" stroke-width="1"/></svg></span>
 <span class="orbit-copy"><strong>İstanbul'a Bir Ağaç Dik.</strong></span>
 </a>
-<a class="orbit-card" href="/algoritma.html" style="--dx:82%;--dy:429px;--tilt:2deg" aria-label="Algoritma Sensin. oyununu aç"><span class="comic-index" aria-hidden="true">09</span>
-<span class="orbit-cover art-algorithm" aria-hidden="true"><span class="art-loop">↻</span><span class="art-foot">YOU ARE THE PRODUCT</span></span>
+<a class="orbit-card" href="/algoritma.html" style="--dx:82%;--dy:429px;--tilt:2deg" aria-label="Algoritma Sensin. oyununu aç"><span class="editorial-index mono">09</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F0DFD0"/><ellipse cx="120" cy="145" rx="78" ry="6" fill="#DBCEBA"/><rect x="74" y="16" width="94" height="128" rx="15" fill="#4B7088" stroke="#283137" stroke-width="3"/><rect x="83" y="28" width="76" height="102" rx="7" fill="#F7E7CE" stroke="none" stroke-width="1"/><circle cx="122" cy="66" r="18" fill="#D79F87" stroke="none" stroke-width="1"/><path d="M102 105Q102 82 122 82Q142 83 146 106L146 124L100 124Z" fill="#8CAA99" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M122 83L61 18" fill="none" stroke="#CA7C76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 97L51 50" fill="none" stroke="#CA7C76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M140 97L191 27" fill="none" stroke="#CA7C76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="61" cy="18" r="6" fill="#CA7C76" stroke="none" stroke-width="1"/><circle cx="191" cy="27" r="6" fill="#CA7C76" stroke="none" stroke-width="1"/></svg></span>
 <span class="orbit-copy"><strong>Algoritma Sensin.</strong></span>
 </a>
-<a class="orbit-card" href="/sigdir.html" style="--dx:82%;--dy:609px;--tilt:-4deg" aria-label="İstanbul'a Sığdır. oyununu aç"><span class="comic-index" aria-hidden="true">10</span>
-<span class="orbit-cover art-city" aria-hidden="true"><span class="art-buildings"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="art-foot">ROOM FOR ONE MORE?</span></span>
+<a class="orbit-card" href="/sigdir.html" style="--dx:82%;--dy:609px;--tilt:-4deg" aria-label="İstanbul'a Sığdır. oyununu aç"><span class="editorial-index mono">10</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#CADFE9"/><circle cx="187" cy="37" r="23" fill="#F3D79B" stroke="none" stroke-width="1"/><rect x="15" y="24" width="65" height="128" rx="0" fill="#809CA9" stroke="none" stroke-width="1"/><rect x="160" y="14" width="66" height="140" rx="0" fill="#638699" stroke="none" stroke-width="1"/><rect x="82" y="62" width="77" height="90" rx="0" fill="#A5B7AB" stroke="none" stroke-width="1"/><rect x="34" y="42" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="34" y="69" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="34" y="97" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="34" y="122" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="56" y="42" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="56" y="69" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="56" y="97" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="56" y="122" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="173" y="42" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="173" y="69" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="173" y="97" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="173" y="122" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="198" y="42" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="198" y="69" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="198" y="97" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="198" y="122" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><path d="M88 120L119 94L150 120Z" fill="#BB826E" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="97" y="120" width="45" height="33" rx="1" fill="#F4DFBC" stroke="#283137" stroke-width="2.5"/><rect x="114" y="130" width="14" height="22" rx="0" fill="#4E7289" stroke="none" stroke-width="1"/></svg></span>
 <span class="orbit-copy"><strong>İstanbul'a Sığdır.</strong></span>
 </a>
-<a class="orbit-card" href="/ofsaytimsi.html" style="--dx:64%;--dy:612px;--tilt:3deg" aria-label="Ofsaytımsı. oyununu aç"><span class="comic-index" aria-hidden="true">11</span>
-<span class="orbit-cover art-offside" aria-hidden="true"><span class="art-pitch"><i></i><b></b></span><span class="art-foot">VAR / STILL CHECKING</span></span>
+<a class="orbit-card" href="/ofsaytimsi.html" style="--dx:64%;--dy:612px;--tilt:3deg" aria-label="Ofsaytımsı. oyununu aç"><span class="editorial-index mono">11</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#D4E6D6"/><path d="M0 25L240 -1" fill="none" stroke="#F2F4E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 68L240 42" fill="none" stroke="#F2F4E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 111L240 85" fill="none" stroke="#F2F4E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 154L240 128" fill="none" stroke="#F2F4E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M139 -5L145 166" fill="none" stroke="#C67F72" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="91" cy="82" r="36" fill="#F9F4E8" stroke="#283137" stroke-width="3"/><path d="M92 63L109 79L103 101L82 101L72 83Z" fill="#283137" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 63L90 48" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M109 79L126 75" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M103 101L114 116" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M82 101L72 116" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="175" cy="45" r="9" fill="#6B9A8B" stroke="none" stroke-width="1"/><path d="M176 52L183 116" fill="none" stroke="#6B9A8B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Ofsaytımsı.</strong></span>
 </a>
-<a class="orbit-card" href="/omubumu.html" style="--dx:45%;--dy:640px;--tilt:-2deg" aria-label="O mu Bu mu? oyununu aç"><span class="comic-index" aria-hidden="true">12</span>
-<span class="orbit-cover art-choice" aria-hidden="true"><span class="art-versus">₺ ? ₺</span><span class="art-foot">CHOOSE YOUR LOSS</span></span>
+<a class="orbit-card" href="/omubumu.html" style="--dx:45%;--dy:640px;--tilt:-2deg" aria-label="O mu Bu mu? oyununu aç"><span class="editorial-index mono">12</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F3E3DC"/><ellipse cx="119" cy="148" rx="103" ry="6" fill="#E5CEC5"/><path d="M121 27L121 137" fill="none" stroke="#283137" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M81 138L162 138" fill="none" stroke="#283137" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M49 64L194 64" fill="none" stroke="#283137" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M65 65L52 112" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M83 65L97 112" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M161 65L148 112" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M184 65L198 112" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 113Q72 139 105 113Z" fill="#90B8AF" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M141 113Q177 138 208 113Z" fill="#D7B87D" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="74" cy="92" r="21" fill="#E6AE73" stroke="#283137" stroke-width="2"/><circle cx="74" cy="92" r="9" fill="#F3E3DC" stroke="none" stroke-width="1"/><rect x="162" y="76" width="30" height="32" rx="6" fill="#526E85" stroke="#283137" stroke-width="2"/><rect x="168" y="83" width="18" height="17" rx="0" fill="#E5F0E3" stroke="none" stroke-width="1"/></svg></span>
 <span class="orbit-copy"><strong>O mu Bu mu?</strong></span>
 </a>
-<a class="orbit-card" href="/paranin-halleri.html" style="--dx:26%;--dy:639px;--tilt:-3deg" aria-label="Paranın Hâlleri. oyununu aç"><span class="comic-index" aria-hidden="true">13</span>
-<span class="orbit-cover art-money" aria-hidden="true"><span class="art-banknote"><b>1</b><i>₺</i></span><span class="art-foot">VALUE SUBJECT TO CHANGE</span></span>
+<a class="orbit-card" href="/paranin-halleri.html" style="--dx:26%;--dy:639px;--tilt:-3deg" aria-label="Paranın Hâlleri. oyununu aç"><span class="editorial-index mono">13</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E5E6CC"/><path d="M28 47L95 32L104 123L38 132Z" fill="#B7CDB3" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M75 24L152 29L149 119L74 117Z" fill="#EFDFB0" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M137 39L211 52L202 132L131 122Z" fill="#CFB399" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="61" cy="82" r="22" fill="#92B5A1" stroke="#283137" stroke-width="2"/><circle cx="111" cy="76" r="24" fill="#C5B48B" stroke="#283137" stroke-width="2"/><circle cx="168" cy="87" r="18" fill="#B6927A" stroke="#283137" stroke-width="2"/><path d="M54 77Q62 57 69 78M105 72Q114 54 122 70M163 82Q170 65 175 82" fill="none" stroke="#F7E7CD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Paranın Hâlleri.</strong></span>
 </a>
-<a class="orbit-card" href="/kaybolan-meslekler.html" style="--dx:5%;--dy:624px;--tilt:3deg" aria-label="Kaybolan Meslekler. oyununu aç"><span class="comic-index" aria-hidden="true">14</span>
-<span class="orbit-cover art-jobs" aria-hidden="true"><span class="art-giant art-lost">404</span><span class="art-foot">OCCUPATION NOT FOUND</span></span>
+<a class="orbit-card" href="/kaybolan-meslekler.html" style="--dx:5%;--dy:624px;--tilt:3deg" aria-label="Kaybolan Meslekler. oyununu aç"><span class="editorial-index mono">14</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E7DAD0"/><ellipse cx="121" cy="145" rx="95" ry="7" fill="#D8C7B8"/><rect x="74" y="79" width="85" height="58" rx="4" fill="#A37B60" stroke="#283137" stroke-width="3"/><path d="M81 133L76 157" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 133L157 157" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M55 94Q77 76 103 90L129 99Q157 100 158 115Q152 124 118 121L73 115Q52 112 55 94Z" fill="#5A8390" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M167 51Q158 33 171 21L187 30L192 62Q193 76 179 85L166 74Z" fill="#E1BC8D" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M167 76L143 95" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Kaybolan Meslekler.</strong></span>
 </a>
-<a class="orbit-card" href="/yasakli-miydi.html" style="--dx:5%;--dy:443px;--tilt:-4deg" aria-label="Yasaklı mıydı? oyununu aç"><span class="comic-index" aria-hidden="true">15</span>
-<span class="orbit-cover art-banned" aria-hidden="true"><span class="art-stamp">YASAK?</span><span class="art-foot">TERMS MAY HAVE CHANGED</span></span>
+<a class="orbit-card" href="/yasakli-miydi.html" style="--dx:5%;--dy:443px;--tilt:-4deg" aria-label="Yasaklı mıydı? oyununu aç"><span class="editorial-index mono">15</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F4DCD4"/><ellipse cx="119" cy="147" rx="96" ry="6" fill="#E4C4B9"/><path d="M63 41L63 144" fill="none" stroke="#C47E6E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M175 41L175 144" fill="none" stroke="#C47E6E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M63 58Q120 108 175 58" fill="none" stroke="#C47E6E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M98 82Q94 61 112 57L146 56Q161 61 157 83L150 112Q123 132 102 109Z" fill="#D7BE9D" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M154 67Q185 60 181 84Q175 102 155 92M98 68Q82 67 81 82" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M120 57L132 43L143 57Z" fill="#C79076" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="205" cy="24" r="16" fill="#FCF8EC" stroke="none" stroke-width="1"/><path d="M197 16L213 32M213 16L197 32" fill="none" stroke="#C47E6E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Yasaklı mıydı?</strong></span>
 </a>
-<a class="orbit-card" href="/evden-cik.html" style="--dx:5%;--dy:261px;--tilt:2deg" aria-label="Evden Çık. oyununu aç"><span class="comic-index" aria-hidden="true">16</span>
-<span class="orbit-cover art-exit" aria-hidden="true"><span class="art-door"><i></i></span><span class="art-foot">EXIT IS AN OPTION</span></span>
+<a class="orbit-card" href="/evden-cik.html" style="--dx:5%;--dy:261px;--tilt:2deg" aria-label="Evden Çık. oyununu aç"><span class="editorial-index mono">16</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#DAE7E8"/><path d="M0 148L0 124L45 124L45 101L90 101L90 78L136 78L136 57L185 57" fill="none" stroke="#86ADB4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/><rect x="154" y="14" width="63" height="120" rx="1" fill="#FFF3DF" stroke="#283137" stroke-width="3"/><path d="M177 39L212 28L211 114L177 106Z" fill="#E0B575" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="202" cy="74" r="3" fill="#283137" stroke="none" stroke-width="1"/><path d="M201 22L225 8" fill="none" stroke="#D9B476" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M214 29L238 28" fill="none" stroke="#D9B476" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="74" cy="121" r="10" fill="#283137" stroke="none" stroke-width="1"/><path d="M67 132L86 132L92 159L63 159Z" fill="#C78E84" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Evden Çık.</strong></span>
 </a>
-<a class="orbit-card" href="/evolution-machine.html" style="--dx:6%;--dy:79px;--tilt:4deg" aria-label="Evrimsel. oyununu aç"><span class="comic-index" aria-hidden="true">17</span>
-<span class="orbit-cover art-evolution" aria-hidden="true"><span class="art-cells"><i></i><i></i><i></i><i></i></span><span class="art-foot">ADAPT OR ...</span></span>
+<a class="orbit-card" href="/evolution-machine.html" style="--dx:6%;--dy:79px;--tilt:4deg" aria-label="Evrimsel. oyununu aç"><span class="editorial-index mono">17</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E3ECCD"/><path d="M-5 137Q52 119 94 135Q133 149 168 128Q202 112 245 129" fill="none" stroke="#8BAD91" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="44" cy="98" r="25" fill="#BCD49C" stroke="#283137" stroke-width="2.5"/><circle cx="36" cy="93" r="7" fill="#72966B" stroke="none" stroke-width="1"/><circle cx="54" cy="106" r="5" fill="#72966B" stroke="none" stroke-width="1"/><path d="M101 99Q91 80 106 64Q130 53 143 70Q158 73 167 93Q148 114 124 109Z" fill="#D7B191" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128" cy="85" r="4" fill="#283137" stroke="none" stroke-width="1"/><path d="M184 107Q175 85 187 68L207 68Q226 84 214 109L223 140L200 140L198 115L192 141L173 141Z" fill="#98A9C6" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="197" cy="54" r="18" fill="#E2BC9B" stroke="#283137" stroke-width="3"/></svg></span>
 <span class="orbit-copy"><strong>Evrimsel.</strong></span>
 </a>
-<a class="orbit-card" href="/ah-yasamak.html" style="--dx:27%;--dy:845px;--tilt:-2deg" aria-label="Ah Yaşamak Var Ya. oyununu aç"><span class="comic-index" aria-hidden="true">18</span>
-<span class="orbit-cover art-life" aria-hidden="true"><span class="art-molecule"><i></i><i></i><i></i><i></i><i></i></span><span class="art-foot">H₂O + TIME + CHAOS</span></span>
+<a class="orbit-card" href="/ah-yasamak.html" style="--dx:27%;--dy:845px;--tilt:-2deg" aria-label="Ah Yaşamak Var Ya. oyununu aç"><span class="editorial-index mono">18</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#D6EAE4"/><ellipse cx="120" cy="144" rx="92" ry="7" fill="#C2D9D2"/><path d="M92 21L148 21M106 21L106 55L70 111Q63 136 94 138L158 138Q187 132 171 111L134 56L134 21" fill="none" stroke="#283137" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M90 98Q122 86 154 98L172 121Q174 135 154 136L94 136Q72 135 77 117Z" fill="#85C1B6" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="102" cy="117" r="16" fill="#E8D58C" stroke="#283137" stroke-width="2"/><circle cx="140" cy="117" r="11" fill="#D69081" stroke="#283137" stroke-width="2"/><circle cx="132" cy="100" r="7" fill="#F3E2AC" stroke="#283137" stroke-width="1"/><path d="M93 117Q107 98 118 116Q130 133 145 118" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="182" cy="52" r="6" fill="#DEA696" stroke="none" stroke-width="1"/></svg></span>
 <span class="orbit-copy"><strong>Ah Yaşamak Var Ya.</strong></span>
 </a>
-<a class="orbit-card" href="/einstein-ve-sen.html" style="--dx:48%;--dy:858px;--tilt:3deg" aria-label="Einstein ve Sen. oyununu aç"><span class="comic-index" aria-hidden="true">19</span>
-<span class="orbit-cover art-einstein" aria-hidden="true"><span class="art-orbit"><i></i><b></b></span><span class="art-formula">E = ?</span></span>
+<a class="orbit-card" href="/einstein-ve-sen.html" style="--dx:48%;--dy:858px;--tilt:3deg" aria-label="Einstein ve Sen. oyununu aç"><span class="editorial-index mono">19</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E5E5EF"/><path d="M0 34Q62 22 120 54Q173 82 241 20" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 58Q62 46 120 78Q173 106 241 44" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 82Q62 70 120 102Q173 130 241 68" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 106Q62 94 120 126Q173 154 241 92" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 130Q62 118 120 150Q173 178 241 116" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 0Q-9 75 42 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M56 0Q21 75 72 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M86 0Q51 75 102 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 0Q81 75 132 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M146 0Q111 75 162 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M176 0Q141 75 192 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M206 0Q171 75 222 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M236 0Q201 75 252 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="143" cy="76" r="38" fill="#E8C279" stroke="#283137" stroke-width="3"/><ellipse cx="130" cy="61" rx="13" ry="6" fill="#F5DFB3"/><path d="M167 89Q143 106 123 94" fill="none" stroke="#B58C4E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="33" r="14" fill="#D18C91" stroke="#283137" stroke-width="2"/><path d="M49 18L58 7" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Einstein ve Sen.</strong></span>
 </a>
-<a class="orbit-card" href="/fiziksel.html" style="--dx:72%;--dy:846px;--tilt:-3deg" aria-label="Fiziksel. oyununu aç"><span class="comic-index" aria-hidden="true">20</span>
-<span class="orbit-cover art-physical" aria-hidden="true"><span class="art-switch"><i></i></span><span class="art-foot">THE UNIVERSE IS ON</span></span>
+<a class="orbit-card" href="/fiziksel.html" style="--dx:72%;--dy:846px;--tilt:-3deg" aria-label="Fiziksel. oyununu aç"><span class="editorial-index mono">20</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F0E6D0"/><ellipse cx="122" cy="146" rx="97" ry="7" fill="#DECBAE"/><path d="M39 105L203 76" fill="none" stroke="#283137" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M117 140L125 90L143 140Z" fill="#7699A0" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M98 141L165 141" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="40" y="55" width="51" height="50" rx="4" fill="#C88A77" stroke="#283137" stroke-width="3"/><path d="M51 55L61 39L81 39L91 55" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="191" cy="58" r="24" fill="#EAC879" stroke="#283137" stroke-width="3"/><path d="M184 51L199 66" fill="none" stroke="#AF8853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M199 50L184 66" fill="none" stroke="#AF8853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 110Q37 125 57 110M183 98Q205 109 226 91" fill="none" stroke="#8CABAA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 <span class="orbit-copy"><strong>Fiziksel.</strong></span>
 </a>
-<a class="orbit-card" href="/cancel-everything.html" style="--dx:5%;--dy:849px;--tilt:3deg" aria-label="Cancel Everything. dalga girişimi oyununu aç"><span class="comic-index" aria-hidden="true">21</span>
-<span class="orbit-cover art-cancel" aria-hidden="true"><svg class="cancel-wave" viewBox="0 0 140 80" preserveAspectRatio="none"><path class="a" d="M3 19 Q19 -3 35 19 T67 19 T99 19 T131 19"/><path class="b" d="M3 49 Q19 71 35 49 T67 49 T99 49 T131 49"/><path class="sum" d="M3 34 L134 34"/></svg><span class="cancel-zero">0</span><span class="art-foot">WAVE + WAVE = NOTHING</span></span>
+<a class="orbit-card" href="/cancel-everything.html" style="--dx:5%;--dy:849px;--tilt:3deg" aria-label="Cancel Everything. dalga girişimi oyununu aç"><span class="editorial-index mono">21</span>
+<span class="orbit-cover" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#DCE7E8"/><path d="M0 78Q20 33 40 78T80 78T120 78T160 78T200 78T240 78" fill="none" stroke="#CB8581" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 78Q20 123 40 78T80 78T120 78T160 78T200 78T240 78" fill="none" stroke="#648CA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 78L225 78" fill="none" stroke="#F5F5EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="120" cy="78" r="17" fill="#F4EEE5" stroke="#283137" stroke-width="2"/><path d="M111 78L129 78" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="45" cy="23" r="9" fill="#DBB879" stroke="none" stroke-width="1"/><circle cx="197" cy="138" r="13" fill="#ACC7BB" stroke="none" stroke-width="1"/></svg></span>
 <span class="orbit-copy"><strong>Cancel Everything.</strong></span>
 </a></div>
 </main>
