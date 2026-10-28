@@ -53,17 +53,26 @@ a{color:inherit;text-decoration:none}.mono{font-family:'DM Mono',monospace}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:720px){.shell{padding:19px 17px 18px}.content{margin:54px 0 0}.heading{font-size:clamp(54px,13vw,76px);margin:13px 0 17px}.live{display:block;min-height:64px}.live-title{font-size:25px}.live-sub{font-size:13px;margin-top:4px}.scene-wrap{margin-top:21px}.scene svg{min-width:0}.scene-foot{font-size:9px}.controls{padding-top:26px;margin-top:12px}.actions{width:100%}.btn{flex:1;min-width:0;padding:13px 8px}.footer{margin-top:27px}.scene-scaffold:after{padding:9px 12px;bottom:13%}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+
+.stage-badge{position:absolute;top:13px;left:14px;z-index:3;font-size:10px;font-weight:700;background:#faf9f6;border:1px solid #545454;padding:5px 7px;transform:rotate(-2deg);pointer-events:none}
+.scene[data-phase="1"] .stage-badge,.scene[data-phase="2"] .stage-badge,.scene[data-phase="3"] .stage-badge{background:#f4e2a8}
+.scene[data-phase="7"] .stage-badge{background:#efcea9}
+.count{color:#66645f}
+.notice{font-weight:500;color:#65635c;max-width:min(100%,480px);min-height:31px}
+.scene-scaffold:after{content:"OYUN DA KAPALI."}
+.scene-scaffold.visible{z-index:4}
+@media(max-width:720px){.stage-badge{top:8px;left:8px;padding:4px 5px;font-size:8px}.notice{min-height:31px}}
 </style>
 </head>
 <body>
 <div class="shell">
 <header class="top"><a class="back" href="/" aria-label="aynen.fun ana sayfa">← aynen.fun</a><span class="id">OYUN / 008</span></header>
 <main class="content">
-<div class="topline"><span>İSTANBUL · BİR MAHALLE</span><span id="round">01 / 08</span></div>
+<div class="topline"><span>İSTANBUL · SESSİZ BİR SOKAK</span><span id="round">01 / 08</span></div>
 <h1 class="heading">Burası da mı?</h1>
-<div class="live" aria-live="polite"><span id="line" class="live-title">Boş arsa.</span><span id="aside" class="live-sub">Güzel yer aslında.</span></div>
+<div class="live" aria-live="polite"><span id="line" class="live-title">Boş arsa.</span><span id="aside" class="live-sub">Bir ağaç var. Mis.</span></div>
 <div class="scene-wrap">
-<div class="scene" id="stage" data-phase="0">
+<div class="scene" id="stage" data-phase="0"><span class="stage-badge mono" id="stageBadge" aria-hidden="true">SESSİZLİK</span>
 <svg id="city" viewBox="0 0 960 438" role="img" aria-labelledby="svgTitle svgDesc" xmlns="http://www.w3.org/2000/svg">
 <title id="svgTitle">Bir İstanbul mahallesinin giderek inşaata dönüşmesi</title><desc id="svgDesc">Başta boş arsa ve ağaç olan sokakta zamanla inşaat, vinç, bina, yol kapatma ve Orman Life tabelası beliriyor.</desc>
 <rect width="960" height="438" fill="#faf9f6"/>
@@ -82,7 +91,7 @@ a{color:inherit;text-decoration:none}.mono{font-family:'DM Mono',monospace}
 <g data-show="2"><path d="M559 60h213m-213 0v300m0-300-26 24m26-24 26 24" fill="none" stroke="#4b4b49" stroke-width="4"/><path d="M561 60h210l-25 17H574z" fill="#e7c276" stroke="#4b4b49" stroke-width="2"/><path d="M752 60v238" stroke="#4b4b49" stroke-width="2" stroke-dasharray="5 6"/><path d="M742 298h20l-4 18h-12z" fill="#d5b666" stroke="#414141" stroke-width="2"/><path d="M556 350h31m-31-42h31m-31-42h31m-31-42h31" stroke="#4b4b49" stroke-width="2"/><rect x="528" y="352" width="65" height="8" fill="#c5a266" stroke="#414141" stroke-width="2"/></g>
 <g data-show="4"><path d="M26 357l18-38 27 16 18-26 19 31 24-18 23 35z" fill="#d2c5b2" stroke="#66635e" stroke-width="2"/><path d="M34 350h110M48 343h51m20 7h19" stroke="#a49a8a" stroke-width="3"/><path d="M13 335l16-16m4 27-20-11" stroke="#9b968d" stroke-width="3"/></g>
 <g data-show="5"><g stroke="#484848" stroke-width="2"><rect x="35" y="317" width="92" height="43" fill="#f5d789"/><path d="M35 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M35 317v43m127-317v0" opacity="0"/></g><g stroke="#484848" stroke-width="2"><rect x="128" y="317" width="92" height="43" fill="#f5d789"/><path d="M128 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M128 317v43m220-317v0" opacity="0"/></g><g stroke="#484848" stroke-width="2"><rect x="222" y="317" width="92" height="43" fill="#f5d789"/><path d="M222 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M222 317v43m314-317v0" opacity="0"/></g><g stroke="#484848" stroke-width="2"><rect x="720" y="317" width="92" height="43" fill="#f5d789"/><path d="M720 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M720 317v43m812-317v0" opacity="0"/></g><g stroke="#484848" stroke-width="2"><rect x="812" y="317" width="92" height="43" fill="#f5d789"/><path d="M812 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M812 317v43m904-317v0" opacity="0"/></g><rect x="290" y="373" width="168" height="36" rx="1" fill="#f8f6ef" stroke="#464646" stroke-width="2.5"/><text x="374" y="396" text-anchor="middle" font-size="15" font-family="monospace" font-weight="700" fill="#464646">YOL KAPALI</text></g>
-<g data-show="6"><rect x="329" y="48" width="314" height="310" fill="#deded7" stroke="#363636" stroke-width="3"/><rect x="320" y="39" width="334" height="13" fill="#c7c8c1" stroke="#363636" stroke-width="2"/><path d="M329 110h314M329 171h314M329 232h314M329 293h314" stroke="#676767" stroke-width="2"/><rect x="348" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="438" y="301" width="88" height="57" fill="#b7bbad" stroke="#363636" stroke-width="2"/><path d="M438 301h88" stroke="#fff" stroke-width="4"/><rect x="653" y="200" width="103" height="87" rx="1" fill="#f8f4e8" stroke="#313131" stroke-width="3"/><text x="705" y="229" font-family="sans-serif" font-size="13" font-weight="800" text-anchor="middle" fill="#424242">ORMAN</text><text x="705" y="246" font-family="sans-serif" font-size="13" font-weight="800" text-anchor="middle" fill="#424242">LIFE</text><path d="M678 260h54" stroke="#739268" stroke-width="3"/><text x="705" y="273" font-family="monospace" font-size="7" text-anchor="middle" fill="#777">DOĞAYLA İÇ İÇE</text></g>
+<g data-show="6"><rect x="329" y="48" width="314" height="310" fill="#deded7" stroke="#363636" stroke-width="3"/><rect x="320" y="39" width="334" height="13" fill="#c7c8c1" stroke="#363636" stroke-width="2"/><path d="M329 110h314M329 171h314M329 232h314M329 293h314" stroke="#676767" stroke-width="2"/><rect x="348" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="438" y="301" width="88" height="57" fill="#b7bbad" stroke="#363636" stroke-width="2"/><path d="M438 301h88" stroke="#fff" stroke-width="4"/><rect x="653" y="200" width="103" height="87" rx="1" fill="#f8f4e8" stroke="#313131" stroke-width="3"/><path d="M665 222q-10-8 0-14q1-15 15-9q14-5 14 10q8 8-3 15z" fill="#a6bf98" stroke="#424940" stroke-width="2"/><path d="M680 217v14" stroke="#514b40" stroke-width="2"/><text x="705" y="229" font-family="sans-serif" font-size="13" font-weight="800" text-anchor="middle" fill="#424242">ORMAN</text><text x="705" y="246" font-family="sans-serif" font-size="13" font-weight="800" text-anchor="middle" fill="#424242">LIFE</text><path d="M678 260h54" stroke="#739268" stroke-width="3"/><text x="705" y="273" font-family="monospace" font-size="7" text-anchor="middle" fill="#777">DOĞAYLA İÇ İÇE</text></g>
 <g data-show="7"><rect x="0" y="336" width="960" height="28" fill="#f1d584" stroke="#333" stroke-width="2"/><path d="M-20 364l32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28" fill="none" stroke="#343434" stroke-width="10" opacity=".9"/><rect x="349" y="372" width="267" height="34" rx="2" fill="#fff" stroke="#363636" stroke-width="2"/><text x="483" y="394" font-family="monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#333">GEÇİCİ OLARAK</text></g>
 </svg>
 </div><div id="sceneScaffold" class="scene-scaffold" aria-hidden="true"></div>
@@ -91,69 +100,90 @@ a{color:inherit;text-decoration:none}.mono{font-family:'DM Mono',monospace}
 <div class="controls" id="controls">
 <div class="track" id="track" aria-label="Oyun ilerlemesi"></div>
 <div class="actions">
-<button class="btn" id="next" type="button">Biraz bekle</button>
-<button class="btn alt" id="complain" type="button">Şikâyet et</button>
+<button class="btn" id="next" type="button">Dokunma</button>
+<button class="btn alt" id="complain" type="button">Koruma iste</button>
 </div>
-<p class="notice" id="notice" role="status" aria-live="polite">Burası böyle kalsın istiyorsun.</p>
-<div class="count" id="count">0 şikâyet · 0 sonuç</div>
+<p class="notice" id="notice" role="status" aria-live="polite">Tek istediğin biraz sessizlik.</p>
+<div class="count" id="count">Şikâyet 0 · Taşınma 0 · Sessizlik 0 dk</div>
 </div>
 </main>
-<footer class="footer"><span>AYNEN.FUN / GERÇEK BİR İNŞAAT DEĞİLDİR.</span><span>ŞİMDİLİK.</span></footer>
+<footer class="footer"><span>AYNEN.FUN / ŞANTİYE SESİ İÇERMEZ.</span><span>EN AZINDAN BURADA.</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
-(()=>{
+(function newGame(){
 'use strict';
 const $=id=>document.getElementById(id);
-const stages=[
-['Boş arsa.','Güzel yer aslında.'],
-['Ölçüm yapıyorlar.','Bi bakıp çıkacaklarmış.'],
-['Kazmaya başladılar.','Ne ara?'],
-['Dört kat oldu.','İki kat demişlerdi.'],
-['Yan bina da gitti.','O daha yeniydi.'],
-['Yol kapandı.','İki haftaya açılır.'],
-['Orman Life.','Orman yok.'],
-['Oyun alanı da kapandı.','Burada da çalışma var.']
+const stories=[
+['Boş arsa.','Bir ağaç var. Mis.','Dokunma','Koruma iste'],
+['Pazar 08.07.','Matkap sesiyle uyandın.','Biraz daha uyu','Zabıtayı ara'],
+['Temel atıldı.','Usta “iki haftaya biter” dedi.','Bekle','Şikâyet et'],
+['Önüne bina geldi.','Güneş öğlene kadardı.','Perdeyi aç','Taşın'],
+['Yan bina da yıkılıyor.','O da daha yeniydi.','Balkona çık','Bir daha taşın'],
+['Yol kapalı.','Karşı kaldırım da.','Dolan','İlgili birime yaz'],
+['Orman Life.','Ağaç logoda.','Satış ofisine gir','Orman nerede?'],
+['Huzurlu yaşam.','Eski ağacın fotoğrafı broşürde.','Başka mahalle bul','Paylaş ↗']
 ];
-const replies=['Talebiniz alındı.','İlgili birime ilettik.','Tekrar ilettik.','İlgili birim yine ilgili.','Bir daha ilettik.','Arkadaşlar biliyor.','Not aldık.'];
-let phase=0,complaints=0,started=performance.now(),toastTimer=0;
+const consequences=[
+['Bir şey yapmadın. Onlar yaptı.','Koruma talebini aldılar. Etrafına şantiye çiti çekildi.'],
+['Gözünü açtın. Hâlâ deliyorlar.','Ses ölçümü için matkabı tekrar çalıştırdılar.'],
+['İki hafta geçti. İlk kat tamam.','Şikâyet hattının önüne duba koydular.'],
+['Perdeyi açtın. Duvar.','Taşındın. Daha sakin sokak diye.'],
+['Balkonun görüşü: moloz.','Yeni mahallede de aynı ses.'],
+['Alternatif yol şantiyenin içinden.','İlgili birim: “Bize de kapalı.”'],
+['Ağacı makete koymuşlar.','Satışçı: “Konsept olarak var.”']
+];
+let stage=0,complaints=0,moves=0,cycles=0,message='',toastTimer=0;
 const scene=$('stage'),next=$('next'),complain=$('complain'),notice=$('notice');
 function render(){
-const final=phase===stages.length-1;
-scene.dataset.phase=String(phase);
-scene.querySelectorAll('[data-show]').forEach(el=>el.classList.toggle('visible',phase>=Number(el.dataset.show)));
-scene.querySelectorAll('[data-hide]').forEach(el=>el.classList.toggle('hidden',phase>=Number(el.dataset.hide)));
-$('line').textContent=stages[phase][0];$('aside').textContent=stages[phase][1];
-$('round').textContent=String(phase+1).padStart(2,'0')+' / '+String(stages.length).padStart(2,'0');
-$('area').textContent=phase>=7?'YEŞİL ALAN: 0 m²':phase>=3?'YEŞİL ALAN: 1 AĞAÇ':'YEŞİL ALAN: 2 AĞAÇ';
-$('promise').textContent=phase>=5?'BİTİŞ: 2 HAFTAYA':phase>=1?'BİTİŞ: YAKINDA':'BİTİŞ: BELLİ DEĞİL';
-$('count').textContent=complaints+' şikâyet · 0 sonuç';
-$('controls').classList.toggle('done',final);
-$('sceneScaffold').classList.toggle('visible',final);
-next.textContent=final?'Bir daha aç':'Biraz bekle';
-complain.textContent=final?'Paylaş ↗':'Şikâyet et';
-notice.textContent=final?'Çıkış için de çalışma var.':phase>=5?'Geçici.':'Burası böyle kalsın istiyorsun.';
-$('track').innerHTML=stages.map((_,i)=>'<i class="'+(i<=phase?'on':'')+'"></i>').join('');
+const done=stage===stories.length-1;
+scene.dataset.phase=String(stage);
+scene.querySelectorAll('[data-show]').forEach(el=>el.classList.toggle('visible',stage>=Number(el.dataset.show)));
+scene.querySelectorAll('[data-hide]').forEach(el=>el.classList.toggle('hidden',stage>=Number(el.dataset.hide)));
+$('line').textContent=stage===4&&moves>0?'Yeni evin önü.':stories[stage][0];
+$('aside').textContent=stage===4&&moves>0?'Tam taşındığın gün yıkım başladı.':stories[stage][1];
+$('round').textContent=String(stage+1).padStart(2,'0')+' / '+String(stories.length).padStart(2,'0');
+$('area').textContent=stage>=7?'YEŞİL ALAN: LOGODA':stage>=3?'YEŞİL ALAN: 0 AĞAÇ':'YEŞİL ALAN: 1 AĞAÇ';
+$('promise').textContent=stage>=5?'BİTİŞ: İKİ HAFTAYA':stage>=1?'BİTİŞ: YAKINDA':'BİTİŞ: BELLİ DEĞİL';
+$('count').textContent='Şikâyet '+complaints+' · Taşınma '+moves+' · Sessizlik 0 dk';
+$('controls').classList.toggle('done',done);
+$('sceneScaffold').classList.toggle('visible',done);
+next.textContent=stories[stage][2];
+complain.textContent=stories[stage][3];
+notice.textContent=done?'Artık oyunun kendisi de şantiyede.':message||'Tek istediğin biraz sessizlik.';
+$('track').innerHTML=stories.map((_,i)=>'<i class="'+(i<=stage?'on':'')+'"></i>').join('');
+$('stageBadge').textContent=done?'SATIŞ OFİSİ':stage>=5?'GEÇİCİ':stage>=1?'ÇALIŞMA VAR':'SESSİZLİK';
 }
-function toast(text){
-const x=$('toast');x.textContent=text;x.classList.add('show');
-clearTimeout(toastTimer);toastTimer=setTimeout(()=>x.classList.remove('show'),1750);
+function toast(t){
+const x=$('toast');x.textContent=t;x.classList.add('show');
+clearTimeout(toastTimer);toastTimer=setTimeout(()=>x.classList.remove('show'),1600);
 }
-function advance(isComplaint=false){
-if(phase===stages.length-1){if(isComplaint){share();return}phase=0;complaints=0;started=performance.now();render();return}
-if(isComplaint){toast(replies[complaints%replies.length]);complaints++}
-phase=Math.min(stages.length-1,phase+1);
+function act(choice){
+if(stage===stories.length-1){
+if(choice===1){share();return}
+stage=0;complaints=0;moves=0;cycles++;
+message=cycles%2?'Bu sefer başka mahalle.':'Bu sefer sessiz bir sokak.';
+render();return;
+}
+if(choice===1){
+if([0,1,2,5].includes(stage))complaints++;
+if([3,4].includes(stage))moves++;
+}
+message=consequences[stage][choice];
+stage++;
 render();
+if(choice===1&&[1,2,3,6].includes(stage))toast('Talebiniz alındı.');
+if(choice===1&&stage===5)toast('Yeni evde de başladılar.');
 }
 function share(){
-const text=complaints+' şikâyet. 0 m² yeşil alan. Burası da mı?';
+const t='Sessizlik: 0 dk. Taşınma: '+moves+'. Şikâyet: '+complaints+'. Ağaç logoda.';
 const url=location.origin+'/burasidami.html';
-if(navigator.share){navigator.share({title:'Burası da mı? — aynen.fun',text,url}).catch(()=>{});return}
-if(navigator.clipboard){navigator.clipboard.writeText(text+' '+url).then(()=>toast('Kopyalandı.')).catch(()=>toast('Kopyalanamadı.'));return}
-window.prompt('Paylaş:',text+' '+url);
+if(navigator.share){navigator.share({title:'Burası da mı? — aynen.fun',text:t,url}).catch(()=>{});return}
+if(navigator.clipboard){navigator.clipboard.writeText(t+' '+url).then(()=>toast('Kopyalandı.')).catch(()=>toast('Kopyalanamadı.'));return}
+window.prompt('Paylaş:',t+' '+url);
 }
-next.addEventListener('click',()=>advance(false));
-complain.addEventListener('click',()=>advance(true));
+next.addEventListener('click',()=>act(0));
+complain.addEventListener('click',()=>act(1));
 render();
 })();
 </script>
