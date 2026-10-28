@@ -86,7 +86,7 @@ if(due){
 due.due=Infinity; // don't repeat while this screen is open
 const level=due.level;
 const texts=ESC[due.id]||['Hatırlatma.','Tekrar yazmışlar.','Arıyorlar.','Yine.'];
-return {type:'debt',id:due.id,icon:due.icon,title:texts[Math.min(level*2,3)],line:texts[Math.min(level*2+1,3)],kind:'bill',cost:due.amount,debt:due,pay:'Öde',skip:level>=2?'Açma':'Görmedim',note:level===1?'Gecikme ücreti dahil.':'Hâlâ duruyor.'}
+return {type:'debt',id:due.id,icon:due.icon,title:texts[Math.min(level*2,3)],line:texts[Math.min(level*2+1,3)],kind:'bill',cost:due.amount,debt:due,pay:'Öde',skip:level>=1?'Sessize al':'Görmedim',note:'Gecikme eklendi.'}
 }
 if(game.cursor<BASE.length){
 const src=BASE[game.cursor++];
@@ -192,7 +192,7 @@ const seconds=dur();game.finalSeconds=seconds;
 const owed=game.debts.reduce((n,d)=>n+d.amount,0);
 $('resultSeconds').textContent=toTime(seconds)+' sn';
 $('resultTop').textContent=reason==='zero'?'MAAŞ BİTTİ.':'BİTTİ SAYILIR.';
-$('resultLine').textContent=owed>0 ? (owed>game.balance?'Hesapta para yok. Borç hâlâ var.':'Para kalmış. Borç da kalmış.'):reason==='zero'?'Daha yeni yatmıştı.':'Bu kadar dayanması ilginç.';
+$('resultLine').textContent=owed>0 ? (game.debts.some(d=>d.id==='fee')?'Yönetici hâlâ grupta.':game.debts.some(d=>d.id==='rent')?'Ev sahibi arıyor.':owed>game.balance?'Hesapta para yok. Borç duruyor.':'Para kalmış. Borç da kalmış.'):reason==='zero'?'Daha yeni yatmıştı.':'Bu kadar dayanması ilginç.';
 $('resultDetail').textContent='Kalan ₺'+fmt(game.balance)+'  ·  Bekleyen ₺'+fmt(owed);
 $('finish').hidden=false;
 }
