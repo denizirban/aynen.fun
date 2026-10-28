@@ -48,6 +48,10 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 .tile-four{--angle:-5deg;right:10%;top:65%;width:205px}
 .tile-five{--angle:6deg;left:28%;top:8%;width:158px}
 .tile-six{--angle:3deg;right:28%;bottom:7%;width:178px}
+.tile-seven{--angle:-3deg;right:3.2%;top:40%;width:202px}
+.tile-seven .window-screen{height:116px}
+.tile-seven .payday-bar{position:absolute;bottom:17px;left:12px;width:75%;height:8px;background:repeating-linear-gradient(90deg,#111 0 12px,#fafafa 12px 16px);border:1px solid #111}
+
 .tile-five .window-screen{height:94px}
 .tile-six .window-screen{height:94px}
 .tile-one .window-screen{height:132px}
@@ -82,7 +86,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
  .landing-cat{width:clamp(250px,30vw,325px)}
  .tile-one{left:4%}.tile-two{right:3%}
  .tile-three{left:5%}.tile-four{right:4%}
- .tile-five{left:27%}.tile-six{right:24%}
+ .tile-five{left:27%}.tile-six{right:24%}.tile-seven{right:1.5%;top:42%;width:176px}
 }
 @media (max-width:800px){
  .desktop-scene{height:auto;max-height:none;min-height:100svh;overflow:visible;padding:18px 18px 54px;display:flex;flex-direction:column;align-items:center}
@@ -124,6 +128,10 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
  <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">almost_there</span></span>
  <span class="window-screen"><span class="window-mini-ring"></span><span class="window-aux">AZ KALDI</span></span>
 </button>
+<a class="float-window tile-seven" href="/maas.html" aria-label="Maaşın Kaç Saniyede Biter? oyununu aç" style="text-decoration:none">
+ <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">maas_sim.exe</span></span>
+ <span class="window-screen"><span class="window-tag">BAKİYE / LIVE</span><span class="window-big" style="font-size:29px;bottom:38px">₺55.000</span><span class="payday-bar"></span><span class="window-aux" style="bottom:31px">↘</span></span>
+</a>
 </div>
 </main>
 
