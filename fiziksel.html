@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f8f4">
+<meta name="description" content="Fiziksel. Dünyanın kurallarını kapat, nesneleri fırlat, kendi fizik deneyini yap. Aynen.fun'da oynanabilir fizik laboratuvarı.">
+<title>Fiziksel. — aynen.fun</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f8f4;--ink:#181c1c;--muted:#6b746e;--line:#dfe5df;--lime:#e4f4b2;--accent:#95dbc7;--rose:#f5c8cb;--mono:'DM Mono',monospace;--sans:'Space Grotesk',Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;color:var(--ink);background:var(--bg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #78d4bb;outline-offset:3px}
+a{color:inherit}.mono{font-family:var(--mono)}
+.site{width:min(1460px,100%);padding:0 26px;margin:auto}
+nav{display:flex;align-items:center;justify-content:space-between;height:76px;border-bottom:1px solid var(--line);gap:14px}
+.logo{font-weight:700;font-size:23px;letter-spacing:-.085em;text-decoration:none}.logo i{font-style:normal;color:#a1b59b}
+.nav-right{display:flex;align-items:center;gap:15px}
+.meta{font-size:10px;color:#89928c;letter-spacing:.08em}
+.back{border:1px solid #b6c0b7;border-radius:30px;padding:11px 16px;text-decoration:none;font-size:11px;font-weight:700;background:#fff}
+.intro{padding:37px 0 26px;display:flex;gap:22px;align-items:end;justify-content:space-between}
+.eyebrow{font:500 10px var(--mono);letter-spacing:.1em;color:#657269;text-transform:uppercase;display:flex;gap:8px;align-items:center}
+.eyebrow:before{content:'';width:6px;height:6px;border-radius:50%;background:#5fbaa3}
+h1{font-size:clamp(52px,6.7vw,89px);letter-spacing:-.095em;line-height:.9;font-weight:700;margin:12px 0 12px}
+h1 span{color:#9ab7a9}
+.intro p{font-size:13px;color:#65736b;line-height:1.65;max-width:490px;margin:0}
+.intro-side{font:11px var(--mono);color:#8b958c;padding-bottom:6px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:minmax(290px,340px) minmax(0,1fr);gap:15px;align-items:stretch}
+.panel{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
+.panel-left{padding:20px;display:flex;flex-direction:column;gap:17px}
+.label-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.mini{font:10px var(--mono);color:#7d8781}.small-pill{font:9px var(--mono);background:#eef5e4;border:1px solid #dee9d6;border-radius:30px;padding:6px 10px;white-space:nowrap}
+.scene-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.scene-button{min-height:74px;text-align:left;background:#f9faf8;border:1px solid #e5e9e2;border-radius:9px;padding:12px;transition:background .14s,border-color .14s}
+.scene-button:hover{border-color:#a3bcac}
+.scene-button.active{border-color:#18271d;background:#e8f4d5;box-shadow:inset 0 0 0 1px #18271d}
+.scene-button strong{display:block;font-size:13px;letter-spacing:-.04em}
+.scene-button small{display:block;font:9px var(--mono);color:#819084;margin-top:6px}
+.section-line{height:1px;background:var(--line)}
+.mission h2{font-size:24px;line-height:1.13;letter-spacing:-.058em;margin:9px 0}
+.mission p{font-size:11px;color:var(--muted);line-height:1.7;margin:0}
+.rules{display:flex;flex-direction:column;gap:8px}
+.rule{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;padding:11px 12px;background:#f9faf8;border:1px solid #e5e9e2;border-radius:9px;text-align:left;min-height:60px}
+.rule .name{display:block;font-size:12px;font-weight:700}
+.rule .details{display:block;font:9px var(--mono);color:#879087;margin-top:4px}
+.switch{width:56px;height:27px;flex:none;border:1px solid #cdd7ce;border-radius:24px;background:#dde3dd;position:relative;transition:background .16s}
+.switch:before{content:'';position:absolute;width:19px;height:19px;border-radius:50%;left:4px;top:3px;background:#fff;box-shadow:0 1px 3px #0002;transition:transform .16s}
+.rule.on .switch{background:#1d3329;border-color:#1d3329}
+.rule.on .switch:before{transform:translateX(27px)}
+.switch-label{position:absolute;top:7px;left:12px;font:9px var(--mono);color:#27342b}
+.rule.on .switch-label{color:#fff;left:9px}
+.rule.off{background:#fff4f4;border-color:#f0dedd}
+.lab-readout{padding:11px 12px;border:1px solid #e4e9e3;border-radius:9px;background:#f8faf7;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lab-readout strong{font:11px var(--mono)}
+.lab-readout small{font:9px var(--mono);color:#859185}
+.control-actions{display:grid;grid-template-columns:1fr auto;gap:9px;margin-top:auto}
+.primary{min-height:48px;border-radius:7px;border:1.5px solid #1a211d;background:var(--lime);font-size:12px;font-weight:700;box-shadow:2px 3px 0 #1b251b;padding:10px 14px}
+.primary:hover{background:#d4f5a9}.primary:active{box-shadow:0 0 0;transform:translate(2px,3px)}
+.secondary{border:1px solid #cbd5cb;background:#fff;border-radius:7px;padding:11px 13px;font-size:11px;font-weight:700}
+.primary:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.presshint{font:9px var(--mono);color:#969f96;line-height:1.5}
+.tuning{border:1px solid #e4e9e3;border-radius:9px;background:#f8faf7;padding:12px;display:none;gap:8px}
+.tuning.show{display:grid}
+.tuning label{display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:700}
+.tuning output{font:10px var(--mono);color:#678174}
+input[type=range]{width:100%;accent-color:#4d8875;cursor:pointer}
+.stage-panel{display:flex;flex-direction:column;background:#131d23}
+.stage-wrap{position:relative;min-width:0;flex:1;overflow:hidden;background:#19282b;min-height:495px}
+#world{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#world.dragging{cursor:grabbing}
+.hud-top,.hud-bottom{position:absolute;left:16px;right:16px;pointer-events:none;display:flex;justify-content:space-between;align-items:start;gap:10px}
+.hud-top{top:16px}.hud-bottom{bottom:16px;align-items:end}
+.hud-tag{padding:8px 10px;background:#102222b8;border:1px solid #d6ffee24;backdrop-filter:blur(8px);border-radius:7px;font:10px var(--mono);color:#cde6dc;white-space:nowrap}
+.hud-tag b{font-weight:500;color:#bdf1d1}
+#hud-tip{max-width:65%;font:10px/1.55 var(--mono);color:#d4ece1;background:#0a211ab8;border:1px solid #d6ffee2c;border-radius:9px;padding:10px 11px}
+#scene-time{font:10px var(--mono);color:#cad5d1;background:#102222af;border:1px solid #ffffff22;border-radius:8px;padding:9px}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:#0d171a;border-top:1px solid #ffffff1f}
+.metric{padding:16px 18px;border-right:1px solid #ffffff1c;min-width:0}
+.metric:last-child{border:0}
+.metric small{font:9px var(--mono);color:#78918a;display:block;margin-bottom:9px}
+.metric b{display:block;color:#e5f7ee;font:500 clamp(11px,1.35vw,16px) var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notice{display:none;border:1px solid #b9d9c4;background:#e9f5e5;border-radius:12px;padding:17px 19px;margin-top:15px;align-items:center;justify-content:space-between;gap:16px}
+.notice.visible{display:flex}
+.notice h3{font-size:22px;letter-spacing:-.055em;line-height:1.12;margin:3px 0 6px}
+.notice p{font-size:11px;color:#52665c;line-height:1.6;margin:0;max-width:660px}
+.notice button{flex:none}
+.below{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.9fr);gap:15px;padding:15px 0 57px}
+.read-card{border:1px solid var(--line);border-radius:13px;background:white;padding:23px}
+.read-card h2{font-size:25px;line-height:1.18;letter-spacing:-.055em;margin:10px 0}
+.read-card p{font-size:12px;line-height:1.8;color:#636e66;margin:0 0 12px}
+.read-card p:last-child{margin:0}
+.fact{background:#f0f7eb;border-radius:8px;padding:13px 15px;font-size:11px;line-height:1.8;margin:12px 0}
+.stats-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.stats-row span{background:#f7f9f4;border:1px solid var(--line);border-radius:30px;padding:7px 9px;font:9px var(--mono)}
+footer{border-top:1px solid var(--line);padding:19px 0 31px;display:flex;justify-content:space-between;gap:12px;font:10px var(--mono);color:#86918a}
+footer a{text-decoration:none}
+@media(max-width:1100px){.grid{grid-template-columns:295px minmax(0,1fr)}.panel-left{padding:15px;gap:13px}.stage-wrap{min-height:450px}}
+@media(max-width:780px){.site{padding:0 16px}.intro{padding:27px 0 20px}.intro-side{display:none}.grid{display:flex;flex-direction:column}.stage-panel{order:0}.panel-left{order:1;gap:16px}.stage-wrap{height:410px;min-height:410px;flex:auto}.scene-buttons{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.scene-button{padding:10px 8px;min-height:66px}.scene-button strong{font-size:11px}.scene-button small{font-size:8px}.rules{display:grid;grid-template-columns:1fr 1fr}.rule{padding:10px;min-height:64px}.rule .name{font-size:10px}.rule .details{font-size:8px}.switch{width:40px;height:24px}.switch:before{height:16px;width:16px;top:3px;left:3px}.rule.on .switch:before{transform:translateX(17px)}.switch-label{font-size:8px;left:9px;top:6px}.rule.on .switch-label{left:5px}.below{grid-template-columns:1fr}.notice{align-items:stretch;flex-direction:column}.notice button{align-self:start}}
+@media(max-width:480px){.site{padding:0 12px}nav{height:64px}.logo{font-size:21px}.meta{display:none}h1{font-size:62px}.stage-wrap{height:375px;min-height:375px}.metric{padding:13px 8px}.metric small{font-size:8px}.metric b{font-size:11px}.hud-top,.hud-bottom{left:9px;right:9px}.hud-tag{font-size:9px;padding:7px 8px}#hud-tip{font-size:9px;max-width:72%}#scene-time{font-size:9px}.scene-button strong{font-size:10px}.scene-button small{font-size:7px}.read-card{padding:17px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
+<script defer src="/fiziksel.js"></script>
+</head>
+<body>
+<div class="site">
+<nav><a class="logo" href="/">aynen<i>.</i>fun</a><div class="nav-right"><span class="meta mono">PLAYGROUND / PHYSICS 002</span><a class="back" href="/">← OYUNLAR</a></div></nav>
+<header class="intro"><div><span class="eyebrow">Gerçek fizik. Kötü fikirler.</span><h1>Fiziksel<span>.</span></h1><p>Evrenin ayarlar paneli eline geçti. Nesneleri tut, fırlat, yasaları kapat. Bakalım ne kadar dayanıyor.</p></div><div class="intro-side">PROTOTYPE / REAL-TIME PHYSICS</div></header>
+<main>
+<div class="grid">
+<section class="panel panel-left" aria-label="Fiziksel kontrol paneli">
+<div class="label-row"><span class="mini">DENEY SEÇ</span><span class="small-pill" id="level">01 / 04</span></div>
+<div class="scene-buttons" role="group" aria-label="Deneyler">
+<button type="button" data-scene="room" class="scene-button active" aria-pressed="true"><strong>Serbest Oda</strong><small>01 / SANDBOX</small></button>
+<button type="button" data-scene="slide" class="scene-button" aria-pressed="false"><strong>Kaydır</strong><small>02 / FRICTION</small></button>
+<button type="button" data-scene="vacuum" class="scene-button" aria-pressed="false"><strong>Düşür</strong><small>03 / VACUUM</small></button>
+<button type="button" data-scene="basket" class="scene-button" aria-pressed="false"><strong>Sepete At</strong><small>04 / TRAJECTORY</small></button>
+</div>
+<div class="section-line"></div>
+<div class="mission"><div class="mini" id="mission-label">DENEY 01 / DÜNYAYI BOZ</div><h2 id="mission-title">Odanın kurallarını değiştir.</h2><p id="mission-copy">Eşyaları sürükle ve fırlat. Yerçekimini kapat, ardından odayı sars. Nesneler artık kendi kendine düşmeyecek.</p></div>
+<div class="label-row"><span class="mini">EVRENİN AYARLARI</span><span class="mini" id="rule-summary">3 / 3 AÇIK</span></div>
+<div class="rules">
+<button type="button" class="rule on" data-rule="gravity" aria-pressed="true"><span><span class="name">Yerçekimi</span><span class="details">Çekim kuvveti</span></span><span class="switch" aria-hidden="true"></span></button>
+<button type="button" class="rule on" data-rule="friction" aria-pressed="true"><span><span class="name">Sürtünme</span><span class="details">Yüzey teması</span></span><span class="switch" aria-hidden="true"></span></button>
+<button type="button" class="rule on" data-rule="air" aria-pressed="true"><span><span class="name">Hava direnci</span><span class="details">Hareketi yavaşlatır</span></span><span class="switch" aria-hidden="true"></span></button>
+</div>
+<div class="tuning" id="tuning"><label for="angle">Atış açısı <output id="angle-label">41°</output></label><input id="angle" type="range" min="15" max="75" value="41"><label for="power">Atış gücü <output id="power-label">16</output></label><input id="power" type="range" min="9" max="23" value="16" step=".5"></div>
+<div class="lab-readout"><div><small>GÜNCEL GÖZLEM</small><strong id="observation">Nesneler hareket etmeye hazır.</strong></div><span class="mini" id="observed">● LIVE</span></div>
+<div class="control-actions"><button id="action" class="primary" type="button">ODAYI SARS ↗</button><button id="reset" class="secondary" type="button">↻ SIFIRLA</button></div>
+<div class="presshint" id="help">Nesnelere dokunup sürükle; bırakırken fırlat. Fizik ayarları hareketi anında değiştirir.</div>
+<div class="stats-row"><span id="badge-counter">0 / 4 KEŞİF</span><button type="button" id="share" class="secondary">SONUCU PAYLAŞ ↗</button></div>
+</section>
+<section class="panel stage-panel" aria-label="Canlı fizik simülasyonu">
+<div class="stage-wrap" id="stage">
+<canvas id="world" role="img" aria-label="Etkileşimli 2 boyutlu fizik laboratuvarı; nesneleri sürükleyebilir ve fırlatabilirsiniz."></canvas>
+<div class="hud-top"><div class="hud-tag" id="stage-title">ROOM_001 · LIVE SIM</div><div class="hud-tag"><b id="live-gravity">1g</b> / <span id="live-air">AIR ON</span></div></div>
+<div class="hud-bottom"><div id="hud-tip" aria-live="polite">Bir nesneyi sürükle. Sonra fizik kurallarından birini kapat.</div><div id="scene-time">00:00.0</div></div>
+</div>
+<div class="metrics"><div class="metric"><small>DİNAMİK NESNE</small><b id="metric-objects">0</b></div><div class="metric"><small>FİZİK DURUMU</small><b id="metric-gravity">EARTH / 1g</b></div><div class="metric"><small>SONUÇ</small><b id="metric-status">HAZIR</b></div></div>
+</section>
+</div>
+<section class="notice" id="notice" aria-live="polite" aria-atomic="true"><div><div class="eyebrow" id="notice-label">KEŞFEDİLDİ</div><h3 id="notice-title">Başardın.</h3><p id="notice-copy"></p></div><button class="secondary" type="button" id="notice-share">PAYLAŞ ↗</button></section>
+<div class="below">
+<article class="read-card"><div class="eyebrow">FİZİĞİN İNCE NOKTASI</div><h2 id="fact-title">Yerçekimini kapatmak, yukarı uçmak değildir.</h2><p id="fact-copy">Sıfır yerçekiminde durmakta olan nesne yerinde kalır. Hareket eden bir nesne ise, başka bir kuvvet etki etmedikçe hareketini sürdürür. Odayı sarsmak bu farkı görmene yardım eder.</p><div class="fact mono" id="formula">KUVVET YOKSA → HIZ DEĞİŞMEZ<br>Hareketin sürmesi için sürekli bir itme gerekmez.</div></article>
+<aside class="read-card"><div class="eyebrow">LAB NOTLARI</div><h2>Simülasyon, sihir değil.</h2><p>Çarpışmalar, döndürme, yerçekimi ve yüzey sürtünmesi gerçek zamanlı 2D rijit cisim motoruyla hesaplanır. Hava direnci sadeleştirilmiş hız sönümüdür; akışkanlar dinamiği çözümü değildir.</p><p>Boyutlar, kütleler ve hızlar eğitici oyun değerleridir; kalibre edilmiş SI ölçümleri değildir. Sonuçlar, modelin sınırlamaları içinde değerlendirilmelidir.</p><p><a href="https://brm.io/matter-js/" target="_blank" rel="noopener">Matter.js</a> (MIT lisansı) ile yapıldı. Sahne fizik motoru yüklenemezse açılmaz.</p></aside>
+</div>
+</main>
+<footer><span>AYNEN.FUN © 2026 · GEREKSİZ DERECEDE GEREKLİ.</span><a href="/">BÜTÜN OYUNLAR ↗</a></footer>
+</div>
+</body>
+</html>
