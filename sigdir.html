@@ -63,6 +63,29 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 @media(max-width:960px){.dashboard{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1.2fr}.hero-note{display:none}}
 @media(max-width:650px){.wrap{padding:16px 15px 22px}.hero{margin:42px 0 20px}.hero h1{font-size:clamp(42px,10.5vw,65px)}.hero p{font-size:12px}.dashboard{gap:12px}.side{display:flex;gap:12px}.map-head{padding:17px 16px 12px}.city{aspect-ratio:940/530}.legend{padding:11px 16px;font-size:9px}.time{padding:18px 16px 20px}.time-line{margin-bottom:12px}.ticks{font-size:9px}.play{margin-top:19px}.play-note{margin:0}.fact{min-height:0;padding:20px}.fact strong{font-size:28px}.space{padding:19px}.footnote{display:block}.links{margin-top:12px}.density .n{font-size:27px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+
+/* Istanbul Atlas v2: labels are geographic references, not historical establishment dates. */
+.city .land-warm{fill:#e9ede3;opacity:.55}.city .land-cool{fill:#e4ede5;opacity:.45}
+.city .golden-horn{fill:none;stroke:#c9e4e2;stroke-width:18;stroke-linecap:round}
+.city .coast-line{fill:none;stroke:#9fbfba;stroke-width:1.6;opacity:.7}
+.city .island{fill:#e5eee2;stroke:#b2c7ae;stroke-width:2}
+.city .bosporus{fill:#c9e4e2;stroke:#a9cfca;stroke-width:2}
+.city .bridge{stroke:#f7f7f3;stroke-width:4;stroke-dasharray:3 4;fill:none}
+.city .sea-name{font:500 11px 'DM Mono',monospace;letter-spacing:2px;fill:#87aaa7}
+.city .district{cursor:default;opacity:.12;transition:opacity .32s ease}
+.city .district.is-visible{opacity:1}
+.city .district circle{fill:#5e805e;stroke:#fff;stroke-width:2.5}
+.city .district text{font:600 13px 'Space Grotesk',sans-serif;fill:#4c624c;paint-order:stroke;stroke:#f3f5f0;stroke-width:5;stroke-linejoin:round;letter-spacing:-.02em}
+.city .district.secondary text{font-size:11px;fill:#728370}
+.city .district.secondary circle{r:3}
+.city .district:focus-visible{outline:none;filter:drop-shadow(0 0 4px #749f77)}
+.map-ui{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 25px 15px}
+.map-toggle{border:1px solid #d6dfd2;border-radius:6px;background:#fff;padding:8px 10px;font:500 10px 'DM Mono',monospace;color:#65745e}
+.map-toggle[aria-pressed=false]{color:#979d95}
+.map-callout{font:400 10px/1.6 'DM Mono',monospace;color:#96a095}
+.timeline-story{min-height:37px;display:flex;align-items:center;gap:9px;margin:9px 0 0;font:400 11px/1.45 'DM Mono',monospace;color:#72816e}
+.timeline-story i{display:block;flex:0 0 7px;height:7px;background:#89ad7e;border-radius:50%}
+@media(max-width:650px){.city .district text{font-size:14px}.city .district.secondary text{font-size:12px}.map-ui{padding:0 16px 12px;align-items:start}.map-callout{font-size:9px}.timeline-story{font-size:10px;min-height:45px}}
 </style></head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
 <header class="hero"><div><h1>İstanbul'a<br>sığdır.</h1><p>1950'den bugüne. Aynı şehir, biraz daha kalabalık.</p></div><span class="hero-note">SÜRGÜYÜ SAĞA ÇEK ↗</span></header>
 <main class="dashboard">
@@ -74,12 +97,37 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <path d="M2 317Q154 285 267 307Q370 332 423 260Q451 232 473 261Q501 319 555 320Q657 363 757 302Q852 280 939 304" fill="none" stroke="#a8cbc6" stroke-width="2"/>
 <g class="artery"><path d="M48 195Q214 154 344 188T557 164T888 186"/><path d="M80 367Q257 356 383 378T619 361T875 354"/><path d="M153 116Q186 216 187 368"/><path d="M742 93Q705 203 753 369"/></g>
 <g class="fine-road"><path d="M40 231H400M512 223H896M45 146H910M45 399H896M300 95V409M615 78V404M844 112V364"/></g>
+<g id="geoFeatures" aria-hidden="true">
+<path class="golden-horn" d="M429 231Q404 214 379 214Q354 208 340 188Q325 179 296 182"/>
+<path class="coast-line" d="M5 282Q161 244 253 284Q343 317 387 265Q408 242 429 220M510 265Q558 333 669 324Q818 286 938 281"/>
+<path class="bosporus" d="M433 0Q413 44 442 76Q470 103 454 133Q439 159 450 184Q465 203 467 228L487 228Q491 203 486 182Q468 149 486 124Q502 97 475 65Q460 36 469 0Z"/>
+<path class="bridge" d="M420 164L501 162M432 107L492 106M438 208L498 207"/>
+<path class="island" d="M764 441q12-12 28-5 8 10-2 17-19 6-26-12zM820 456q12-8 23 0 5 11-17 12zM869 427q7-8 18-3 7 9-4 14-14 3-14-11z"/>
+<text class="sea-name" x="719" y="454">ADALAR</text><text class="sea-name" x="488" y="50">BOĞAZ</text>
+</g>
 <g id="urbanCells"></g>
+<g id="districtLabels" aria-label="İstanbul'un referans semt ve ilçe konumları"><g class="district" data-label-from="1950" aria-label="Fatih (konum işareti)"><circle cx="359" cy="223" r="4"/><text x="366" y="214">Fatih</text></g>
+<g class="district" data-label-from="1950" aria-label="Beyoğlu (konum işareti)"><circle cx="387" cy="151" r="4"/><text x="394" y="142">Beyoğlu</text></g>
+<g class="district" data-label-from="1950" aria-label="Üsküdar (konum işareti)"><circle cx="535" cy="220" r="4"/><text x="542" y="211">Üsküdar</text></g>
+<g class="district" data-label-from="1950" aria-label="Beşiktaş (konum işareti)"><circle cx="454" cy="141" r="4"/><text x="461" y="132">Beşiktaş</text></g>
+<g class="district secondary" data-label-from="1960" aria-label="Şişli (konum işareti)"><circle cx="369" cy="107" r="3"/><text x="376" y="98">Şişli</text></g>
+<g class="district" data-label-from="1950" aria-label="Kadıköy (konum işareti)"><circle cx="595" cy="352" r="4"/><text x="602" y="343">Kadıköy</text></g>
+<g class="district" data-label-from="1970" aria-label="Bakırköy (konum işareti)"><circle cx="244" cy="347" r="4"/><text x="251" y="338">Bakırköy</text></g>
+<g class="district secondary" data-label-from="1970" aria-label="Sarıyer (konum işareti)"><circle cx="511" cy="78" r="3"/><text x="518" y="69">Sarıyer</text></g>
+<g class="district secondary" data-label-from="1985" aria-label="Ümraniye (konum işareti)"><circle cx="662" cy="153" r="3"/><text x="669" y="144">Ümraniye</text></g>
+<g class="district secondary" data-label-from="1980" aria-label="Maltepe (konum işareti)"><circle cx="696" cy="376" r="3"/><text x="703" y="367">Maltepe</text></g>
+<g class="district" data-label-from="1990" aria-label="Pendik (konum işareti)"><circle cx="817" cy="358" r="4"/><text x="824" y="349">Pendik</text></g>
+<g class="district secondary" data-label-from="1990" aria-label="Beylikdüzü (konum işareti)"><circle cx="99" cy="365" r="3"/><text x="106" y="356">Beylikdüzü</text></g>
+<g class="district" data-label-from="2000" aria-label="Ataşehir (konum işareti)"><circle cx="660" cy="268" r="4"/><text x="667" y="259">Ataşehir</text></g>
+<g class="district secondary" data-label-from="2000" aria-label="Başakşehir (konum işareti)"><circle cx="209" cy="128" r="3"/><text x="216" y="119">Başakşehir</text></g>
+<g class="district secondary" data-label-from="1985" aria-label="Kartal (konum işareti)"><circle cx="762" cy="391" r="3"/><text x="769" y="382">Kartal</text></g></g>
 <g class="district-label"><text x="95" y="85">AVRUPA</text><text x="713" y="84">ANADOLU</text><text x="439" y="450" fill="#9abbb7">MARMARA</text></g>
 </svg>
-<div class="legend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>COĞRAFİ SINIRLAR TEMSİLÎ</span></div>
+<div class="map-ui"><span class="map-callout" id="mapHint">Semt konumları yaklaşık; belirme yılları haritadaki anlatım için.</span><button type="button" class="map-toggle" id="labelToggle" aria-pressed="true">SEMTLERİ GİZLE</button></div>
+<div class="legend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>GERÇEK HARİTA VERİSİ DEĞİL</span></div>
 <div class="time"><div class="time-line"><span class="kicker">YILI DEĞİŞTİR</span><span class="kicker" id="yearOnScale">1950</span></div>
 <input id="timeline" class="range" type="range" min="1950" max="2025" step="1" value="1950" aria-label="Yıl: 1950 ile 2025 arasında"><div class="ticks"><span>1950</span><span>1970</span><span>1990</span><span>2010</span><span>2025</span></div>
+<div class="timeline-story" aria-live="polite"><i></i><span id="eraText">Tarihsel merkezler ve iki yaka.</span></div>
 <div class="play"><button class="play-btn" id="play" type="button">▶ 75 YILI İZLE</button><button class="play-btn alt" id="jump" type="button">2025'E GİT ↗</button><span class="play-note">Yıllar arası nüfus doğrusal ara değerle gösterilir.</span></div></div>
 </section>
 <aside class="side">
@@ -97,7 +145,7 @@ const $=id=>document.getElementById(id);
 const P=[[1950,1166477],[1955,1533822],[1960,1882092],[1965,2293823],[1970,3019032],[1975,3904588],[1980,4741890],[1985,5842985],[1990,7309190],[2000,10018735],[2007,12573836],[2008,12697164],[2009,12915158],[2010,13255685],[2011,13624240],[2012,13854740],[2013,14160467],[2014,14377018],[2015,14657434],[2016,14804116],[2017,15029231],[2018,15067724],[2019,15519267],[2020,15462452],[2021,15840900],[2022,15907951],[2023,15655924],[2024,15701602],[2025,15754053]];
 const A={1975:337.77,1990:605.12,2000:713.32,2010:899.77};
 const nf=new Intl.NumberFormat('tr-TR'),dec=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:1});
-let year=1950,area=1975,timer=null;
+let year=1950,area=1975,timer=null,showDistricts=true;
 function population(y){for(let i=0;i<P.length-1;i++){const [a,v]=P[i],[b,w]=P[i+1];if(y>=a&&y<=b)return Math.round(v+(w-v)*(y-a)/(b-a))}return P[P.length-1][1]}
 const cells=[];let seed=2031;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
 function paintGrid(){
@@ -122,6 +170,9 @@ function render(y){
 year=y;$('timeline').value=y;$('population').textContent=nf.format(population(y));
 $('yearLabel').textContent=y;$('yearOnScale').textContent=y;$('growth').textContent="1950'ye göre ×"+dec.format(population(y)/P[0][1]);
 const all=$('urbanCells').children;for(let i=0;i<all.length;i++)all[i].style.opacity=Number(all[i].dataset.urban)<=y?'1':'0';
+document.querySelectorAll('[data-label-from]').forEach(el=>el.classList.toggle('is-visible',showDistricts&&y>=Number(el.dataset.labelFrom)));
+const era=y<1970?'Tarihsel merkezler ve iki yaka.':y<1985?'Merkezden çevreye doğru yayılma.':y<2000?'Çeperlerde büyüme hızlanıyor.':y<2010?'Yeni merkezler ve yeni konut alanları.':'Metropol, iki yakada geniş bir ağa dönüşüyor.';
+$('eraText').textContent=era;
 const factor=population(y)/P[0][1];
 $('factTitle').textContent=y===1950?'Daha yeni başlıyoruz.':y===2025?'13,5 kat insan.':dec.format(factor)+' kat nüfus.';
 $('factText').textContent=y===1950?'1950 yılında İstanbul yaklaşık 1,17 milyon kişiydi.':y===2025?'2025 yılında 15.754.053 kişi. Aynı ilin nüfusu 1950’nin yaklaşık 13,5 katı.':y===2020?'2020 nüfusu bir önceki yıla göre azaldı. Büyüme her yıl düz çizgi değil.':'Bu sayı nüfus serisinden geliyor; çizilen yerleşim izleri temsili.';
@@ -136,6 +187,7 @@ $('timeline').addEventListener('input',e=>{stop();render(+e.target.value)});
 $('jump').addEventListener('click',()=>{stop();render(2025)});
 $('play').addEventListener('click',()=>{if(timer){stop();return}if(year>=2025)render(1950);$('play').textContent='Ⅱ DURDUR';timer=setInterval(()=>{if(year>=2025){stop();return}render(year+1)},85)});
 document.querySelectorAll('[data-area]').forEach(b=>b.addEventListener('click',()=>setArea(+b.dataset.area)));
+$('labelToggle').addEventListener('click',()=>{showDistricts=!showDistricts;$('labelToggle').setAttribute('aria-pressed',String(showDistricts));$('labelToggle').textContent=showDistricts?'SEMTLERİ GİZLE':'SEMTLERİ GÖSTER';render(year)});
 window.addEventListener('pagehide',stop);paintGrid();render(1950);setArea(1975);
 })();
 </script></body></html>
