@@ -71,7 +71,7 @@ function show(i){
  $('denom').textContent=selectedDenom!==null?selectedDenom+' TL':d[1];
  $('source').href=i===6&&selectedDenom>=5?official:d[5];
  const items=i===6&&selectedDenom!==null? f.items.map(z=>{let raw=z[0],unit=z[2];return z}):f.items;
- if(i===6&&selectedDenom!==null&&selectedDenom!==1){$('buylist').innerHTML='<div class="buy-item" style="grid-column:1/-1">Bu kupür için doğrulanmış aynı yıl ürün fiyatları derleniyor. Yanıltıcı miktar göstermiyoruz.</div>'}
+ if(i===6&&selectedDenom!==null&&selectedDenom!==1){const count=Math.floor(selectedDenom*100/65),change=(selectedDenom*100-count*65)/100;$('buylist').innerHTML='<div class="buy-item"><div class="buy-amount">'+count+' adet</div><div class="buy-product">300 g ekmek</div><div class="buy-unit">65 kuruş / adet</div></div><div class="buy-item"><div class="buy-amount">₺'+change.toFixed(2).replace('.',',')+'</div><div class="buy-product">para üstü</div><div class="buy-unit">Tam adet hesabı</div></div>';$('buyfoot').innerHTML='Eskişehir, Temmuz 2009 ekmek tarifesiyle hesaplandı. Diğer şehirlerde fiyat farklıydı. <a href="'+f.source+'" target="_blank" rel="noopener noreferrer">Veri kaynağı ↗</a>'}
  else{$('buylist').innerHTML=items.length?items.map(z=>'<div class="buy-item"><div class="buy-amount">'+z[0]+'</div><div class="buy-product">'+z[1]+'</div><div class="buy-unit">'+z[2]+'</div></div>').join(''):'<div class="buy-item" style="grid-column:1/-1">Bu yıl için doğrulanmış ürün fiyatı henüz yok.</div>'}
  $('buyfoot').innerHTML=f.note+' <a href="'+f.source+'" target="_blank" rel="noopener noreferrer">Veri kaynağı ↗</a>';
  const photo=$('photo'),fallback=$('fallback'),missing=$('missing');missing.hidden=true;photo.hidden=true;fallback.hidden=false;
