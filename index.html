@@ -27,191 +27,46 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 
 
 
-/* Calmer nostalgic desktop: one wallpaper, individual image windows, original mascot. */
+
+/* Minimal small visual experiments. One motif per game, predominantly monochrome. */
 html{scroll-behavior:smooth}
-body{overflow-x:hidden;background:#f7f9f6}
-.desktop-scene{
- position:relative;width:100%;height:1000px;min-height:0;isolation:isolate;overflow:hidden;
- background:linear-gradient(180deg,#77a9d7 0%,#a9c9de 47%,#c3d6d2 56%,#91b16b 57%,#6b9355 81%,#60864c 100%);
-}
-.desktop-scene:after{
- content:"";position:absolute;inset:57% 0 0;z-index:0;pointer-events:none;
- background-image:repeating-linear-gradient(120deg,transparent 0 8px,rgba(42,75,32,.055) 8px 10px),linear-gradient(0deg,rgba(32,64,28,.06),transparent);
- opacity:.6
-}
-.wallpaper-clouds{position:absolute;inset:0;z-index:0;pointer-events:none}
-.wallpaper-clouds svg{height:100%;width:100%;display:block}
-.wallpaper-hill{position:absolute;z-index:0;left:-8%;width:118%;top:50%;height:55%;background:linear-gradient(180deg,#8eb068,#668f51 70%,#527c44);border-radius:54% 46% 0 0/15% 20% 0 0;transform:rotate(-1.6deg);pointer-events:none}
-.landing-nav{position:relative;z-index:6;padding:23px clamp(20px,3vw,44px)}
-.wordmark{font:700 clamp(23px,2.4vw,30px)/1 'DM Mono',monospace;letter-spacing:-.06em;text-decoration:none;color:#fff;text-shadow:0 1px 2px #497eb0}
-.mark-dot{color:#fff}
-.landing-hub{position:absolute;top:318px;left:50%;transform:translateX(-50%);width:clamp(230px,24vw,352px);z-index:2;pointer-events:none}
-.hub-cat{display:block;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 12px 12px rgba(21,42,35,.14))}
+body{background:#fff;color:#181818;overflow-x:hidden}
+.desktop-scene{position:relative;width:100%;height:774px;min-height:0;margin:0;overflow:hidden;background:#fff;isolation:isolate}
+.landing-hub{position:absolute;z-index:1;width:clamp(154px,17vw,220px);left:50%;top:291px;transform:translateX(-50%);pointer-events:none}
+.hub-cat{display:block;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 8px 7px rgba(0,0,0,.04));transform:translate(var(--cat-x,0px),var(--cat-y,0px));transition:transform .25s ease-out}
 .orbit-cards{display:contents}
-.orbit-card{
- position:absolute;left:var(--dx);top:var(--dy);width:clamp(136px,14.2vw,218px);
- height:auto;z-index:3;display:block;padding:0;margin:0;border:0;background:transparent;
- text-align:left;color:#171d28;text-decoration:none;cursor:pointer;
- transform:rotate(var(--tilt));transform-origin:center;
- transition:transform .2s ease,filter .2s ease;filter:drop-shadow(1px 3px 2px rgba(15,35,54,.17))
-}
-.orbit-card:hover,.orbit-card:focus-visible{z-index:10;transform:rotate(0deg) translateY(-5px) scale(1.05);filter:drop-shadow(2px 6px 4px rgba(15,35,54,.24))}
-.orbit-card:active{transform:rotate(0deg) scale(.985)}
-.retro-window{
- display:flex;flex-direction:column;width:100%;background:#d5d7d7;
- border:1px solid #f4f1e9;box-shadow:1px 1px 0 #45566d,2px 2px 0 #8b989a;
- overflow:hidden;
-}
-.retro-titlebar{
- height:21px;min-height:21px;padding:0 4px;display:flex;gap:5px;align-items:center;overflow:hidden;
- background:linear-gradient(90deg,#174b9c,#366bb7 75%,#618cc0);color:#fff;
- font:500 clamp(9px,.82vw,12px)/1 Tahoma,Arial,sans-serif;
-}
-.orbit-card:nth-child(6n+3) .retro-titlebar{background:linear-gradient(90deg,#707982,#aeb5b7);color:#1d2a31}
-.orbit-card:nth-child(6n+3) .retro-close{background:#ddd}
-.retro-number{font:500 .89em/1 'DM Mono',monospace;opacity:.8;flex:none}
-.retro-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.02em}
-.retro-close{flex:none;display:grid;place-items:center;width:14px;height:14px;border:1px solid #5e6273;background:#d9d9d2;color:#282e30;box-shadow:inset 1px 1px 0 #fff;font:700 13px/1 Arial}
-.retro-picture{
- display:block;position:relative;overflow:hidden;width:100%;aspect-ratio:240/160;
- background:#f2efe9;isolation:isolate;
-}
-.retro-picture:after{
- content:"";position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.15;
- background-image:radial-gradient(rgba(49,61,60,.4) .53px,transparent .65px);
- background-size:3px 3px;mix-blend-mode:multiply
-}
-.editorial-art{display:block;height:100%;width:100%;image-rendering:auto}
-.orbit-card:nth-child(4n+1) .editorial-art{filter:saturate(.92) contrast(1.04)}
-.orbit-card:nth-child(4n+2) .editorial-art{filter:saturate(1.1) sepia(.08)}
-.orbit-card:nth-child(4n+3) .editorial-art{filter:contrast(1.05) saturate(.85)}
-.retro-float{position:absolute;z-index:3;bottom:10%;right:5%;display:block;color:#303332;background:#efeee5;border:1px solid #a9a9a4;box-shadow:2px 2px 0 #424a51;padding:3px 5px;font:8px/1.12 Tahoma,Arial,sans-serif;white-space:nowrap}
-.retro-confirm b{margin-left:4px;border:1px solid #9e9e98;background:#fff;padding:1px 4px;font-weight:400}
-.retro-document{transform:rotate(-7deg);color:#af5043}
-.retro-bubble{border-radius:10px}
-.retro-progress{width:67%;height:17px;bottom:9%;right:16%;text-align:right}
-.retro-progress i{float:left;display:block;width:74%;height:7px;background:#4c9d80;border:1px solid #719a76;margin-top:2px}
-.retro-star{font-size:20px;color:#f3c566;border:none;box-shadow:none;background:none;text-shadow:1px 1px #555}
-.retro-choice{font-weight:700}
-@media (min-width:761px) and (max-width:1100px){
- .desktop-scene{height:880px}
- .orbit-card{width:clamp(110px,15vw,170px);top:var(--ty)}
- .landing-hub{top:285px;width:clamp(190px,23vw,258px)}
- .retro-titlebar{height:18px;min-height:18px}
+.game-tile{position:absolute;top:var(--y);left:var(--x);z-index:2;width:clamp(104px,10.7vw,146px);display:flex;flex-direction:column;align-items:stretch;gap:7px;min-width:0;margin:0;padding:0;background:transparent;border:0;color:#181818;text-align:center;text-decoration:none;cursor:pointer;transform:rotate(var(--angle));transition:transform .18s ease}
+.game-tile:hover,.game-tile:focus-visible{z-index:8;transform:translateY(-4px) rotate(0deg) scale(1.035)}
+.game-tile:active{transform:scale(.98)}
+.game-thumb{position:relative;width:100%;aspect-ratio:1.42;display:block;border:1px solid #ececea;border-radius:9px;background:#f7f7f6;overflow:hidden;transition:border-color .2s ease,background .2s ease}
+.game-tile:hover .game-thumb,.game-tile:focus-visible .game-thumb{border-color:#bcbcbc;background:#f4f4f3}
+.game-tile.is-color .game-thumb{background:#f7f8f5}
+.tile-illustration{display:block;width:100%;height:100%;object-fit:contain}
+.game-name{display:block;font:600 clamp(10px,.88vw,12px)/1.18 'Space Grotesk',sans-serif;letter-spacing:-.025em;padding:0 1px}
+.game-index{position:absolute;z-index:2;top:7px;left:9px;color:#b0b0ad;font:500 9px/1 'DM Mono',monospace}
+.game-tile .motion,.game-tile .spin{transform-origin:80px 56px;transition:transform .25s ease}
+.game-tile:hover .spin{transform:rotate(60deg)}
+.game-tile:hover .motion{transform:translateX(6px)}
+@media(min-width:761px) and (max-width:970px){
+ .desktop-scene{height:744px}
+ .game-tile{width:clamp(94px,11vw,112px)}
+ .landing-hub{top:279px;width:clamp(142px,18vw,180px)}
 }
 @media(max-width:760px){
- .desktop-scene{height:auto;min-height:100svh;overflow:hidden;padding-bottom:25px}
- .landing-nav{padding:17px 16px 9px}
- .wallpaper-clouds{height:640px}
- .wallpaper-hill{top:200px;height:100%;border-radius:54% 46% 0 0/6% 9% 0 0}
- .landing-hub{position:relative;left:auto;top:auto;transform:none;width:min(49vw,200px);margin:2px auto 13px}
- .orbit-cards{position:relative;z-index:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 9px;max-width:640px;padding:0 13px;margin:0 auto}
- .orbit-card{position:relative;top:auto;left:auto;width:100%;transform:rotate(var(--tilt));filter:drop-shadow(1px 2px 1px rgba(15,35,54,.17))}
- .orbit-card:nth-child(3n+2){margin-top:6px}
- .orbit-card:nth-child(3n){margin-top:2px}
- .retro-titlebar{height:17px;min-height:17px;padding:0 3px;gap:3px;font-size:8px}
- .retro-number{font-size:7px}
- .retro-close{width:11px;height:12px;font-size:11px}
- .retro-float{font-size:6px;padding:2px 3px}
+ .desktop-scene{height:auto;min-height:100svh;overflow:visible;padding:12px 0 34px}
+ .landing-hub{position:relative;top:auto;left:auto;transform:none;margin:0 auto 14px;width:min(42vw,167px)}
+ .orbit-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px 12px;width:min(100%,550px);padding:0 14px;margin:0 auto}
+ .game-tile{position:relative;top:auto;left:auto;width:100%;gap:6px;transform:rotate(var(--angle))}
+ .game-tile:hover,.game-tile:focus-visible{transform:translateY(-3px) rotate(0deg) scale(1.025)}
+ .game-name{font-size:clamp(9.5px,2.5vw,12px);line-height:1.15}
+ .game-index{font-size:8px;top:5px;left:6px}
 }
-@media(max-width:370px){
- .orbit-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 11px;padding:0 15px}
- .retro-titlebar{font-size:9px}
- .landing-hub{width:min(52vw,175px)}
+@media(max-width:350px){
+ .orbit-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 10px;padding:0 16px}
+ .landing-hub{width:150px}
+ .game-name{font-size:11px}
 }
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-card{transition:none}}
-
-
-/* Interactive desktop — clean shell, working window controls and depth. */
-.desktop-scene { --cat-x:0px;--cat-y:0px; }
-.desktop-scene:before {
- content:"";position:absolute;z-index:0;inset:0;
- background:linear-gradient(135deg,rgba(255,255,255,.14),transparent 52%);
- pointer-events:none;
-}
-.landing-hub{top:292px}
-.hub-cat{transform:translate3d(var(--cat-x),var(--cat-y),0);transition:transform .4s ease-out;will-change:transform}
-.wallpaper-clouds{animation:desktop-clouds 48s ease-in-out infinite alternate}
-@keyframes desktop-clouds {from{transform:translateX(-9px)}to{transform:translateX(16px)}}
-.orbit-card{
- --move-x:0px;--move-y:0px;
- transform:translate3d(var(--move-x),var(--move-y),0) rotate(var(--tilt));
-}
-.orbit-card:hover,.orbit-card:focus-visible{
- transform:translate3d(var(--move-x),calc(var(--move-y) - 4px),0) rotate(0deg) scale(1.035);
-}
-.orbit-card:active{transform:translate3d(var(--move-x),var(--move-y),0) rotate(var(--tilt))}
-.orbit-card.is-dragging,.orbit-card.is-dragging:hover{
- transition:none;cursor:grabbing;transform:translate3d(var(--move-x),var(--move-y),0) rotate(0deg) scale(1.016);
- filter:drop-shadow(5px 12px 7px rgba(17,35,50,.28))
-}
-.retro-titlebar{cursor:grab;touch-action:pan-y}
-.orbit-card.is-dragging .retro-titlebar{cursor:grabbing}
-.orbit-card.is-active .retro-window{box-shadow:1px 1px 0 #fff,2px 2px 0 #456891,5px 8px 17px rgba(24,51,72,.24)}
-.orbit-card.is-active .retro-titlebar{background:linear-gradient(90deg,#143e8c,#357bce 82%,#8bb4db);color:#fff}
-.retro-close{cursor:pointer;pointer-events:auto}
-.retro-close:hover{background:#f3e9e3;color:#b84d45}
-.desktop-taskbar{
- position:fixed;left:0;right:0;bottom:0;z-index:40;min-height:39px;padding:4px 12px;
- display:flex;align-items:center;gap:10px;
- color:#253f61;background:linear-gradient(180deg,rgba(241,249,250,.97),rgba(214,231,239,.95));
- border-top:1px solid rgba(255,255,255,.7);
- box-shadow:0 -4px 18px rgba(28,65,72,.09);
- backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
- font:500 11px/1 Tahoma,'Space Grotesk',sans-serif;
-}
-.desktop-taskbar button{font:inherit}
-.desktop-start{height:30px;border:1px solid rgba(65,112,135,.27);border-radius:5px;background:rgba(255,255,255,.65);color:#273e55;padding:2px 10px 2px 4px;display:flex;align-items:center;gap:6px;font-weight:700!important;cursor:pointer}
-.desktop-start:hover,.desktop-start[aria-expanded="true"]{background:#fff}
-.desktop-start img{width:25px;height:24px;object-fit:contain}
-.desktop-taskbar-divider{height:18px;width:1px;background:#b1c8d1}
-.desktop-taskbar-label{display:flex;align-items:center;gap:8px;color:#50687b;letter-spacing:.01em}
-.desktop-live-dot{width:6px;height:6px;background:#67a58a;border-radius:50%;box-shadow:0 0 0 2px #d5e8df}
-.desktop-taskbar-spacer{flex:1}
-.desktop-reset{border:0;border-radius:5px;padding:6px;background:transparent;color:#556d80;cursor:pointer;display:grid;place-items:center}
-.desktop-reset:hover{background:#fff}
-.desktop-clock{min-width:45px;text-align:center;font-size:11px;color:#294459;letter-spacing:0}
-.desktop-launcher[hidden]{display:none}
-.desktop-launcher{
- position:fixed;z-index:41;left:12px;bottom:45px;width:min(360px,calc(100vw - 24px));
- background:rgba(250,252,249,.97);
- border:1px solid #b3c9d2;border-radius:8px;
- box-shadow:0 14px 38px rgba(20,45,62,.25);
- padding:10px;backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px)
-}
-.desktop-launcher-heading{display:flex;justify-content:space-between;align-items:center;padding:5px 7px 10px;font:700 11px/1 'DM Mono',monospace;letter-spacing:.075em;color:#4a6477}
-.desktop-launcher-heading .mono{font-size:9px;font-weight:400;color:#79909e}
-.desktop-launcher-list{max-height:min(45vh,315px);overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.desktop-launcher-list button{border:0;background:transparent;border-radius:4px;padding:9px 7px;display:flex;align-items:center;gap:7px;text-align:left;font:500 11px/1.2 'Space Grotesk',sans-serif;color:#273d4d;cursor:pointer;min-width:0}
-.desktop-launcher-list button:hover,.desktop-launcher-list button:focus-visible{background:#e4eff3}
-.desktop-launcher-list .launcher-num{font:500 9px 'DM Mono',monospace;color:#839ca8;flex:none}
-.orbit-card.is-minimized{width:82px;min-height:80px;filter:none;transform:translate3d(var(--move-x),var(--move-y),0);transition:none;cursor:pointer}
-.orbit-card.is-minimized .retro-window{display:none}
-.orbit-card.is-minimized:before{
- content:"";display:block;width:45px;height:43px;margin:0 auto 5px;
- background:linear-gradient(180deg,#fff5d1 0 20%,#efcf76 20% 100%);
- border:2px solid #a47d35;border-radius:2px;box-shadow:2px 3px 0 rgba(32,54,56,.26);clip-path:polygon(0 14%,6% 14%,6% 0,48% 0,57% 14%,100% 14%,100% 100%,0 100%)
-}
-.orbit-card.is-minimized:after{content:attr(data-short-title);display:block;color:#fff;font:500 10px/1.13 Tahoma,Arial,sans-serif;text-align:center;text-shadow:1px 1px 2px #23465a,0 1px 3px #23465a;overflow-wrap:anywhere}
-.orbit-card.is-minimized:hover{transform:translate3d(var(--move-x),calc(var(--move-y) - 3px),0)}
-@media(max-width:760px){
- .landing-hub{top:auto}
- .wallpaper-clouds{animation:none}
- .orbit-card,.orbit-card:hover,.orbit-card:focus-visible,.orbit-card:active{transform:rotate(var(--tilt));}
- .retro-titlebar{cursor:pointer;touch-action:auto}
- .desktop-taskbar{position:fixed;min-height:35px;padding:3px 9px;gap:7px}
- .desktop-start{height:28px;padding-right:6px;font-size:10px!important}
- .desktop-start img{height:23px;width:23px}
- .desktop-taskbar-label{font-size:10px}
- .desktop-reset{padding:4px}
- .desktop-scene{padding-bottom:55px}
- .desktop-launcher{bottom:40px}
- .orbit-card.is-minimized{width:100%;min-height:90px;transform:rotate(0deg)}
- .orbit-card.is-minimized:hover{transform:rotate(0deg)}
- .orbit-card.is-minimized:before{width:36px;height:35px}
- .orbit-card.is-minimized:after{font-size:9px}
-}
-@media(prefers-reduced-motion:reduce){.wallpaper-clouds{animation:none}.hub-cat{transition:none}.orbit-card{transition:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.game-tile,.game-thumb,.hub-cat,.game-tile .motion,.game-tile .spin{transition:none}}
 
 /* The experiences retain their own compact, window-like presentation. */
 .modal{position:fixed;inset:0;background:rgba(255,255,255,.76);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
@@ -259,58 +114,98 @@ body{overflow-x:hidden;background:#f7f9f6}
 </head>
 <body>
 <main class="desktop-scene" id="top">
-<h1 class="sr-only">22 küçük oyun — interaktif masaüstü</h1>
-<div class="wallpaper-clouds" aria-hidden="true">
-<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-<defs><filter id="cloud-soft"><feGaussianBlur stdDeviation="12"/></filter></defs>
-<g fill="#fff" opacity=".55" filter="url(#cloud-soft)">
-<ellipse cx="195" cy="140" rx="145" ry="31"/><ellipse cx="185" cy="112" rx="68" ry="48"/><ellipse cx="283" cy="125" rx="77" ry="39"/>
-<ellipse cx="1125" cy="104" rx="172" ry="36"/><ellipse cx="1065" cy="79" rx="83" ry="48"/><ellipse cx="1203" cy="79" rx="77" ry="44"/>
-<ellipse cx="1396" cy="265" rx="138" ry="32"/><ellipse cx="1352" cy="237" rx="61" ry="43"/>
-<ellipse cx="566" cy="205" rx="104" ry="22"/><ellipse cx="530" cy="191" rx="49" ry="30"/>
-</g></svg></div>
-<div class="wallpaper-hill" aria-hidden="true"></div>
-<section class="landing-hub" aria-label="aynen.fun kedisi"><img class="hub-cat" src="./cat.webp" alt="aynen.fun kedisi" width="207" height="179" fetchpriority="high"></section>
-<div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye"><button class="orbit-card" type="button" data-game="nothing" style="--dx:4%;--dy:93px;--ty:79px;--tilt:-2deg" aria-label="Hiçbir Şey Yapma. oyununu aç" title="hiçbir şey yapma"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">01</span><span class="retro-title">hiçbir şey yapma</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#DCE9E2"/><ellipse cx="121" cy="146" rx="88" ry="6" fill="#C0CFC6"/><path d="M72 112L74 71Q75 52 95 52L145 52Q167 56 167 76L167 111Z" fill="#D38C77" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="67" y="98" width="103" height="32" rx="15" fill="#E3A18A" stroke="#283137" stroke-width="2"/><path d="M78 126L74 144" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M158 126L162 144" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 38L42 131" fill="none" stroke="#51786B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 39Q42 -3 70 39Z" fill="#F1C786" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="193" cy="108" r="22" fill="#F5E7C9" stroke="#283137" stroke-width="2.5"/><path d="M193 108L193 94" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M193 108L204 114" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></button>
-<button class="orbit-card" type="button" data-game="no" style="--dx:23%;--dy:89px;--ty:76px;--tilt:1.5deg" aria-label="Hayır Diyebilir misin? oyununu aç" title="hayır diyebilir misin?"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">02</span><span class="retro-title">hayır diyebilir misin?</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F0D5D5"/><circle cx="176" cy="44" r="30" fill="#E4ADA7" stroke="none" stroke-width="1"/><path d="M105 136Q88 130 80 114L49 80Q41 71 50 65Q56 61 63 70L85 88L72 44Q69 34 78 31Q87 30 90 41L104 78L104 26Q105 16 114 18Q122 19 122 29L122 77L133 37Q136 27 144 29Q152 32 148 43L139 80L152 60Q160 50 168 56Q174 61 168 71L149 119Q137 145 105 136Z" fill="#E5AC82" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M93 137L155 138L152 160L104 160Z" fill="#547A97" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="retro-float retro-confirm">hayır mı? <b>evet</b></span></span></span></button>
-<button class="orbit-card" type="button" data-game="paper" style="--dx:42%;--dy:95px;--ty:81px;--tilt:-1deg" aria-label="Bir Evrak Eksik. oyununu aç" title="bir evrak eksik"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">03</span><span class="retro-title">bir evrak eksik</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E7E1D5"/><ellipse cx="114" cy="145" rx="91" ry="6" fill="#D2C6B8"/><rect x="49" y="38" width="99" height="105" rx="3" fill="#fff" stroke="#283137" stroke-width="2"/><rect x="60" y="26" width="100" height="110" rx="3" fill="#F5F0E5" stroke="#283137" stroke-width="2"/><rect x="75" y="14" width="103" height="112" rx="3" fill="#fff" stroke="#283137" stroke-width="2.5"/><path d="M92 41L161 41" fill="none" stroke="#BAC3C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 55L161 55" fill="none" stroke="#BAC3C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 69L161 69" fill="none" stroke="#BAC3C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 83L161 83" fill="none" stroke="#BAC3C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="159" cy="113" r="24" fill="#CC8179" stroke="#283137" stroke-width="2"/><path d="M146 114L157 124L176 102" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="41" cy="137" r="9" fill="#283137" stroke="none" stroke-width="1"/><path d="M32 146L51 146L57 161L26 161Z" fill="#4D7282" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="retro-float retro-document">BELGE EKSİK</span></span></span></button>
-<button class="orbit-card" type="button" data-game="message" style="--dx:62%;--dy:94px;--ty:80px;--tilt:1.5deg" aria-label="Bir Şey Soracağım. oyununu aç" title="bir şey soracağım"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">04</span><span class="retro-title">bir şey soracağım</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#D8E8F1"/><rect x="72" y="13" width="97" height="134" rx="16" fill="#455B69" stroke="#283137" stroke-width="2.5"/><rect x="82" y="26" width="77" height="104" rx="9" fill="#FAF7EB" stroke="none" stroke-width="1"/><rect x="90" y="44" width="56" height="25" rx="12" fill="#88BDB6" stroke="none" stroke-width="1"/><circle cx="105" cy="56" r="3" fill="#fff" stroke="none" stroke-width="1"/><circle cx="118" cy="56" r="3" fill="#fff" stroke="none" stroke-width="1"/><circle cx="131" cy="56" r="3" fill="#fff" stroke="none" stroke-width="1"/><path d="M109 86Q113 65 136 66Q157 66 160 87Q181 81 190 93Q198 111 181 119Q168 128 151 114Q138 132 121 121Q105 111 109 86Z" fill="#F1D0A8" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="196" cy="50" r="6" fill="#D99194" stroke="none" stroke-width="1"/></svg><span class="retro-float retro-bubble">yazıyor...</span></span></span></button>
-<button class="orbit-card" type="button" data-game="loading" style="--dx:81%;--dy:90px;--ty:77px;--tilt:-1.5deg" aria-label="Az Kaldı. oyununu aç" title="az kaldı"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">05</span><span class="retro-title">az kaldı</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#EEE9D7"/><ellipse cx="119" cy="146" rx="92" ry="6" fill="#D3D0BD"/><path d="M40 122Q56 113 77 122Q98 136 112 121Q124 111 144 114Q177 114 186 132Q180 146 134 146L72 146Q45 143 40 122Z" fill="#8AAC91" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M54 102L49 71" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M71 103L74 73" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="68" r="4" fill="#283137" stroke="none" stroke-width="1"/><circle cx="75" cy="69" r="4" fill="#283137" stroke="none" stroke-width="1"/><circle cx="122" cy="81" r="48" fill="#D49A9A" stroke="#283137" stroke-width="3"/><path d="M145 90Q145 50 118 49Q88 48 91 77Q94 106 119 107Q139 109 139 83Q139 65 122 66" fill="none" stroke="#F7EAD0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="122" cy="82" r="15" fill="#F4E2BD" stroke="#283137" stroke-width="2"/><path d="M122 82L122 71" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M122 82L134 87" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="retro-float retro-progress"><i></i>99%</span></span></span></button>
-<button class="orbit-card" type="button" data-game="success" style="--dx:5%;--dy:271px;--ty:230px;--tilt:1deg" aria-label="Başarı Simülatörü. oyununu aç" title="başarı simülatörü"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">06</span><span class="retro-title">başarı simülatörü</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E7E0F0"/><ellipse cx="125" cy="147" rx="86" ry="6" fill="#D0CBDA"/><path d="M32 145L32 124L65 124L65 102L96 102L96 79L127 79L127 57L157 57" fill="none" stroke="#8398A1" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><path d="M155 20L203 20L200 45Q195 66 180 70Q160 66 156 44Z" fill="#E9BE73" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M156 28L138 28Q136 51 161 55M202 28L219 28Q214 51 198 55" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="176" y="70" width="8" height="16" rx="0" fill="#58748B" stroke="none" stroke-width="1"/><rect x="165" y="86" width="31" height="7" rx="1" fill="#E9BE73" stroke="#283137" stroke-width="1"/><circle cx="92" cy="121" r="9" fill="#283137" stroke="none" stroke-width="1"/><path d="M84 131L101 131L108 159L80 159Z" fill="#C87F77" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="retro-float retro-star">★</span></span></span></button>
-<a class="orbit-card" href="/maas.html" style="--dx:24%;--dy:280px;--ty:238px;--tilt:-1.3deg" aria-label="Maaşın Kaç Saniyede Biter? oyununu aç" title="maaşın kaç saniyede biter?"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">07</span><span class="retro-title">maaşın kaç saniyede biter?</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#DDE9D8"/><ellipse cx="119" cy="146" rx="96" ry="6" fill="#CAD9C7"/><path d="M38 103L178 103Q184 105 184 113L184 140L31 140L31 109Q31 103 38 103Z" fill="#5B8981" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="131" y="109" width="58" height="23" rx="5" fill="#E8D7B3" stroke="#283137" stroke-width="2"/><circle cx="166" cy="120" r="4" fill="#283137" stroke="none" stroke-width="1"/><path d="M81 85Q67 62 83 40Q100 15 122 19Q154 19 163 48Q169 73 146 88Q137 97 133 111Q128 120 122 105Q118 95 111 97Q102 108 95 91Z" fill="#E2BB68" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="120" cy="55" r="25" fill="none" stroke="#AC8A4C" stroke-width="3"/></svg></span></span></a>
-<a class="orbit-card" href="/burasidami.html" style="--dx:64%;--dy:277px;--ty:235px;--tilt:1deg" aria-label="İstanbul'a Bir Ağaç Dik. oyununu aç" title="bir ağaç dik"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">08</span><span class="retro-title">bir ağaç dik</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E6E5D9"/><rect x="0" y="126" width="240" height="34" rx="0" fill="#D4CBBC" stroke="none" stroke-width="1"/><path d="M0 131L240 131" fill="none" stroke="#ADA597" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M117 114L117 150M117 133L91 151M117 137L143 151" fill="none" stroke="#816651" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 76L116 129" fill="none" stroke="#816651" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M109 77Q76 95 58 71Q42 48 64 31Q72 8 101 17Q123 -1 149 27Q176 20 183 47Q191 74 157 80Q137 97 109 77Z" fill="#73A387" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="83" cy="43" r="12" fill="#A2C6A7" stroke="none" stroke-width="1"/><circle cx="144" cy="45" r="13" fill="#A4C4A3" stroke="none" stroke-width="1"/><circle cx="192" cy="30" r="13" fill="#EDCA89" stroke="none" stroke-width="1"/></svg></span></span></a>
-<a class="orbit-card" href="/algoritma.html" style="--dx:81%;--dy:277px;--ty:235px;--tilt:-1.2deg" aria-label="Algoritma Sensin. oyununu aç" title="algoritma sensin"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">09</span><span class="retro-title">algoritma sensin</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F0DFD0"/><ellipse cx="120" cy="145" rx="78" ry="6" fill="#DBCEBA"/><rect x="74" y="16" width="94" height="128" rx="15" fill="#4B7088" stroke="#283137" stroke-width="3"/><rect x="83" y="28" width="76" height="102" rx="7" fill="#F7E7CE" stroke="none" stroke-width="1"/><circle cx="122" cy="66" r="18" fill="#D79F87" stroke="none" stroke-width="1"/><path d="M102 105Q102 82 122 82Q142 83 146 106L146 124L100 124Z" fill="#8CAA99" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M122 83L61 18" fill="none" stroke="#CA7C76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M108 97L51 50" fill="none" stroke="#CA7C76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M140 97L191 27" fill="none" stroke="#CA7C76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="61" cy="18" r="6" fill="#CA7C76" stroke="none" stroke-width="1"/><circle cx="191" cy="27" r="6" fill="#CA7C76" stroke="none" stroke-width="1"/></svg></span></span></a>
-<a class="orbit-card" href="/sigdir.html" style="--dx:5%;--dy:453px;--ty:385px;--tilt:-1deg" aria-label="İstanbul'a Sığdır. oyununu aç" title="istanbul'a sığdır"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">10</span><span class="retro-title">istanbul'a sığdır</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#CADFE9"/><circle cx="187" cy="37" r="23" fill="#F3D79B" stroke="none" stroke-width="1"/><rect x="15" y="24" width="65" height="128" rx="0" fill="#809CA9" stroke="none" stroke-width="1"/><rect x="160" y="14" width="66" height="140" rx="0" fill="#638699" stroke="none" stroke-width="1"/><rect x="82" y="62" width="77" height="90" rx="0" fill="#A5B7AB" stroke="none" stroke-width="1"/><rect x="34" y="42" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="34" y="69" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="34" y="97" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="34" y="122" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="56" y="42" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="56" y="69" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="56" y="97" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="56" y="122" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="173" y="42" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="173" y="69" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="173" y="97" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="173" y="122" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="198" y="42" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="198" y="69" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="198" y="97" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><rect x="198" y="122" width="11" height="13" rx="0" fill="#EDEAD0" stroke="none" stroke-width="1"/><path d="M88 120L119 94L150 120Z" fill="#BB826E" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="97" y="120" width="45" height="33" rx="1" fill="#F4DFBC" stroke="#283137" stroke-width="2.5"/><rect x="114" y="130" width="14" height="22" rx="0" fill="#4E7289" stroke="none" stroke-width="1"/></svg></span></span></a>
-<a class="orbit-card" href="/ofsaytimsi.html" style="--dx:24%;--dy:459px;--ty:390px;--tilt:1deg" aria-label="Ofsaytımsı. oyununu aç" title="ofsaytımsı"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">11</span><span class="retro-title">ofsaytımsı</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#D4E6D6"/><path d="M0 25L240 -1" fill="none" stroke="#F2F4E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 68L240 42" fill="none" stroke="#F2F4E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 111L240 85" fill="none" stroke="#F2F4E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 154L240 128" fill="none" stroke="#F2F4E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M139 -5L145 166" fill="none" stroke="#C67F72" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="91" cy="82" r="36" fill="#F9F4E8" stroke="#283137" stroke-width="3"/><path d="M92 63L109 79L103 101L82 101L72 83Z" fill="#283137" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 63L90 48" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M109 79L126 75" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M103 101L114 116" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M82 101L72 116" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="175" cy="45" r="9" fill="#6B9A8B" stroke="none" stroke-width="1"/><path d="M176 52L183 116" fill="none" stroke="#6B9A8B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></a>
-<a class="orbit-card" href="/omubumu.html" style="--dx:64%;--dy:455px;--ty:387px;--tilt:-1deg" aria-label="O mu Bu mu? oyununu aç" title="o mu bu mu?"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">12</span><span class="retro-title">o mu bu mu?</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F3E3DC"/><ellipse cx="119" cy="148" rx="103" ry="6" fill="#E5CEC5"/><path d="M121 27L121 137" fill="none" stroke="#283137" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M81 138L162 138" fill="none" stroke="#283137" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M49 64L194 64" fill="none" stroke="#283137" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M65 65L52 112" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M83 65L97 112" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M161 65L148 112" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M184 65L198 112" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 113Q72 139 105 113Z" fill="#90B8AF" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M141 113Q177 138 208 113Z" fill="#D7B87D" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="74" cy="92" r="21" fill="#E6AE73" stroke="#283137" stroke-width="2"/><circle cx="74" cy="92" r="9" fill="#F3E3DC" stroke="none" stroke-width="1"/><rect x="162" y="76" width="30" height="32" rx="6" fill="#526E85" stroke="#283137" stroke-width="2"/><rect x="168" y="83" width="18" height="17" rx="0" fill="#E5F0E3" stroke="none" stroke-width="1"/></svg><span class="retro-float retro-choice">A / B</span></span></span></a>
-<a class="orbit-card" href="/paranin-halleri.html" style="--dx:81%;--dy:463px;--ty:394px;--tilt:1deg" aria-label="Paranın Hâlleri. oyununu aç" title="paranın halleri"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">13</span><span class="retro-title">paranın halleri</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E5E6CC"/><path d="M28 47L95 32L104 123L38 132Z" fill="#B7CDB3" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M75 24L152 29L149 119L74 117Z" fill="#EFDFB0" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M137 39L211 52L202 132L131 122Z" fill="#CFB399" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="61" cy="82" r="22" fill="#92B5A1" stroke="#283137" stroke-width="2"/><circle cx="111" cy="76" r="24" fill="#C5B48B" stroke="#283137" stroke-width="2"/><circle cx="168" cy="87" r="18" fill="#B6927A" stroke="#283137" stroke-width="2"/><path d="M54 77Q62 57 69 78M105 72Q114 54 122 70M163 82Q170 65 175 82" fill="none" stroke="#F7E7CD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></a>
-<a class="orbit-card" href="/kaybolan-meslekler.html" style="--dx:5%;--dy:639px;--ty:543px;--tilt:1deg" aria-label="Kaybolan Meslekler. oyununu aç" title="kaybolan meslekler"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">14</span><span class="retro-title">kaybolan meslekler</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E7DAD0"/><ellipse cx="121" cy="145" rx="95" ry="7" fill="#D8C7B8"/><rect x="74" y="79" width="85" height="58" rx="4" fill="#A37B60" stroke="#283137" stroke-width="3"/><path d="M81 133L76 157" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 133L157 157" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M55 94Q77 76 103 90L129 99Q157 100 158 115Q152 124 118 121L73 115Q52 112 55 94Z" fill="#5A8390" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M167 51Q158 33 171 21L187 30L192 62Q193 76 179 85L166 74Z" fill="#E1BC8D" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M167 76L143 95" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></a>
-<a class="orbit-card" href="/yasakli-miydi.html" style="--dx:24%;--dy:632px;--ty:537px;--tilt:-1.2deg" aria-label="Yasaklı mıydı? oyununu aç" title="yasaklı mıydı?"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">15</span><span class="retro-title">yasaklı mıydı?</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F4DCD4"/><ellipse cx="119" cy="147" rx="96" ry="6" fill="#E4C4B9"/><path d="M63 41L63 144" fill="none" stroke="#C47E6E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M175 41L175 144" fill="none" stroke="#C47E6E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M63 58Q120 108 175 58" fill="none" stroke="#C47E6E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M98 82Q94 61 112 57L146 56Q161 61 157 83L150 112Q123 132 102 109Z" fill="#D7BE9D" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M154 67Q185 60 181 84Q175 102 155 92M98 68Q82 67 81 82" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M120 57L132 43L143 57Z" fill="#C79076" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="205" cy="24" r="16" fill="#FCF8EC" stroke="none" stroke-width="1"/><path d="M197 16L213 32M213 16L197 32" fill="none" stroke="#C47E6E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></a>
-<a class="orbit-card" href="/evden-cik.html" style="--dx:43%;--dy:641px;--ty:545px;--tilt:1deg" aria-label="Evden Çık. oyununu aç" title="evden çık"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">16</span><span class="retro-title">evden çık</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#DAE7E8"/><path d="M0 148L0 124L45 124L45 101L90 101L90 78L136 78L136 57L185 57" fill="none" stroke="#86ADB4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/><rect x="154" y="14" width="63" height="120" rx="1" fill="#FFF3DF" stroke="#283137" stroke-width="3"/><path d="M177 39L212 28L211 114L177 106Z" fill="#E0B575" stroke="#283137" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="202" cy="74" r="3" fill="#283137" stroke="none" stroke-width="1"/><path d="M201 22L225 8" fill="none" stroke="#D9B476" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M214 29L238 28" fill="none" stroke="#D9B476" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="74" cy="121" r="10" fill="#283137" stroke="none" stroke-width="1"/><path d="M67 132L86 132L92 159L63 159Z" fill="#C78E84" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></a>
-<a class="orbit-card" href="/evolution-machine.html" style="--dx:62%;--dy:636px;--ty:541px;--tilt:-1deg" aria-label="Evrimsel. oyununu aç" title="evrimsel"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">17</span><span class="retro-title">evrimsel</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E3ECCD"/><path d="M-5 137Q52 119 94 135Q133 149 168 128Q202 112 245 129" fill="none" stroke="#8BAD91" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="44" cy="98" r="25" fill="#BCD49C" stroke="#283137" stroke-width="2.5"/><circle cx="36" cy="93" r="7" fill="#72966B" stroke="none" stroke-width="1"/><circle cx="54" cy="106" r="5" fill="#72966B" stroke="none" stroke-width="1"/><path d="M101 99Q91 80 106 64Q130 53 143 70Q158 73 167 93Q148 114 124 109Z" fill="#D7B191" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128" cy="85" r="4" fill="#283137" stroke="none" stroke-width="1"/><path d="M184 107Q175 85 187 68L207 68Q226 84 214 109L223 140L200 140L198 115L192 141L173 141Z" fill="#98A9C6" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="197" cy="54" r="18" fill="#E2BC9B" stroke="#283137" stroke-width="3"/></svg></span></span></a>
-<a class="orbit-card" href="/ah-yasamak.html" style="--dx:81%;--dy:645px;--ty:548px;--tilt:1deg" aria-label="Ah Yaşamak Var Ya. oyununu aç" title="ah yaşamak var ya"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">18</span><span class="retro-title">ah yaşamak var ya</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#D6EAE4"/><ellipse cx="120" cy="144" rx="92" ry="7" fill="#C2D9D2"/><path d="M92 21L148 21M106 21L106 55L70 111Q63 136 94 138L158 138Q187 132 171 111L134 56L134 21" fill="none" stroke="#283137" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M90 98Q122 86 154 98L172 121Q174 135 154 136L94 136Q72 135 77 117Z" fill="#85C1B6" stroke="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="102" cy="117" r="16" fill="#E8D58C" stroke="#283137" stroke-width="2"/><circle cx="140" cy="117" r="11" fill="#D69081" stroke="#283137" stroke-width="2"/><circle cx="132" cy="100" r="7" fill="#F3E2AC" stroke="#283137" stroke-width="1"/><path d="M93 117Q107 98 118 116Q130 133 145 118" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="182" cy="52" r="6" fill="#DEA696" stroke="none" stroke-width="1"/></svg></span></span></a>
-<a class="orbit-card" href="/einstein-ve-sen.html" style="--dx:16%;--dy:823px;--ty:700px;--tilt:-1deg" aria-label="Einstein ve Sen. oyununu aç" title="einstein ve sen"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">19</span><span class="retro-title">einstein ve sen</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E5E5EF"/><path d="M0 34Q62 22 120 54Q173 82 241 20" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 58Q62 46 120 78Q173 106 241 44" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 82Q62 70 120 102Q173 130 241 68" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 106Q62 94 120 126Q173 154 241 92" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 130Q62 118 120 150Q173 178 241 116" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 0Q-9 75 42 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M56 0Q21 75 72 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M86 0Q51 75 102 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 0Q81 75 132 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M146 0Q111 75 162 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M176 0Q141 75 192 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M206 0Q171 75 222 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M236 0Q201 75 252 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="143" cy="76" r="38" fill="#E8C279" stroke="#283137" stroke-width="3"/><ellipse cx="130" cy="61" rx="13" ry="6" fill="#F5DFB3"/><path d="M167 89Q143 106 123 94" fill="none" stroke="#B58C4E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="33" r="14" fill="#D18C91" stroke="#283137" stroke-width="2"/><path d="M49 18L58 7" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></a>
-<a class="orbit-card" href="/fiziksel.html" style="--dx:41%;--dy:820px;--ty:697px;--tilt:1deg" aria-label="Fiziksel. oyununu aç" title="fiziksel"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">20</span><span class="retro-title">fiziksel</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F0E6D0"/><ellipse cx="122" cy="146" rx="97" ry="7" fill="#DECBAE"/><path d="M39 105L203 76" fill="none" stroke="#283137" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M117 140L125 90L143 140Z" fill="#7699A0" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M98 141L165 141" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="40" y="55" width="51" height="50" rx="4" fill="#C88A77" stroke="#283137" stroke-width="3"/><path d="M51 55L61 39L81 39L91 55" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="191" cy="58" r="24" fill="#EAC879" stroke="#283137" stroke-width="3"/><path d="M184 51L199 66" fill="none" stroke="#AF8853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M199 50L184 66" fill="none" stroke="#AF8853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 110Q37 125 57 110M183 98Q205 109 226 91" fill="none" stroke="#8CABAA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></a>
-<a class="orbit-card" href="/ses-cikarma.html" style="--dx:66%;--dy:817px;--ty:694px;--tilt:-1.3deg" aria-label="Ses Çıkarma. dalga girişimi oyununu aç" title="ses çıkarma"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">21</span><span class="retro-title">ses çıkarma</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#DCE7E8"/><path d="M0 78Q20 33 40 78T80 78T120 78T160 78T200 78T240 78" fill="none" stroke="#CB8581" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 78Q20 123 40 78T80 78T120 78T160 78T200 78T240 78" fill="none" stroke="#648CA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 78L225 78" fill="none" stroke="#F5F5EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="120" cy="78" r="17" fill="#F4EEE5" stroke="#283137" stroke-width="2"/><path d="M111 78L129 78" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="45" cy="23" r="9" fill="#DBB879" stroke="none" stroke-width="1"/><circle cx="197" cy="138" r="13" fill="#ACC7BB" stroke="none" stroke-width="1"/></svg></span></span></a>
-<a class="orbit-card" href="/o-ayiyi-dusunme.html" style="--dx:83%;--dy:817px;--ty:694px;--tilt:2deg" aria-label="O Ayıyı Düşünme. psikoloji oyununu aç" title="o ayıyı düşünme">
-<span class="retro-window retro-bear-window"><span class="retro-titlebar"><span class="retro-number">22</span><span class="retro-title">o ayıyı düşünme.exe</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture retro-bear-picture" aria-hidden="true"><img src="/beyaz-ayi-pixel.svg" width="240" height="160" alt="" loading="lazy"></span></span></a></div>
-
-<div class="desktop-taskbar" role="toolbar" aria-label="Masaüstü kontrolleri">
- <button class="desktop-start" type="button" aria-expanded="false" aria-controls="desktop-launcher" title="Oyunları aç">
-  <img src="./cat.webp" alt="" width="27" height="23" loading="lazy"><span>Başlat</span>
- </button>
- <span class="desktop-taskbar-divider" aria-hidden="true"></span>
- <span class="desktop-taskbar-label"><span class="desktop-live-dot"></span><span id="desktop-status">22 açık pencere</span></span>
- <span class="desktop-taskbar-spacer"></span>
- <button class="desktop-reset" type="button" title="Pencereleri eski yerine koy" aria-label="Pencereleri sıfırla">
-  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M5.2 9A7.5 7.5 0 0 1 18 7l2 5M4 12l2 5a7.5 7.5 0 0 0 12.8-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
- </button>
- <span class="desktop-clock mono" aria-label="Yerel saat">--:--</span>
-</div>
-<div class="desktop-launcher" id="desktop-launcher" hidden>
- <div class="desktop-launcher-heading"><span>OYUNLAR</span><span class="mono">22 DOSYA</span></div>
- <div class="desktop-launcher-list"></div>
-</div>
+<h1 class="sr-only">Küçük oyunlar — aynen.fun</h1>
+<section class="landing-hub" aria-label="aynen.fun kedisi">
+<img class="hub-cat" src="./cat.webp" alt="aynen.fun kedisi" width="230" height="198" fetchpriority="high">
+</section>
+<div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye"><button class="game-tile" type="button" data-game="nothing" style="--x:4%;--y:58px;--angle:-2deg" aria-label="Hiçbir Şey Yapma oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">01</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M44 71Q40 59 52 57H105Q115 57 115 71V80H44Z" /><rect x="49" y="78" width="62" height="12" rx="3" /><path d="M51 90L48 99" /><path d="M107 90L110 99" /><path d="M44 81H35V68Q35 60 43 60" /><path d="M115 80H123V66Q123 59 116 59" /><circle cx="117" cy="33" r="13" /><path d="M117 33L117 25" /><path d="M117 33L123 36" /></svg></span>
+<span class="game-name">Hiçbir Şey Yapma</span>
+</button>
+<button class="game-tile" type="button" data-game="no" style="--x:23%;--y:63px;--angle:1deg" aria-label="Hayır Diyebilir misin? oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">02</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="79" cy="55" r="32" /><text x="53" y="63" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="27" letter-spacing="-1">NO</text><path d="M43 27L35 19M117 83L126 93" stroke="#c78175"/></svg></span>
+<span class="game-name">Hayır Diyebilir misin?</span>
+</button>
+<button class="game-tile" type="button" data-game="paper" style="--x:42%;--y:54px;--angle:-1deg" aria-label="Bir Evrak Eksik oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">03</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="50" y="19" width="59" height="74" rx="3" /><path d="M94 19V33H109" /><path d="M61 44L94 44" /><path d="M61 53L94 53" /><rect x="61" y="65" width="19" height="17" rx="2" stroke-dasharray="4 3"/><text x="86" y="83" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="20">?</text></svg></span>
+<span class="game-name">Bir Evrak Eksik</span>
+</button>
+<button class="game-tile" type="button" data-game="message" style="--x:61%;--y:66px;--angle:1.4deg" aria-label="Bir Şey Soracağım oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">04</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M35 31Q35 23 45 23H114Q123 23 123 33V70Q123 79 113 79H69L51 91V79H45Q35 79 35 70Z" /><circle cx="59" cy="52" r="3" fill="#171717"/><circle cx="80" cy="52" r="3" fill="#171717"/><circle cx="101" cy="52" r="3" fill="#171717"/></svg></span>
+<span class="game-name">Bir Şey Soracağım</span>
+</button>
+<button class="game-tile" type="button" data-game="loading" style="--x:80%;--y:57px;--angle:-1.1deg" aria-label="Az Kaldı oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">05</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="80" cy="55" r="31" stroke="#e5e5e1" stroke-width="7"/><path d="M80 24A31 31 0 1 1 50 65" class="spin" stroke="#171717" stroke-width="7"/><text x="62" y="61" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="21">99</text><text x="91" y="59" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="11">%</text></svg></span>
+<span class="game-name">Az Kaldı</span>
+</button>
+<button class="game-tile" type="button" data-game="success" style="--x:4%;--y:201px;--angle:1.1deg" aria-label="Başarı Simülatörü oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">06</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M59 27H101V40Q101 64 80 69Q59 64 59 40Z" /><path d="M59 34H45Q43 51 63 55M101 34H115Q116 51 97 55" /><path d="M80 69L80 79" /><path d="M65 80L95 80" /><rect x="59" y="80" width="42" height="9" rx="1" /><text x="74" y="56" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="26">?</text></svg></span>
+<span class="game-name">Başarı Simülatörü</span>
+</button>
+<a class="game-tile is-color" href="/maas.html" style="--x:23%;--y:197px;--angle:-1.2deg" aria-label="Maaşın Kaç Saniyede Biter? oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">07</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="42" y="41" width="76" height="46" rx="7" /><rect x="96" y="56" width="32" height="22" rx="4" /><circle cx="110" cy="67" r="2" fill="#171717"/><path d="M48 41V31H104V40" /><path d="M45 20H58M52 14V26" stroke="#6a9d80"/></svg></span>
+<span class="game-name">Maaşın Kaç Saniyede Biter?</span>
+</a>
+<a class="game-tile" href="/burasidami.html" style="--x:61%;--y:196px;--angle:1.4deg" aria-label="İstanbul'a Bir Ağaç Dik oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">08</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M79 58L79 91" /><path d="M56 56Q48 49 55 41Q52 29 66 28Q70 15 82 23Q96 14 102 28Q118 31 112 44Q122 55 109 61Q97 68 89 61Q72 74 56 56Z" fill="#a6d6a8" stroke="#4d805d"/><rect x="31" y="79" width="16" height="15" rx="0" /><rect x="113" y="74" width="18" height="20" rx="0" /><path d="M26 95L135 95" /></svg></span>
+<span class="game-name">İstanbul'a Bir Ağaç Dik</span>
+</a>
+<a class="game-tile" href="/algoritma.html" style="--x:80%;--y:206px;--angle:-0.8deg" aria-label="Algoritma Sensin oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">09</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="80" cy="55" r="8" fill="#171717"/><path d="M55 46A30 30 0 0 1 103 30" /><path d="M98 24L105 31L96 33" /><path d="M106 62A30 30 0 0 1 60 81" /><path d="M66 85L58 81L65 75" /><text x="75" y="61" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#fff" font-size="16">•</text></svg></span>
+<span class="game-name">Algoritma Sensin</span>
+</a>
+<a class="game-tile" href="/sigdir.html" style="--x:4%;--y:342px;--angle:-0.7deg" aria-label="İstanbul'a Sığdır oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">10</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 92L139 92" /><rect x="29" y="60" width="21" height="32" rx="0" /><rect x="53" y="40" width="23" height="52" rx="0" /><rect x="80" y="52" width="20" height="40" rx="0" /><rect x="103" y="27" width="24" height="65" rx="0" /><path d="M63 49L63 53" /><path d="M63 63L63 67" /><path d="M112 37L112 41" /><path d="M112 50L112 54" /><path d="M39 67L39 71" /></svg></span>
+<span class="game-name">İstanbul'a Sığdır</span>
+</a>
+<a class="game-tile" href="/ofsaytimsi.html" style="--x:23%;--y:338px;--angle:1.2deg" aria-label="Ofsaytımsı oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">11</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="29" y="26" width="102" height="60" rx="2" /><path d="M80 26L80 86" stroke-dasharray="4 4"/><circle cx="80" cy="56" r="16" /><circle cx="99" cy="45" r="6" fill="#171717"/><path d="M96 42L101 48M101 42L96 48" stroke="#fff" stroke-width="1.7"/></svg></span>
+<span class="game-name">Ofsaytımsı</span>
+</a>
+<a class="game-tile" href="/omubumu.html" style="--x:61%;--y:344px;--angle:-1.3deg" aria-label="O mu Bu mu? oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">12</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="25" y="40" width="48" height="37" rx="6" /><rect x="87" y="40" width="48" height="37" rx="6" /><text x="42" y="65" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="22">A</text><text x="103" y="65" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="22">B</text><text x="76" y="64" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="17">?</text></svg></span>
+<span class="game-name">O mu Bu mu?</span>
+</a>
+<a class="game-tile is-color" href="/paranin-halleri.html" style="--x:80%;--y:335px;--angle:1deg" aria-label="Paranın Hâlleri oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">13</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="34" y="30" width="92" height="53" rx="3" stroke="#78977c"/><rect x="42" y="38" width="76" height="37" rx="3" stroke="#78977c"/><circle cx="80" cy="56" r="15" stroke="#78977c"/><text x="74" y="63" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="19" fill="#54795b">₺</text></svg></span>
+<span class="game-name">Paranın Hâlleri</span>
+</a>
+<a class="game-tile" href="/kaybolan-meslekler.html" style="--x:4%;--y:482px;--angle:0.8deg" aria-label="Kaybolan Meslekler oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">14</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="38" y="36" width="84" height="54" rx="4" /><path d="M50 49L110 49" /><text x="55" y="74" fill="#171717" stroke="none" font-family="Arial,sans-serif" font-size="14" font-weight="700" font-size="24">404</text><path d="M44 90L40 100M116 90L120 100" /></svg></span>
+<span class="game-name">Kaybolan Meslekler</span>
+</a>
+<a class="game-tile" href="/yasakli-miydi.html" style="--x:23%;--y:476px;--angle:-1deg" aria-label="Yasaklı mıydı? oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">15</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="80" cy="55" r="34" /><path d="M56 79L104 31" stroke="#ca6b65" stroke-width="4"/><rect x="69" y="41" width="22" height="28" rx="4" /></svg></span>
+<span class="game-name">Yasaklı mıydı?</span>
+</a>
+<a class="game-tile" href="/evden-cik.html" style="--x:42%;--y:487px;--angle:0.7deg" aria-label="Evden Çık oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">16</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="54" y="20" width="59" height="74" rx="1" /><path d="M63 30L103 22V88L63 82Z" /><circle cx="96" cy="57" r="2" fill="#171717"/><path d="M26 58H48M41 50L49 58L41 66" class="motion"/></svg></span>
+<span class="game-name">Evden Çık</span>
+</a>
+<a class="game-tile is-color" href="/evolution-machine.html" style="--x:61%;--y:481px;--angle:-0.8deg" aria-label="Evrimsel oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">17</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="39" cy="59" r="5" /><circle cx="61" cy="59" r="9" /><circle cx="90" cy="58" r="14" /><circle cx="124" cy="54" r="23" stroke="#609a72"/><circle cx="119" cy="49" r="3" fill="#609a72" stroke="none"/><path d="M111 65Q123 73 134 61" stroke="#609a72"/></svg></span>
+<span class="game-name">Evrimsel</span>
+</a>
+<a class="game-tile is-color" href="/ah-yasamak.html" style="--x:80%;--y:478px;--angle:1.2deg" aria-label="Ah Yaşamak Var Ya oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">18</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="80" cy="55" r="38" stroke="#73ab9a" stroke-width="3"/><circle cx="80" cy="55" r="15" fill="#b1d6c2" stroke="#5e9d84"/><circle cx="54" cy="52" r="5" /><circle cx="106" cy="41" r="5" /><circle cx="96" cy="81" r="4" /><path d="M60 74Q74 79 81 87" stroke="#73ab9a"/></svg></span>
+<span class="game-name">Ah Yaşamak Var Ya</span>
+</a>
+<a class="game-tile is-color" href="/einstein-ve-sen.html" style="--x:10%;--y:618px;--angle:-1deg" aria-label="Einstein ve Sen oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">19</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="84" cy="55" r="29" fill="#e9cc77" stroke="#957b3b"/><circle cx="72" cy="43" r="5" fill="#c5ab65" stroke="none"/><circle cx="95" cy="58" r="7" fill="#c5ab65" stroke="none"/><path d="M24 80Q76 103 136 47" stroke="#6c8fae" stroke-dasharray="5 4"/><circle cx="125" cy="53" r="5" fill="#7ba4cb" stroke="none"/></svg></span>
+<span class="game-name">Einstein ve Sen</span>
+</a>
+<a class="game-tile is-color" href="/fiziksel.html" style="--x:30%;--y:615px;--angle:1.2deg" aria-label="Fiziksel oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">20</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M36 92L127 92" /><circle cx="98" cy="34" r="15" fill="#efc86b" stroke="#a48b48"/><path d="M93 14L90 20M106 63L106 80" stroke-dasharray="3 6"/><path d="M99 70Q75 83 58 81" stroke="#b5b5b0" stroke-dasharray="4 5"/></svg></span>
+<span class="game-name">Fiziksel</span>
+</a>
+<a class="game-tile is-color" href="/ses-cikarma.html" style="--x:50%;--y:624px;--angle:-0.8deg" aria-label="Ses Çıkarma oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">21</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 55Q32 20 48 55T80 55T112 55T144 55" stroke="#518eb2"/><path d="M16 55Q32 90 48 55T80 55T112 55T144 55" stroke="#d08a81"/><path d="M18 55L142 55" stroke="#171717" stroke-width="1"/></svg></span>
+<span class="game-name">Ses Çıkarma</span>
+</a>
+<a class="game-tile is-color" href="/o-ayiyi-dusunme.html" style="--x:70%;--y:613px;--angle:1.3deg" aria-label="O Ayıyı Düşünme oyununu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">22</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration" fill="none" stroke="#171717" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="59" cy="36" r="14" /><circle cx="101" cy="36" r="14" /><path d="M50 46Q51 27 80 28Q109 27 111 47Q124 74 107 83Q94 96 80 96Q65 96 53 82Q38 69 50 46Z" fill="#fff"/><circle cx="66" cy="61" r="3" fill="#171717"/><circle cx="94" cy="61" r="3" fill="#171717"/><path d="M74 74Q80 69 86 74Q80 81 74 74Z" fill="#171717"/><path d="M75 84Q80 88 85 84" /></svg></span>
+<span class="game-name">O Ayıyı Düşünme</span>
+</a></div>
 </main>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Oyun penceresi"><div class="panel"><div class="modal-top mono"><span id="modal-label">AYNEN. / OYUN</span><button class="close" id="close" aria-label="Oyunu kapat">×</button></div><div class="stage" id="stage"></div><div class="mono" style="font-size:10px;color:#999;text-align:right" id="round">AYNEN.FUN / BETA</div></div></div>
@@ -336,144 +231,22 @@ let requested=new URLSearchParams(location.search).get('game');if(['nothing','no
 </script>
 
 
+
+
 <script>
-/* Desktop interactions are isolated from the six existing game engines. */
 (function(){
-  const desktop=document.querySelector('.desktop-scene');
-  if(!desktop)return;
-  const cards=Array.from(desktop.querySelectorAll('.orbit-card'));
-  const start=document.querySelector('.desktop-start');
-  const launcher=document.getElementById('desktop-launcher');
-  const launcherList=launcher.querySelector('.desktop-launcher-list');
-  const reset=document.querySelector('.desktop-reset');
-  const status=document.getElementById('desktop-status');
-  const clock=document.querySelector('.desktop-clock');
-  let topLayer=30;
-  const canDrag=()=>window.matchMedia('(min-width: 761px) and (pointer: fine)').matches;
-  function refreshStatus(){
-    const count=cards.filter(card=>!card.classList.contains('is-minimized')).length;
-    status.textContent=count+' açık pencere';
-  }
-  function focusWindow(card){
-    if(card.classList.contains('is-minimized'))return;
-    cards.forEach(c=>c.classList.remove('is-active'));
-    card.classList.add('is-active');
-    card.style.zIndex=String(++topLayer);
-  }
-  function restoreWindow(card){
-    card.classList.remove('is-minimized');
-    focusWindow(card);
-    refreshStatus();
-  }
-  function minimizeWindow(card){
-    card.classList.add('is-minimized');
-    card.classList.remove('is-active');
-    card.style.zIndex='3';
-    refreshStatus();
-  }
-  function setLauncher(open){
-    launcher.hidden=!open;
-    start.setAttribute('aria-expanded',String(open));
-  }
-  cards.forEach((card,i)=>{
-    const bar=card.querySelector('.retro-titlebar');
-    const close=card.querySelector('.retro-close');
-    const title=(card.querySelector('.retro-title')?.textContent||'oyun').trim();
-    card.dataset.shortTitle=title;
-    let blockClick=false;
-    let drag=null;
-    card.addEventListener('click',function(event){
-      if(blockClick){
-        event.preventDefault();event.stopImmediatePropagation();blockClick=false;return;
-      }
-      if(event.target.closest('.retro-close')){
-        event.preventDefault();event.stopImmediatePropagation();minimizeWindow(card);return;
-      }
-      if(card.classList.contains('is-minimized')){
-        event.preventDefault();event.stopImmediatePropagation();restoreWindow(card);return;
-      }
-      focusWindow(card);
-    },true);
-    card.addEventListener('pointerdown',()=>{if(!card.classList.contains('is-minimized'))focusWindow(card);},{passive:true});
-    card.addEventListener('keydown',event=>{
-      if((event.key==='Delete'||event.key==='Backspace')&&!card.classList.contains('is-minimized')){
-        event.preventDefault();minimizeWindow(card);
-      }
-    });
-    bar.addEventListener('pointerdown',event=>{
-      if(!canDrag()||event.button!==0||event.target.closest('.retro-close'))return;
-      const cardBounds=card.getBoundingClientRect();
-      const rootBounds=desktop.getBoundingClientRect();
-      drag={
-        id:event.pointerId,startX:event.clientX,startY:event.clientY,
-        baseX:parseFloat(card.style.getPropertyValue('--move-x'))||0,
-        baseY:parseFloat(card.style.getPropertyValue('--move-y'))||0,
-        bounds:cardBounds,root:rootBounds,moved:false
-      };
-      bar.setPointerCapture(event.pointerId);
-    });
-    bar.addEventListener('pointermove',event=>{
-      if(!drag||event.pointerId!==drag.id)return;
-      let dx=event.clientX-drag.startX,dy=event.clientY-drag.startY;
-      if(!drag.moved&&Math.hypot(dx,dy)<5)return;
-      if(!drag.moved){drag.moved=true;card.classList.add('is-dragging');focusWindow(card)}
-      dx=Math.max(drag.root.left+8-drag.bounds.left,Math.min(drag.root.right-8-drag.bounds.right,dx));
-      dy=Math.max(drag.root.top+8-drag.bounds.top,Math.min(drag.root.bottom-48-drag.bounds.bottom,dy));
-      card.style.setProperty('--move-x',(drag.baseX+dx)+'px');
-      card.style.setProperty('--move-y',(drag.baseY+dy)+'px');
-    });
-    const finish=event=>{
-      if(!drag||event.pointerId!==drag.id)return;
-      if(drag.moved){blockClick=true;setTimeout(()=>{blockClick=false},180)}
-      card.classList.remove('is-dragging');
-      drag=null;
-      if(bar.hasPointerCapture(event.pointerId))bar.releasePointerCapture(event.pointerId);
-    };
-    bar.addEventListener('pointerup',finish);
-    bar.addEventListener('pointercancel',finish);
-    const item=document.createElement('button');
-    item.type='button';
-    const number=document.createElement('span');
-    number.className='launcher-num';
-    number.textContent=String(i+1).padStart(2,'0');
-    const label=document.createElement('span');
-    label.textContent=title;
-    item.append(number,label);
-    item.addEventListener('click',()=>{
-      setLauncher(false);
-      if(card.classList.contains('is-minimized'))restoreWindow(card);
-      else card.click();
-    });
-    launcherList.append(item);
+ const scene=document.querySelector('.desktop-scene');
+ if(!scene)return;
+ let frame=0;
+ scene.addEventListener('pointermove',event=>{
+  if(event.pointerType==='touch'||window.matchMedia('(prefers-reduced-motion: reduce)').matches||frame)return;
+  frame=requestAnimationFrame(()=>{
+   const r=scene.getBoundingClientRect();
+   scene.style.setProperty('--cat-x',((event.clientX-r.left-r.width/2)/r.width*6).toFixed(1)+'px');
+   scene.style.setProperty('--cat-y',((event.clientY-r.top-r.height/2)/r.height*5).toFixed(1)+'px');
+   frame=0;
   });
-  start.addEventListener('click',()=>setLauncher(launcher.hidden));
-  document.addEventListener('pointerdown',event=>{
-    if(!launcher.hidden&&!launcher.contains(event.target)&&!start.contains(event.target))setLauncher(false);
-  });
-  document.addEventListener('keydown',event=>{if(event.key==='Escape')setLauncher(false)});
-  reset.addEventListener('click',()=>{
-    cards.forEach(card=>{
-      card.classList.remove('is-minimized','is-active','is-dragging');
-      card.style.removeProperty('--move-x');card.style.removeProperty('--move-y');card.style.removeProperty('z-index');
-    });
-    setLauncher(false);refreshStatus();
-  });
-  function updateClock(){
-    clock.textContent=new Intl.DateTimeFormat('tr-TR',{hour:'2-digit',minute:'2-digit'}).format(new Date());
-  }
-  updateClock();setInterval(updateClock,30000);
-  let frame=0;
-  desktop.addEventListener('pointermove',event=>{
-    if(event.pointerType==='touch'||window.matchMedia('(prefers-reduced-motion: reduce)').matches||frame)return;
-    frame=requestAnimationFrame(()=>{
-      const r=desktop.getBoundingClientRect();
-      desktop.style.setProperty('--cat-x',((event.clientX-r.left-r.width/2)/r.width*9).toFixed(1)+'px');
-      desktop.style.setProperty('--cat-y',((event.clientY-r.top-r.height/2)/r.height*6).toFixed(1)+'px');
-      frame=0;
-    });
-  },{passive:true});
-  refreshStatus();
+ },{passive:true});
 })();
 </script>
-
 </body></html>
