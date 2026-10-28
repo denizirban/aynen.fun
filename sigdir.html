@@ -100,7 +100,7 @@ main>.panel .actions button{min-height:36px;padding:8px 12px}
 .footer{padding-top:9px;font-size:9px}
 @media(max-width:650px){.wrap{padding:13px 13px 17px}.hero{display:block;margin:24px 0 13px}.hero h1{font-size:37px}.hero p{margin-top:6px;font-size:10px}.geo-svg{height:clamp(260px,42vh,370px)}.geo-head{padding:10px 13px}.geo-info,.geo-status{padding-left:13px;padding-right:13px}main>.panel .mainhead{padding:10px 14px 7px}main>.panel .pop{font-size:clamp(28px,8vw,39px)}main>.panel .year{font-size:34px}main>.panel .controls{padding:11px 14px 13px}main>.panel .chartnote{padding:0 14px 4px}.metric{padding:12px}.metric .n{font-size:23px}}
  .building-legend{margin-top:12px;font:400 10px/1.6 'DM Mono',monospace;color:#758674;background:#f1f6ef;padding:10px 13px;border-radius:6px}
-#buildings text{paint-order:stroke;stroke:#f5f8ef;stroke-width:2px;dominant-baseline:middle}
+#buildings text{paint-order:stroke;stroke:#f5f8ef;stroke-width:2px;dominant-baseline:middle}.historic-symbol text{opacity:.8}
 @media(max-width:650px){.building-legend{font-size:9px}}
 </style></head><body>
 <div class="wrap"><nav class="top"><a href="/">← aynen.fun</a><span>İSTANBUL / 1950–2025</span></nav>
@@ -127,7 +127,7 @@ main>.panel .actions button{min-height:36px;padding:8px 12px}
 <section class="panel metric"><div class="kicker">1950'DEN BERİ EKLENEN</div><div class="n" id="change">0</div><p id="changeText">İstanbul'da yaşayan kişi farkı.</p></section></div>
 <div class="extras"><details><summary>YERLEŞİM ALANI VERİSİNİ KEŞFET <span>＋</span></summary><div class="area-data"><p>İstanbul'un kentsel alanı için Döker'in yayımlanan dört ölçüm yılı. Farklı araştırmalardaki “kent alanı” tanımları birbiriyle karıştırılmadı.</p><div class="area-switch" id="areaButtons"><button type="button" data-year="1975" aria-pressed="true">1975</button><button type="button" data-year="1990" aria-pressed="false">1990</button><button type="button" data-year="2000" aria-pressed="false">2000</button><button type="button" data-year="2010" aria-pressed="false">2010</button></div><div class="kicker">YERLEŞİM ALANI · km²</div><div class="area-answer" id="area">337,77</div><p id="areaExplanation">1975 ölçümü · 33.777 hektar.</p></div></details></div>
 </main>
-<div class="building-legend">🏢 1 simge ≈ 100.000 kişi (toplam ilçe nüfusu). 2008–2025 arasında ara yıllar hesaplanmıştır. 2008 öncesi ilçelere özgü veri bulunmadığından simge gösterilmez; bu, bina olmadığı anlamına gelmez.</div>
+<div class="building-legend">🏘️ Tarihî yerleşim merkezleri: konum işareti, bina veya nüfus sayısı değil. 🏢 2008–2025: seçili 5 ilçede yaklaşık 100.000 kişi/simge (2008 ve 2025 nüfusları arasında hesaplanan ara değer). 2008 öncesi ilçe nüfus yoğunluğu ölçülmüş olarak gösterilmiyor.</div>
 <div class="sources">Nüfus: <a href="https://www.ibb.gov.tr/tr-TR/BilgiHizmetleri/Istatistikler/Documents/demografi/t211.pdf" target="_blank" rel="noopener">İBB / tarihsel sayımlar</a> ve <a href="https://data.tuik.gov.tr/Bulten/Index?p=Adrese-Dayali-Nufus-Kayit-Sistemi-Sonuclari-2025-53899" target="_blank" rel="noopener">TÜİK / ADNKS</a>. Ara yıllar doğrusal hesaplamadır; ölçülmüş veri değildir. Kent alanı: <a href="https://istanbultarihi.ist/22-istanbulun-cumhuriyet-donemi-mekansal-gelisimi" target="_blank" rel="noopener">Döker (İstanbul Tarihi'nde aktarıldığı şekliyle)</a>. Nüfus ile kent alanı farklı tanımlara dayanabilir.</div>
 <footer class="footer">AYNEN.FUN / ÖLÇÜLEN VERİ ÖLÇÜLMÜŞ, TAHMİN TAHMİN OLARAK GÖSTERİLİR.</footer></div>
 <script>(()=>{'use strict';
@@ -179,8 +179,19 @@ const DISTRICT_GROWTH={
 const foldName=name=>name.toLocaleUpperCase('tr-TR').replace(/İ/g,'I').replace(/Ş/g,'S').replace(/Ü/g,'U').replace(/Ö/g,'O').replace(/Ç/g,'C').replace(/Ğ/g,'G');
 const GROWTH=Object.fromEntries(Object.entries(DISTRICT_GROWTH).map(([k,v])=>[foldName(k),v]));
 const buildingLocations=[];
+// Historical settlement references, not district population measurements or building counts.
+// These long-established centers remain visible before the ADNKS district series starts.
+const HISTORIC_CENTERS=new Set(['FATIH','BEYOGLU','BESIKTAS','SISLI','USKUDAR','KADIKOY','BAKIRKOY','SARIYER','EYUPSULTAN','EYUP','ZEYTINBURNU','KARTAL','PENDIK','TUZLA','SILE','SILIVRI','CATALCA','BEYKOZ']);
+const historicLocations=[];
+function historicSymbol(cx,cy){
+const g=elem('g');g.setAttribute('transform','translate('+cx.toFixed(1)+' '+cy.toFixed(1)+')');g.setAttribute('class','historic-symbol');
+const t=elem('text');t.textContent='🏘️';t.setAttribute('text-anchor','middle');t.setAttribute('font-size','18');t.setAttribute('aria-hidden','true');g.appendChild(t);return g;
+}
+
 function showBuildings(){
 const yearShown=year;
+// Historic centers exist before 2008; icons are location cues, not counts.
+for(const symbol of historicLocations)symbol.style.opacity='1';
 for(const b of buildingLocations){
 // Icons visualize population at the selected year, not just growth above a 100k threshold.
 const fraction=Math.max(0,Math.min(1,(yearShown-2008)/17));
@@ -216,7 +227,7 @@ const latitudeScale=Math.cos((north+south)/2*Math.PI/180);
 const width=(east-west)*latitudeScale,height=north-south,scale=Math.min(840/width,340/height);
 const ox=(900-width*scale)/2,oy=(385-height*scale)/2;
 const project=p=>[ox+(p[0]-west)*latitudeScale*scale,oy+(north-p[1])*scale];
-const polygons=$('polygons');polygons.replaceChildren();$('labels').replaceChildren();$('buildings').replaceChildren();buildingLocations.length=0;
+const polygons=$('polygons');polygons.replaceChildren();$('labels').replaceChildren();$('buildings').replaceChildren();buildingLocations.length=0;historicLocations.length=0;
 let shown=0;
 for(const f of features){
 const name=String(f.properties.name||f.properties.NAME||f.properties.ilce||'İlçe');
@@ -232,6 +243,7 @@ const el=elem('path');el.setAttribute('d',path);el.setAttribute('class','distric
 function choose(){polygons.querySelectorAll('.selected').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');selectedGeo=name;$('selectedGeo').innerHTML='<strong>'+name.replace(/[<>&]/g,'')+'</strong> · güncel idari sınır';$('clearGeo').hidden=false;}
 el.addEventListener('click',choose);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose()}});
 polygons.appendChild(el);shown++;
+if(HISTORIC_CENTERS.has(foldName(name))){const old=historicSymbol(centerX/count,centerY/count);$('buildings').appendChild(old);historicLocations.push(old)}
 const values=GROWTH[foldName(name)];
 if(values){
 const iconGroup=elem('g');iconGroup.setAttribute('transform','translate('+(centerX/count).toFixed(1)+' '+(centerY/count).toFixed(1)+')');
