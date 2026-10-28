@@ -102,6 +102,11 @@ main>.panel .actions button{min-height:36px;padding:8px 12px}
  .building-legend{margin-top:12px;font:400 10px/1.6 'DM Mono',monospace;color:#758674;background:#f1f6ef;padding:10px 13px;border-radius:6px}
 #buildings text{paint-order:stroke;stroke:#f5f8ef;stroke-width:2px;dominant-baseline:middle}.historic-symbol text{opacity:.8}
 @media(max-width:650px){.building-legend{font-size:9px}}
+
+.era-strip{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 12px;border:1px solid #e2e8df;background:#f6f8f4;border-radius:7px;margin-top:11px;font:400 10px/1.55 'DM Mono',monospace;color:#869487}
+.era-strip .era-left{font-weight:500;color:#38573d}
+.building-legend{background:none!important;padding:7px 2px!important;margin-top:3px!important;font-size:9px!important;color:#99a599!important}
+@media(max-width:650px){.era-strip{display:block;font-size:9px}.era-strip span{display:block}.era-strip span+span{margin-top:4px}}
 </style></head><body>
 <div class="wrap"><nav class="top"><a href="/">← aynen.fun</a><span>İSTANBUL / 1950–2025</span></nav>
 <header class="hero"><h1>İstanbul’a Sığdır.</h1><p>İstanbul · 1950–2025 · Veriye dayalı deney</p></header>
@@ -127,7 +132,8 @@ main>.panel .actions button{min-height:36px;padding:8px 12px}
 <section class="panel metric"><div class="kicker">1950'DEN BERİ EKLENEN</div><div class="n" id="change">0</div><p id="changeText">İstanbul'da yaşayan kişi farkı.</p></section></div>
 <div class="extras"><details><summary>YERLEŞİM ALANI VERİSİNİ KEŞFET <span>＋</span></summary><div class="area-data"><p>İstanbul'un kentsel alanı için Döker'in yayımlanan dört ölçüm yılı. Farklı araştırmalardaki “kent alanı” tanımları birbiriyle karıştırılmadı.</p><div class="area-switch" id="areaButtons"><button type="button" data-year="1975" aria-pressed="true">1975</button><button type="button" data-year="1990" aria-pressed="false">1990</button><button type="button" data-year="2000" aria-pressed="false">2000</button><button type="button" data-year="2010" aria-pressed="false">2010</button></div><div class="kicker">YERLEŞİM ALANI · km²</div><div class="area-answer" id="area">337,77</div><p id="areaExplanation">1975 ölçümü · 33.777 hektar.</p></div></details></div>
 </main>
-<div class="building-legend">🏘️ Tarihî yerleşim merkezleri: konum işareti, bina veya nüfus sayısı değil. 🏢 2008–2025: seçili 5 ilçede yaklaşık 100.000 kişi/simge (2008 ve 2025 nüfusları arasında hesaplanan ara değer). 2008 öncesi ilçe nüfus yoğunluğu ölçülmüş olarak gösterilmiyor.</div>
+<div class="era-strip"><span class="era-left" id="eraLabel">1950 · Tarihî yerleşim merkezleri</span><span id="areaMilestone">1975 öncesi için karşılaştırılabilir kent alanı ölçümü yok.</span></div>
+<div class="building-legend">🏘️ Yerleşim merkezi işareti; tarihsel bina sayısı değildir. 🏢 Yalnızca 2008–2025 döneminde beş ilçenin tahmini nüfus ölçeğini simgeler; 1 bina ≈ 100.000 kişi. Ara yıllar hesaplanmıştır. Diğer ilçelerde simge olmaması yerleşim olmadığı anlamına gelmez.</div>
 <div class="sources">Nüfus: <a href="https://www.ibb.gov.tr/tr-TR/BilgiHizmetleri/Istatistikler/Documents/demografi/t211.pdf" target="_blank" rel="noopener">İBB / tarihsel sayımlar</a> ve <a href="https://data.tuik.gov.tr/Bulten/Index?p=Adrese-Dayali-Nufus-Kayit-Sistemi-Sonuclari-2025-53899" target="_blank" rel="noopener">TÜİK / ADNKS</a>. Ara yıllar doğrusal hesaplamadır; ölçülmüş veri değildir. Kent alanı: <a href="https://istanbultarihi.ist/22-istanbulun-cumhuriyet-donemi-mekansal-gelisimi" target="_blank" rel="noopener">Döker (İstanbul Tarihi'nde aktarıldığı şekliyle)</a>. Nüfus ile kent alanı farklı tanımlara dayanabilir.</div>
 <footer class="footer">AYNEN.FUN / ÖLÇÜLEN VERİ ÖLÇÜLMÜŞ, TAHMİN TAHMİN OLARAK GÖSTERİLİR.</footer></div>
 <script>(()=>{'use strict';
@@ -145,6 +151,19 @@ $('fill').setAttribute('d',path+'L775 300L56 300Z');
 function render(yr){
 year=Math.max(1950,Math.min(2025,Math.round(yr)));
 const pop=value(year),measured=P.some(a=>a[0]===year),delta=pop-P[0][1];
+const eras=[
+[1950,'Tarihî merkezler ve iki yaka'],
+[1973,'Birinci Boğaz Köprüsü'],
+[1988,'Fatih Sultan Mehmet Köprüsü'],
+[2000,'Metropolün çeperlere genişlemesi'],
+[2013,'Marmaray hizmete giriyor'],
+[2016,'Üçüncü Boğaz Köprüsü']
+];
+const era=eras.filter(e=>e[0]<=year).at(-1);
+$('eraLabel').textContent=year+' · '+era[1];
+const measuredAreaYears=[1975,1990,2000,2010];
+const lastArea=measuredAreaYears.filter(y=>y<=year).at(-1);
+$('areaMilestone').textContent=lastArea===undefined?'Kent alanı: ilk karşılaştırılabilir ölçüm 1975':(lastArea===year?'Kent alanı · '+A[lastArea].toLocaleString('tr-TR',{maximumFractionDigits:2})+' km² (ölçüm)':'Kent alanı · son ölçüm '+lastArea+': '+A[lastArea].toLocaleString('tr-TR',{maximumFractionDigits:2})+' km²');
 showBuildings();
 $('slider').value=year;$('year').textContent=year;$('pop').textContent=nf.format(pop);
 $('ratio').textContent='×'+fmt.format(pop/P[0][1]);$('change').textContent=(delta>=0?'+':'')+nf.format(delta);
@@ -253,7 +272,7 @@ if(['Fatih','Beşiktaş','Kadıköy','Üsküdar','Sarıyer','Silivri','Şile','B
 const text=elem('text');text.setAttribute('class','loc-label');text.setAttribute('x',(centerX/count).toFixed(1));text.setAttribute('y',(centerY/count).toFixed(1));text.setAttribute('text-anchor','middle');text.textContent=name;$('labels').appendChild(text);
 }
 }
-if(shown<25)throw Error('İlçe sınırları beklenen sayıda değil.');showBuildings();
+if(shown<35)throw Error('İlçe sınırları eksik: '+shown);showBuildings();
 $('geoStatus').textContent=shown+' güncel ilçe sınırı · kaynak: açık GeoJSON · çizim veri geometrisinden üretildi · tarihsel yapılaşma değildir.';
 }
 $('clearGeo').addEventListener('click',()=>{selectedGeo=null;document.querySelectorAll('.district-shape.selected').forEach(el=>el.classList.remove('selected'));$('selectedGeo').innerHTML='<strong>İlçe seç</strong> · sınırları keşfet';$('clearGeo').hidden=true});
