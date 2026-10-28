@@ -67,9 +67,41 @@ html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink)}body
 .geo-info button{border:0;background:none;font:500 10px 'DM Mono',monospace;color:#567357;text-decoration:underline}
 .geo-info button[hidden]{display:none}
 @media(max-width:650px){.geo-head{padding:12px 14px 9px}.geo-svg{height:300px}.geo-status{padding:9px 14px}.geo-info{padding:10px 14px}.geo-head .geo-sub{font-size:9px}}
+
+/* One-screen editorial atlas: geography above; year immediately beneath it. */
+.wrap{max-width:1040px;padding:14px 24px 18px}
+.hero{margin:24px 0 13px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.hero h1{font-size:clamp(32px,4.5vw,48px);line-height:1.02;margin:0}
+.hero p{font-size:11px}
+.geo-panel{margin-bottom:0;border-bottom:0;border-radius:9px 9px 0 0}
+.geo-head{padding:10px 18px 8px}
+.geo-svg{height:clamp(280px,40vh,420px)}
+.geo-info{padding:7px 18px}
+.geo-status{padding:7px 18px 8px;font-size:9px;min-height:0}
+main>.panel{border-radius:0 0 9px 9px;border-top:0}
+main>.panel .mainhead{padding:11px 20px 6px}
+main>.panel .pop{font-size:clamp(28px,3.8vw,44px);margin-top:4px}
+main>.panel .year{font-size:clamp(32px,4.1vw,47px)}
+main>.panel .chart{display:none}
+main>.panel .chartnote{padding:0 20px 4px;font-size:10px}
+main>.panel .controls{padding:12px 20px 14px;border:0}
+main>.panel .controls .row{margin-bottom:10px}
+main>.panel .ticks{margin-top:10px}
+main>.panel .actions{margin-top:13px}
+main>.panel .actions button{min-height:36px;padding:8px 12px}
+.metrics{margin-top:11px}
+.metric{padding:13px 18px}
+.metric .n{font-size:clamp(22px,3vw,33px);margin:6px 0 3px}
+.metric p{font-size:10px}
+.extras{margin-top:10px}
+.extras details{padding:0 16px}
+.extras summary{padding:11px 0}
+.sources{margin-top:12px;font-size:9px}
+.footer{padding-top:9px;font-size:9px}
+@media(max-width:650px){.wrap{padding:13px 13px 17px}.hero{display:block;margin:24px 0 13px}.hero h1{font-size:37px}.hero p{margin-top:6px;font-size:10px}.geo-svg{height:clamp(260px,42vh,370px)}.geo-head{padding:10px 13px}.geo-info,.geo-status{padding-left:13px;padding-right:13px}main>.panel .mainhead{padding:10px 14px 7px}main>.panel .pop{font-size:clamp(28px,8vw,39px)}main>.panel .year{font-size:34px}main>.panel .controls{padding:11px 14px 13px}main>.panel .chartnote{padding:0 14px 4px}.metric{padding:12px}.metric .n{font-size:23px}}
 </style></head><body>
 <div class="wrap"><nav class="top"><a href="/">← aynen.fun</a><span>İSTANBUL / 1950–2025</span></nav>
-<header class="hero"><h1>İstanbul'a<br>sığdır.</h1><p>75 yıl. Tek şehir. Gerçek nüfus verileri.</p></header>
+<header class="hero"><h1>İstanbul’a Sığdır.</h1><p>İstanbul · 1950–2025 · Veriye dayalı deney</p></header>
 <main>
 <section class="geo-panel" aria-label="İstanbul gerçek ilçe sınırları">
 <div class="geo-head"><span class="geo-title">İSTANBUL · ÇİZİM HARİTASI</span><span class="geo-sub">GÜNCEL COĞRAFYA</span></div>
