@@ -62,6 +62,11 @@ a{color:inherit;text-decoration:none}.mono{font-family:'DM Mono',monospace}
 .scene-scaffold:after{content:"OYUN DA KAPALI."}
 .scene-scaffold.visible{z-index:4}
 @media(max-width:720px){.stage-badge{top:8px;left:8px;padding:4px 5px;font-size:8px}.notice{min-height:31px}}
+
+/* Two tiny visual callbacks: an actual moving van, and the complaint receipt. */
+.scene svg #movingVan,.scene svg #petitionPaper{opacity:0;transition:opacity .4s ease;pointer-events:none}
+.scene svg #movingVan.visible,.scene svg #petitionPaper.visible{opacity:1}
+@media(prefers-reduced-motion:reduce){.scene svg #movingVan,.scene svg #petitionPaper{transition:none}}
 </style>
 </head>
 <body>
@@ -93,6 +98,27 @@ a{color:inherit;text-decoration:none}.mono{font-family:'DM Mono',monospace}
 <g data-show="5"><g stroke="#484848" stroke-width="2"><rect x="35" y="317" width="92" height="43" fill="#f5d789"/><path d="M35 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M35 317v43m127-317v0" opacity="0"/></g><g stroke="#484848" stroke-width="2"><rect x="128" y="317" width="92" height="43" fill="#f5d789"/><path d="M128 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M128 317v43m220-317v0" opacity="0"/></g><g stroke="#484848" stroke-width="2"><rect x="222" y="317" width="92" height="43" fill="#f5d789"/><path d="M222 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M222 317v43m314-317v0" opacity="0"/></g><g stroke="#484848" stroke-width="2"><rect x="720" y="317" width="92" height="43" fill="#f5d789"/><path d="M720 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M720 317v43m812-317v0" opacity="0"/></g><g stroke="#484848" stroke-width="2"><rect x="812" y="317" width="92" height="43" fill="#f5d789"/><path d="M812 317l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43m0-43l25 43" stroke="#b68834" stroke-width="6"/><path d="M812 317v43m904-317v0" opacity="0"/></g><rect x="290" y="373" width="168" height="36" rx="1" fill="#f8f6ef" stroke="#464646" stroke-width="2.5"/><text x="374" y="396" text-anchor="middle" font-size="15" font-family="monospace" font-weight="700" fill="#464646">YOL KAPALI</text></g>
 <g data-show="6"><rect x="329" y="48" width="314" height="310" fill="#deded7" stroke="#363636" stroke-width="3"/><rect x="320" y="39" width="334" height="13" fill="#c7c8c1" stroke="#363636" stroke-width="2"/><path d="M329 110h314M329 171h314M329 232h314M329 293h314" stroke="#676767" stroke-width="2"/><rect x="348" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="64" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="123" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="182" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="241" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="348" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="395" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="442" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="489" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="536" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="583" y="300" width="28" height="31" rx="1" fill="#f5f3ed" stroke="#40413e" stroke-width="1.5"/><rect x="438" y="301" width="88" height="57" fill="#b7bbad" stroke="#363636" stroke-width="2"/><path d="M438 301h88" stroke="#fff" stroke-width="4"/><rect x="653" y="200" width="103" height="87" rx="1" fill="#f8f4e8" stroke="#313131" stroke-width="3"/><path d="M665 222q-10-8 0-14q1-15 15-9q14-5 14 10q8 8-3 15z" fill="#a6bf98" stroke="#424940" stroke-width="2"/><path d="M680 217v14" stroke="#514b40" stroke-width="2"/><text x="705" y="229" font-family="sans-serif" font-size="13" font-weight="800" text-anchor="middle" fill="#424242">ORMAN</text><text x="705" y="246" font-family="sans-serif" font-size="13" font-weight="800" text-anchor="middle" fill="#424242">LIFE</text><path d="M678 260h54" stroke="#739268" stroke-width="3"/><text x="705" y="273" font-family="monospace" font-size="7" text-anchor="middle" fill="#777">DOĞAYLA İÇ İÇE</text></g>
 <g data-show="7"><rect x="0" y="336" width="960" height="28" fill="#f1d584" stroke="#333" stroke-width="2"/><path d="M-20 364l32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28m9 28 32-28" fill="none" stroke="#343434" stroke-width="10" opacity=".9"/><rect x="349" y="372" width="267" height="34" rx="2" fill="#fff" stroke="#363636" stroke-width="2"/><text x="483" y="394" font-family="monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#333">GEÇİCİ OLARAK</text></g>
+<g data-show="1" data-hide="3" id="drillWorker">
+<path d="M618 345q16-24 33-13" stroke="#353535" stroke-width="3" fill="none"/>
+<circle cx="652" cy="286" r="12" fill="#f0c48d" stroke="#444" stroke-width="2"/>
+<path d="M641 287q1-25 21-15l5 11h-28" fill="#f0d379" stroke="#444" stroke-width="2"/>
+<path d="M652 298v37m0-30-17 21m17-21 20 15m-20 15-12 21m12-21 15 21" stroke="#464646" stroke-width="5" fill="none" stroke-linecap="round"/>
+<path d="M630 324l12-4 6 23h-12z" fill="#c1bdbc" stroke="#444" stroke-width="2"/>
+<path d="M642 344v16m-7-10 14 0" stroke="#444" stroke-width="2"/>
+<path d="M608 330l-9-7m8 17-12-2m12 10-8 4" stroke="#555" stroke-width="2" fill="none"/>
+</g>
+<g id="movingVan">
+<rect x="252" y="324" width="74" height="29" rx="3" fill="#fff" stroke="#444" stroke-width="2.2"/>
+<path d="M326 333h15l12 14v6h-27z" fill="#f3dc9c" stroke="#444" stroke-width="2.2"/>
+<circle cx="274" cy="353" r="7" fill="#ddd" stroke="#444" stroke-width="2"/><circle cx="335" cy="353" r="7" fill="#ddd" stroke="#444" stroke-width="2"/>
+<text x="289" y="341" font-size="8" font-family="monospace" font-weight="700" text-anchor="middle" fill="#444">TAŞINDIM</text>
+</g>
+<g id="petitionPaper">
+<rect x="90" y="230" width="95" height="70" rx="3" fill="#fffdf8" stroke="#565656" stroke-width="2.5" transform="rotate(-6 137 265)"/>
+<text x="136" y="249" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#666">İLETİLDİ</text>
+<path d="M114 265h43m-43 7h35m-35 7h28" stroke="#a9a5a0" stroke-width="2"/>
+<text id="formCount" x="166" y="285" text-anchor="middle" font-family="monospace" font-size="11" fill="#666">×1</text>
+</g>
 </svg>
 </div><div id="sceneScaffold" class="scene-scaffold" aria-hidden="true"></div>
 <div class="scene-foot"><span id="area">YEŞİL ALAN: 1 AĞAÇ</span><span id="promise">BİTİŞ: BELLİ DEĞİL</span></div>
@@ -140,6 +166,9 @@ const done=stage===stories.length-1;
 scene.dataset.phase=String(stage);
 scene.querySelectorAll('[data-show]').forEach(el=>el.classList.toggle('visible',stage>=Number(el.dataset.show)));
 scene.querySelectorAll('[data-hide]').forEach(el=>el.classList.toggle('hidden',stage>=Number(el.dataset.hide)));
+$('movingVan').classList.toggle('visible',moves>0&&stage>=4);
+$('petitionPaper').classList.toggle('visible',complaints>0);
+$('formCount').textContent='×'+complaints;
 $('line').textContent=stage===4&&moves>0?'Yeni evin önü.':stories[stage][0];
 $('aside').textContent=stage===4&&moves>0?'Tam taşındığın gün yıkım başladı.':stories[stage][1];
 $('round').textContent=String(stage+1).padStart(2,'0')+' / '+String(stories.length).padStart(2,'0');
