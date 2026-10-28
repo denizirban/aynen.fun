@@ -1,0 +1,166 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fbfbfa"><meta name="description" content="Sen algoritmasın. İki tuş var. Geçmiş olsun."><meta property="og:title" content="Algoritma Sensin — aynen.fun"><meta property="og:description" content="DAHA ÇOK / DAHA AZ. Sonrası sana kalmış."><title>Algoritma Sensin — aynen.fun</title><link rel="icon" href="/favicon.ico?v=4"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
+:root{--ink:#20221f;--muted:#999b95;--line:#e5e7e2;--paper:#fbfbfa;--green:#bfe6b8}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink)}body{font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #6d9a64;outline-offset:3px}button:disabled{cursor:default}a{color:inherit;text-decoration:none}.mono{font-family:'DM Mono',monospace}
+.shell{min-height:100svh;max-width:1120px;margin:auto;padding:20px 30px;display:flex;flex-direction:column}
+nav{display:flex;align-items:center;justify-content:space-between;gap:10px;font:500 11px 'DM Mono',monospace}nav span{color:#a5aaa1}
+.head{margin:46px auto 25px;width:min(100%,820px)}
+.head h1{font-size:clamp(43px,7vw,83px);line-height:.98;letter-spacing:-.085em;margin:0 0 12px;font-weight:700}
+.head p{font-size:14px;color:#848982;margin:0;line-height:1.5}
+.game{width:min(100%,820px);margin:0 auto;flex:1;display:flex;flex-direction:column}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 2px;border-top:1px solid var(--line);font:400 11px 'DM Mono',monospace;color:#939890}
+.stream{height:8px;border-radius:20px;background:#e9ebe6;overflow:hidden}
+.stream>div{height:100%;width:0;background:#2d332b;transition:width .2s}
+.card{border:1px solid #dfe2dc;border-radius:12px;background:#fff;margin-top:24px;min-height:330px;display:flex;flex-direction:column;padding:31px clamp(23px,5vw,45px);box-shadow:0 10px 35px #2529250a;position:relative;overflow:hidden}
+.card .person{display:flex;align-items:center;gap:10px;font:500 12px 'DM Mono',monospace;color:#8c9488}
+.avatar{display:grid;place-items:center;width:34px;height:34px;border:1px solid #dfe5d8;background:#edf2e8;border-radius:50%;font-size:16px;color:#586d52}
+.card .user{font-weight:500;color:#6b7568}
+.card .since{margin-left:auto;color:#a3a7a1}
+.card h2{font-size:clamp(28px,5vw,47px);line-height:1.12;letter-spacing:-.065em;font-weight:650;margin:auto 0 15px;max-width:660px}
+.card .caption{font:400 12px/1.5 'DM Mono',monospace;color:#a1a6a0;max-width:580px}
+.card .tag{display:inline-flex;align-self:flex-start;margin-top:23px;font:500 10px 'DM Mono',monospace;border:1px solid #e3e7df;border-radius:5px;padding:7px 9px;color:#84917e}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.choice{min-height:63px;padding:13px;border:1.5px solid #1e231d;border-radius:8px;font-size:15px;font-weight:700;background:#1e231d;color:#fff}
+.choice.less{color:#1e231d;background:#fff}
+.choice:hover{transform:translateY(-1px)}
+.foot{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:18px 0 8px;color:#a0a69d;font:400 10px/1.5 'DM Mono',monospace}
+.signal{display:flex;align-items:center;gap:8px}
+.signal .dot{height:7px;width:7px;background:#b2b6ae;border-radius:50%}
+.signal .dot.live{background:#64b65c}
+.note{min-height:28px;margin-top:15px;text-align:center;font:400 12px/1.5 'DM Mono',monospace;color:#838a80}
+.result{display:none;border:1px solid #dfe2dc;border-radius:12px;background:white;margin-top:24px;min-height:360px;padding:40px 32px;text-align:center;flex-direction:column;justify-content:center;align-items:center;box-shadow:0 10px 35px #2529250a}
+.result.on{display:flex}.result h2{font-size:clamp(37px,6vw,69px);letter-spacing:-.075em;line-height:1.05;margin:15px auto 12px;max-width:650px}
+.result p{font-size:15px;color:#81867f;line-height:1.5;max-width:550px;margin:0 auto}
+.result .audit{margin:27px 0 20px;display:flex;gap:25px;justify-content:center;flex-wrap:wrap}
+.result .metric{font:500 11px 'DM Mono',monospace;color:#939a90}
+.result .metric strong{display:block;font:700 24px 'Space Grotesk',sans-serif;color:#272c26;margin-bottom:5px}
+.result .endactions{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+.result button{border:1px solid #292e28;border-radius:7px;background:#292e28;color:white;padding:12px 22px;font-size:13px;font-weight:700}
+.result button.secondary{background:white;color:#292e28}
+.footer{margin:35px auto 0;width:min(100%,820px);font:400 10px 'DM Mono',monospace;color:#b5b8b0;display:flex;justify-content:space-between;gap:10px}
+@media(max-width:620px){.shell{padding:16px 17px}.head{margin:53px 0 23px}.head h1{font-size:clamp(44px,11vw,70px)}.head p{font-size:13px}.card{min-height:300px;margin-top:19px;padding:24px 22px}.card h2{font-size:clamp(30px,8vw,43px)}.actions{gap:9px}.choice{min-height:58px;font-size:13px}.result{padding:27px 15px}.result .audit{gap:13px}.footer{margin-top:25px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body>
+<div class="shell">
+<nav><a href="/">← aynen.fun</a><span>OYUN 09 / ALGORİTMA</span></nav>
+<header class="head"><h1>Algoritma sensin.</h1><p>Birine ne izleteceğine karar veriyorsun. İki tuşun var.</p></header>
+<main class="game">
+<div class="topline"><span id="round">GÖNDERİ 01 / 12</span><span id="watcher">KULLANICI: SERKAN, 31</span></div>
+<div class="stream" aria-hidden="true"><div id="progress"></div></div>
+<section class="card" id="card" aria-live="polite"><div class="person"><div class="avatar" id="avatar">s.</div><span class="user" id="handle">@mahalle</span><span class="since" id="when">az önce</span></div><h2 id="headline">Sabah yine köprü kilit.</h2><div class="caption" id="subline">12 dakika yol, 47 dakika trafik.</div><span class="tag" id="tag">GÜNDEM</span></section>
+<div class="actions" id="actions"><button class="choice" id="more" type="button">DAHA ÇOK ↑</button><button class="choice less" id="less" type="button">DAHA AZ ↓</button></div>
+<div class="note" id="note" role="status" aria-live="polite">Bu sadece bir gönderi.</div>
+<section class="result" id="result" aria-live="polite"><div class="mono" style="color:#8f958d;font-size:11px" id="finalLabel">12 GÖNDERİ SONRA</div><h2 id="resultTitle">Biraz karıştı.</h2><p id="resultText"></p><div class="audit"><div class="metric"><strong id="moreCount">0</strong>DAHA ÇOK</div><div class="metric"><strong id="lessCount">0</strong>DAHA AZ</div><div class="metric"><strong id="topTopic">—</strong>AKIŞIN KONUSU</div></div><div class="endactions"><button id="restart" type="button">YENİDEN</button><button id="share" type="button" class="secondary">PAYLAŞ ↗</button></div></section>
+<div class="foot"><span class="signal"><i class="dot live" id="dot"></i><span id="system">ÖNERİ SİSTEMİ AKTİF</span></span><span>AYNEN.FUN / SİMÜLASYON</span></div>
+</main>
+<footer class="footer"><span>KURGUSAL KULLANICI, KURGUSAL AKIŞ.</span><span>BU İŞLER BÖYLE BAŞLIYOR.</span></footer>
+</div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const TOPICS=[
+{id:'traffic',label:'TRAFİK',seed:2,posts:[
+['Sabah yine köprü kilit.','12 dakika yol, 47 dakika trafik.','@yoldakaldim'],
+['Bu kavşaktan kim sorumlu?','Dördüncü gündür aynı yerdeyim.','@arabada'],
+['Trafik çözülmüyor çünkü...','Yorumlarda herkes biliyor.','@direksiyonda'],
+['Dün bu yol açıktı.','Bugün niye kapalı?','@yol_durumu'],
+['Trafiğin asıl sebebini bulduk.','Bir adam video çekmiş.','@abi_dinle'],
+['Şehir bir deney alanı mı?','Bu kavşak tesadüf olamaz.','@arastirdim']
+]},
+{id:'housing',label:'KİRA',seed:1,posts:[
+['Bu ev 38 bin mi?','Fotoğrafta pencere de yok.','@emlakbakiyorum'],
+['Aidat güncellenmiş.','Ben değişmedim, aidat değişti.','@apartman'],
+['Ev ilanlarında aynı fotoğraf.','Balkon başka binada çıktı.','@kiraci'],
+['Kira neden ayın 1’inde?','Bunu kim belirledi?','@bir_soru'],
+['Ev sahibinin attığı ses kaydı.','8 dakika. Henüz açmadım.','@bir_kiraci'],
+['Kira algoritması bizi tanıyor.','Aradığım evin fiyatı arttı.','@bakiyorum']
+]},
+{id:'market',label:'MARKET',seed:1,posts:[
+['Bir paket peynir 379 TL.','Bir de hafifmiş.','@kasadayim'],
+['Market fişini çerçevelettim.','Hatıra kalsın.','@sepet'],
+['Dün aldığım şey bugün daha pahalı.','Dün de pahalıydı.','@fiş'],
+['Etiket değişirken yakaladım.','Kasiyer de şaşırmış.','@raf_arasi'],
+['Fiyatların gizli saati var mı?','Her baktığımda oynuyor.','@fiyat'],
+['Şu barkodların sırrı ne?','Çok enteresan bir video var.','@barkodcu']
+]},
+{id:'group',label:'WHATSAPP',seed:1,posts:[
+['Apartman grubunda 86 mesaj.','Çöp saatini soracaktım.','@blok_c'],
+['“Arkadaşlar bir şey rica edeceğim.”','Son görülme: 03.12.','@yonetim'],
+['Kim grubu sessize aldı?','Yönetici merak etmiş.','@katmaliki'],
+['Apartman grubunda gizli grup.','Oraya da alınmamışım.','@blok_b'],
+['Bu mesaj neden silindi?','Kimse okumamış gibi yapıyor.','@yuksek_giris'],
+['Yönetici her şeyi önceden biliyor.','Geçen ay da böyle olmuş.','@yonetici_izle']
+]},
+{id:'life',label:'GÜNLÜK',seed:2,posts:[
+['Bugün hava güzelmiş.','Dışarı çıkınca fark ettim.','@mahalle'],
+['Kedim yine kutuya girmiş.','Kutu boştu.','@kedicim'],
+['İstanbul’da sakin bir sokak.','Yorumlarda kimse yerini söylemiyor.','@gezgin'],
+['Bir çay daha içeyim mi?','Üçüncü.','@demlik'],
+['Pazar kahvaltısı masası.','Ekmek unutulmuş.','@pazar'],
+['Deniz bugün çok güzel.','Sadece uzaktan baktık.','@sahil']
+]}
+];
+const META={
+traffic:{curious:'Trafik yine önüme düştü.',deep:'Her kavşak aynı hesaba çıkıyor.',end:'Serkan artık kavşaklara güvenmiyor.',label:'TRAFİK'},
+housing:{curious:'Ev ilanları birbirini takip ediyor.',deep:'Ev sahibinin ses kaydını analiz ediyor.',end:'Serkan artık ilan fotoğraflarını büyüteçle inceliyor.',label:'KİRA'},
+market:{curious:'Fişlerin peşine düştü.',deep:'Markete metreyle gidiyor.',end:'Serkan fişleri klasörlemeye başladı.',label:'MARKET'},
+group:{curious:'Grup mesajlarını geriye sardı.',deep:'Kim kimi gruba aldı, tablo çıkardı.',end:'Serkan apartman grubunun alt grubunu araştırıyor.',label:'WHATSAPP'},
+life:{curious:'Kedi videoları iyi geldi.',deep:'Serkan bir süre internete ara verdi.',end:'Serkan kedilere bakıyor. Normal.',label:'GÜNLÜK'}
+};
+const $topic=id=>TOPICS.find(t=>t.id===id);
+const TOTAL=12;
+let state=null,current=null;
+function reset(){
+state={turn:0,weights:Object.fromEntries(TOPICS.map(t=>[t.id,t.seed])),counts:Object.fromEntries(TOPICS.map(t=>[t.id,0])),last:'traffic',streak:0,more:0,less:0,intensity:0,history:[]};
+$('result').classList.remove('on');$('card').style.display='';$('actions').style.display='grid';$('note').textContent='Bu sadece bir gönderi.';$('system').textContent='ÖNERİ SİSTEMİ AKTİF';
+current={topic:'traffic',index:0};paint();
+}
+function rand(t){const n=(t*11+state.turn*7+3)%17;return n/17}
+function pick(){
+const weights=TOPICS.map(t=>Math.max(.35,state.weights[t.id]));
+const total=weights.reduce((a,b)=>a+b,0);let choice=rand(state.turn+state.more)*total;
+let topic=TOPICS[0].id;
+for(let i=0;i<TOPICS.length;i++){choice-=weights[i];if(choice<=0){topic=TOPICS[i].id;break}}
+const count=state.counts[topic]||0;
+const index=Math.min(5,Math.max(0,Math.floor(state.weights[topic]/3)+Math.floor(count/2)-1));
+return {topic,index:Math.min(5,index)};
+}
+function paint(){
+const t=$topic(current.topic),item=t.posts[current.index];
+$('round').textContent='GÖNDERİ '+String(state.turn+1).padStart(2,'0')+' / '+TOTAL;
+$('progress').style.width=(100*state.turn/TOTAL)+'%';
+$('handle').textContent=item[2];$('headline').textContent=item[0];$('subline').textContent=item[1];
+$('tag').textContent=t.label;$('avatar').textContent=item[2].replace('@','').slice(0,1).toUpperCase()+'.';
+$('when').textContent=['az önce','2 sa','dün'][state.turn%3];
+}
+function click(more){
+if(state.turn>=TOTAL)return;
+const topic=current.topic;
+state.counts[topic]++;
+state.history.push({topic,more});
+if(more){state.more++;state.weights[topic]=Math.min(35,state.weights[topic]+(2+state.streak*.8));state.weights.life=Math.max(.3,state.weights.life-.25);state.streak=state.last===topic?state.streak+1:1}
+else{state.less++;state.weights[topic]=Math.max(.25,state.weights[topic]*.45);state.streak=0}
+state.last=topic;state.turn++;
+const lead=Object.entries(state.weights).sort((a,b)=>b[1]-a[1])[0];
+const dominance=lead[1]/Object.values(state.weights).reduce((a,b)=>a+b,0);
+if(state.turn===TOTAL){finish();return}
+current=pick();
+const line=dominance>.75?'Akış biraz tek konuya döndü.':state.more>=6?'Serkan bir şeye sardı.':state.less>=5?'Serkan pek beğenmedi.':'Serkan kaydırıyor.';
+$('note').textContent=line;
+paint();
+}
+function finish(){
+$('progress').style.width='100%';$('card').style.display='none';$('actions').style.display='none';
+const ranked=Object.entries(state.weights).sort((a,b)=>b[1]-a[1]);const lead=ranked[0],topic=lead[0],meta=META[topic];
+const d=lead[1]/ranked.reduce((s,x)=>s+x[1],0);
+const echo=d>.67&&topic!=='life';
+const t=echo?'Tebrikler. Bir yankı odası yaptın.':state.more<=3?'Serkan hâlâ normal.':'Serkan biraz değişti.';
+const explanation=echo?meta.end+' Bir sonraki gönderi de aynı konuda.':d>.40?meta.curious+' Karşısına benzer şeyler çıkmaya devam ediyor.':meta.deep;
+$('resultTitle').textContent=t;$('resultText').textContent=explanation;
+$('moreCount').textContent=state.more;$('lessCount').textContent=state.less;$('topTopic').textContent=meta.label;
+$('note').textContent='Sistem sadece senin kararlarını büyüttü.';
+$('result').classList.add('on');$('system').textContent=echo?'YANKI ODASI TESPİT EDİLDİ':'AKIŞ TAMAMLANDI';
+}
+$('more').addEventListener('click',()=>click(true));$('less').addEventListener('click',()=>click(false));$('restart').addEventListener('click',reset);
+$('share').addEventListener('click',async()=>{const msg=$('resultTitle').textContent+' '+$('resultText').textContent;const url=location.origin+'/algoritma.html';try{if(navigator.share)await navigator.share({title:'Algoritma sensin — aynen.fun',text:msg,url});else if(navigator.clipboard){await navigator.clipboard.writeText(msg+' '+url);$('note').textContent='Kopyalandı.'}else window.prompt('Paylaş:',msg+' '+url)}catch(_){}});
+reset();
+})();
+</script></body></html>
