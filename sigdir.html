@@ -105,6 +105,15 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 .side{gap:15px}
 @media(max-width:960px){.side{grid-template-columns:1fr 1fr}.district-info,.compare{min-height:0}}
 @media(max-width:650px){.side{display:flex}.compare,.district-info{padding:19px}.city .district text{font-size:15px}}
+
+/* Swipe the city through time; retain vertical page scrolling and district taps. */
+.city{touch-action:pan-y;cursor:ew-resize;user-select:none;-webkit-user-select:none}
+.city.is-scrubbing{cursor:grabbing}
+.city .district{cursor:pointer}
+.gesture-hint{display:flex;justify-content:center;align-items:center;gap:8px;color:#567657;background:#eff5ea;border-top:1px solid #e1e9db;padding:11px 14px;font:500 11px 'DM Mono',monospace}
+.gesture-hint .hand{font-size:19px;line-height:1}
+.city.is-scrubbing [data-urban]{transition:none!important}
+@media(max-width:650px){.gesture-hint{font-size:10px;padding:10px 8px}}
 </style></head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
 <header class="hero"><div><h1>İstanbul'a<br>sığdır.</h1><p>1950'den bugüne. Aynı şehir, biraz daha kalabalık.</p></div><span class="hero-note">SÜRGÜYÜ SAĞA ÇEK ↗</span></header>
 <main class="dashboard">
@@ -142,6 +151,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <g class="district secondary" data-label-from="1985" aria-label="Kartal (konum işareti)"><circle cx="762" cy="391" r="3"/><text x="769" y="382">Kartal</text></g></g>
 <g class="district-label"><text x="95" y="85">AVRUPA</text><text x="713" y="84">ANADOLU</text><text x="439" y="450" fill="#9abbb7">MARMARA</text></g>
 </svg>
+<div class="gesture-hint"><span class="hand" aria-hidden="true">↔</span><span>HARİTAYI SAĞA / SOLA SÜRÜKLE · ZAMANDA GEZİN</span></div>
 <div class="map-ui"><span class="map-callout" id="mapHint">Semt konumları yaklaşık; belirme yılları haritadaki anlatım için.</span><button type="button" class="map-toggle" id="labelToggle" aria-pressed="true">SEMTLERİ GİZLE</button></div>
 <div class="legend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>GERÇEK HARİTA VERİSİ DEĞİL</span></div>
 <div class="time"><div class="time-line"><span class="kicker">YILI DEĞİŞTİR</span><span class="kicker" id="yearOnScale">1950</span></div>
@@ -256,6 +266,30 @@ $('jump').addEventListener('click',()=>{stop();render(2025)});
 $('play').addEventListener('click',()=>{if(timer){stop();return}if(year>=2025)render(1950);$('play').textContent='Ⅱ DURDUR';timer=setInterval(()=>{if(year>=2025){stop();return}render(year+1)},85)});
 document.querySelectorAll('[data-area]').forEach(b=>b.addEventListener('click',()=>setArea(+b.dataset.area)));
 $('labelToggle').addEventListener('click',()=>{showDistricts=!showDistricts;$('labelToggle').setAttribute('aria-pressed',String(showDistricts));$('labelToggle').textContent=showDistricts?'SEMTLERİ GİZLE':'SEMTLERİ GÖSTER';render(year)});
+
+const map=$('city');
+let scrub=null;
+function yearAt(clientX){const r=map.getBoundingClientRect();return Math.max(1950,Math.min(2025,Math.round(1950+(clientX-r.left)/r.width*75)))}
+map.addEventListener('pointerdown',e=>{
+if(e.button!==0||e.target.closest?.('.district'))return;
+stop();
+scrub={id:e.pointerId,x:e.clientX,y:e.clientY,startYear:year,active:false};
+});
+map.addEventListener('pointermove',e=>{
+if(!scrub||e.pointerId!==scrub.id)return;
+const dx=e.clientX-scrub.x,dy=e.clientY-scrub.y;
+if(!scrub.active&&Math.abs(dx)<7)return;
+if(!scrub.active&&Math.abs(dy)>Math.abs(dx)*1.25){scrub=null;return}
+if(!scrub.active){scrub.active=true;map.classList.add('is-scrubbing');try{map.setPointerCapture(e.pointerId)}catch(_){}}
+if(e.cancelable)e.preventDefault();
+const w=map.getBoundingClientRect().width;
+render(Math.max(1950,Math.min(2025,Math.round(scrub.startYear+dx/w*75))));
+});
+function endScrub(e){if(!scrub||e.pointerId!==scrub.id)return;const wasActive=scrub.active;scrub=null;map.classList.remove('is-scrubbing');if(wasActive){try{map.releasePointerCapture(e.pointerId)}catch(_){}}}
+map.addEventListener('pointerup',endScrub);map.addEventListener('pointercancel',endScrub);
+map.addEventListener('keydown',e=>{if(e.target!==map)return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();stop();render(Math.max(1950,Math.min(2025,year+(e.key==='ArrowRight'?1:-1))))}});
+map.setAttribute('tabindex','0');
+map.setAttribute('aria-label',"İstanbul temsili haritası. Parmağınızla yatay sürükleyerek veya ok tuşlarıyla yıllar arasında gezin.");
 window.addEventListener('pagehide',stop);paintGrid();render(1950);setArea(1975);
 })();
 </script></body></html>
