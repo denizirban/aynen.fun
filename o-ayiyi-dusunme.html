@@ -36,7 +36,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax
 .stage-play:after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 3px,#12092119 3px 4px);pointer-events:none}
 .stage-play.playing{background:radial-gradient(ellipse at 50% 45%,#39226e,#22143d 60%,#170e31 100%)}
 .hero-bear{position:relative;z-index:1;width:min(57%,380px);aspect-ratio:240/160;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 18px 27px #0a041d91);animation:bearFloat 3.6s ease-in-out infinite;user-select:none;pointer-events:none}
-.stage-play.playing .hero-bear,.stage-play.prep .hero-bear{display:none}
+.stage-play.playing .hero-bear{display:none}
 @keyframes bearFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(1deg)}}
 .big-prompt{position:relative;z-index:3;text-align:center;color:#fff;max-width:90%;pointer-events:none}
 .big-prompt[hidden],.hero-bear[hidden],.thinking[hidden]{display:none!important}
