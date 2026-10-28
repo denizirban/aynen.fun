@@ -71,18 +71,18 @@ function setMode(mode){
  $("stage-id").textContent=idle?"WHITE LAMB.exe / READY":sup?"WHITE LAMB.exe / SUPPRESS":rel?"WHITE LAMB.exe / RELEASE":mid?"WHITE LAMB.exe / INTERMISSION":"WHITE LAMB.exe / RESULTS";
  $("stage-state").textContent=active()?"DÜŞÜNCE GÖZLEMİ":end?"COMPLETE":mid?"TUR TAMAMLANDI":"SİSTEM AKTİF";
  if(idle){
-  $("mission").textContent="Bir kuzu düşünme.";
-  $("desc").textContent="20 saniye boyunca beyaz kuzuyu düşünmemeye çalış. Aklına geldiğinde dürüstçe butona bas.";
+  $("mission").textContent="Beyaz kuzuyu düşünme.";
+  $("desc").textContent="20 saniye boyunca beyaz kuzuyu düşünmemeye çalış. Aklına geldiğinde butona bas.";
   $("rule-no").textContent="01";
   $("rule-title").textContent="Aklına gelirse bildir.";
-  $("rule-copy").textContent="Her düşünce geldiğinde tek bir dokunuş. Skuzulacak olan sadece bildirdiklerin.";
+  $("rule-copy").textContent="Her düşünce geldiğinde tek bir dokunuş. Sayılacak olan sadece bildirdiklerin.";
   $("say").textContent="DÜŞÜNMEYE BAŞLAMADAN ÖNCE: BAŞLA.";
  }else if(sup){
-  $("mission").textContent="O kuzuyu düşünme.";
+  $("mission").textContent="Beyaz kuzuyu düşünme.";
   $("desc").textContent="Düşünceyi engellemeye çalış. Aklına geldikçe butona bas. Zile basmak kadar basit.";
   $("rule-no").textContent="01";
   $("rule-title").textContent="Beyaz kuzu aklına geldi mi?";
-  $("rule-copy").textContent="Evetse bas. Hkuzursa hiçbir şey yapma.";
+  $("rule-copy").textContent="Evetse bas. Hayırsa hiçbir şey yapma.";
   $("prompt-label").textContent="PLEASE DON'T THINK";
   $("prompt-title").textContent="Bomboş.";
   $("prompt-detail").textContent="HER ŞEY YOLUNDA. GÜYA.";
@@ -96,7 +96,7 @@ function setMode(mode){
   $("rule-copy").textContent="İkinci tur 12 saniye. Yine her kuzu düşüncesini işaretle.";
   $("summary-first").textContent=state.suppress+" düşünce";
   $("summary-second").textContent="bekliyor";
-  $("say").textContent="KUZUYI SERBEST BIRAKMA PROSEDÜRÜ HAZIR.";
+  $("say").textContent="KUZUYU SERBEST BIRAKMA PROSEDÜRÜ HAZIR.";
  }else if(rel){
   $("mission").textContent="Şimdi düşünebilirsin.";
   $("desc").textContent="Beyaz kuzuyu düşünmek serbest. Yine aklına her gelişinde butona bas.";
@@ -111,7 +111,7 @@ function setMode(mode){
  }else if(end){
   const d=state.release-state.suppress;
   $("mission").textContent=d>0?"Kuzu geri geldi.":d===0?"Kuzu hesabı eşitlendi.":"Kuzu bu tur daha az uğradı.";
-  $("desc").textContent=d>0?"Serbest turda daha fazla kuzu düşüncesi bildirdin. Geri tepme etkisini andırıyor; ama bu iki kısa tur neden-sonuç kanıtı değil.":d===0?"İki turda eşit skuzuda kuzu bildirdin. Düşünce bastırma herkeste aynı sonucu üretmez.":"Serbest turda daha az kuzu bildirdin. Düşünce bastırmanın geri tepme etkisi herkeste ortaya çıkmak zorunda değil.";
+  $("desc").textContent=d>0?"Serbest turda daha fazla kuzu düşüncesi bildirdin. Geri tepme etkisini andırıyor; ama bu iki kısa tur neden-sonuç kanıtı değil.":d===0?"İki turda eşit sayıda kuzu bildirdin. Düşünce bastırma herkeste aynı sonucu üretmez.":"Serbest turda daha az kuzu bildirdin. Düşünce bastırmanın geri tepme etkisi herkeste ortaya çıkmak zorunda değil.";
   $("rule-no").textContent="✓";
   $("rule-title").textContent="Rapor hazır. Kuzu güvende.";
   $("rule-copy").textContent="Kişilik testi değil. Beyin okuyucu hiç değil. Sadece senin bildirimlerin.";
