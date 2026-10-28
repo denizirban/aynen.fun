@@ -1,419 +1,103 @@
-<!doctype html>
-<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fbfbf9">
-<meta name="description" content="1950'den bugüne İstanbul'a kaç İstanbul sığdı? Gerçek nüfus verileriyle interaktif şehir deneyi.">
-<meta property="og:title" content="İstanbul'a Sığdır — aynen.fun"><meta property="og:description" content="Bir şehir. 75 yıl. 15,7 milyon insan.">
-<title>İstanbul'a Sığdır — aynen.fun</title><link rel="icon" href="/favicon.ico?v=4">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fbfbf9"><meta name="description" content="İstanbul'un 1950'den 2025'e nüfus değişimi. Ölçülmüş veriyle interaktif zaman yolculuğu.">
+<meta property="og:title" content="İstanbul'a Sığdır — aynen.fun"><title>İstanbul'a Sığdır — aynen.fun</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fbfbf9;--ink:#20231f;--soft:#92998e;--line:#e3e7de;--green:#abc39e;--blue:#c4e1e0}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink)}body{font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}
-button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #72a16d;outline-offset:3px}
-.mono{font-family:'DM Mono',monospace}
-.wrap{width:min(1290px,100%);margin:0 auto;padding:21px clamp(16px,4vw,56px) 28px;min-height:100svh;display:flex;flex-direction:column}
-.nav{display:flex;align-items:center;justify-content:space-between;font:500 11px 'DM Mono',monospace}.nav span{color:#adb1a8}
-.hero{display:flex;justify-content:space-between;gap:25px;align-items:end;margin:44px 0 26px}.hero h1{font-size:clamp(43px,6.4vw,86px);letter-spacing:-.09em;line-height:.96;margin:0 0 12px;font-weight:700}.hero p{color:#8d948b;font-size:14px;line-height:1.45;margin:0}.hero-note{white-space:nowrap;color:#9da49a;font:400 11px 'DM Mono',monospace;padding-bottom:5px}
-.dashboard{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(315px,.85fr);gap:20px}
-.panel{border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden}
-.primary{display:flex;flex-direction:column}
-.map-head{padding:21px 25px 12px;display:flex;justify-content:space-between;gap:12px;align-items:center}
-.kicker{font:500 10px 'DM Mono',monospace;color:#999e95;letter-spacing:.03em}
-.big-pop{font-size:clamp(32px,4.7vw,59px);font-weight:700;letter-spacing:-.07em;line-height:1.08;margin-top:10px;font-variant-numeric:tabular-nums}
-.growth{font:400 11px 'DM Mono',monospace;color:#7d967b;margin-top:6px}
-.year-badge{font:700 clamp(22px,4vw,45px) 'Space Grotesk',sans-serif;letter-spacing:-.075em;color:#bcc0b8}
-.city{width:100%;height:auto;display:block;aspect-ratio:940/480;background:#f4f6f1;overflow:hidden}
-.city [data-urban]{opacity:0;transition:opacity .2s ease}
-.city .city-outline{fill:#e6ebdf;stroke:#a9b8a4;stroke-width:2;stroke-dasharray:5 8}
-.city .water{fill:#c9e4e2}
-.city .artery{stroke:#e0e4db;stroke-width:7;fill:none;stroke-linecap:round}
-.city .fine-road{stroke:#e6e8e1;stroke-width:2;fill:none}
-.city .district-label{fill:#9da99a;font:500 14px 'DM Mono',monospace;letter-spacing:1.3px}
-.city .urban{fill:#789677}
-.city .urban2{fill:#9fb795}
-.city .accent{fill:#bbcfae}
-.legend{display:flex;justify-content:space-between;gap:14px;font:400 10px 'DM Mono',monospace;color:#a0a69b;padding:14px 25px;border-top:1px solid #eef0eb}
-.legend b{display:inline-block;height:9px;width:9px;background:#8aab83;margin-right:6px}
-.time{padding:21px 25px 25px;background:#fff}
-.time-line{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
-.range{appearance:none;width:100%;height:5px;border-radius:5px;background:#e6eae2;cursor:pointer;accent-color:#304d31;display:block}
-.range::-webkit-slider-thumb{appearance:none;height:21px;width:21px;border-radius:50%;background:#293d2a;border:4px solid #fff;box-shadow:0 0 0 1px #314632,0 2px 9px #3332}
-.ticks{display:flex;justify-content:space-between;color:#a2a69e;font:400 10px 'DM Mono',monospace;margin-top:14px}
-.play{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:24px}
-.play-btn{border:1px solid #29312a;background:#29312a;border-radius:7px;color:#fff;font-size:12px;font-weight:700;padding:12px 17px;min-height:42px}
-.play-btn.alt{background:#fff;color:#29312a;border-color:#dfe3dc}
-.play-note{font:400 10px 'DM Mono',monospace;color:#adb2a9;margin-left:auto}
-.side{display:flex;flex-direction:column;gap:20px}
-.fact{padding:24px;min-height:190px}
-.fact strong{display:block;font-size:clamp(26px,3vw,37px);font-weight:700;letter-spacing:-.075em;line-height:1.13;margin:15px 0 9px}
-.fact p{font-size:13px;color:#8d948c;line-height:1.55;margin:0}
-.space{padding:23px 24px;flex:1}
-.space-head{display:flex;justify-content:space-between;align-items:center}
-.space h2{font-size:19px;letter-spacing:-.06em;margin:15px 0 9px}
-.space p{color:#858e83;font-size:12px;line-height:1.5;margin:0}
-.buttons{display:flex;flex-wrap:wrap;gap:7px;margin:19px 0 20px}
-.buttons button{border:1px solid #dfe5da;border-radius:6px;padding:9px 12px;background:#fff;font:500 11px 'DM Mono',monospace;color:#747f70}
-.buttons button[aria-pressed=true]{background:#293d2a;color:#fff;border-color:#293d2a}
-.density{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 14px}
-.density .n{font-size:clamp(23px,2.7vw,34px);font-weight:700;letter-spacing:-.065em;line-height:1.12}
-.density .l{font:400 10px 'DM Mono',monospace;color:#9ba49a;margin-top:5px}
-.chip{font:400 11px/1.65 'DM Mono',monospace;color:#737f72;background:#f4f7f1;padding:12px;border-radius:6px}
-.footnote{margin-top:20px;display:flex;justify-content:space-between;gap:18px;align-items:center}
-.footnote .note{font:400 11px/1.6 'DM Mono',monospace;color:#a7ada4;max-width:760px}
-.links{display:flex;gap:12px;white-space:nowrap}.links a{color:#5d765d;font:500 10px 'DM Mono',monospace;text-decoration:underline;text-underline-offset:3px}
-@media(max-width:960px){.dashboard{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1.2fr}.hero-note{display:none}}
-@media(max-width:650px){.wrap{padding:16px 15px 22px}.hero{margin:42px 0 20px}.hero h1{font-size:clamp(42px,10.5vw,65px)}.hero p{font-size:12px}.dashboard{gap:12px}.side{display:flex;gap:12px}.map-head{padding:17px 16px 12px}.city{aspect-ratio:940/530}.legend{padding:11px 16px;font-size:9px}.time{padding:18px 16px 20px}.time-line{margin-bottom:12px}.ticks{font-size:9px}.play{margin-top:19px}.play-note{margin:0}.fact{min-height:0;padding:20px}.fact strong{font-size:28px}.space{padding:19px}.footnote{display:block}.links{margin-top:12px}.density .n{font-size:27px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
-
-/* Istanbul Atlas v2: labels are geographic references, not historical establishment dates. */
-.city .land-warm{fill:#e9ede3;opacity:.55}.city .land-cool{fill:#e4ede5;opacity:.45}
-.city .golden-horn{fill:none;stroke:#c9e4e2;stroke-width:18;stroke-linecap:round}
-.city .coast-line{fill:none;stroke:#9fbfba;stroke-width:1.6;opacity:.7}
-.city .island{fill:#e5eee2;stroke:#b2c7ae;stroke-width:2}
-.city .bosporus{fill:#c9e4e2;stroke:#a9cfca;stroke-width:2}
-.city .bridge{stroke:#f7f7f3;stroke-width:4;stroke-dasharray:3 4;fill:none}
-.city .sea-name{font:500 11px 'DM Mono',monospace;letter-spacing:2px;fill:#87aaa7}
-.city .district{cursor:default;opacity:.12;transition:opacity .32s ease}
-.city .district.is-visible{opacity:1}
-.city .district circle{fill:#5e805e;stroke:#fff;stroke-width:2.5}
-.city .district text{font:600 13px 'Space Grotesk',sans-serif;fill:#4c624c;paint-order:stroke;stroke:#f3f5f0;stroke-width:5;stroke-linejoin:round;letter-spacing:-.02em}
-.city .district.secondary text{font-size:11px;fill:#728370}
-.city .district.secondary circle{r:3}
-.city .district:focus-visible{outline:none;filter:drop-shadow(0 0 4px #749f77)}
-.map-ui{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 25px 15px}
-.map-toggle{border:1px solid #d6dfd2;border-radius:6px;background:#fff;padding:8px 10px;font:500 10px 'DM Mono',monospace;color:#65745e}
-.map-toggle[aria-pressed=false]{color:#979d95}
-.map-callout{font:400 10px/1.6 'DM Mono',monospace;color:#96a095}
-.timeline-story{min-height:37px;display:flex;align-items:center;gap:9px;margin:9px 0 0;font:400 11px/1.45 'DM Mono',monospace;color:#72816e}
-.timeline-story i{display:block;flex:0 0 7px;height:7px;background:#89ad7e;border-radius:50%}
-@media(max-width:650px){.city .district text{font-size:14px}.city .district.secondary text{font-size:12px}.map-ui{padding:0 16px 12px;align-items:start}.map-callout{font-size:9px}.timeline-story{font-size:10px;min-height:45px}}
-
-.city .district{cursor:pointer}.city .district.is-visible:hover circle,.city .district.selected circle{fill:#203c2b;stroke:#fff;stroke-width:3}
-.city .district.selected text{font-weight:800;fill:#253e28;stroke-width:6}
-.city .district:focus-visible circle{stroke:#213d28;stroke-width:4}
-.city .district:not(.is-visible){pointer-events:none}
-.compare{padding:23px 24px}.compare h2{font-size:20px;letter-spacing:-.055em;margin:13px 0 12px}
-.compare-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.compare-controls label{font:500 10px/2 'DM Mono',monospace;color:#9aa196}
-.compare-controls select{display:block;width:100%;border:1px solid #dfe5dc;border-radius:6px;background:#fff;padding:10px;color:#303d30;font:500 13px 'DM Mono',monospace}
-.compare-number{font-weight:700;font-size:clamp(25px,3vw,37px);letter-spacing:-.065em;margin:16px 0 5px;font-variant-numeric:tabular-nums}
-.compare-small{font:400 11px/1.5 'DM Mono',monospace;color:#879285}
-.spark{width:100%;height:82px;display:block;margin:12px 0 0}
-.district-info{padding:19px 24px;min-height:105px;background:#f9fbf7}
-.district-info strong{font-size:20px;letter-spacing:-.055em;display:block;margin:8px 0 5px}
-.district-info p{font-size:12px;line-height:1.55;color:#889487;margin:0}
-.district-info button{float:right;background:none;border:0;font:500 10px 'DM Mono',monospace;color:#70836b;text-decoration:underline}
-.side{gap:15px}
-@media(max-width:960px){.side{grid-template-columns:1fr 1fr}.district-info,.compare{min-height:0}}
-@media(max-width:650px){.side{display:flex}.compare,.district-info{padding:19px}.city .district text{font-size:15px}}
-
-/* Swipe the city through time; retain vertical page scrolling and district taps. */
-.city{touch-action:pan-y;cursor:ew-resize;user-select:none;-webkit-user-select:none}
-.real-map{touch-action:auto;cursor:grab}
-.city.is-scrubbing{cursor:grabbing}
-.city .district{cursor:pointer}
-.gesture-hint{display:flex;justify-content:center;align-items:center;gap:8px;color:#567657;background:#eff5ea;border-top:1px solid #e1e9db;padding:11px 14px;font:500 11px 'DM Mono',monospace}
-.gesture-hint .hand{font-size:19px;line-height:1}
-.city.is-scrubbing [data-urban]{transition:none!important}
-@media(max-width:650px){.gesture-hint{font-size:10px;padding:10px 8px}}
-
-.real-map{position:relative;height:clamp(340px,43vw,550px);background:#e6eeea}
-.real-map[hidden],.city[hidden]{display:none}
-#leafletMap{height:100%;width:100%;background:#e6eeea;z-index:0}
-.map-mode{display:flex;gap:6px;flex-wrap:wrap;padding:13px 25px 4px}
-.map-mode button{background:#fff;border:1px solid #dae2d8;border-radius:7px;padding:10px 12px;color:#687a65;font:500 11px 'DM Mono',monospace}
-.map-mode button[aria-pressed=true]{color:#fff;background:#314c34;border-color:#314c34}
-.data-state{font:400 10px/1.55 'DM Mono',monospace;color:#829183;padding:8px 25px 12px}
-.event-pill{background:#fffefcf0;border:1px solid #dce1d6;border-radius:7px;padding:12px 15px;font:500 11px/1.5 'DM Mono',monospace;color:#647365}
-.event-pill strong{display:block;font-weight:700;color:#283e2b;margin-bottom:3px}
-.real-map .leaflet-container{font-family:'Space Grotesk',sans-serif}
-.real-map .leaflet-control-attribution{font-size:9px}
-@media(max-width:650px){.real-map{height:420px}.map-mode{padding:11px 16px 4px}.data-state{padding:7px 16px 10px}}
-
-/* V5 editorial cleanup: one map, one timeline, details only on demand. */
-.wrap{max-width:1120px}
-.hero{margin:35px 0 24px}
-.dashboard{display:block}
-.primary{overflow:hidden}
-.map-head{padding:23px 27px 15px}
-.real-map{height:clamp(360px,48vw,570px);overflow:hidden;position:relative;isolation:isolate}
-#leafletMap{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
-.real-map .leaflet-container{height:100%;width:100%;overflow:hidden}
-.real-map .leaflet-control-zoom{box-shadow:none;border:1px solid #d8e1d6}
-.map-mode{padding:8px 27px 12px;gap:7px}
-.map-mode button{border-radius:6px;font-size:10px;padding:8px 11px}
-.data-state{padding:7px 27px 11px;font-size:9px;line-height:1.5}
-.gesture-hint{padding:9px 14px;font-size:10px}
-.map-ui{padding:6px 27px 11px}
-.legend{padding:9px 27px;font-size:9px}
-.time{padding:22px 27px 23px}
-.time .play{margin-top:16px}
-.side{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.side .fact{min-height:0;padding:22px}
-.side .district-info{min-height:0;padding:22px}
-.side .compare,.side .space{display:none}
-.side.details-open .compare,.side.details-open .space{display:block}
-.side.details-open{grid-template-columns:repeat(2,minmax(0,1fr))}
-.details-toggle{display:flex;align-items:center;justify-content:space-between;margin-top:15px;border:1px solid var(--line);border-radius:8px;padding:11px 17px;background:white;color:#445a45;font:500 11px 'DM Mono',monospace;min-height:43px}
-.details-toggle[aria-expanded=true]{background:#f3f7f0}
-.footnote{margin-top:19px}
-@media(max-width:960px){.side{grid-template-columns:1fr 1fr}.side.details-open{grid-template-columns:1fr 1fr}}
-@media(max-width:650px){.hero{margin:32px 0 18px}.map-head{padding:18px 16px 12px}.real-map{height:clamp(340px,85vw,480px)}.map-mode{padding:8px 16px 9px}.data-state{padding:7px 16px}.map-ui{padding:8px 16px}.legend{padding:8px 16px}.time{padding:18px 16px}.side,.side.details-open{display:flex;flex-direction:column}.side .fact,.side .district-info{padding:18px}.details-toggle{font-size:10px}}
-/* A single reliable SVG sketch map, with no asynchronously fetched map tiles. */
-.city{display:block;width:100%;max-width:100%;height:auto!important;min-height:0!important;aspect-ratio:940/480;overflow:hidden;touch-action:pan-y}
-.city .bridge{opacity:0;transition:opacity .2s}
-.primary{overflow:hidden}
-.gesture-hint{padding:10px 12px}
-@media(max-width:650px){.city{aspect-ratio:940/480;min-height:0!important;height:auto!important}}
-
-/* Compact atlas editorial pass */
-.wrap{max-width:1060px;padding-top:17px}.hero{margin:27px 0 17px}.hero h1{font-size:clamp(38px,5.7vw,68px);margin-bottom:7px}.hero p{font-size:12px}
-.map-head{padding:15px 21px 11px}.big-pop{font-size:clamp(30px,4.2vw,51px);margin-top:5px}.year-badge{font-size:clamp(23px,3vw,35px)}
-.time{padding:15px 21px 17px}.timeline-story{margin:7px 0 0;min-height:24px}.event-pill{padding:9px 11px;font-size:10px}
-.time .play{margin-top:10px}.legend{padding:7px 21px}.gesture-hint{padding:7px 10px}
-.map-ui{padding:8px 21px;align-items:center}.map-switches{display:flex;align-items:center;gap:6px;white-space:nowrap}.map-toggle{padding:7px 9px;font-size:9px}
-.map-toggle[aria-pressed=true]{background:#eef4ea;color:#365439;border-color:#cfddcb}
-.city .neighborhood{opacity:0;pointer-events:none;transition:opacity .18s}.city .neighborhoods.on .neighborhood{opacity:1;pointer-events:auto}
-.city .neighborhood circle{fill:#5b7866;stroke:white;stroke-width:1.5}.city .neighborhood text{font:500 9px 'DM Mono',monospace;fill:#576c59;paint-order:stroke;stroke:#f3f5f0;stroke-width:3px;stroke-linejoin:round}
-.city .neighborhood.selected circle{r:4;fill:#233d2a}.city .neighborhood.selected text{font-weight:700;fill:#24442b}
-.city .district text{font-size:12px}.city .district.secondary text{font-size:10px}
-.side{margin-top:11px}.side .fact,.side .district-info{padding:17px}.side .fact strong{font-size:26px;margin:8px 0 5px}
-.details-toggle{margin-top:11px}
-.footnote .note{font-size:10px;max-width:670px}
-@media(max-width:650px){.hero{margin:25px 0 15px}.hero h1{font-size:clamp(38px,10vw,56px)}.map-head{padding:14px 15px 10px}.map-ui{padding:8px 14px;flex-wrap:wrap}.map-callout{width:100%;font-size:9px}.map-switches{width:100%;justify-content:flex-start}.city .neighborhood text{font-size:13px}.city .district text{font-size:15px}.time{padding:14px 15px}.side .fact,.side .district-info{padding:16px}}
-
-/* One quiet place-name layer: primary districts always present, neighborhoods lighter. */
-.map-ui{padding:6px 21px 8px}.map-callout{font-size:9px}
-.city .neighborhoods.on .neighborhood{opacity:.75}
-.city .neighborhoods.on .neighborhood:hover,.city .neighborhoods.on .neighborhood.selected{opacity:1}
-.city .neighborhood text{font-size:9px;fill:#718473}
-.city .district text{font-weight:650}
-@media(max-width:650px){.map-ui{padding:5px 14px 7px}.city .neighborhood text{font-size:12px}}
-
-/* V7: single-location time lens, without inventing aerial imagery */
-.city{transition:view-box .5s}
-.focus-strip{display:none;align-items:center;justify-content:space-between;gap:12px;background:#f2f7ef;border-top:1px solid #e0e8dc;padding:11px 20px}
-.focus-strip.on{display:flex}
-.focus-strip strong{font-size:16px;letter-spacing:-.05em}
-.focus-strip span{display:block;font:400 10px/1.5 'DM Mono',monospace;color:#81907e;margin-top:2px}
-.focus-strip button{border:1px solid #c9d7c5;background:white;border-radius:6px;padding:9px 12px;color:#415e42;font:500 11px 'DM Mono',monospace}
-.focus-veil{opacity:0;pointer-events:none;transition:opacity .2s}
-.focus-veil.on{opacity:1}
-.focus-ring{fill:none;stroke:#365f41;stroke-width:3;stroke-dasharray:4 5;vector-effect:non-scaling-stroke}
-@media(max-width:650px){.focus-strip{padding:10px 13px}.focus-strip strong{font-size:14px}.focus-strip span{font-size:9px}}
-</style></head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
-<header class="hero"><div><h1>İstanbul'a<br>sığdır.</h1><p>1950'den bugüne. Aynı şehir, biraz daha kalabalık.</p></div><span class="hero-note">SÜRGÜYÜ SAĞA ÇEK ↗</span></header>
-<main class="dashboard">
-<section class="panel primary"><div class="map-head"><div><div class="kicker">İSTANBUL NÜFUSU</div><div class="big-pop" id="population" aria-live="off">1.166.477</div><div class="growth" id="growth">1950'ye göre ×1,0</div></div><div class="year-badge" id="yearLabel">1950</div></div>
-<svg class="city" id="city" viewBox="0 0 940 480" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="maptitle mapdesc" xmlns="http://www.w3.org/2000/svg">
-<title id="maptitle">İstanbul'un zamanla büyüyen, temsili yerleşim alanı</title><desc id="mapdesc">Bu harita gerçek bir yıl bazlı uydu tespiti değil, şehrin büyümesini anlatan şematik bir görselleştirmedir. Tarihsel nüfus verileri gerçektir.</desc>
-<rect width="940" height="480" fill="#f3f5f0"/><path class="city-outline" d="M22 180Q125 72 255 100T465 87Q665 26 842 107L928 170V351Q787 415 636 374T390 433Q157 414 20 333Z"/>
-<path class="water" d="M0 284Q160 247 255 284Q339 313 377 273Q408 246 430 218Q448 199 473 208Q492 214 497 244Q513 290 559 301Q650 331 750 279Q844 260 940 282V330Q860 313 761 324Q658 375 555 343Q493 331 468 282Q452 248 440 254Q426 256 411 277Q362 344 268 326Q153 293 0 326Z"/>
-<path d="M2 317Q154 285 267 307Q370 332 423 260Q451 232 473 261Q501 319 555 320Q657 363 757 302Q852 280 939 304" fill="none" stroke="#a8cbc6" stroke-width="2"/>
-<g class="artery"><path d="M48 195Q214 154 344 188T557 164T888 186"/><path d="M80 367Q257 356 383 378T619 361T875 354"/><path d="M153 116Q186 216 187 368"/><path d="M742 93Q705 203 753 369"/></g>
-<g class="fine-road"><path d="M40 231H400M512 223H896M45 146H910M45 399H896M300 95V409M615 78V404M844 112V364"/></g>
-<g id="geoFeatures" aria-hidden="true">
-<path class="golden-horn" d="M429 231Q404 214 379 214Q354 208 340 188Q325 179 296 182"/>
-<path class="coast-line" d="M5 282Q161 244 253 284Q343 317 387 265Q408 242 429 220M510 265Q558 333 669 324Q818 286 938 281"/>
-<path class="bosporus" d="M433 0Q413 44 442 76Q470 103 454 133Q439 159 450 184Q465 203 467 228L487 228Q491 203 486 182Q468 149 486 124Q502 97 475 65Q460 36 469 0Z"/>
-<path class="bridge" data-bridge-from="1973" d="M420 164L501 162"/><path class="bridge" data-bridge-from="1988" d="M432 107L492 106"/><path class="bridge" data-bridge-from="2016" d="M438 208L498 207"/>
-<path class="island" d="M764 441q12-12 28-5 8 10-2 17-19 6-26-12zM820 456q12-8 23 0 5 11-17 12zM869 427q7-8 18-3 7 9-4 14-14 3-14-11z"/>
-<text class="sea-name" x="719" y="454">ADALAR</text><text class="sea-name" x="488" y="50">BOĞAZ</text>
-</g>
-<g id="urbanCells"></g>
-<g id="focusLayer" class="focus-veil" aria-hidden="true"><circle class="focus-ring" id="focusCircle" cx="470" cy="240" r="52"/></g>
-<g id="districtLabels" aria-label="İstanbul'un referans semt ve ilçe konumları; dokunulabilir"><g class="district" data-label-from="1950" aria-label="Fatih (konum işareti)"><circle cx="359" cy="223" r="4"/><text x="366" y="214">Fatih</text></g>
-<g class="district" data-label-from="1950" aria-label="Beyoğlu (konum işareti)"><circle cx="387" cy="151" r="4"/><text x="394" y="142">Beyoğlu</text></g>
-<g class="district" data-label-from="1950" aria-label="Üsküdar (konum işareti)"><circle cx="535" cy="220" r="4"/><text x="542" y="211">Üsküdar</text></g>
-<g class="district" data-label-from="1950" aria-label="Beşiktaş (konum işareti)"><circle cx="454" cy="141" r="4"/><text x="461" y="132">Beşiktaş</text></g>
-<g class="district secondary" data-label-from="1960" aria-label="Şişli (konum işareti)"><circle cx="369" cy="107" r="3"/><text x="376" y="98">Şişli</text></g>
-<g class="district" data-label-from="1950" aria-label="Kadıköy (konum işareti)"><circle cx="595" cy="352" r="4"/><text x="602" y="343">Kadıköy</text></g>
-<g class="district" data-label-from="1970" aria-label="Bakırköy (konum işareti)"><circle cx="244" cy="347" r="4"/><text x="251" y="338">Bakırköy</text></g>
-<g class="district secondary" data-label-from="1970" aria-label="Sarıyer (konum işareti)"><circle cx="511" cy="78" r="3"/><text x="518" y="69">Sarıyer</text></g>
-<g class="district secondary" data-label-from="1985" aria-label="Ümraniye (konum işareti)"><circle cx="662" cy="153" r="3"/><text x="669" y="144">Ümraniye</text></g>
-<g class="district secondary" data-label-from="1980" aria-label="Maltepe (konum işareti)"><circle cx="696" cy="376" r="3"/><text x="703" y="367">Maltepe</text></g>
-<g class="district" data-label-from="1990" aria-label="Pendik (konum işareti)"><circle cx="817" cy="358" r="4"/><text x="824" y="349">Pendik</text></g>
-<g class="district secondary" data-label-from="1990" aria-label="Beylikdüzü (konum işareti)"><circle cx="99" cy="365" r="3"/><text x="106" y="356">Beylikdüzü</text></g>
-<g class="district" data-label-from="2000" aria-label="Ataşehir (konum işareti)"><circle cx="660" cy="268" r="4"/><text x="667" y="259">Ataşehir</text></g>
-<g class="district secondary" data-label-from="2000" aria-label="Başakşehir (konum işareti)"><circle cx="209" cy="128" r="3"/><text x="216" y="119">Başakşehir</text></g>
-<g class="district secondary" data-label-from="1985" aria-label="Kartal (konum işareti)"><circle cx="762" cy="391" r="3"/><text x="769" y="382">Kartal</text></g></g>
-<g id="neighborhoods" class="neighborhoods" aria-label="Yaklaşık mahalle ve semt konumları"><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Nişantaşı" aria-label="Nişantaşı, yaklaşık konum"><circle cx="402" cy="114" r="2.3"/><text x="407" y="109">Nişantaşı</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Cihangir" aria-label="Cihangir, yaklaşık konum"><circle cx="405" cy="170" r="2.3"/><text x="410" y="165">Cihangir</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Karaköy" aria-label="Karaköy, yaklaşık konum"><circle cx="410" cy="198" r="2.3"/><text x="415" y="193">Karaköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Balat" aria-label="Balat, yaklaşık konum"><circle cx="313" cy="204" r="2.3"/><text x="318" y="199">Balat</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Etiler" aria-label="Etiler, yaklaşık konum"><circle cx="476" cy="104" r="2.3"/><text x="481" y="99">Etiler</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Levent" aria-label="Levent, yaklaşık konum"><circle cx="435" cy="87" r="2.3"/><text x="440" y="82">Levent</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Ortaköy" aria-label="Ortaköy, yaklaşık konum"><circle cx="489" cy="163" r="2.3"/><text x="494" y="158">Ortaköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Moda" aria-label="Moda, yaklaşık konum"><circle cx="615" cy="378" r="2.3"/><text x="620" y="373">Moda</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Fenerbahçe" aria-label="Fenerbahçe, yaklaşık konum"><circle cx="641" cy="402" r="2.3"/><text x="646" y="397">Fenerbahçe</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Acıbadem" aria-label="Acıbadem, yaklaşık konum"><circle cx="573" cy="272" r="2.3"/><text x="578" y="267">Acıbadem</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Kozyatağı" aria-label="Kozyatağı, yaklaşık konum"><circle cx="683" cy="315" r="2.3"/><text x="688" y="310">Kozyatağı</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Bostancı" aria-label="Bostancı, yaklaşık konum"><circle cx="718" cy="395" r="2.3"/><text x="723" y="390">Bostancı</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Zekeriyaköy" aria-label="Zekeriyaköy, yaklaşık konum"><circle cx="535" cy="47" r="2.3"/><text x="540" y="42">Zekeriyaköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Florya" aria-label="Florya, yaklaşık konum"><circle cx="194" cy="369" r="2.3"/><text x="199" y="364">Florya</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Çengelköy" aria-label="Çengelköy, yaklaşık konum"><circle cx="555" cy="171" r="2.3"/><text x="560" y="166">Çengelköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Sultanahmet" aria-label="Sultanahmet, yaklaşık konum"><circle cx="380" cy="258" r="2.3"/><text x="385" y="253">Sultanahmet</text></g></g>
-<g class="district-label"><text x="95" y="85">AVRUPA</text><text x="713" y="84">ANADOLU</text><text x="439" y="450" fill="#9abbb7">MARMARA</text></g>
-</svg>
-<div class="focus-strip" id="focusStrip" aria-live="polite"><div><strong id="focusName">Kadıköy</strong><span>AYNI KONUM · FARKLI YILLAR · ÇİZİM HARİTA</span></div><button id="closeFocus" type="button">GENEL HARİTA ↗</button></div>
-<div class="gesture-hint"><span class="hand" aria-hidden="true">↔</span><span>HARİTAYI SÜRÜKLE · ZAMANDA GEZİN</span></div>
-<div class="map-ui"><span class="map-callout" id="mapHint">Konumlar yaklaşık · yapılaşma temsili</span></div>
-<div class="legend" id="mapLegend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>ÖLÇEK VE YAYILIM TEMSİLÎ</span></div>
-<div class="time"><div class="time-line"><span class="kicker">YILI DEĞİŞTİR</span><span class="kicker" id="yearOnScale">1950</span></div>
-<input id="timeline" class="range" type="range" min="1950" max="2025" step="1" value="1950" aria-label="Yıl: 1950 ile 2025 arasında"><div class="ticks"><span>1950</span><span>1970</span><span>1990</span><span>2010</span><span>2025</span></div>
-<div class="timeline-story" aria-live="polite"><i></i><span id="eraText">Tarihsel merkezler ve iki yaka.</span></div><div class="event-pill" id="eventPill" aria-live="polite"><strong>1950 · Ulaşım ağını keşfet</strong>Yılları değiştirince İstanbul'un dönüm noktaları burada gösterilir.</div>
-<div class="play"><button class="play-btn" id="play" type="button">▶ 75 YILI İZLE</button><button class="play-btn alt" id="jump" type="button">2025'E GİT ↗</button><span class="play-note">Ara yıllar tahminî · Şematik harita</span></div></div>
-</section>
-<button class="details-toggle" id="detailsToggle" type="button" aria-expanded="false">DAHA FAZLA VERİ GÖSTER <span>＋</span></button><aside class="side" id="sidePanels">
-<section class="panel fact"><div class="kicker">BİR ŞEHİR, KAÇ KAT?</div><strong id="factTitle">Daha yeni başlıyoruz.</strong><p id="factText">Kaydırıcıyı 2025'e götür. Aynı şehrin nüfusu kaç katına çıktı, bak.</p></section>
-<section class="panel district-info" id="districtInfo" aria-live="polite"><button id="clearDistrict" type="button" hidden>GERİ ↗</button><div class="kicker">HARİTADA BİR SEMT SEÇ</div><strong id="districtTitle">İstanbul'u keşfet.</strong><p id="districtDescription">Haritada görünen semt isimlerine dokun. Konumlar şematik; burada ilçe bazında tarihsel nüfus iddiası yok.</p></section>
-<section class="panel compare"><div class="kicker">DENEY 02 / İKİ YIL ARASINDA</div><h2>Kaç kişi eklendi?</h2><div class="compare-controls"><label>BAŞLANGIÇ<select id="compareFrom" aria-label="Karşılaştırma başlangıç yılı"></select></label><label>BİTİŞ<select id="compareTo" aria-label="Karşılaştırma bitiş yılı"></select></label></div><div class="compare-number" id="compareDifference">+14.587.576</div><div class="compare-small" id="compareExplanation">1950–2025 nüfus farkı</div><svg class="spark" id="spark" viewBox="0 0 320 82" preserveAspectRatio="none" aria-label="İstanbul yıllık nüfus eğrisi"><path id="sparkLine" fill="none" stroke="#638c63" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path id="sparkBaseline" fill="none" stroke="#d8e6d5" stroke-width="1.5"/></svg></section>
-<section class="panel space"><div class="space-head"><div class="kicker">DENEY 01 / SIĞAR MI?</div><div class="kicker">VARSAYIM</div></div><h2>Bugünkü İstanbul'u eski alana sığdır.</h2><p>2025 nüfusunu seçtiğin yılın yayımlanmış kent alanına yerleştir. Gereken ortalama yoğunluğu gör.</p>
-<div class="buttons" id="areas"><button data-area="1975" aria-pressed="true">1975</button><button data-area="1990" aria-pressed="false">1990</button><button data-area="2000" aria-pressed="false">2000</button><button data-area="2010" aria-pressed="false">2010</button></div>
-<div class="density"><div><div class="n" id="areaNum">337,77</div><div class="l">KENT ALANI / km²</div></div><div><div class="n" id="densityNum">46.640</div><div class="l">GEREKLİ KİŞİ / km²</div></div></div>
-<div class="chip" id="experiment">2025 nüfusu, 1975'in yayımlanmış kent alanında: km² başına yaklaşık 46.640 kişi. Sadece matematiksel deney.</div>
-</section></aside></main>
-<div class="footnote"><div class="note">Nüfus: TÜİK tarihsel seri ve ADNKS. Ölçüm dönemleri karşılaştırılırken idari tanım ve yöntem farklılıkları dikkate alınmalıdır. Ölçüm olmayan ara yıllarda doğrusal enterpolasyon kullanılır. Kent alanı: Döker'in 1975–2010 ölçümleri, İstanbul Tarihi'nde aktarıldığı şekliyle. Alan tanımları nüfusun il sınırlarıyla birebir eşleşmeyebilir. Harita gerçek yapılaşma sınırı değildir.</div>
-<div class="links"><a href="https://unstats.un.org/unsd/demographic/meetings/wshops/Turkey/2015/docs/Presentations/Session15-Turkstat_overview_ENG.pdf" target="_blank" rel="noopener">TÜİK TARİHSEL ↗</a><a href="https://data.tuik.gov.tr/Bulten/Index?p=Adrese-Dayali-Nufus-Kayit-Sistemi-Sonuclari-2025-53899" target="_blank" rel="noopener">2025 ↗</a><a href="https://istanbultarihi.ist/22-istanbulun-cumhuriyet-donemi-mekansal-gelisimi" target="_blank" rel="noopener">KENT ALANI ↗</a></div></div></div>
-<script>
-(()=>{'use strict';
+:root{--paper:#fbfbf9;--ink:#232a24;--line:#e3e8df;--muted:#818b80;--green:#47694a}*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink)}body{font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #78a077;outline-offset:4px}
+.mono{font-family:'DM Mono',monospace}.wrap{width:min(960px,100%);margin:auto;padding:22px 28px 26px;min-height:100svh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;font:500 11px 'DM Mono',monospace}.top span{color:#a0a89f}
+.hero{margin:54px 0 28px}.hero h1{font-size:clamp(48px,8vw,90px);letter-spacing:-.09em;line-height:.95;margin:0 0 13px}.hero p{font-size:14px;color:#929a91;margin:0}
+.panel{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.mainhead{display:flex;justify-content:space-between;align-items:end;gap:14px;padding:26px 30px 15px}
+.kicker{font:500 10px 'DM Mono',monospace;color:#929d91;letter-spacing:.04em}
+.pop{font-size:clamp(38px,6vw,67px);font-weight:700;letter-spacing:-.075em;line-height:1.08;margin-top:9px;font-variant-numeric:tabular-nums}
+.year{font-size:clamp(37px,6vw,68px);font-weight:700;letter-spacing:-.075em;color:#c2ccc0}
+.chart{height:360px;position:relative;padding:15px 28px 0;touch-action:pan-y;cursor:ew-resize;user-select:none;overflow:hidden}
+.chart svg{width:100%;height:100%;display:block}
+.chart .gridline{stroke:#edf0ea;stroke-width:1}
+.chart .axislabel{font:400 11px 'DM Mono',monospace;fill:#9da69b}
+.chart .area{fill:#dfeadc}
+.chart .line{fill:none;stroke:#517b55;stroke-width:3;vector-effect:non-scaling-stroke}
+.chart .guide{stroke:#283d2c;stroke-width:1.5;stroke-dasharray:4 5}
+.chart .point{fill:#355a3a;stroke:#fff;stroke-width:3}
+.chartnote{padding:0 29px 18px;font:400 11px/1.6 'DM Mono',monospace;color:#879488}
+.controls{padding:20px 30px 23px;border-top:1px solid var(--line)}
+.controls .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}
+.range{appearance:none;width:100%;height:5px;border-radius:5px;background:#e5ebe3;cursor:pointer}
+.range::-webkit-slider-thumb{appearance:none;width:22px;height:22px;border:4px solid #fff;background:#2e5032;border-radius:50%;box-shadow:0 0 0 1px #2e5032}
+.range::-moz-range-thumb{width:16px;height:16px;border:4px solid #fff;background:#2e5032;border-radius:50%}
+.ticks{display:flex;justify-content:space-between;margin-top:14px;font:400 10px 'DM Mono',monospace;color:#a1aaa0}
+.actions{display:flex;gap:9px;align-items:center;margin-top:21px}
+.actions button{padding:11px 15px;border:1px solid #d9e2d8;background:white;border-radius:6px;color:#445a46;font:500 11px 'DM Mono',monospace;min-height:43px}
+.actions button:first-child{background:#2e4a32;color:#fff;border-color:#2e4a32}
+.actions .source-tag{margin-left:auto;font:400 10px 'DM Mono',monospace;color:#9da59b}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}.metric{padding:22px 24px}
+.metric .n{font-size:clamp(24px,3.8vw,42px);font-weight:700;letter-spacing:-.068em;margin:11px 0 5px}
+.metric p{font-size:12px;line-height:1.6;color:#889388;margin:0}
+.extras{margin-top:15px}
+.extras details{border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 22px}
+.extras summary{cursor:pointer;list-style:none;padding:16px 0;font:500 11px 'DM Mono',monospace;color:#506a52;display:flex;justify-content:space-between}
+.extras summary::-webkit-details-marker{display:none}
+.area-data{padding:3px 0 20px}.area-data p{font-size:12px;color:#8a958a;line-height:1.6}
+.area-switch{display:flex;gap:7px;flex-wrap:wrap;margin:17px 0}.area-switch button{border:1px solid #dae4d8;background:#fff;border-radius:5px;padding:10px 14px;font:500 11px 'DM Mono',monospace;color:#5a725a}
+.area-switch button[aria-pressed=true]{background:#35543b;color:white;border-color:#35543b}
+.area-answer{font-size:clamp(27px,4vw,45px);font-weight:700;letter-spacing:-.07em}
+.sources{font:400 10px/1.7 'DM Mono',monospace;color:#a0aaa1;margin-top:20px}.sources a{text-decoration:underline;text-underline-offset:3px;color:#607c60}
+.footer{margin-top:auto;padding-top:22px;font:400 10px 'DM Mono',monospace;color:#b0b6af}
+@media(max-width:650px){.wrap{padding:17px 15px}.hero{margin:45px 0 21px}.hero h1{font-size:clamp(45px,11vw,69px)}.hero p{font-size:12px}.mainhead{padding:20px 18px 12px}.pop{font-size:clamp(33px,8.5vw,49px)}.year{font-size:37px}.chart{height:280px;padding:10px 8px 0}.chartnote{padding:0 17px 14px;font-size:10px}.controls{padding:17px 18px 20px}.metrics{gap:9px}.metric{padding:17px 15px}.metric .n{font-size:clamp(23px,6vw,34px)}.metric p{font-size:11px}.actions{flex-wrap:wrap}.actions .source-tag{width:100%;margin:2px 0 0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="wrap"><nav class="top"><a href="/">← aynen.fun</a><span>İSTANBUL / 1950–2025</span></nav>
+<header class="hero"><h1>İstanbul'a<br>sığdır.</h1><p>75 yıl. Tek şehir. Gerçek nüfus verileri.</p></header>
+<main>
+<section class="panel"><div class="mainhead"><div><div class="kicker">İSTANBUL NÜFUSU</div><div class="pop" id="pop">1.166.477</div></div><div class="year" id="year">1950</div></div>
+<div class="chart" id="chart" aria-label="İstanbul nüfusu. Sağa sola sürükleyerek yılları değiştir.">
+<svg viewBox="0 0 800 330" role="img" aria-label="1950 ile 2025 arası nüfus eğrisi" preserveAspectRatio="none">
+<path class="gridline" d="M56 40H775M56 108H775M56 176H775M56 244H775M56 300H775"/>
+<text class="axislabel" x="7" y="42">16M</text><text class="axislabel" x="13" y="110">12M</text><text class="axislabel" x="19" y="178">8M</text><text class="axislabel" x="19" y="246">4M</text><text class="axislabel" x="27" y="303">0</text>
+<path id="fill" class="area"/><path id="line" class="line"/><line id="guide" class="guide"/><circle id="point" class="point" r="6"/>
+</svg></div>
+<div class="chartnote" id="note">1950 genel nüfus sayımı · 1.166.477 kişi</div>
+<div class="controls"><div class="row"><span class="kicker">ZAMANDA GEZİN</span><span class="kicker" id="mode">ÖLÇÜLEN YIL</span></div>
+<input class="range" id="slider" type="range" min="1950" max="2025" value="1950" step="1" aria-label="Yıl seçimi"><div class="ticks"><span>1950</span><span>1970</span><span>1990</span><span>2010</span><span>2025</span></div>
+<div class="actions"><button id="play">▶ OYNAT</button><button id="latest">2025'E GİT</button><span class="source-tag">SÜRÜKLE VEYA YILI SEÇ</span></div></div></section>
+<div class="metrics"><section class="panel metric"><div class="kicker">1950'YE GÖRE</div><div class="n" id="ratio">×1,0</div><p>İstanbul nüfusu kaç katına çıktı?</p></section>
+<section class="panel metric"><div class="kicker">1950'DEN BERİ EKLENEN</div><div class="n" id="change">0</div><p id="changeText">İstanbul'da yaşayan kişi farkı.</p></section></div>
+<div class="extras"><details><summary>YERLEŞİM ALANI VERİSİNİ KEŞFET <span>＋</span></summary><div class="area-data"><p>İstanbul'un kentsel alanı için Döker'in yayımlanan dört ölçüm yılı. Farklı araştırmalardaki “kent alanı” tanımları birbiriyle karıştırılmadı.</p><div class="area-switch" id="areaButtons"><button type="button" data-year="1975" aria-pressed="true">1975</button><button type="button" data-year="1990" aria-pressed="false">1990</button><button type="button" data-year="2000" aria-pressed="false">2000</button><button type="button" data-year="2010" aria-pressed="false">2010</button></div><div class="kicker">YERLEŞİM ALANI · km²</div><div class="area-answer" id="area">337,77</div><p id="areaExplanation">1975 ölçümü · 33.777 hektar.</p></div></details></div>
+</main>
+<div class="sources">Nüfus: <a href="https://www.ibb.gov.tr/tr-TR/BilgiHizmetleri/Istatistikler/Documents/demografi/t211.pdf" target="_blank" rel="noopener">İBB / tarihsel sayımlar</a> ve <a href="https://data.tuik.gov.tr/Bulten/Index?p=Adrese-Dayali-Nufus-Kayit-Sistemi-Sonuclari-2025-53899" target="_blank" rel="noopener">TÜİK / ADNKS</a>. Ara yıllar doğrusal hesaplamadır; ölçülmüş veri değildir. Kent alanı: <a href="https://istanbultarihi.ist/22-istanbulun-cumhuriyet-donemi-mekansal-gelisimi" target="_blank" rel="noopener">Döker (İstanbul Tarihi'nde aktarıldığı şekliyle)</a>. Nüfus ile kent alanı farklı tanımlara dayanabilir.</div>
+<footer class="footer">AYNEN.FUN / ÖLÇÜLEN VERİ ÖLÇÜLMÜŞ, TAHMİN TAHMİN OLARAK GÖSTERİLİR.</footer></div>
+<script>(()=>{'use strict';
 const $=id=>document.getElementById(id);
 const P=[[1950,1166477],[1955,1533822],[1960,1882092],[1965,2293823],[1970,3019032],[1975,3904588],[1980,4741890],[1985,5842985],[1990,7309190],[2000,10018735],[2007,12573836],[2008,12697164],[2009,12915158],[2010,13255685],[2011,13624240],[2012,13854740],[2013,14160467],[2014,14377018],[2015,14657434],[2016,14804116],[2017,15029231],[2018,15067724],[2019,15519267],[2020,15462452],[2021,15840900],[2022,15907951],[2023,15655924],[2024,15701602],[2025,15754053]];
 const A={1975:337.77,1990:605.12,2000:713.32,2010:899.77};
-const nf=new Intl.NumberFormat('tr-TR'),dec=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:1});
-let year=1950,area=1975,timer=null,showDistricts=true,showNeighborhoods=true;
-let selectedDistrict=null;
-const DISTRICT_NOTES={
-'Fatih':'Tarihî yarımada ve eski kent çekirdeği.',
-'Beyoğlu':'Haliç’in kuzeyinde tarihsel ticaret ve yerleşim merkezi.',
-'Üsküdar':'Boğaz’ın Anadolu yakasındaki tarihî kıyı merkezlerinden.',
-'Beşiktaş':'Boğaz kıyısında yoğunlaşmış tarihî yerleşim dokusu.',
-'Şişli':'Merkezin kuzeye açıldığı yerleşim ve iş alanları.',
-'Kadıköy':'Anadolu yakasında kıyı ve ulaşım bağlantılarıyla gelişen merkez.',
-'Bakırköy':'Avrupa yakasında batıya uzanan eski kıyı yerleşimlerinden.',
-'Sarıyer':'Boğaz’ın kuzeyinde kıyı ve orman dokusunun bir arada olduğu bölge.',
-'Ümraniye':'Anadolu yakasının iç kesimlerinde yoğunlaşmış yerleşim alanı.',
-'Maltepe':'Anadolu yakasında Marmara kıyısı boyunca uzanan yerleşim.',
-'Pendik':'Doğuya uzanan kıyı ve ulaşım koridorunda bir merkez.',
-'Beylikdüzü':'Batı çeperde yeni konut alanlarıyla anılan bölge.',
-'Ataşehir':'Anadolu yakasında planlı gelişim ve iş merkezi kimliğiyle öne çıkar.',
-'Başakşehir':'Avrupa yakasının batı-kuzey çeperinde konut gelişimiyle öne çıkar.',
-'Kartal':'Anadolu yakasının doğuya uzanan kıyı hattında yer alır.'
-};
-
-function population(y){for(let i=0;i<P.length-1;i++){const [a,v]=P[i],[b,w]=P[i+1];if(y>=a&&y<=b)return Math.round(v+(w-v)*(y-a)/(b-a))}return P[P.length-1][1]}
-const cells=[];let seed=2031;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
-function paintGrid(){
-const group=$('urbanCells');let markup='';
-for(let row=0;row<22;row++)for(let col=0;col<43;col++){
-const x=24+col*21,y=30+row*19;
-const land=(y<180||y>355||(x>515&&y>215&&y<255)||(x<405&&y>175&&y<270));
-const c1=Math.exp(-((x-360)**2/(2*107**2)+(y-207)**2/(2*78**2)));
-const c2=Math.exp(-((x-609)**2/(2*100**2)+(y-204)**2/(2*85**2)));
-const c3=Math.exp(-((x-220)**2/(2*145**2)+(y-346)**2/(2*85**2)));
-const c4=Math.exp(-((x-755)**2/(2*125**2)+(y-342)**2/(2*74**2)));
-const r=rand(),v=Math.max(c1,c2*.85,c3*.6,c4*.65)+(r-.5)*.3;
-if(!land||v<.08)continue;
-const threshold= Math.min(1.1,Math.max(0,1.08-v*1.24+(r-.5)*.23));
-const born=Math.max(1950,Math.min(2025,1950+threshold*77));
-cells.push({year:born});
-markup+='<rect data-urban="'+born.toFixed(1)+'" class="'+(r>.65?'urban2':r>.35?'accent':'urban')+'" x="'+x+'" y="'+y+'" width="14" height="12" rx="2"/>';
+const nf=new Intl.NumberFormat('tr-TR'),fmt=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:1});
+let year=1950,timer=null;
+function value(y){for(let i=0;i<P.length-1;i++){const [a,v]=P[i],[b,w]=P[i+1];if(y>=a&&y<=b)return Math.round(v+(w-v)*(y-a)/(b-a))}return P.at(-1)[1]}
+const x=y=>56+(y-1950)/75*719;
+const y=p=>300-(p/16000000)*260;
+let path='';for(let yr=1950;yr<=2025;yr++)path+=(yr===1950?'M':'L')+x(yr).toFixed(1)+' '+y(value(yr)).toFixed(1)+' ';
+$('line').setAttribute('d',path);
+$('fill').setAttribute('d',path+'L775 300L56 300Z');
+function render(yr){
+year=Math.max(1950,Math.min(2025,Math.round(yr)));
+const pop=value(year),measured=P.some(a=>a[0]===year),delta=pop-P[0][1];
+$('slider').value=year;$('year').textContent=year;$('pop').textContent=nf.format(pop);
+$('ratio').textContent='×'+fmt.format(pop/P[0][1]);$('change').textContent=(delta>=0?'+':'')+nf.format(delta);
+$('mode').textContent=measured?'ÖLÇÜLEN YIL':'ARA YIL · HESAPLANAN';
+$('note').textContent=year+' · '+nf.format(pop)+' kişi · '+(measured?'yayımlanmış nüfus değeri':'iki ölçüm arasında doğrusal hesaplama');
+$('guide').setAttribute('x1',x(year));$('guide').setAttribute('x2',x(year));$('guide').setAttribute('y1',y(pop));$('guide').setAttribute('y2',300);
+$('point').setAttribute('cx',x(year));$('point').setAttribute('cy',y(pop));
 }
-group.innerHTML=markup;
-}
-function render(y){
-year=y;$('timeline').value=y;$('population').textContent=nf.format(population(y));
-$('yearLabel').textContent=y;$('yearOnScale').textContent=y;$('growth').textContent="1950'ye göre ×"+dec.format(population(y)/P[0][1]);
-const all=$('urbanCells').children;for(let i=0;i<all.length;i++)all[i].style.opacity=Number(all[i].dataset.urban)<=y?'1':'0';
-document.querySelectorAll('[data-label-from]').forEach(el=>el.classList.toggle('is-visible',showDistricts&&y>=Number(el.dataset.labelFrom)));
-$('neighborhoods').classList.toggle('on',showNeighborhoods);
-if(selectedDistrict){const chosen=[...document.querySelectorAll('[data-label-from]')].find(el=>el.querySelector('text')?.textContent===selectedDistrict);if(!chosen?.classList.contains('is-visible')){selectedDistrict=null;drawDistrict()}}
-const era=y<1970?'Tarihsel merkezler ve iki yaka.':y<1985?'Merkezden çevreye doğru yayılma.':y<2000?'Çeperlerde büyüme hızlanıyor.':y<2010?'Yeni merkezler ve yeni konut alanları.':'Metropol, iki yakada geniş bir ağa dönüşüyor.';
-$('eraText').textContent=era;
-updateEvent(y);
-const factor=population(y)/P[0][1];
-$('factTitle').textContent=y===1950?'Daha yeni başlıyoruz.':y===2025?'13,5 kat insan.':dec.format(factor)+' kat nüfus.';
-$('factText').textContent=y===1950?'1950 yılında İstanbul yaklaşık 1,17 milyon kişiydi.':y===2025?'2025 yılında 15.754.053 kişi. Aynı ilin nüfusu 1950’nin yaklaşık 13,5 katı.':y===2020?'2020 nüfusu bir önceki yıla göre azaldı. Büyüme her yıl düz çizgi değil.':'Bu sayı nüfus serisinden geliyor; çizilen yerleşim izleri temsili.';
-}
-
-let focus=null;
-function focusLocation(name,x,y){
-if(!Number.isFinite(x)||!Number.isFinite(y))return;
-focus={name,x,y};stop();
-$('focusName').textContent=name;
-$('focusStrip').classList.add('on');
-$('focusLayer').classList.add('on');
-$('focusCircle').setAttribute('cx',x);$('focusCircle').setAttribute('cy',y);
-const w=440,h=275;
-$('city').setAttribute('viewBox',Math.max(0,Math.min(940-w,x-w/2))+' '+Math.max(0,Math.min(480-h,y-h/2))+' '+w+' '+h);
-$('eraText').textContent=name+' · zaman içinde çevresel yerleşim dokusunu incele';
-}
-function clearFocus(){
-focus=null;$('focusStrip').classList.remove('on');$('focusLayer').classList.remove('on');
-$('city').setAttribute('viewBox','0 0 940 480');
-render(year);
-}
-$('closeFocus').addEventListener('click',clearFocus);
-function focusFromGroup(el){const circle=el.querySelector('circle');if(!circle)return;focusLocation(el.dataset.neighborhood||el.querySelector('text')?.textContent||'İstanbul',Number(circle.getAttribute('cx')),Number(circle.getAttribute('cy')))}
-function drawDistrict(){
-document.querySelectorAll('[data-label-from]').forEach(el=>el.classList.toggle('selected',el.querySelector('text')?.textContent===selectedDistrict));
-$('districtTitle').textContent=selectedDistrict||"İstanbul'u keşfet.";
-$('districtDescription').textContent=selectedDistrict?DISTRICT_NOTES[selectedDistrict]+' Etiketin görünme yılı semtin kuruluş tarihi değildir.':'Haritada görünen semt isimlerine dokun. Konumlar şematik; burada ilçe bazında tarihsel nüfus iddiası yok.';
-$('clearDistrict').hidden=!selectedDistrict;
-}
-function compare(){
-const a=+$('compareFrom').value,b=+$('compareTo').value,d=population(b)-population(a);
-$('compareDifference').textContent=(d>0?'+':'')+nf.format(d);
-$('compareExplanation').textContent=a+' → '+b+' · '+(d===0?'aynı nüfus':d>0?'nüfus artışı':'nüfus azalışı')+' · ×'+dec.format(population(b)/population(a));
-const line=[];for(let y=1950;y<=2025;y++){const x=(y-1950)/75*320,p=population(y),v=76-(p/16500000*68);line.push((y===1950?'M':'L')+x.toFixed(1)+' '+v.toFixed(1))}
-$('sparkLine').setAttribute('d',line.join(' '));
-const y1=76-population(a)/16500000*68,y2=76-population(b)/16500000*68;
-$('sparkBaseline').setAttribute('d','M'+((a-1950)/75*320).toFixed(1)+' '+y1.toFixed(1)+' L'+((b-1950)/75*320).toFixed(1)+' '+y2.toFixed(1));
-}
-const compareYears=P.map(x=>x[0]);
-for(const id of ['compareFrom','compareTo']){$(id).innerHTML=compareYears.map(y=>'<option value="'+y+'">'+y+'</option>').join('');$(id).addEventListener('change',compare)}
-$('compareFrom').value='1950';$('compareTo').value='2025';
-document.querySelectorAll('[data-label-from]').forEach(el=>{
-el.setAttribute('tabindex','0');el.setAttribute('role','button');
-function choose(){if(!el.classList.contains('is-visible'))return;const name=el.querySelector('text')?.textContent;selectedDistrict=selectedDistrict===name?null:name;drawDistrict();if(selectedDistrict)focusFromGroup(el);else clearFocus()}
-el.addEventListener('click',choose);
-el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose()}});
-});
-$('clearDistrict').addEventListener('click',()=>{selectedDistrict=null;drawDistrict()});
-compare();drawDistrict();
-
-$('detailsToggle').addEventListener('click',()=>{const open=$('sidePanels').classList.toggle('details-open');$('detailsToggle').setAttribute('aria-expanded',String(open));$('detailsToggle').innerHTML=open?'DETAYLARI GİZLE <span>−</span>':'DAHA FAZLA VERİ GÖSTER <span>＋</span>'});
-const EVENTS=[
-{year:1973,name:'Birinci Boğaz Köprüsü',description:'İlk karayolu köprüsü açıldı.'},
-{year:1988,name:'Fatih Sultan Mehmet Köprüsü',description:'İkinci Boğaz köprüsü açıldı.'},
-{year:2013,name:'Marmaray',description:'İki yaka demiryoluyla denizin altından bağlandı.'},
-{year:2016,name:'Yavuz Sultan Selim Köprüsü',description:'Üçüncü Boğaz köprüsü açıldı.'}
-];
-function updateEvent(y){
-const last=EVENTS.filter(e=>e.year<=y).at(-1);
-$('eventPill').innerHTML='<strong>'+(last?last.year+' · '+last.name:'1950 · İstanbul')+'</strong>'+(last?last.description:'İki yaka. Henüz Boğaz köprüsü yok.');
-document.querySelectorAll('[data-bridge-from]').forEach(el=>el.style.opacity=y>=Number(el.dataset.bridgeFrom)?'1':'0');
-}
-function setArea(k){area=k;const km=A[k],density=15754053/km;$('areaNum').textContent=km.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
-$('densityNum').textContent=nf.format(Math.round(density));
-$('experiment').textContent="2025 nüfusu "+k+" kent alanına sığarsa kilometrekare başına yaklaşık "+nf.format(Math.round(density))+" kişi düşer. Gerçek yoğunluk veya uygulanabilir plan değildir.";
-document.querySelectorAll('[data-area]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.area===k)));
-}
-function stop(){if(timer){clearInterval(timer);timer=null}$('play').textContent='▶ 75 YILI İZLE'}
-$('timeline').addEventListener('input',e=>{stop();render(+e.target.value)});
-$('jump').addEventListener('click',()=>{stop();render(2025)});
-$('play').addEventListener('click',()=>{if(timer){stop();return}if(year>=2025)render(1950);$('play').textContent='Ⅱ DURDUR';timer=setInterval(()=>{if(year>=2025){stop();return}render(year+1)},85)});
-document.querySelectorAll('[data-area]').forEach(b=>b.addEventListener('click',()=>setArea(+b.dataset.area)));
-document.querySelectorAll('[data-neighborhood]').forEach(el=>{const show=()=>{const n=el.dataset.neighborhood;$('districtTitle').textContent=n;$('districtDescription').textContent='Haritada yaklaşık konum. Mahalleye özgü tarihsel nüfus veya yapılaşma verisi bu gösterimde bulunmuyor.';$('clearDistrict').hidden=false;selectedDistrict=null;focusFromGroup(el);document.querySelectorAll('.neighborhood').forEach(x=>x.classList.toggle('selected',x===el))};el.addEventListener('click',show);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show()}})});
-
-
-const map=$('city');
-let scrub=null;
-function yearAt(clientX){const r=map.getBoundingClientRect();return Math.max(1950,Math.min(2025,Math.round(1950+(clientX-r.left)/r.width*75)))}
-map.addEventListener('pointerdown',e=>{
-if(e.button!==0||e.target.closest?.('.district, .neighborhood'))return;
-stop();
-scrub={id:e.pointerId,x:e.clientX,y:e.clientY,startYear:year,active:false};
-});
-map.addEventListener('pointermove',e=>{
-if(!scrub||e.pointerId!==scrub.id)return;
-const dx=e.clientX-scrub.x,dy=e.clientY-scrub.y;
-if(!scrub.active&&Math.abs(dx)<7)return;
-if(!scrub.active&&Math.abs(dy)>Math.abs(dx)*1.25){scrub=null;return}
-if(!scrub.active){scrub.active=true;map.classList.add('is-scrubbing');try{map.setPointerCapture(e.pointerId)}catch(_){}}
-if(e.cancelable)e.preventDefault();
-const w=map.getBoundingClientRect().width;
-render(Math.max(1950,Math.min(2025,Math.round(scrub.startYear+dx/w*75))));
-});
-function endScrub(e){if(!scrub||e.pointerId!==scrub.id)return;const wasActive=scrub.active;scrub=null;map.classList.remove('is-scrubbing');if(wasActive){try{map.releasePointerCapture(e.pointerId)}catch(_){}}}
-map.addEventListener('pointerup',endScrub);map.addEventListener('pointercancel',endScrub);
-map.addEventListener('keydown',e=>{if(e.target!==map)return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();stop();render(Math.max(1950,Math.min(2025,year+(e.key==='ArrowRight'?1:-1))))}});
-map.setAttribute('tabindex','0');
-map.setAttribute('aria-label',"İstanbul temsili haritası. Parmağınızla yatay sürükleyerek veya ok tuşlarıyla yıllar arasında gezin.");
-window.addEventListener('pagehide',stop);paintGrid();render(1950);setArea(1975);
-})();
-</script></body></html>
+function stop(){if(timer){clearInterval(timer);timer=null}$('play').textContent='▶ OYNAT'}
+$('slider').addEventListener('input',e=>{stop();render(+e.target.value)});
+$('latest').addEventListener('click',()=>{stop();render(2025)});
+$('play').addEventListener('click',()=>{if(timer){stop();return}if(year===2025)render(1950);$('play').textContent='Ⅱ DURDUR';timer=setInterval(()=>{if(year===2025){stop();return}render(year+1)},95)});
+const chart=$('chart');let drag=null;
+chart.addEventListener('pointerdown',e=>{drag={id:e.pointerId};try{chart.setPointerCapture(e.pointerId)}catch(_){};move(e)});
+function move(e){if(!drag||e.pointerId!==drag.id)return;stop();const r=chart.getBoundingClientRect();render(1950+Math.max(0,Math.min(1,(e.clientX-r.left-r.width*.07)/(r.width*.90)))*75)}
+chart.addEventListener('pointermove',move);chart.addEventListener('pointerup',()=>drag=null);chart.addEventListener('pointercancel',()=>drag=null);
+document.querySelectorAll('[data-year]').forEach(b=>b.addEventListener('click',()=>{const yr=+b.dataset.year;$('area').textContent=A[yr].toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});$('areaExplanation').textContent=yr+' ölçümü · '+nf.format(Math.round(A[yr]*100))+' hektar.';document.querySelectorAll('[data-year]').forEach(c=>c.setAttribute('aria-pressed',String(c===b)))}));
+window.addEventListener('pagehide',stop);render(1950);
+})();</script></body></html>
