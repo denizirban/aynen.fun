@@ -188,6 +188,18 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 .city .neighborhood text{font-size:9px;fill:#718473}
 .city .district text{font-weight:650}
 @media(max-width:650px){.map-ui{padding:5px 14px 7px}.city .neighborhood text{font-size:12px}}
+
+/* V7: single-location time lens, without inventing aerial imagery */
+.city{transition:view-box .5s}
+.focus-strip{display:none;align-items:center;justify-content:space-between;gap:12px;background:#f2f7ef;border-top:1px solid #e0e8dc;padding:11px 20px}
+.focus-strip.on{display:flex}
+.focus-strip strong{font-size:16px;letter-spacing:-.05em}
+.focus-strip span{display:block;font:400 10px/1.5 'DM Mono',monospace;color:#81907e;margin-top:2px}
+.focus-strip button{border:1px solid #c9d7c5;background:white;border-radius:6px;padding:9px 12px;color:#415e42;font:500 11px 'DM Mono',monospace}
+.focus-veil{opacity:0;pointer-events:none;transition:opacity .2s}
+.focus-veil.on{opacity:1}
+.focus-ring{fill:none;stroke:#365f41;stroke-width:3;stroke-dasharray:4 5;vector-effect:non-scaling-stroke}
+@media(max-width:650px){.focus-strip{padding:10px 13px}.focus-strip strong{font-size:14px}.focus-strip span{font-size:9px}}
 </style></head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
 <header class="hero"><div><h1>İstanbul'a<br>sığdır.</h1><p>1950'den bugüne. Aynı şehir, biraz daha kalabalık.</p></div><span class="hero-note">SÜRGÜYÜ SAĞA ÇEK ↗</span></header>
 <main class="dashboard">
@@ -208,6 +220,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <text class="sea-name" x="719" y="454">ADALAR</text><text class="sea-name" x="488" y="50">BOĞAZ</text>
 </g>
 <g id="urbanCells"></g>
+<g id="focusLayer" class="focus-veil" aria-hidden="true"><circle class="focus-ring" id="focusCircle" cx="470" cy="240" r="52"/></g>
 <g id="districtLabels" aria-label="İstanbul'un referans semt ve ilçe konumları; dokunulabilir"><g class="district" data-label-from="1950" aria-label="Fatih (konum işareti)"><circle cx="359" cy="223" r="4"/><text x="366" y="214">Fatih</text></g>
 <g class="district" data-label-from="1950" aria-label="Beyoğlu (konum işareti)"><circle cx="387" cy="151" r="4"/><text x="394" y="142">Beyoğlu</text></g>
 <g class="district" data-label-from="1950" aria-label="Üsküdar (konum işareti)"><circle cx="535" cy="220" r="4"/><text x="542" y="211">Üsküdar</text></g>
@@ -226,6 +239,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <g id="neighborhoods" class="neighborhoods" aria-label="Yaklaşık mahalle ve semt konumları"><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Nişantaşı" aria-label="Nişantaşı, yaklaşık konum"><circle cx="402" cy="114" r="2.3"/><text x="407" y="109">Nişantaşı</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Cihangir" aria-label="Cihangir, yaklaşık konum"><circle cx="405" cy="170" r="2.3"/><text x="410" y="165">Cihangir</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Karaköy" aria-label="Karaköy, yaklaşık konum"><circle cx="410" cy="198" r="2.3"/><text x="415" y="193">Karaköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Balat" aria-label="Balat, yaklaşık konum"><circle cx="313" cy="204" r="2.3"/><text x="318" y="199">Balat</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Etiler" aria-label="Etiler, yaklaşık konum"><circle cx="476" cy="104" r="2.3"/><text x="481" y="99">Etiler</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Levent" aria-label="Levent, yaklaşık konum"><circle cx="435" cy="87" r="2.3"/><text x="440" y="82">Levent</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Ortaköy" aria-label="Ortaköy, yaklaşık konum"><circle cx="489" cy="163" r="2.3"/><text x="494" y="158">Ortaköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Moda" aria-label="Moda, yaklaşık konum"><circle cx="615" cy="378" r="2.3"/><text x="620" y="373">Moda</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Fenerbahçe" aria-label="Fenerbahçe, yaklaşık konum"><circle cx="641" cy="402" r="2.3"/><text x="646" y="397">Fenerbahçe</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Acıbadem" aria-label="Acıbadem, yaklaşık konum"><circle cx="573" cy="272" r="2.3"/><text x="578" y="267">Acıbadem</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Kozyatağı" aria-label="Kozyatağı, yaklaşık konum"><circle cx="683" cy="315" r="2.3"/><text x="688" y="310">Kozyatağı</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Bostancı" aria-label="Bostancı, yaklaşık konum"><circle cx="718" cy="395" r="2.3"/><text x="723" y="390">Bostancı</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Zekeriyaköy" aria-label="Zekeriyaköy, yaklaşık konum"><circle cx="535" cy="47" r="2.3"/><text x="540" y="42">Zekeriyaköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Florya" aria-label="Florya, yaklaşık konum"><circle cx="194" cy="369" r="2.3"/><text x="199" y="364">Florya</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Çengelköy" aria-label="Çengelköy, yaklaşık konum"><circle cx="555" cy="171" r="2.3"/><text x="560" y="166">Çengelköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Sultanahmet" aria-label="Sultanahmet, yaklaşık konum"><circle cx="380" cy="258" r="2.3"/><text x="385" y="253">Sultanahmet</text></g></g>
 <g class="district-label"><text x="95" y="85">AVRUPA</text><text x="713" y="84">ANADOLU</text><text x="439" y="450" fill="#9abbb7">MARMARA</text></g>
 </svg>
+<div class="focus-strip" id="focusStrip" aria-live="polite"><div><strong id="focusName">Kadıköy</strong><span>AYNI KONUM · FARKLI YILLAR · ÇİZİM HARİTA</span></div><button id="closeFocus" type="button">GENEL HARİTA ↗</button></div>
 <div class="gesture-hint"><span class="hand" aria-hidden="true">↔</span><span>HARİTAYI SÜRÜKLE · ZAMANDA GEZİN</span></div>
 <div class="map-ui"><span class="map-callout" id="mapHint">Konumlar yaklaşık · yapılaşma temsili</span></div>
 <div class="legend" id="mapLegend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>ÖLÇEK VE YAYILIM TEMSİLÎ</span></div>
@@ -306,6 +320,25 @@ $('factTitle').textContent=y===1950?'Daha yeni başlıyoruz.':y===2025?'13,5 kat
 $('factText').textContent=y===1950?'1950 yılında İstanbul yaklaşık 1,17 milyon kişiydi.':y===2025?'2025 yılında 15.754.053 kişi. Aynı ilin nüfusu 1950’nin yaklaşık 13,5 katı.':y===2020?'2020 nüfusu bir önceki yıla göre azaldı. Büyüme her yıl düz çizgi değil.':'Bu sayı nüfus serisinden geliyor; çizilen yerleşim izleri temsili.';
 }
 
+let focus=null;
+function focusLocation(name,x,y){
+if(!Number.isFinite(x)||!Number.isFinite(y))return;
+focus={name,x,y};stop();
+$('focusName').textContent=name;
+$('focusStrip').classList.add('on');
+$('focusLayer').classList.add('on');
+$('focusCircle').setAttribute('cx',x);$('focusCircle').setAttribute('cy',y);
+const w=440,h=275;
+$('city').setAttribute('viewBox',Math.max(0,Math.min(940-w,x-w/2))+' '+Math.max(0,Math.min(480-h,y-h/2))+' '+w+' '+h);
+$('eraText').textContent=name+' · zaman içinde çevresel yerleşim dokusunu incele';
+}
+function clearFocus(){
+focus=null;$('focusStrip').classList.remove('on');$('focusLayer').classList.remove('on');
+$('city').setAttribute('viewBox','0 0 940 480');
+render(year);
+}
+$('closeFocus').addEventListener('click',clearFocus);
+function focusFromGroup(el){const circle=el.querySelector('circle');if(!circle)return;focusLocation(el.dataset.neighborhood||el.querySelector('text')?.textContent||'İstanbul',Number(circle.getAttribute('cx')),Number(circle.getAttribute('cy')))}
 function drawDistrict(){
 document.querySelectorAll('[data-label-from]').forEach(el=>el.classList.toggle('selected',el.querySelector('text')?.textContent===selectedDistrict));
 $('districtTitle').textContent=selectedDistrict||"İstanbul'u keşfet.";
@@ -326,7 +359,7 @@ for(const id of ['compareFrom','compareTo']){$(id).innerHTML=compareYears.map(y=
 $('compareFrom').value='1950';$('compareTo').value='2025';
 document.querySelectorAll('[data-label-from]').forEach(el=>{
 el.setAttribute('tabindex','0');el.setAttribute('role','button');
-function choose(){if(!el.classList.contains('is-visible'))return;const name=el.querySelector('text')?.textContent;selectedDistrict=selectedDistrict===name?null:name;drawDistrict()}
+function choose(){if(!el.classList.contains('is-visible'))return;const name=el.querySelector('text')?.textContent;selectedDistrict=selectedDistrict===name?null:name;drawDistrict();if(selectedDistrict)focusFromGroup(el);else clearFocus()}
 el.addEventListener('click',choose);
 el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose()}});
 });
@@ -355,7 +388,7 @@ $('timeline').addEventListener('input',e=>{stop();render(+e.target.value)});
 $('jump').addEventListener('click',()=>{stop();render(2025)});
 $('play').addEventListener('click',()=>{if(timer){stop();return}if(year>=2025)render(1950);$('play').textContent='Ⅱ DURDUR';timer=setInterval(()=>{if(year>=2025){stop();return}render(year+1)},85)});
 document.querySelectorAll('[data-area]').forEach(b=>b.addEventListener('click',()=>setArea(+b.dataset.area)));
-document.querySelectorAll('[data-neighborhood]').forEach(el=>{const show=()=>{const n=el.dataset.neighborhood;$('districtTitle').textContent=n;$('districtDescription').textContent='Haritada yaklaşık konum. Mahalleye özgü tarihsel nüfus veya yapılaşma verisi bu gösterimde bulunmuyor.';$('clearDistrict').hidden=false;selectedDistrict=null;document.querySelectorAll('.neighborhood').forEach(x=>x.classList.toggle('selected',x===el))};el.addEventListener('click',show);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show()}})});
+document.querySelectorAll('[data-neighborhood]').forEach(el=>{const show=()=>{const n=el.dataset.neighborhood;$('districtTitle').textContent=n;$('districtDescription').textContent='Haritada yaklaşık konum. Mahalleye özgü tarihsel nüfus veya yapılaşma verisi bu gösterimde bulunmuyor.';$('clearDistrict').hidden=false;selectedDistrict=null;focusFromGroup(el);document.querySelectorAll('.neighborhood').forEach(x=>x.classList.toggle('selected',x===el))};el.addEventListener('click',show);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show()}})});
 
 
 const map=$('city');
