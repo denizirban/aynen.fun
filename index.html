@@ -136,6 +136,18 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 .mini-moon{position:absolute;right:11px;top:29px;width:65px;height:65px;border-radius:100%;background:radial-gradient(circle at 34% 29%,#ebeff0,#a4afba 48%,#4e5b6b 81%,#2b3648);box-shadow:0 0 23px #c6d6fd45,inset -8px -7px 15px #172a49a0}
 .mini-moon:before{content:'';position:absolute;top:18px;left:18px;width:12px;height:12px;border:2px solid #61708088;border-radius:50%;box-shadow:22px 17px 0 -3px #7883916b,-5px 25px 0 0 #72809355}
 @media(max-width:800px){.tile-twenty{order:-1;z-index:3}.tile-twenty .window-screen{height:112px}}
+
+/* Balanced game gallery: no absolute stacking or clipped lower tiles. */
+.desktop-scene{height:auto!important;max-height:none!important;min-height:100svh!important;overflow:visible!important;display:flex!important;flex-direction:column;align-items:center;padding:28px clamp(16px,3vw,42px) 72px}
+.landing-cat{position:relative!important;left:auto!important;top:auto!important;transform:none!important;width:clamp(180px,22vw,260px)!important;margin:4px auto 30px!important;flex-shrink:0}
+.scene-tiles{position:relative;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));align-items:start;gap:24px 22px;width:min(100%,1080px);margin:0 auto}
+.scene-tiles>.float-window{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;width:100%!important;max-width:none!important;min-width:0;transform:rotate(var(--angle));transition:transform .22s ease,box-shadow .22s ease}
+.scene-tiles>.float-window:hover{transform:rotate(0deg) translateY(-4px) scale(1.02)}
+.scene-tiles .window-screen{height:115px!important}
+.scene-tiles .window-big{max-width:calc(100% - 18px);overflow-wrap:anywhere}
+@media(min-width:801px){.scene-tiles>.float-window:nth-child(4n+2){margin-top:11px}.scene-tiles>.float-window:nth-child(4n+3){margin-top:5px}.scene-tiles>.float-window:nth-child(4n+4){margin-top:17px}}
+@media(min-width:601px) and (max-width:1000px){.scene-tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.scene-tiles>.float-window{margin-top:0!important}.landing-cat{margin-bottom:25px!important}}
+@media(max-width:600px){.desktop-scene{padding:16px 13px 45px!important}.landing-cat{width:min(48vw,200px)!important;margin:8px auto 26px!important}.scene-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 12px}.scene-tiles>.float-window{margin:0!important}.scene-tiles .window-screen{height:102px!important}.scene-tiles .window-big{font-size:clamp(17px,5vw,31px)}}
 </style>
 </head>
 <body>
