@@ -164,6 +164,22 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 .primary{overflow:hidden}
 .gesture-hint{padding:10px 12px}
 @media(max-width:650px){.city{aspect-ratio:940/480;min-height:0!important;height:auto!important}}
+
+/* Compact atlas editorial pass */
+.wrap{max-width:1060px;padding-top:17px}.hero{margin:27px 0 17px}.hero h1{font-size:clamp(38px,5.7vw,68px);margin-bottom:7px}.hero p{font-size:12px}
+.map-head{padding:15px 21px 11px}.big-pop{font-size:clamp(30px,4.2vw,51px);margin-top:5px}.year-badge{font-size:clamp(23px,3vw,35px)}
+.time{padding:15px 21px 17px}.timeline-story{margin:7px 0 0;min-height:24px}.event-pill{padding:9px 11px;font-size:10px}
+.time .play{margin-top:10px}.legend{padding:7px 21px}.gesture-hint{padding:7px 10px}
+.map-ui{padding:8px 21px;align-items:center}.map-switches{display:flex;align-items:center;gap:6px;white-space:nowrap}.map-toggle{padding:7px 9px;font-size:9px}
+.map-toggle[aria-pressed=true]{background:#eef4ea;color:#365439;border-color:#cfddcb}
+.city .neighborhood{opacity:0;pointer-events:none;transition:opacity .18s}.city .neighborhoods.on .neighborhood{opacity:1;pointer-events:auto}
+.city .neighborhood circle{fill:#5b7866;stroke:white;stroke-width:1.5}.city .neighborhood text{font:500 9px 'DM Mono',monospace;fill:#576c59;paint-order:stroke;stroke:#f3f5f0;stroke-width:3px;stroke-linejoin:round}
+.city .neighborhood.selected circle{r:4;fill:#233d2a}.city .neighborhood.selected text{font-weight:700;fill:#24442b}
+.city .district text{font-size:12px}.city .district.secondary text{font-size:10px}
+.side{margin-top:11px}.side .fact,.side .district-info{padding:17px}.side .fact strong{font-size:26px;margin:8px 0 5px}
+.details-toggle{margin-top:11px}
+.footnote .note{font-size:10px;max-width:670px}
+@media(max-width:650px){.hero{margin:25px 0 15px}.hero h1{font-size:clamp(38px,10vw,56px)}.map-head{padding:14px 15px 10px}.map-ui{padding:8px 14px;flex-wrap:wrap}.map-callout{width:100%;font-size:9px}.map-switches{width:100%;justify-content:flex-start}.city .neighborhood text{font-size:13px}.city .district text{font-size:15px}.time{padding:14px 15px}.side .fact,.side .district-info{padding:16px}}
 </style></head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
 <header class="hero"><div><h1>İstanbul'a<br>sığdır.</h1><p>1950'den bugüne. Aynı şehir, biraz daha kalabalık.</p></div><span class="hero-note">SÜRGÜYÜ SAĞA ÇEK ↗</span></header>
 <main class="dashboard">
@@ -199,15 +215,16 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <g class="district" data-label-from="2000" aria-label="Ataşehir (konum işareti)"><circle cx="660" cy="268" r="4"/><text x="667" y="259">Ataşehir</text></g>
 <g class="district secondary" data-label-from="2000" aria-label="Başakşehir (konum işareti)"><circle cx="209" cy="128" r="3"/><text x="216" y="119">Başakşehir</text></g>
 <g class="district secondary" data-label-from="1985" aria-label="Kartal (konum işareti)"><circle cx="762" cy="391" r="3"/><text x="769" y="382">Kartal</text></g></g>
+<g id="neighborhoods" class="neighborhoods" aria-label="Yaklaşık mahalle ve semt konumları"><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Nişantaşı" aria-label="Nişantaşı, yaklaşık konum"><circle cx="402" cy="114" r="2.3"/><text x="407" y="109">Nişantaşı</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Cihangir" aria-label="Cihangir, yaklaşık konum"><circle cx="405" cy="170" r="2.3"/><text x="410" y="165">Cihangir</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Karaköy" aria-label="Karaköy, yaklaşık konum"><circle cx="410" cy="198" r="2.3"/><text x="415" y="193">Karaköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Balat" aria-label="Balat, yaklaşık konum"><circle cx="313" cy="204" r="2.3"/><text x="318" y="199">Balat</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Etiler" aria-label="Etiler, yaklaşık konum"><circle cx="476" cy="104" r="2.3"/><text x="481" y="99">Etiler</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Levent" aria-label="Levent, yaklaşık konum"><circle cx="435" cy="87" r="2.3"/><text x="440" y="82">Levent</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Ortaköy" aria-label="Ortaköy, yaklaşık konum"><circle cx="489" cy="163" r="2.3"/><text x="494" y="158">Ortaköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Moda" aria-label="Moda, yaklaşık konum"><circle cx="615" cy="378" r="2.3"/><text x="620" y="373">Moda</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Fenerbahçe" aria-label="Fenerbahçe, yaklaşık konum"><circle cx="641" cy="402" r="2.3"/><text x="646" y="397">Fenerbahçe</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Acıbadem" aria-label="Acıbadem, yaklaşık konum"><circle cx="573" cy="272" r="2.3"/><text x="578" y="267">Acıbadem</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Kozyatağı" aria-label="Kozyatağı, yaklaşık konum"><circle cx="683" cy="315" r="2.3"/><text x="688" y="310">Kozyatağı</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Bostancı" aria-label="Bostancı, yaklaşık konum"><circle cx="718" cy="395" r="2.3"/><text x="723" y="390">Bostancı</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Zekeriyaköy" aria-label="Zekeriyaköy, yaklaşık konum"><circle cx="535" cy="47" r="2.3"/><text x="540" y="42">Zekeriyaköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Florya" aria-label="Florya, yaklaşık konum"><circle cx="194" cy="369" r="2.3"/><text x="199" y="364">Florya</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Çengelköy" aria-label="Çengelköy, yaklaşık konum"><circle cx="555" cy="171" r="2.3"/><text x="560" y="166">Çengelköy</text></g><g class="neighborhood" tabindex="0" role="button" data-neighborhood="Sultanahmet" aria-label="Sultanahmet, yaklaşık konum"><circle cx="380" cy="258" r="2.3"/><text x="385" y="253">Sultanahmet</text></g></g>
 <g class="district-label"><text x="95" y="85">AVRUPA</text><text x="713" y="84">ANADOLU</text><text x="439" y="450" fill="#9abbb7">MARMARA</text></g>
 </svg>
 <div class="gesture-hint"><span class="hand" aria-hidden="true">↔</span><span>HARİTAYI SÜRÜKLE · ZAMANDA GEZİN</span></div>
-<div class="map-ui"><span class="map-callout" id="mapHint">Semt konumları yaklaşık; belirme yılları haritadaki anlatım için.</span><button type="button" class="map-toggle" id="labelToggle" aria-pressed="true">SEMTLERİ GİZLE</button></div>
+<div class="map-ui"><span class="map-callout" id="mapHint">Yer isimleri şematik referanstır; tarihsel mahalle verisi değildir.</span><div class="map-switches"><button type="button" class="map-toggle" id="labelToggle" aria-pressed="true">İLÇELER ✓</button><button type="button" class="map-toggle" id="neighborhoodToggle" aria-pressed="false">MAHALLELER +</button></div></div>
 <div class="legend" id="mapLegend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>ÖLÇEK VE YAYILIM TEMSİLÎ</span></div>
 <div class="time"><div class="time-line"><span class="kicker">YILI DEĞİŞTİR</span><span class="kicker" id="yearOnScale">1950</span></div>
 <input id="timeline" class="range" type="range" min="1950" max="2025" step="1" value="1950" aria-label="Yıl: 1950 ile 2025 arasında"><div class="ticks"><span>1950</span><span>1970</span><span>1990</span><span>2010</span><span>2025</span></div>
 <div class="timeline-story" aria-live="polite"><i></i><span id="eraText">Tarihsel merkezler ve iki yaka.</span></div><div class="event-pill" id="eventPill" aria-live="polite"><strong>1950 · Ulaşım ağını keşfet</strong>Yılları değiştirince İstanbul'un dönüm noktaları burada gösterilir.</div>
-<div class="play"><button class="play-btn" id="play" type="button">▶ 75 YILI İZLE</button><button class="play-btn alt" id="jump" type="button">2025'E GİT ↗</button><span class="play-note">Yıllar arası nüfus doğrusal ara değerle gösterilir.</span></div></div>
+<div class="play"><button class="play-btn" id="play" type="button">▶ 75 YILI İZLE</button><button class="play-btn alt" id="jump" type="button">2025'E GİT ↗</button><span class="play-note">Ara yıllar tahminî · Şematik harita</span></div></div>
 </section>
 <button class="details-toggle" id="detailsToggle" type="button" aria-expanded="false">DAHA FAZLA VERİ GÖSTER <span>＋</span></button><aside class="side" id="sidePanels">
 <section class="panel fact"><div class="kicker">BİR ŞEHİR, KAÇ KAT?</div><strong id="factTitle">Daha yeni başlıyoruz.</strong><p id="factText">Kaydırıcıyı 2025'e götür. Aynı şehrin nüfusu kaç katına çıktı, bak.</p></section>
@@ -218,7 +235,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <div class="density"><div><div class="n" id="areaNum">337,77</div><div class="l">KENT ALANI / km²</div></div><div><div class="n" id="densityNum">46.640</div><div class="l">GEREKLİ KİŞİ / km²</div></div></div>
 <div class="chip" id="experiment">2025 nüfusu, 1975'in yayımlanmış kent alanında: km² başına yaklaşık 46.640 kişi. Sadece matematiksel deney.</div>
 </section></aside></main>
-<div class="footnote"><div class="note">Nüfus: TÜİK (1950–2014 tarihsel seri, 2015–2025 ADNKS). Kent alanı: Döker'in 1975–2010 ölçümleri, İstanbul Tarihi'nde aktarıldığı şekliyle. Alan tanımları nüfusun il sınırlarıyla birebir eşleşmeyebilir. Harita gerçek yapılaşma sınırı değildir.</div>
+<div class="footnote"><div class="note">Nüfus: TÜİK tarihsel seri ve ADNKS. Ölçüm dönemleri karşılaştırılırken idari tanım ve yöntem farklılıkları dikkate alınmalıdır. Ölçüm olmayan ara yıllarda doğrusal enterpolasyon kullanılır. Kent alanı: Döker'in 1975–2010 ölçümleri, İstanbul Tarihi'nde aktarıldığı şekliyle. Alan tanımları nüfusun il sınırlarıyla birebir eşleşmeyebilir. Harita gerçek yapılaşma sınırı değildir.</div>
 <div class="links"><a href="https://unstats.un.org/unsd/demographic/meetings/wshops/Turkey/2015/docs/Presentations/Session15-Turkstat_overview_ENG.pdf" target="_blank" rel="noopener">TÜİK TARİHSEL ↗</a><a href="https://data.tuik.gov.tr/Bulten/Index?p=Adrese-Dayali-Nufus-Kayit-Sistemi-Sonuclari-2025-53899" target="_blank" rel="noopener">2025 ↗</a><a href="https://istanbultarihi.ist/22-istanbulun-cumhuriyet-donemi-mekansal-gelisimi" target="_blank" rel="noopener">KENT ALANI ↗</a></div></div></div>
 <script>
 (()=>{'use strict';
@@ -226,7 +243,7 @@ const $=id=>document.getElementById(id);
 const P=[[1950,1166477],[1955,1533822],[1960,1882092],[1965,2293823],[1970,3019032],[1975,3904588],[1980,4741890],[1985,5842985],[1990,7309190],[2000,10018735],[2007,12573836],[2008,12697164],[2009,12915158],[2010,13255685],[2011,13624240],[2012,13854740],[2013,14160467],[2014,14377018],[2015,14657434],[2016,14804116],[2017,15029231],[2018,15067724],[2019,15519267],[2020,15462452],[2021,15840900],[2022,15907951],[2023,15655924],[2024,15701602],[2025,15754053]];
 const A={1975:337.77,1990:605.12,2000:713.32,2010:899.77};
 const nf=new Intl.NumberFormat('tr-TR'),dec=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:1});
-let year=1950,area=1975,timer=null,showDistricts=true;
+let year=1950,area=1975,timer=null,showDistricts=true,showNeighborhoods=false;
 let selectedDistrict=null;
 const DISTRICT_NOTES={
 'Fatih':'Tarihî yarımada ve eski kent çekirdeği.',
@@ -271,6 +288,7 @@ year=y;$('timeline').value=y;$('population').textContent=nf.format(population(y)
 $('yearLabel').textContent=y;$('yearOnScale').textContent=y;$('growth').textContent="1950'ye göre ×"+dec.format(population(y)/P[0][1]);
 const all=$('urbanCells').children;for(let i=0;i<all.length;i++)all[i].style.opacity=Number(all[i].dataset.urban)<=y?'1':'0';
 document.querySelectorAll('[data-label-from]').forEach(el=>el.classList.toggle('is-visible',showDistricts&&y>=Number(el.dataset.labelFrom)));
+$('neighborhoods').classList.toggle('on',showNeighborhoods);
 if(selectedDistrict){const chosen=[...document.querySelectorAll('[data-label-from]')].find(el=>el.querySelector('text')?.textContent===selectedDistrict);if(!chosen?.classList.contains('is-visible')){selectedDistrict=null;drawDistrict()}}
 const era=y<1970?'Tarihsel merkezler ve iki yaka.':y<1985?'Merkezden çevreye doğru yayılma.':y<2000?'Çeperlerde büyüme hızlanıyor.':y<2010?'Yeni merkezler ve yeni konut alanları.':'Metropol, iki yakada geniş bir ağa dönüşüyor.';
 $('eraText').textContent=era;
@@ -329,7 +347,10 @@ $('timeline').addEventListener('input',e=>{stop();render(+e.target.value)});
 $('jump').addEventListener('click',()=>{stop();render(2025)});
 $('play').addEventListener('click',()=>{if(timer){stop();return}if(year>=2025)render(1950);$('play').textContent='Ⅱ DURDUR';timer=setInterval(()=>{if(year>=2025){stop();return}render(year+1)},85)});
 document.querySelectorAll('[data-area]').forEach(b=>b.addEventListener('click',()=>setArea(+b.dataset.area)));
-$('labelToggle').addEventListener('click',()=>{showDistricts=!showDistricts;$('labelToggle').setAttribute('aria-pressed',String(showDistricts));$('labelToggle').textContent=showDistricts?'SEMTLERİ GİZLE':'SEMTLERİ GÖSTER';render(year)});
+$('labelToggle').addEventListener('click',()=>{showDistricts=!showDistricts;$('labelToggle').setAttribute('aria-pressed',String(showDistricts));$('labelToggle').textContent=showDistricts?'İLÇELER ✓':'İLÇELER +';render(year)});
+$('neighborhoodToggle').addEventListener('click',()=>{showNeighborhoods=!showNeighborhoods;$('neighborhoodToggle').setAttribute('aria-pressed',String(showNeighborhoods));$('neighborhoodToggle').textContent=showNeighborhoods?'MAHALLELER ✓':'MAHALLELER +';render(year)});
+document.querySelectorAll('[data-neighborhood]').forEach(el=>{const show=()=>{const n=el.dataset.neighborhood;$('districtTitle').textContent=n;$('districtDescription').textContent='Haritada yaklaşık konum. Mahalleye özgü tarihsel nüfus veya yapılaşma verisi bu gösterimde bulunmuyor.';$('clearDistrict').hidden=false;selectedDistrict=null;document.querySelectorAll('.neighborhood').forEach(x=>x.classList.toggle('selected',x===el))};el.addEventListener('click',show);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show()}})});
+
 
 const map=$('city');
 let scrub=null;
