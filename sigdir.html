@@ -159,7 +159,7 @@ main>.panel .chartnote{padding:0 12px 2px}
 <section class="geo-panel" aria-label="İstanbul gerçek ilçe sınırları">
 <div class="geo-head"><span class="geo-title">İSTANBUL · ÇİZİM HARİTASI</span><span class="geo-sub">GÜNCEL COĞRAFYA</span></div>
 <div class="geo-frame"><svg class="geo-svg" id="geo" viewBox="0 0 900 385" preserveAspectRatio="xMidYMid meet" role="img" aria-label="İstanbul'un gerçek ilçelerinin coğrafi sınırları"><title>İstanbul coğrafyası — gerçek ilçe sınırları</title><desc>Güncel ilçe geometrilerinden oluşturulan çizim haritası. Tarihsel yapılaşmayı temsil etmez.</desc><g id="polygons"></g><g id="buildings" pointer-events="none"></g><g id="labels"></g></svg></div>
-<div class="geo-info"><span id="selectedGeo"><strong>İlçe seç</strong> · nüfus artışını incele</span><button id="clearGeo" hidden type="button">TEMİZLE</button></div>
+<div class="geo-info"><span id="selectedGeo"><strong>İlçe seç</strong> · güncel sınır</span><button id="clearGeo" hidden type="button">TEMİZLE</button></div>
 <div class="geo-status" id="geoStatus" role="status">Harita yükleniyor…</div>
 </section>
 <section class="panel"><div class="mainhead"><div><div class="kicker">İSTANBUL NÜFUSU</div><div class="pop" id="pop">1.166.477</div></div><div class="year" id="year">1950</div></div>
@@ -178,7 +178,7 @@ main>.panel .chartnote{padding:0 12px 2px}
 <div class="extras"><details><summary>YERLEŞİM ALANI VERİSİNİ KEŞFET <span>＋</span></summary><div class="area-data"><p>İstanbul'un kentsel alanı için Döker'in yayımlanan dört ölçüm yılı. Farklı araştırmalardaki “kent alanı” tanımları birbiriyle karıştırılmadı.</p><div class="area-switch" id="areaButtons"><button type="button" data-year="1975" aria-pressed="true">1975</button><button type="button" data-year="1990" aria-pressed="false">1990</button><button type="button" data-year="2000" aria-pressed="false">2000</button><button type="button" data-year="2010" aria-pressed="false">2010</button></div><div class="kicker">YERLEŞİM ALANI · km²</div><div class="area-answer" id="area">337,77</div><p id="areaExplanation">1975 ölçümü · 33.777 hektar.</p></div></details></div>
 </main>
 <div class="era-strip"><span class="era-left" id="eraLabel">1950 · Tarihî yerleşim merkezleri</span><span id="areaMilestone">1975 öncesi için karşılaştırılabilir kent alanı ölçümü yok.</span></div>
-<div class="building-legend">🏘️ Yerleşim merkezi işareti; tarihsel bina sayısı değildir. 🏢 Yalnızca 2008–2025 döneminde beş ilçenin tahmini nüfus ölçeğini simgeler; 1 bina ≈ 100.000 kişi. Ara yıllar hesaplanmıştır. Diğer ilçelerde simge olmaması yerleşim olmadığı anlamına gelmez.</div>
+<div class="building-legend">🏢 Simgeler, İstanbul'un <strong>toplam nüfusuna</strong> göre 1950–2025 boyunca artar (≈125 bin kişi/simge). Konumlara dağılım <strong>temsili</strong>; mahalle nüfusu, tarihsel bina sayısı veya yapılaşma sınırı değildir. Harita güncel ilçe sınırlarını kullanır.</div>
 <div class="sources">Nüfus: <a href="https://www.ibb.gov.tr/tr-TR/BilgiHizmetleri/Istatistikler/Documents/demografi/t211.pdf" target="_blank" rel="noopener">İBB / tarihsel sayımlar</a> ve <a href="https://data.tuik.gov.tr/Bulten/Index?p=Adrese-Dayali-Nufus-Kayit-Sistemi-Sonuclari-2025-53899" target="_blank" rel="noopener">TÜİK / ADNKS</a>. Ara yıllar doğrusal hesaplamadır; ölçülmüş veri değildir. Kent alanı: <a href="https://istanbultarihi.ist/22-istanbulun-cumhuriyet-donemi-mekansal-gelisimi" target="_blank" rel="noopener">Döker (İstanbul Tarihi'nde aktarıldığı şekliyle)</a>. Nüfus ile kent alanı farklı tanımlara dayanabilir.</div>
 <footer class="footer">AYNEN.FUN / ÖLÇÜLEN VERİ ÖLÇÜLMÜŞ, TAHMİN TAHMİN OLARAK GÖSTERİLİR.</footer></div>
 <script>(()=>{'use strict';
@@ -242,32 +242,41 @@ const DISTRICT_GROWTH={
 };
 const foldName=name=>name.toLocaleUpperCase('tr-TR').replace(/İ/g,'I').replace(/Ş/g,'S').replace(/Ü/g,'U').replace(/Ö/g,'O').replace(/Ç/g,'C').replace(/Ğ/g,'G');
 const GROWTH=Object.fromEntries(Object.entries(DISTRICT_GROWTH).map(([k,v])=>[foldName(k),v]));
-const buildingLocations=[];
-// Historical settlement references, not district population measurements or building counts.
-// These long-established centers remain visible before the ADNKS district series starts.
+// Real annual city population drives the number of glyphs; spatial allocation is illustrative.
 const HISTORIC_CENTERS=new Set(['FATIH','BEYOGLU','BESIKTAS','SISLI','USKUDAR','KADIKOY','BAKIRKOY','SARIYER','EYUPSULTAN','EYUP','ZEYTINBURNU','KARTAL','PENDIK','TUZLA','SILE','SILIVRI','CATALCA','BEYKOZ']);
-const historicLocations=[];
-function historicSymbol(cx,cy){
-const g=elem('g');g.setAttribute('transform','translate('+cx.toFixed(1)+' '+cy.toFixed(1)+')');g.setAttribute('class','historic-symbol');
-const t=elem('text');t.textContent='🏘️';t.setAttribute('text-anchor','middle');t.setAttribute('font-size','18');t.setAttribute('aria-hidden','true');g.appendChild(t);return g;
-}
-
+const settlementLocations=[];
 function showBuildings(){
-const yearShown=year;
-// Historic centers exist before 2008; icons are location cues, not counts.
-for(const symbol of historicLocations)symbol.style.opacity='1';
-for(const b of buildingLocations){
-// Icons visualize population at the selected year, not just growth above a 100k threshold.
-const fraction=Math.max(0,Math.min(1,(yearShown-2008)/17));
-const estimated=b.values[0]+(b.values[1]-b.values[0])*fraction;
-const count=yearShown<2008?0:Math.min(10,Math.max(1,Math.round(estimated/100000)));
-b.group.replaceChildren();
-for(let i=0;i<count;i++){
-const text=elem('text');text.setAttribute('x',String((i%3)*15-17));text.setAttribute('y',String(Math.floor(i/3)*-18+6));text.setAttribute('font-size','17');text.setAttribute('aria-hidden','true');text.textContent='🏢';b.group.appendChild(text);
+  if(!settlementLocations.length)return;
+  const total=Math.max(12,Math.round(value(year)/125000)); // 1950: ~12, 2025: ~126 symbols across city
+  const maxEach=12, baseline=settlementLocations.length;
+  const ordered=settlementLocations.map((b,i)=>({b,i,score:((i*37)%19)/19}));
+  let remaining=Math.max(0,total-baseline);
+  const counts=settlementLocations.map(()=>1);
+  // Round-robin weighted allocation across reference centers; not spatial population estimation.
+  while(remaining>0){
+    let allocated=false;
+    for(const {i} of ordered){
+      if(remaining<=0)break;
+      if(counts[i]<maxEach){counts[i]++;remaining--;allocated=true;}
+    }
+    if(!allocated)break;
+  }
+  for(let j=0;j<settlementLocations.length;j++){
+    const g=settlementLocations[j].group;g.replaceChildren();
+    const count=counts[j];
+    for(let i=0;i<count;i++){
+      const t=elem('text');
+      const col=i%4,row=Math.floor(i/4);
+      t.setAttribute('x',String((col-1.5)*15+(row%2)*4));
+      t.setAttribute('y',String((row-1)*16));
+      t.setAttribute('font-size','15');
+      t.setAttribute('text-anchor','middle');
+      t.setAttribute('aria-hidden','true');
+      t.textContent='🏢';
+      g.appendChild(t);
+    }
+  }
 }
-}
-}
-
 function allRings(geometry){
 if(!geometry)return[];
 if(geometry.type==='Polygon')return geometry.coordinates||[];
@@ -291,7 +300,7 @@ const latitudeScale=Math.cos((north+south)/2*Math.PI/180);
 const width=(east-west)*latitudeScale,height=north-south,scale=Math.min(840/width,340/height);
 const ox=(900-width*scale)/2,oy=(385-height*scale)/2;
 const project=p=>[ox+(p[0]-west)*latitudeScale*scale,oy+(north-p[1])*scale];
-const polygons=$('polygons');polygons.replaceChildren();$('labels').replaceChildren();$('buildings').replaceChildren();buildingLocations.length=0;historicLocations.length=0;
+const polygons=$('polygons');polygons.replaceChildren();$('labels').replaceChildren();$('buildings').replaceChildren();settlementLocations.length=0;
 let shown=0;
 for(const f of features){
 const name=String(f.properties.name||f.properties.NAME||f.properties.ilce||'İlçe');
@@ -307,11 +316,9 @@ const el=elem('path');el.setAttribute('d',path);el.setAttribute('class','distric
 function choose(){polygons.querySelectorAll('.selected').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');selectedGeo=name;$('selectedGeo').innerHTML='<strong>'+name.replace(/[<>&]/g,'')+'</strong> · güncel idari sınır';$('clearGeo').hidden=false;}
 el.addEventListener('click',choose);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose()}});
 polygons.appendChild(el);shown++;
-if(HISTORIC_CENTERS.has(foldName(name))){const old=historicSymbol(centerX/count,centerY/count);$('buildings').appendChild(old);historicLocations.push(old)}
-const values=GROWTH[foldName(name)];
-if(values){
-const iconGroup=elem('g');iconGroup.setAttribute('transform','translate('+(centerX/count).toFixed(1)+' '+(centerY/count).toFixed(1)+')');
-$('buildings').appendChild(iconGroup);buildingLocations.push({group:iconGroup,values,name});
+if(HISTORIC_CENTERS.has(foldName(name))){
+ const g=elem('g');g.setAttribute('transform','translate('+(centerX/count).toFixed(1)+' '+(centerY/count).toFixed(1)+')');
+ $('buildings').appendChild(g);settlementLocations.push({group:g,name});
 }
 if(['Fatih','Beşiktaş','Kadıköy','Üsküdar','Sarıyer','Silivri','Şile','Beylikdüzü','Pendik'].includes(name)){
 const text=elem('text');text.setAttribute('class','loc-label');text.setAttribute('x',(centerX/count).toFixed(1));text.setAttribute('y',(centerY/count).toFixed(1));text.setAttribute('text-anchor','middle');text.textContent=name;$('labels').appendChild(text);
