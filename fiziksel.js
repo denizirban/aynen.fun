@@ -70,8 +70,14 @@ function showNotice(title,copy,won){
  $("notice-label").textContent=won?"DENEY BAŞARILI":"GÖZLEM KAYDEDİLDİ";
  notice.classList.add("visible");
  noticeText=title+" — "+copy;
+ if(noticeTimeout)clearTimeout(noticeTimeout);
+ noticeTimeout=setTimeout(()=>hideNotice(),8500);
 }
-function hideNotice(){$("notice").classList.remove("visible");noticeText=""}
+function hideNotice(){
+ if(noticeTimeout){clearTimeout(noticeTimeout);noticeTimeout=null}
+ $("notice").classList.remove("visible");
+ noticeText="";
+}
 function achievement(id,title,desc){
  if(!state.completed[id]){state.completed[id]=true;persist()}
  state.result="KEŞFEDİLDİ";showNotice(title,desc,true);observation(title,"KEŞFEDİLDİ");
@@ -489,6 +495,20 @@ function run(now){
  }
  requestAnimationFrame(run);
 }
+const science=$("science-overlay"), scienceOpen=$("science-open"), scienceClose=$("science-close");
+function openScience(){
+ science.hidden=false;
+ scienceClose.focus();
+}
+function closeScience(){
+ if(science.hidden)return;
+ science.hidden=true;
+ scienceOpen.focus();
+}
+scienceOpen.addEventListener("click",openScience);
+scienceClose.addEventListener("click",closeScience);
+science.addEventListener("click",e=>{if(e.target===science)closeScience()});
+$("notice-close").addEventListener("click",hideNotice);
 document.querySelectorAll("[data-scene]").forEach(b=>b.addEventListener("click",()=>selectScene(b.dataset.scene)));
 document.querySelectorAll("[data-rule]").forEach(b=>b.addEventListener("click",()=>setRule(b.dataset.rule)));
 $("action").addEventListener("click",action);
@@ -497,6 +517,8 @@ $("angle").addEventListener("input",e=>$("angle-label").textContent=e.target.val
 $("power").addEventListener("input",e=>$("power-label").textContent=e.target.value);
 $("share").addEventListener("click",share);$("notice-share").addEventListener("click",share);
 document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"&&!science.hidden){e.preventDefault();closeScience();return}
+ if(!science.hidden)return;
  if(e.target&&["INPUT","BUTTON","TEXTAREA","SELECT"].includes(e.target.tagName))return;
  if(e.code==="Space"){e.preventDefault();action()}
  if(["Digit1","Digit2","Digit3","Digit4"].includes(e.code))selectScene(["room","slide","vacuum","basket"][Number(e.code[5])-1]);
