@@ -101,6 +101,173 @@ footer a{text-decoration:none}
 @media(max-width:780px){.site{padding:0 16px}.intro{padding:27px 0 20px}.intro-side{display:none}.grid{display:flex;flex-direction:column}.stage-panel{order:0}.panel-left{order:1;gap:16px}.stage-wrap{height:410px;min-height:410px;flex:auto}.scene-buttons{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.scene-button{padding:10px 8px;min-height:66px}.scene-button strong{font-size:11px}.scene-button small{font-size:8px}.rules{display:grid;grid-template-columns:1fr 1fr}.rule{padding:10px;min-height:64px}.rule .name{font-size:10px}.rule .details{font-size:8px}.switch{width:40px;height:24px}.switch:before{height:16px;width:16px;top:3px;left:3px}.rule.on .switch:before{transform:translateX(17px)}.switch-label{font-size:8px;left:9px;top:6px}.rule.on .switch-label{left:5px}.below{grid-template-columns:1fr}.notice{align-items:stretch;flex-direction:column}.notice button{align-self:start}}
 @media(max-width:480px){.site{padding:0 12px}nav{height:64px}.logo{font-size:21px}.meta{display:none}h1{font-size:62px}.stage-wrap{height:375px;min-height:375px}.metric{padding:13px 8px}.metric small{font-size:8px}.metric b{font-size:11px}.hud-top,.hud-bottom{left:9px;right:9px}.hud-tag{font-size:9px;padding:7px 8px}#hud-tip{font-size:9px;max-width:72%}#scene-time{font-size:9px}.scene-button strong{font-size:10px}.scene-button small{font-size:7px}.read-card{padding:17px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* One-viewport studio — no page scrolling during play */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{overflow:hidden}
+.site{height:100vh;height:100dvh;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+nav{flex:0 0 48px;height:48px}
+.logo{font-size:21px}.back{padding:8px 13px}
+.intro{flex:0 0 auto;padding:14px 0 11px;gap:12px}
+h1{font-size:clamp(37px,4.3vw,57px);margin:5px 0 5px;line-height:.94}
+.intro p{font-size:11px;line-height:1.45;max-width:700px}
+.intro-side{font-size:9px}
+main{display:flex;flex:1;min-height:0;flex-direction:column;padding-bottom:9px}
+.grid{flex:1;min-height:0;grid-template-columns:minmax(255px,300px) minmax(0,1fr);gap:10px}
+.panel{min-height:0;border-radius:10px}
+.panel-left{overflow-y:auto;overscroll-behavior:contain;padding:13px;gap:9px;scrollbar-width:thin}
+.panel-left .label-row{min-height:14px}
+.scene-buttons{gap:5px}
+.scene-button{min-height:52px;padding:8px 9px;border-radius:7px}
+.scene-button strong{font-size:12px}
+.scene-button small{font-size:8px;margin-top:4px}
+.section-line{display:none}
+.mission h2{font-size:19px;line-height:1.1;margin:3px 0}
+.mission p{font-size:10px;line-height:1.35;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.rule{display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:6px;padding:8px 5px;min-height:62px;text-align:center;border-radius:7px}
+.rule .name{font-size:10px;line-height:1.1}
+.rule .details{display:none}
+.switch{align-self:center;width:43px;height:23px}
+.switch:before{height:15px;width:15px;top:3px;left:3px}
+.rule.on .switch:before{transform:translateX(19px)}
+.switch-label{font-size:8px;top:6px;left:9px}
+.rule.on .switch-label{left:6px}
+.tuning{padding:8px 10px;gap:4px}
+.tuning.show{display:grid;grid-template-columns:94px minmax(0,1fr);align-items:center}
+.tuning label{font-size:10px}
+.tuning input{margin:0;height:17px;min-width:0}
+.lab-readout{padding:8px 10px}
+.lab-readout small{font-size:8px}
+.lab-readout strong{font-size:10px}
+.control-actions{gap:6px;margin-top:0}
+.primary,.secondary{min-height:34px;padding:7px 9px;font-size:10px;border-radius:6px}
+.primary{box-shadow:2px 2px 0 #1b251b}
+.presshint{display:none}
+.stats-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:5px;flex-wrap:nowrap}
+.stats-row span{padding:6px;font-size:8px;white-space:nowrap}
+.stats-row button{font-size:9px;white-space:nowrap;padding:7px 8px;min-height:27px}
+.stage-panel{min-height:0}
+.stage-wrap{flex:1;min-height:0;height:100%}
+.hud-top,.hud-bottom{left:11px;right:11px}
+.hud-top{top:10px}.hud-bottom{bottom:10px}
+.hud-tag{padding:6px 8px;font-size:9px}
+#hud-tip{font-size:9px;padding:7px 9px}
+#scene-time{font-size:9px;padding:7px}
+.metrics{flex:0 0 53px}
+.metric{padding:9px 12px}
+.metric small{margin-bottom:4px;font-size:8px}
+.metric b{font-size:13px}
+footer{flex:0 0 24px;padding:5px 0 7px;font-size:9px;align-items:center}
+/* Results and reference notes are overlays so they never push the game off-screen */
+.notice{position:fixed;left:50%;bottom:12px;z-index:40;transform:translateX(-50%);width:min(760px,calc(100vw - 24px));margin:0;max-height:35dvh;overflow-y:auto;box-shadow:0 8px 30px #0d261c30;padding:12px 15px;border-radius:10px;gap:14px}
+.notice h3{font-size:19px;margin:1px 0 3px}
+.notice p{font-size:10px;line-height:1.45}
+.notice .eyebrow{font-size:8px}
+.notice-actions{display:flex;flex:0 0 auto;gap:5px}
+.notice-actions .secondary{height:31px;min-height:0}
+.below[hidden]{display:none!important}
+.below{position:fixed;inset:0;z-index:100;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.9fr);align-content:center;gap:13px;padding:clamp(55px,9vh,94px) max(20px,calc((100vw - 1020px)/2));margin:0;overflow-y:auto;background:#0b1b19e8;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.read-card{padding:21px;max-height:min(75dvh,650px);overflow-y:auto}
+.read-card h2{font-size:24px}
+.science-close{position:fixed;right:clamp(20px,6vw,95px);top:17px;width:42px;height:42px;display:grid;place-items:center;border:1px solid #ffffff55;border-radius:50%;background:#ebf8f0;color:#213a2f;font-size:26px;font-weight:400}
+@media(max-width:780px){
+ .site{padding:0 10px}
+ nav{flex:0 0 40px;height:40px}
+ .logo{font-size:19px}
+ .nav-right{gap:8px}
+ .nav-right .meta{display:none}
+ .back{padding:6px 11px;font-size:9px}
+ .intro{padding:10px 0 8px}
+ h1{font-size:clamp(36px,9vw,48px);margin:4px 0 2px}
+ .eyebrow{font-size:8px}
+ .intro p{font-size:10px;line-height:1.3}
+ main{padding-bottom:7px}
+ .grid{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(155px,1fr) auto;gap:7px;min-height:0}
+ .stage-panel{order:0;grid-row:1;min-height:0}
+ .stage-wrap{height:100%;min-height:0}
+ .panel-left{order:1;grid-row:2;min-height:0;padding:9px;gap:6px;overflow:visible}
+ .panel-left>.label-row:first-child{display:none}
+ .scene-buttons{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+ .scene-button{padding:7px 4px;min-height:44px;text-align:center}
+ .scene-button strong{font-size:10px}
+ .scene-button small{font-size:7px;margin-top:4px}
+ .mission{display:flex;gap:7px;align-items:center;min-height:25px}
+ .mission #mission-label{display:none}
+ .mission h2{font-size:14px;line-height:1.15;margin:0;flex-shrink:0;max-width:55%}
+ .mission p{font-size:9px;line-height:1.2;max-width:45%;-webkit-line-clamp:2}
+ .panel-left>.label-row:not(:first-child){display:none}
+ .rules{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .rule{min-height:40px;flex-direction:row;justify-content:space-around;align-items:center;gap:3px;padding:5px 4px}
+ .rule .name{font-size:9px;line-height:1.08}
+ .rule .switch{align-self:auto;flex:0 0 39px;width:39px;height:21px}
+ .switch:before{width:13px;height:13px;top:3px;left:3px}
+ .rule.on .switch:before{transform:translateX(17px)}
+ .tuning{padding:5px 9px;gap:1px}
+ .tuning.show{grid-template-columns:92px minmax(0,1fr)}
+ .tuning input{height:18px}
+ .tuning label{font-size:9px}
+ .lab-readout{display:none}
+ .control-actions{display:grid;grid-template-columns:1fr auto;gap:6px}
+ .primary,.secondary{min-height:34px;padding:7px 10px;font-size:10px}
+ .stats-row{grid-template-columns:1fr auto auto;gap:5px}
+ .stats-row button{min-height:25px;padding:5px 8px}
+ .stats-row span{font-size:8px;padding:5px 7px}
+ .hud-top,.hud-bottom{left:8px;right:8px}
+ .hud-tag{padding:5px 7px;font-size:8px}
+ #hud-tip{font-size:8px;line-height:1.35;max-width:76%;padding:6px 7px}
+ #scene-time{font-size:8px;padding:5px}
+ .metrics{flex:0 0 37px}
+ .metric{padding:6px 8px}
+ .metric small{font-size:7px;margin-bottom:2px}
+ .metric b{font-size:10px}
+ footer{display:none}
+ .below{grid-template-columns:1fr;align-content:start;padding:56px 12px 20px;gap:10px}
+ .read-card{max-height:none;overflow:visible;padding:16px}
+ .read-card h2{font-size:21px}
+ .read-card p{font-size:11px}
+ .notice{bottom:6px;width:calc(100vw - 12px);padding:9px 11px;gap:7px;max-height:28dvh}
+ .notice h3{font-size:16px}
+ .notice p{font-size:9px}
+ .notice-actions{flex-direction:column;justify-content:center}
+ .notice-actions .secondary{padding:5px 7px;min-height:25px;height:25px;font-size:9px}
+}
+@media(max-width:430px){
+ .site{padding:0 8px}
+ .intro{padding:8px 0 7px}
+ h1{font-size:40px}
+ .intro p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100vw - 16px)}
+ .panel-left{gap:5px;padding:8px}
+ .mission h2{font-size:13px}
+ .mission p{font-size:8px}
+ .scene-button{min-height:41px}
+ .rule .name{font-size:8px}
+ .rule .switch{flex:0 0 36px;width:36px}
+ .rule.on .switch:before{transform:translateX(14px)}
+ .control-actions .primary{min-height:31px}
+ .control-actions .secondary{min-height:31px}
+}
+@media(max-height:700px) and (min-width:781px){
+ .intro{padding:7px 0}.intro p{display:none}
+ .panel-left{gap:7px}
+ .scene-button{min-height:46px}
+ .rule{min-height:53px}
+ .mission p{-webkit-line-clamp:1}
+ .lab-readout{display:none}
+}
+@media(max-height:635px) and (max-width:780px){
+ .intro{padding:5px 0}
+ h1{font-size:32px;margin:2px 0}
+ .intro p{display:none}
+ .scene-button{min-height:38px}
+ .panel-left{gap:4px;padding:6px}
+ .mission p{display:none}
+ .mission h2{max-width:none}
+ .rule{min-height:35px}
+ .stats-row span{font-size:7px}
+ .grid{grid-template-rows:minmax(120px,1fr) auto}
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js" defer></script>
 <script defer src="/fiziksel.js"></script>
@@ -131,7 +298,7 @@ footer a{text-decoration:none}
 <div class="lab-readout"><div><small>GÜNCEL GÖZLEM</small><strong id="observation">Nesneler hareket etmeye hazır.</strong></div><span class="mini" id="observed">● LIVE</span></div>
 <div class="control-actions"><button id="action" class="primary" type="button">ODAYI SARS ↗</button><button id="reset" class="secondary" type="button">↻ SIFIRLA</button></div>
 <div class="presshint" id="help">Nesnelere dokunup sürükle; bırakırken fırlat. Fizik ayarları hareketi anında değiştirir.</div>
-<div class="stats-row"><span id="badge-counter">0 / 4 KEŞİF</span><button type="button" id="share" class="secondary">SONUCU PAYLAŞ ↗</button></div>
+<div class="stats-row"><span id="badge-counter">0 / 4 KEŞİF</span><button type="button" id="science-open" class="secondary" aria-haspopup="dialog" aria-controls="science-overlay">FİZİK NOTU ↗</button><button type="button" id="share" class="secondary">PAYLAŞ ↗</button></div>
 </section>
 <section class="panel stage-panel" aria-label="Canlı fizik simülasyonu">
 <div class="stage-wrap" id="stage">
@@ -142,8 +309,8 @@ footer a{text-decoration:none}
 <div class="metrics"><div class="metric"><small>DİNAMİK NESNE</small><b id="metric-objects">0</b></div><div class="metric"><small>FİZİK DURUMU</small><b id="metric-gravity">EARTH / 1g</b></div><div class="metric"><small>SONUÇ</small><b id="metric-status">HAZIR</b></div></div>
 </section>
 </div>
-<section class="notice" id="notice" aria-live="polite" aria-atomic="true"><div><div class="eyebrow" id="notice-label">KEŞFEDİLDİ</div><h3 id="notice-title">Başardın.</h3><p id="notice-copy"></p></div><button class="secondary" type="button" id="notice-share">PAYLAŞ ↗</button></section>
-<div class="below">
+<section class="notice" id="notice" aria-live="polite" aria-atomic="true"><div><div class="eyebrow" id="notice-label">KEŞFEDİLDİ</div><h3 id="notice-title">Başardın.</h3><p id="notice-copy"></p></div><div class="notice-actions"><button class="secondary" type="button" id="notice-share">PAYLAŞ ↗</button><button class="secondary" type="button" id="notice-close" aria-label="Sonucu kapat">×</button></div></section>
+<div class="below" id="science-overlay" role="dialog" aria-modal="true" aria-label="Fiziksel. bilim notları" tabindex="-1" hidden><button class="science-close" type="button" id="science-close" aria-label="Bilim notlarını kapat">×</button>
 <article class="read-card"><div class="eyebrow">FİZİĞİN İNCE NOKTASI</div><h2 id="fact-title">Yerçekimini kapatmak, yukarı uçmak değildir.</h2><p id="fact-copy">Sıfır yerçekiminde durmakta olan nesne yerinde kalır. Hareket eden bir nesne ise, başka bir kuvvet etki etmedikçe hareketini sürdürür. Odayı sarsmak bu farkı görmene yardım eder.</p><div class="fact mono" id="formula">KUVVET YOKSA → HIZ DEĞİŞMEZ<br>Hareketin sürmesi için sürekli bir itme gerekmez.</div></article>
 <aside class="read-card"><div class="eyebrow">LAB NOTLARI</div><h2>Simülasyon, sihir değil.</h2><p>Çarpışmalar, döndürme, yerçekimi ve yüzey sürtünmesi gerçek zamanlı 2D rijit cisim motoruyla hesaplanır. Hava direnci sadeleştirilmiş hız sönümüdür; akışkanlar dinamiği çözümü değildir.</p><p>Boyutlar, kütleler ve hızlar eğitici oyun değerleridir; kalibre edilmiş SI ölçümleri değildir. Sonuçlar, modelin sınırlamaları içinde değerlendirilmelidir.</p><p><a href="https://brm.io/matter-js/" target="_blank" rel="noopener">Matter.js</a> (MIT lisansı) ile yapıldı. Sahne fizik motoru yüklenemezse açılmaz.</p></aside>
 </div>
