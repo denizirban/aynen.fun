@@ -170,9 +170,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border:3px solid #fff
 </div>
 <div class="mission"><div class="ctl-title" id="mission-tag">DENEY 01 / KARŞIT FAZ</div><h2 id="mission-title">Bir dalgayı sustur.</h2><p id="mission-copy">İkinci dalganın fazını kaydır. İki dalga birbirini tam olarak söndürsün.</p></div>
 <div class="slider-group">
-<div class="slider-card"><label for="phase">Faz farkı <output for="phase" id="phase-val">0°</output></label><input id="phase" type="range" min="0" max="360" step="1" value="47" aria-label="İkinci dalganın faz farkı"><span class="hint">180° ters faz demektir.</span></div>
+<div class="slider-card"><label for="phase">B dalgası / faz <output for="phase" id="phase-val">0°</output></label><input id="phase" type="range" min="0" max="360" step="1" value="47" aria-label="İkinci dalganın faz farkı"><span class="hint">180° ters faz demektir.</span></div>
 <div class="slider-card" id="amp-box" hidden><label for="amp">B dalgasının genliği <output id="amp-val" for="amp">1.00</output></label><input id="amp" type="range" min="0" max="1.6" step="0.01" value="1.25"></div>
-<div class="slider-card" id="freq-box" hidden><label for="freq">B dalgasının frekansı <output id="freq-val" for="freq">2.50</output></label><input id="freq" type="range" min="1" max="5" step="0.01" value="2.5"></div>
+<div class="slider-card" id="freq-box" hidden><label for="freq">B dalgasının frekansı <output id="freq-val" for="freq">2.50 birim</output></label><input id="freq" type="range" min="1" max="5" step="0.01" value="2.5"></div>
 <div class="slider-card" id="sensor-box" hidden><label for="sensor">Sensör konumu <output id="sensor-val" for="sensor">68%</output></label><input id="sensor" type="range" min="15" max="85" step="1" value="68"><span class="hint">Grafikteki mikrofon çizgisini de sürükleyebilirsin.</span></div>
 </div>
 <div class="progress-quest"><div class="quest-state" id="quest">HEDEF: <strong>En az %98 sönümleme</strong> · ayarı sabit tut.</div></div>
@@ -192,7 +192,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border:3px solid #fff
 <div class="kicker">BİLİMSEL AÇIKLAMA</div><h2>Bir şeyi silmek için bir şey daha ekliyorsun.</h2>
 <p>Dalga girişiminde, aynı noktadaki yer değiştirmeler <strong>toplanır</strong>. Aynı yönde ilerleyen, aynı frekans ve genlikteki iki sinüzoidal dalga arasındaki faz farkı <strong>180°</strong> olduğunda toplam dalga her yerde sıfır olur.</p>
 <code>y(x,t) = A sin(kx − ωt) + B sin(k'x − ω't + φ)</code>
-<p>Frekanslar farklıysa dalgalar farklı zamanlarda farklı şekilde örtüşür; kalıcı ve tüm alanı kapsayan sessizlik oluşmaz. Dördüncü bölümde iki dalga ters yönlerde gider: belirli bir noktada sönümleme mümkünken diğer noktalarda dalga hâlâ bulunur. Bu, duran dalga düğümleriyle ilişkilidir.</p>
+<p>Frekanslar farklıysa dalgalar farklı zamanlarda farklı şekilde örtüşür; kalıcı ve tüm alanı kapsayan sessizlik oluşmaz. Bu oyunun görsel frekans değerleri göreli simülasyon birimleridir, gerçek hertz ölçümleri değildir. Dördüncü bölümde iki dalga ters yönlerde gider: belirli bir noktada sönümleme mümkünken diğer noktalarda dalga hâlâ bulunur. Bu, duran dalga düğümleriyle ilişkilidir.</p>
 <p>Ekrandaki oran, birinci dalgaya göre <strong>RMS genlik azalmasını</strong> ölçer; bir enerji korunum oranı değildir. İdeal girişimde enerji yok olmaz, dalgaların enerji dağılımı ve kaynaklarla etkileşimi önemlidir.</p>
 <p>İsteğe bağlı ses, tarayıcıda üretilen iki saf tonun dijital toplamıdır; gerçek ortamda aktif gürültü engelleme, mikrofon, hoparlör, gecikme ve mekânsal akustik gerektirir. Kulaklık kullanıyorsan sesi düşük tut.</p>
 <p><strong>Kaynaklar:</strong> <a href="https://openstax.org/books/university-physics-volume-1/pages/16-5-interference-of-waves" rel="noopener" target="_blank">OpenStax University Physics — Interference of Waves</a> · <a href="https://openstax.org/books/university-physics-volume-1/pages/16-6-standing-waves-and-resonance" rel="noopener" target="_blank">Standing Waves</a>.</p>
