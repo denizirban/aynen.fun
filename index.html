@@ -182,6 +182,18 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 .scene-tiles .window-screen{height:105px!important}
 }
 @media(max-width:410px){.desktop-scene{padding:14px 12px 44px!important}.landing-cat{width:min(59vw,220px)!important;margin:18px auto 33px!important}.scene-tiles{gap:21px 13px}.scene-tiles .window-screen{height:97px!important}.scene-tiles .window-big{font-size:clamp(16px,5vw,30px)}}
+
+/* Fiziksel — physics playground */
+.tile-twentyone{--angle:-4deg;right:15.4%;top:46%;width:206px;z-index:4}
+.tile-twentyone .window-screen{height:117px;background:linear-gradient(132deg,#24403d,#132526)}
+.tile-twentyone .window-tag{color:#c3e9d4}
+.tile-twentyone .window-big{font-size:25px;color:#ecf7e8;bottom:16px}
+.tile-twentyone .window-aux{color:#b9ecbd}
+.tile-twentyone .physics-ball{position:absolute;right:16px;top:35px;width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff3d0,#d5ae76 52%,#7d5948);box-shadow:0 7px 0 #112c2977;transform:rotate(-12deg)}
+.tile-twentyone .physics-ball:before{content:'';position:absolute;left:-24px;top:22px;width:70px;height:2px;border-top:2px dashed #c6f3ca8c;transform:rotate(-32deg)}
+.tile-twentyone .physics-switch{position:absolute;right:15px;bottom:14px;width:38px;height:13px;border-radius:9px;background:#d6f1b5;border:1px solid #213c30}
+.tile-twentyone .physics-switch:before{content:'';position:absolute;width:9px;height:9px;right:2px;top:1px;background:#263b2c;border-radius:50%}
+@media(max-width:800px){.tile-twentyone{order:-2;z-index:3}.tile-twentyone .window-screen{height:112px}}
 </style>
 </head>
 <body>
@@ -189,6 +201,11 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 <h1 class="sr-only">aynen.fun — mikro oyunlar</h1>
 <img class="landing-cat" src="./cat.webp" alt="Aynen'in kısık gözlü, gülümseyen kedi sticker'ı" width="340" height="293" fetchpriority="high" />
 <div class="scene-tiles">
+<a class="float-window tile-twentyone" href="/fiziksel.html" aria-label="Fiziksel fizik simülasyonunu aç" style="text-decoration:none">
+<span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">fiziksel_sim.exe</span></span>
+<span class="window-screen"><span class="window-tag">PHYSICS / 002</span><span class="window-big">FİZİKSEL.</span><span class="physics-ball"></span><span class="physics-switch"></span><span class="window-aux">g ON / OFF</span></span>
+</a>
+
 <a class="float-window tile-twenty" href="/einstein-ve-sen.html" aria-label="Einstein ve Sen fizik oyununu aç" style="text-decoration:none">
 <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">einstein_ve_sen.exe</span></span>
 <span class="window-screen"><span class="window-tag">PHYSICS / 001</span><span class="window-big">EINSTEIN<br>VE SEN.</span><span class="mini-moon"></span><span class="window-aux">1c → ?</span></span>
