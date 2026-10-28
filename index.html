@@ -56,6 +56,12 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 .tile-eight .mini-cone{position:absolute;right:18px;top:30px;width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-bottom:47px solid #f1d085;filter:drop-shadow(1px 1px 0 #252525)}
 .tile-eight .mini-cone:after{content:"";position:absolute;top:22px;left:-11px;width:22px;height:6px;background:#fff}
 .tile-eight .mini-base{position:absolute;right:8px;bottom:22px;width:55px;height:7px;background:#222;border-radius:2px}
+.tile-nine{--angle:-6deg;left:1.5%;top:41%;width:174px}
+.tile-nine .window-screen{height:104px}
+.tile-nine .algo-choices{position:absolute;bottom:14px;left:12px;display:flex;gap:5px}
+.tile-nine .algo-choices i{font:700 9px 'DM Mono',monospace;border:1px solid #222;border-radius:2px;padding:5px 6px;font-style:normal}
+.tile-nine .algo-choices i:first-child{background:#d5eccb}
+
 
 
 .tile-five .window-screen{height:94px}
@@ -92,7 +98,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
  .landing-cat{width:clamp(250px,30vw,325px)}
  .tile-one{left:4%}.tile-two{right:3%}
  .tile-three{left:5%}.tile-four{right:4%}
- .tile-five{left:27%}.tile-six{right:24%}.tile-seven{right:1.5%;top:42%;width:176px}.tile-eight{left:27%;bottom:5%;width:150px}
+ .tile-five{left:27%}.tile-six{right:24%}.tile-seven{right:1.5%;top:42%;width:176px}.tile-eight{left:27%;bottom:5%;width:150px}.tile-nine{left:1.5%;top:42%;width:155px}
 }
 @media (max-width:800px){
  .desktop-scene{height:auto;max-height:none;min-height:100svh;overflow:visible;padding:18px 18px 54px;display:flex;flex-direction:column;align-items:center}
@@ -141,6 +147,10 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 <a class="float-window tile-eight" href="/burasidami.html" aria-label="İstanbul’a Bir Ağaç Dik oyununu aç" style="text-decoration:none">
  <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">agac_dik.exe</span></span>
  <span class="window-screen"><span class="window-tag">1 AĞAÇ / 11 YER</span><span class="window-big" style="font-size:16px;bottom:16px">AĞAÇ DİK.</span><span class="mini-cone"></span><span class="mini-base"></span></span>
+</a>
+<a class="float-window tile-nine" href="/algoritma.html" aria-label="Algoritma sensin oyununu aç" style="text-decoration:none">
+ <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">sen_algoritmasin.exe</span></span>
+ <span class="window-screen"><span class="window-tag">SEN ALGORİTMASIN.</span><span class="algo-choices"><i>DAHA ÇOK ↑</i><i>DAHA AZ ↓</i></span></span>
 </a>
 </div>
 </main>
