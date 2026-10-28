@@ -114,11 +114,28 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 .gesture-hint .hand{font-size:19px;line-height:1}
 .city.is-scrubbing [data-urban]{transition:none!important}
 @media(max-width:650px){.gesture-hint{font-size:10px;padding:10px 8px}}
-</style></head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
+
+.real-map{position:relative;height:clamp(340px,43vw,550px);background:#e6eeea}
+.real-map[hidden],.city[hidden]{display:none}
+#leafletMap{height:100%;width:100%;background:#e6eeea;z-index:0}
+.map-mode{display:flex;gap:6px;flex-wrap:wrap;padding:13px 25px 4px}
+.map-mode button{background:#fff;border:1px solid #dae2d8;border-radius:7px;padding:10px 12px;color:#687a65;font:500 11px 'DM Mono',monospace}
+.map-mode button[aria-pressed=true]{color:#fff;background:#314c34;border-color:#314c34}
+.data-state{font:400 10px/1.55 'DM Mono',monospace;color:#829183;padding:8px 25px 12px}
+.event-pill{background:#fffefcf0;border:1px solid #dce1d6;border-radius:7px;padding:12px 15px;font:500 11px/1.5 'DM Mono',monospace;color:#647365}
+.event-pill strong{display:block;font-weight:700;color:#283e2b;margin-bottom:3px}
+.real-map .leaflet-container{font-family:'Space Grotesk',sans-serif}
+.real-map .leaflet-control-attribution{font-size:9px}
+@media(max-width:650px){.real-map{height:420px}.map-mode{padding:11px 16px 4px}.data-state{padding:7px 16px 10px}}
+</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzxZOV1p3MZ0K4A4b9B0uiN6lM=" crossorigin="">
+</head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
 <header class="hero"><div><h1>İstanbul'a<br>sığdır.</h1><p>1950'den bugüne. Aynı şehir, biraz daha kalabalık.</p></div><span class="hero-note">SÜRGÜYÜ SAĞA ÇEK ↗</span></header>
 <main class="dashboard">
 <section class="panel primary"><div class="map-head"><div><div class="kicker">İSTANBUL NÜFUSU</div><div class="big-pop" id="population" aria-live="off">1.166.477</div><div class="growth" id="growth">1950'ye göre ×1,0</div></div><div class="year-badge" id="yearLabel">1950</div></div>
-<svg class="city" id="city" viewBox="0 0 940 480" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="maptitle mapdesc" xmlns="http://www.w3.org/2000/svg">
+<div class="map-mode" role="group" aria-label="Harita görünümü"><button id="realMode" aria-pressed="true" type="button">GERÇEK HARİTA</button><button id="schematicMode" aria-pressed="false" type="button">ZAMAN SİMÜLASYONU</button></div>
+<div class="real-map" id="realMap"><div id="leafletMap" role="application" aria-label="Gerçek İstanbul coğrafyası ve ilçe sınırları"></div></div>
+<div class="data-state" id="geoStatus">Gerçek harita yükleniyor · OpenStreetMap altlığı, açık ilçe sınırları.</div>
+<svg class="city" id="city" hidden viewBox="0 0 940 480" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="maptitle mapdesc" xmlns="http://www.w3.org/2000/svg">
 <title id="maptitle">İstanbul'un zamanla büyüyen, temsili yerleşim alanı</title><desc id="mapdesc">Bu harita gerçek bir yıl bazlı uydu tespiti değil, şehrin büyümesini anlatan şematik bir görselleştirmedir. Tarihsel nüfus verileri gerçektir.</desc>
 <rect width="940" height="480" fill="#f3f5f0"/><path class="city-outline" d="M22 180Q125 72 255 100T465 87Q665 26 842 107L928 170V351Q787 415 636 374T390 433Q157 414 20 333Z"/>
 <path class="water" d="M0 284Q160 247 255 284Q339 313 377 273Q408 246 430 218Q448 199 473 208Q492 214 497 244Q513 290 559 301Q650 331 750 279Q844 260 940 282V330Q860 313 761 324Q658 375 555 343Q493 331 468 282Q452 248 440 254Q426 256 411 277Q362 344 268 326Q153 293 0 326Z"/>
@@ -153,10 +170,10 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 </svg>
 <div class="gesture-hint"><span class="hand" aria-hidden="true">↔</span><span>HARİTAYI SAĞA / SOLA SÜRÜKLE · ZAMANDA GEZİN</span></div>
 <div class="map-ui"><span class="map-callout" id="mapHint">Semt konumları yaklaşık; belirme yılları haritadaki anlatım için.</span><button type="button" class="map-toggle" id="labelToggle" aria-pressed="true">SEMTLERİ GİZLE</button></div>
-<div class="legend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>GERÇEK HARİTA VERİSİ DEĞİL</span></div>
+<div class="legend" id="mapLegend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>GERÇEK HARİTA VERİSİ DEĞİL</span></div>
 <div class="time"><div class="time-line"><span class="kicker">YILI DEĞİŞTİR</span><span class="kicker" id="yearOnScale">1950</span></div>
 <input id="timeline" class="range" type="range" min="1950" max="2025" step="1" value="1950" aria-label="Yıl: 1950 ile 2025 arasında"><div class="ticks"><span>1950</span><span>1970</span><span>1990</span><span>2010</span><span>2025</span></div>
-<div class="timeline-story" aria-live="polite"><i></i><span id="eraText">Tarihsel merkezler ve iki yaka.</span></div>
+<div class="timeline-story" aria-live="polite"><i></i><span id="eraText">Tarihsel merkezler ve iki yaka.</span></div><div class="event-pill" id="eventPill" aria-live="polite"><strong>1950 · Ulaşım ağını keşfet</strong>Yılları değiştirince İstanbul'un dönüm noktaları burada gösterilir.</div>
 <div class="play"><button class="play-btn" id="play" type="button">▶ 75 YILI İZLE</button><button class="play-btn alt" id="jump" type="button">2025'E GİT ↗</button><span class="play-note">Yıllar arası nüfus doğrusal ara değerle gösterilir.</span></div></div>
 </section>
 <aside class="side">
@@ -176,7 +193,7 @@ const $=id=>document.getElementById(id);
 const P=[[1950,1166477],[1955,1533822],[1960,1882092],[1965,2293823],[1970,3019032],[1975,3904588],[1980,4741890],[1985,5842985],[1990,7309190],[2000,10018735],[2007,12573836],[2008,12697164],[2009,12915158],[2010,13255685],[2011,13624240],[2012,13854740],[2013,14160467],[2014,14377018],[2015,14657434],[2016,14804116],[2017,15029231],[2018,15067724],[2019,15519267],[2020,15462452],[2021,15840900],[2022,15907951],[2023,15655924],[2024,15701602],[2025,15754053]];
 const A={1975:337.77,1990:605.12,2000:713.32,2010:899.77};
 const nf=new Intl.NumberFormat('tr-TR'),dec=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:1});
-let year=1950,area=1975,timer=null,showDistricts=true;
+let year=1950,area=1975,timer=null,showDistricts=true,geoMap=null,geoBorders=null,mapMode="real";
 let selectedDistrict=null;
 const DISTRICT_NOTES={
 'Fatih':'Tarihî yarımada ve eski kent çekirdeği.',
@@ -224,6 +241,7 @@ document.querySelectorAll('[data-label-from]').forEach(el=>el.classList.toggle('
 if(selectedDistrict){const chosen=[...document.querySelectorAll('[data-label-from]')].find(el=>el.querySelector('text')?.textContent===selectedDistrict);if(!chosen?.classList.contains('is-visible')){selectedDistrict=null;drawDistrict()}}
 const era=y<1970?'Tarihsel merkezler ve iki yaka.':y<1985?'Merkezden çevreye doğru yayılma.':y<2000?'Çeperlerde büyüme hızlanıyor.':y<2010?'Yeni merkezler ve yeni konut alanları.':'Metropol, iki yakada geniş bir ağa dönüşüyor.';
 $('eraText').textContent=era;
+updateEvent(y);
 const factor=population(y)/P[0][1];
 $('factTitle').textContent=y===1950?'Daha yeni başlıyoruz.':y===2025?'13,5 kat insan.':dec.format(factor)+' kat nüfus.';
 $('factText').textContent=y===1950?'1950 yılında İstanbul yaklaşık 1,17 milyon kişiydi.':y===2025?'2025 yılında 15.754.053 kişi. Aynı ilin nüfusu 1950’nin yaklaşık 13,5 katı.':y===2020?'2020 nüfusu bir önceki yıla göre azaldı. Büyüme her yıl düz çizgi değil.':'Bu sayı nüfus serisinden geliyor; çizilen yerleşim izleri temsili.';
@@ -255,6 +273,50 @@ el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefa
 });
 $('clearDistrict').addEventListener('click',()=>{selectedDistrict=null;drawDistrict()});
 compare();drawDistrict();
+
+const EVENTS=[
+{year:1973,name:'15 Temmuz Şehitler Köprüsü',description:'Boğaz üstündeki ilk karayolu köprüsü açıldı.',coords:[41.045,29.034]},
+{year:1988,name:'Fatih Sultan Mehmet Köprüsü',description:'Boğaz’ın ikinci karayolu köprüsü açıldı.',coords:[41.091,29.062]},
+{year:2013,name:'Marmaray',description:'Boğaz altından demiryolu bağlantısı hizmete girdi.',coords:[41.012,29.019]},
+{year:2016,name:'Yavuz Sultan Selim Köprüsü',description:'Üçüncü Boğaz köprüsü açıldı.',coords:[41.203,29.112]}
+];
+let eventMarkers=[];
+function updateEvent(y){
+const last=EVENTS.filter(e=>e.year<=y).at(-1);
+$('eventPill').innerHTML='<strong>'+(last?last.year+' · '+last.name:'1950 · İstanbul')+'</strong>'+(last?last.description:'Boğaz’ın iki yakası. Yeni köprülerin açılışını zaman çizelgesinde izle.');
+eventMarkers.forEach(({event,marker})=>{if(!geoMap)return;if(y>=event.year)marker.addTo(geoMap);else geoMap.removeLayer(marker)});
+}
+function setMode(mode){
+mapMode=mode;const real=mode==='real';
+$('realMap').hidden=!real;$('city').hidden=real;
+$('realMode').setAttribute('aria-pressed',String(real));$('schematicMode').setAttribute('aria-pressed',String(!real));
+$('mapLegend').innerHTML=real?'<span>GERÇEK COĞRAFYA · İLÇE SINIRLARI</span><span>YAPIlaşma animasyonu bu modda gösterilmez</span>':'<span><b></b> YERLEŞİM — ŞEMATİK</span><span>GERÇEK HARİTA VERİSİ DEĞİL</span>';
+$('geoStatus').textContent=real?'Gerçek coğrafya: OpenStreetMap. İlçe sınırları: açık kaynak GeoJSON. Zamanla değişen yapılaşma bu katmanda yer almıyor.':'Şematik kent yayılımı: gerçek uydu görüntüsü veya yıl bazında yapılaşma ölçümü değildir.';
+if(real&&geoMap)setTimeout(()=>geoMap.invalidateSize(),80);
+}
+$('realMode').addEventListener('click',()=>setMode('real'));
+$('schematicMode').addEventListener('click',()=>setMode('schematic'));
+function initRealMap(){
+if(typeof L==='undefined'){$('geoStatus').textContent='Gerçek harita açılamadı. Şematik mod kullanılabilir.';setMode('schematic');return}
+geoMap=L.map('leafletMap',{zoomControl:true,scrollWheelZoom:false}).setView([41.055,28.99],10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(geoMap);
+eventMarkers=EVENTS.map(event=>({event,marker:L.circleMarker(event.coords,{radius:6,color:'#365a42',weight:2,fillColor:'#e6c77b',fillOpacity:1}).bindPopup('<strong>'+event.name+'</strong><p>'+event.year+' · '+event.description+'</p>')}));
+updateEvent(year);
+fetch('https://raw.githubusercontent.com/ozanyerli/istanbul-districts-geojson/master/istanbul-districts.json')
+.then(r=>{if(!r.ok)throw Error('GeoJSON '+r.status);return r.json()})
+.then(data=>{
+geoBorders=L.geoJSON(data,{style:{color:'#688a74',weight:1.15,fillColor:'#b3cdb0',fillOpacity:.10},onEachFeature(feature,layer){
+const p=feature.properties||{};
+const name=p.name||p.NAME||p.Name||p.ilce||p.ILCE||p.district||p.DISTRICT||'İstanbul ilçesi';
+layer.bindPopup('<strong>'+String(name).replace(/[<>]/g,'')+'</strong><p>İdari sınır gösterimi · tarihsel sınır değişimi değil</p>');
+layer.on('mouseover',()=>layer.setStyle({weight:2.5,fillOpacity:.22}));
+layer.on('mouseout',()=>geoBorders.resetStyle(layer));
+}}).addTo(geoMap);
+const bounds=geoBorders.getBounds();if(bounds.isValid())geoMap.fitBounds(bounds.pad(.02));
+$('geoStatus').textContent='Gerçek İstanbul ilçe geometrileri yüklendi. Haritada yakınlaş, ilçeye dokun; tarihsel olayları görmek için yılı değiştir.';
+}).catch(()=>{$('geoStatus').textContent='İlçe sınırları şu anda yüklenemedi; OpenStreetMap haritası ve olay noktaları kullanılabilir.'});
+}
+const leaflet=document.createElement('script');leaflet.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';leaflet.integrity='sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';leaflet.crossOrigin='';leaflet.onload=initRealMap;leaflet.onerror=()=>{$('geoStatus').textContent='Harita kütüphanesi yüklenemedi; şematik görünümü açabilirsiniz.';setMode('schematic')};document.head.appendChild(leaflet);
 function setArea(k){area=k;const km=A[k],density=15754053/km;$('areaNum').textContent=km.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
 $('densityNum').textContent=nf.format(Math.round(density));
 $('experiment').textContent="2025 nüfusu "+k+" kent alanına sığarsa kilometrekare başına yaklaşık "+nf.format(Math.round(density))+" kişi düşer. Gerçek yoğunluk veya uygulanabilir plan değildir.";
