@@ -1,0 +1,126 @@
+/* aynen.fun — salary survival / two-column shop */
+:root{--ink:#1c202a;--sub:#868c98;--line:#e5e7eb;--green:#2ac879;--bg:#fff;--soft:#f7f8fa}
+*{box-sizing:border-box}
+html,body{height:100%;min-height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #328be7;outline-offset:4px}
+a{color:inherit;text-decoration:none}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.mono{font-family:'DM Mono',ui-monospace,monospace}
+.app{display:grid;grid-template-columns:minmax(0,1fr) minmax(350px,33%);height:100dvh;min-height:610px;width:100%}
+.board{min-width:0;position:relative;display:flex;flex-direction:column;padding:24px clamp(22px,3vw,55px) 24px;overflow:hidden}
+.sitebar{display:flex;justify-content:space-between;align-items:center;gap:14px;min-height:26px}
+.back{display:inline-flex;align-items:center;gap:6px;font:500 12px/1.1 'DM Mono',monospace;color:#444b58}
+.back:hover{text-decoration:underline}
+.back svg{width:17px;height:17px}
+.salary-choices{display:flex;align-items:center;gap:5px}
+.salary-caption{font:500 10px 'DM Mono',monospace;color:#9da2ad;margin-right:7px}
+.preset{border:1px solid #e6e7eb;border-radius:6px;background:#fff;color:#777e8b;font:500 11px 'DM Mono',monospace;padding:7px 9px}
+.preset[aria-pressed="true"]{border-color:#242832;background:#242832;color:white}
+.preset:hover:not([aria-pressed="true"]){border-color:#b8bdc6}
+.balance-head{padding:44px 0 0;position:relative;z-index:1}
+.balance-label{margin:0 0 6px;font:500 12px 'DM Mono',monospace;letter-spacing:.01em;color:#8d93a0}
+.balance-number{font-size:clamp(38px,4.4vw,76px);font-weight:700;letter-spacing:-.075em;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
+.balance-number.zero{color:#ef6064}
+.summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#858b98;font:400 12px/1.5 'DM Mono',monospace;margin-top:9px}
+.status-dot{width:11px;height:11px;border-radius:50%;background:#dce0e5;flex:0 0 11px}
+.summary strong{color:#222733}
+.drain-meter{height:5px;width:min(440px,85%);background:#eff0f2;border-radius:5px;overflow:hidden;margin:16px 0 0}
+.drain-meter>div{width:100%;height:100%;background:var(--green);transition:width .28s ease,background .28s ease}
+.cat-zone{position:relative;flex:1;min-height:150px;display:grid;place-items:center}
+.cat-zone img{display:block;height:min(54vh,455px);max-height:100%;width:min(70%,520px);object-fit:contain;user-select:none;pointer-events:none}
+.cat-caption{position:absolute;bottom:0;width:100%;text-align:center;font:400 12px 'DM Mono',monospace;color:#8d939e;padding:0 20px}
+.board-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eef0f1;margin-top:16px;padding-top:13px;gap:12px}
+.foot-stat{display:flex;align-items:baseline;gap:7px}
+.foot-stat span:first-child{color:#a0a5af;font:500 10px 'DM Mono',monospace}
+.foot-stat span:last-child{font:500 14px 'DM Mono',monospace;font-variant-numeric:tabular-nums}
+.reset{border:0;background:transparent;color:#737b88;padding:6px 2px;font:500 11px 'DM Mono',monospace}
+.reset:hover{text-decoration:underline}
+.shop{min-width:0;border-left:1px solid var(--line);display:flex;flex-direction:column;background:#fff;overflow:hidden}
+.shop-head{height:76px;min-height:76px;padding:18px 25px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.shop-head h1{font-size:22px;letter-spacing:-.055em;line-height:1.1;margin:0;font-weight:700}
+.shop-count{font:400 11px 'DM Mono',monospace;color:#9ea4ae}
+.shop-reset{padding:7px;border:0;background:none;color:#9ca2ae;display:grid;place-items:center;border-radius:6px}
+.shop-reset:hover{background:#f2f3f5;color:#242832}
+.shop-reset svg{width:20px;height:20px}
+.items{overflow:auto;overscroll-behavior:contain;padding:0 25px 20px;scrollbar-width:thin;scrollbar-color:#ccd0d6 transparent}
+.item{display:grid;grid-template-columns:84px minmax(0,1fr) 95px;column-gap:12px;min-height:137px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.item-visual{width:84px;height:86px;display:grid;place-items:center;overflow:visible}
+.item-visual img{display:block;max-width:80px;max-height:80px;width:80px;height:80px;object-fit:contain;mix-blend-mode:multiply}
+.item-visual svg{width:66px;height:66px;display:block;stroke:#565d68;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.item-name{font-size:17px;line-height:1.15;font-weight:700;letter-spacing:-.045em;margin:0}
+.item-price{font-size:13px;color:#9ca2af;margin-top:6px;font-weight:500}
+.item-note{font:400 10px/1.25 'DM Mono',monospace;color:#adb1b9;margin-top:7px}
+.item-actions{display:flex;flex-direction:column;gap:5px;align-items:stretch}
+.buy{border:0;border-radius:7px;background:var(--green);min-height:39px;color:white;font-size:14px;font-weight:700}
+.buy:hover:not(:disabled){background:#20b46b}
+.buy:disabled{background:#d2e9dc;color:#fff}
+.sell{border:0;border-radius:6px;background:transparent;color:#a6acb6;min-height:29px;font-size:12px;font-weight:700}
+.sell:hover:not(:disabled){background:#f3f4f5;color:#666}
+.sell:disabled{color:#d0d4db}
+.item-qty{font:500 11px 'DM Mono',monospace;color:#5e6674;text-align:center;min-height:16px}
+.shop-footer{padding:10px 25px;border-top:1px solid #f0f0f0;min-height:36px;font:400 10px 'DM Mono',monospace;color:#b3b6bb}
+.end{position:absolute;inset:0;background:rgba(255,255,255,.965);z-index:20;display:flex;align-items:center;justify-content:center;padding:24px}
+.end[hidden]{display:none}
+.end-inside{text-align:center;width:min(100%,540px)}
+.end-kicker{font:500 12px 'DM Mono',monospace;color:#888}
+.end-inside h2{font-size:clamp(50px,8vw,102px);line-height:1;letter-spacing:-.085em;margin:15px 0}
+.end-inside p{font:400 14px/1.5 'DM Mono',monospace;color:#777;margin:0 auto 28px;max-width:420px}
+.end-button{background:#1f232a;color:white;border:0;border-radius:7px;padding:13px 20px;font-weight:700;font-size:13px;margin:4px}
+.end-button.secondary{background:#f3f4f5;color:#333}
+.toast{position:fixed;bottom:21px;left:50%;transform:translateX(-50%) translateY(18px);background:#23272e;color:white;border-radius:7px;padding:10px 15px;font:500 12px 'DM Mono',monospace;opacity:0;pointer-events:none;z-index:40;transition:opacity .15s,transform .15s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:1150px) and (min-width:761px){
+.app{grid-template-columns:minmax(0,1fr) minmax(328px,38%)}
+.board{padding:18px 24px}
+.balance-head{padding-top:42px}
+.balance-number{font-size:clamp(34px,4vw,56px)}
+.item{grid-template-columns:65px minmax(0,1fr) 78px;column-gap:10px}
+.item-visual{width:65px}
+.item-visual img{width:60px}
+.item-visual svg{width:56px}
+.item-name{font-size:15px}
+.items{padding:0 15px 20px}
+.shop-head{padding:18px 15px}
+}
+@media(max-width:760px){
+html,body{height:auto;min-height:100%}
+.app{display:flex;flex-direction:column;height:auto;min-height:100svh}
+.board{position:sticky;top:0;z-index:5;background:#fff;padding:11px 17px 12px;box-shadow:0 1px 0 #e8eaee;flex:0 0 auto;overflow:visible}
+.sitebar{min-height:29px}
+.salary-caption{display:none}
+.preset{padding:7px 9px}
+.balance-head{padding:12px 0 0}
+.balance-label{font-size:10px;margin:0 0 4px}
+.balance-number{font-size:clamp(37px,9vw,60px);letter-spacing:-.075em}
+.summary{font-size:10px;margin-top:3px;gap:6px}
+.status-dot{width:7px;height:7px;flex-basis:7px}
+.drain-meter{width:100%;max-width:100%;margin-top:9px;height:4px}
+.cat-zone{position:absolute;top:42px;right:17px;width:87px;min-height:0;height:93px;display:flex;justify-content:center;pointer-events:none}
+.cat-zone img{width:87px;height:87px;object-fit:contain}
+.cat-caption{display:none}
+.board-foot{border:0;margin:0;padding:9px 0 0;justify-content:space-between}
+.foot-stat span:first-child{font-size:9px}
+.foot-stat span:last-child{font-size:11px}
+.board-foot .reset{font-size:10px}
+.shop{border-left:0;overflow:visible;display:block;min-height:0}
+.shop-head{height:52px;min-height:52px;padding:11px 18px;position:relative}
+.shop-head h1{font-size:19px}
+.items{overflow:visible;padding:0 18px 25px}
+.item{grid-template-columns:66px minmax(0,1fr) 84px;min-height:111px;column-gap:9px;padding:11px 0}
+.item-visual{width:65px;height:72px}
+.item-visual img{width:65px;height:65px}
+.item-visual svg{width:57px;height:57px}
+.item-name{font-size:15px}
+.item-price{font-size:12px;margin-top:4px}
+.item-note{font-size:9px;margin-top:4px}
+.buy{min-height:34px;font-size:13px}
+.sell{min-height:24px;font-size:11px}
+.shop-footer{padding:14px 18px}
+.end{position:fixed;inset:0;padding:20px}
+}
+@media(max-width:350px){.cat-zone{width:61px;right:12px}.cat-zone img{width:61px}.preset{padding:6px 7px;font-size:10px}.item{grid-template-columns:54px minmax(0,1fr) 72px;gap:7px}.item-visual{width:54px}.item-visual svg{width:48px}.item-visual img{width:52px}.item-name{font-size:13px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
