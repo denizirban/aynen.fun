@@ -107,13 +107,58 @@ main>.panel .actions button{min-height:36px;padding:8px 12px}
 .era-strip .era-left{font-weight:500;color:#38573d}
 .building-legend{background:none!important;padding:7px 2px!important;margin-top:3px!important;font-size:9px!important;color:#99a599!important}
 @media(max-width:650px){.era-strip{display:block;font-size:9px}.era-strip span{display:block}.era-strip span+span{margin-top:4px}}
+
+/* V-next — measured spacing and natural map aspect ratio, no fake empty canvas */
+.wrap{max-width:1020px;padding:12px 20px 18px;min-height:unset}
+.hero{margin:17px 0 12px;align-items:center}
+.hero h1{font-size:clamp(29px,3.9vw,43px)}
+.hero p{font-size:10px}
+.geo-panel{overflow:hidden}
+.geo-head{padding:9px 15px}
+.geo-frame{overflow:hidden;line-height:0;aspect-ratio:900/385;max-height:min(42vh,390px)}
+.geo-frame .geo-svg{display:block;width:100%;height:100%;max-height:none;aspect-ratio:900/385}
+.geo-info{padding:6px 15px}
+.geo-status{padding:4px 15px 7px;min-height:0;font-size:9px}
+main>.panel .mainhead{padding:10px 16px 5px}
+main>.panel .chartnote{padding:0 16px 2px}
+main>.panel .controls{padding:8px 16px 11px}
+main>.panel .controls .row{margin-bottom:7px}
+main>.panel .ticks{margin-top:8px}
+main>.panel .actions{margin-top:9px}
+main>.panel .actions button{min-height:33px}
+.metrics{margin-top:8px;gap:8px}
+.metric{padding:10px 14px}
+.metric .n{margin:4px 0 2px}
+.metric p{margin:0}
+.era-strip{margin-top:8px;padding:8px 10px}
+.building-legend{line-height:1.45}
+.extras{margin-top:7px}
+.sources{margin-top:8px}
+.footer{padding-top:7px}
+@media(max-width:650px){
+.wrap{padding:11px 11px 15px}
+.hero{margin:16px 0 10px}
+.hero h1{font-size:33px}
+.hero p{font-size:9px}
+.geo-head{padding:8px 10px}
+.geo-frame{aspect-ratio:900/385;max-height:none}
+.geo-frame .geo-svg{height:auto;aspect-ratio:900/385;max-height:none}
+.geo-info{padding:6px 11px}
+.geo-status{padding:4px 11px 7px}
+main>.panel .mainhead{padding:9px 12px 4px}
+main>.panel .controls{padding:9px 12px 10px}
+main>.panel .chartnote{padding:0 12px 2px}
+.metrics{gap:7px}
+.metric{padding:9px 11px}
+.era-strip{padding:8px 9px}
+}
 </style></head><body>
 <div class="wrap"><nav class="top"><a href="/">← aynen.fun</a><span>İSTANBUL / 1950–2025</span></nav>
 <header class="hero"><h1>İstanbul’a Sığdır.</h1><p>İstanbul · 1950–2025 · Veriye dayalı deney</p></header>
 <main>
 <section class="geo-panel" aria-label="İstanbul gerçek ilçe sınırları">
 <div class="geo-head"><span class="geo-title">İSTANBUL · ÇİZİM HARİTASI</span><span class="geo-sub">GÜNCEL COĞRAFYA</span></div>
-<div class="geo-frame"><svg class="geo-svg" id="geo" viewBox="0 0 900 385" role="img" aria-label="İstanbul'un gerçek ilçelerinin coğrafi sınırları"><title>İstanbul coğrafyası — gerçek ilçe sınırları</title><desc>Güncel ilçe geometrilerinden oluşturulan çizim haritası. Tarihsel yapılaşmayı temsil etmez.</desc><g id="polygons"></g><g id="buildings" pointer-events="none"></g><g id="labels"></g></svg></div>
+<div class="geo-frame"><svg class="geo-svg" id="geo" viewBox="0 0 900 385" preserveAspectRatio="xMidYMid meet" role="img" aria-label="İstanbul'un gerçek ilçelerinin coğrafi sınırları"><title>İstanbul coğrafyası — gerçek ilçe sınırları</title><desc>Güncel ilçe geometrilerinden oluşturulan çizim haritası. Tarihsel yapılaşmayı temsil etmez.</desc><g id="polygons"></g><g id="buildings" pointer-events="none"></g><g id="labels"></g></svg></div>
 <div class="geo-info"><span id="selectedGeo"><strong>İlçe seç</strong> · nüfus artışını incele</span><button id="clearGeo" hidden type="button">TEMİZLE</button></div>
 <div class="geo-status" id="geoStatus" role="status">Harita yükleniyor…</div>
 </section>
