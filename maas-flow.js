@@ -128,7 +128,7 @@ stepTimer=setTimeout(run,85);
 }
 function scheduleDebt(item){
 const amount=item.cost,fee=Math.max(180,Math.round(amount*.055/10)*10);
-game.debts.push({id:item.id,icon:item.icon,amount:amount+fee,original:amount,level:1,due:game.decisions+2});
+game.debts.push({id:item.id,icon:item.icon,amount:amount+fee,original:amount,level:0,due:game.decisions+2});
 game.alerts++;
 if(item.id==='fee')say('Yönetici yazıyor...');
 else if(item.id==='rent')say('Ev sahibi çevrimiçi.');
@@ -140,7 +140,7 @@ if(action==='pay'){
 game.balance-=d.amount;game.spent+=d.amount;game.paid++;
 game.debts=game.debts.filter(x=>x!==d);
 say('Gitti.');
-}else if(d.level<2){
+}else if(d.level<1){
 d.level+=1;d.amount+=Math.max(200,Math.round(d.original*.055/10)*10);
 d.due=game.decisions+2;
 game.alerts++;
@@ -188,7 +188,7 @@ delayTimer=setTimeout(advance,440);
 function end(reason){
 if(game.ended)return;
 game.ended=true;cleanTimers();
-const seconds=dur();
+const seconds=dur();game.finalSeconds=seconds;
 const owed=game.debts.reduce((n,d)=>n+d.amount,0);
 $('resultSeconds').textContent=toTime(seconds)+' sn';
 $('resultTop').textContent=reason==='zero'?'MAAŞ BİTTİ.':'BİTTİ SAYILIR.';
@@ -213,7 +213,7 @@ $('btnSkip').addEventListener('click',()=>decision('skip'));
 $('reset').addEventListener('click',()=>{cleanTimers();$('intro').hidden=false;$('finish').hidden=true;game=null});
 $('playAgain').addEventListener('click',()=>{init(game.salary)});
 $('share').addEventListener('click',()=>{
-const t='Maaşım '+toTime(dur())+' saniye dayandı. aynen.fun/maas.html';
+const t='Maaşım '+toTime(game.finalSeconds||dur())+' saniye dayandı. aynen.fun/maas.html';
 const url=location.origin+'/maas.html';
 if(navigator.share){navigator.share({title:'Maaş kaç saniye dayanır?',text:t,url}).catch(()=>{});return}
 if(navigator.clipboard){navigator.clipboard.writeText(t+' '+url).then(()=>say('Kopyalandı.')).catch(()=>say('Kopyalanmadı.'));return}
