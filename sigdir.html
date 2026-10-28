@@ -150,7 +150,7 @@ if(features.length<25)throw Error('İlçe verisi eksik.');
 const coord=[];
 for(const f of features)for(const ring of allRings(f.geometry))for(const point of ring)if(Number.isFinite(point[0])&&Number.isFinite(point[1]))coord.push(point);
 if(!coord.length)throw Error('Geometri bulunamadı.');
-let west=Math.min(...coord.map(p=>p[0])),east=Math.max(...coord.map(p=>p[0])),south=Math.min(...coord.map(p=>p[1])),north=Math.max(...coord.map(p=>p[1]));
+let west=Infinity,east=-Infinity,south=Infinity,north=-Infinity;for(const [lon,lat] of coord){if(lon<west)west=lon;if(lon>east)east=lon;if(lat<south)south=lat;if(lat>north)north=lat;}
 const latitudeScale=Math.cos((north+south)/2*Math.PI/180);
 const width=(east-west)*latitudeScale,height=north-south,scale=Math.min(840/width,340/height);
 const ox=(900-width*scale)/2,oy=(385-height*scale)/2;
