@@ -307,6 +307,17 @@ body{overflow-x:hidden}
 .game-timer{font-size:52px;font-weight:700}
 .move-no{position:relative}
 .result-kicker{border:1px solid #111;background:var(--pink);padding:5px 9px;font-size:10px;transform:rotate(-5deg)}
+
+/* Cancel Everything — fresh outer-orbit sticker */
+.art-cancel{--sticker-color:#a4e8e3}
+.art-cancel .cancel-wave{position:absolute;inset:16px 7px 7px;width:calc(100% - 14px);height:80px;overflow:visible;transform:rotate(-5deg);filter:drop-shadow(1px 2px 0 #fff)}
+.art-cancel .cancel-wave path{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:4}
+.art-cancel .cancel-wave .a{stroke:#142e36}
+.art-cancel .cancel-wave .b{stroke:#fc5e99}
+.art-cancel .cancel-wave .sum{stroke:#24433b;stroke-width:4;stroke-dasharray:6 5}
+.art-cancel .cancel-zero{position:absolute;right:12px;top:22px;border:2px solid #1b2727;background:#f8fff1;border-radius:50%;font:700 15px 'DM Mono',monospace;width:31px;height:31px;display:grid;place-items:center;transform:rotate(10deg);z-index:3}
+.art-cancel .art-foot{bottom:9px}
+@media(max-width:760px){.art-cancel .cancel-wave{top:15px;height:67px}.art-cancel .cancel-zero{width:25px;height:25px;font-size:12px;right:8px}}
 </style>
 </head>
 <body>
@@ -392,6 +403,10 @@ body{overflow-x:hidden}
 <a class="orbit-card" href="/fiziksel.html" style="--dx:72%;--dy:846px;--tilt:-3deg" aria-label="Fiziksel. oyununu aç"><span class="comic-index" aria-hidden="true">20</span>
 <span class="orbit-cover art-physical" aria-hidden="true"><span class="art-switch"><i></i></span><span class="art-foot">THE UNIVERSE IS ON</span></span>
 <span class="orbit-copy"><strong>Fiziksel.</strong></span>
+</a>
+<a class="orbit-card" href="/cancel-everything.html" style="--dx:5%;--dy:849px;--tilt:3deg" aria-label="Cancel Everything. dalga girişimi oyununu aç"><span class="comic-index" aria-hidden="true">21</span>
+<span class="orbit-cover art-cancel" aria-hidden="true"><svg class="cancel-wave" viewBox="0 0 140 80" preserveAspectRatio="none"><path class="a" d="M3 19 Q19 -3 35 19 T67 19 T99 19 T131 19"/><path class="b" d="M3 49 Q19 71 35 49 T67 49 T99 49 T131 49"/><path class="sum" d="M3 34 L134 34"/></svg><span class="cancel-zero">0</span><span class="art-foot">WAVE + WAVE = NOTHING</span></span>
+<span class="orbit-copy"><strong>Cancel Everything.</strong></span>
 </a></div>
 </main>
 
