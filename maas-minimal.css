@@ -1,0 +1,83 @@
+
+/* Aynen salary toy — single-photo-sticker minimal mode */
+:root{--bg:#fff;--paper:#fff;--ink:#191919;--edge:#ebebeb;--acid:#e9eddf;--shadow:none}
+html,body{background:#fff}
+body{background:#fff}
+.wrap{max-width:760px;padding:20px 24px 56px}
+.top{margin:0 0 56px;height:38px}
+.back .arrow{width:28px;height:28px;border:0;font-size:19px}
+.brand{font-size:0;gap:0}
+.brand img{height:34px;width:34px}
+.eyebrow,.footnote{display:none}
+.hero-title{font-size:clamp(42px,6.5vw,75px);line-height:1.03;letter-spacing:-.08em}
+.hero-title em{text-decoration:none}
+.hero-copy{font-size:15px;margin:25px auto 40px}
+.setup{border:0;box-shadow:none;padding:0;max-width:490px;background:transparent}
+.setup:before{content:none}
+.setup h2{font-size:14px;font-weight:500;text-align:center;letter-spacing:0;margin-bottom:15px}
+.presets{gap:10px}
+.preset{border:1px solid #dedede;border-radius:10px;background:#fff;font-size:16px;padding:15px 5px}
+.preset[aria-pressed=true]{box-shadow:none;transform:none;background:#f4f4f4;border-color:#191919}
+.custom-row{margin:20px 0}
+.cta{box-shadow:none;border-radius:10px;background:#191919;font-size:15px;padding:16px}
+.cta:hover{box-shadow:none;transform:none}
+.disclaimer{color:#aaa;font-size:9px;margin-top:26px}
+.game{max-width:580px}
+.receipt-head{border:0;justify-content:flex-end;padding:0;margin-bottom:6px}
+.receipt-head>span:first-child{display:none}
+.live{color:#aaa}
+.live-dot{width:5px;height:5px;background:#bbb;animation:none}
+.board{padding:4px 0 26px}
+.board>p{font-size:10px;margin-bottom:9px;letter-spacing:0;color:#8b8b8b}
+.money{font-weight:700;font-size:clamp(43px,8vw,65px);letter-spacing:-.07em}
+.money.shake{animation:none}
+.meter{border:0;background:#f1f1f1;height:4px;margin-top:17px;max-width:390px;border-radius:6px}
+.meter-fill{background:#191919!important}
+.ledger-top{display:none}
+.event-slot{min-height:450px;margin:7px auto 0;display:flex;flex-direction:column;align-items:stretch}
+.event{border:0;box-shadow:none;padding:0 0 14px;animation:none;text-align:center;background:#fff}
+.event-top{display:none}
+.focus-sticker{display:block;width:min(44vw,205px);height:205px;object-fit:contain;object-position:center;margin:2px auto 14px;background:transparent}
+.focus-sticker.dog{height:216px;width:min(47vw,216px);object-fit:contain}
+.event h2{font-size:clamp(22px,5vw,29px);letter-spacing:-.05em;line-height:1.1;margin:0 auto 8px;max-width:470px}
+.event .desc{font-size:13px;color:#777;line-height:1.35;min-height:0;margin:0 auto 11px;max-width:400px}
+.event-price{font-size:clamp(31px,6vw,38px);letter-spacing:-.06em;margin:0 0 24px}
+.event-price .curr{font-weight:700;font-size:1em;letter-spacing:0;margin-right:2px}
+.event-actions{max-width:390px;margin:auto;gap:9px;grid-template-columns:1fr 1fr}
+.choice,.choice.primary,.choice.sticker-choice{min-height:52px;padding:10px 12px;font-size:12px;border-radius:9px;display:flex;align-items:center;justify-content:center;text-align:center;gap:0;box-shadow:none;transition:background .15s}
+.choice{border:1px solid #ddd;background:#fff;color:#222}
+.choice.primary{background:#191919;border-color:#191919;color:#fff}
+.choice:hover{background:#f4f4f4}
+.choice.primary:hover{background:#333}
+.choice:disabled{opacity:.5}
+.deadline{max-width:390px;margin:17px auto 0;height:2px;background:#eee}
+.deadline div{background:#b8b8b8}
+.mini-ledger{display:none}
+.end{max-width:500px;text-align:center}
+.result-card{border:0;box-shadow:none;padding:40px 0;background:transparent}
+.result-card:before{display:none}
+.result-card .tag{border:0;background:none;transform:none;padding:0;color:#888}
+.result-card h2{font-size:clamp(53px,9vw,78px)}
+.result-card h2 span{background:none}
+.end-quote{max-width:440px;margin:16px auto 33px}
+.end-stats{border-top:1px solid #eee;border-bottom:1px solid #eee}
+.end-brand{justify-content:center;gap:22px}
+.end-buttons button{background:#f7f7f7;border:1px solid #ddd;border-radius:8px}
+.end-buttons button:first-child{background:#191919;border-color:#191919;color:#fff}
+.extra{color:#bbb}
+@media(max-width:640px){
+.wrap{padding:12px 18px 35px}
+.top{margin-bottom:46px}
+.brand img{width:28px;height:28px}
+.board{padding:0 0 16px}
+.event-slot{min-height:410px;margin-top:0}
+.focus-sticker{height:178px;width:178px;margin:0 auto 13px}
+.focus-sticker.dog{height:190px;width:184px}
+.event{padding:0 0 14px}
+.event h2{font-size:clamp(22px,6vw,27px)}
+.event .desc{margin-bottom:9px;font-size:12px}
+.event-price{font-size:32px;margin-bottom:20px}
+.choice{min-height:52px;font-size:11px;padding:10px 6px}
+.deadline{margin-top:15px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
