@@ -68,10 +68,10 @@ function showNotice(title,copy,won){
  const notice=$("notice");
  $("notice-title").textContent=title;$("notice-copy").textContent=copy;
  $("notice-label").textContent=won?"DENEY BAŞARILI":"GÖZLEM KAYDEDİLDİ";
- notice.classList.add("visible");notice.scrollIntoView&&false;
+ notice.classList.add("visible");
  noticeText=title+" — "+copy;
 }
-function hideNotice(){$("notice").classList.remove("visible")}
+function hideNotice(){$("notice").classList.remove("visible");noticeText=""}
 function achievement(id,title,desc){
  if(!state.completed[id]){state.completed[id]=true;persist()}
  state.result="KEŞFEDİLDİ";showNotice(title,desc,true);observation(title,"KEŞFEDİLDİ");
@@ -256,7 +256,7 @@ function action(){
 function evaluate(){
  if(state.scene==="slide"){
   const b=sceneData.crate;
-  if(b&&!state.completed.slide&&b.position.x>sceneData.finishX){
+  if(b&&state.running&&b.position.x>sceneData.finishX){
    achievement("slide","Hedefe ulaştın.",state.pushes<=1?"Kutuyu tek itişle hedefe ulaştırdın. Sürtünmeyi kapatmak büyük fark yaratıyor.":"Kutuyu "+state.pushes+" itişte hedefe ulaştırdın. Bir sonraki denemede sürtünmeyi kapatıp tek itişi dene.");
    state.running=false;
   }
