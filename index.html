@@ -155,6 +155,139 @@ body{overflow-x:hidden}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-card{transition:none}.art-dots{animation:none}}
 
+
+/* Hand-cut sticker covers: white die-cut rims, individual silhouettes, no window chrome. */
+.orbit-card {
+  border:0; border-radius:0; background:transparent; box-shadow:none;
+  overflow:visible; align-items:center; height:162px; transform:rotate(var(--tilt));
+}
+.orbit-card:hover,.orbit-card:focus-visible {
+  transform:translateY(-6px) rotate(0deg) scale(1.08);
+  box-shadow:none;
+}
+.orbit-card:active {box-shadow:none;transform:rotate(0deg) scale(.97)}
+.orbit-card-bar {display:none}
+.orbit-cover {
+  height:119px; overflow:visible; border:0;
+  background:transparent!important; isolation:isolate;
+  filter:drop-shadow(3px 4px 0 #171717);
+  transform:rotate(-2deg);
+  transition:transform .2s ease;
+}
+.orbit-card:nth-child(4n+2) .orbit-cover {transform:rotate(3deg)}
+.orbit-card:nth-child(4n+3) .orbit-cover {transform:rotate(-4deg)}
+.orbit-card:hover .orbit-cover {transform:rotate(0deg)}
+.orbit-cover:before,.orbit-cover:after {
+  content:"";position:absolute;z-index:0;pointer-events:none;
+  clip-path:var(--cut,polygon(7% 10%,29% 3%,49% 7%,72% 2%,93% 9%,98% 30%,95% 60%,99% 83%,81% 96%,52% 92%,27% 99%,4% 88%,6% 60%,1% 33%));
+  transform:rotate(var(--cut-rotate,0deg));
+  background:#fff;
+}
+.orbit-cover:before {inset:0}
+.orbit-cover:after {inset:6px;background:var(--sticker-color,#ffca5c)}
+.orbit-cover>* {z-index:2}
+.orbit-card:nth-child(4n+1) .orbit-cover {--cut:polygon(50% 2%,62% 9%,78% 3%,82% 19%,97% 24%,90% 40%,99% 57%,88% 73%,86% 94%,66% 89%,51% 99%,35% 89%,15% 94%,13% 75%,1% 61%,10% 44%,3% 26%,21% 17%,31% 5%)}
+.orbit-card:nth-child(4n+2) .orbit-cover {--cut:polygon(5% 20%,20% 4%,42% 6%,61% 1%,87% 10%,99% 28%,95% 57%,99% 81%,79% 96%,52% 92%,30% 99%,7% 82%,1% 57%)}
+.orbit-card:nth-child(4n+3) .orbit-cover {--cut:polygon(11% 3%,86% 1%,99% 19%,97% 82%,83% 99%,10% 94%,1% 77%,4% 22%)}
+.orbit-card:nth-child(4n) .orbit-cover {--cut:polygon(5% 13%,31% 4%,62% 7%,87% 2%,98% 19%,92% 42%,99% 68%,90% 88%,68% 95%,43% 91%,18% 98%,2% 80%,8% 51%,1% 30%)}
+.art-nothing {--sticker-color:#ffcb48}
+.art-no {--sticker-color:#fd78b7}
+.art-paper {--sticker-color:#ff956c}
+.art-message {--sticker-color:#83d9f7}
+.art-loading {--sticker-color:#dcf169}
+.art-success {--sticker-color:#bf98f7}
+.art-maas {--sticker-color:#77e2b9}
+.art-tree {--sticker-color:#a6e67d}
+.art-algorithm {--sticker-color:#fda46e}
+.art-city {--sticker-color:#9fc4ff}
+.art-offside {--sticker-color:#8cdfab}
+.art-choice {--sticker-color:#fea4d5}
+.art-money {--sticker-color:#b5e886}
+.art-jobs {--sticker-color:#f6bb6f}
+.art-banned {--sticker-color:#fc7f89}
+.art-exit {--sticker-color:#9bb7ff}
+.art-evolution {--sticker-color:#aee077}
+.art-life {--sticker-color:#83ded5}
+.art-einstein {--sticker-color:#6550a7}
+.art-physical {--sticker-color:#ffd46a}
+.orbit-card .orbit-copy{
+  display:flex;align-items:center;justify-content:center;min-height:28px;
+  padding:5px 7px;max-width:96%;flex:none;text-align:center;
+  background:#fff;color:#161616;border:2px solid #171717;
+  border-radius:6px;box-shadow:2px 3px 0 #171717;
+  transform:translateY(-3px) rotate(2deg);
+}
+.orbit-card:nth-child(3n+2) .orbit-copy{transform:translateY(-3px) rotate(-3deg)}
+.orbit-copy strong{font-size:clamp(11px,1.09vw,14px);line-height:1.14}
+.comic-index{
+  border:2px solid #181818; background:#fff; color:#181818;
+  border-radius:50%; min-width:26px; height:26px; line-height:16px;
+  top:-3px;left:0;transform:rotate(-14deg);z-index:5;
+  box-shadow:1px 2px 0 #171717;
+}
+.art-foot{
+  font:700 7px/1 'DM Mono',monospace;letter-spacing:-.015em;
+  left:14px;bottom:12px;border:1px solid #191919;border-radius:3px;
+  padding:3px 4px;background:#fff!important;color:#181818;
+  transform:rotate(-4deg);max-width:calc(100% - 26px)
+}
+.art-giant{
+  color:#171717;letter-spacing:-.09em;
+  text-shadow:2px 2px 0 #fff,-2px -2px 0 #fff,2px -2px 0 #fff,-2px 2px 0 #fff,4px 4px 0 #171717;
+  transform:rotate(-5deg)
+}
+.art-nothing .art-giant{top:30px;left:13px;font-size:clamp(30px,3.25vw,47px)}
+.art-loading .art-giant,.art-success .art-giant {top:25px;left:15px;font-size:45px}
+.art-maas .art-giant{top:27px;left:22px;font-size:41px}
+.art-jobs .art-giant{top:23px;left:17px;font-size:48px}
+.art-button{
+  background:#171717;border:3px solid #fff;color:#fff;
+  padding:9px 12px;top:30px;left:19px;
+  box-shadow:3px 4px 0 #171717;transform:rotate(-8deg)
+}
+.art-document{top:18px;border:2px solid #171717;box-shadow:5px 5px 0 #171717}
+.art-bubble{top:28px;left:11px;transform:rotate(-7deg);box-shadow:4px 5px 0 #171717}
+.art-dots{bottom:18px;right:17px;color:#171717}
+.art-meter{bottom:21px;left:18px;right:18px;border:2px solid #171717;background:#fff}
+.art-banknote{top:23px;left:19px;right:19px;transform:rotate(-8deg);box-shadow:3px 4px 0 #161616}
+.art-loop{top:14px;left:calc(50% - 42px);font-size:82px;color:#161616;text-shadow:3px 4px 0 #fff}
+.art-tree>.art-tree{top:28px;background:#2f9a56;filter:drop-shadow(3px 4px 0 #fff)}
+.art-buildings{bottom:9px;left:18px;right:18px;height:86px;transform:rotate(-4deg)}
+.art-buildings i{border:2px solid #171717;background:#3b79af}
+.art-pitch{inset:22px 16px 17px;transform:skewY(-7deg) rotate(-3deg);border:3px solid #161616}
+.art-pitch:after{background:#161616}
+.art-pitch i{border-color:#161616}
+.art-versus{top:34px;transform:rotate(-7deg);text-shadow:3px 3px 0 #fff;font-size:30px}
+.art-stamp{top:39px;left:calc(50% - 54px);transform:rotate(-16deg);font-size:22px;border:4px solid #171717;background:#fff;color:#171717;box-shadow:3px 4px 0 #171717}
+.art-door{top:20px;height:84px;transform:rotate(6deg);border:3px solid #161616;box-shadow:4px 5px 0 #161616}
+.art-cells{inset:20px 12px 5px;transform:rotate(-7deg)}
+.art-cells i{border-color:#171717;background:#6abc76;border-width:3px}
+.art-molecule{top:65px;left:10px;border-top-color:#171717;border-top-width:3px}
+.art-molecule i{border:3px solid #171717;background:#fc7c9e}
+.art-orbit{top:16px;border:3px solid #fff;transform:rotate(-24deg) skew(20deg)}
+.art-orbit:before,.art-orbit:after{border-color:#fff}
+.art-formula{left:25px;bottom:23px;background:#fff;color:#171717;border:2px solid #171717;border-radius:4px;padding:0 4px;transform:rotate(-8deg)}
+.art-switch{top:30px;background:#6b91dd;border:3px solid #171717;transform:rotate(-9deg);box-shadow:4px 5px 0 #fff}
+.art-switch i{background:#fff;border:2px solid #171717}
+@media(max-width:760px){
+  .orbit-card{height:145px;box-shadow:none}
+  .orbit-cover{height:108px}
+  .orbit-card .orbit-copy{padding:4px 5px;min-height:25px}
+  .orbit-copy strong{font-size:clamp(10px,2.65vw,13px)}
+  .comic-index{top:-1px;left:0;min-width:23px;height:23px;line-height:14px;font-size:9px}
+  .art-giant{font-size:34px}
+  .art-nothing .art-giant{font-size:clamp(26px,7vw,39px)}
+  .art-loading .art-giant,.art-success .art-giant{font-size:40px}
+  .art-maas .art-giant{font-size:35px}
+  .art-button{font-size:15px;left:13px;top:32px;padding:6px 9px}
+  .art-versus{font-size:23px}
+  .art-banknote{left:10px;right:10px}
+  .art-stamp{font-size:15px;left:calc(50% - 41px)}
+  .art-bubble{font-size:10px;left:9px;top:31px}
+  .art-loop{font-size:68px;left:calc(50% - 35px)}
+  .art-foot{font-size:6px;left:10px;bottom:15px}
+}
+
 /* The experiences retain their own compact, window-like presentation. */
 .modal{position:fixed;inset:0;background:rgba(255,255,255,.76);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
 .modal.on{display:flex}
@@ -181,102 +314,82 @@ body{overflow-x:hidden}
 <header class="landing-nav"><a class="wordmark" href="/" aria-label="aynen.fun ana sayfa">aynen<span class="mark-dot">.</span>fun</a></header>
 <section class="landing-hub" aria-label="aynen.fun kedisi"><img class="hub-cat" src="./cat.webp" alt="aynen.fun kedisi" width="207" height="179" fetchpriority="high"></section>
 <div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye"><button class="orbit-card" type="button" data-game="nothing" style="--dx:26%;--dy:252px;--tilt:-3deg" aria-label="Hiçbir Şey Yapma. oyununu aç"><span class="comic-index" aria-hidden="true">01</span>
-<span class="orbit-card-bar"><span class="orbit-num">01 <span class="orbit-separator">/</span> NOTHING</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-nothing" aria-hidden="true"><span class="art-giant">00:00</span><span class="art-foot">PRODUCTIVITY — 0%</span></span>
 <span class="orbit-copy"><strong>Hiçbir Şey Yapma.</strong></span>
 </button>
 <button class="orbit-card" type="button" data-game="no" style="--dx:63%;--dy:243px;--tilt:3deg" aria-label="Hayır Diyebilir misin? oyununu aç"><span class="comic-index" aria-hidden="true">02</span>
-<span class="orbit-card-bar"><span class="orbit-num">02 <span class="orbit-separator">/</span> NO</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-no" aria-hidden="true"><span class="art-button">HAYIR.</span><span class="art-small art-ask">EMİN MİSİN?</span></span>
 <span class="orbit-copy"><strong>Hayır Diyebilir misin?</strong></span>
 </button>
 <button class="orbit-card" type="button" data-game="paper" style="--dx:64%;--dy:426px;--tilt:2deg" aria-label="Bir Evrak Eksik. oyununu aç"><span class="comic-index" aria-hidden="true">03</span>
-<span class="orbit-card-bar"><span class="orbit-num">03 <span class="orbit-separator">/</span> PAPER</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-paper" aria-hidden="true"><span class="art-document"><i></i><i></i><i></i><strong>RED</strong></span></span>
 <span class="orbit-copy"><strong>Bir Evrak Eksik.</strong></span>
 </button>
 <button class="orbit-card" type="button" data-game="message" style="--dx:27%;--dy:439px;--tilt:-3deg" aria-label="Bir Şey Soracağım. oyununu aç"><span class="comic-index" aria-hidden="true">04</span>
-<span class="orbit-card-bar"><span class="orbit-num">04 <span class="orbit-separator">/</span> MESSAGE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-message" aria-hidden="true"><span class="art-bubble">bi şey sorucam</span><span class="art-dots">● &nbsp;● &nbsp;●</span></span>
 <span class="orbit-copy"><strong>Bir Şey Soracağım.</strong></span>
 </button>
 <button class="orbit-card" type="button" data-game="loading" style="--dx:29%;--dy:70px;--tilt:2deg" aria-label="Az Kaldı. oyununu aç"><span class="comic-index" aria-hidden="true">05</span>
-<span class="orbit-card-bar"><span class="orbit-num">05 <span class="orbit-separator">/</span> LOADING</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-loading" aria-hidden="true"><span class="art-giant">99<span class="art-small">%</span></span><span class="art-meter"><i></i></span></span>
 <span class="orbit-copy"><strong>Az Kaldı.</strong></span>
 </button>
 <button class="orbit-card" type="button" data-game="success" style="--dx:49%;--dy:61px;--tilt:-4deg" aria-label="Başarı Simülatörü. oyununu aç"><span class="comic-index" aria-hidden="true">06</span>
-<span class="orbit-card-bar"><span class="orbit-num">06 <span class="orbit-separator">/</span> SUCCESS</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-success" aria-hidden="true"><span class="art-giant">+∞%</span><span class="art-foot">MEASURABLE SUCCESS</span></span>
 <span class="orbit-copy"><strong>Başarı Simülatörü.</strong></span>
 </button>
 <a class="orbit-card" href="/maas.html" style="--dx:81%;--dy:72px;--tilt:4deg" aria-label="Maaşın Kaç Saniyede Biter? oyununu aç"><span class="comic-index" aria-hidden="true">07</span>
-<span class="orbit-card-bar"><span class="orbit-num">07 <span class="orbit-separator">/</span> MAAS</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-maas" aria-hidden="true"><span class="art-giant">₺ <span class="art-slash">0</span></span><span class="art-foot">BALANCE / NOT FOUND</span></span>
 <span class="orbit-copy"><strong>Maaşın Kaç Saniyede Biter?</strong></span>
 </a>
 <a class="orbit-card" href="/burasidami.html" style="--dx:82%;--dy:251px;--tilt:-3deg" aria-label="İstanbul'a Bir Ağaç Dik. oyununu aç"><span class="comic-index" aria-hidden="true">08</span>
-<span class="orbit-card-bar"><span class="orbit-num">08 <span class="orbit-separator">/</span> TREE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-tree" aria-hidden="true"><span class="art-tree"><i></i></span><span class="art-foot">LOCATION: ASPHALT</span></span>
 <span class="orbit-copy"><strong>İstanbul'a Bir Ağaç Dik.</strong></span>
 </a>
 <a class="orbit-card" href="/algoritma.html" style="--dx:82%;--dy:429px;--tilt:2deg" aria-label="Algoritma Sensin. oyununu aç"><span class="comic-index" aria-hidden="true">09</span>
-<span class="orbit-card-bar"><span class="orbit-num">09 <span class="orbit-separator">/</span> ALGORITHM</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-algorithm" aria-hidden="true"><span class="art-loop">↻</span><span class="art-foot">YOU ARE THE PRODUCT</span></span>
 <span class="orbit-copy"><strong>Algoritma Sensin.</strong></span>
 </a>
 <a class="orbit-card" href="/sigdir.html" style="--dx:82%;--dy:609px;--tilt:-4deg" aria-label="İstanbul'a Sığdır. oyununu aç"><span class="comic-index" aria-hidden="true">10</span>
-<span class="orbit-card-bar"><span class="orbit-num">10 <span class="orbit-separator">/</span> CITY</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-city" aria-hidden="true"><span class="art-buildings"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="art-foot">ROOM FOR ONE MORE?</span></span>
 <span class="orbit-copy"><strong>İstanbul'a Sığdır.</strong></span>
 </a>
 <a class="orbit-card" href="/ofsaytimsi.html" style="--dx:64%;--dy:612px;--tilt:3deg" aria-label="Ofsaytımsı. oyununu aç"><span class="comic-index" aria-hidden="true">11</span>
-<span class="orbit-card-bar"><span class="orbit-num">11 <span class="orbit-separator">/</span> OFFSIDE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-offside" aria-hidden="true"><span class="art-pitch"><i></i><b></b></span><span class="art-foot">VAR / STILL CHECKING</span></span>
 <span class="orbit-copy"><strong>Ofsaytımsı.</strong></span>
 </a>
 <a class="orbit-card" href="/omubumu.html" style="--dx:45%;--dy:640px;--tilt:-2deg" aria-label="O mu Bu mu? oyununu aç"><span class="comic-index" aria-hidden="true">12</span>
-<span class="orbit-card-bar"><span class="orbit-num">12 <span class="orbit-separator">/</span> CHOICE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-choice" aria-hidden="true"><span class="art-versus">₺ ? ₺</span><span class="art-foot">CHOOSE YOUR LOSS</span></span>
 <span class="orbit-copy"><strong>O mu Bu mu?</strong></span>
 </a>
 <a class="orbit-card" href="/paranin-halleri.html" style="--dx:26%;--dy:639px;--tilt:-3deg" aria-label="Paranın Hâlleri. oyununu aç"><span class="comic-index" aria-hidden="true">13</span>
-<span class="orbit-card-bar"><span class="orbit-num">13 <span class="orbit-separator">/</span> MONEY</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-money" aria-hidden="true"><span class="art-banknote"><b>1</b><i>₺</i></span><span class="art-foot">VALUE SUBJECT TO CHANGE</span></span>
 <span class="orbit-copy"><strong>Paranın Hâlleri.</strong></span>
 </a>
 <a class="orbit-card" href="/kaybolan-meslekler.html" style="--dx:5%;--dy:624px;--tilt:3deg" aria-label="Kaybolan Meslekler. oyununu aç"><span class="comic-index" aria-hidden="true">14</span>
-<span class="orbit-card-bar"><span class="orbit-num">14 <span class="orbit-separator">/</span> JOBS</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-jobs" aria-hidden="true"><span class="art-giant art-lost">404</span><span class="art-foot">OCCUPATION NOT FOUND</span></span>
 <span class="orbit-copy"><strong>Kaybolan Meslekler.</strong></span>
 </a>
 <a class="orbit-card" href="/yasakli-miydi.html" style="--dx:5%;--dy:443px;--tilt:-4deg" aria-label="Yasaklı mıydı? oyununu aç"><span class="comic-index" aria-hidden="true">15</span>
-<span class="orbit-card-bar"><span class="orbit-num">15 <span class="orbit-separator">/</span> BANNED</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-banned" aria-hidden="true"><span class="art-stamp">YASAK?</span><span class="art-foot">TERMS MAY HAVE CHANGED</span></span>
 <span class="orbit-copy"><strong>Yasaklı mıydı?</strong></span>
 </a>
 <a class="orbit-card" href="/evden-cik.html" style="--dx:5%;--dy:261px;--tilt:2deg" aria-label="Evden Çık. oyununu aç"><span class="comic-index" aria-hidden="true">16</span>
-<span class="orbit-card-bar"><span class="orbit-num">16 <span class="orbit-separator">/</span> EXIT</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-exit" aria-hidden="true"><span class="art-door"><i></i></span><span class="art-foot">EXIT IS AN OPTION</span></span>
 <span class="orbit-copy"><strong>Evden Çık.</strong></span>
 </a>
 <a class="orbit-card" href="/evolution-machine.html" style="--dx:6%;--dy:79px;--tilt:4deg" aria-label="Evrimsel. oyununu aç"><span class="comic-index" aria-hidden="true">17</span>
-<span class="orbit-card-bar"><span class="orbit-num">17 <span class="orbit-separator">/</span> EVOLUTION</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-evolution" aria-hidden="true"><span class="art-cells"><i></i><i></i><i></i><i></i></span><span class="art-foot">ADAPT OR ...</span></span>
 <span class="orbit-copy"><strong>Evrimsel.</strong></span>
 </a>
 <a class="orbit-card" href="/ah-yasamak.html" style="--dx:27%;--dy:845px;--tilt:-2deg" aria-label="Ah Yaşamak Var Ya. oyununu aç"><span class="comic-index" aria-hidden="true">18</span>
-<span class="orbit-card-bar"><span class="orbit-num">18 <span class="orbit-separator">/</span> LIFE</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-life" aria-hidden="true"><span class="art-molecule"><i></i><i></i><i></i><i></i><i></i></span><span class="art-foot">H₂O + TIME + CHAOS</span></span>
 <span class="orbit-copy"><strong>Ah Yaşamak Var Ya.</strong></span>
 </a>
 <a class="orbit-card" href="/einstein-ve-sen.html" style="--dx:48%;--dy:858px;--tilt:3deg" aria-label="Einstein ve Sen. oyununu aç"><span class="comic-index" aria-hidden="true">19</span>
-<span class="orbit-card-bar"><span class="orbit-num">19 <span class="orbit-separator">/</span> EINSTEIN</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-einstein" aria-hidden="true"><span class="art-orbit"><i></i><b></b></span><span class="art-formula">E = ?</span></span>
 <span class="orbit-copy"><strong>Einstein ve Sen.</strong></span>
 </a>
 <a class="orbit-card" href="/fiziksel.html" style="--dx:72%;--dy:846px;--tilt:-3deg" aria-label="Fiziksel. oyununu aç"><span class="comic-index" aria-hidden="true">20</span>
-<span class="orbit-card-bar"><span class="orbit-num">20 <span class="orbit-separator">/</span> PHYSICAL</span><span class="orbit-corner">↗</span></span>
 <span class="orbit-cover art-physical" aria-hidden="true"><span class="art-switch"><i></i></span><span class="art-foot">THE UNIVERSE IS ON</span></span>
 <span class="orbit-copy"><strong>Fiziksel.</strong></span>
 </a></div>
