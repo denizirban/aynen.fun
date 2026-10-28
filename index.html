@@ -4,54 +4,128 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#ffffff" />
-<meta name="description" content="AYNEN. Gereksiz derecede gerekli oyunlar. Çok düşünmeden oyna." />
-<title>AYNEN. — Gereksiz derecede gerekli oyunlar</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+<meta name="description" content="Aynen. Gereksiz oyunlar." />
+<title>aynen.fun</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-:root{--ink:#171717;--grey:#777;--line:#e8e8e8;--pink:#fc8aaa;--lime:#d6f26e;--blue:#b9c7f9;--violet:#e6d7ff;--white:#fff}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--white);color:var(--ink);font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #906dff;outline-offset:4px}
-.mono{font-family:'DM Mono','Courier New',monospace;letter-spacing:-.015em} .wrap{max-width:1150px;margin:0 auto;padding:0 32px}
-.topbar{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.brand-mini{font-weight:700;letter-spacing:-.08em;font-size:18px}.top-right{display:flex;gap:22px;align-items:center;font-size:10px;text-transform:uppercase}.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#9dd721;margin-right:8px}
-.hero{min-height:530px;display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center;padding:60px 18px 57px;position:relative}
-.logo-img{width:225px;max-width:70vw;aspect-ratio:230/198;object-fit:contain;object-position:center bottom;display:block;margin:0 auto -7px;filter:drop-shadow(0 6px 0 rgba(0,0,0,.02))}
-.hero h1{font-size:clamp(86px,12vw,160px);letter-spacing:-.12em;line-height:.86;margin:0 0 23px 0;font-weight:700;padding-right:.13em}
-.hero-sub{font-size:13px;font-weight:600;letter-spacing:-.01em;margin:0 0 23px}.hero-sub span{background:var(--lime);box-shadow:4px 0 0 var(--lime),-4px 0 0 var(--lime)}
-.hero-micro{font-size:10px;color:#8a8a8a;margin:0;text-transform:uppercase}.spark{position:absolute;font-weight:700;font-size:14px}.sp1{left:14%;top:37%;transform:rotate(-16deg)}.sp2{right:17%;top:35%;font-size:30px;transform:rotate(14deg)}
-.section-head{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid #222;padding-bottom:17px;margin:0 0 22px}.section-head h2{font-weight:700;font-size:24px;letter-spacing:-.07em;margin:0}.section-head small{font-size:10px;color:#666}
-.games{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.game{border:1px solid #ddd;padding:10px;text-align:left;background:white;transition:transform .2s,box-shadow .2s;min-width:0;display:flex;flex-direction:column}.game:hover{transform:translateY(-6px);box-shadow:7px 7px 0 #181818}.game:active{transform:translateY(-1px)}.game-art{height:230px;display:flex;justify-content:center;align-items:center;position:relative;overflow:hidden}.art-pink{background:#f6b2ca}.art-lime{background:#d8ef8f}.art-blue{background:#c8d1f5}.art-violet{background:#e8d9fa}.art-yellow{background:#f8de92}.art-cream{background:#f0e9df}
-.sticker{position:absolute;left:13px;top:14px;font-size:10px;border:1px solid #1e1e1e;padding:6px 7px;background:white;transform:rotate(-5deg);font-family:'DM Mono',monospace}.art-center{font-weight:700;letter-spacing:-.06em}.nothing-circle{width:132px;height:132px;background:#111;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:67px;transform:rotate(-16deg);box-shadow:8px 8px 0 rgba(0,0,0,.14)}.no-button{background:#fff;border:3px solid #151515;color:#151515;font-size:40px;padding:16px 28px;transform:rotate(-9deg);box-shadow:8px 8px 0 #151515}.paper{background:white;border:2px solid black;width:130px;height:160px;transform:rotate(11deg);box-shadow:8px 8px 0 rgba(0,0,0,.16);padding:23px 16px;display:flex;flex-direction:column;gap:13px}.paper i{height:7px;background:#111;width:100%}.paper i:nth-child(3){width:60%}.paper b{font-size:40px;text-align:center;line-height:1}.typing{background:white;border:2px solid #111;padding:19px 18px;transform:rotate(-7deg);font-size:23px;box-shadow:7px 7px 0 #111}.loading-ring{width:122px;height:122px;border:19px solid #151515;border-top-color:white;border-radius:50%;transform:rotate(30deg)}.rating{font-size:78px;font-weight:700;transform:rotate(-10deg);text-shadow:5px 5px 0 #fff}
-.game-meta{display:flex;justify-content:space-between;font-size:10px;color:#777;padding:16px 4px 7px}.game h3{font-size:24px;letter-spacing:-.06em;margin:0 4px 7px;font-weight:700}.game p{font-size:12px;color:#666;line-height:1.5;margin:0 4px 19px;flex:1}.play-link{font-size:11px;font-weight:700;letter-spacing:-.03em;margin:0 4px 6px;display:flex;align-items:center;justify-content:space-between}.play-link span:last-child{font-size:20px}
-.after{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin:75px 0 0;padding:20px 0 30px}.after p{font-size:12px;color:#777;margin:0}.after strong{font-weight:700}.footer-note{font-size:10px;color:#888}
-.modal{position:fixed;inset:0;background:rgba(14,14,14,.64);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}.modal.on{display:flex}.panel{background:#fff;width:min(100%,550px);border:2px solid #111;box-shadow:12px 12px 0 rgba(0,0,0,.35);min-height:420px;padding:22px;display:flex;flex-direction:column}.modal-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ddd;padding-bottom:16px;font-size:10px}.close{border:1px solid #222;width:34px;height:34px;background:#fff;font-size:22px;display:grid;place-items:center}.stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 10px;gap:18px;min-height:280px}.stage h2{font-size:clamp(28px,6vw,43px);line-height:1.05;letter-spacing:-.07em;margin:0}.stage p{font-size:13px;color:#666;margin:0;max-width:360px;line-height:1.6}.stage .big{font-size:64px;font-weight:700;letter-spacing:-.06em}.action{border:2px solid #111;padding:14px 22px;background:#d9f08b;font-size:15px;font-weight:700;box-shadow:4px 4px 0 #111;min-height:49px}.action:hover{background:#f4b6d1}.action-secondary{background:white}.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}.progress{width:100%;height:8px;background:#eee;margin-top:5px}.progress>i{display:block;height:100%;background:#111;transition:width .3s}.game-timer{font-size:48px;font-weight:700}.question{border:1px solid #ddd;padding:14px;background:#f5f5f5;font-size:12px}.move-no{position:relative}.result-kicker{background:#fa9bbd;padding:5px 9px;font-size:10px;transform:rotate(-5deg)}
-@media(max-width:760px){.wrap{padding:0 20px}.topbar{height:52px}.top-right{gap:10px;font-size:9px}.hero{min-height:445px;padding:48px 10px}.logo-img{width:185px}.hero h1{font-size:clamp(76px,18vw,112px);margin-bottom:21px}.sp1{left:3%;top:33%}.sp2{right:7%;top:33%}.games{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.game-art{height:175px}.game h3{font-size:19px}.game-meta{font-size:8px}.nothing-circle{width:103px;height:103px;font-size:51px}.no-button{font-size:30px;padding:12px 21px}.paper{transform:scale(.8) rotate(11deg)}.typing{font-size:16px}.after{margin-top:50px}}
-@media(max-width:490px){.games{grid-template-columns:1fr}.game-art{height:205px}.game h3{font-size:23px}.section-head h2{font-size:22px}.hero h1{font-size:88px}.hero{min-height:420px}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+:root{--paper:#fff;--ink:#151515;--edge:#1b1b1b;--pink:#f1bacb;--lime:#d4e7a5}
+*{box-sizing:border-box}
+html,body{min-height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.mono{font-family:'DM Mono','Courier New',monospace}
+.desktop-scene{position:relative;width:100%;min-height:760px;height:100svh;max-height:1180px;isolation:isolate;overflow:hidden;background:#fff}
+.landing-cat{position:absolute;z-index:2;left:50%;top:48%;width:clamp(260px,29vw,400px);height:auto;transform:translate(-50%,-50%);object-fit:contain;pointer-events:none;user-select:none;filter:drop-shadow(0 8px 3px rgba(0,0,0,.026))}
+.float-window{--angle:0deg;position:absolute;z-index:3;border:1.5px solid #222;border-radius:7px;background:white;padding:0;text-align:left;color:#151515;box-shadow:4px 5px 0 rgba(0,0,0,.055);transform:rotate(var(--angle));transition:transform .22s ease,box-shadow .22s ease;border-collapse:collapse;overflow:hidden}
+.float-window:hover{transform:rotate(0deg) translateY(-5px) scale(1.035);box-shadow:8px 10px 0 rgba(0,0,0,.09);z-index:6}
+.float-window:active{transform:rotate(0deg) scale(.98)}
+.window-bar{height:22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid #222;padding:0 8px;background:#fafafa}
+.window-circles{display:flex;gap:4px}
+.window-circles i{width:5px;height:5px;background:#1a1a1a;border-radius:50%;display:block}
+.window-title{font:500 9px/1 'DM Mono',monospace;letter-spacing:-.04em;white-space:nowrap;color:#555}
+.window-screen{position:relative;height:120px;background:#fff;overflow:hidden;padding:12px}
+.window-tag{position:absolute;left:12px;top:10px;font:500 9px/1 'DM Mono',monospace;letter-spacing:-.04em;color:#666}
+.window-big{position:absolute;left:13px;bottom:13px;font:500 38px/1 'DM Mono',monospace;letter-spacing:-.09em}
+.window-aux{position:absolute;right:11px;bottom:12px;color:#aaa;font:500 9px/1 'DM Mono',monospace}
+.window-line{position:absolute;left:12px;right:12px;bottom:18px;height:12px;border:1px solid #222}
+.window-line b{display:block;width:99%;height:100%;background:#1a1a1a}
+.window-card{position:absolute;border:1px solid #222;background:#fff;padding:7px 9px;font:500 10px/1.2 'DM Mono',monospace;box-shadow:2px 2px 0 rgba(0,0,0,.06)}
+.window-dots{position:absolute;left:17px;top:55px;display:flex;gap:9px}
+.window-dots i{height:7px;width:7px;background:#111;border-radius:50%;animation:blink 1.2s infinite}
+.window-dots i:nth-child(2){animation-delay:.2s}.window-dots i:nth-child(3){animation-delay:.4s}
+.window-mini-ring{position:absolute;width:53px;height:53px;border:5px solid #151515;border-top-color:#eee;border-radius:50%;top:37px;left:calc(50% - 27px);animation:rotate 2.4s linear infinite}
+.window-star{font:700 47px/1 'Space Grotesk',sans-serif;position:absolute;right:17px;top:38px;transform:rotate(12deg)}
+.tile-one{--angle:-5deg;left:6.5%;top:18%;width:210px}
+.tile-two{--angle:4deg;right:7%;top:11.5%;width:216px}
+.tile-three{--angle:3deg;left:12%;top:64%;width:190px}
+.tile-four{--angle:-5deg;right:10%;top:65%;width:205px}
+.tile-five{--angle:6deg;left:28%;top:8%;width:158px}
+.tile-six{--angle:3deg;right:28%;bottom:7%;width:178px}
+.tile-five .window-screen{height:94px}
+.tile-six .window-screen{height:94px}
+.tile-one .window-screen{height:132px}
+.tile-two .window-screen{height:126px}
+.tile-three .window-screen{height:122px}
+.tile-four .window-screen{height:124px}
+.window-stamp{position:absolute;right:13px;bottom:10px;border:1px solid #181818;padding:4px 5px;font:500 10px 'DM Mono',monospace;transform:rotate(-8deg)}
+.window-mini-buttons{position:absolute;left:12px;bottom:19px;display:flex;gap:6px}
+.window-mini-buttons i{border:1px solid #111;padding:6px 10px;font:500 10px/1 'DM Mono',monospace;font-style:normal}
+.window-mini-buttons i:first-child{background:#161616;color:#fff}
+@keyframes rotate{to{transform:rotate(360deg)}}@keyframes blink{0%,70%,100%{opacity:.15}35%{opacity:1}}
+/* The experiences retain their own compact, window-like presentation. */
+.modal{position:fixed;inset:0;background:rgba(255,255,255,.76);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
+.modal.on{display:flex}
+.panel{background:white;width:min(100%,570px);border:1.5px solid #161616;border-radius:9px;box-shadow:10px 12px 0 rgba(0,0,0,.13);min-height:410px;padding:17px;display:flex;flex-direction:column}
+.modal-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #161616;padding-bottom:12px;font-size:10px}
+.close{border:1px solid #161616;border-radius:4px;width:31px;height:31px;background:white;font-size:21px;display:grid;place-items:center}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 10px;gap:18px;min-height:290px}
+.stage h2{font-size:clamp(30px,6vw,46px);line-height:1.08;letter-spacing:-.065em;margin:0;font-weight:700}
+.stage p{font-size:13px;color:#555;margin:0;max-width:370px;line-height:1.65}
+.stage .big{font-size:64px;font-weight:700;letter-spacing:-.06em}
+.action{border:1.5px solid #111;padding:13px 20px;background:var(--lime);font-size:14px;font-weight:700;border-radius:3px;box-shadow:3px 3px 0 #111;min-height:46px}
+.action:hover{background:var(--pink)}
+.action-secondary{background:white}
+.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.progress{width:100%;height:8px;background:#eee;margin-top:5px}
+.progress>i{display:block;height:100%;background:#111;transition:width .3s}
+.game-timer{font-size:52px;font-weight:700}
+.move-no{position:relative}
+.result-kicker{border:1px solid #111;background:var(--pink);padding:5px 9px;font-size:10px;transform:rotate(-5deg)}
+@media (max-width:1100px) and (min-width:801px){
+ .landing-cat{width:clamp(250px,30vw,325px)}
+ .tile-one{left:4%}.tile-two{right:3%}
+ .tile-three{left:5%}.tile-four{right:4%}
+ .tile-five{left:27%}.tile-six{right:24%}
+}
+@media (max-width:800px){
+ .desktop-scene{height:auto;max-height:none;min-height:100svh;overflow:visible;padding:18px 18px 54px;display:flex;flex-direction:column;align-items:center}
+ .landing-cat{position:relative;left:auto;top:auto;transform:none;width:min(74vw,300px);margin:48px auto 42px;z-index:1}
+ .scene-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(100%,600px)}
+ .float-window{position:relative;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;width:100%!important;transform:rotate(var(--angle));box-shadow:3px 4px 0 rgba(0,0,0,.06)}
+ .window-screen,.tile-one .window-screen,.tile-two .window-screen,.tile-three .window-screen,.tile-four .window-screen,.tile-five .window-screen,.tile-six .window-screen{height:112px}
+}
+@media (max-width:410px){.desktop-scene{padding:8px 15px 40px}.landing-cat{width:min(78vw,310px);margin:64px auto 46px}.scene-tiles{gap:14px}.window-bar{padding:0 5px}.window-title{font-size:8px}.window-screen{padding:8px}.window-big{font-size:31px}.window-card{font-size:9px;padding:6px}.window-mini-buttons i{padding:5px 6px;font-size:8px}}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-<header class="topbar wrap"><a class="brand-mini" href="#top" aria-label="Aynen ana sayfa">a.</a><div class="top-right mono"><span><i class="live-dot"></i>ÇOK GEREKLİ</span><span>EST. 2026 / TR</span></div></header>
-<main id="top">
-<section class="hero" aria-label="AYNEN tanıtım">
-<span class="spark sp1 mono">✳</span><span class="spark sp2 mono">✦</span>
-<img class="logo-img" src="./cat.webp" alt="Kısık gözleriyle sinsi şekilde gülümseyen kedi, Aynen logosu" width="230" height="198" />
-<h1>aynen.</h1>
-<p class="hero-sub"><span>GEREKSİZ DERECEDE GEREKLİ OYUNLAR.</span></p>
-<p class="hero-micro mono">BURADASIN. MİDEMİZDE KELEBEKLER UÇUŞMUYOR.</p>
-</section>
-<section class="wrap" id="oyunlar"><div class="section-head"><h2>OYNANABİLİR ŞEYLER <span style="font-size:13px;vertical-align:top">↘</span></h2><small class="mono">01 — 06 / İYİ EĞLENCELER SANIRIZ</small></div>
-<div class="games">
-<button class="game" type="button" data-game="nothing"><div class="game-art art-pink"><span class="sticker">001 / HARD MODE</span><div class="nothing-circle art-center">0</div></div><div class="game-meta mono"><span>01 / REFLEKS</span><span>30 SN</span></div><h3>Hiçbir Şey Yapma</h3><p>Hayatında ilk kez bunun için ödüllendirilebilirsin.</p><div class="play-link mono"><span>OYNA</span><span>↗</span></div></button>
-<button class="game" type="button" data-game="no"><div class="game-art art-lime"><span class="sticker">002 / SOSYAL</span><div class="no-button art-center">HAYIR.</div></div><div class="game-meta mono"><span>02 / KARAKTER TESTİ</span><span>10 SN</span></div><h3>Hayır Diyebilir misin?</h3><p>Yapamayacaksın gibi. Neyse.</p><div class="play-link mono"><span>OYNA</span><span>↗</span></div></button>
-<button class="game" type="button" data-game="paper"><div class="game-art art-blue"><span class="sticker">003 / SİSTEM</span><div class="paper"><i></i><i></i><i></i><b>?</b></div></div><div class="game-meta mono"><span>03 / EVRAK</span><span>∞ SN</span></div><h3>Bir Evrak Eksik</h3><p>Bir imza kalmıştı. Başından beri.</p><div class="play-link mono"><span>OYNA</span><span>↗</span></div></button>
-<button class="game" type="button" data-game="message"><div class="game-art art-violet"><span class="sticker">004 / SOSYAL</span><div class="typing mono">bi şey sorucam<span style="color:#999">...</span></div></div><div class="game-meta mono"><span>04 / MESAJ</span><span>?? SN</span></div><h3>Bir Şey Soracağım</h3><p>Sormadı. Soracak. Muhtemelen.</p><div class="play-link mono"><span>OYNA</span><span>↗</span></div></button>
-<button class="game" type="button" data-game="loading"><div class="game-art art-yellow"><span class="sticker">005 / SABIR</span><div class="loading-ring"></div></div><div class="game-meta mono"><span>05 / BEKLEME</span><span>?? SN</span></div><h3>Az Kaldı</h3><p>Bir şeyin yüklenmesini bekle. Ne olduğunu bilmiyoruz.</p><div class="play-link mono"><span>OYNA</span><span>↗</span></div></button>
-<button class="game" type="button" data-game="success"><div class="game-art art-cream"><span class="sticker">006 / BAŞARI</span><div class="rating mono">+999</div></div><div class="game-meta mono"><span>06 / MOTİVASYON</span><span>∞ SN</span></div><h3>Başarı Simülatörü</h3><p>Ne yaptığını bilmiyoruz ama iyisin.</p><div class="play-link mono"><span>OYNA</span><span>↗</span></div></button>
+<main class="desktop-scene" id="top">
+<h1 class="sr-only">aynen.fun — mikro oyunlar</h1>
+<img class="landing-cat" src="./cat.webp" alt="Aynen'in kısık gözlü, gülümseyen kedi sticker'ı" width="340" height="293" fetchpriority="high" />
+<div class="scene-tiles">
+<button class="float-window tile-one" type="button" data-game="nothing" aria-label="Hiçbir Şey Yapma oyununu aç">
+ <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">idle_sim.exe</span></span>
+ <span class="window-screen"><span class="window-tag">DO NOTHING</span><span class="window-big">00:15</span><span class="window-aux">● REC</span></span>
+</button>
+<button class="float-window tile-two" type="button" data-game="paper" aria-label="Bir Evrak Eksik oyununu aç">
+ <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">evrak_final_v8.pdf</span></span>
+ <span class="window-screen"><span class="window-tag">BELGE YÜKLENİYOR</span><span class="window-big" style="font-size:30px;bottom:38px">99%</span><span class="window-line"><b></b></span></span>
+</button>
+<button class="float-window tile-three" type="button" data-game="message" aria-label="Bir Şey Soracağım oyununu aç">
+ <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">typing…</span></span>
+ <span class="window-screen"><span class="window-card" style="left:10px;top:25px;transform:rotate(-3deg)">bi şey sorucam</span><span class="window-dots"><i></i><i></i><i></i></span></span>
+</button>
+<button class="float-window tile-four" type="button" data-game="success" aria-label="Başarı Simülatörü oyununu aç">
+ <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">success.sys</span></span>
+ <span class="window-screen"><span class="window-tag">STATUS: OK</span><span class="window-big" style="font-size:35px">+4800%</span><span class="window-aux">↑↑↑</span></span>
+</button>
+<button class="float-window tile-five" type="button" data-game="no" aria-label="Hayır Diyebilir misin oyununu aç">
+ <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">consent_test</span></span>
+ <span class="window-screen"><span class="window-mini-buttons"><i>EVET</i><i>HAYIR?</i></span><span class="window-aux">01/??</span></span>
+</button>
+<button class="float-window tile-six" type="button" data-game="loading" aria-label="Az Kaldı oyununu aç">
+ <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">almost_there</span></span>
+ <span class="window-screen"><span class="window-mini-ring"></span><span class="window-aux">AZ KALDI</span></span>
+</button>
 </div>
-<footer class="after"><p><strong>AYNEN.</strong> &nbsp; Yeterince ciddi bir internet sitesi.</p><span class="footer-note mono">© 2026 / MADE FOR ABSOLUTELY NO REASON.</span></footer>
-</section></main>
+</main>
+
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Oyun penceresi"><div class="panel"><div class="modal-top mono"><span id="modal-label">AYNEN. / OYUN</span><button class="close" id="close" aria-label="Oyunu kapat">×</button></div><div class="stage" id="stage"></div><div class="mono" style="font-size:10px;color:#999;text-align:right" id="round">AYNEN.FUN / BETA</div></div></div>
 <script>
 (()=>{
@@ -63,7 +137,7 @@ const close=()=>{clear();modal.classList.remove('on');document.body.style.overfl
 document.getElementById('close').onclick=close;modal.addEventListener('click',e=>{if(e.target===modal)close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 const result=(heading,desc,share)=>{clear();show(`<span class="mono result-kicker">OYUN BİTTİ</span><h2>${heading}</h2><p>${desc}</p><div class="actions" id="result-actions"></div>`);const row=document.getElementById('result-actions');row.append(btn('TEKRAR',()=>run(current),'action action-secondary'));row.append(btn('PAYLAŞ ↗',()=>{const url=location.origin+location.pathname+'?game='+current;const payload={title:'AYNEN.',text:share||heading,url};if(navigator.share)navigator.share(payload).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(`${payload.text} ${url}`).then(()=>{row.lastChild.textContent='KOPYALANDI ✓'}).catch(()=>{row.lastChild.textContent='LİNKİ KOPYALA'});else window.prompt('Paylaş:',url)}))};
 function run(game){clear();current=game;score=0;label.textContent='AYNEN. / '+({nothing:'HİÇBİR ŞEY YAPMA',no:'HAYIR DİYEBİLİR MİSİN?',paper:'BİR EVRAK EKSİK',message:'BİR ŞEY SORACAĞIM',loading:'AZ KALDI',success:'BAŞARI SİMÜLATÖRÜ'}[game]||'OYUN');
-if(game==='nothing'){show('<h2>Hiçbir şey yapma.</h2><p>15 saniye boyunca kırmızı butona basma. Başka bir şey yapabilirsin.</p>');stage.append(btn('BAŞLA',()=>{startedAt=Date.now();show('<div class="game-timer mono" id="count">15.0</div><h2>Dokunma.</h2><p>Gerçekten bu kadar basit.</p><div class="actions" id="tempt"></div>');const tempt=document.getElementById('tempt');tempt.append(btn('BASMA',()=>result('Dayanamadın.',`${((Date.now()-startedAt)/1000).toFixed(1)} saniye dayandın. Bu bir başarı değil.`, 'Hiçbir şey yapma oyununda dayanamadım.')));const t=setInterval(()=>{const left=Math.max(0,15-(Date.now()-startedAt)/1000);const c=document.getElementById('count');if(c)c.textContent=left.toFixed(1);if(left<=0)result('Hiçbir şey yaptın.','15 saniyede sıfır şey başardın. Seni tebrik etmek için bir neden bulamadık.','15 saniye hiçbir şey yapmadım.');},90);timers.push(t);later(()=>{const b=tempt.querySelector('button');if(b)b.textContent='LÜTFEN BAS';},4400);later(()=>{const b=tempt.querySelector('button');if(b)b.textContent='BAS. BİR ŞEY OLMAZ.';},8600)}))}
+if(game==='nothing'){show('<h2>Hiçbir şey yapma.</h2><p>15 saniye boyunca kırmızı butona basma. Başka bir şey yapabilirsin.</p>');stage.append(btn('BAŞLA',()=>{startedAt=Date.now();show('<div class="game-timer mono" id="count">15.0</div><h2>Dokunma.</h2><p>Gerçekten bu kadar basit.</p><div class="actions" id="tempt"></div>');const tempt=document.getElementById('tempt');tempt.append(btn('BASMA',()=>result('Dayanamadın.',`${((Date.now()-startedAt)/1000).toFixed(1)} saniye dayandın. Bu bir başarı değil.`, 'Hiçbir şey yapma oyununda dayanamadım.')));const t=setInterval(()=>{const left=Math.max(0,15-(Date.now()-startedAt)/1000);const c=document.getElementById('count');if(c)c.textContent=left.toFixed(1);if(left<=0)result('Hiçbir şey yapmadın.','15 saniyede sıfır şey başardın. Seni tebrik etmek için bir neden bulamadık.','15 saniye hiçbir şey yapmadım.');},90);timers.push(t);later(()=>{const b=tempt.querySelector('button');if(b)b.textContent='LÜTFEN BAS';},4400);later(()=>{const b=tempt.querySelector('button');if(b)b.textContent='BAS. BİR ŞEY OLMAZ.';},8600)}))}
 else if(game==='no'){let tries=0;const draw=()=>{show('<h2>Bir şey rica edebilir miyim?</h2><p>Hayır diyebileceğine emin misin?</p><div class="actions" id="choices" style="position:relative;min-height:90px;width:100%;align-items:center"></div>');const choices=document.getElementById('choices');choices.append(btn('EVET',()=>result('Yine kabul ettin.','Sınır koyma pratiği bir sonraki oyuna kaldı.','Yine hayır diyemedim.')));const no=btn('HAYIR',()=>{tries++;if(tries>=5)result('Hayır dedin.','Beş kez denedin. Tamam, bu sayılır.','Sonunda hayır diyebildim.');else {no.style.transform=`translate(${(tries%2===0?-1:1)*Math.min(tries*25,85)}px,${tries%2===0?20:-12}px)`;choices.firstChild.style.transform=`scale(${1+tries*.13})`;}} ,'action action-secondary');choices.append(no);no.addEventListener('pointerenter',()=>{if(tries<4)no.style.transform=`translate(${tries%2===0?52:-52}px,12px)`})};draw()}
 else if(game==='paper'){const steps=[['T.C. kimlik fotokopisi','Belgenin aslı gerekli.'],['Belgenin aslı','Fotokopisini getiriniz.'],['Fotokopi','Islak imza eksik.'],['Islak imza','İmzanın fotokopisi gerekli.'],['İmzanın fotokopisi','Sistem bakımda.'],['Tekrar dene','İşleminiz başarıyla ertelendi.']];let n=0;const next=()=>{if(n===steps.length)return result('Bir evrak eksik.','İşlem tamamlanmadı. Aslında hiç başlamamıştı.','Bir evrak eksikti. Altı evrak sonra yine eksik.');let [a,b]=steps[n++];show(`<span class="mono" style="font-size:11px">DOSYA NO: 000${n}</span><h2>${n===1?'Başvurunuz alındı.':b}</h2><p>${n===1?'İşleminize devam etmek için lütfen gerekli belgeyi yükleyiniz.':'Lütfen aşağıdaki belgeyi sisteme iletiniz.'}</p><div class="progress"><i style="width:${Math.min(99,n*19)}%"></i></div>`);stage.append(btn(a+' ✓',next))};next()}
 else if(game==='message'){show('<h2>bi şey sorucam</h2><p id="typing">yazıyor...</p><div class="mono" style="font-size:36px">•••</div>');later(()=>{let p=document.getElementById('typing');if(p)p.textContent='yazıyor...';},2000);later(()=>result('Yok ya boşver.','Soru sorulmadı. Sorunun cevabı da bilinmiyor.','Bana bir şey soracaklardı. Sormadılar.'),6500)}
