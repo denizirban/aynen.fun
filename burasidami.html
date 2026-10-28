@@ -180,9 +180,8 @@ if(finished)return;finished=true;note.classList.remove('on');tree.style.display=
 }
 function findTarget(e){
 if(used.size===SLOTS.length){const r=ratios(e.clientX,e.clientY);return r.x>.72&&r.y>.76?'corner':null}
-const el=document.elementFromPoint(e.clientX,e.clientY);
-const g=el?.closest?.('.region');
-return g?.dataset?.id||null;
+for(const el of domSlots){const r=el.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)return el.dataset.id}
+return null;
 }
 function down(e){if(finished)return;drag=true;start={x:e.clientX,y:e.clientY};tree.classList.add('dragging');try{tree.setPointerCapture(e.pointerId)}catch(_){}}
 function move(e){if(!drag)return;const r=ratios(e.clientX,e.clientY);showTree(r.x,r.y)}
@@ -197,7 +196,7 @@ else{if(used.size===SLOTS.length)message('Yazının içine bırak.','Gerçekten 
 tree.addEventListener('pointerdown',down);tree.addEventListener('pointermove',move);tree.addEventListener('pointerup',up);
 tree.addEventListener('pointercancel',()=>{drag=false;tree.classList.remove('dragging');showTree(.49,.64)});
 domSlots.forEach(el=>{el.addEventListener('click',()=>plant(el.dataset.id));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();plant(el.dataset.id)}})});
-corner.addEventListener('click',()=>{if(used.size===SLOTS.length)end()});
+play.addEventListener('click',e=>{if(used.size!==SLOTS.length||finished)return;const r=ratios(e.clientX,e.clientY);if(r.x>.72&&r.y>.76)end()});
 tree.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const next=SLOTS.find(id=>!used.has(id));if(next)plant(next);else end()}});
 function reset(){used.clear();finished=false;drag=false;tree.style.display='';note.classList.remove('on');$('end').hidden=true;$('log').textContent='Şu an sorun yok.';showTree(.49,.64);update()}
 $('reset').addEventListener('click',reset);$('again').addEventListener('click',reset);
