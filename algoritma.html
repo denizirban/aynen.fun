@@ -1,166 +1,57 @@
 <!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fbfbfa"><meta name="description" content="Sen algoritmasın. İki tuş var. Geçmiş olsun."><meta property="og:title" content="Algoritma Sensin — aynen.fun"><meta property="og:description" content="DAHA ÇOK / DAHA AZ. Sonrası sana kalmış."><title>Algoritma Sensin — aynen.fun</title><link rel="icon" href="/favicon.ico?v=4"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
-:root{--ink:#20221f;--muted:#999b95;--line:#e5e7e2;--paper:#fbfbfa;--green:#bfe6b8}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink)}body{font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #6d9a64;outline-offset:3px}button:disabled{cursor:default}a{color:inherit;text-decoration:none}.mono{font-family:'DM Mono',monospace}
-.shell{min-height:100svh;max-width:1120px;margin:auto;padding:20px 30px;display:flex;flex-direction:column}
-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;font:500 11px 'DM Mono',monospace}nav span{color:#a5aaa1}
-.head{margin:46px auto 25px;width:min(100%,820px)}
-.head h1{font-size:clamp(43px,7vw,83px);line-height:.98;letter-spacing:-.085em;margin:0 0 12px;font-weight:700}
-.head p{font-size:14px;color:#848982;margin:0;line-height:1.5}
-.game{width:min(100%,820px);margin:0 auto;flex:1;display:flex;flex-direction:column}
-.topline{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 2px;border-top:1px solid var(--line);font:400 11px 'DM Mono',monospace;color:#939890}
-.stream{height:8px;border-radius:20px;background:#e9ebe6;overflow:hidden}
-.stream>div{height:100%;width:0;background:#2d332b;transition:width .2s}
-.card{border:1px solid #dfe2dc;border-radius:12px;background:#fff;margin-top:24px;min-height:330px;display:flex;flex-direction:column;padding:31px clamp(23px,5vw,45px);box-shadow:0 10px 35px #2529250a;position:relative;overflow:hidden}
-.card .person{display:flex;align-items:center;gap:10px;font:500 12px 'DM Mono',monospace;color:#8c9488}
-.avatar{display:grid;place-items:center;width:34px;height:34px;border:1px solid #dfe5d8;background:#edf2e8;border-radius:50%;font-size:16px;color:#586d52}
-.card .user{font-weight:500;color:#6b7568}
-.card .since{margin-left:auto;color:#a3a7a1}
-.card h2{font-size:clamp(28px,5vw,47px);line-height:1.12;letter-spacing:-.065em;font-weight:650;margin:auto 0 15px;max-width:660px}
-.card .caption{font:400 12px/1.5 'DM Mono',monospace;color:#a1a6a0;max-width:580px}
-.card .tag{display:inline-flex;align-self:flex-start;margin-top:23px;font:500 10px 'DM Mono',monospace;border:1px solid #e3e7df;border-radius:5px;padding:7px 9px;color:#84917e}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
-.choice{min-height:63px;padding:13px;border:1.5px solid #1e231d;border-radius:8px;font-size:15px;font-weight:700;background:#1e231d;color:#fff}
-.choice.less{color:#1e231d;background:#fff}
-.choice:hover{transform:translateY(-1px)}
-.foot{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:18px 0 8px;color:#a0a69d;font:400 10px/1.5 'DM Mono',monospace}
-.signal{display:flex;align-items:center;gap:8px}
-.signal .dot{height:7px;width:7px;background:#b2b6ae;border-radius:50%}
-.signal .dot.live{background:#64b65c}
-.note{min-height:28px;margin-top:15px;text-align:center;font:400 12px/1.5 'DM Mono',monospace;color:#838a80}
-.result{display:none;border:1px solid #dfe2dc;border-radius:12px;background:white;margin-top:24px;min-height:360px;padding:40px 32px;text-align:center;flex-direction:column;justify-content:center;align-items:center;box-shadow:0 10px 35px #2529250a}
-.result.on{display:flex}.result h2{font-size:clamp(37px,6vw,69px);letter-spacing:-.075em;line-height:1.05;margin:15px auto 12px;max-width:650px}
-.result p{font-size:15px;color:#81867f;line-height:1.5;max-width:550px;margin:0 auto}
-.result .audit{margin:27px 0 20px;display:flex;gap:25px;justify-content:center;flex-wrap:wrap}
-.result .metric{font:500 11px 'DM Mono',monospace;color:#939a90}
-.result .metric strong{display:block;font:700 24px 'Space Grotesk',sans-serif;color:#272c26;margin-bottom:5px}
-.result .endactions{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap;justify-content:center}
-.result button{border:1px solid #292e28;border-radius:7px;background:#292e28;color:white;padding:12px 22px;font-size:13px;font-weight:700}
-.result button.secondary{background:white;color:#292e28}
-.footer{margin:35px auto 0;width:min(100%,820px);font:400 10px 'DM Mono',monospace;color:#b5b8b0;display:flex;justify-content:space-between;gap:10px}
-@media(max-width:620px){.shell{padding:16px 17px}.head{margin:53px 0 23px}.head h1{font-size:clamp(44px,11vw,70px)}.head p{font-size:13px}.card{min-height:300px;margin-top:19px;padding:24px 22px}.card h2{font-size:clamp(30px,8vw,43px)}.actions{gap:9px}.choice{min-height:58px;font-size:13px}.result{padding:27px 15px}.result .audit{gap:13px}.footer{margin-top:25px}}
-@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-</style></head><body>
-<div class="shell">
-<nav><a href="/">← aynen.fun</a><span>OYUN 09 / ALGORİTMA</span></nav>
-<header class="head"><h1>Algoritma sensin.</h1><p>Birine ne izleteceğine karar veriyorsun. İki tuşun var.</p></header>
-<main class="game">
-<div class="topline"><span id="round">GÖNDERİ 01 / 12</span><span id="watcher">KULLANICI: SERKAN, 31</span></div>
-<div class="stream" aria-hidden="true"><div id="progress"></div></div>
-<section class="card" id="card" aria-live="polite"><div class="person"><div class="avatar" id="avatar">s.</div><span class="user" id="handle">@mahalle</span><span class="since" id="when">az önce</span></div><h2 id="headline">Sabah yine köprü kilit.</h2><div class="caption" id="subline">12 dakika yol, 47 dakika trafik.</div><span class="tag" id="tag">GÜNDEM</span></section>
-<div class="actions" id="actions"><button class="choice" id="more" type="button">DAHA ÇOK ↑</button><button class="choice less" id="less" type="button">DAHA AZ ↓</button></div>
-<div class="note" id="note" role="status" aria-live="polite">Bu sadece bir gönderi.</div>
-<section class="result" id="result" aria-live="polite"><div class="mono" style="color:#8f958d;font-size:11px" id="finalLabel">12 GÖNDERİ SONRA</div><h2 id="resultTitle">Biraz karıştı.</h2><p id="resultText"></p><div class="audit"><div class="metric"><strong id="moreCount">0</strong>DAHA ÇOK</div><div class="metric"><strong id="lessCount">0</strong>DAHA AZ</div><div class="metric"><strong id="topTopic">—</strong>AKIŞIN KONUSU</div></div><div class="endactions"><button id="restart" type="button">YENİDEN</button><button id="share" type="button" class="secondary">PAYLAŞ ↗</button></div></section>
-<div class="foot"><span class="signal"><i class="dot live" id="dot"></i><span id="system">ÖNERİ SİSTEMİ AKTİF</span></span><span>AYNEN.FUN / SİMÜLASYON</span></div>
-</main>
-<footer class="footer"><span>KURGUSAL KULLANICI, KURGUSAL AKIŞ.</span><span>BU İŞLER BÖYLE BAŞLIYOR.</span></footer>
-</div>
-<script>
-(()=>{'use strict';
+:root{--ink:#242622;--muted:#92978f;--bg:#fcfcfa;--line:#e8eae4}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink)}body{font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #8aa883;outline-offset:4px}a{color:inherit;text-decoration:none}.mono{font-family:'DM Mono',monospace}.wrap{max-width:1120px;margin:auto;padding:20px 30px;min-height:100svh;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;font:500 11px 'DM Mono',monospace}.top span{color:#aaa}.header{margin:48px 0 30px}.header h1{font-size:clamp(46px,7vw,88px);letter-spacing:-.085em;line-height:.96;margin:0 0 13px}.header p{font-size:14px;color:#818780;margin:0}.game{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,330px);gap:28px;flex:1}.left{display:flex;flex-direction:column;min-width:0}.person{display:flex;justify-content:space-between;gap:10px;font:500 11px 'DM Mono',monospace;color:#90968e;border-bottom:1px solid var(--line);padding:0 0 13px}.feed{min-height:260px;border:1px solid #e4e7e1;border-radius:13px;background:white;display:flex;flex-direction:column;padding:28px;margin-top:20px;position:relative;overflow:hidden;box-shadow:0 8px 30px #11111108}.user{font:500 12px 'DM Mono',monospace;color:#91968f}.feed h2{font-size:clamp(31px,4.7vw,53px);font-weight:650;letter-spacing:-.07em;line-height:1.1;margin:auto 0 13px;max-width:590px}.sub{font:400 12px/1.6 'DM Mono',monospace;color:#999f97}.topic{align-self:flex-start;font:500 10px 'DM Mono',monospace;color:#9da79a;margin-top:23px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.actions button{border:1.5px solid #272c27;background:#272c27;color:white;border-radius:8px;padding:18px 10px;font-weight:700;font-size:14px;min-height:58px}.actions button:nth-child(2){background:#fff;color:#272c27}.actions button:hover{transform:translateY(-2px)}.comment{font:400 12px/1.5 'DM Mono',monospace;color:#90978e;margin:17px 0}.right{border-left:1px solid var(--line);padding-left:26px;display:flex;flex-direction:column}.right-title{font:500 11px 'DM Mono',monospace;color:#8f978e}.profile{font-size:18px;letter-spacing:-.045em;font-weight:650;margin:13px 0 5px}.profile-sub{font:400 11px/1.5 'DM Mono',monospace;color:#9ca29b}.bars{display:flex;flex-direction:column;gap:19px;margin:32px 0}.bar{display:grid;grid-template-columns:86px minmax(0,1fr) 31px;align-items:center;gap:9px}.bar span{font:500 10px 'DM Mono',monospace;color:#818a80}.track{height:9px;border-radius:12px;background:#eef0ec;overflow:hidden}.track i{display:block;height:100%;width:0;border-radius:12px;background:#a5bf9c;transition:width .26s}.bar strong{font:500 11px 'DM Mono',monospace;text-align:right}.profile-result{border-top:1px solid var(--line);padding-top:23px;margin-top:auto}.profile-result h3{font-size:clamp(19px,2.5vw,25px);letter-spacing:-.055em;line-height:1.15;margin:10px 0}.profile-result p{font-size:12px;line-height:1.6;color:#8c938b;margin:0}.meter{font:500 10px 'DM Mono',monospace;color:#929890;margin-bottom:11px}.meter strong{color:#252a25}.bottom{display:flex;gap:10px;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:25px;padding-top:15px}.bottom button{border:0;background:none;color:#5d675b;font:500 11px 'DM Mono',monospace;padding:8px 0}.bottom span{font:400 10px 'DM Mono',monospace;color:#aaa}.footer{margin-top:27px;font:400 10px 'DM Mono',monospace;color:#b4b9b1}.flash{animation:pop .23s ease}@keyframes pop{50%{transform:scale(.985);opacity:.75}}@media(max-width:790px){.wrap{padding:16px 18px}.header{margin:45px 0 24px}.header h1{font-size:clamp(43px,10vw,68px)}.game{display:flex;flex-direction:column;gap:24px}.feed{margin-top:13px;min-height:260px;padding:24px}.feed h2{font-size:clamp(31px,8vw,45px)}.right{border:0;border-top:1px solid var(--line);padding:20px 0 0}.bars{gap:14px;margin:22px 0}.profile-result{margin-top:8px}.footer{padding-bottom:20px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><div class="wrap"><nav class="top"><a href="/">← aynen.fun</a><span>OYUN / 09</span></nav><header class="header"><h1>Algoritma sensin.</h1><p>Serkan'a ne göstereceğine sen karar veriyorsun.</p></header><main class="game"><section class="left"><div class="person"><span id="postNumber">GÖNDERİ 01</span><span>SONSUZ AKIŞ ↘</span></div><div class="feed" id="feed"><span class="user" id="handle">@yoldakaldim</span><h2 id="headline">Sabah yine köprü kilit.</h2><div class="sub" id="sub">12 dakika yol, 47 dakika trafik.</div><span class="topic" id="tag">TRAFİK</span></div><div class="actions"><button type="button" id="more">DAHA ÇOK ↑</button><button type="button" id="less">DAHA AZ ↓</button></div><p class="comment" id="comment">Bir gönderiden bir şey olmaz.</p></section><aside class="right"><div class="right-title">SERKAN'IN KAFASI / CANLI</div><div class="profile">Serkan, 31</div><div class="profile-sub">Ne gösterirsen biraz daha ona dönüşüyor.</div><div class="bars" id="bars" aria-label="Serkan'ın ilgi alanları"></div><div class="profile-result"><div class="meter">YANKI ODASI <strong id="echo">0%</strong></div><div class="track" style="height:5px"><i id="echoBar"></i></div><h3 id="status">Daha bir şey olmadı.</h3><p id="description">Serkan hâlâ farklı şeyler izliyor.</p></div></aside></main><div class="bottom"><button id="reset" type="button">BAŞA SAR ↻</button><button id="share" type="button">PAYLAŞ ↗</button><span id="total">0 karar</span></div><footer class="footer">AYNEN.FUN / ÖNERİ ALGORİTMASI OYUNCAĞI. GERÇEK KULLANICI YOK.</footer></div><script>(()=>{
+'use strict';
 const $=id=>document.getElementById(id);
-const TOPICS=[
-{id:'traffic',label:'TRAFİK',seed:2,posts:[
-['Sabah yine köprü kilit.','12 dakika yol, 47 dakika trafik.','@yoldakaldim'],
-['Bu kavşaktan kim sorumlu?','Dördüncü gündür aynı yerdeyim.','@arabada'],
-['Trafik çözülmüyor çünkü...','Yorumlarda herkes biliyor.','@direksiyonda'],
-['Dün bu yol açıktı.','Bugün niye kapalı?','@yol_durumu'],
-['Trafiğin asıl sebebini bulduk.','Bir adam video çekmiş.','@abi_dinle'],
-['Şehir bir deney alanı mı?','Bu kavşak tesadüf olamaz.','@arastirdim']
-]},
-{id:'housing',label:'KİRA',seed:1,posts:[
-['Bu ev 38 bin mi?','Fotoğrafta pencere de yok.','@emlakbakiyorum'],
-['Aidat güncellenmiş.','Ben değişmedim, aidat değişti.','@apartman'],
-['Ev ilanlarında aynı fotoğraf.','Balkon başka binada çıktı.','@kiraci'],
-['Kira neden ayın 1’inde?','Bunu kim belirledi?','@bir_soru'],
-['Ev sahibinin attığı ses kaydı.','8 dakika. Henüz açmadım.','@bir_kiraci'],
-['Kira algoritması bizi tanıyor.','Aradığım evin fiyatı arttı.','@bakiyorum']
-]},
-{id:'market',label:'MARKET',seed:1,posts:[
-['Bir paket peynir 379 TL.','Bir de hafifmiş.','@kasadayim'],
-['Market fişini çerçevelettim.','Hatıra kalsın.','@sepet'],
-['Dün aldığım şey bugün daha pahalı.','Dün de pahalıydı.','@fiş'],
-['Etiket değişirken yakaladım.','Kasiyer de şaşırmış.','@raf_arasi'],
-['Fiyatların gizli saati var mı?','Her baktığımda oynuyor.','@fiyat'],
-['Şu barkodların sırrı ne?','Çok enteresan bir video var.','@barkodcu']
-]},
-{id:'group',label:'WHATSAPP',seed:1,posts:[
-['Apartman grubunda 86 mesaj.','Çöp saatini soracaktım.','@blok_c'],
-['“Arkadaşlar bir şey rica edeceğim.”','Son görülme: 03.12.','@yonetim'],
-['Kim grubu sessize aldı?','Yönetici merak etmiş.','@katmaliki'],
-['Apartman grubunda gizli grup.','Oraya da alınmamışım.','@blok_b'],
-['Bu mesaj neden silindi?','Kimse okumamış gibi yapıyor.','@yuksek_giris'],
-['Yönetici her şeyi önceden biliyor.','Geçen ay da böyle olmuş.','@yonetici_izle']
-]},
-{id:'life',label:'GÜNLÜK',seed:2,posts:[
-['Bugün hava güzelmiş.','Dışarı çıkınca fark ettim.','@mahalle'],
-['Kedim yine kutuya girmiş.','Kutu boştu.','@kedicim'],
-['İstanbul’da sakin bir sokak.','Yorumlarda kimse yerini söylemiyor.','@gezgin'],
-['Bir çay daha içeyim mi?','Üçüncü.','@demlik'],
-['Pazar kahvaltısı masası.','Ekmek unutulmuş.','@pazar'],
-['Deniz bugün çok güzel.','Sadece uzaktan baktık.','@sahil']
-]}
+const topics=[
+{id:'trafik',label:'TRAFİK',seed:2,posts:[['Sabah yine köprü kilit.','12 dakika yol, 47 dakika trafik.','@yoldakaldim'],['Şu kavşağı kim tasarladı?','Sabah akşam aynı yer.','@direksiyonda'],['Bütün yollar aynı anda mı kapanıyor?','Birisi harita çıkarmış.','@trafikbak'],['Trafiğin asıl sebebi belli oldu.','Arkadaşımın eniştesi anlatıyor.','@bilemeyen'],['Bu kavşaklar tesadüf mü?','Haritada çizgileri birleştirdim.','@gercegibiliyorum'],['Bütün kavşaklar birbirine bağlı.','Aksini iddia eden de vardır tabii.','@uzman_abi']]},
+{id:'kira',label:'KİRA',seed:2,posts:[['Ev ilanına baktım.','Fotoğraftaki ev başka çıktı.','@kiraciyim'],['Aidat yine artmış.','Binada bir değişiklik yok.','@apartman'],['Ev sahibinden ses kaydı.','8 dakika.','@kiraciyim'],['Aynı ev farklı fiyat.','Arka arkaya iki ilan.','@ilanbak'],['Emlakçı beni tanımadan tanıyor.','“Sana göre değil” dedi.','@kiraonline'],['İlan siteleri beni izliyor olabilir.','Beğendiğim ev hep zamlanıyor.','@evkonusu']]},
+{id:'market',label:'MARKET',seed:2,posts:[['Kasada yine şaşırdım.','Bir poşet bir şey.','@fis'],['Dün aldığım bugün daha pahalı.','Dün de pahalıydı.','@kasadayim'],['Peynirde indirim vardı.','Önce fiyatı yükseltmişler.','@marketten'],['Etiketleri takip ediyorum.','Not alıyorum artık.','@fisyolla'],['Rafların gizli bir düzeni var.','Ben fark ettim.','@etiket'],['Barkodlarda bir şey var.','Bu kadarına da tesadüf demeyin.','@fisarsivi']]},
+{id:'grup',label:'APARTMAN',seed:2,posts:[['Apartman grubunda 72 mesaj.','Çöp saati sorulmuş.','@katmaliki'],['Yönetici “arkadaşlar” yazdı.','Kimse cevap vermiyor.','@yonetim'],['Gruptan biri çıkmış.','Herkes onu konuşuyor.','@siteici'],['Apartmanın bir de gizli grubu var.','Beni almamışlar.','@blokc'],['Yönetici her şeyi önceden biliyor.','Geçen sene de böyleydi.','@kat4'],['Bütün aidatlar bir yere gidiyor.','Nereye gittiğini buldum galiba.','@grupyoneticisi']]},
+{id:'kedi',label:'KEDİ',seed:3,posts:[['Kedi kutunun içine girmiş.','Kutu da kendinden büyük.','@kedim'],['Bu kedi her sabah burada.','Mahallenin sahibi.','@mahallekedisi'],['Kediler neden poşet seviyor?','Yine içine girmiş.','@kedili'],['Bu kediyi dün başka yerde gördüm.','Aynı kedi olabilir.','@pati'],['İstanbul’un bütün kedileri birbirini tanıyor mu?','Düşününce mantıklı.','@kedi_teorisi'],['Bu kediler bir şey biliyor.','Hiçbir şey yapmadan yaşıyorlar.','@benkediolcam']]}
 ];
-const META={
-traffic:{curious:'Trafik yine önüme düştü.',deep:'Her kavşak aynı hesaba çıkıyor.',end:'Serkan bütün kavşakların birbirine bağlı olduğuna inanıyor.',label:'TRAFİK'},
-housing:{curious:'Ev ilanları birbirini takip ediyor.',deep:'Ev sahibinin ses kaydını analiz ediyor.',end:'Serkan artık ilan fotoğraflarını büyüteçle inceliyor.',label:'KİRA'},
-market:{curious:'Fişlerin peşine düştü.',deep:'Markete metreyle gidiyor.',end:'Serkan fişleri klasörlemeye başladı.',label:'MARKET'},
-group:{curious:'Grup mesajlarını geriye sardı.',deep:'Kim kimi gruba aldı, tablo çıkardı.',end:'Serkan apartman grubunun alt grubunu araştırıyor.',label:'WHATSAPP'},
-life:{curious:'Kedi videoları iyi geldi.',deep:'Serkan bir süre internete ara verdi.',end:'Serkan kedilere bakıyor. Normal.',label:'GÜNLÜK'}
-};
-const $topic=id=>TOPICS.find(t=>t.id===id);
-const TOTAL=12;
+const initial=Object.fromEntries(topics.map(t=>[t.id,t.seed]));
 let state=null,current=null;
-function reset(){
-state={turn:0,weights:Object.fromEntries(TOPICS.map(t=>[t.id,t.seed])),counts:Object.fromEntries(TOPICS.map(t=>[t.id,0])),last:'traffic',streak:0,more:0,less:0,intensity:0,history:[]};
-$('result').classList.remove('on');$('card').style.display='';$('actions').style.display='grid';$('note').textContent='Bu sadece bir gönderi.';$('system').textContent='ÖNERİ SİSTEMİ AKTİF';
-current={topic:'traffic',index:0};paint();
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function weightedPick(){
+const sum=Object.values(state.weights).reduce((s,v)=>s+v,0);
+let roll=Math.random()*sum;
+for(const t of topics){roll-=state.weights[t.id];if(roll<=0)return t.id}
+return 'kedi';
 }
-function rand(t){const n=(t*11+state.turn*7+3)%17;return n/17}
-function pick(){
-const weights=TOPICS.map(t=>Math.max(.35,state.weights[t.id]));
-const total=weights.reduce((a,b)=>a+b,0);let choice=rand(state.turn+state.more)*total;
-let topic=TOPICS[0].id;
-for(let i=0;i<TOPICS.length;i++){choice-=weights[i];if(choice<=0){topic=TOPICS[i].id;break}}
-const count=state.counts[topic]||0;
-const index=Math.min(5,Math.max(0,Math.floor(state.weights[topic]/3)+Math.floor(count/2)-1));
-return {topic,index:Math.min(5,index)};
+function choosePost(id){
+const t=topics.find(x=>x.id===id);
+const exposure=state.views[id]||0;
+const depth=clamp(Math.floor(exposure/2)+Math.floor((state.weights[id]-t.seed)/4),0,5);
+return t.posts[depth];
 }
-function paint(){
-const t=$topic(current.topic),item=t.posts[current.index];
-$('round').textContent='GÖNDERİ '+String(state.turn+1).padStart(2,'0')+' / '+TOTAL;
-$('progress').style.width=(100*state.turn/TOTAL)+'%';
-$('handle').textContent=item[2];$('headline').textContent=item[0];$('subline').textContent=item[1];
-$('tag').textContent=t.label;$('avatar').textContent=item[2].replace('@','').slice(0,1).toUpperCase()+'.';
-$('when').textContent=['az önce','2 sa','dün'][state.turn%3];
+function update(){
+const total=Object.values(state.weights).reduce((a,b)=>a+b,0);
+const entries=topics.map(t=>({...t,v:state.weights[t.id],share:state.weights[t.id]/total})).sort((a,b)=>b.share-a.share);
+const top=entries[0],d=top.share,echo=clamp(Math.round((d-.2)/.7*100),0,100);
+$('bars').innerHTML=entries.map(t=>'<div class="bar"><span>'+t.label+'</span><div class="track"><i style="width:'+Math.max(2,t.share*100)+'%;background:'+(t.id===top.id?'#7eaa74':'#c9d7c5')+'"></i></div><strong>'+Math.round(t.share*100)+'%</strong></div>').join('');
+$('echo').textContent=echo+'%';$('echoBar').style.width=echo+'%';
+$('total').textContent=state.turn+' karar';
+$('postNumber').textContent='GÖNDERİ '+String(state.turn+1).padStart(2,'0');
+const level=d>.8?3:d>.62?2:d>.42?1:0;
+const text=level===3?'Tebrikler. Serkan uzman oldu.':level===2?'Serkan artık başka bir şey konuşmuyor.':level===1?'Serkan bir şeye sardı.':'Daha bir şey olmadı.';
+const sub=level===3?'Son 10 gönderinin çoğu '+top.label.toLowerCase()+' hakkında. Serkan hepsini izledi.':level===2?'Ne açsa karşısına '+top.label.toLowerCase()+' çıkıyor.':level===1?'Bir baktı. Bir daha baktı.':"Serkan hâlâ farklı şeyler izliyor.";
+$('status').textContent=text;$('description').textContent=sub;
+$('comment').textContent=level===3?'Artık algoritmaya gerek yok.':level===2?'İlgi alanı daralıyor.':level===1?'Biraz daha gösterdin.':'Bir gönderiden bir şey olmaz.';
+const post=choosePost(current);
+$('headline').textContent=post[0];$('sub').textContent=post[1];$('handle').textContent=post[2];$('tag').textContent=topics.find(t=>t.id===current).label;
 }
-function click(more){
-if(state.turn>=TOTAL)return;
-const topic=current.topic;
-state.counts[topic]++;
-state.history.push({topic,more});
-if(more){state.more++;state.weights[topic]=Math.min(35,state.weights[topic]+(2+state.streak*.8));state.weights.life=Math.max(.3,state.weights.life-.25);state.streak=state.last===topic?state.streak+1:1}
-else{state.less++;state.weights[topic]=Math.max(.25,state.weights[topic]*.45);state.streak=0}
-state.last=topic;state.turn++;
-const lead=Object.entries(state.weights).sort((a,b)=>b[1]-a[1])[0];
-const dominance=lead[1]/Object.values(state.weights).reduce((a,b)=>a+b,0);
-if(state.turn===TOTAL){finish();return}
-current=pick();
-const line=dominance>.75?'Akış biraz tek konuya döndü.':state.more>=6?'Serkan bir şeye sardı.':state.less>=5?'Serkan pek beğenmedi.':'Serkan kaydırıyor.';
-$('note').textContent=line;
-paint();
+function vote(more){
+const id=current;
+if(more){state.weights[id]=Math.min(200,state.weights[id]*1.42+2);for(const t of topics)if(t.id!==id)state.weights[t.id]=Math.max(.16,state.weights[t.id]*.96);state.more++}
+else{state.weights[id]=Math.max(.16,state.weights[id]*.36);state.less++}
+state.views[id]=(state.views[id]||0)+1;state.turn++;
+current=weightedPick();
+const feed=$('feed');feed.classList.remove('flash');void feed.offsetWidth;feed.classList.add('flash');
+update();
 }
-function finish(){
-$('progress').style.width='100%';$('card').style.display='none';$('actions').style.display='none';
-const ranked=Object.entries(state.weights).sort((a,b)=>b[1]-a[1]);const lead=ranked[0],topic=lead[0],meta=META[topic];
-const d=lead[1]/ranked.reduce((s,x)=>s+x[1],0);
-const echo=(d>.51||state.more>=9)&&topic!=='life';
-const t=echo?'Tebrikler. Serkan artık her şeyi çözdü.':state.more<=3?'Serkan hâlâ normal.':'Serkan bir şeye sardı.';
-const explanation=echo?meta.end+' Bir sonraki gönderi de aynı konuda.':d>.40?meta.curious+' Karşısına benzer şeyler çıkmaya devam ediyor.':meta.deep;
-$('resultTitle').textContent=t;$('resultText').textContent=explanation;
-$('moreCount').textContent=state.more;$('lessCount').textContent=state.less;$('topTopic').textContent=meta.label;
-$('note').textContent='Sistem sadece senin kararlarını büyüttü.';
-$('result').classList.add('on');$('system').textContent=echo?'YANKI ODASI TESPİT EDİLDİ':'AKIŞ TAMAMLANDI';
-}
-$('more').addEventListener('click',()=>click(true));$('less').addEventListener('click',()=>click(false));$('restart').addEventListener('click',reset);
-$('share').addEventListener('click',async()=>{const msg=$('resultTitle').textContent+' '+$('resultText').textContent;const url=location.origin+'/algoritma.html';try{if(navigator.share)await navigator.share({title:'Algoritma sensin — aynen.fun',text:msg,url});else if(navigator.clipboard){await navigator.clipboard.writeText(msg+' '+url);$('note').textContent='Kopyalandı.'}else window.prompt('Paylaş:',msg+' '+url)}catch(_){}});
+function reset(){state={weights:{...initial},views:Object.fromEntries(topics.map(t=>[t.id,0])),turn:0,more:0,less:0};current='trafik';update()}
+$('more').addEventListener('click',()=>vote(true));$('less').addEventListener('click',()=>vote(false));$('reset').addEventListener('click',reset);
+$('share').addEventListener('click',async()=>{const msg='Serkan: '+$('status').textContent+' Yankı odası '+$('echo').textContent+'. '+state.turn+' karar.';const url=location.origin+'/algoritma.html';try{if(navigator.share)await navigator.share({title:'Algoritma sensin — aynen.fun',text:msg,url});else if(navigator.clipboard)await navigator.clipboard.writeText(msg+' '+url);else window.prompt('Paylaş:',msg+' '+url)}catch(_){}});
 reset();
-})();
-</script></body></html>
+})();</script></body></html>
