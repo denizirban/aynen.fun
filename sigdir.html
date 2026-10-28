@@ -158,15 +158,17 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 .footnote{margin-top:19px}
 @media(max-width:960px){.side{grid-template-columns:1fr 1fr}.side.details-open{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.hero{margin:32px 0 18px}.map-head{padding:18px 16px 12px}.real-map{height:clamp(340px,85vw,480px)}.map-mode{padding:8px 16px 9px}.data-state{padding:7px 16px}.map-ui{padding:8px 16px}.legend{padding:8px 16px}.time{padding:18px 16px}.side,.side.details-open{display:flex;flex-direction:column}.side .fact,.side .district-info{padding:18px}.details-toggle{font-size:10px}}
-</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzxZOV1p3MZ0K4A4b9B0uiN6lM=" crossorigin="">
-</head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
+/* A single reliable SVG sketch map, with no asynchronously fetched map tiles. */
+.city{display:block;width:100%;max-width:100%;height:auto!important;min-height:0!important;aspect-ratio:940/480;overflow:hidden;touch-action:pan-y}
+.city .bridge{opacity:0;transition:opacity .2s}
+.primary{overflow:hidden}
+.gesture-hint{padding:10px 12px}
+@media(max-width:650px){.city{aspect-ratio:940/480;min-height:0!important;height:auto!important}}
+</style></head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
 <header class="hero"><div><h1>İstanbul'a<br>sığdır.</h1><p>1950'den bugüne. Aynı şehir, biraz daha kalabalık.</p></div><span class="hero-note">SÜRGÜYÜ SAĞA ÇEK ↗</span></header>
 <main class="dashboard">
 <section class="panel primary"><div class="map-head"><div><div class="kicker">İSTANBUL NÜFUSU</div><div class="big-pop" id="population" aria-live="off">1.166.477</div><div class="growth" id="growth">1950'ye göre ×1,0</div></div><div class="year-badge" id="yearLabel">1950</div></div>
-<div class="map-mode" role="group" aria-label="Harita görünümü"><button id="realMode" aria-pressed="true" type="button">GERÇEK HARİTA</button><button id="schematicMode" aria-pressed="false" type="button">ZAMAN SİMÜLASYONU</button></div>
-<div class="real-map" id="realMap"><div id="leafletMap" role="application" aria-label="Gerçek İstanbul coğrafyası ve ilçe sınırları"></div></div>
-<div class="data-state" id="geoStatus">Harita yükleniyor…</div>
-<svg class="city" id="city" hidden viewBox="0 0 940 480" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="maptitle mapdesc" xmlns="http://www.w3.org/2000/svg">
+<svg class="city" id="city" viewBox="0 0 940 480" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="maptitle mapdesc" xmlns="http://www.w3.org/2000/svg">
 <title id="maptitle">İstanbul'un zamanla büyüyen, temsili yerleşim alanı</title><desc id="mapdesc">Bu harita gerçek bir yıl bazlı uydu tespiti değil, şehrin büyümesini anlatan şematik bir görselleştirmedir. Tarihsel nüfus verileri gerçektir.</desc>
 <rect width="940" height="480" fill="#f3f5f0"/><path class="city-outline" d="M22 180Q125 72 255 100T465 87Q665 26 842 107L928 170V351Q787 415 636 374T390 433Q157 414 20 333Z"/>
 <path class="water" d="M0 284Q160 247 255 284Q339 313 377 273Q408 246 430 218Q448 199 473 208Q492 214 497 244Q513 290 559 301Q650 331 750 279Q844 260 940 282V330Q860 313 761 324Q658 375 555 343Q493 331 468 282Q452 248 440 254Q426 256 411 277Q362 344 268 326Q153 293 0 326Z"/>
@@ -177,7 +179,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <path class="golden-horn" d="M429 231Q404 214 379 214Q354 208 340 188Q325 179 296 182"/>
 <path class="coast-line" d="M5 282Q161 244 253 284Q343 317 387 265Q408 242 429 220M510 265Q558 333 669 324Q818 286 938 281"/>
 <path class="bosporus" d="M433 0Q413 44 442 76Q470 103 454 133Q439 159 450 184Q465 203 467 228L487 228Q491 203 486 182Q468 149 486 124Q502 97 475 65Q460 36 469 0Z"/>
-<path class="bridge" d="M420 164L501 162M432 107L492 106M438 208L498 207"/>
+<path class="bridge" data-bridge-from="1973" d="M420 164L501 162"/><path class="bridge" data-bridge-from="1988" d="M432 107L492 106"/><path class="bridge" data-bridge-from="2016" d="M438 208L498 207"/>
 <path class="island" d="M764 441q12-12 28-5 8 10-2 17-19 6-26-12zM820 456q12-8 23 0 5 11-17 12zM869 427q7-8 18-3 7 9-4 14-14 3-14-11z"/>
 <text class="sea-name" x="719" y="454">ADALAR</text><text class="sea-name" x="488" y="50">BOĞAZ</text>
 </g>
@@ -199,9 +201,9 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <g class="district secondary" data-label-from="1985" aria-label="Kartal (konum işareti)"><circle cx="762" cy="391" r="3"/><text x="769" y="382">Kartal</text></g></g>
 <g class="district-label"><text x="95" y="85">AVRUPA</text><text x="713" y="84">ANADOLU</text><text x="439" y="450" fill="#9abbb7">MARMARA</text></g>
 </svg>
-<div class="gesture-hint"><span class="hand" aria-hidden="true">↔</span><span>ŞEMATİK MODDA SÜRÜKLEYEREK ZAMANDA GEZİN</span></div>
+<div class="gesture-hint"><span class="hand" aria-hidden="true">↔</span><span>HARİTAYI SÜRÜKLE · ZAMANDA GEZİN</span></div>
 <div class="map-ui"><span class="map-callout" id="mapHint">Semt konumları yaklaşık; belirme yılları haritadaki anlatım için.</span><button type="button" class="map-toggle" id="labelToggle" aria-pressed="true">SEMTLERİ GİZLE</button></div>
-<div class="legend" id="mapLegend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>GERÇEK HARİTA VERİSİ DEĞİL</span></div>
+<div class="legend" id="mapLegend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>ÖLÇEK VE YAYILIM TEMSİLÎ</span></div>
 <div class="time"><div class="time-line"><span class="kicker">YILI DEĞİŞTİR</span><span class="kicker" id="yearOnScale">1950</span></div>
 <input id="timeline" class="range" type="range" min="1950" max="2025" step="1" value="1950" aria-label="Yıl: 1950 ile 2025 arasında"><div class="ticks"><span>1950</span><span>1970</span><span>1990</span><span>2010</span><span>2025</span></div>
 <div class="timeline-story" aria-live="polite"><i></i><span id="eraText">Tarihsel merkezler ve iki yaka.</span></div><div class="event-pill" id="eventPill" aria-live="polite"><strong>1950 · Ulaşım ağını keşfet</strong>Yılları değiştirince İstanbul'un dönüm noktaları burada gösterilir.</div>
@@ -224,7 +226,7 @@ const $=id=>document.getElementById(id);
 const P=[[1950,1166477],[1955,1533822],[1960,1882092],[1965,2293823],[1970,3019032],[1975,3904588],[1980,4741890],[1985,5842985],[1990,7309190],[2000,10018735],[2007,12573836],[2008,12697164],[2009,12915158],[2010,13255685],[2011,13624240],[2012,13854740],[2013,14160467],[2014,14377018],[2015,14657434],[2016,14804116],[2017,15029231],[2018,15067724],[2019,15519267],[2020,15462452],[2021,15840900],[2022,15907951],[2023,15655924],[2024,15701602],[2025,15754053]];
 const A={1975:337.77,1990:605.12,2000:713.32,2010:899.77};
 const nf=new Intl.NumberFormat('tr-TR'),dec=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:1});
-let year=1950,area=1975,timer=null,showDistricts=true,geoMap=null,geoBorders=null,mapMode="real";
+let year=1950,area=1975,timer=null,showDistricts=true;
 let selectedDistrict=null;
 const DISTRICT_NOTES={
 'Fatih':'Tarihî yarımada ve eski kent çekirdeği.',
@@ -307,49 +309,16 @@ compare();drawDistrict();
 
 $('detailsToggle').addEventListener('click',()=>{const open=$('sidePanels').classList.toggle('details-open');$('detailsToggle').setAttribute('aria-expanded',String(open));$('detailsToggle').innerHTML=open?'DETAYLARI GİZLE <span>−</span>':'DAHA FAZLA VERİ GÖSTER <span>＋</span>'});
 const EVENTS=[
-{year:1973,name:'15 Temmuz Şehitler Köprüsü',description:'Boğaz üstündeki ilk karayolu köprüsü açıldı.',coords:[41.045,29.034]},
-{year:1988,name:'Fatih Sultan Mehmet Köprüsü',description:'Boğaz’ın ikinci karayolu köprüsü açıldı.',coords:[41.091,29.062]},
-{year:2013,name:'Marmaray',description:'Boğaz altından demiryolu bağlantısı hizmete girdi.',coords:[41.012,29.019]},
-{year:2016,name:'Yavuz Sultan Selim Köprüsü',description:'Üçüncü Boğaz köprüsü açıldı.',coords:[41.203,29.112]}
+{year:1973,name:'Birinci Boğaz Köprüsü',description:'İlk karayolu köprüsü açıldı.'},
+{year:1988,name:'Fatih Sultan Mehmet Köprüsü',description:'İkinci Boğaz köprüsü açıldı.'},
+{year:2013,name:'Marmaray',description:'İki yaka demiryoluyla denizin altından bağlandı.'},
+{year:2016,name:'Yavuz Sultan Selim Köprüsü',description:'Üçüncü Boğaz köprüsü açıldı.'}
 ];
-let eventMarkers=[];
 function updateEvent(y){
 const last=EVENTS.filter(e=>e.year<=y).at(-1);
-$('eventPill').innerHTML='<strong>'+(last?last.year+' · '+last.name:'1950 · İstanbul')+'</strong>'+(last?last.description:'Boğaz’ın iki yakası. Yeni köprülerin açılışını zaman çizelgesinde izle.');
-eventMarkers.forEach(({event,marker})=>{if(!geoMap)return;if(y>=event.year)marker.addTo(geoMap);else geoMap.removeLayer(marker)});
+$('eventPill').innerHTML='<strong>'+(last?last.year+' · '+last.name:'1950 · İstanbul')+'</strong>'+(last?last.description:'İki yaka. Henüz Boğaz köprüsü yok.');
+document.querySelectorAll('[data-bridge-from]').forEach(el=>el.style.opacity=y>=Number(el.dataset.bridgeFrom)?'1':'0');
 }
-function setMode(mode){
-mapMode=mode;const real=mode==='real';
-$('realMap').hidden=!real;$('city').hidden=real;
-$('mapHint').textContent=real?'Gerçek harita üzerinde dokunarak ilçeleri keşfet.':'Etiketler şematiktir; yıllar semtlerin kuruluş tarihi değildir.';
-$('realMode').setAttribute('aria-pressed',String(real));$('schematicMode').setAttribute('aria-pressed',String(!real));
-$('mapLegend').innerHTML=real?'<span>GERÇEK COĞRAFYA · İLÇE SINIRLARI</span><span>YAPIlaşma animasyonu bu modda gösterilmez</span>':'<span><b></b> YERLEŞİM — ŞEMATİK</span><span>GERÇEK HARİTA VERİSİ DEĞİL</span>';
-$('geoStatus').textContent=real?'Gerçek coğrafya: OpenStreetMap. İlçe sınırları: açık kaynak GeoJSON. Zamanla değişen yapılaşma bu katmanda yer almıyor.':'Şematik kent yayılımı: gerçek uydu görüntüsü veya yıl bazında yapılaşma ölçümü değildir.';
-if(real&&geoMap)setTimeout(()=>geoMap.invalidateSize(),80);
-}
-$('realMode').addEventListener('click',()=>setMode('real'));
-$('schematicMode').addEventListener('click',()=>setMode('schematic'));
-function initRealMap(){
-if(typeof L==='undefined'){$('geoStatus').textContent='Gerçek harita açılamadı. Şematik mod kullanılabilir.';setMode('schematic');return}
-geoMap=L.map('leafletMap',{zoomControl:true,scrollWheelZoom:false}).setView([41.055,28.99],10);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(geoMap);
-eventMarkers=EVENTS.map(event=>({event,marker:L.circleMarker(event.coords,{radius:6,color:'#365a42',weight:2,fillColor:'#e6c77b',fillOpacity:1}).bindPopup('<strong>'+event.name+'</strong><p>'+event.year+' · '+event.description+'</p>')}));
-updateEvent(year);
-fetch('https://raw.githubusercontent.com/ozanyerli/istanbul-districts-geojson/master/istanbul-districts.json')
-.then(r=>{if(!r.ok)throw Error('GeoJSON '+r.status);return r.json()})
-.then(data=>{
-geoBorders=L.geoJSON(data,{style:{color:'#688a74',weight:1.15,fillColor:'#b3cdb0',fillOpacity:.10},onEachFeature(feature,layer){
-const p=feature.properties||{};
-const name=p.name||p.NAME||p.Name||p.ilce||p.ILCE||p.district||p.DISTRICT||'İstanbul ilçesi';
-layer.bindPopup('<strong>'+String(name).replace(/[<>]/g,'')+'</strong><p>İdari sınır gösterimi · tarihsel sınır değişimi değil</p>');
-layer.on('mouseover',()=>layer.setStyle({weight:2.5,fillOpacity:.22}));
-layer.on('mouseout',()=>geoBorders.resetStyle(layer));
-}}).addTo(geoMap);
-const bounds=geoBorders.getBounds();if(bounds.isValid())geoMap.fitBounds(bounds.pad(.02));
-$('geoStatus').textContent='Gerçek İstanbul ilçe geometrileri yüklendi. Haritada yakınlaş, ilçeye dokun; tarihsel olayları görmek için yılı değiştir.';
-}).catch(()=>{$('geoStatus').textContent='İlçe sınırları şu anda yüklenemedi; OpenStreetMap haritası ve olay noktaları kullanılabilir.'});
-}
-const leaflet=document.createElement('script');leaflet.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';leaflet.integrity='sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';leaflet.crossOrigin='';leaflet.onload=initRealMap;leaflet.onerror=()=>{$('geoStatus').textContent='Harita kütüphanesi yüklenemedi; şematik görünümü açabilirsiniz.';setMode('schematic')};document.head.appendChild(leaflet);
 function setArea(k){area=k;const km=A[k],density=15754053/km;$('areaNum').textContent=km.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
 $('densityNum').textContent=nf.format(Math.round(density));
 $('experiment').textContent="2025 nüfusu "+k+" kent alanına sığarsa kilometrekare başına yaklaşık "+nf.format(Math.round(density))+" kişi düşer. Gerçek yoğunluk veya uygulanabilir plan değildir.";
