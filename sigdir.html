@@ -152,6 +152,12 @@ main>.panel .chartnote{padding:0 12px 2px}
 .metric{padding:9px 11px}
 .era-strip{padding:8px 9px}
 }
+/* Neighborhood names: a muted sketch annotation layer, not additional controls. */
+.geo-svg .nh-label{pointer-events:none}
+.geo-svg .nh-label circle{fill:#527861;stroke:#eaf2e9;stroke-width:1}
+.geo-svg .nh-label text{font:400 8.4px 'DM Mono',monospace;fill:#55765c;paint-order:stroke;stroke:#eff5eb;stroke-width:2.8px;stroke-linejoin:round}
+.geo-svg .loc-label{font-size:10.4px;fill:#314b3b;stroke-width:3.5}
+@media(max-width:650px){.geo-svg .nh-label text{font-size:10px}.geo-svg .loc-label{font-size:11px}}
 </style></head><body>
 <div class="wrap"><nav class="top"><a href="/">← aynen.fun</a><span>İSTANBUL / 1950–2025</span></nav>
 <header class="hero"><h1>İstanbul’a Sığdır.</h1><p>İstanbul · 1950–2025 · Veriye dayalı deney</p></header>
@@ -178,7 +184,7 @@ main>.panel .chartnote{padding:0 12px 2px}
 <div class="extras"><details><summary>YERLEŞİM ALANI VERİSİNİ KEŞFET <span>＋</span></summary><div class="area-data"><p>İstanbul'un kentsel alanı için Döker'in yayımlanan dört ölçüm yılı. Farklı araştırmalardaki “kent alanı” tanımları birbiriyle karıştırılmadı.</p><div class="area-switch" id="areaButtons"><button type="button" data-year="1975" aria-pressed="true">1975</button><button type="button" data-year="1990" aria-pressed="false">1990</button><button type="button" data-year="2000" aria-pressed="false">2000</button><button type="button" data-year="2010" aria-pressed="false">2010</button></div><div class="kicker">YERLEŞİM ALANI · km²</div><div class="area-answer" id="area">337,77</div><p id="areaExplanation">1975 ölçümü · 33.777 hektar.</p></div></details></div>
 </main>
 <div class="era-strip"><span class="era-left" id="eraLabel">1950 · Tarihî yerleşim merkezleri</span><span id="areaMilestone">1975 öncesi için karşılaştırılabilir kent alanı ölçümü yok.</span></div>
-<div class="building-legend">🏢 Simgeler, İstanbul'un <strong>toplam nüfusuna</strong> göre 1950–2025 boyunca artar (≈125 bin kişi/simge). Konumlara dağılım <strong>temsili</strong>; mahalle nüfusu, tarihsel bina sayısı veya yapılaşma sınırı değildir. Harita güncel ilçe sınırlarını kullanır.</div>
+<div class="building-legend">Mahalle / semt adları yaklaşık konum etiketleridir. 🏢 Simgeler, İstanbul'un <strong>toplam nüfusuna</strong> göre 1950–2025 boyunca artar (≈125 bin kişi/simge). Konumlara dağılım <strong>temsili</strong>; mahalle nüfusu, tarihsel bina sayısı veya yapılaşma sınırı değildir. Harita güncel ilçe sınırlarını kullanır.</div>
 <div class="sources">Nüfus: <a href="https://www.ibb.gov.tr/tr-TR/BilgiHizmetleri/Istatistikler/Documents/demografi/t211.pdf" target="_blank" rel="noopener">İBB / tarihsel sayımlar</a> ve <a href="https://data.tuik.gov.tr/Bulten/Index?p=Adrese-Dayali-Nufus-Kayit-Sistemi-Sonuclari-2025-53899" target="_blank" rel="noopener">TÜİK / ADNKS</a>. Ara yıllar doğrusal hesaplamadır; ölçülmüş veri değildir. Kent alanı: <a href="https://istanbultarihi.ist/22-istanbulun-cumhuriyet-donemi-mekansal-gelisimi" target="_blank" rel="noopener">Döker (İstanbul Tarihi'nde aktarıldığı şekliyle)</a>. Nüfus ile kent alanı farklı tanımlara dayanabilir.</div>
 <footer class="footer">AYNEN.FUN / ÖLÇÜLEN VERİ ÖLÇÜLMÜŞ, TAHMİN TAHMİN OLARAK GÖSTERİLİR.</footer></div>
 <script>(()=>{'use strict';
@@ -324,6 +330,26 @@ if(['Fatih','Beşiktaş','Kadıköy','Üsküdar','Sarıyer','Silivri','Şile','B
 const text=elem('text');text.setAttribute('class','loc-label');text.setAttribute('x',(centerX/count).toFixed(1));text.setAttribute('y',(centerY/count).toFixed(1));text.setAttribute('text-anchor','middle');text.textContent=name;$('labels').appendChild(text);
 }
 }
+// Approximate reference points: names are geographic orientation, not historical neighborhood boundaries.
+const NEIGHBORHOODS=[
+['Balat',28.949,41.031],['Karaköy',28.978,41.024],['Cihangir',28.985,41.032],
+['Nişantaşı',28.994,41.052],['Levent',29.017,41.079],['Etiler',29.030,41.081],
+['Ortaköy',29.026,41.048],['Bebek',29.043,41.077],['Emirgan',29.056,41.106],
+['Tarabya',29.059,41.136],['Moda',29.029,40.985],['Fenerbahçe',29.047,40.973],
+['Caddebostan',29.064,40.968],['Bostancı',29.096,40.954],['Acıbadem',29.047,41.011],
+['Kuzguncuk',29.031,41.038],['Çengelköy',29.053,41.049],['Florya',28.787,40.977],
+['Zekeriyaköy',29.023,41.202],['Kozyatağı',29.102,40.968]
+];
+const labelRoot=elem('g');labelRoot.setAttribute('id','neighborhoodLabels');$('labels').appendChild(labelRoot);
+for(const [name,lon,lat] of NEIGHBORHOODS){
+ if(lon<west||lon>east||lat<south||lat>north)continue;
+ const [px,py]=project([lon,lat]);
+ const g=elem('g');g.setAttribute('class','nh-label');
+ const dot=elem('circle');dot.setAttribute('cx',px.toFixed(1));dot.setAttribute('cy',py.toFixed(1));dot.setAttribute('r','1.9');
+ const t=elem('text');t.setAttribute('x',(px+5).toFixed(1));t.setAttribute('y',(py-5).toFixed(1));t.textContent=name;
+ g.append(dot,t);labelRoot.appendChild(g);
+}
+
 if(shown<35)throw Error('İlçe sınırları eksik: '+shown);showBuildings();
 $('geoStatus').textContent=shown+' güncel ilçe sınırı · kaynak: açık GeoJSON · çizim veri geometrisinden üretildi · tarihsel yapılaşma değildir.';
 }
