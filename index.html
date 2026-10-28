@@ -121,6 +121,98 @@ body{overflow-x:hidden;background:#f7f9f6}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-card{transition:none}}
 
+
+/* Interactive desktop — clean shell, working window controls and depth. */
+.desktop-scene { --cat-x:0px;--cat-y:0px; }
+.desktop-scene:before {
+ content:"";position:absolute;z-index:0;inset:0;
+ background:linear-gradient(135deg,rgba(255,255,255,.14),transparent 52%);
+ pointer-events:none;
+}
+.landing-hub{top:292px}
+.hub-cat{transform:translate3d(var(--cat-x),var(--cat-y),0);transition:transform .4s ease-out;will-change:transform}
+.wallpaper-clouds{animation:desktop-clouds 48s ease-in-out infinite alternate}
+@keyframes desktop-clouds {from{transform:translateX(-9px)}to{transform:translateX(16px)}}
+.orbit-card{
+ --move-x:0px;--move-y:0px;
+ transform:translate3d(var(--move-x),var(--move-y),0) rotate(var(--tilt));
+}
+.orbit-card:hover,.orbit-card:focus-visible{
+ transform:translate3d(var(--move-x),calc(var(--move-y) - 4px),0) rotate(0deg) scale(1.035);
+}
+.orbit-card:active{transform:translate3d(var(--move-x),var(--move-y),0) rotate(var(--tilt))}
+.orbit-card.is-dragging,.orbit-card.is-dragging:hover{
+ transition:none;cursor:grabbing;transform:translate3d(var(--move-x),var(--move-y),0) rotate(0deg) scale(1.016);
+ filter:drop-shadow(5px 12px 7px rgba(17,35,50,.28))
+}
+.retro-titlebar{cursor:grab;touch-action:pan-y}
+.orbit-card.is-dragging .retro-titlebar{cursor:grabbing}
+.orbit-card.is-active .retro-window{box-shadow:1px 1px 0 #fff,2px 2px 0 #456891,5px 8px 17px rgba(24,51,72,.24)}
+.orbit-card.is-active .retro-titlebar{background:linear-gradient(90deg,#143e8c,#357bce 82%,#8bb4db);color:#fff}
+.retro-close{cursor:pointer;pointer-events:auto}
+.retro-close:hover{background:#f3e9e3;color:#b84d45}
+.desktop-taskbar{
+ position:fixed;left:0;right:0;bottom:0;z-index:40;min-height:39px;padding:4px 12px;
+ display:flex;align-items:center;gap:10px;
+ color:#253f61;background:linear-gradient(180deg,rgba(241,249,250,.97),rgba(214,231,239,.95));
+ border-top:1px solid rgba(255,255,255,.7);
+ box-shadow:0 -4px 18px rgba(28,65,72,.09);
+ backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+ font:500 11px/1 Tahoma,'Space Grotesk',sans-serif;
+}
+.desktop-taskbar button{font:inherit}
+.desktop-start{height:30px;border:1px solid rgba(65,112,135,.27);border-radius:5px;background:rgba(255,255,255,.65);color:#273e55;padding:2px 10px 2px 4px;display:flex;align-items:center;gap:6px;font-weight:700!important;cursor:pointer}
+.desktop-start:hover,.desktop-start[aria-expanded="true"]{background:#fff}
+.desktop-start img{width:25px;height:24px;object-fit:contain}
+.desktop-taskbar-divider{height:18px;width:1px;background:#b1c8d1}
+.desktop-taskbar-label{display:flex;align-items:center;gap:8px;color:#50687b;letter-spacing:.01em}
+.desktop-live-dot{width:6px;height:6px;background:#67a58a;border-radius:50%;box-shadow:0 0 0 2px #d5e8df}
+.desktop-taskbar-spacer{flex:1}
+.desktop-reset{border:0;border-radius:5px;padding:6px;background:transparent;color:#556d80;cursor:pointer;display:grid;place-items:center}
+.desktop-reset:hover{background:#fff}
+.desktop-clock{min-width:45px;text-align:center;font-size:11px;color:#294459;letter-spacing:0}
+.desktop-launcher[hidden]{display:none}
+.desktop-launcher{
+ position:fixed;z-index:41;left:12px;bottom:45px;width:min(360px,calc(100vw - 24px));
+ background:rgba(250,252,249,.97);
+ border:1px solid #b3c9d2;border-radius:8px;
+ box-shadow:0 14px 38px rgba(20,45,62,.25);
+ padding:10px;backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px)
+}
+.desktop-launcher-heading{display:flex;justify-content:space-between;align-items:center;padding:5px 7px 10px;font:700 11px/1 'DM Mono',monospace;letter-spacing:.075em;color:#4a6477}
+.desktop-launcher-heading .mono{font-size:9px;font-weight:400;color:#79909e}
+.desktop-launcher-list{max-height:min(45vh,315px);overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.desktop-launcher-list button{border:0;background:transparent;border-radius:4px;padding:9px 7px;display:flex;align-items:center;gap:7px;text-align:left;font:500 11px/1.2 'Space Grotesk',sans-serif;color:#273d4d;cursor:pointer;min-width:0}
+.desktop-launcher-list button:hover,.desktop-launcher-list button:focus-visible{background:#e4eff3}
+.desktop-launcher-list .launcher-num{font:500 9px 'DM Mono',monospace;color:#839ca8;flex:none}
+.orbit-card.is-minimized{width:82px;min-height:80px;filter:none;transform:translate3d(var(--move-x),var(--move-y),0);transition:none;cursor:pointer}
+.orbit-card.is-minimized .retro-window{display:none}
+.orbit-card.is-minimized:before{
+ content:"";display:block;width:45px;height:43px;margin:0 auto 5px;
+ background:linear-gradient(180deg,#fff5d1 0 20%,#efcf76 20% 100%);
+ border:2px solid #a47d35;border-radius:2px;box-shadow:2px 3px 0 rgba(32,54,56,.26);clip-path:polygon(0 14%,6% 14%,6% 0,48% 0,57% 14%,100% 14%,100% 100%,0 100%)
+}
+.orbit-card.is-minimized:after{content:attr(data-short-title);display:block;color:#fff;font:500 10px/1.13 Tahoma,Arial,sans-serif;text-align:center;text-shadow:1px 1px 2px #23465a,0 1px 3px #23465a;overflow-wrap:anywhere}
+.orbit-card.is-minimized:hover{transform:translate3d(var(--move-x),calc(var(--move-y) - 3px),0)}
+@media(max-width:760px){
+ .landing-hub{top:auto}
+ .wallpaper-clouds{animation:none}
+ .orbit-card,.orbit-card:hover,.orbit-card:focus-visible,.orbit-card:active{transform:rotate(var(--tilt));}
+ .retro-titlebar{cursor:pointer;touch-action:auto}
+ .desktop-taskbar{position:fixed;min-height:35px;padding:3px 9px;gap:7px}
+ .desktop-start{height:28px;padding-right:6px;font-size:10px!important}
+ .desktop-start img{height:23px;width:23px}
+ .desktop-taskbar-label{font-size:10px}
+ .desktop-reset{padding:4px}
+ .desktop-scene{padding-bottom:55px}
+ .desktop-launcher{bottom:40px}
+ .orbit-card.is-minimized{width:100%;min-height:90px;transform:rotate(0deg)}
+ .orbit-card.is-minimized:hover{transform:rotate(0deg)}
+ .orbit-card.is-minimized:before{width:36px;height:35px}
+ .orbit-card.is-minimized:after{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.wallpaper-clouds{animation:none}.hub-cat{transition:none}.orbit-card{transition:none}}
+
 /* The experiences retain their own compact, window-like presentation. */
 .modal{position:fixed;inset:0;background:rgba(255,255,255,.76);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
 .modal.on{display:flex}
@@ -155,7 +247,7 @@ body{overflow-x:hidden;background:#f7f9f6}
 </head>
 <body>
 <main class="desktop-scene" id="top">
-<header class="landing-nav"><a class="wordmark" href="/" aria-label="aynen.fun ana sayfa">aynen<span class="mark-dot">.</span>fun</a></header>
+<h1 class="sr-only">21 küçük oyun — interaktif masaüstü</h1>
 <div class="wallpaper-clouds" aria-hidden="true">
 <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
 <defs><filter id="cloud-soft"><feGaussianBlur stdDeviation="12"/></filter></defs>
@@ -188,6 +280,23 @@ body{overflow-x:hidden;background:#f7f9f6}
 <a class="orbit-card" href="/einstein-ve-sen.html" style="--dx:16%;--dy:823px;--ty:700px;--tilt:-1deg" aria-label="Einstein ve Sen. oyununu aç" title="einstein ve sen"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">19</span><span class="retro-title">einstein ve sen</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#E5E5EF"/><path d="M0 34Q62 22 120 54Q173 82 241 20" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 58Q62 46 120 78Q173 106 241 44" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 82Q62 70 120 102Q173 130 241 68" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 106Q62 94 120 126Q173 154 241 92" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 130Q62 118 120 150Q173 178 241 116" fill="none" stroke="#98AAC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 0Q-9 75 42 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M56 0Q21 75 72 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M86 0Q51 75 102 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 0Q81 75 132 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M146 0Q111 75 162 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M176 0Q141 75 192 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M206 0Q171 75 222 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M236 0Q201 75 252 165" fill="none" stroke="#98AAC0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="143" cy="76" r="38" fill="#E8C279" stroke="#283137" stroke-width="3"/><ellipse cx="130" cy="61" rx="13" ry="6" fill="#F5DFB3"/><path d="M167 89Q143 106 123 94" fill="none" stroke="#B58C4E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="48" cy="33" r="14" fill="#D18C91" stroke="#283137" stroke-width="2"/><path d="M49 18L58 7" fill="none" stroke="#283137" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></a>
 <a class="orbit-card" href="/fiziksel.html" style="--dx:41%;--dy:820px;--ty:697px;--tilt:1deg" aria-label="Fiziksel. oyununu aç" title="fiziksel"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">20</span><span class="retro-title">fiziksel</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#F0E6D0"/><ellipse cx="122" cy="146" rx="97" ry="7" fill="#DECBAE"/><path d="M39 105L203 76" fill="none" stroke="#283137" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M117 140L125 90L143 140Z" fill="#7699A0" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M98 141L165 141" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="40" y="55" width="51" height="50" rx="4" fill="#C88A77" stroke="#283137" stroke-width="3"/><path d="M51 55L61 39L81 39L91 55" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="191" cy="58" r="24" fill="#EAC879" stroke="#283137" stroke-width="3"/><path d="M184 51L199 66" fill="none" stroke="#AF8853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M199 50L184 66" fill="none" stroke="#AF8853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 110Q37 125 57 110M183 98Q205 109 226 91" fill="none" stroke="#8CABAA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></a>
 <a class="orbit-card" href="/ses-cikarma.html" style="--dx:66%;--dy:817px;--ty:694px;--tilt:-1.3deg" aria-label="Ses Çıkarma. dalga girişimi oyununu aç" title="ses çıkarma"><span class="retro-window"><span class="retro-titlebar"><span class="retro-number">21</span><span class="retro-title">ses çıkarma</span><span class="retro-close" aria-hidden="true">×</span></span><span class="retro-picture" aria-hidden="true"><svg class="editorial-art" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect width="240" height="160" fill="#DCE7E8"/><path d="M0 78Q20 33 40 78T80 78T120 78T160 78T200 78T240 78" fill="none" stroke="#CB8581" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 78Q20 123 40 78T80 78T120 78T160 78T200 78T240 78" fill="none" stroke="#648CA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 78L225 78" fill="none" stroke="#F5F5EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="120" cy="78" r="17" fill="#F4EEE5" stroke="#283137" stroke-width="2"/><path d="M111 78L129 78" fill="none" stroke="#283137" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="45" cy="23" r="9" fill="#DBB879" stroke="none" stroke-width="1"/><circle cx="197" cy="138" r="13" fill="#ACC7BB" stroke="none" stroke-width="1"/></svg></span></span></a></div>
+
+<div class="desktop-taskbar" role="toolbar" aria-label="Masaüstü kontrolleri">
+ <button class="desktop-start" type="button" aria-expanded="false" aria-controls="desktop-launcher" title="Oyunları aç">
+  <img src="./cat.webp" alt="" width="27" height="23" loading="lazy"><span>Başlat</span>
+ </button>
+ <span class="desktop-taskbar-divider" aria-hidden="true"></span>
+ <span class="desktop-taskbar-label"><span class="desktop-live-dot"></span><span id="desktop-status">21 açık pencere</span></span>
+ <span class="desktop-taskbar-spacer"></span>
+ <button class="desktop-reset" type="button" title="Pencereleri eski yerine koy" aria-label="Pencereleri sıfırla">
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M5.2 9A7.5 7.5 0 0 1 18 7l2 5M4 12l2 5a7.5 7.5 0 0 0 12.8-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+ </button>
+ <span class="desktop-clock mono" aria-label="Yerel saat">--:--</span>
+</div>
+<div class="desktop-launcher" id="desktop-launcher" hidden>
+ <div class="desktop-launcher-heading"><span>OYUNLAR</span><span class="mono">21 DOSYA</span></div>
+ <div class="desktop-launcher-list"></div>
+</div>
 </main>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Oyun penceresi"><div class="panel"><div class="modal-top mono"><span id="modal-label">AYNEN. / OYUN</span><button class="close" id="close" aria-label="Oyunu kapat">×</button></div><div class="stage" id="stage"></div><div class="mono" style="font-size:10px;color:#999;text-align:right" id="round">AYNEN.FUN / BETA</div></div></div>
@@ -209,6 +318,147 @@ else if(game==='loading'){startedAt=Date.now();show('<div class="game-timer mono
 else if(game==='success'){let n=0;const draw=()=>{show(`<span class="mono">BAŞARI RAPORU</span><div class="big mono">%${n*100}</div><h2>${n?'Biraz daha başarılı ol.':'Başarmaya hazır mısın?'}</h2><p>Ne konuda olduğunu sorma.</p>`);stage.append(btn(n?'DAHA BAŞARILI OL':'BAŞAR',()=>{n++;if(n===12)result('%1200 başarılısın.','Neyi başardığını bilmiyoruz. Bunun önemli olduğunu da düşünmüyoruz.','%1200 başarılıyım. Nedenini bilmiyorum.');else draw()}))};draw()}}
 document.querySelectorAll('[data-game]').forEach(x=>x.onclick=()=>{modal.classList.add('on');document.body.style.overflow='hidden';run(x.dataset.game)});
 let requested=new URLSearchParams(location.search).get('game');if(['nothing','no','paper','message','loading','success'].includes(requested)){modal.classList.add('on');document.body.style.overflow='hidden';run(requested)};
+})();
+</script>
+
+
+<script>
+/* Desktop interactions are isolated from the six existing game engines. */
+(function(){
+  const desktop=document.querySelector('.desktop-scene');
+  if(!desktop)return;
+  const cards=Array.from(desktop.querySelectorAll('.orbit-card'));
+  const start=document.querySelector('.desktop-start');
+  const launcher=document.getElementById('desktop-launcher');
+  const launcherList=launcher.querySelector('.desktop-launcher-list');
+  const reset=document.querySelector('.desktop-reset');
+  const status=document.getElementById('desktop-status');
+  const clock=document.querySelector('.desktop-clock');
+  let topLayer=30;
+  const canDrag=()=>window.matchMedia('(min-width: 761px) and (pointer: fine)').matches;
+  function refreshStatus(){
+    const count=cards.filter(card=>!card.classList.contains('is-minimized')).length;
+    status.textContent=count+' açık pencere';
+  }
+  function focusWindow(card){
+    if(card.classList.contains('is-minimized'))return;
+    cards.forEach(c=>c.classList.remove('is-active'));
+    card.classList.add('is-active');
+    card.style.zIndex=String(++topLayer);
+  }
+  function restoreWindow(card){
+    card.classList.remove('is-minimized');
+    focusWindow(card);
+    refreshStatus();
+  }
+  function minimizeWindow(card){
+    card.classList.add('is-minimized');
+    card.classList.remove('is-active');
+    card.style.zIndex='3';
+    refreshStatus();
+  }
+  function setLauncher(open){
+    launcher.hidden=!open;
+    start.setAttribute('aria-expanded',String(open));
+  }
+  cards.forEach((card,i)=>{
+    const bar=card.querySelector('.retro-titlebar');
+    const close=card.querySelector('.retro-close');
+    const title=(card.querySelector('.retro-title')?.textContent||'oyun').trim();
+    card.dataset.shortTitle=title;
+    let blockClick=false;
+    let drag=null;
+    card.addEventListener('click',function(event){
+      if(blockClick){
+        event.preventDefault();event.stopImmediatePropagation();blockClick=false;return;
+      }
+      if(event.target.closest('.retro-close')){
+        event.preventDefault();event.stopImmediatePropagation();minimizeWindow(card);return;
+      }
+      if(card.classList.contains('is-minimized')){
+        event.preventDefault();event.stopImmediatePropagation();restoreWindow(card);return;
+      }
+      focusWindow(card);
+    },true);
+    card.addEventListener('pointerdown',()=>{if(!card.classList.contains('is-minimized'))focusWindow(card);},{passive:true});
+    card.addEventListener('keydown',event=>{
+      if((event.key==='Delete'||event.key==='Backspace')&&!card.classList.contains('is-minimized')){
+        event.preventDefault();minimizeWindow(card);
+      }
+    });
+    bar.addEventListener('pointerdown',event=>{
+      if(!canDrag()||event.button!==0||event.target.closest('.retro-close'))return;
+      const cardBounds=card.getBoundingClientRect();
+      const rootBounds=desktop.getBoundingClientRect();
+      drag={
+        id:event.pointerId,startX:event.clientX,startY:event.clientY,
+        baseX:parseFloat(card.style.getPropertyValue('--move-x'))||0,
+        baseY:parseFloat(card.style.getPropertyValue('--move-y'))||0,
+        bounds:cardBounds,root:rootBounds,moved:false
+      };
+      bar.setPointerCapture(event.pointerId);
+    });
+    bar.addEventListener('pointermove',event=>{
+      if(!drag||event.pointerId!==drag.id)return;
+      let dx=event.clientX-drag.startX,dy=event.clientY-drag.startY;
+      if(!drag.moved&&Math.hypot(dx,dy)<5)return;
+      if(!drag.moved){drag.moved=true;card.classList.add('is-dragging');focusWindow(card)}
+      dx=Math.max(drag.root.left+8-drag.bounds.left,Math.min(drag.root.right-8-drag.bounds.right,dx));
+      dy=Math.max(drag.root.top+8-drag.bounds.top,Math.min(drag.root.bottom-48-drag.bounds.bottom,dy));
+      card.style.setProperty('--move-x',(drag.baseX+dx)+'px');
+      card.style.setProperty('--move-y',(drag.baseY+dy)+'px');
+    });
+    const finish=event=>{
+      if(!drag||event.pointerId!==drag.id)return;
+      if(drag.moved){blockClick=true;setTimeout(()=>{blockClick=false},180)}
+      card.classList.remove('is-dragging');
+      drag=null;
+      if(bar.hasPointerCapture(event.pointerId))bar.releasePointerCapture(event.pointerId);
+    };
+    bar.addEventListener('pointerup',finish);
+    bar.addEventListener('pointercancel',finish);
+    const item=document.createElement('button');
+    item.type='button';
+    const number=document.createElement('span');
+    number.className='launcher-num';
+    number.textContent=String(i+1).padStart(2,'0');
+    const label=document.createElement('span');
+    label.textContent=title;
+    item.append(number,label);
+    item.addEventListener('click',()=>{
+      setLauncher(false);
+      if(card.classList.contains('is-minimized'))restoreWindow(card);
+      else card.click();
+    });
+    launcherList.append(item);
+  });
+  start.addEventListener('click',()=>setLauncher(launcher.hidden));
+  document.addEventListener('pointerdown',event=>{
+    if(!launcher.hidden&&!launcher.contains(event.target)&&!start.contains(event.target))setLauncher(false);
+  });
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')setLauncher(false)});
+  reset.addEventListener('click',()=>{
+    cards.forEach(card=>{
+      card.classList.remove('is-minimized','is-active','is-dragging');
+      card.style.removeProperty('--move-x');card.style.removeProperty('--move-y');card.style.removeProperty('z-index');
+    });
+    setLauncher(false);refreshStatus();
+  });
+  function updateClock(){
+    clock.textContent=new Intl.DateTimeFormat('tr-TR',{hour:'2-digit',minute:'2-digit'}).format(new Date());
+  }
+  updateClock();setInterval(updateClock,30000);
+  let frame=0;
+  desktop.addEventListener('pointermove',event=>{
+    if(event.pointerType==='touch'||window.matchMedia('(prefers-reduced-motion: reduce)').matches||frame)return;
+    frame=requestAnimationFrame(()=>{
+      const r=desktop.getBoundingClientRect();
+      desktop.style.setProperty('--cat-x',((event.clientX-r.left-r.width/2)/r.width*9).toFixed(1)+'px');
+      desktop.style.setProperty('--cat-y',((event.clientY-r.top-r.height/2)/r.height*6).toFixed(1)+'px');
+      frame=0;
+    });
+  },{passive:true});
+  refreshStatus();
 })();
 </script>
 
