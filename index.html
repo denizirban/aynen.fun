@@ -126,13 +126,28 @@ button:focus-visible,a:focus-visible{outline:3px solid #fc8fb5;outline-offset:5p
 }
 @media (max-width:410px){.desktop-scene{padding:8px 15px 40px}.landing-cat{width:min(78vw,310px);margin:64px auto 46px}.scene-tiles{gap:14px}.window-bar{padding:0 5px}.window-title{font-size:8px}.window-screen{padding:8px}.window-big{font-size:31px}.window-card{font-size:9px;padding:6px}.window-mini-buttons i{padding:5px 6px;font-size:8px}}
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-.tile-seventeen{--angle:2deg;left:10%;top:93%;width:206px}.tile-seventeen .window-screen{height:105px;background:#e8eee6}.tile-eighteen{--angle:-2deg;right:13%;top:94%;width:217px}.tile-eighteen .window-screen{height:109px;background:#dcece0}.tile-nineteen{--angle:2deg;left:35%;top:103%;width:213px}.tile-nineteen .window-screen{height:107px;background:#e4eada}</style>
+.tile-seventeen{--angle:2deg;left:10%;top:93%;width:206px}.tile-seventeen .window-screen{height:105px;background:#e8eee6}.tile-eighteen{--angle:-2deg;right:13%;top:94%;width:217px}.tile-eighteen .window-screen{height:109px;background:#dcece0}.tile-nineteen{--angle:2deg;left:35%;top:103%;width:213px}.tile-nineteen .window-screen{height:107px;background:#e4eada}
+/* Einstein ve Sen — physics micro-lab */
+.tile-twenty{--angle:3deg;left:43%;top:2.5%;width:195px;z-index:4}
+.tile-twenty .window-screen{height:111px;background:radial-gradient(circle at 78% 46%,#2c354b,#0d1324 70%)}
+.tile-twenty .window-tag{color:#d5ddd9}
+.tile-twenty .window-big{font-size:19px;bottom:15px;color:#fff;line-height:1.05}
+.tile-twenty .window-aux{color:#b9ffd0}
+.mini-moon{position:absolute;right:11px;top:29px;width:65px;height:65px;border-radius:100%;background:radial-gradient(circle at 34% 29%,#ebeff0,#a4afba 48%,#4e5b6b 81%,#2b3648);box-shadow:0 0 23px #c6d6fd45,inset -8px -7px 15px #172a49a0}
+.mini-moon:before{content:'';position:absolute;top:18px;left:18px;width:12px;height:12px;border:2px solid #61708088;border-radius:50%;box-shadow:22px 17px 0 -3px #7883916b,-5px 25px 0 0 #72809355}
+@media(max-width:800px){.tile-twenty{order:-1;z-index:3}.tile-twenty .window-screen{height:112px}}
+</style>
 </head>
 <body>
 <main class="desktop-scene" id="top">
 <h1 class="sr-only">aynen.fun — mikro oyunlar</h1>
 <img class="landing-cat" src="./cat.webp" alt="Aynen'in kısık gözlü, gülümseyen kedi sticker'ı" width="340" height="293" fetchpriority="high" />
 <div class="scene-tiles">
+<a class="float-window tile-twenty" href="/einstein-ve-sen.html" aria-label="Einstein ve Sen fizik oyununu aç" style="text-decoration:none">
+<span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">einstein_ve_sen.exe</span></span>
+<span class="window-screen"><span class="window-tag">PHYSICS / 001</span><span class="window-big">EINSTEIN<br>VE SEN.</span><span class="mini-moon"></span><span class="window-aux">1c → ?</span></span>
+</a>
+
 <button class="float-window tile-one" type="button" data-game="nothing" aria-label="Hiçbir Şey Yapma oyununu aç">
  <span class="window-bar"><span class="window-circles"><i></i><i></i><i></i></span><span class="window-title">idle_sim.exe</span></span>
  <span class="window-screen"><span class="window-tag">DO NOTHING</span><span class="window-big">00:15</span><span class="window-aux">● REC</span></span>
