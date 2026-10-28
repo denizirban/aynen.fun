@@ -247,11 +247,11 @@ const HISTORIC_CENTERS=new Set(['FATIH','BEYOGLU','BESIKTAS','SISLI','USKUDAR','
 const settlementLocations=[];
 function showBuildings(){
   if(!settlementLocations.length)return;
-  const total=Math.max(12,Math.round(value(year)/125000)); // 1950: ~12, 2025: ~126 symbols across city
-  const maxEach=12, baseline=settlementLocations.length;
+  const total=Math.max(1,Math.round(value(year)/125000)); // 1950: ~9, 2025: ~126 symbols across city
+  const maxEach=12;
   const ordered=settlementLocations.map((b,i)=>({b,i,score:((i*37)%19)/19}));
-  let remaining=Math.max(0,total-baseline);
-  const counts=settlementLocations.map(()=>1);
+  let remaining=total;
+  const counts=settlementLocations.map(()=>0);
   // Round-robin weighted allocation across reference centers; not spatial population estimation.
   while(remaining>0){
     let allocated=false;
