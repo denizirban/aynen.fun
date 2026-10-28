@@ -129,6 +129,13 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
 .orbit-card:has(.retro-bear-window):hover .retro-bear-window{box-shadow:1px 1px 0 #c7affc,6px 7px 0 #291550}
 @media(max-width:760px){.retro-bear-window .retro-titlebar{font-size:8px}}
 
+
+/* Fullscreen white lamb sticker: new psychology game cover */
+.lamb-card-thumb{background:radial-gradient(circle at 50% 32%,#e4cafc,#9063c9 74%)!important;border:2px solid #3e2568!important;border-radius:10px!important;box-shadow:3px 4px 0 #201533!important;overflow:hidden!important;display:grid!important;place-items:center}
+.lamb-card-thumb img{display:block!important;width:102%!important;height:112%!important;object-fit:contain;filter:drop-shadow(0 5px 5px #44216d66);transform:translateY(3%);transition:transform .2s ease}
+.game-tile:hover .lamb-card-thumb img{transform:translateY(2%) scale(1.07)}
+.lamb-card-thumb .game-index{z-index:3!important;background:#e7ffa9!important;color:#311b4d!important}
+
 </style>
 </head>
 <body>
@@ -221,9 +228,9 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
 <span class="game-thumb"><span class="game-index" aria-hidden="true">21</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration"><rect x="17" y="33" width="126" height="50" fill="#fb13c9" stroke="none" stroke-width="1"/><text x="26" y="68" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="31" fill="#101010" letter-spacing="-1">0 dB</text><path d="M119 41L137 76M137 41L119 76" fill="none" stroke="#101010" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" /></svg></span>
 <span class="game-name">Ses Çıkarma</span>
 </a>
-<a class="game-tile is-color" href="/o-ayiyi-dusunme.html" style="--x:70%;--y:613px;--angle:1.3deg" aria-label="O Ayıyı Düşünme oyununu aç">
-<span class="game-thumb"><span class="game-index" aria-hidden="true">22</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration"><rect x="26" y="18" width="108" height="78" fill="#101010" stroke="none" stroke-width="1"/><rect x="34" y="26" width="92" height="63" fill="#fff" stroke="none" stroke-width="1"/><rect x="39" y="10" width="19" height="22" fill="#101010" stroke="none" stroke-width="1"/><rect x="101" y="10" width="19" height="22" fill="#101010" stroke="none" stroke-width="1"/><rect x="39" y="20" width="13" height="17" fill="#fff" stroke="none" stroke-width="1"/><rect x="104" y="20" width="13" height="17" fill="#fff" stroke="none" stroke-width="1"/><rect x="52" y="55" width="11" height="9" fill="#101010" stroke="none" stroke-width="1"/><rect x="97" y="55" width="11" height="9" fill="#101010" stroke="none" stroke-width="1"/><rect x="71" y="68" width="19" height="9" fill="#101010" stroke="none" stroke-width="1"/><rect x="79" y="78" width="5" height="7" fill="#101010" stroke="none" stroke-width="1"/></svg></span>
-<span class="game-name">O Ayıyı Düşünme</span>
+<a class="game-tile is-color" href="/beyaz-kuzuyu-dusunme.html" style="--x:70%;--y:613px;--angle:1.3deg" aria-label="Beyaz Kuzuyu Düşünme oyununu aç">
+<span class="game-thumb lamb-card-thumb"><span class="game-index" aria-hidden="true">22</span><img src="/beyaz-kuzu.svg" alt="" loading="lazy" width="500" height="500"></span>
+<span class="game-name">Beyaz Kuzuyu Düşünme</span>
 </a></div>
 </main>
 
