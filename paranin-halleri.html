@@ -75,12 +75,12 @@ function show(i){
  else{$('buylist').innerHTML=items.length?items.map(z=>'<div class="buy-item"><div class="buy-amount">'+z[0]+'</div><div class="buy-product">'+z[1]+'</div><div class="buy-unit">'+z[2]+'</div></div>').join(''):'<div class="buy-item" style="grid-column:1/-1">Bu yıl için doğrulanmış ürün fiyatı henüz yok.</div>'}
  $('buyfoot').innerHTML=f.note+' <a href="'+f.source+'" target="_blank" rel="noopener noreferrer">Veri kaynağı ↗</a>';
  const photo=$('photo'),fallback=$('fallback'),missing=$('missing');missing.hidden=true;photo.hidden=true;fallback.hidden=false;
- fallback.innerHTML=banknoteArt(selectedDenom??1);
+ fallback.innerHTML=selectedDenom===null?'<div class="bank-art" style="background:#d7dfd0;border-color:#708472"><span class="bank-edge">TARİHSEL KUPÜR</span><strong style="font-size:clamp(18px,4vw,42px)">'+d[1]+'</strong><span class="bank-bottom">TEMSİLİ ÇİZİM</span></div>':banknoteArt(selectedDenom);
  // Only the verified timeline image is attempted for its corresponding denomination.
  // Never show mismatched denomination imagery or broken image placeholders.
  if((selectedDenom===1&&[0,1,2,5,6].includes(i))){
-  const src=d[4],expected=current;const pre=new Image();
-  pre.onload=()=>{if(current!==expected)return;photo.src=src;photo.alt=d[0]+' '+d[1]+' tarihsel para görüntüsü';photo.hidden=false;fallback.hidden=true};
+  const src=d[4],expected=current,expectedDenom=selectedDenom;const pre=new Image();
+  pre.onload=()=>{if(current!==expected||selectedDenom!==expectedDenom)return;photo.src=src;photo.alt=d[0]+' '+d[1]+' tarihsel para görüntüsü';photo.hidden=false;fallback.hidden=true};
   pre.onerror=()=>{if(current===expected){photo.hidden=true;fallback.hidden=false}};
   pre.src=src;
  }
