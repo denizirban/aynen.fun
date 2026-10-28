@@ -75,7 +75,7 @@ function updateControls(){
  $("mission-tag").textContent=l.tag;$("mission-title").textContent=l.title;$("mission-copy").textContent=l.copy;
  $("phase").value=String(state.phase);$("phase-val").textContent=Math.round(state.phase)+"°";
  $("amp").value=String(state.amp);$("amp-val").textContent=state.amp.toFixed(2);
- $("freq").value=String(state.freq);$("freq-val").textContent=state.freq.toFixed(2)+" Hz*";
+ $("freq").value=String(state.freq);$("freq-val").textContent=state.freq.toFixed(2)+" birim";
  $("sensor").value=String(Math.round(state.sensor*100));$("sensor-val").textContent=Math.round(state.sensor*100)+"%";
  $("amp-box").hidden=!l.controls.includes("amp");
  $("freq-box").hidden=!l.controls.includes("freq");
@@ -108,7 +108,7 @@ function onChange(){
 }
 $("phase").addEventListener("input",e=>{state.phase=Number(e.target.value);$("phase-val").textContent=Math.round(state.phase)+"°";onChange()});
 $("amp").addEventListener("input",e=>{state.amp=Number(e.target.value);$("amp-val").textContent=state.amp.toFixed(2);onChange()});
-$("freq").addEventListener("input",e=>{state.freq=Number(e.target.value);$("freq-val").textContent=state.freq.toFixed(2)+" Hz*";onChange()});
+$("freq").addEventListener("input",e=>{state.freq=Number(e.target.value);$("freq-val").textContent=state.freq.toFixed(2)+" birim";onChange()});
 $("sensor").addEventListener("input",e=>{state.sensor=Number(e.target.value)/100;$("sensor-val").textContent=Math.round(state.sensor*100)+"%";onChange()});
 document.querySelectorAll("[data-level]").forEach(b=>b.addEventListener("click",()=>goToLevel(Number(b.dataset.level))));
 $("reset").addEventListener("click",()=>goToLevel(state.level,true));
@@ -229,7 +229,7 @@ function renderFrame(now){
  const p=params();
  const time=reduceMotion?0:(now-state.origin)/1000*.65;
  const perRow=Math.min(usable*.143,Math.max(13,h*.11));
- trace(left,right,rows[0],perRow,p.a?0:0,time,p,"#6fe9dc",.12,6);
+ trace(left,right,rows[0],perRow,0,time,p,"#6fe9dc",.12,6);
  trace(left,right,rows[0],perRow,0,time,p,"#7befe5",.95,2.35);
  trace(left,right,rows[1],perRow,1,time,p,"#ff8da7",.13,6);
  trace(left,right,rows[1],perRow,1,time,p,"#ffa0b5",.95,2.35);
@@ -251,7 +251,7 @@ function renderFrame(now){
 function animate(t){
  state.now=t;
  renderFrame(t);
- if(!state.shown && state.score>=THRESHOLD){
+ if(!state.shown && overlay.hidden && state.score>=THRESHOLD){
   if(!state.qualifiedAt)state.qualifiedAt=t;
   if(t-state.qualifiedAt>=HOLD_MS)win();
  }
