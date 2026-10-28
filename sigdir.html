@@ -108,6 +108,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 
 /* Swipe the city through time; retain vertical page scrolling and district taps. */
 .city{touch-action:pan-y;cursor:ew-resize;user-select:none;-webkit-user-select:none}
+.real-map{touch-action:auto;cursor:grab}
 .city.is-scrubbing{cursor:grabbing}
 .city .district{cursor:pointer}
 .gesture-hint{display:flex;justify-content:center;align-items:center;gap:8px;color:#567657;background:#eff5ea;border-top:1px solid #e1e9db;padding:11px 14px;font:500 11px 'DM Mono',monospace}
@@ -127,6 +128,37 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 .real-map .leaflet-container{font-family:'Space Grotesk',sans-serif}
 .real-map .leaflet-control-attribution{font-size:9px}
 @media(max-width:650px){.real-map{height:420px}.map-mode{padding:11px 16px 4px}.data-state{padding:7px 16px 10px}}
+
+/* V5 editorial cleanup: one map, one timeline, details only on demand. */
+.wrap{max-width:1120px}
+.hero{margin:35px 0 24px}
+.dashboard{display:block}
+.primary{overflow:hidden}
+.map-head{padding:23px 27px 15px}
+.real-map{height:clamp(360px,48vw,570px);overflow:hidden;position:relative;isolation:isolate}
+#leafletMap{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.real-map .leaflet-container{height:100%;width:100%;overflow:hidden}
+.real-map .leaflet-pane,.real-map .leaflet-control-container{z-index:auto}
+.real-map .leaflet-control-zoom{box-shadow:none;border:1px solid #d8e1d6}
+.map-mode{padding:8px 27px 12px;gap:7px}
+.map-mode button{border-radius:6px;font-size:10px;padding:8px 11px}
+.data-state{padding:7px 27px 11px;font-size:9px;line-height:1.5}
+.gesture-hint{padding:9px 14px;font-size:10px}
+.map-ui{padding:6px 27px 11px}
+.legend{padding:9px 27px;font-size:9px}
+.time{padding:22px 27px 23px}
+.time .play{margin-top:16px}
+.side{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.side .fact{min-height:0;padding:22px}
+.side .district-info{min-height:0;padding:22px}
+.side .compare,.side .space{display:none}
+.side.details-open .compare,.side.details-open .space{display:block}
+.side.details-open{grid-template-columns:repeat(2,minmax(0,1fr))}
+.details-toggle{display:flex;align-items:center;justify-content:space-between;margin-top:15px;border:1px solid var(--line);border-radius:8px;padding:11px 17px;background:white;color:#445a45;font:500 11px 'DM Mono',monospace;min-height:43px}
+.details-toggle[aria-expanded=true]{background:#f3f7f0}
+.footnote{margin-top:19px}
+@media(max-width:960px){.side{grid-template-columns:1fr 1fr}.side.details-open{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.hero{margin:32px 0 18px}.map-head{padding:18px 16px 12px}.real-map{height:clamp(340px,85vw,480px)}.map-mode{padding:8px 16px 9px}.data-state{padding:7px 16px}.map-ui{padding:8px 16px}.legend{padding:8px 16px}.time{padding:18px 16px}.side,.side.details-open{display:flex;flex-direction:column}.side .fact,.side .district-info{padding:18px}.details-toggle{font-size:10px}}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzxZOV1p3MZ0K4A4b9B0uiN6lM=" crossorigin="">
 </head><body><div class="wrap"><nav class="nav"><a href="/">← aynen.fun</a><span>VERİYLE OYNA / 01</span></nav>
 <header class="hero"><div><h1>İstanbul'a<br>sığdır.</h1><p>1950'den bugüne. Aynı şehir, biraz daha kalabalık.</p></div><span class="hero-note">SÜRGÜYÜ SAĞA ÇEK ↗</span></header>
@@ -134,7 +166,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <section class="panel primary"><div class="map-head"><div><div class="kicker">İSTANBUL NÜFUSU</div><div class="big-pop" id="population" aria-live="off">1.166.477</div><div class="growth" id="growth">1950'ye göre ×1,0</div></div><div class="year-badge" id="yearLabel">1950</div></div>
 <div class="map-mode" role="group" aria-label="Harita görünümü"><button id="realMode" aria-pressed="true" type="button">GERÇEK HARİTA</button><button id="schematicMode" aria-pressed="false" type="button">ZAMAN SİMÜLASYONU</button></div>
 <div class="real-map" id="realMap"><div id="leafletMap" role="application" aria-label="Gerçek İstanbul coğrafyası ve ilçe sınırları"></div></div>
-<div class="data-state" id="geoStatus">Gerçek harita yükleniyor · OpenStreetMap altlığı, açık ilçe sınırları.</div>
+<div class="data-state" id="geoStatus">Harita yükleniyor…</div>
 <svg class="city" id="city" hidden viewBox="0 0 940 480" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="maptitle mapdesc" xmlns="http://www.w3.org/2000/svg">
 <title id="maptitle">İstanbul'un zamanla büyüyen, temsili yerleşim alanı</title><desc id="mapdesc">Bu harita gerçek bir yıl bazlı uydu tespiti değil, şehrin büyümesini anlatan şematik bir görselleştirmedir. Tarihsel nüfus verileri gerçektir.</desc>
 <rect width="940" height="480" fill="#f3f5f0"/><path class="city-outline" d="M22 180Q125 72 255 100T465 87Q665 26 842 107L928 170V351Q787 415 636 374T390 433Q157 414 20 333Z"/>
@@ -168,7 +200,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <g class="district secondary" data-label-from="1985" aria-label="Kartal (konum işareti)"><circle cx="762" cy="391" r="3"/><text x="769" y="382">Kartal</text></g></g>
 <g class="district-label"><text x="95" y="85">AVRUPA</text><text x="713" y="84">ANADOLU</text><text x="439" y="450" fill="#9abbb7">MARMARA</text></g>
 </svg>
-<div class="gesture-hint"><span class="hand" aria-hidden="true">↔</span><span>HARİTAYI SAĞA / SOLA SÜRÜKLE · ZAMANDA GEZİN</span></div>
+<div class="gesture-hint"><span class="hand" aria-hidden="true">↔</span><span>ŞEMATİK MODDA SÜRÜKLEYEREK ZAMANDA GEZİN</span></div>
 <div class="map-ui"><span class="map-callout" id="mapHint">Semt konumları yaklaşık; belirme yılları haritadaki anlatım için.</span><button type="button" class="map-toggle" id="labelToggle" aria-pressed="true">SEMTLERİ GİZLE</button></div>
 <div class="legend" id="mapLegend"><span><b></b> YERLEŞİM — ŞEMATİK</span><span>GERÇEK HARİTA VERİSİ DEĞİL</span></div>
 <div class="time"><div class="time-line"><span class="kicker">YILI DEĞİŞTİR</span><span class="kicker" id="yearOnScale">1950</span></div>
@@ -176,7 +208,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <div class="timeline-story" aria-live="polite"><i></i><span id="eraText">Tarihsel merkezler ve iki yaka.</span></div><div class="event-pill" id="eventPill" aria-live="polite"><strong>1950 · Ulaşım ağını keşfet</strong>Yılları değiştirince İstanbul'un dönüm noktaları burada gösterilir.</div>
 <div class="play"><button class="play-btn" id="play" type="button">▶ 75 YILI İZLE</button><button class="play-btn alt" id="jump" type="button">2025'E GİT ↗</button><span class="play-note">Yıllar arası nüfus doğrusal ara değerle gösterilir.</span></div></div>
 </section>
-<aside class="side">
+<button class="details-toggle" id="detailsToggle" type="button" aria-expanded="false">DAHA FAZLA VERİ GÖSTER <span>＋</span></button><aside class="side" id="sidePanels">
 <section class="panel fact"><div class="kicker">BİR ŞEHİR, KAÇ KAT?</div><strong id="factTitle">Daha yeni başlıyoruz.</strong><p id="factText">Kaydırıcıyı 2025'e götür. Aynı şehrin nüfusu kaç katına çıktı, bak.</p></section>
 <section class="panel district-info" id="districtInfo" aria-live="polite"><button id="clearDistrict" type="button" hidden>GERİ ↗</button><div class="kicker">HARİTADA BİR SEMT SEÇ</div><strong id="districtTitle">İstanbul'u keşfet.</strong><p id="districtDescription">Haritada görünen semt isimlerine dokun. Konumlar şematik; burada ilçe bazında tarihsel nüfus iddiası yok.</p></section>
 <section class="panel compare"><div class="kicker">DENEY 02 / İKİ YIL ARASINDA</div><h2>Kaç kişi eklendi?</h2><div class="compare-controls"><label>BAŞLANGIÇ<select id="compareFrom" aria-label="Karşılaştırma başlangıç yılı"></select></label><label>BİTİŞ<select id="compareTo" aria-label="Karşılaştırma bitiş yılı"></select></label></div><div class="compare-number" id="compareDifference">+14.587.576</div><div class="compare-small" id="compareExplanation">1950–2025 nüfus farkı</div><svg class="spark" id="spark" viewBox="0 0 320 82" preserveAspectRatio="none" aria-label="İstanbul yıllık nüfus eğrisi"><path id="sparkLine" fill="none" stroke="#638c63" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path id="sparkBaseline" fill="none" stroke="#d8e6d5" stroke-width="1.5"/></svg></section>
@@ -274,6 +306,7 @@ el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefa
 $('clearDistrict').addEventListener('click',()=>{selectedDistrict=null;drawDistrict()});
 compare();drawDistrict();
 
+$('detailsToggle').addEventListener('click',()=>{const open=$('sidePanels').classList.toggle('details-open');$('detailsToggle').setAttribute('aria-expanded',String(open));$('detailsToggle').innerHTML=open?'DETAYLARI GİZLE <span>−</span>':'DAHA FAZLA VERİ GÖSTER <span>＋</span>'});
 const EVENTS=[
 {year:1973,name:'15 Temmuz Şehitler Köprüsü',description:'Boğaz üstündeki ilk karayolu köprüsü açıldı.',coords:[41.045,29.034]},
 {year:1988,name:'Fatih Sultan Mehmet Köprüsü',description:'Boğaz’ın ikinci karayolu köprüsü açıldı.',coords:[41.091,29.062]},
@@ -289,6 +322,7 @@ eventMarkers.forEach(({event,marker})=>{if(!geoMap)return;if(y>=event.year)marke
 function setMode(mode){
 mapMode=mode;const real=mode==='real';
 $('realMap').hidden=!real;$('city').hidden=real;
+$('mapHint').textContent=real?'Gerçek harita üzerinde dokunarak ilçeleri keşfet.':'Etiketler şematiktir; yıllar semtlerin kuruluş tarihi değildir.';
 $('realMode').setAttribute('aria-pressed',String(real));$('schematicMode').setAttribute('aria-pressed',String(!real));
 $('mapLegend').innerHTML=real?'<span>GERÇEK COĞRAFYA · İLÇE SINIRLARI</span><span>YAPIlaşma animasyonu bu modda gösterilmez</span>':'<span><b></b> YERLEŞİM — ŞEMATİK</span><span>GERÇEK HARİTA VERİSİ DEĞİL</span>';
 $('geoStatus').textContent=real?'Gerçek coğrafya: OpenStreetMap. İlçe sınırları: açık kaynak GeoJSON. Zamanla değişen yapılaşma bu katmanda yer almıyor.':'Şematik kent yayılımı: gerçek uydu görüntüsü veya yıl bazında yapılaşma ölçümü değildir.';
