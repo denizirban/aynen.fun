@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f7f4">
+<meta name="description" content="Beyaz Kuzuyu Düşünme. 20 saniye boyunca beyaz bir kuzuyu düşünmemeye çalış. Bunu ne kadar yapabiliyorsun? Psikoloji deneyi, aynen.fun.">
+<title>Beyaz Kuzuyu Düşünme. — aynen.fun</title>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f7f7f4;--ink:#17151e;--line:#e0dfe0;--muted:#817b87;--purple:#6135b7;--dark:#1c1238;--pink:#f8a4df;--lime:#e2f8ac;--mono:'DM Mono',monospace;--sans:'Space Grotesk',sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:var(--paper);color:var(--ink)}
+body{font-family:var(--sans);-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visible,a:focus-visible{outline:3px solid #ae81ff;outline-offset:3px}
+button:disabled{cursor:not-allowed;opacity:.55}.mono{font-family:var(--mono)}a{color:inherit}
+.site{max-width:1400px;width:100%;height:100vh;height:100dvh;padding:0 clamp(10px,2.1vw,29px);margin:auto;display:flex;flex-direction:column;min-height:0}
+nav{flex:0 0 51px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.wordmark{text-decoration:none;font-size:22px;font-weight:700;letter-spacing:-.085em}.wordmark b{color:#9b8ab8}
+.nav-right{display:flex;gap:14px;align-items:center}.nav-right span{font:9px var(--mono);color:#8c8491}.go-home{text-decoration:none;background:#fff;border:1px solid #bebac6;padding:8px 12px;border-radius:22px;font-size:10px;font-weight:700}
+.heading{flex:0 0 auto;display:flex;justify-content:space-between;align-items:end;gap:12px;padding:16px 0 13px}
+.eyebrow{font:10px var(--mono);letter-spacing:.035em;color:#816a9e}
+.eyebrow::before{content:'';display:inline-block;width:6px;height:6px;background:#a277ff;border-radius:50%;margin-right:7px;vertical-align:1px}
+h1{font-size:clamp(40px,5vw,70px);letter-spacing:-.085em;line-height:1;margin:5px 0 4px}
+h1 span{color:#a59ab7}.heading p{font-size:12px;color:#817b87;margin:0}
+.page-no{font:10px var(--mono);color:#8c8491;white-space:nowrap;padding-bottom:5px}
+main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(285px,320px);gap:12px;padding-bottom:10px}
+.stage{display:flex;flex-direction:column;min-height:0;border-radius:12px;background:var(--dark);overflow:hidden;border:1px solid #281b4d;position:relative}
+.stage-top{flex:0 0 43px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #ffffff26;background:#21163f}
+.stage-top strong{font:500 10px var(--mono);color:#d7c7f4;letter-spacing:.05em}
+.live{display:flex;align-items:center;gap:7px;font:9px var(--mono);color:#cab7e6}.live i{width:6px;height:6px;border-radius:50%;background:#eab7e8;box-shadow:0 0 10px #eab7e8}
+.stage-play{position:relative;flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 45%,#4b2894,#28144e 57%,#170e31 100%)}
+.stage-play:before{content:'';pointer-events:none;position:absolute;inset:0;opacity:.2;background-image:linear-gradient(#c7a7f927 1px,transparent 1px),linear-gradient(90deg,#c7a7f927 1px,transparent 1px);background-size:26px 26px;mask-image:linear-gradient(to bottom,#000,transparent 95%)}
+.stage-play:after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 3px,#12092119 3px 4px);pointer-events:none}
+.stage-play.playing{background:radial-gradient(ellipse at 50% 45%,#39226e,#22143d 60%,#170e31 100%)}
+.hero-bear{position:relative;z-index:1;width:min(57%,380px);aspect-ratio:240/160;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 18px 27px #0a041d91);animation:bearFloat 3.6s ease-in-out infinite;user-select:none;pointer-events:none}
+.stage-play.playing .hero-bear{display:none}
+@keyframes bearFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(1deg)}}
+.big-prompt{position:relative;z-index:3;text-align:center;color:#fff;max-width:90%;pointer-events:none}
+.big-prompt[hidden],.hero-bear[hidden],.thinking[hidden]{display:none!important}
+.big-prompt h2{font-size:clamp(35px,4.3vw,65px);letter-spacing:-.08em;line-height:.97;margin:6px 0 11px}
+.big-prompt p{font:11px/1.7 var(--mono);color:#e4d5fb;margin:0}
+.big-prompt .tiny{font:10px var(--mono);letter-spacing:.08em;color:#d9b5ff}
+.screen-count{position:absolute;z-index:3;right:15px;top:14px;border:1px solid #dbbdff7d;background:#21113baa;color:#e8d9ff;padding:6px 10px;border-radius:6px;font:10px var(--mono)}
+.screen-count b{color:#fff}
+.thinking{position:absolute;z-index:2;inset:0;pointer-events:none;overflow:hidden}
+.pixel{position:absolute;border:1px solid #ccacf76b;background:#8b5eddad;width:9px;height:9px;transform:rotate(16deg);animation:pixelFloat 1.7s ease-out forwards}
+@keyframes pixelFloat{0%{opacity:0;transform:translateY(17px) rotate(9deg) scale(.5)}15%{opacity:1}100%{opacity:0;transform:translateY(-125px) rotate(45deg) scale(1.15)}}
+.say{position:absolute;z-index:5;left:50%;bottom:16px;transform:translateX(-50%);color:#f3e7ff;font:10px var(--mono);text-align:center;max-width:95%;min-height:15px}
+.stage-bottom{flex:0 0 76px;padding:12px 16px;background:#160e2c;border-top:1px solid #ffffff24;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.metric{border-right:1px solid #ffffff1b;padding:2px 5px}.metric:last-child{border-right:0}
+.metric span{display:block;font:9px var(--mono);color:#ada0c0;letter-spacing:.04em;margin-bottom:5px}
+.metric strong{display:block;color:#f5ebff;font-size:22px;letter-spacing:-.05em;font-variant-numeric:tabular-nums;line-height:1}
+.metric strong small{font-size:11px;color:#c2b0dc;font-weight:500}
+.controls{background:#fff;border:1px solid var(--line);border-radius:12px;padding:19px;min-height:0;display:flex;flex-direction:column;gap:16px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.chip-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mini-label{font:10px var(--mono);color:#86818a}.phase-chip{border:1px solid #dcd0f3;color:#614392;border-radius:30px;background:#f3ecfb;padding:5px 9px;font:10px var(--mono)}
+.section h2{font-size:clamp(24px,2.3vw,30px);line-height:1.12;letter-spacing:-.062em;margin:5px 0 8px}
+.section p{margin:0;font-size:12px;line-height:1.65;color:#77717d}
+.rule-box{border:1px solid #e8e1ec;background:#faf8fd;border-radius:10px;padding:13px;display:flex;gap:10px;align-items:center}
+.rule-number{width:32px;height:32px;display:grid;place-items:center;background:#e8dbfc;border:1px solid #d1b9fb;border-radius:7px;color:#4a297d;font:700 13px var(--mono);flex:none}
+.rule-copy strong{display:block;font-size:12px}.rule-copy small{display:block;font:10px/1.45 var(--mono);color:#82798a;margin-top:3px}
+.action-area{display:flex;flex-direction:column;gap:9px;margin-top:auto}
+.primary{display:block;width:100%;padding:13px 12px;min-height:57px;border:2px solid #191225;border-radius:9px;background:var(--lime);box-shadow:3px 4px 0 #191225;font-size:14px;letter-spacing:-.02em;font-weight:700;transition:background .15s,transform .1s,box-shadow .1s}
+.primary:hover{background:#d4f9a1}.primary:active{transform:translate(2px,3px);box-shadow:0 0 0}
+.primary.thought{background:#ffc5ea;min-height:90px;font-size:clamp(18px,2.2vw,27px);letter-spacing:-.055em;border-color:#2b1547;box-shadow:4px 5px 0 #261345}
+.primary.thought:active{background:#f095cc;transform:translate(2px,3px)}
+.primary[hidden],.secondary[hidden],.hint-key[hidden]{display:none}
+.hint-key{font:9px var(--mono);color:#95919a;text-align:center;line-height:1.4}
+.secondary-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.secondary{border:1px solid #d5d1dc;border-radius:7px;background:#fff;padding:10px 7px;min-height:38px;font-size:10px;font-weight:700}
+.secondary:hover{background:#f9f6fe}
+.reset-note{font:10px/1.5 var(--mono);color:#8c8492;margin:0}
+.score-box{display:none;border:1px solid #e8e2ed;border-radius:9px;background:#f9f6fd;padding:12px;gap:7px}
+.score-box.show{display:grid;grid-template-columns:1fr 1fr;align-items:center}
+.score-box span{font:9px var(--mono);color:#82788e}.score-box strong{font:19px var(--mono);color:#39285e;text-align:right}
+.footer{flex:0 0 26px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);font:9px var(--mono);color:#98919a}
+.info[hidden]{display:none!important}
+.info{position:fixed;inset:0;background:#130b27e7;z-index:100;display:grid;place-items:center;padding:14px;backdrop-filter:blur(9px)}
+.info-card{background:#fff;border:1px solid #dabffa;border-radius:14px;padding:clamp(20px,3vw,32px);width:min(620px,100%);max-height:88dvh;overflow-y:auto;position:relative}
+.info-card h2{font-size:clamp(28px,4vw,39px);letter-spacing:-.07em;line-height:1.08;margin:10px 30px 14px 0}
+.info-card p{font-size:12px;line-height:1.75;color:#695d72;margin:0 0 11px}
+.info-card p:last-child{margin-bottom:0}
+.info-card a{font-weight:700;color:#5d329f}
+.info-close{position:absolute;right:15px;top:15px;width:34px;height:34px;background:#eee7f9;border:1px solid #b7a0d4;border-radius:50%;font-size:24px;line-height:1}
+.result-detail{font-size:11px;line-height:1.7;color:#d9c6f8;max-width:400px;margin:10px auto 0}
+@media(max-width:950px){main{grid-template-columns:minmax(0,1fr) minmax(265px,285px)}.controls{padding:14px;gap:12px}.stage-bottom{flex-basis:67px}.hero-bear{width:min(75%,365px)}}
+@media(max-width:740px){
+ .site{padding:0 10px}
+ nav{flex:0 0 41px}.wordmark{font-size:19px}.nav-right span{display:none}.go-home{font-size:9px;padding:6px 10px}
+ .heading{padding:9px 0 8px}.heading h1{font-size:clamp(37px,8.5vw,51px);margin:3px 0}.heading p{font-size:10px}.eyebrow{font-size:9px}.page-no{display:none}
+ main{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(160px,1fr) auto;gap:7px;padding-bottom:7px}
+ .stage{grid-row:1}.stage-top{flex-basis:29px;padding:0 10px}.stage-top strong{font-size:9px}.live{font-size:8px}
+ .hero-bear{width:min(52%,250px)}
+ .stage-bottom{flex-basis:51px;padding:7px 10px;gap:3px}
+ .metric span{font-size:7px;margin-bottom:3px}.metric strong{font-size:17px}.metric strong small{font-size:9px}
+ .controls{grid-row:2;padding:10px;gap:7px;overflow:visible}
+ .chip-row{display:none}.section{display:flex;align-items:center;gap:10px}.section h2{flex:0 0 48%;font-size:17px;margin:0}.section p{font-size:10px;line-height:1.35}
+ .rule-box{padding:7px 10px}.rule-number{width:25px;height:25px;font-size:11px}.rule-copy strong{font-size:11px}.rule-copy small{font-size:9px;margin-top:0}
+ .action-area{gap:6px}.primary{min-height:43px;padding:8px 10px;font-size:12px}.primary.thought{min-height:58px;font-size:21px}
+ .hint-key{font-size:8px}.secondary{min-height:30px;padding:6px;font-size:9px}
+ .score-box{padding:8px 10px}.score-box strong{font-size:16px}
+ .reset-note{display:none}.footer{display:none}
+ .big-prompt h2{font-size:clamp(33px,8vw,51px)}.big-prompt p{font-size:9px}.big-prompt .tiny{font-size:9px}
+ .screen-count{top:9px;right:9px;font-size:9px;padding:5px 7px}
+}
+@media(max-width:420px){.site{padding:0 7px}.heading{padding:7px 0}.heading h1{font-size:37px}.heading p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hero-bear{width:min(63%,245px)}.controls{gap:6px;padding:8px}.section h2{font-size:15px}.section p{font-size:9px}.rule-box{padding:6px 8px}.rule-copy small{font-size:8px}.stage-bottom{flex-basis:47px;padding:6px 8px}.metric strong{font-size:15px}.metric span{font-size:7px}}
+@media(max-height:660px) and (min-width:741px){.heading{padding:8px 0}.heading h1{font-size:39px}.heading p{display:none}.controls{gap:9px;padding:12px}.rule-box{padding:8px}.stage-bottom{flex-basis:60px}.section h2{font-size:23px}}
+@media(max-height:680px) and (max-width:740px){.heading{padding:4px 0}.heading h1{font-size:32px}.heading p{display:none}.controls{gap:4px;padding:6px}.section p{display:none}.section h2{flex:1;font-size:15px}.rule-box{padding:5px 7px}.rule-copy small{display:none}.hint-key{display:none}.primary{min-height:35px;padding:5px}.primary.thought{min-height:44px}.secondary{min-height:25px;padding:4px}.stage-bottom{flex-basis:41px;padding:4px 7px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* BEYAZ KUZUYU DÜŞÜNME — REAL FULLSCREEN TAKEOVER */
+:root{--paper:#dac4f5;--ink:#25153e}
+html,body{width:100%;height:100%;overflow:hidden}
+body{background:#d9c2f5}
+.site{width:100vw;max-width:none;height:100vh;height:100dvh;padding:0;display:block;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 60%,#f5efff 0%,#e5d5f9 53%,#c7a8e9 100%)}
+nav{position:absolute;top:0;left:0;right:0;height:57px;z-index:50;display:flex;border:0;padding:0 clamp(15px,3vw,38px);background:linear-gradient(180deg,#f7f3ffde,#f7f3ff00);align-items:center}
+.wordmark{font-size:23px;color:#201336}
+.nav-right span{display:none}
+.go-home{border:1.5px solid #302044;background:#ffffffbc;border-radius:7px;color:#291a40;padding:9px 13px}
+.heading{position:absolute;top:clamp(65px,9vh,103px);left:0;right:0;z-index:10;text-align:center;display:block;padding:0 15px;pointer-events:none}
+.heading h1{font-size:clamp(35px,5.5vw,77px);color:#291442;line-height:.95;margin:9px 0 8px;letter-spacing:-.085em}
+.heading h1 span{color:#9e70ce}
+.eyebrow{color:#6c448d;font-size:11px}
+.heading p{font-size:clamp(11px,1.3vw,14px);color:#665078;line-height:1.4}
+.heading .page-no{display:none}
+main{position:absolute;inset:0;padding:0;margin:0;display:block}
+.stage{position:absolute;inset:0;min-height:0;width:100%;border:0;border-radius:0;overflow:hidden;background:transparent}
+.stage-top{display:none}
+.stage-play,.stage-play.playing{position:absolute;inset:0;background:transparent!important;display:grid;place-items:center}
+.stage-play:before{opacity:.08;background-size:32px 32px}
+.stage-play:after{display:none}
+.hero-bear{width:min(76vh,75vw,790px);height:min(76vh,75vw,790px);max-height:72vh;object-fit:contain;animation:breathing 4s ease-in-out infinite;filter:drop-shadow(0 16px 28px #8a63aa45);transform:none;margin-top:4vh}
+.stage-play.playing .hero-bear{display:none}
+@keyframes breathing{0%,100%{transform:translateY(8px) rotate(-1.4deg)}50%{transform:translateY(-7px) rotate(1.1deg)}}
+.big-prompt{z-index:4;color:#30184e;margin-top:8vh}
+.big-prompt h2{font-size:clamp(64px,12vw,162px);letter-spacing:-.095em;text-shadow:0 5px 0 #ffffff70}
+.big-prompt .tiny{color:#7c52a6;font-size:13px}
+.big-prompt p{color:#81639e;font-size:13px}
+.stage-bottom{position:absolute;top:clamp(173px,24vh,265px);left:50%;transform:translateX(-50%);width:min(480px,92vw);z-index:12;display:flex;justify-content:center;gap:0;flex:none;padding:9px 14px;border:1px solid #805baa52;border-radius:12px;background:#f8efffd9;backdrop-filter:blur(10px);box-shadow:0 8px 20px #704f9616}
+.metric{flex:1;text-align:center;border-right:1px solid #9876bb40;padding:0 10px}
+.metric span{color:#765a92;font-size:9px;margin-bottom:4px}
+.metric strong{color:#2b1449;font-size:clamp(19px,3vw,27px)}
+.metric strong small{color:#7b5b98}
+.screen-count{display:none}
+.say{position:absolute;bottom:clamp(129px,18vh,205px);left:10px;right:10px;width:auto;transform:none;z-index:12;font:11px var(--mono);color:#60417d;text-align:center;padding:0 15px}
+.controls{position:absolute;z-index:30;bottom:0;left:0;right:0;width:100%;min-height:0;overflow:visible;border:0;border-radius:0;background:transparent;display:flex;align-items:center;justify-content:flex-end;padding:0 14px max(24px,env(safe-area-inset-bottom));gap:0}
+.controls .chip-row,.controls .rule-box,.controls .reset-note,.controls .hint-key{display:none}
+.controls .section{display:none}
+.controls .score-box{position:fixed;left:50%;bottom:calc(111px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(400px,88vw);box-shadow:0 10px 32px #6a4ba324;background:#ffffffee;border:1px solid #9778b6;border-radius:12px;padding:12px 15px;z-index:12}
+.score-box span{color:#6f5483}.score-box strong{color:#2e1846}
+.action-area{width:min(570px,90vw);margin:0;display:flex;flex-direction:column;align-items:stretch;gap:10px;z-index:30}
+.primary{font-size:clamp(17px,2vw,23px);border:2.5px solid #2b1a45;border-radius:13px;background:#e5f8b9;min-height:72px;box-shadow:4px 5px 0 #2a1845;color:#2d1c45;letter-spacing:-.045em}
+.primary.thought{height:clamp(76px,11vh,110px);min-height:76px;font-size:clamp(22px,3vw,36px);background:#f4c9ee}
+.primary:active{transform:translate(3px,4px);box-shadow:0 0 0}
+.secondary-row{position:fixed;top:63px;right:clamp(13px,3vw,38px);display:flex;flex-direction:row;gap:6px;z-index:55}
+.secondary{background:#ffffffab;border:1px solid #9f86b5;font:10px var(--mono);border-radius:7px;min-height:34px;padding:8px 11px}
+.footer{display:none}
+.thinking,.pixel{pointer-events:none}
+.lamb-flash{position:fixed;inset:0;z-index:80;background:#af84e6;display:grid;place-items:center;opacity:0;visibility:hidden;overflow:hidden;pointer-events:none;will-change:opacity}
+.lamb-flash.active{visibility:visible;animation:invade .9s cubic-bezier(.2,.75,.3,1) both}
+.lamb-flash img{width:max(118vw,120vh);height:max(118vw,120vh);max-height:none;max-width:none;object-fit:contain;filter:drop-shadow(0 12px 28px #47217633);animation:bigLamb .9s cubic-bezier(.15,.85,.2,1) both}
+.lamb-flash span{position:absolute;bottom:11%;left:0;right:0;text-align:center;color:#fff;font:800 clamp(45px,12vw,160px)/.8 var(--sans);text-shadow:4px 6px 0 #4b277a;letter-spacing:-.09em;white-space:nowrap;transform:rotate(-4deg)}
+@keyframes invade{0%{opacity:0}8%,74%{opacity:1}100%{opacity:0}}
+@keyframes bigLamb{0%{transform:scale(.35) rotate(-6deg)}15%{transform:scale(1.05) rotate(1deg)}80%{transform:scale(1.32) rotate(-1deg)}100%{transform:scale(1.47) rotate(1deg)}}
+.info{z-index:120}
+@media(max-width:740px){
+ .heading{top:64px}
+ .heading h1{font-size:clamp(33px,7.4vw,51px)}
+ .heading p{font-size:11px}
+ .stage-bottom{top:clamp(155px,21vh,220px);width:min(400px,94vw);padding:7px 10px}
+ .metric span{font-size:8px}.metric strong{font-size:23px}
+ .hero-bear{width:min(88vw,63vh);height:min(88vw,63vh);max-height:64vh;margin-top:5vh}
+ .big-prompt{margin-top:7vh}.big-prompt h2{font-size:clamp(60px,15vw,104px)}
+ .say{bottom:122px;font-size:10px}
+ .controls{padding-bottom:max(14px,env(safe-area-inset-bottom));padding-left:8px;padding-right:8px}
+ .action-area{width:min(100%,500px)}.primary{min-height:59px}
+ .primary.thought{height:75px;min-height:75px;font-size:26px}
+ .secondary-row{top:45px;right:9px}
+ .secondary{min-height:27px;padding:6px 7px;font-size:9px}
+ .controls .score-box{bottom:calc(93px + env(safe-area-inset-bottom))}
+ .lamb-flash img{width:max(160vw,110vh);height:max(160vw,110vh)}
+ .lamb-flash span{bottom:16%;font-size:clamp(39px,13vw,85px)}
+}
+@media(max-height:600px){
+ .heading{top:55px}.heading h1{font-size:clamp(31px,5vw,50px)}.heading p{display:none}
+ .stage-bottom{top:clamp(112px,24vh,158px)}
+ .hero-bear{max-height:53vh;max-width:50vw;margin-top:0}
+ .big-prompt h2{font-size:clamp(45px,10vh,95px)}
+ .say{display:none}
+ .primary{min-height:46px}.primary.thought{height:58px;min-height:58px}
+ .controls{padding-bottom:8px}
+ .secondary-row{top:10px;right:95px}
+}
+@media(prefers-reduced-motion:reduce){.hero-bear{animation:none}.lamb-flash.active{animation:none;opacity:1}.lamb-flash img{animation:none}.lamb-flash span{animation:none}}
+</style>
+<script defer src="/beyaz-kuzuyu-dusunme.js"></script>
+</head>
+<body>
+<div class="site">
+<nav><a class="wordmark" href="/">aynen<b>.</b>fun</a><div class="nav-right"><span>PSYCHOLOGY EXPERIMENT / 001</span><a class="go-home" href="/">← OYUNLAR</a></div></nav>
+<header class="heading"><div><div class="eyebrow">İstenmeyen düşünceler departmanı</div><h1>Beyaz Kuzuyu Düşünme<span>.</span></h1><p>Düşünmemeye çalışmak, onu düşünmenin en hızlı yolu olabilir.</p></div><span class="page-no">THERAPY? NOT REALLY.</span></header>
+<main>
+<section class="stage" aria-label="Beyaz kuzu düşünce oyunu">
+<div class="stage-top"><strong id="stage-id">WHITE LAMB.exe / READY</strong><span class="live"><i></i><span id="stage-state">SİSTEM AKTİF</span></span></div>
+<div class="stage-play" id="stage-play">
+<img src="/beyaz-kuzu.svg" alt="Fotoğraftan kesilmiş beyaz kuzu sticker" class="hero-bear" id="bear-art">
+<div class="screen-count" id="screen-count">KUZU SAYACI <b id="screen-bears">0</b></div>
+<div class="thinking" id="particles" aria-hidden="true"></div>
+<div class="big-prompt" id="prompt" hidden><div class="tiny" id="prompt-label">WHITE BEAR PROTOCOL</div><h2 id="prompt-title">...</h2><p id="prompt-detail">KUZU YOK. TEORİDE.</p></div>
+<div class="say" id="say" aria-live="polite"></div>
+</div>
+<div class="stage-bottom">
+<div class="metric"><span>KALAN SÜRE</span><strong id="time">20.0 <small>sn</small></strong></div>
+<div class="metric"><span>BİLDİRİLEN KUZU</span><strong id="thoughts">0</strong></div>
+<div class="metric"><span>İLK KUZU</span><strong id="first">—</strong></div>
+</div>
+</section>
+<aside class="controls" aria-label="Düşünce deneyi kontrol paneli">
+<div class="chip-row"><span class="mini-label">BEYİN / TEST ORTAMI</span><span class="phase-chip" id="phase">HAZIR / 00</span></div>
+<section class="section"><div><div class="mini-label" id="part">KURAL 01 / 02</div><h2 id="mission">Beyaz kuzuyu düşünme.</h2></div><p id="desc">20 saniye beyaz kuzuyu düşünme. Aklına gelirse tek tuşa bas.</p></section>
+<div class="rule-box"><div class="rule-number" id="rule-no">01</div><div class="rule-copy"><strong id="rule-title">Aklına gelirse bildir.</strong><small id="rule-copy">Her düşünce geldiğinde tek bir dokunuş. Sayılacak olan sadece bildirdiklerin.</small></div></div>
+<div class="score-box" id="scorebox"><span>İLK TUR</span><strong id="summary-first">—</strong><span>İKİNCİ TUR</span><strong id="summary-second">—</strong></div>
+<div class="action-area">
+<button class="primary" id="start" type="button">TAMAM. DÜŞÜNMÜYORUM. ↗</button>
+<button class="primary thought" id="thought" type="button" hidden>AKLIMA GELDİ. +1</button>
+<button class="primary" id="next" type="button" hidden>İKİNCİ TURA GEÇ →</button>
+<button class="primary" id="again" type="button" hidden>YİNE DÜŞÜNME ↻</button>
+<div class="hint-key" id="keyhint">Boşluk tuşu veya butonla bildirebilirsin.</div>
+<div class="secondary-row">
+<button class="secondary" id="about" type="button">? FUN FACT</button>
+<button class="secondary" id="share" type="button">↗ PAYLAŞ</button>
+</div>
+</div>
+<p class="reset-note" id="reset-note">Küçük bir oyun. Düşüncelerin ölçüldüğü bilimsel bir test değil.</p>
+</aside>
+</main>
+<div class="lamb-flash" id="lamb-flash" aria-hidden="true"><img id="lamb-flash-img" src="/beyaz-kuzu.svg" alt=""><span id="lamb-flash-caption">YİNE KUZU!</span></div>
+<footer class="footer"><span>AYNEN.FUN / LAMB-FREE* EXPERIENCE</span><span>*KUZU GARANTİSİ VERİLEMEZ.</span></footer>
+</div>
+<section class="info" id="info" role="dialog" aria-modal="true" aria-label="Beyaz kuzu oyununun psikolojisi" tabindex="-1" hidden>
+<div class="info-card"><button type="button" class="info-close" id="info-close" aria-label="Bilgi penceresini kapat">×</button>
+<div class="eyebrow">FUN FACT / 1987</div>
+<h2>Beyaz bir kuzuyu düşünmemeye çalış.</h2>
+<p>Daniel Wegner ve çalışma arkadaşlarının 1987'deki klasik deneyinde katılımcılar, beyaz ayıyı düşünmemeye çalışırken akıllarına geldiğinde bir zili çalıyordu. Sonraki serbest düşünme aşamasında bazı katılımcılarda daha fazla ayı düşüncesi raporlandı. Bu durum <strong>düşünce bastırmanın paradoksal / geri tepme etkisi</strong> olarak biliniyor.</p>
+<p>Ancak bu etki <strong>herkeste zorunlu olarak ortaya çıkmıyor</strong>. Araştırmaların bulguları değişken; bir meta-analizde küçük ila orta düzeyde bir geri tepme etkisi raporlandı. Dikkati başka belirgin bir düşünceye yönlendirmek bazı koşullarda yardımcı olabiliyor.</p>
+<p>Orijinal çalışma beyaz ayıyla yapıldı; bizimkinde beyaz kuzu var. Orijinal deneyde tur süreleri beşer dakikaydı. Bu oyun 20 + 12 saniyelik komik, sadeleştirilmiş bir uyarlama. Tıklamalar yalnızca <strong>kendi bildirdiğin düşünceleri</strong> sayar; psikolojik tanı, dikkat testi veya bilimsel ölçüm değildir.</p>
+<p><a href="https://pubmed.ncbi.nlm.nih.gov/3612492/" target="_blank" rel="noopener">1987 orijinal çalışma (Wegner ve ark.)</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/11434226/" target="_blank" rel="noopener">2001 meta-analiz</a></p>
+</div>
+</section>
+</body></html>
