@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f7f3">
+<meta name="description" content="Einstein ve Sen — Ay'a bir lazer gönder. Lekenin ışık hızını aşmasını sağlayabilir misin? Gerçek fizik, küçük bir oyun.">
+<title>Einstein ve Sen — aynen.fun</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#171915;--sub:#676b65;--paper:#f7f7f3;--white:#fff;--lime:#dcf5a2;--pink:#f4d4da;--line:#dfe0d7;--space:#080f1b;--cyan:#b7fff4}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #75bccc;outline-offset:3px}
+a{color:inherit}.mono{font-family:'DM Mono','Courier New',monospace}
+.shell{max-width:1460px;margin:auto;padding:0 32px}
+nav{height:77px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{font-size:22px;font-weight:700;letter-spacing:-.08em;text-decoration:none}.brand span{color:#7e8d7a}
+.nav-right{display:flex;gap:12px;align-items:center}.return{border:1px solid #aaaeb0;border-radius:99px;text-decoration:none;padding:10px 16px;font-size:12px;font-weight:600;background:#fff}
+.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#6d7469}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:10px;text-transform:uppercase;letter-spacing:.09em}
+.kicker:before{content:'';width:7px;height:7px;border-radius:50%;background:#84b28b}
+.heading{display:flex;justify-content:space-between;align-items:end;gap:24px;padding:43px 0 26px}
+h1{margin:7px 0 9px;font-size:clamp(46px,6vw,81px);line-height:.96;letter-spacing:-.085em;font-weight:700}
+.heading p{margin:0;color:var(--sub);font-size:14px;line-height:1.65;max-width:540px}
+.lab-num{font-size:12px;color:#92978f;white-space:nowrap;padding-bottom:6px}
+.game{display:grid;grid-template-columns:minmax(300px,355px) minmax(0,1fr);gap:16px;align-items:stretch}
+.controls,.visual{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.controls{display:flex;flex-direction:column;padding:23px;min-height:576px;gap:16px}
+.control-top{display:flex;justify-content:space-between;align-items:center;gap:9px}
+.mission-count{background:var(--lime);border-radius:99px;padding:7px 11px;font-size:10px;letter-spacing:.04em}
+.control-title{font-size:27px;line-height:1.12;letter-spacing:-.055em;font-weight:700;margin:0}
+.control-help{font-size:12px;line-height:1.7;color:#677069;margin:0}
+.targets{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.target{border:1px solid var(--line);border-radius:8px;background:#fafaf8;color:#383e38;min-height:62px;text-align:left;padding:9px 11px;transition:background .2s,border-color .2s}
+.target b{display:block;font-size:13px;letter-spacing:-.035em}.target small{display:block;font:10px 'DM Mono',monospace;color:#8f958e;margin-top:5px}
+.target.active{background:#ebf5da;border-color:#495b32;box-shadow:inset 0 0 0 1px #495b32}
+.speed-card{background:#f6f7f2;border:1px solid #e5e7de;border-radius:12px;padding:16px}
+.speed-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.speed-head label{font-size:11px;font-weight:600}.speed-value{font:500 14px 'DM Mono',monospace}
+input[type=range]{width:100%;height:24px;appearance:none;-webkit-appearance:none;background:transparent;cursor:pointer;touch-action:pan-y}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:20px;background:linear-gradient(90deg,#c7e7aa 0%,#9acfc4 50%,#c2a2d8 100%)}
+input[type=range]::-moz-range-track{height:6px;border-radius:20px;background:#aacdc2}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;background:#141a18;border:4px solid white;border-radius:50%;box-shadow:0 1px 7px #0005}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:4px solid #fff;border-radius:50%;background:#141a18;box-shadow:0 1px 7px #0005}
+.scale{display:flex;justify-content:space-between;font-size:9px;color:#868d84;margin:0}
+.threshold{margin-top:13px;font-size:10px;color:#70756f;line-height:1.5}
+.stat-block{border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+.stat-label{font-size:10px;color:var(--sub)}
+.stat-main{font-size:clamp(40px,5vw,59px);line-height:1;letter-spacing:-.07em;font-weight:700;margin:8px 0}
+.stat-main span{font-size:21px;letter-spacing:-.04em}
+.stat-note{font-size:11px;color:#6e776c;line-height:1.5}
+.fast .stat-main{color:#1b795b}
+.primary{border:1.5px solid #121812;min-height:54px;border-radius:8px;background:var(--lime);font-size:13px;font-weight:700;letter-spacing:-.025em;box-shadow:3px 3px 0 #202520;transition:transform .16s,box-shadow .16s}
+.primary:hover{transform:translate(-1px,-2px);box-shadow:4px 5px 0 #202520}
+.primary:active{transform:translate(2px,2px);box-shadow:0 0 0 #202520}
+.primary:disabled{opacity:.58;cursor:default;transform:none;box-shadow:none}
+.control-bottom{margin-top:auto;border-top:1px dashed #dce0d7;padding-top:13px;display:flex;justify-content:space-between;align-items:center;gap:9px;font:10px 'DM Mono',monospace;color:#92998e}
+.status-dot{display:inline-block;width:7px;height:7px;background:#5dae85;border-radius:100%;margin-right:5px}
+.visual{position:relative;display:flex;flex-direction:column;background:var(--space);color:white;min-height:576px}
+.sky{position:relative;min-height:440px;flex:1;overflow:hidden;background:radial-gradient(circle at 65% 50%,#172239,#080e1a 65%);}
+#space{position:absolute;inset:0;width:100%;height:100%;display:block}
+.sky-top,.sky-bottom{position:absolute;left:22px;right:22px;display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none;z-index:2}
+.sky-top{top:19px}.sky-bottom{bottom:19px}
+.tag{border:1px solid #ffffff2a;background:#101927b3;backdrop-filter:blur(10px);border-radius:99px;padding:8px 12px;color:#bfcee0;font-size:10px;white-space:nowrap;letter-spacing:.03em}
+.live{display:flex;gap:7px;align-items:center}.live:before{content:'';width:6px;height:6px;border-radius:50%;background:#a2f2bb;box-shadow:0 0 10px #a2f2bb}
+#skyMessage{background:#152438b3;border:1px solid #ffffff26;max-width:72%;color:#d7e4ed;border-radius:9px;padding:10px 13px;font-size:10px;line-height:1.5}
+.tiny{font-size:10px;color:#8491a1}
+.meter-row{border-top:1px solid #ffffff1e;display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:#0a1422}
+.meter{padding:19px 22px;border-right:1px solid #ffffff16;min-width:0}
+.meter:last-child{border:0}.meter small{display:block;color:#8190a4;font-size:10px;margin-bottom:8px}
+.meter strong{display:block;color:#f3f8fd;font:500 clamp(14px,1.65vw,21px) 'DM Mono',monospace;letter-spacing:-.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.result{display:none;margin-top:16px;border:1px solid #2f5d4e;border-radius:13px;background:#e5f2e0;padding:21px 24px;align-items:center;justify-content:space-between;gap:20px}
+.result.on{display:flex}.result.lost{background:#fff4e5;border-color:#e4caa7}
+.result h2{font-size:27px;letter-spacing:-.055em;margin:3px 0 7px}.result p{font-size:12px;line-height:1.65;color:#59635a;margin:0;max-width:600px}
+.result-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.secondary{border:1px solid #b4bcb2;border-radius:7px;background:#fff;padding:12px 14px;font-size:11px;font-weight:700}
+.secondary.highlight{background:#161916;color:#fff;border-color:#161916}
+.learn{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.9fr);gap:16px;padding:17px 0 58px}
+.learn-box{border:1px solid var(--line);border-radius:13px;background:#fff;padding:25px}
+.learn h2{font-size:clamp(20px,2.5vw,29px);letter-spacing:-.055em;line-height:1.15;margin:12px 0}
+.learn p{font-size:12px;line-height:1.8;color:#5d665e;margin:0 0 13px}
+.learn p:last-child{margin:0}.formula{border-radius:8px;padding:17px;margin:16px 0;font:500 14px 'DM Mono',monospace;background:#f1f3ee;line-height:1.7}
+footer{border-top:1px solid var(--line);padding:21px 0 32px;display:flex;justify-content:space-between;gap:10px;font:10px 'DM Mono',monospace;color:#858b83}
+footer a{text-decoration:none}
+@media(max-width:1000px){.shell{padding:0 20px}.game{grid-template-columns:minmax(275px,320px) minmax(0,1fr)}.controls{padding:17px;gap:13px}.meter{padding:15px 12px}.sky{min-height:385px}}
+@media(max-width:750px){nav{height:64px}.heading{padding:28px 0 19px}.lab-num{display:none}.game{display:flex;flex-direction:column}.visual{order:0;min-height:0}.sky{height:390px;flex:auto;min-height:0}.controls{order:1;min-height:0}.control-title{font-size:25px}.meter{padding:15px 13px}.result{flex-direction:column;align-items:stretch}.learn{grid-template-columns:1fr}.heading p{font-size:12px}}
+@media(max-width:480px){.shell{padding:0 13px}.sky{height:345px}.sky-top,.sky-bottom{left:12px;right:12px}.tag{padding:7px 9px;font-size:9px}.sky-top .tag:nth-child(2){display:none}#skyMessage{max-width:80%;font-size:9px}.meter strong{font-size:13px}.meter small{font-size:9px}.target{padding:10px 8px}.control-help{font-size:11px}.learn-box{padding:19px}footer{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<nav><a href="/" class="brand" aria-label="aynen.fun ana sayfa">aynen<span>.</span>fun</a><div class="nav-right"><span class="eyebrow mono">PHYSICS / 001</span><a class="return" href="/">← Oyunlara dön</a></div></nav>
+<header class="heading">
+<div><div class="kicker mono">Küçük deneyler. Büyük paradokslar.</div><h1>Einstein ve Sen<span style="color:#9daf9e">.</span></h1><p>Ay'a bir lazer gönder. Işık noktasını ışığın kendisinden hızlı hareket ettirebilir misin?</p></div>
+<div class="lab-num mono">DENEY / 01—03</div>
+</header>
+<main>
+<div class="game">
+<section class="controls" aria-label="Oyun kontrolleri">
+<div class="control-top"><span class="eyebrow mono">GÖREV PANELİ</span><span class="mission-count mono" id="levelCount">01 / 03</span></div>
+<h2 class="control-title">Einstein'ı alt edebilir misin?</h2>
+<p class="control-help">Hedefi seç. Lazerin dönüş hızını ayarla. Gönder. Sonucu izle.</p>
+<div class="targets" role="group" aria-label="Hedef seçimi">
+<button class="target active" data-planet="moon" type="button" aria-pressed="true"><b>Ay</b><small>01 / YAKIN</small></button>
+<button class="target" data-planet="mars" type="button" aria-pressed="false"><b>Mars</b><small>02 / UZAK</small></button>
+<button class="target" data-planet="jupiter" type="button" aria-pressed="false"><b>Jüpiter</b><small>03 / DAHA UZAK</small></button>
+</div>
+<div class="speed-card">
+<div class="speed-head"><label for="speed">Lazerin açısal dönüş hızı</label><output class="speed-value" id="degReadout" for="speed">0 °/s</output></div>
+<input id="speed" type="range" min="0" max="120" step="0.1" value="25" aria-describedby="thresholdNote">
+<div class="scale mono"><span>0°/s</span><span id="maxLabel">120°/s</span></div>
+<div class="threshold mono" id="thresholdNote">Merkezde c'yi aşmak için gereken hızı keşfet.</div>
+</div>
+<div class="stat-block" id="statBlock">
+<div class="stat-label mono">TAHMİN EDİLEN LEKE HIZI · MERKEZDE</div>
+<div class="stat-main" id="ratio">0.00<span> c</span></div>
+<div class="stat-note" id="ratioNote">c = ışığın boşluktaki hızı.</div>
+</div>
+<button class="primary" id="fire" type="button">LAZERİ GÖNDER ↗</button>
+<div class="control-bottom"><span><i class="status-dot"></i><span id="controlStatus">DENEY HAZIR</span></span><span id="attempts">0 DENEME</span></div>
+</section>
+<section class="visual" aria-label="Dünya'dan hedef gezegene lazer simülasyonu">
+<div class="sky" id="sky"><canvas id="space" role="img" aria-label="Dünya'dan seçilen hedefe lazerin yolculuğunun ve hareketli ışık noktasının çizimi"></canvas>
+<div class="sky-top"><span class="tag mono live" id="phaseTag">SİMÜLASYON HAZIR</span><span class="tag mono">GÖRSEL ÖLÇEK ŞEMATİK</span></div>
+<div class="sky-bottom"><span id="skyMessage" aria-live="polite">Hazır olduğunda lazeri gönder. Işık noktasının yolculuğunu yavaş çekimde izle.</span><span class="tiny mono" id="slowLabel">● MISSION 01</span></div>
+</div>
+<div class="meter-row">
+<div class="meter"><small class="mono">HEDEF UZAKLIĞI</small><strong id="distance">384.400 km</strong></div>
+<div class="meter"><small class="mono">IŞIK YOLCULUĞU</small><strong id="light">~1,28 sn</strong></div>
+<div class="meter"><small class="mono">TARAMA SÜRESİ</small><strong id="duration">— ms</strong></div>
+</div>
+</section>
+</div>
+<section class="result" id="result" aria-live="polite" aria-atomic="true">
+<div><span class="eyebrow mono" id="resultTag">DENEY SONUCU</span><h2 id="resultTitle">Sonuç</h2><p id="resultText"></p></div>
+<div class="result-actions"><button class="secondary" id="again" type="button">TEKRAR DENE ↻</button><button class="secondary highlight" id="share" type="button">PAYLAŞ ↗</button><button class="secondary" id="next" type="button" hidden>SONRAKİ HEDEF →</button></div>
+</section>
+<div class="learn">
+<article class="learn-box">
+<div class="eyebrow mono">PEKİ, NASIL MÜMKÜN?</div><h2>Işıktan hızlı bir nokta. Işıktan hızlı hiçbir foton yok.</h2>
+<p>Hareket eden şey aynı ışık taneciği değil. Lazer yön değiştirdikçe hedefin farklı noktalarına birbirinden farklı fotonlar ulaşıyor. Yüzeydeki <strong>aydınlanma deseni</strong> ışık hızını aşabiliyor; fakat bir noktadan diğerine ışık hızını aşan bir madde, enerji ya da bilgi taşınmıyor.</p>
+<p>Her foton Dünya'dan hedefe en fazla <strong>c = 299.792,458 km/sn</strong> hızında ilerler. Ayrıca ışığın hedefe varmasını beklememiz gerekir: Ay için yaklaşık 1,28 saniye.</p>
+<div class="formula">v<sub>merkez</sub> = (D − R) × ω<br><span style="font-size:10px;color:#818980">ω: rad/sn · D: merkez uzaklığı · R: hedef yarıçapı</span></div>
+<p>Bu simülasyon, ideal bir lazerin sabit açısal hızla taradığı küresel bir hedefin yakın yüzündeki kesişimi hesaplar. Merkezdeki leke hızını ölçer; ışık ışınlarının ayrı ayrı uçuş sürelerini de hesaba katar. Hedef uzaklıkları sabit örnek değerlerdir, canlı astronomi konumları değil.</p>
+</article>
+<aside class="learn-box">
+<div class="eyebrow mono">FİZİK NOTLARI</div><h2>Einstein hâlâ haklı.</h2>
+<p>Özel göreliliğin sınırı, nedensel etki ve bilginin ışıktan hızlı aktarılamamasıdır. Lazer lekesi fiziksel bir cisim değildir.</p>
+<p><strong>Görselleştirme notu:</strong> Gezegenler, mesafe ve lazer huzmesi ekranda gerçek ölçekte çizilmez. Lazer huzmesi uzay boşluğunda normalde bu şekilde görünmez; yolunu anlaşılır kılmak için şematik gösteriyoruz. Tarama gerçek süresinden çok daha yavaş oynatılır.</p>
+<p><strong>Kaynaklar:</strong> <a href="https://physics.duke.edu/fast-light-tutorial" target="_blank" rel="noopener">Duke Physics — Fast Light</a> · <a href="https://science.nasa.gov/moon/facts/" target="_blank" rel="noopener">NASA — Moon Facts</a> · <a href="https://science.nasa.gov/mission/voyager/voyager-1/voyager-1-what-is-a-light-day/" target="_blank" rel="noopener">NASA — Light Travel</a>.</p>
+</aside>
+</div>
+</main>
+<footer><span>AYNEN.FUN © 2026 · GEREKSİZ DERECEDE GEREKLİ.</span><a href="/">DAHA FAZLA OYUN ↗</a></footer>
+</div>
+<script>
+(function(){
+"use strict";
+const C=299792.458, RAD=Math.PI/180;
+const worlds={
+ moon:{name:"Ay",distance:384400,radius:1737.4,color:"#b6c4d7",mission:"01"},
+ mars:{name:"Mars",distance:225000000,radius:3389.5,color:"#d99370",mission:"02"},
+ jupiter:{name:"Jüpiter",distance:628000000,radius:69911,color:"#dec8a0",mission:"03"}
+};
+const $=id=>document.getElementById(id);
+const canvas=$("space"),ctx=canvas.getContext("2d",{alpha:false});
+const data={target:"moon",omega:0,phase:"idle",started:0,attempt:0,lastRatio:0,ready:false,samples:[],lastTime:0,progress:0,flightProgress:0,best:{}};
+try{data.best=JSON.parse(localStorage.getItem("aynen_einstein_best")||"{}")||{}}catch(e){}
+const query=new URLSearchParams(location.search);
+const initial=query.get("target");if(worlds[initial])data.target=initial;
+const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function current(){return worlds[data.target]}
+function threshold(w){return C/(w.distance-w.radius)/RAD}
+function centerRatio(w,deg){return (w.distance-w.radius)*deg*RAD/C}
+function decimal(n,d){return n.toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d})}
+function lightText(s){if(s<60)return "~"+decimal(s,2)+" sn";return "~"+decimal(s/60,2)+" dk"}
+function durationText(s){if(!Number.isFinite(s))return "—";if(s<1)return decimal(s*1000,2)+" ms";if(s<60)return decimal(s,2)+" sn";return decimal(s/60,2)+" dk"}
+function angleEdge(w){return Math.asin(w.radius/w.distance)*.90}
+function scanDuration(w,deg){return deg<=0?Infinity:2*angleEdge(w)/(deg*RAD)}
+function setMessage(text){$("skyMessage").textContent=text}
+function setPhase(phase){$("phaseTag").textContent=phase}
+function storeBest(){try{localStorage.setItem("aynen_einstein_best",JSON.stringify(data.best))}catch(e){}}
+function updateHUD(){
+ const w=current(),deg=data.omega,rat=centerRatio(w,deg),thr=threshold(w);
+ $("degReadout").textContent=decimal(deg,deg<1?3:1)+" °/s";
+ $("ratio").innerHTML=decimal(rat,2)+"<span> c</span>";
+ $("statBlock").classList.toggle("fast",rat>=1);
+ $("ratioNote").textContent=rat>=1?"Merkezdeki leke c sınırını geçiyor.":"Merkezdeki ışık lekesi hâlâ c'nin altında.";
+ $("thresholdNote").textContent="Bu hedefte 1c için yaklaşık "+decimal(thr,thr<1?3:1)+"°/sn gerekiyor.";
+ $("distance").textContent=Math.round(w.distance).toLocaleString("tr-TR")+" km";
+ $("light").textContent=lightText(w.distance/C);
+ $("duration").textContent=durationText(scanDuration(w,deg));
+ $("levelCount").textContent=w.mission+" / 03";
+ $("slowLabel").textContent="● MISSION "+w.mission;
+ $("attempts").textContent=data.attempt+" DENEME";
+ $("fire").disabled=data.phase==="flight"||data.phase==="sweep"||deg===0;
+ $("fire").textContent=data.phase==="flight"?"FOTONLAR YOLDA…":data.phase==="sweep"?"YAVAŞ ÇEKİM OYNANIYOR…":"LAZERİ GÖNDER ↗";
+ document.querySelectorAll("[data-planet]").forEach(b=>{const on=b.dataset.planet===data.target;b.classList.toggle("active",on);b.setAttribute("aria-pressed",String(on))});
+ if(data.phase==="idle")$("controlStatus").textContent="DENEY HAZIR";
+}
+function choose(planet,override){
+ if(!worlds[planet])return;
+ data.target=planet;data.phase="idle";data.progress=0;data.flightProgress=0;data.samples=[];data.ready=false;
+ $("result").classList.remove("on");$("result").classList.remove("lost");
+ const w=current(),thr=threshold(w),max=thr*2.8;
+ $("speed").min="0";$("speed").max=String(max);$("speed").step=String(max/2000);
+ data.omega=override!=null?Math.min(max,Math.max(0,override)):thr*.58;
+ $("speed").value=String(data.omega);
+ setPhase("SİMÜLASYON HAZIR");
+ setMessage("Lazerin dönüş hızını ayarla ve gönder. Hedef: "+w.name+".");
+ updateHUD();
+ const p=new URL(location.href);p.searchParams.set("target",planet);p.searchParams.delete("speed");history.replaceState(null,"",p.pathname+p.search);
+}
+document.querySelectorAll("[data-planet]").forEach(b=>b.addEventListener("click",()=>{if(data.phase==="flight"||data.phase==="sweep")return;choose(b.dataset.planet)}));
+$("speed").addEventListener("input",e=>{data.omega=Number(e.target.value);if(data.phase==="result"){data.phase="idle";$("result").classList.remove("on");setPhase("SİMÜLASYON HAZIR");setMessage("Yeni bir hız seçtin. Sonucu görmek için lazeri gönder.")}updateHUD()});
+function intersection(w,theta){
+ const d=w.distance,r=w.radius,det=r*r-d*d*Math.sin(theta)*Math.sin(theta);
+ if(det<0)return null;
+ const path=d*Math.cos(theta)-Math.sqrt(Math.max(0,det));
+ const y=path*Math.sin(theta);
+ return {theta,path,unit:Math.max(-1,Math.min(1,y/r)),arrive:0};
+}
+function sampleScan(){
+ const w=current(),edge=angleEdge(w),seconds=scanDuration(w,data.omega),res=[];
+ const count=720;
+ for(let i=0;i<=count;i++){
+  const theta=-edge+2*edge*i/count;
+  const item=intersection(w,theta);if(!item)continue;
+  item.emitted=(i/count)*seconds;
+  item.arrive=item.emitted+item.path/C;
+  res.push(item);
+ }
+ const times=res.map(a=>a.arrive),lo=Math.min(...times),hi=Math.max(...times),width=Math.max(hi-lo,.000000001);
+ for(const a of res)a.t=(a.arrive-lo)/width;
+ res.sort((a,b)=>a.t-b.t);
+ data.samples=res;
+ data.physicalStart=lo;data.physicalEnd=hi;
+}
+function start(){
+ if(data.phase==="flight"||data.phase==="sweep"||data.omega<=0)return;
+ data.attempt++;data.lastRatio=centerRatio(current(),data.omega);
+ sampleScan();data.phase="flight";data.started=performance.now();data.progress=0;data.flightProgress=0;
+ $("result").classList.remove("on");
+ setPhase("01 / IŞIK YOLDA");
+ setMessage("Her foton c hızında ilerliyor. Hedefe ulaşma süresini hızlandırılmış izliyorsun.");
+ $("controlStatus").textContent="FOTONLAR YOLDA";
+ updateHUD();
+}
+$("fire").addEventListener("click",start);
+$("again").addEventListener("click",()=>{data.phase="idle";$("result").classList.remove("on");data.progress=0;data.flightProgress=0;setPhase("SİMÜLASYON HAZIR");setMessage("Bir kez daha dene. Dönüş hızını değiştirebilirsin.");updateHUD()});
+$("next").addEventListener("click",()=>{const next={moon:"mars",mars:"jupiter",jupiter:"moon"};choose(next[data.target]);$("fire").focus()});
+function finish(){
+ data.phase="result";
+ const win=data.lastRatio>=1;
+ $("result").classList.add("on");$("result").classList.toggle("lost",!win);
+ $("resultTag").textContent=win?"PARADOKS BULUNDU / "+current().name.toLocaleUpperCase("tr-TR"):"IŞIK HÂLÂ ÖNDE";
+ $("resultTitle").textContent=win?"Işıktan hızlı. Einstein hâlâ haklı.":"Az kaldı. Işık kazandı.";
+ $("resultText").textContent=win?("Merkezdeki leke "+decimal(data.lastRatio,2)+"c hızına ulaştı. Ama bu bir madde ya da mesajın hızı değil. Fotonların her biri c hızında yol aldı."):("Merkezdeki leke "+decimal(data.lastRatio,2)+"c hızında. Açısal dönüş hızını artırıp yeniden dene.");
+ $("next").hidden=!win;
+ $("next").textContent=data.target==="jupiter"?"BAŞA DÖN →":"SONRAKİ HEDEF →";
+ if(win&&data.lastRatio>(data.best[data.target]||0)){data.best[data.target]=data.lastRatio;storeBest()}
+ $("controlStatus").textContent=win?"PARADOKS BULUNDU":"TEKRAR DENE";
+ setPhase(win?"02 / IŞIK LEKESİ c'Yİ GEÇTİ":"02 / c SINIRININ ALTINDA");
+ setMessage(win?"Işık lekesi, evet. Bilgi, hayır. Einstein'ın teorisiyle çelişki yok.":"Bir sonraki denemede açısal dönüş hızını artır.");
+ updateHUD();
+}
+function shareText(){return "Einstein ve Sen'de "+current().name+" üzerinde "+decimal(data.lastRatio||centerRatio(current(),data.omega),2)+"c hızında bir lazer lekesi yaptım. Einstein hâlâ haklı. "}
+function shareUrl(){
+ const u=new URL(location.href);u.searchParams.set("target",data.target);u.searchParams.set("speed",String(Number(data.omega.toFixed(6))));return u.href
+}
+$("share").addEventListener("click",async()=>{
+ const payload={title:"Einstein ve Sen — aynen.fun",text:shareText(),url:shareUrl()};
+ if(navigator.share){try{await navigator.share(payload);return}catch(e){if(e.name==="AbortError")return}}
+ try{await navigator.clipboard.writeText(payload.text+payload.url);$("share").textContent="KOPYALANDI ✓";setTimeout(()=>$("share").textContent="PAYLAŞ ↗",2000)}
+ catch(e){window.prompt("Paylaşılabilir sonuç:",payload.text+payload.url)}
+});
+document.addEventListener("keydown",e=>{if(e.target instanceof HTMLInputElement)return;if(e.code==="Space"&&!e.repeat){e.preventDefault();start()}});
+let seed=17483;
+function rnd(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
+const stars=Array.from({length:160},()=>({x:rnd(),y:rnd(),r:.3+rnd()*1.45,a:.12+rnd()*.56}));
+const planetCache={};
+function makePlanet(name){
+ const n=600,p=document.createElement("canvas");p.width=n;p.height=n;const c=p.getContext("2d");const mid=n/2,rad=n*.474;
+ c.save();c.beginPath();c.arc(mid,mid,rad,0,Math.PI*2);c.clip();
+ if(name==="moon"){
+  const g=c.createRadialGradient(mid*.55,mid*.55,10,mid,mid,rad*1.48);g.addColorStop(0,"#d2dae3");g.addColorStop(.36,"#9ca7b5");g.addColorStop(.76,"#737f8f");g.addColorStop(1,"#222f43");c.fillStyle=g;c.fillRect(0,0,n,n);
+  seed=202608;
+  for(let i=0;i<2700;i++){const x=rnd()*n,y=rnd()*n,r=.4+rnd()*2.6;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=rnd()>.4?"#e0e5e8":"#2d3e53";c.globalAlpha=.02+rnd()*.11;c.fill()}c.globalAlpha=1;
+  seed=34092;
+  for(let i=0;i<210;i++){
+   const x=rnd()*n,y=rnd()*n,r=2+Math.pow(rnd(),2.1)*49;
+   c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle="rgba(21,35,52,.14)";c.fill();
+   c.beginPath();c.arc(x-r*.08,y-r*.07,r*.87,0,Math.PI*2);c.strokeStyle="rgba(240,248,255,.16)";c.lineWidth=Math.max(.7,r*.11);c.stroke();
+   c.beginPath();c.arc(x+r*.09,y+r*.10,r*.74,0,Math.PI*2);c.strokeStyle="rgba(13,23,39,.14)";c.lineWidth=Math.max(.6,r*.13);c.stroke();
+  }
+ }else if(name==="mars"){
+  const g=c.createRadialGradient(180,130,30,320,320,420);g.addColorStop(0,"#f1bb96");g.addColorStop(.46,"#c87a59");g.addColorStop(1,"#542d36");c.fillStyle=g;c.fillRect(0,0,n,n);
+  seed=991;
+  for(let i=0;i<240;i++){const x=rnd()*n,y=rnd()*n;const r=4+rnd()*45;c.beginPath();c.ellipse(x,y,r,r*(.23+rnd()*.38),rnd()*3,0,Math.PI*2);c.fillStyle=rnd()>.5?"rgba(92,45,41,.10)":"rgba(255,203,156,.09)";c.fill()}
+ }else{
+  c.fillStyle="#c8b296";c.fillRect(0,0,n,n);seed=783;
+  let y=0;while(y<n){let h=8+rnd()*31;c.fillStyle=["#d8c4a4","#bda185","#ddbf9c","#9a7568","#ebd0a4"][Math.floor(rnd()*5)];c.globalAlpha=.72+rnd()*.25;c.fillRect(0,y,n,h);y+=h}c.globalAlpha=1;
+  c.beginPath();c.ellipse(430,400,100,43,-.12,0,Math.PI*2);c.fillStyle="rgba(156,75,58,.58)";c.fill();c.beginPath();c.ellipse(422,396,66,24,-.12,0,Math.PI*2);c.strokeStyle="rgba(239,193,157,.65)";c.lineWidth=10;c.stroke();
+  const shadow=c.createRadialGradient(200,120,10,300,300,390);shadow.addColorStop(0,"#fff3de25");shadow.addColorStop(.8,"#45343408");shadow.addColorStop(1,"#0a0c17b3");c.fillStyle=shadow;c.fillRect(0,0,n,n);
+ }
+ c.restore();
+ const rim=c.createRadialGradient(mid*.45,mid*.5,rad*.2,mid,mid,rad*1.02);rim.addColorStop(.55,"#00000000");rim.addColorStop(.95,"#03071455");rim.addColorStop(1,"#030714b8");c.beginPath();c.arc(mid,mid,rad,0,Math.PI*2);c.fillStyle=rim;c.fill();
+ return p;
+}
+function earth(cx,cy,r){
+ const g=ctx.createRadialGradient(cx-r*.35,cy-r*.5,r*.03,cx,cy,r*1.25);
+ g.addColorStop(0,"#b6f8ff");g.addColorStop(.28,"#328dbe");g.addColorStop(.65,"#144e85");g.addColorStop(1,"#080f26");
+ ctx.save();ctx.shadowColor="#3b9dd1";ctx.shadowBlur=25;ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.clip();
+ ctx.fillStyle="rgba(103,163,134,.72)";ctx.beginPath();ctx.moveTo(cx-r*.48,cy-r*.68);ctx.bezierCurveTo(cx+r*.10,cy-r*.79,cx+r*.46,cy-r*.18,cx+r*.10,cy+r*.02);ctx.bezierCurveTo(cx+r*.55,cy+r*.48,cx-r*.11,cy+r*.64,cx-r*.45,cy+r*.2);ctx.fill();
+ ctx.strokeStyle="#ffffff50";ctx.lineWidth=r*.12;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(cx-r*.8,cy-r*.18);ctx.bezierCurveTo(cx-r*.2,cy-r*.4,cx+r*.4,cy+r*.17,cx+r*.82,cy-r*.17);ctx.stroke();ctx.restore();
+}
+let viewW=0,viewH=0,dpr=1;
+function resize(){
+ const rect=canvas.getBoundingClientRect();const w=Math.max(200,rect.width),h=Math.max(200,rect.height);
+ dpr=Math.min(window.devicePixelRatio||1,2);viewW=w;viewH=h;canvas.width=Math.ceil(w*dpr);canvas.height=Math.ceil(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+if(typeof ResizeObserver!=="undefined"){new ResizeObserver(resize).observe($("sky"))}else window.addEventListener("resize",resize);resize();
+function moonSpot(item,cx,cy,r){
+ const u=item.unit,turn=Math.sqrt(Math.max(0,1-u*u));
+ return {x:cx+u*r*.96,y:cy-r*.045-r*.18*(1-turn),r:Math.max(3,7*turn)};
+}
+function drawGlow(x,y,r,color){
+ const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,color);g.addColorStop(1,"transparent");ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+}
+function draw(now){
+ if(!viewW||!viewH)return;
+ const w=viewW,h=viewH,world=current(),moonX=w*(w<470?.70:.73),moonY=h*.49,moonR=Math.min(h*.34,w*(w<470?.265:.245)),earthX=w*.115,earthY=h*.7,earthR=Math.min(h*.107,w*.095),laserX=earthX+earthR*.67,laserY=earthY-earthR*.55;
+ const bg=ctx.createRadialGradient(moonX,moonY,moonR*.24,moonX,moonY,w*.8);bg.addColorStop(0,"#1e2a3c");bg.addColorStop(.42,"#111c2e");bg.addColorStop(1,"#060c18");ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+ for(const s of stars){ctx.globalAlpha=s.a*(reduced?1:(.88+.12*Math.sin(now*.00035+s.x*25)));ctx.fillStyle="#eaf5ff";ctx.beginPath();ctx.arc(s.x*w,s.y*h,s.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+ ctx.strokeStyle="#ffffff10";ctx.lineWidth=1;
+ for(let i=0;i<3;i++){ctx.beginPath();ctx.ellipse(moonX,moonY,moonR*(1.18+i*.15),moonR*(1.18+i*.15),0,0,Math.PI*2);ctx.stroke()}
+ ctx.save();ctx.shadowColor=world.color;ctx.shadowBlur=38;ctx.fillStyle="#1d2534";ctx.beginPath();ctx.arc(moonX,moonY,moonR*.965,0,Math.PI*2);ctx.fill();ctx.restore();
+ if(!planetCache[data.target])planetCache[data.target]=makePlanet(data.target);
+ ctx.drawImage(planetCache[data.target],moonX-moonR,moonY-moonR,moonR*2,moonR*2);
+ ctx.save();ctx.strokeStyle="#9ebcc960";ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(laserX,laserY);ctx.lineTo(moonX-moonR*.7,moonY);ctx.stroke();ctx.restore();
+ earth(earthX,earthY,earthR);
+ const timeline=now-data.started;
+ if(data.phase==="flight"){data.flightProgress=Math.min(1,timeline/1350)}
+ if(data.phase==="sweep"){data.progress=Math.min(1,timeline/3000)}
+ if(data.phase==="flight"){
+  const x=laserX+(moonX-laserX)*data.flightProgress,y=laserY+(moonY-laserY)*data.flightProgress;
+  drawGlow(x,y,20,"#a4fff2cf");
+  ctx.strokeStyle="#9de5dbcc";ctx.lineWidth=2;ctx.shadowColor="#9de5db";ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(laserX,laserY);ctx.lineTo(x,y);ctx.stroke();ctx.shadowBlur=0;
+ }else if(data.phase==="sweep"||data.phase==="result"){
+  const pr=data.phase==="result"?1:data.progress;
+  const arrived=data.samples.filter(a=>a.t<=pr);
+  const active=arrived[arrived.length-1];
+  if(active){
+   const spot=moonSpot(active,moonX,moonY,moonR);
+   ctx.lineWidth=1.8;ctx.strokeStyle="#9bf4d5b8";ctx.shadowColor="#7ef8db";ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(laserX,laserY);ctx.lineTo(spot.x,spot.y);ctx.stroke();ctx.shadowBlur=0;
+   const tail=arrived.slice(-120);
+   for(let i=0;i<tail.length;i+=2){
+    const p=moonSpot(tail[i],moonX,moonY,moonR);
+    const glow=(i/tail.length)*.45;
+    ctx.beginPath();ctx.arc(p.x,p.y,Math.max(1,spot.r*.55),0,Math.PI*2);ctx.fillStyle="rgba(171,255,216,"+glow+")";ctx.fill();
+   }
+   if(data.phase!=="result"||pr===1){drawGlow(spot.x,spot.y,27,"#a6ffe0ba");ctx.fillStyle="#eefff2";ctx.beginPath();ctx.arc(spot.x,spot.y,Math.max(3,spot.r*.65),0,Math.PI*2);ctx.fill()}
+  }
+ }else{
+  const aiming=intersection(world,angleEdge(world)*(-.78+1.56*Math.min(1,data.omega/(threshold(world)*2.8))));
+  const point=aiming?moonSpot(aiming,moonX,moonY,moonR):{x:moonX,y:moonY};
+  ctx.setLineDash([4,5]);ctx.lineWidth=1;ctx.strokeStyle="#a4d3c45b";ctx.beginPath();ctx.moveTo(laserX,laserY);ctx.lineTo(point.x,point.y);ctx.stroke();ctx.setLineDash([]);
+  drawGlow(point.x,point.y,19,"#c9ffda94");ctx.beginPath();ctx.arc(point.x,point.y,3,0,Math.PI*2);ctx.fillStyle="#e9ffea";ctx.fill();
+ }
+ ctx.font="500 10px 'DM Mono',monospace";ctx.fillStyle="#d6e2f0";ctx.textAlign="center";ctx.fillText(world.name.toLocaleUpperCase("tr-TR"),moonX,Math.min(h-20,moonY+moonR+30));
+ ctx.fillStyle="#8da8bf";ctx.fillText("DÜNYA",earthX,Math.min(h-17,earthY+earthR+23));
+ if(data.phase==="flight"&&data.flightProgress>=1){
+  data.phase="sweep";data.started=now;data.progress=0;setPhase("02 / AYDINLANMA TARANIYOR");setMessage("Farklı fotonların oluşturduğu noktalar hedef yüzeyine sırayla ulaşıyor. YAVAŞ ÇEKİM.");$("controlStatus").textContent="TARAMA DEVAM EDİYOR";updateHUD();
+ }else if(data.phase==="sweep"&&data.progress>=1){finish()}
+ requestAnimationFrame(draw);
+}
+function init(){
+ let speed=null;const parsed=Number(query.get("speed"));if(query.has("speed")&&Number.isFinite(parsed)&&parsed>=0)speed=parsed;
+ choose(data.target,speed);requestAnimationFrame(draw);
+}
+init();
+})();
+</script>
+</body>
+</html>
