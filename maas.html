@@ -1,77 +1,89 @@
 <!doctype html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#ffffff" />
-<title>Maaşın Kaç Saniyede Biter? — aynen.fun</title>
-<meta name="description" content="Maaşın hesabına yattı. Şimdi harca. Zaten kendi kendine de eksiliyor." />
-<meta property="og:title" content="Maaşın Kaç Saniyede Biter? — aynen.fun" />
-<meta property="og:description" content="Maaşın kaç saniye dayanabiliyor? Türkiye simülasyonu." />
+<meta name="description" content="Maaş yattı. Giderler de burada. aynen.fun" />
+<meta property="og:title" content="Maaşın Kaç Saniye Dayanır? — aynen.fun" />
+<meta property="og:description" content="Ödemesen de geliyor." />
+<title>Maaşın Kaç Saniye Dayanır? — aynen.fun</title>
 <link rel="icon" type="image/x-icon" href="/favicon.ico?v=4" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/maas-shop.css?v=1" />
-<script defer src="/maas-shop.js?v=1"></script>
+<link rel="stylesheet" href="/maas-flow.css?v=1" />
+<script src="/maas-flow.js?v=1" defer></script>
 </head>
 <body>
-<main class="app" aria-label="Maaşın kaç saniyede biter?">
-<section class="board" aria-label="Maaş ve süre">
-<header class="sitebar">
-  <a href="/" class="back" aria-label="aynen.fun ana sayfa">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m14 5-7 7 7 7M7 12h14"/></svg>
-    aynen.fun
-  </a>
-  <div class="salary-choices" aria-label="Maaş seç">
-    <span class="salary-caption">MAAŞIN</span>
-    <button type="button" class="preset" data-salary="35000" aria-pressed="false">35K</button>
-    <button type="button" class="preset" data-salary="55000" aria-pressed="true">55K</button>
-    <button type="button" class="preset" data-salary="85000" aria-pressed="false">85K</button>
-    <button type="button" class="preset" data-salary="0" aria-pressed="false" aria-label="Özel maaş seç">✎</button>
-  </div>
-</header>
-<div class="balance-head">
-  <p class="balance-label">MAAŞINDAN KALAN</p>
-  <div class="balance-number" id="balance" aria-live="off">₺55.000</div>
-  <div class="summary"><span class="status-dot" aria-hidden="true"></span><span>Harcanan <strong id="spent">₺0</strong></span></div>
-  <div class="drain-meter" role="progressbar" aria-label="Kalan maaş oranı" aria-valuemin="0" aria-valuemax="100"><div id="meter"></div></div>
+<div class="page">
+<header><a href="/" class="logo">aynen.fun</a><span class="caption">MAAŞIN KAÇ SANİYE DAYANIR?</span></header>
+<main class="app">
+<section class="left" aria-label="Maaş durumu">
+<div>
+  <div class="label">KALAN MAAŞ</div>
+  <div id="money" class="balance" aria-live="off">₺55.000</div>
+  <div class="subtotal">Giden <strong id="spent">₺0</strong> &nbsp;·&nbsp; Bekleyen <strong id="owed">₺0</strong></div>
+  <div class="track"><i id="progressFill"></i></div>
 </div>
-<div class="cat-zone">
-  <img src="/cat.webp" alt="Aynen'in ifadesiz kedi sticker'ı" width="420" height="390" fetchpriority="high" draggable="false" />
-  <div class="cat-caption" id="catCaption" aria-live="polite">Maaş yattı. Kısa süreliğine.</div>
+<div class="figure"><div id="figureIcon" aria-hidden="true">
+  <svg viewBox="0 0 80 80" class="drawn"><path d="M22 9h36v62l-9-5-9 5-9-5-9 5zM30 27h20M30 38h20M30 49h11"/></svg>
+</div><span id="figureText" class="fig-credit">Şimdilik.</span></div>
+<div class="left-bottom">
+  <div class="stat"><span class="label">SÜRE</span><b id="seconds">0,0 sn</b></div>
+  <div class="stat"><span class="label">GİDER</span><b id="finishedCount">00 / 18</b></div>
+  <button id="reset" class="reset" type="button">YENİDEN ↻</button>
 </div>
-<div class="board-foot">
-  <div class="foot-stat"><span>SÜRE</span><span id="elapsed">00:00.0</span></div>
-  <div class="foot-stat"><span>GÜN</span><span id="day">01/30</span></div>
-  <button class="reset" type="button" id="reset">YENİDEN ↻</button>
-</div>
-<section class="end" id="end" hidden aria-live="polite" aria-label="Oyun sonucu">
-  <div class="end-inside">
-    <div class="end-kicker" id="endKicker">MAAŞIN ÖMRÜ</div>
-    <h2 id="endTitle">00:00.0</h2>
-    <p id="endMessage">Maaş hesabına uğradı. Kalıcı değildi.</p>
-    <div>
-      <button type="button" class="end-button" id="again">TEKRAR DENE</button>
-      <button type="button" class="end-button secondary" id="share">PAYLAŞ ↗</button>
-    </div>
-  </div>
 </section>
+<section class="right" aria-label="Gelen gider">
+<div class="right-top"><h1>Yine bir şey.</h1><span id="rightCountdown" class="progress" aria-live="off"></span></div>
+<div class="event" aria-live="polite">
+<div id="eventIcon" class="event-icon" aria-hidden="true">
+  <svg viewBox="0 0 80 80"><path d="M22 9h36v62l-9-5-9 5-9-5-9 5z"/></svg>
+</div>
+<div class="event-tag" id="kind">BUNU ÖDEYECEKSİN.</div>
+<h2 id="eventTitle">Kira</h2>
+<p id="eventLine" class="event-desc">Ev sahibi “müsaitsen” dedi.</p>
+<p id="eventCost" class="event-cost">₺27.000</p>
+<p id="eventHint" class="event-due">Erteleyince kaybolmuyor.</p>
+</div>
+<div class="choice-row">
+<button class="choice pay" id="btnPay" type="button">Öde</button>
+<button class="choice" id="btnSkip" type="button">Birazdan</button>
+</div>
+<div class="deadline"><i id="deadlineFill"></i></div>
+<div class="hint" aria-label="Süre dolunca otomatik karar verilir">Süre dolarsa zorunlu gider ödenir.</div>
+<div class="notice" id="notice"></div>
 </section>
-<aside class="shop" aria-label="Harcama listesi">
-  <header class="shop-head">
-    <h1>Harca.</h1>
-    <div style="display:flex;align-items:center;gap:13px">
-      <span class="shop-count" id="shopCount">0 işlem</span>
-      <button type="button" class="shop-reset" id="resetTop" aria-label="Oyunu sıfırla" title="Yeniden başlat">
-        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" aria-hidden="true"><path d="M20 5v6h-6M20 11a8 8 0 1 0 1 5"/></svg>
-      </button>
-    </div>
-  </header>
-  <div class="items" id="items" aria-label="Satın alınabilecek harcamalar"></div>
-  <footer class="shop-footer">Temsilî fiyatlar. Günlük hayat otomatik tahsil edilir.</footer>
-</aside>
 </main>
+</div>
+<div id="intro" class="intro">
+  <div class="intro-inside">
+    <div class="label">AYNEN.FUN / 01</div>
+    <h2>Maaş yattı.</h2>
+    <p>Kaç saniye dayanıyor, bakalım.</p>
+    <div class="salaries" aria-label="Maaş seçimi">
+      <button data-salary="35000" aria-pressed="false" type="button">35.000</button>
+      <button data-salary="55000" aria-pressed="true" type="button">55.000</button>
+      <button data-salary="85000" aria-pressed="false" type="button">85.000</button>
+    </div>
+    <input id="salaryCustom" class="custom" type="number" min="10000" max="500000" step="1000" inputmode="numeric" placeholder="Başka bir tutar" aria-label="Özel maaş" />
+    <button id="start" class="start" type="button" data-amount="55000">Başla</button>
+    <p class="micro">Fiyatlar temsili. Mevzular tanıdık.</p>
+  </div>
+</div>
+<div id="finish" class="finish" hidden>
+ <div class="finish-inside">
+  <div class="label" id="resultTop">MAAŞ BİTTİ.</div>
+  <h2 id="resultSeconds">24,0 sn</h2>
+  <p id="resultLine">Daha yeni yatmıştı.</p>
+  <div class="minor" id="resultDetail">Kalan ₺0 · Bekleyen ₺0</div>
+  <div class="finish-actions">
+    <button id="playAgain" type="button">Bir daha</button>
+    <button id="share" type="button">Paylaş ↗</button>
+  </div>
+ </div>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
