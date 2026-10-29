@@ -89,7 +89,7 @@ async function loadPicture(o, requestId){
   if(!candidate)return false;
   const ok=await maybeImage(candidate.src);
   if(requestId!==imageToken)return true;
-  if(ok){photo.src=candidate.src;photo.onload=()=>{if(requestId===imageToken)shell.classList.remove('loading','error')};$('photo-caption').textContent='GÖRSEL / NESNE';$('photo-credit').href=candidate.credit||o.link;imageCache.set(o.id,candidate);return true;}
+  if(ok){photo.onload=()=>{if(requestId===imageToken)shell.classList.remove('loading','error')};photo.onerror=()=>{if(requestId===imageToken)shell.classList.add('error')};photo.src=candidate.src;if(photo.complete&&photo.naturalWidth>0)shell.classList.remove('loading','error');$('photo-caption').textContent='GÖRSEL / NESNE';$('photo-credit').href=candidate.credit||o.link;imageCache.set(o.id,candidate);return true;}
   return false;
  };
  if(saved && await tryImage(saved))return;
