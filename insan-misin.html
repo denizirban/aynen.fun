@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f7f4"><meta name="description" content="İnsan mısın? Türkiye usulü 8 tuhaf CAPTCHA. İnsan olduğunu kanıtlamak sandığından zor. aynen.fun">
+<title>İnsan mısın? — aynen.fun</title>
+<style>
+:root{--bg:#f7f7f4;--ink:#171817;--muted:#858985;--border:#d8dcd8;--blue:#2665dd;--green:#17664b;--red:#c83d38}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.shell{max-width:960px;min-height:100dvh;margin:auto;padding:18px 22px 24px;display:flex;flex-direction:column}
+.nav{display:flex;justify-content:space-between;gap:12px;padding-bottom:15px;border-bottom:1px solid var(--border);font:11px ui-monospace,monospace}.nav a{text-decoration:none}.nav span{color:var(--muted)}
+.title{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:24px 0 19px}.title h1{font-size:clamp(40px,7vw,78px);margin:0;letter-spacing:-.09em;line-height:.96}.title p{margin:0;font-size:12px;line-height:1.55;color:#797d79;max-width:220px}
+.panel{border:1px solid #2b302d;background:#fff;min-height:min(575px,calc(100dvh - 215px));display:flex;flex-direction:column;box-shadow:7px 7px 0 #e4e6e0}
+.hud{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border);padding:14px 19px;font:11px ui-monospace,monospace}.hud .progress{color:var(--blue);font-weight:700}.hud .detail{color:var(--muted)}.track{height:3px;background:#e6e8e5}.track i{display:block;width:0%;height:100%;background:var(--blue);transition:width .3s}
+.content{flex:1;display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center;padding:25px 22px;min-height:310px}
+.eyebrow{font:11px ui-monospace,monospace;letter-spacing:.08em;color:var(--blue);margin-bottom:13px}
+.question{font-size:clamp(24px,4.7vw,45px);line-height:1.08;letter-spacing:-.066em;max-width:710px;margin:0 auto 13px;font-weight:800;text-wrap:balance}
+.help{color:#77807b;font-size:13px;line-height:1.6;margin:0 auto 22px;max-width:500px}
+.zone{width:min(100%,540px);min-height:95px;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:12px;position:relative}
+.btn{background:#181d1a;color:#fff;border:1px solid #181d1a;min-height:50px;padding:13px 22px;font-weight:700;font-size:14px;letter-spacing:-.02em}.btn:hover{background:#2d51b3}.btn.outline{background:#fff;color:#171817}.btn.outline:hover{background:#f3f5fa}.btnrow{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.note{font:10px ui-monospace,monospace;color:#8f9690;margin-top:5px}.result-msg{min-height:25px;margin:13px 0 0;color:var(--red);font:12px ui-monospace,monospace}
+.check{display:flex;gap:20px;align-items:center;justify-content:space-between;padding:21px 23px;border:1px solid #c7cdcf;width:min(380px,100%);box-shadow:0 3px 9px #0000000d}.check label{display:flex;gap:14px;align-items:center;font-size:18px;font-weight:500;cursor:pointer}.check input{appearance:none;width:28px;height:28px;border:2px solid #7f8d8a;flex-shrink:0;cursor:pointer}.check input:checked{background:#2678dc;border-color:#2678dc}.check input:checked:after{content:'✓';color:#fff;font-size:22px;line-height:24px}.captcha-brand{text-align:right;color:#929c9d;font:10px Arial}.captcha-brand strong{display:block;font-size:16px;color:#6e8ca0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;width:min(340px,100%);margin:5px auto}.tile{aspect-ratio:1;min-height:67px;border:1px solid #bdc5c1;background:#f1f2ef;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:37px;position:relative}.tile span{font:11px ui-monospace,monospace;margin-top:5px}.tile.selected{box-shadow:inset 0 0 0 4px #246bdd;border-color:#246bdd;background:#eaf0fe}.tile.selected:after{content:'✓';position:absolute;right:4px;top:3px;color:#fff;background:#246bdd;font-size:11px;padding:2px 4px}
+.tea{width:115px;height:94px;display:flex;align-items:end;justify-content:center;position:relative;margin:2px auto 7px}.tea:before{content:'';position:absolute;bottom:4px;width:69px;height:88px;border:5px solid #4e4e4b;border-top:0;border-radius:0 0 25px 25px;clip-path:polygon(15% 0,85% 0,100% 100%,0 100%)}.tea:after{content:'';position:absolute;bottom:29px;left:91px;border:5px solid #4e4e4b;border-left:0;width:19px;height:29px;border-radius:0 14px 14px 0}
+.tea .tea-liquid{position:absolute;bottom:8px;width:55px;height:0%;max-height:80px;background:linear-gradient(#cf6024,#913a18);border-radius:0 0 18px 18px;transition:height .03s linear}
+.gauge{height:12px;background:#e7eae5;width:min(350px,100%);border-radius:14px;position:relative;overflow:hidden}.gauge i{display:block;background:var(--blue);height:100%;width:0%}.gauge:after{content:'';position:absolute;left:66%;width:16%;height:100%;top:0;background:#65b59190;border-inline:1px solid #267756}
+.bell{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:min(420px,100%)}.bell button{height:74px;background:#eeeee9;border:2px solid #b1b6ae;display:flex;flex-direction:column;justify-content:center;gap:5px;align-items:center;font-weight:800;font-size:22px}.bell small{font:10px ui-monospace,monospace;color:#677169}.bell button:active{background:#dbe0dc}
+.pos{height:130px;width:min(430px,100%);border:1px dashed #c4c9c3;position:relative;background:#fbfbf8;overflow:hidden}.pos button{position:absolute;left:var(--posx,40%);top:var(--posy,40%);transition:left .14s,top .14s;transform:translate(-50%,-50%);padding:10px 13px;border:1px solid #1b1e1a;border-radius:6px;background:#202825;color:white;font-weight:700;font-size:12px;white-space:nowrap}
+.choicegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;width:min(460px,100%)}.choicegrid button{padding:18px 11px;border:1px solid #c4cac4;background:#fafbf9;font-size:15px;font-weight:700}.choicegrid button:hover{background:#eaf0fe;border-color:#4680cf}
+.queue{display:flex;justify-content:center;align-items:center;gap:6px;width:min(380px,100%)}.queue span{font-size:30px;opacity:.32;transition:opacity .2s}.queue span.current{opacity:1;transform:scale(1.16)}
+.queue-meter{height:10px;background:#e9ebe6;border-radius:12px;position:relative;width:min(340px,100%);margin:auto}.queue-meter i{display:block;height:100%;background:#d99d46;width:0%;border-radius:12px}
+.foot{padding:13px 19px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;color:#939a93;font:10px/1.5 ui-monospace,monospace}.foot a{text-decoration:underline;text-underline-offset:3px}
+.badge{font-size:clamp(61px,12vw,108px);letter-spacing:-.09em;font-weight:900;line-height:1;color:var(--blue);margin:7px auto}.endline{font-size:clamp(21px,4vw,35px);font-weight:800;letter-spacing:-.055em;max-width:550px;line-height:1.12}.final-note{font-size:12px;line-height:1.7;color:#818881;max-width:430px}
+@media(max-width:620px){.shell{padding:13px 11px 17px}.title{display:block;margin:21px 0 14px}.title h1{font-size:47px}.title p{margin-top:7px;max-width:none;font-size:11px}.panel{min-height:calc(100dvh - 197px);box-shadow:4px 4px 0 #e4e6e0}.hud{padding:12px 13px}.content{padding:23px 13px}.question{font-size:clamp(24px,7.5vw,34px)}.help{font-size:12px}.foot{padding:12px;font-size:9px}.tile{font-size:28px;min-height:60px}.tile span{font-size:9px}.pos{height:170px}.bell button{height:65px}}
+@media(max-height:620px){.content{padding:16px}.title{margin:12px 0 8px}.panel{min-height:410px}.question{font-size:25px}.help{margin-bottom:13px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+</style></head>
+<body><div class="shell"><nav class="nav"><a href="/">← aynen.fun</a><span>İNSAN DOĞRULAMA SİSTEMİ / TR</span></nav><header class="title"><h1>İnsan mısın?</h1><p>İnsan olduğunu kanıtlamak için sekiz küçük kontrol. Hepsi tamamen gereksiz.</p></header>
+<main class="panel"><div><div class="hud"><span class="progress" id="level">DOĞRULAMA / BAŞLANGIÇ</span><span class="detail" id="detail">İNSANLIK ORANI: %0</span></div><div class="track"><i id="track"></i></div></div><section class="content" id="content" aria-live="polite"></section><footer class="foot"><span>BU BİR OYUNDUR. GERÇEK KİMLİK DOĞRULAMASI YAPMAZ.</span><span id="footerState">AYNEN.FUN / CAPTCHA-TR</span></footer></main></div>
+<script>
+(function(){
+'use strict';
+var steps=['check','dolmus','cay','zil','pos','trafik','dolmus2','bekle'];
+var i=0,fail=0,ticks=0,stage='intro',timer=null,raf=0,last=0,meter=0,done=false,selected=[],presses=0,passTime=0;
+var $=x=>document.getElementById(x),content=$('content'),lv=$('level'),dt=$('detail'),bar=$('track'),msg='';var clean=()=>{if(timer)clearTimeout(timer);timer=null;if(raf)cancelAnimationFrame(raf);raf=0;};
+function ui(eyebrow,title,help,body){content.innerHTML='<div class="eyebrow">'+eyebrow+'</div><h2 class="question">'+title+'</h2><p class="help">'+help+'</p><div class="zone" id="zone">'+body+'</div><p class="result-msg" id="msg" role="status"></p>';}
+function say(t){var e=$('msg');if(e)e.textContent=t;}
+function button(t,fn){var b=document.createElement('button');b.className='btn';b.textContent=t;b.onclick=fn;return b;}
+function go(){if(done)return;clean();i++;if(i>=steps.length){end();return;}show();}
+function bad(text){fail++;say(text);content.classList.remove('shake');void content.offsetWidth;content.style.transform='translateX(3px)';timer=setTimeout(()=>content.style.transform='',130);}
+function show(){clean();stage='play';ticks++;lv.textContent='DOĞRULAMA '+String(i+1).padStart(2,'0')+' / 08';dt.textContent='İNSANLIK ORANI: %'+Math.round(100*i/8);bar.style.width=100*i/8+'%';$('footerState').textContent='HATA SAYISI: '+fail;var z;
+switch(steps[i]){
+case 'check':
+ ui('TEST 01 / BAŞLANGIÇ','Robot değilim.','Aşağıdaki kutuyu işaretleyin. Şimdilik bu kadar.','<div class="check"><label><input type="checkbox" id="human"> Ben robot değilim</label><div class="captcha-brand"><strong>▦</strong>aynenCAPTCHA</div></div>');
+ $('human').onchange=()=>{passTime=performance.now();timer=setTimeout(go,500);};break;
+case 'dolmus':
+ selected=[];ui('TEST 02 / GÖRSEL TANIMA','Dolmuşu seçin.','Tüm dolmuşları işaretleyin. Sarı olan her şey taksi değildir.','<div class="grid" id="grid"></div>');
+ var items=[['🚕','TAKSİ',0],['🚐','DOLMUŞ',1],['🚌','OTOBÜS',0],['🚐','MİNİBÜS',1],['🚑','AMBULANS',0],['🚐','DOLMUŞ',1],['🚚','KAMYON',0],['🚙','ARABA',0],['🚐','DOLMUŞ',1]];
+ $('grid').innerHTML=items.map((a,j)=>'<button class="tile" data-idx="'+j+'" aria-pressed="false" type="button"><span aria-hidden="true" style="font-size:34px">'+a[0]+'</span><span>'+a[1]+'</span></button>').join('');
+ $('grid').querySelectorAll('button').forEach(b=>b.onclick=()=>{let n=Number(b.dataset.idx);selected[n]=!selected[n];b.classList.toggle('selected',!!selected[n]);b.setAttribute('aria-pressed',!!selected[n]+'');});
+ z=$('zone');z.appendChild(button('DOĞRULA →',()=>{if(items.every((x,j)=>!!selected[j]===!!x[2]))go();else bad('Eksik dolmuş var. Bir de fazla araç seçmiş olabilirsin.')}));break;
+case 'cay':
+ meter=0;ui('TEST 03 / HASSASİYET','Çayı tavında bırak.','Ne açık, ne de kaşık dikilecek kadar koyu. Yeşil aralıkta durdur.','<div class="tea"><div class="tea-liquid" id="liquid"></div></div><div class="gauge"><i id="fill"></i></div>');
+ z=$('zone');z.appendChild(button('TAMAM. BU KADAR ÇAY.',()=>{if(meter>=66&&meter<=82)go();else bad(meter<66?'Bu bildiğin sıcak su.':'Bu çayla asfalt atılır.')}));
+ last=performance.now();function animateTea(now){if(i!==2||stage!=='play')return;meter=18+66*(.5-.5*Math.cos((now-last)/770));$('fill').style.width=meter+'%';$('liquid').style.height=(meter*.83)+'%';raf=requestAnimationFrame(animateTea);}raf=requestAnimationFrame(animateTea);break;
+case 'zil':
+ ui('TEST 04 / APARTMAN','Kargocuya kapıyı aç.','"3. kat, soldaki daire" dedi. Bu apartmanda her katta iki daire var.','<div class="bell" id="bells"></div>');
+ $('bells').innerHTML=[1,2,3,4,5,6].map(n=>'<button type="button" data-n="'+n+'"><small>'+Math.ceil(n/2)+'. KAT</small>'+n+'</button>').join('');
+ $('bells').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(Number(b.dataset.n)===5)go();else bad('"Ben bir alt kattayım" diye bağırdılar.')});break;
+case 'pos':
+ presses=0;ui('TEST 05 / ÖDEME','Hesap kimde?','POS cihazını üç kez yakala. Ortamdaki herkes "ben ödeyeceğim" diyor.','<div class="pos" id="pos"><button type="button" id="posbtn">POS BENDE</button></div><div class="note" id="poscount">0 / 3 BAŞARILI HAMLE</div>');
+ var p=$('posbtn');p.onclick=()=>{presses++;$('poscount').textContent=presses+' / 3 BAŞARILI HAMLE';if(presses>=3){go();return;}p.style.setProperty('--posx',20+Math.random()*60+'%');p.style.setProperty('--posy',25+Math.random()*50+'%');};break;
+case 'trafik':
+ ui('TEST 06 / İSTANBUL','Hangi yol daha hızlı?','Saat 18.15, Cuma. İki seçenek var.','<div class="choicegrid"><button id="bridge">KÖPRÜ</button><button id="tunnel">TÜNEL</button></div>');
+ $('bridge').onclick=()=>{bad('Köprüde trafik var.');timer=setTimeout(go,700)};
+ $('tunnel').onclick=()=>{bad('Tünelde de trafik var.');timer=setTimeout(go,700)};break;
+case 'dolmus2':
+ ui('TEST 07 / TOPLU TAŞIMA','İnecek var.','Dolmuş şoförüne tam doğru anda seslen. Araç durağa yaklaşırken düğmeye bas.','<div style="width:min(340px,100%);font-size:45px" id="vehicle">🚐 —————————— 🚏</div><div class="queue-meter"><i id="queueFill"></i></div>');
+ z=$('zone');z.appendChild(button('MÜSAİT BİR YERDE!',()=>{if(meter>=70&&meter<=90)go();else bad(meter<70?'Daha gelmedik.':'Durağı geçtik. Bir sonrakinde.')}));
+ meter=0;last=performance.now();function animateQueue(now){if(i!==6||stage!=='play')return;meter=(now-last)/35%100;$('queueFill').style.width=meter+'%';raf=requestAnimationFrame(animateQueue)}raf=requestAnimationFrame(animateQueue);break;
+case 'bekle':
+ ui('TEST 08 / SON ONAY','Sadece bekle.','Hiçbir şeye dokunmadan 4 saniye bekle. Gerçek insan sabırsızlanır.','<div class="queue-meter"><i id="queueFill"></i></div><button class="btn outline" id="impatient">BİTTİ Mİ?</button><div class="note" id="waiting">DOĞRULANIYOR...</div>');
+ var start=performance.now();$('impatient').onclick=()=>{bad('Bu hareket çok insancaydı. Baştan sayıyoruz.');start=performance.now()};function wait(now){if(i!==7||stage!=='play')return;let pct=Math.min(100,((now-start)/4000)*100);$('queueFill').style.width=pct+'%';if(pct>=100){go();return;}raf=requestAnimationFrame(wait);}raf=requestAnimationFrame(wait);break;
+}
+}
+function end(){done=true;stage='end';bar.style.width='100%';dt.textContent='İNSANLIK ORANI: %100';lv.textContent='DOĞRULAMA TAMAMLANDI';$('footerState').textContent='ONAYLI İNSAN / HATA: '+fail;
+let label=fail===0?'Şüpheli derecede sorunsuz.':fail<=3?'Evet, fazlasıyla insansın.':'Bu kadar uğraşan robot olamaz.';
+ui('RESMÎ OLMAYAN SONUÇ','İnsanlık onaylandı.','Bu belge hiçbir kurumda geçerli değildir.','<div class="badge">✓</div><div class="endline">'+label+'</div><p class="final-note">8 kontrol tamamlandı. '+fail+' hata yaptın. İstanbul trafiğinden sağ çıktın. Daha fazla kanıt istemiyoruz.</p>');
+let z=$('zone');z.appendChild(button('BİR DAHA KANITLA ↻',()=>{i=0;fail=0;done=false;show()}));z.appendChild(button('SONUCUMU PAYLAŞ ↗',async()=>{let t='İnsan mısın? 8/8 doğrulama tamamlandı. '+fail+' hata. '+label;try{if(navigator.share)await navigator.share({title:'İnsan mısın? — aynen.fun',text:t,url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(t+' '+location.href);say('Sonuç kopyalandı.');}else prompt('Paylaş:',t+' '+location.href);}catch(e){}}));
+}
+show();
+})();
+</script></body></html>
