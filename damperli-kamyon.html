@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/><meta name="theme-color" content="#f9f8f5"/>
+<title>Damperli Kamyon — aynen.fun</title><meta name="description" content="Türkiye'de 10 saniye sessizlik bulmaya çalış. Bir kamyon hep senden önce varacak."/>
+<meta property="og:title" content="DAMPERLİ KAMYON — aynen.fun"/><meta property="og:description" content="10 saniye sessizlik bulabilir misin? Üzgünüz, burada bir yol çalışması var."/><meta property="og:image" content="https://aynen.fun/damperli-kamyon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--ink:#171717;--paper:#f9f8f5;--yellow:#ffe100;--gray:#8b9391;--orange:#f56a30}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{font-family:'Space Grotesk',system-ui,sans-serif;color:var(--ink);background:var(--paper);user-select:none;-webkit-tap-highlight-color:transparent}
+button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.shell{height:100svh;height:100dvh;max-height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
+header{height:57px;padding:0 clamp(12px,2.6vw,37px);display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--ink);background:var(--paper)}
+header a{font-size:12px;font-weight:700;text-decoration:none;color:var(--ink);white-space:nowrap}
+.brand{font:12px/1 'DM Mono',monospace;letter-spacing:-.02em}
+.counter{font:10px 'DM Mono',monospace;color:#666;text-align:right;white-space:nowrap}
+.sound{border:1px solid #111;border-radius:999px;background:white;padding:8px 12px;color:#111;font:10px 'DM Mono',monospace;white-space:nowrap}
+.intro-title{font:clamp(17px,2vw,28px)/1 'Archivo Black',sans-serif;letter-spacing:-.055em}
+.top-middle{display:flex;align-items:center;gap:12px}
+.world{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(#deded8 0%,#eef0e8 60%,#c4c8c3 61%,#969c99 100%);min-height:170px}
+.world::before{content:"";position:absolute;z-index:0;inset:0;background-image:radial-gradient(#6f7b75 0.6px,transparent .6px);background-size:16px 16px;opacity:.14}
+.skyline{position:absolute;inset:auto 0 38%;height:53%;display:flex;align-items:flex-end;gap:1.1%;justify-content:space-around;opacity:.85}
+.building{position:relative;flex:1;max-width:140px;height:var(--h);background:var(--c,#bec1ba);border:1px solid #9ea39f;border-bottom:0}
+.building::after{content:"";position:absolute;inset:7px 8px 3px;background:repeating-linear-gradient(90deg,transparent 0 11px,#eef1e8 11px 18px,transparent 18px 25px),repeating-linear-gradient(0deg,transparent 0 14px,#89949077 14px 19px,transparent 19px 28px);opacity:.48}
+.building:nth-child(2n){--c:#b3bab3}.building:nth-child(3n){--c:#d1d4c9}
+.crane{position:absolute;width:220px;height:180px;right:11%;bottom:35%;opacity:.62;transform:scale(.85);transform-origin:bottom}
+.crane::before{content:"";position:absolute;bottom:0;left:92px;height:100%;width:9px;background:repeating-linear-gradient(0deg,#988f68 0 12px,#ece084 12px 16px);border:2px solid #8e7e44}
+.crane::after{content:"";position:absolute;top:15px;right:0;width:220px;height:9px;background:#c6aa42;box-shadow:0 6px #9a853b}
+.crane i{position:absolute;right:49px;top:24px;width:2px;height:60px;background:#514d44}
+.crane i::after{content:"";position:absolute;top:56px;left:-6px;width:12px;height:10px;border:3px solid #353b37;border-top:0;border-radius:0 0 50% 50%}
+.world-location{position:absolute;z-index:4;top:15px;left:clamp(16px,3vw,45px);font:11px 'DM Mono',monospace;letter-spacing:.08em;color:#333}
+.world-location b{display:block;font:clamp(18px,3.4vw,44px)/1 'Archivo Black',sans-serif;letter-spacing:-.06em;margin-top:7px}
+.noise-tag{position:absolute;z-index:5;top:17px;right:clamp(12px,3vw,43px);background:var(--yellow);border:2px solid var(--ink);box-shadow:4px 4px var(--ink);padding:9px 12px;transform:rotate(3deg);font:700 clamp(9px,1.4vw,13px) 'DM Mono',monospace;max-width:45%;text-align:center}
+.road{position:absolute;z-index:1;bottom:0;left:-7%;right:-7%;height:39%;background:linear-gradient(#999f9b,#848b88)}
+.road::before{content:"";position:absolute;left:0;right:0;top:8px;height:3px;background:#e7e5da;opacity:.7}
+.road::after{content:"";position:absolute;bottom:22%;left:0;width:100%;height:8px;background:repeating-linear-gradient(90deg,#eeeade 0 65px,transparent 65px 112px);opacity:.62;transform:skewY(-2deg)}
+.barrier{position:absolute;z-index:3;left:14%;bottom:15%;width:165px;height:54px;transform:rotate(-2deg);filter:drop-shadow(4px 7px 1px #0003)}
+.barrier::before{content:"";position:absolute;left:7px;right:7px;top:8px;height:29px;border:4px solid #262626;background:repeating-linear-gradient(125deg,#f76a2a 0 15px,#f3ece2 15px 29px)}
+.barrier::after{content:"";position:absolute;top:36px;left:25px;width:10px;height:22px;background:#222;box-shadow:96px 0 #222}
+.barrier span{position:absolute;top:17px;left:38px;font:900 12px/1 'Archivo Black',sans-serif;color:#111;background:#fff6;border:1px solid #111;z-index:2;padding:3px}
+.cone{position:absolute;bottom:8%;z-index:3;width:24px;height:49px;clip-path:polygon(45% 0,58% 0,88% 82%,100% 82%,100% 100%,0 100%,0 82%,13% 82%);background:repeating-linear-gradient(0deg,#ef692e 0 11px,#f7f2e5 11px 18px,#ef692e 18px 30px);filter:drop-shadow(2px 3px #444)}
+.cone.one{left:8%}.cone.two{left:36%;bottom:6%;transform:scale(.8)}
+.truck-wrap{position:absolute;z-index:4;left:50%;bottom:6%;width:min(790px,83vw);max-height:79%;transform:translateX(-50%);filter:drop-shadow(2px 9px 3px #0003);transition:filter .15s}
+.truck-wrap img{display:block;width:100%;height:auto;max-height:100%;object-fit:contain;mix-blend-mode:multiply;animation:engineShake .13s infinite alternate}
+.truck-wrap.drive{animation:truckLurch 1s cubic-bezier(.22,.73,.21,1)}
+.ghost-truck{position:absolute;z-index:3;left:-8%;bottom:21%;width:31%;transform:scaleX(-1);opacity:0;transition:opacity .3s}
+.ghost-truck.visible{opacity:.63;animation:otherTruck 3.4s linear infinite}
+.dust{position:absolute;z-index:5;bottom:20%;right:11%;width:94px;height:45px;border-radius:50%;filter:blur(12px);background:#d6c8a2b5;animation:cloud 2.3s ease-in-out infinite alternate;pointer-events:none}
+.exclaim{position:absolute;z-index:5;bottom:70%;left:50%;font:900 clamp(17px,5vw,55px)/1 'Archivo Black',sans-serif;color:#ed672c;text-shadow:2px 3px #101010;transform:rotate(-6deg);opacity:0;pointer-events:none}
+.exclaim.pop{animation:pop .75s ease-out both}
+.budget{position:absolute;z-index:5;left:clamp(14px,2.7vw,40px);bottom:18px;max-width:49%;padding:9px 12px;background:#f9f8f5e6;border:1px solid #111;font:10px/1.5 'DM Mono',monospace}
+.budget b{display:block;font-size:15px}
+.hud{position:absolute;z-index:5;right:clamp(15px,3vw,42px);bottom:17px;display:flex;gap:8px}
+.hud div{min-width:80px;background:#171717;color:#fff;padding:8px 11px;font:9px/1.5 'DM Mono',monospace}
+.hud strong{display:block;font:21px/1.15 'Archivo Black',sans-serif;color:var(--yellow)}
+.gamepad{background:var(--paper);border-top:2px solid var(--ink);padding:13px clamp(12px,3vw,46px) max(13px,env(safe-area-inset-bottom));display:grid;grid-template-columns:minmax(195px,.85fr) minmax(350px,1.25fr);gap:clamp(12px,2vw,25px);align-items:stretch;max-height:43svh;overflow:auto}
+.story{display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+.eyebrow{font:10px 'DM Mono',monospace;color:#666;letter-spacing:.04em}
+.story h2{margin:0;font:clamp(16px,2.3vw,31px)/1.07 'Archivo Black',sans-serif;letter-spacing:-.045em;max-width:440px}
+.story p{font-size:11px;line-height:1.35;margin:0;color:#666}
+.meters{display:flex;gap:12px;align-items:flex-end}
+.meter{flex:1;min-width:0}.meter label{display:flex;justify-content:space-between;font:9px 'DM Mono',monospace;gap:4px}
+.track{height:8px;background:#d4d4ce;border:1px solid #151515;margin-top:5px;overflow:hidden}.fill{height:100%;width:100%;background:#ffcf00;transition:width .2s}.fill.red{background:#ef6a31}
+.action-area{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;align-content:center}
+.route{background:#fff;border:1.5px solid #171717;min-height:52px;padding:8px 6px;font-size:11px;font-weight:700;letter-spacing:-.025em;transition:transform .12s,background .12s}
+.route:hover:not(:disabled){background:var(--yellow);transform:translateY(-2px)}.route:active{transform:translateY(1px)}.route:disabled{color:#888;border-color:#bbb;background:#e8e7e4;text-decoration:line-through;cursor:default}
+.route.headphones{background:#171717;color:#fff}.route.headphones:hover:not(:disabled){background:#323232}
+.overlay{position:fixed;z-index:20;inset:57px 0 0;background:#151515bd;display:flex;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(5px)}
+.overlay[hidden]{display:none}
+.paper{width:min(100%,495px);max-height:calc(100dvh - 93px);overflow:auto;background:#f9f8f5;border:2px solid #101010;box-shadow:9px 9px 0 #ffe000;padding:clamp(20px,5vw,33px);text-align:left}
+.stamp{display:inline-block;padding:7px 8px;background:var(--yellow);border:1px solid #111;font:10px 'DM Mono',monospace;transform:rotate(-2deg)}
+.paper h1{font:clamp(33px,7vw,64px)/.94 'Archivo Black',sans-serif;letter-spacing:-.07em;margin:17px 0 14px;text-transform:uppercase}
+.paper p{font-size:clamp(13px,2vw,16px);line-height:1.42;margin:0 0 16px}
+.paper small{display:block;font:10px/1.5 'DM Mono',monospace;margin:12px 0;color:#666}
+.paper .primary{width:100%;min-height:49px;border:2px solid #141414;background:#161616;color:#fff;font:700 13px 'Space Grotesk',sans-serif;margin-top:8px}
+.paper .primary:hover{background:#444}
+.paper .secondary{width:100%;margin-top:7px;background:#fff;border:1px solid #171717;padding:11px;font-size:11px}
+.paper select{display:block;width:100%;padding:13px;border:1px solid #171717;background:#fff;margin:14px 0 3px;font-size:12px}
+.report{border:2px solid #111;padding:14px;background:#fff;margin:12px 0;font:12px/1.7 'DM Mono',monospace}
+.report b{font:24px 'Archivo Black',sans-serif}
+.shake{animation:screenShake .22s linear}
+@keyframes engineShake{to{transform:translateY(1.2px) rotate(.11deg)}}@keyframes truckLurch{0%{transform:translateX(-50%)}22%{transform:translateX(-65%) rotate(-1deg)}45%{transform:translateX(-40%) rotate(1deg)}100%{transform:translateX(-50%) rotate(0)}}@keyframes cloud{to{transform:translateX(-60px) scale(1.4);opacity:.5}}@keyframes pop{0%{opacity:0;transform:translateY(15px) rotate(-15deg) scale(.5)}35%{opacity:1;transform:translateY(-12px) rotate(4deg) scale(1.1)}85%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}@keyframes otherTruck{0%{transform:translateX(0) scaleX(-1)}100%{transform:translateX(270%) scaleX(-1)}}@keyframes screenShake{0%,100%{transform:none}25%{transform:translate(2px,-1px)}50%{transform:translate(-2px,1px)}75%{transform:translate(1px,1px)}}
+@media(max-width:760px){header{height:49px}.overlay{inset:49px 0 0}.top-middle{gap:6px}.intro-title{font-size:15px}.counter{display:none}.sound{padding:7px 9px}.world-location b{font-size:22px}.noise-tag{font-size:9px}.crane{right:-15%;transform:scale(.6)}.world{min-height:150px}.truck-wrap{width:107vw;bottom:7%;left:50%}.budget{font-size:8px;padding:5px;bottom:6px}.budget b{font-size:10px}.hud{gap:4px;bottom:6px}.hud div{min-width:59px;padding:6px;font-size:7px}.hud strong{font-size:16px}.barrier{transform:scale(.57);left:-4%;bottom:8%}.gamepad{max-height:46dvh;grid-template-columns:1fr;gap:11px;padding:12px max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-bottom))}.story h2{font-size:clamp(15px,4.4vw,22px)}.story p{font-size:10px}.meters{gap:8px}.action-area{grid-template-columns:repeat(3,1fr);gap:6px}.route{min-height:43px;font-size:10px;padding:5px}.paper{max-height:calc(100dvh - 88px);box-shadow:5px 5px 0 #ffe000}}
+@media(max-height:650px) and (min-width:761px){header{height:46px}.overlay{inset:46px 0 0}.gamepad{padding-top:8px;padding-bottom:8px}.route{min-height:41px}}
+@media(prefers-reduced-motion:reduce){.truck-wrap img,.ghost-truck,.dust,.exclaim{animation:none!important}.shake{animation:none}}
+</style></head><body>
+<div class="shell">
+<header><a href="/" aria-label="aynen.fun ana sayfaya dön">← aynen.fun</a><div class="top-middle"><div class="intro-title">DAMPERLİ KAMYON</div><span class="brand">/ 08</span></div><div class="counter" id="timeDisplay">07:59 · ŞANTİYE SAATİ</div><button class="sound" id="soundBtn" type="button" aria-pressed="false">SES: KAPALI</button></header>
+<div id="world" class="world" aria-label="Damperli kamyon ve hiç bitmeyen şehir inşaatı simülasyonu">
+<div class="skyline" aria-hidden="true"><span class="building" style="--h:62%"></span><span class="building" style="--h:80%"></span><span class="building" style="--h:47%"></span><span class="building" style="--h:97%"></span><span class="building" style="--h:68%"></span><span class="building" style="--h:89%"></span><span class="building" style="--h:58%"></span><span class="building" style="--h:77%"></span><span class="building" style="--h:68%"></span><span class="building" style="--h:53%"></span></div><div class="crane" aria-hidden="true"><i></i></div><div class="road"></div>
+<div class="world-location"><span id="cityText">İSTANBUL</span><b id="placeText">EVİNİN ÖNÜ</b></div><div class="noise-tag" id="roadSign">ALTERNATİF YOL KAPALI</div><div class="barrier"><span>YOL KAPALI</span></div><i class="cone one"></i><i class="cone two"></i>
+<div id="truck" class="truck-wrap"><img src="/damperli-kamyon.svg" alt="Sarı damperli kamyon" draggable="false"/></div>
+<img src="/damperli-kamyon.svg" alt="" aria-hidden="true" class="ghost-truck" id="otherTruck"/><div class="dust"></div><div class="exclaim" id="exclaim">TAK TAK TAK</div>
+<div class="budget">GÜNÜN HEDEFİ<b>10 SN SESSİZLİK</b></div><div class="hud"><div>YENİ ŞANTİYE<strong id="siteStat">01</strong></div><div>KAPANAN YOL<strong id="roadStat">00</strong></div><div>SESSİZLİK<strong id="quietStat">0.0s</strong></div></div>
+</div>
+<section class="gamepad" aria-label="Oyun kontrolleri"><div class="story"><div><span class="eyebrow" id="storyTag">DURUM RAPORU 001</span><h2 id="story">Biraz sakin bir yer arıyorsun.</h2><p id="subStory">Mantıklı bir talep.</p></div><div class="meters"><div class="meter"><label><span>SABIR</span><span id="patienceText">%100</span></label><div class="track"><div class="fill" id="patienceFill"></div></div></div><div class="meter"><label><span>GÜRÜLTÜ</span><span id="noiseText">%18</span></label><div class="track"><div class="fill red" id="noiseFill" style="width:18%"></div></div></div></div></div><div class="action-area" id="buttons">
+<button class="route" data-route="ev">EVE KAÇ</button><button class="route" data-route="park">PARKA GİT</button><button class="route" data-route="sahil">SAHİLE İN</button><button class="route" data-route="kafe">KAFEYE GİR</button><button class="route" data-route="koy">ŞEHİR DIŞI</button><button class="route headphones" data-route="kulak">KULAĞINI KAPAT</button>
+</div></section></div>
+<div id="intro" class="overlay"><div class="paper"><span class="stamp">TÜRKİYE ŞANTİYE SİMÜLATÖRÜ · 001</span><h1>DAMPERLİ<br>KAMYON.</h1><p>Tek görevin <b>10 saniye sessiz bir yer bulmak.</b> Nereye kaçarsan kaç, damperli kamyon senden önce orada olacak.</p>
+<label for="city" class="eyebrow">NEREDEN KAÇMAK İSTERSİN?</label><select id="city"><option>İstanbul</option><option>Ankara</option><option>İzmir</option><option>Antalya</option><option>Bursa</option><option>Trabzon</option><option>Fethiye</option><option>Türkiye geneli</option></select>
+<button class="primary" id="startSound">BAŞLA — SESLİ</button><button class="secondary" id="startSilent">SESSİZ BAŞLA (İYİ ŞANSLAR)</button><small>Sesler tarayıcıda üretilir; gerçek inşaat kaydı değildir. İstediğin an kapatabilirsin.</small></div></div>
+<div id="ending" class="overlay" hidden><div class="paper"><span class="stamp">RESMÎ ŞANTİYE RAPORU</span><h1>SESSİZLİK<br>BULUNAMADI.</h1><p id="endingBlurb">Araman başarıyla başarısız oldu.</p><div class="report"><div>KAÇIŞ SÜRESİ: <b id="finalTime">0 SN</b></div><div>YENİ ŞANTİYE: <b id="finalSites">0</b></div><div>KAPANAN YOL: <b id="finalRoads">0</b></div><div>TOPLAM SESSİZLİK: <b>0 SANİYE</b></div></div><button class="primary" id="share">RAPORUMU PAYLAŞ</button><button class="secondary" id="again">BİR DAHA KAÇMAYI DENE</button><small>Dipnot: Kaçtığın yerde yol çalışması başlamış olabilir.</small></div></div>
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const routes={
+ev:["EVİNİN ÖNÜ","Eve kaçtın. Üst kat komple kırılıyor.","Bir komşu 'iki delik açacağız' demişti.","Üst kat"],
+park:["PARK","Parka gittin. Parkın altına otopark yapılıyor.","Yeşil alan geçici olarak hafriyat alanı.","Yeni otopark"],
+sahil:["SAHİL","Denize kaçtın. Sahil yolu kazılıyor.","Manzara güzel. Beton mikseri daha yakın.","Sahil düzenlemesi"],
+kafe:["KAFE","Sakin kafeyi buldun. Yan dükkânda hilti var.","Barista gürültü üstüne bir filtre kahve önerdi.","Sessiz kafe"],
+koy:["ŞEHİR DIŞI","Şehirden çıktın. Buraya da bir yol yapılıyor.","Gidiş yolun asfaltlanıyor. Dönüş yolun kazılıyor.","Alternatif güzergâh"]
+};
+const sayings=["İnşaatın bitmesine çok az kaldı. (Tahmini: 2029)","Burası daha önce de kazılmıştı. Düzeltiliyor.","Bir kapalı yolu atlatıp iki şantiyeye ulaştın.","Çalışmalar gece yapılmasın demiştin. Artık sabah.","Korna sesinin arkasında bir şehir varmış.","Kamyonun geri vites sesi artık kişisel asistanın.","Şehir büyüyor. Senin sabrın küçülüyor.","Tebrikler. Alternatif yol da alternatif şekilde kapalı."];
+const signs=["YOL KAPALI","ALTERNATİF YOL DA KAPALI","GEÇİCİ OLARAK SÜRESİZ","BURADA ÇALIŞMA VAR","BİR ŞANTİYE DAHA","DİKKAT: HAFRİYAT","KISA SÜRELİ ÇALIŞMA","TRAFİĞE KAPALIDIR"];
+let state=null,clock=null,fxClock=null,audio=null;
+function stopTimers(){clearInterval(clock);clearInterval(fxClock);clock=fxClock=null}
+function say(title,detail){$('#story').textContent=title;$('#subStory').textContent=detail;$('#storyTag').textContent='DURUM RAPORU '+String((state?.round||0)+1).padStart(3,'0')}
+function paint(){
+$('#siteStat').textContent=String(state.sites).padStart(2,'0');$('#roadStat').textContent=String(state.roads).padStart(2,'0');
+$('#quietStat').textContent=state.quiet.toFixed(1)+'s';$('#patienceText').textContent='%'+Math.round(state.patience);$('#noiseText').textContent='%'+Math.round(state.noise);
+$('#patienceFill').style.width=state.patience+'%';$('#noiseFill').style.width=state.noise+'%';
+$('#timeDisplay').textContent=(state.elapsed>0?'08:':'07:')+String(state.elapsed>0?Math.min(59,state.elapsed):59).padStart(2,'0')+' · ŞANTİYE SAATİ';
+}
+function impact(word){
+const world=$('#world'),truck=$('#truck'),x=$('#exclaim');
+world.classList.remove('shake');truck.classList.remove('drive');x.classList.remove('pop');void world.offsetWidth;
+x.textContent=word||'GÜMMM';world.classList.add('shake');truck.classList.add('drive');x.classList.add('pop');
+setTimeout(()=>{world.classList.remove('shake');truck.classList.remove('drive')},850);
+}
+function tone(freq,duration,type='sine',vol=.22,delay=0){
+if(!audio)return;const now=audio.context.currentTime+delay;
+const osc=audio.context.createOscillator(),env=audio.context.createGain();
+osc.type=type;osc.frequency.setValueAtTime(freq,now);osc.frequency.exponentialRampToValueAtTime(Math.max(30,freq*.72),now+duration);
+env.gain.setValueAtTime(.0001,now);env.gain.exponentialRampToValueAtTime(vol,now+.018);env.gain.exponentialRampToValueAtTime(.0001,now+duration);
+osc.connect(env);env.connect(audio.master);osc.start(now);osc.stop(now+duration+.025)
+}
+function metallic(){
+if(!audio)return;tone(94,.3,'sawtooth',.4);tone(880,.085,'square',.11);tone(560,.11,'triangle',.08,.12);tone(210,.19,'sawtooth',.13,.26)
+}
+function reverseBeep(){if(audio){tone(770,.13,'sine',.17);tone(770,.13,'sine',.17,.27)}}
+function mute(){if(audio){audio.master.disconnect();audio.context.close().catch(()=>{});audio=null}$('#soundBtn').textContent='SES: KAPALI';$('#soundBtn').setAttribute('aria-pressed','false')}
+function unmute(){
+if(audio)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+try{const context=new C(),master=context.createGain();master.gain.value=.038;master.connect(context.destination);audio={context,master};context.resume();$('#soundBtn').textContent='SES: AÇIK';$('#soundBtn').setAttribute('aria-pressed','true');reverseBeep()}catch(e){audio=null}
+}
+function end(){
+if(!state||!state.playing)return;state.playing=false;stopTimers();mute();$('#finalTime').textContent=state.elapsed+' SN';$('#finalSites').textContent=state.sites;$('#finalRoads').textContent=state.roads;
+$('#endingBlurb').textContent=state.city+' sınırlarında '+state.elapsed+' saniye boyunca huzur aradın. '+state.sites+' şantiye buldun. Şehir seni buldu.';
+$('#ending').hidden=false;
+}
+function choose(key){
+if(!state?.playing)return;
+if(key==='kulak'){
+state.patience=Math.max(0,state.patience-5);
+state.noise=Math.max(5,state.noise-32);say('Kulaklarını kapattın.','Damperli kamyon bu sefer titreşimle haber veriyor.');impact('TIK TIK');tone(140,.3,'sine',.12);
+}else{
+const [place,title,detail]=routes[key];state.round++;state.sites++;state.roads++;
+state.patience=Math.max(0,state.patience-(10+Math.min(15,state.round*1.6)));
+state.noise=Math.min(100,state.noise+9+state.round*3);
+$('#placeText').textContent=place;$('#roadSign').textContent=signs[Math.min(state.round,signs.length-1)];
+say(title, state.round%2?sayings[(state.round-1)%sayings.length]:detail);impact(['DÜÜT','TAK TAK','GÜMMM','BİP BİP'][state.round%4]);metallic();
+if(state.round>=3)$('#otherTruck').classList.add('visible');
+if(state.round>=5)document.querySelectorAll('.route:not(.headphones)').forEach(b=>{if(b.dataset.route===key){b.disabled=true;b.textContent='YOL KAPALI'}});
+}
+paint();if(state.patience<=0||state.round>=9)end()
+}
+function start(withSound){
+stopTimers();mute();$('#ending').hidden=true;$('#intro').hidden=true;$('#otherTruck').classList.remove('visible');
+document.querySelectorAll('.route').forEach(b=>{b.disabled=false;const t={ev:'EVE KAÇ',park:'PARKA GİT',sahil:'SAHİLE İN',kafe:'KAFEYE GİR',koy:'ŞEHİR DIŞI',kulak:'KULAĞINI KAPAT'};b.textContent=t[b.dataset.route]});
+state={playing:true,city:$('#city').value,round:0,sites:1,roads:0,patience:100,noise:18,elapsed:0,quiet:0};
+$('#cityText').textContent=state.city.toLocaleUpperCase('tr-TR');$('#placeText').textContent='EVİNİN ÖNÜ';$('#roadSign').textContent='ALTERNATİF YOL KAPALI';
+say('Saat 07:59. Biraz sessizlik arıyorsun.','İlk kamyon henüz senin bulunduğun sokağı keşfetmedi.');paint();if(withSound)unmute();
+clock=setInterval(()=>{
+if(!state?.playing)return;state.elapsed++;
+state.noise=Math.min(100,state.noise+2.5);state.patience=Math.max(0,state.patience-(state.elapsed%3===0?2:1));
+if(state.noise<8)state.quiet=Math.min(10,state.quiet+1);else state.quiet=0;
+if(state.elapsed%5===0){
+state.sites++;state.roads++;state.noise=Math.min(100,state.noise+13);state.patience=Math.max(0,state.patience-7);
+say('Hiçbir yere gitmedin. Şantiye sana geldi.','Bulunduğun yerde sessizce durmak da bir seçenek değildi.');impact('BİP BİP');metallic();
+if(state.sites>=4)$('#otherTruck').classList.add('visible');
+}
+paint();if(state.quiet>=10||state.patience<=0||state.elapsed>=45)end()
+},1000);
+fxClock=setInterval(()=>{if(!state?.playing)return;if(state.elapsed%2===0)reverseBeep();else tone(80,.22,'sawtooth',.1)},3100);
+}
+document.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.route)));
+$('#startSound').addEventListener('click',()=>start(true));$('#startSilent').addEventListener('click',()=>start(false));
+$('#soundBtn').addEventListener('click',()=>{if(audio)mute();else unmute()});
+$('#again').addEventListener('click',()=>start(false));
+$('#share').addEventListener('click',async()=>{
+const t='Damperli Kamyon: '+state.city+'’da '+state.elapsed+' saniye sessizlik aradım. '+state.sites+' şantiye, '+state.roads+' kapalı yol, 0 saniye sessizlik. https://aynen.fun/damperli-kamyon.html';
+try{if(navigator.share){await navigator.share({title:'Damperli Kamyon · aynen.fun',text:t})}else if(navigator.clipboard){await navigator.clipboard.writeText(t);$('#share').textContent='KOPYALANDI ✓'}else{window.prompt('Raporunu kopyala:',t)}}catch(e){if(e.name!=='AbortError')window.prompt('Raporunu kopyala:',t)}
+});
+window.addEventListener('pagehide',()=>{stopTimers();mute()});
+})();
+</script></body></html>
