@@ -34,59 +34,52 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-vis
 @media(max-height:620px){.content{padding:16px}.title{margin:12px 0 8px}.panel{min-height:410px}.question{font-size:25px}.help{margin-bottom:13px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
 </style></head>
-<body><div class="shell"><nav class="nav"><a href="/">← aynen.fun</a><span>İNSAN DOĞRULAMA SİSTEMİ / TR</span></nav><header class="title"><h1>İnsan mısın?</h1><p>İnsan olduğunu kanıtlamak için sekiz küçük kontrol. Hepsi tamamen gereksiz.</p></header>
+<body><div class="shell"><nav class="nav"><a href="/">← aynen.fun</a><span>İNSAN DOĞRULAMA SİSTEMİ / TR</span></nav><header class="title"><h1>İnsan mısın?</h1><p>Sekiz sosyal refleks. Hiçbirinin doğru cevabı yok. Yine de değerlendiriliyorsun.</p></header>
 <main class="panel"><div><div class="hud"><span class="progress" id="level">DOĞRULAMA / BAŞLANGIÇ</span><span class="detail" id="detail">İNSANLIK ORANI: %0</span></div><div class="track"><i id="track"></i></div></div><section class="content" id="content" aria-live="polite"></section><footer class="foot"><span>BU BİR OYUNDUR. GERÇEK KİMLİK DOĞRULAMASI YAPMAZ.</span><span id="footerState">AYNEN.FUN / CAPTCHA-TR</span></footer></main></div>
 <script>
 (function(){
 'use strict';
-var steps=['check','dolmus','cay','zil','pos','trafik','dolmus2','bekle'];
-var i=0,fail=0,ticks=0,stage='intro',timer=null,raf=0,last=0,meter=0,done=false,selected=[],presses=0,passTime=0,wrongZil=0,trafikChoice=0;
-var $=x=>document.getElementById(x),content=$('content'),lv=$('level'),dt=$('detail'),bar=$('track'),msg='';var clean=()=>{if(timer)clearTimeout(timer);timer=null;if(raf)cancelAnimationFrame(raf);raf=0;};
-function ui(eyebrow,title,help,body){content.innerHTML='<div class="eyebrow">'+eyebrow+'</div><h2 class="question">'+title+'</h2><p class="help">'+help+'</p><div class="zone" id="zone">'+body+'</div><p class="result-msg" id="msg" role="status"></p>';}
-function say(t){var e=$('msg');if(e)e.textContent=t;}
-function button(t,fn){var b=document.createElement('button');b.className='btn';b.textContent=t;b.onclick=fn;return b;}
-function go(){if(done)return;clean();i++;if(i>=steps.length){end();return;}show();}
-function bad(text){fail++;say(text);content.classList.remove('shake');void content.offsetWidth;content.style.transform='translateX(3px)';setTimeout(()=>{if(content)content.style.transform=''},130);}
-function show(){clean();stage='play';if(i===5)trafikChoice=0;ticks++;lv.textContent='DOĞRULAMA '+String(i+1).padStart(2,'0')+' / 08';dt.textContent='İNSANLIK ORANI: %'+Math.round(100*i/8);bar.style.width=100*i/8+'%';$('footerState').textContent='HATA SAYISI: '+fail;var z;
+var steps=['check','asansor','misafir','grup','pazar','ses','mesaj','son'];
+var i=0,fail=0,done=false,timer=null,raf=0,started=0,score=0,traits={};
+var $=x=>document.getElementById(x),content=$('content'),lv=$('level'),dt=$('detail'),bar=$('track');
+function clean(){if(timer)clearTimeout(timer);timer=null;if(raf)cancelAnimationFrame(raf);raf=0}
+function ui(k,q,h,b){content.innerHTML='<div class="eyebrow">'+k+'</div><h2 class="question">'+q+'</h2><p class="help">'+h+'</p><div class="zone" id="zone">'+b+'</div><p class="result-msg" id="msg" role="status"></p>'}
+function say(t){let e=$('msg');if(e)e.textContent=t}
+function button(t,fn,cls){let b=document.createElement('button');b.className='btn'+(cls?' outline':'');b.textContent=t;b.onclick=fn;return b}
+function next(){clean();i++;if(i>=steps.length)end();else show()}
+function bad(t){fail++;say(t);$('footerState').textContent='İNSANİ HATA: '+fail}
+function pass(t,trait){if(trait)traits[trait]=(traits[trait]||0)+1;say(t);timer=setTimeout(next,950)}
+function show(){clean();lv.textContent='İNSANLIK TESTİ '+String(i+1).padStart(2,'0')+' / 08';dt.textContent='DOĞRULAMA: %'+Math.round(i/8*100);bar.style.width=(i/8*100)+'%';$('footerState').textContent='İNSANİ HATA: '+fail;let z;
 switch(steps[i]){
 case 'check':
- ui('TEST 01 / BAŞLANGIÇ','Robot değilim.','Aşağıdaki kutuyu işaretleyin. Şimdilik bu kadar.','<div class="check"><label><input type="checkbox" id="human"> Ben robot değilim</label><div class="captcha-brand"><strong>▦</strong>aynenCAPTCHA</div></div>');
- $('human').onchange=()=>{passTime=performance.now();timer=setTimeout(go,500);};break;
-case 'dolmus':
- selected=[];ui('TEST 02 / GÖRSEL TANIMA','Hangileri dolmuş?','Tüm dolmuşları seç. Plakaya değil, niyete bak.','<div class="grid" id="grid"></div>');
- var items=[['🚕','TAKSİ',0],['🚐','DOLMUŞ',1],['🚌','İETT',0],['🚐','DOLMUŞ',1],['🚑','AMBULANS',0],['🚐','DOLMUŞ',1],['🚚','KAMYON',0],['🚙','SERVİS',0],['🚐','DOLMUŞ',1]];
- $('grid').innerHTML=items.map((a,j)=>'<button class="tile" data-idx="'+j+'" aria-pressed="false" type="button"><span aria-hidden="true" style="font-size:34px">'+a[0]+'</span><span>'+a[1]+'</span></button>').join('');
- $('grid').querySelectorAll('button').forEach(b=>b.onclick=()=>{let n=Number(b.dataset.idx);selected[n]=!selected[n];b.classList.toggle('selected',!!selected[n]);b.setAttribute('aria-pressed',!!selected[n]+'');});
- z=$('zone');z.appendChild(button('DOĞRULA →',()=>{if(items.every((x,j)=>!!selected[j]===!!x[2]))go();else bad('Eksik dolmuş var. Bir de fazla araç seçmiş olabilirsin.')}));break;
-case 'cay':
- meter=0;ui('TEST 03 / HASSASİYET','Çay açık olsun. Ama çok da açık değil.','Misafir “açık olsun” dedi. Tam kararında durdur. Çay rengi iki saniyede bir değişiyor.','<div class="tea"><div class="tea-liquid" id="liquid"></div></div><div class="gauge"><i id="fill"></i></div>');
- z=$('zone');z.appendChild(button('TAMAM. BU KADAR ÇAY.',()=>{if(meter>=66&&meter<=82)go();else bad(meter<66?'Bu bildiğin sıcak su.':'Bu çayla asfalt atılır.')}));
- last=performance.now();function animateTea(now){if(i!==2||stage!=='play')return;meter=18+66*(.5-.5*Math.cos((now-last)/770));$('fill').style.width=meter+'%';$('liquid').style.height=(meter*.83)+'%';raf=requestAnimationFrame(animateTea);}raf=requestAnimationFrame(animateTea);break;
-case 'zil':
- ui('TEST 04 / APARTMAN','Kargo: Evde misiniz?','Üçüncü kat, soldaki daire. Her katta iki daire var. Yanlış zile basarsan tüm apartman sana bakacak.','<div class="bell" id="bells"></div>');
- $('bells').innerHTML=[1,2,3,4,5,6].map(n=>'<button type="button" data-n="'+n+'"><small>'+Math.ceil(n/2)+'. KAT</small>'+n+'</button>').join('');
- $('bells').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(Number(b.dataset.n)===5)go();else{wrongZil++;bad(wrongZil===1?'"Kim o?" — "Kargo." — "Bize gelmedi."':wrongZil===2?'"Bir üst kattayım!" diye bağırdılar.':'Apartman grubu seni konuşuyor.')}});break;
-case 'pos':
- presses=0;ui('TEST 05 / ÖDEME','Hesabı ben ödeyeceğim.','POS cihazı elden ele kaçıyor. Üç kere yakala. Herkes “yok yok, ben” diyor.','<div class="pos" id="pos"><button type="button" id="posbtn">POS BENDE</button></div><div class="note" id="poscount">0 / 3 BAŞARILI HAMLE</div>');
- var p=$('posbtn');p.onclick=()=>{presses++;$('poscount').textContent=presses+' / 3 BAŞARILI HAMLE';if(presses>=3){go();return;}p.style.setProperty('--posx',20+Math.random()*60+'%');p.style.setProperty('--posy',25+Math.random()*50+'%');};break;
-case 'trafik':
- ui('TEST 06 / İSTANBUL','Cuma 18.15. Karşıya nasıl geçersin?','Trafik uygulaması iki yola da yeşil gösteriyor. Birini seç.','<div class="choicegrid"><button id="bridge">KÖPRÜ<br><small>26 DK</small></button><button id="tunnel">TÜNEL<br><small>24 DK</small></button></div>');
- function stuck(which){if(trafikChoice)return;trafikChoice=1;bad(which==='bridge'?'26 dakika yazıyordu. 1 saat 40 dakika oldu.':'24 dakika yazıyordu. Tünelin girişine daha gelmedin.');$('bridge').disabled=true;$('tunnel').disabled=true;timer=setTimeout(()=>{say('İstanbul testini geçtin: İkisine de inanmadın.');timer=setTimeout(go,850)},1050)}
- $('bridge').onclick=()=>stuck('bridge');$('tunnel').onclick=()=>stuck('tunnel');break;
-case 'dolmus2':
- ui('TEST 07 / TOPLU TAŞIMA','Müsait bir yerde.','Dolmuş durağa yaklaşıyor. Ne çok erken ne de köşeyi döndükten sonra seslen.','<div style="width:min(340px,100%);font-size:45px" id="vehicle">🚐 —————————— 🚏</div><div class="queue-meter"><i id="queueFill"></i></div>');
- z=$('zone');z.appendChild(button('MÜSAİT BİR YERDE!',()=>{if(meter>=70&&meter<=90)go();else bad(meter<70?'Daha gelmedik.':'Durağı geçtik. Bir sonrakinde.')}));
- meter=0;last=performance.now();function animateQueue(now){if(i!==6||stage!=='play')return;meter=(now-last)/35%100;$('queueFill').style.width=meter+'%';raf=requestAnimationFrame(animateQueue)}raf=requestAnimationFrame(animateQueue);break;
-case 'bekle':
- ui('TEST 08 / SON ONAY','Son kontrol: Sırada bekle.','Önünde tek kişi var. 4 saniye boyunca “BİTTİ Mİ?” tuşuna dokunma. Türk insanı için zor olabilir.','<div class="queue-meter"><i id="queueFill"></i></div><button class="btn outline" id="impatient">BİTTİ Mİ?</button><div class="note" id="waiting">DOĞRULANIYOR...</div>');
- var start=performance.now();$('impatient').onclick=()=>{bad('Bu hareket çok insancaydı. Baştan sayıyoruz.');start=performance.now()};function wait(now){if(i!==7||stage!=='play')return;let pct=Math.min(100,((now-start)/4000)*100);$('queueFill').style.width=pct+'%';if(pct>=100){go();return;}raf=requestAnimationFrame(wait);}raf=requestAnimationFrame(wait);break;
-}
-}
-function end(){done=true;stage='end';bar.style.width='100%';dt.textContent='İNSANLIK ORANI: %100';lv.textContent='DOĞRULAMA TAMAMLANDI';$('footerState').textContent='ONAYLI İNSAN / HATA: '+fail;
-let label=fail===0?'Şüpheli derecede sorunsuz.':fail<=3?'Evet, fazlasıyla insansın.':'Bu kadar uğraşan robot olamaz.';
-ui('RESMÎ OLMAYAN SONUÇ','İnsanlık onaylandı.','Bu belge hiçbir kurumda geçerli değildir.','<div class="badge">✓</div><div class="endline">'+label+'</div><p class="final-note">8 kontrol tamamlandı. '+fail+' hata yaptın. İstanbul trafiğinden sağ çıktın. Daha fazla kanıt istemiyoruz.</p>');
-let z=$('zone');z.appendChild(button('BİR DAHA KANITLA ↻',()=>{i=0;fail=0;done=false;wrongZil=0;trafikChoice=0;show()}));z.appendChild(button('SONUCUMU PAYLAŞ ↗',async()=>{let t='İnsan mısın? 8/8 doğrulama tamamlandı. '+fail+' hata. '+label;try{if(navigator.share)await navigator.share({title:'İnsan mısın? — aynen.fun',text:t,url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(t+' '+location.href);say('Sonuç kopyalandı.');}else prompt('Paylaş:',t+' '+location.href);}catch(e){}}));
-}
+ui('01 / STANDART CAPTCHA','Robot değilim.','Sistemin tek normal sorusu. Tadını çıkar.','<div class="check"><label><input type="checkbox" id="human"> Ben robot değilim</label><div class="captcha-brand"><strong>▦</strong>aynenCAPTCHA</div></div>');
+$('human').onchange=()=>pass('Şüpheli derecede kolaydı.','sabir');break;
+case 'asansor':
+ui('02 / SOSYAL MESAFE','Asansörde sadece ikiniz varsınız.','Komşun: “Kaçıncı kat?” Sen 3. kata çıkacaksın.','<div class="choicegrid"><button data-a="3">3. KAT</button><button data-a="siz">SİZ KAÇA?</button><button data-a="sus">SESSİZCE 3’E BAS</button><button data-a="mer">ÖNCE MERHABA DE</button></div>');
+z=$('zone');z.querySelectorAll('button').forEach(b=>b.onclick=()=>pass(({3:'Doğrudan cevap. Fazla verimli.',siz:'Soruya soruyla cevap. Çok insani.',sus:'Sessizlik biraz uzun sürdü.',mer:'Nezaket doğrulandı. Kat hâlâ bilinmiyor.'})[b.dataset.a],b.dataset.a==='siz'?'sosyal':'sabir'));break;
+case 'misafir':
+ui('03 / SOSYAL PROTOKOL','Misafir: “Hiç zahmet etmeyin.”','Çay ikram edeceksin. Ne yaparsın?','<div class="choicegrid"><button data-a="getir">ÇAYI GETİR</button><button data-a="sor">BİR DAHA SOR</button><button data-a="su">SADECE SU GETİR</button><button data-a="yok">HİÇBİR ŞEY GETİRME</button></div>');
+z=$('zone');z.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(b.dataset.a==='getir')pass('“Ay hiç gerek yoktu.” Çay içildi.','sosyal');else if(b.dataset.a==='sor')pass('“Yok gerçekten.” İkinci çay sorusu bekleniyor.','sosyal');else if(b.dataset.a==='su')pass('“Bir çay olsaydı aslında…”','sabir');else pass('Misafir 40 dakika sonra “Bir çay içseydik” dedi.','sabir')});break;
+case 'grup':
+ui('04 / GRUP DİNAMİĞİ','Aile grubuna “Günaydın” geldi.','Saat 06.12. Mesajı 23 kişi gördü. Sen ne yaparsın?','<div class="choicegrid"><button data-a="kalp">❤️ GÖNDER</button><button data-a="gun">GÜNAYDIN YAZ</button><button data-a="gor">GÖRÜLDÜ BIRAK</button><button data-a="sessiz">GRUBU SESSİZE AL</button></div>');
+z=$('zone');z.querySelectorAll('button').forEach(b=>b.onclick=()=>pass(({kalp:'Kalp attın. Şimdi üç kişi daha günaydın yazdı.',gun:'Bir günaydın zincirini sen de uzattın.',gor:'“Mesajımı gördün mü?” özelden geldi.',sessiz:'Bildirim kapandı. Aile bağı devam ediyor.'})[b.dataset.a],b.dataset.a==='sessiz'?'sabir':'sosyal'));break;
+case 'pazar':
+ui('05 / PAZARLIK ALGORİTMASI','“Son ne olur?”','Etikette 500 TL yazıyor. Satıcı: “Sana 450 olur.” Pazarlık yap.','<div style="width:min(410px,100%);text-align:center"><div style="font-size:12px;color:#929892">ETİKET 500 TL → TEKLİF 450 TL</div><input id="offer" type="range" min="100" max="450" value="300" step="10" style="width:100%;margin:22px 0 8px;accent-color:#2665dd"><div id="offerlabel" style="font-size:42px;font-weight:900;letter-spacing:-.07em">300 TL</div></div>');
+z=$('zone');z.appendChild(button('SON FİYATIM BU',()=>{let n=+$('offer').value;if(n<200)pass('Satıcı: “Sen de bedava al istersen.”','pazarlik');else if(n<350)pass('Satıcı: “Ben de zararına veriyorum zaten.”','pazarlik');else pass('Satıcı: “Tamam, senin güzel hatırın için.”','sosyal')}));
+$('offer').oninput=()=>$('offerlabel').textContent=$('offer').value+' TL';break;
+case 'ses':
+ui('06 / GÜNDELİK SES TANIMA','Üst kattan bu ses geliyor: TAK TAK TAK.','Saat 08.03. Sence ne oluyor?','<div style="font-size:47px;letter-spacing:9px;margin:0 auto 7px">▰ ▰ ▰</div><div class="choicegrid"><button data-a="tadilat">TADİLAT</button><button data-a="topuk">TOPUKLU AYAKKABI</button><button data-a="ceviz">CEVİZ KIRIYORLAR</button><button data-a="belirsiz">BİLMEM MÜMKÜN DEĞİL</button></div>');
+z=$('zone');z.querySelectorAll('button').forEach(b=>b.onclick=()=>pass(b.dataset.a==='belirsiz'?'Kesin bir şey söylemedin. Bilimsel yaklaşım.':'Muhtemelen haklısın. Üst kat yine açıklama yapmadı.',b.dataset.a==='belirsiz'?'sabir':'sosyal'));break;
+case 'mesaj':
+ui('07 / İLETİŞİM PROTOKOLÜ','“Bir şey sorucam.”','Mesaj geldi. 4 dakikadır ikinci mesaj yok. Ne yazarsın?','<div class="choicegrid"><button data-a="sor">SOR</button><button data-a="ne">NE OLDU?</button><button data-a="bekle">BEKLERİM</button><button data-a="kork">HAYIRDIR?</button></div>');
+z=$('zone');z.querySelectorAll('button').forEach(b=>b.onclick=()=>pass(({sor:'“Yok ya boşver.”',ne:'“Müsait misin önce?”',bekle:'Bir saat sonra: “Hallettim.”',kork:'“Yok kötü bir şey değil.” Daha kötü oldu.'})[b.dataset.a],b.dataset.a==='bekle'?'sabir':'sosyal'));break;
+case 'son':
+ui('08 / SON DOĞRULAMA','Bu test ne zaman bitecek?','Sistem insan olduğundan emin olamadı. Son bir işlem gerekiyor.','<div style="border:1px solid #d7dbd5;padding:22px;width:min(380px,100%);font:12px ui-monospace,monospace">İNSANLIK DOĞRULAMASI<br><br><span id="status">LÜTFEN BEKLEYİN...</span><div class="queue-meter" style="margin-top:17px"><i id="queueFill"></i></div></div>');
+z=$('zone');z.appendChild(button('YETER ARTIK',()=>{bad('Sabırsızlık tespit edildi. İnsan olma ihtimalin yükseldi.');finish()},true));started=performance.now();function wait(t){if(i!==7||done)return;let p=Math.min(100,(t-started)/4800*100);$('queueFill').style.width=p+'%';if(p>=100){$('status').textContent='TEBRİKLER. SİSTEM HÂLÂ ŞÜPHELİ.';timer=setTimeout(finish,750)}else raf=requestAnimationFrame(wait)}raf=requestAnimationFrame(wait);break;
+}}
+function finish(){clean();end()}
+function end(){if(done)return;done=true;bar.style.width='100%';lv.textContent='DOĞRULAMA TAMAMLANDI';dt.textContent='İNSANLIK: %100';let type=fail>0?'SABIRSIZ İNSAN':(traits.sosyal||0)>=(traits.sabir||0)?'SOSYAL REFLEKS UZMANI':'SESSİZ GÖZLEMCİ';let punch=fail>0?'Robotlar henüz bu kadar çabuk sinirlenmiyor.':type==='SOSYAL REFLEKS UZMANI'?'Bir günaydın mesajıyla 14 bildirim üretebilirsin.':'Hiçbir şey demeyerek çok şey anlattın.';ui('RESMÎ OLMAYAN SONUÇ','İnsan olduğun düşünüldü.','Kesin kanıt yok. Ama yeterince uğraştırdık.','<div class="badge">✓</div><div class="endline">'+type+'</div><p class="final-note">'+punch+'<br>8 test · '+fail+' sabırsızlık kaydı</p>');let z=$('zone');z.appendChild(button('TEKRAR DENE ↻',()=>{i=0;fail=0;done=false;traits={};show()}));z.appendChild(button('SONUCUMU PAYLAŞ ↗',async()=>{let t='İnsan mısın? Sonucum: '+type+'. '+punch+' Seninki ne?';try{if(navigator.share)await navigator.share({title:'İnsan mısın? — aynen.fun',text:t,url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(t+' '+location.href);say('Kopyalandı.')}else prompt('Paylaş:',t+' '+location.href)}catch(e){}}));}
+
 show();
 })();
 </script></body></html>
