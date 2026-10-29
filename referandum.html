@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7f6f2">
-<meta name="description" content="Referandum: 2018 İsviçre boynuzlu inek referandumu. EVET mi HAYIR mı? Titreyen elle mührü çizgiye taşırmadan bas. aynen.fun">
+<meta name="description" content="Referandum: 1958 İsviçre bahis limiti 2 franktan 5 franka çıksın mı? EVET veya HAYIR. Basılı tut, mührü bırak, çizginin dışına taşırma. aynen.fun">
 <title>Referandum — Oy Geçersiz | aynen.fun</title>
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -126,6 +126,96 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
 .info{min-height:40px}.info p{display:none}.paper{max-height:calc(100% - 22px);width:min(450px,86vw,calc((100dvh - 145px)*.72))}.hint-plate{bottom:8px;padding:7px 10px}.paper-sub,.paper-micro{display:none}.referendum-topic{font-size:10px;line-height:1.15}.paper-rule{margin:4px 0 2px}
 }
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+
+/* REFERANDUM — ARCADE CASINO / GOVERNMENT DOSSIER */
+:root{--bg:#080f13;--ink:#eaf7f1;--muted:#8da59f;--line:#244039;--red:#fe5d62;--blue:#5de6d2;--felt:#0a302a}
+body{background:#080f13;color:#eaf7f1}
+.topbar{background:#0b1318;border-color:#23413f;box-shadow:0 1px 0 #73efd220}
+.back{color:#f8f7ef}.back small{color:#70a69e;border-color:#314f4d}
+.game-title{color:#8cecd8;letter-spacing:.055em;text-transform:uppercase;font-family:var(--mono);font-size:12px}
+.top-right{color:#82afa6}.top-right strong{color:#f1f6e9}.timer{color:#f0d49b;font-size:27px!important;text-shadow:0 0 17px #e8b35c44}
+.timer.warn{color:#ff787e;text-shadow:0 0 20px #ed455d99}
+.info{background:#101c20;border-color:#223b39;min-height:60px}.info strong{color:#eef8f0;font-size:12px}.info p{color:#89aca4}
+.hand-status{color:#6fe7d1;font-size:10px}.progress-dots i{border-color:#426663;width:8px;height:8px}
+.progress-dots i.current{background:#f8b64f;box-shadow:0 0 10px #f8b64f; border-color:#f8b64f}
+.progress-dots i.done{background:#70e4bd;border-color:#70e4bd}
+.stability{display:flex;align-items:center;gap:9px}.stability-track{height:5px;width:54px;background:#29433f;border-radius:20px;overflow:hidden}.stability-track i{display:block;background:linear-gradient(90deg,#4ccbaa,#e4ca73);height:100%;transition:width .24s}
+.stage{background:radial-gradient(ellipse at 50% 36%,#155848 0%,#0b342d 47%,#071c1b 95%)}
+.stage:before{opacity:.34;background-image:repeating-linear-gradient(34deg,transparent 0px,transparent 2px,#acd8b406 3px,transparent 4px),radial-gradient(circle at 10% 60%,#ddb5642e 0 58px,transparent 60px),radial-gradient(circle at 91% 30%,#e4b25b14 0 94px,transparent 95px)}
+.stage:after{box-shadow:inset 0 0 130px #020908a8,inset 0 1px 0 #8deacb24;transition:background .15s}
+.stage.hit:after{background:#4df5b41f;animation:flashOut .45s forwards}
+.stage.miss:after{background:#fc415a39;animation:flashOut .6s forwards}
+.stage.impact .paper{animation:paperHit .27s cubic-bezier(.3,.1,.22,1) }
+.desk-label{color:#b0ccae;line-height:1.6;display:flex;align-items:center;gap:10px}
+.desk-label span{color:#79aca2}.casino-chip{height:35px;width:35px;border-radius:50%;border:3px dashed #f3d897;outline:2px solid #a27943;display:grid;place-items:center;color:#f9d997;background:#1b3732;font-size:18px;box-shadow:0 2px 15px #0007}
+.paper{background:#f9f7ed;box-shadow:0 0 0 1px #f0e3c289,0 5px 9px #0006,0 24px 55px #000b,0 0 78px #a9d8a81a}
+.paper-title{letter-spacing:.07em;color:#283733}.referendum-topic{color:#1b2829;font-size:clamp(12px,1.95vh,17px);font-weight:700;line-height:1.28;max-width:98%;margin:6px auto}
+.paper-rule{background:#a27743}.paper-sub{color:#69716e;font-size:8px}.paper-rows{border-color:#455d53}
+.paper-row{background:#faf9f4;border-color:#9eb0a5}.paper-row:nth-child(2){background:#f1f3ed}
+.target-cell{background:transparent;border-color:#a4b0a7}.target{border:2px solid #869a92;box-shadow:inset 0 0 0 2px #fff,0 0 0 3px #fdf7ea}
+.target:after{background:#88968d;opacity:.5}
+.paper-instruction{color:#596762}.paper-footer{color:#75796f}
+.stamp{filter:drop-shadow(10px 13px 9px #0009) drop-shadow(0 0 15px #a7f0ce26)}
+.stamp svg{transform:translateY(var(--press-y,0px)) scaleY(var(--press-scale,1)) rotate(var(--tilt,-7deg));transform-origin:55% 89%;transition:none}
+.stamp.pressed{filter:drop-shadow(4px 5px 4px #000a) drop-shadow(0 0 21px #f6cb8275)}
+.stamp.dropping{filter:drop-shadow(1px 2px 2px #0008)}
+.stamp.impact svg{animation:impactSnap .23s ease-out}
+.aim{border:2px dashed #34f4df;box-shadow:0 0 14px #42e7d787,0 0 0 1px #073b35;opacity:0}
+.aim.on{opacity:.58}.aim.pressed{opacity:.88;border-color:#ffc578}
+.inkmark{border-color:#b72c30;color:#b72c30;opacity:.95;box-shadow:inset 0 0 0 1px #a7292f83,0 0 1px #a63a3488;
+background:repeating-linear-gradient(25deg,transparent 0 3px,#ae30251a 4px,transparent 6px);
+animation:inkSpread .33s cubic-bezier(.16,.83,.15,1) both}
+.inkmark:before,.inkmark:after{border-color:#ba2e30a3}
+.hint-plate{bottom:22px;background:#0c1a1cdd;color:#c4d8cf;border-color:#35645a;box-shadow:0 4px 24px #0008;letter-spacing:.015em}
+.hint-plate:before{background:#f7be65;box-shadow:0 0 12px #f7be65}
+.side-note{color:#97baac}
+.charge-ui{position:absolute;z-index:10;left:50%;bottom:70px;transform:translateX(-50%);width:min(300px,76%);pointer-events:none;color:#e7f7f0}
+.charge-label{display:flex;justify-content:space-between;margin-bottom:8px;gap:12px;font:10px var(--mono);letter-spacing:.05em}
+.charge-track{height:6px;border:1px solid #4e8674;background:#091b1b;border-radius:8px;box-shadow:0 0 14px #0007;overflow:hidden}
+.charge-track i{display:block;width:0;height:100%;background:linear-gradient(90deg,#54d7c8,#f1b95e);box-shadow:0 0 15px #5fe2c8;transition:width .07s linear}
+.stage.charging .charge-track i{box-shadow:0 0 18px #f9c46b}
+.overlay{background:#030b0bd8;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.dialog{background:linear-gradient(150deg,#122326,#0d171d);border:1px solid #52816e;color:#eef8f2;box-shadow:0 22px 75px #000b,0 0 0 1px #ffffff0c;width:min(505px,100%);padding:clamp(21px,4vw,35px);max-height:calc(100dvh - 100px);overflow-y:auto}
+.dialog h1{letter-spacing:-.085em}.dialog h1 span{color:#f7c66b}
+.dialog p{color:#b3cac0}.mini-kicker{color:#5fe1c5}
+.history-fact{border-color:#2c514b;background:#0d2423;margin:12px 0 5px}.history-fact .fact-label{color:#74e5d0}
+.history-fact strong{color:#f0f5e9}.history-fact>span:last-child{color:#9cb8ad}
+.history-fact a,.historical-result a{color:#75e7d3}
+.rules{border-color:#2a514b;margin:17px 0}.rule{color:#a3beb6}.rule+.rule{border-color:#2a514b}.rule strong{color:#f7c971}
+.main-button,.secondary-button{border:1px solid #95e2ca;background:#68e2c9;color:#06211c;box-shadow:3px 3px 0 #2c594f;font-weight:700}
+.main-button:hover{background:#eac47f}
+.secondary-button{background:transparent;color:#8be6d2;box-shadow:none}
+.end-big{color:#f35b63;border-color:#f35b63;text-shadow:0 0 27px #f14d563c}
+.end-big.valid{color:#80dfb0;border-color:#80dfb0;text-shadow:0 0 22px #75e8a947}
+.end-explain{color:#97bcb1}
+.historical-result{border-color:#2b5349}.historical-result span{color:#9dbbb1}.historical-result strong{color:#f7d18d}.historical-result small{color:#afc8bd}
+.result-animate .end-big{animation:resultStamp .48s cubic-bezier(.13,.89,.25,1.28) both}
+.toast{background:#0c2823;border-color:#76edc4;color:#8af0c8;box-shadow:0 4px 17px #000a}
+.fineprint{color:#a3c3b2;opacity:.62}
+@keyframes inkSpread{0%{opacity:0;filter:blur(2px);scale:.86}55%{opacity:.99;filter:blur(.6px);scale:1.07}100%{opacity:.94;filter:blur(0);scale:1}}
+@keyframes resultStamp{0%{opacity:.2;transform:scale(1.65) rotate(-15deg);filter:blur(3px)}70%{opacity:1;transform:scale(.96) rotate(-5deg)}100%{transform:scale(1) rotate(-6deg);filter:blur(0)}}
+@keyframes impactSnap{0%{transform:translateY(30px) scaleY(.86)}40%{transform:translateY(32px) scaleY(.83)}100%{transform:translateY(5px) scaleY(.98)}}
+@keyframes paperHit{0%,100%{filter:none}35%{filter:brightness(.965)}}
+@keyframes flashOut{from{opacity:.9}to{opacity:0}}
+@media(max-width:750px){
+ .topbar{background:#0b1318}.info{background:#101c20}
+ .game-title{font-size:10px}.info strong{font-size:11px}.hand-status{font-size:8px}
+ .stability-track{width:28px}.stability{gap:5px}
+ .paper{width:min(87vw,calc((100dvh - 177px)*.725));top:46%}
+ .referendum-topic{font-size:clamp(11px,1.8vh,14px);margin:3px auto}
+ .charge-ui{bottom:54px;width:min(285px,76%)}
+ .charge-label{font-size:9px;margin-bottom:5px}
+ .hint-plate{bottom:12px;font-size:9px}
+ .dialog{max-height:calc(100dvh - 65px);padding:20px}
+ .dialog h1{font-size:clamp(29px,6vw,46px);margin:9px 0 10px}
+ .dialog p{font-size:12px;margin-bottom:11px}
+ .history-fact{padding:9px 11px}
+ .rules{margin:10px 0}
+ .rule{padding:9px 4px}
+}
+@media(max-height:600px){.seal{display:none}.paper{top:44%}.paper-title{font-size:14px}.referendum-topic{font-size:11px}.charge-ui{bottom:49px}.dialog h1{font-size:32px}.dialog{max-height:calc(100dvh - 20px)}}
+@media(prefers-reduced-motion:reduce){.inkmark,.result-animate .end-big,.stamp.impact svg,.stage.impact .paper{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -138,18 +228,18 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
  <main class="game">
   <div class="info">
    <div><strong id="prompt">Mühür, dairenin dışına taşmamalı.</strong><p id="subprompt">Herhangi bir tercihi mühürle. Sadece bir hakkın var.</p></div>
-   <div class="game-status"><span class="hand-status" id="handStatus">EL: TİTRİYOR</span><div class="progress-dots" id="progress" aria-label="Tur ilerlemesi"><i class="current"></i><i></i><i></i><i></i><i></i></div></div>
+   <div class="game-status"><div class="stability"><span class="hand-status" id="handStatus">EL: TİTRİYOR</span><span class="stability-track"><i id="stabilityFill"></i></span></div><div class="progress-dots" id="progress" aria-label="Tur ilerlemesi"><i class="current"></i><i></i><i></i><i></i><i></i></div></div>
   </div>
   <section class="stage" id="stage" aria-label="Oy pusulası ve mühürleme alanı" tabindex="0">
-   <div class="desk-label">MÜHÜRLEME MASASI / NO. 03<span>KAĞIDI KAYDIRMAYINIZ.</span></div>
+   <div class="desk-label"><b class="casino-chip" aria-hidden="true">₣</b> 1958 / İSVİÇRE / OYLAMA KABİNİ<span>2 CHF → 5 CHF · TEK HAK</span></div>
    <article class="paper" id="ballot" aria-label="Kurgusal oyun pusulası">
-    <div class="document-id"><span>İSVİÇRE · 25.11.2018</span><span>OYUN PUSULASI / KURGU</span></div>
+    <div class="document-id"><span>İSVİÇRE · 07.12.1958</span><span>OYUN PUSULASI / KURGU</span></div>
     <div class="seal"><span class="seal-ring" aria-hidden="true">✳</span><span class="seal-text">OY VERME İŞLEMLERİ<br>DAİRE BAŞKANLIĞI</span></div>
     <div class="paper-title">REFERANDUM</div>
-    <div class="referendum-topic">İneklerin ve keçilerin boynuzlarını koruyan çiftçilere devlet desteği verilsin mi?</div>
-    <div class="paper-sub">GERÇEK BİR 2018 HALK OYLAMASINDAN ESİNLENİLEN OYUN</div>
+    <div class="referendum-topic">Kumarhanede tek seferde oynanabilecek azami bahis 2 franktan 5 franka çıkarılsın mı?</div>
+    <div class="paper-sub">1958 İSVİÇRE REFERANDUMU · SADELEŞTİRİLMİŞ SORU</div>
     <div class="paper-rule"></div>
-    <div class="paper-instruction"><span>TERCİH</span><span>EVET MÜHRÜ</span></div>
+    <div class="paper-instruction"><span>TERCİH</span><span>MÜHRÜ BURAYA BASINIZ</span></div>
     <div class="paper-rows">
      <div class="paper-row"><div class="choice"><strong>EVET</strong><span>01 / İLK SEÇENEK</span></div><div class="target-cell"><div class="target" aria-label="Evet seçeneği mühür dairesi"></div></div></div>
      <div class="paper-row"><div class="choice"><strong>HAYIR</strong><span>02 / İKİNCİ SEÇENEK</span></div><div class="target-cell"><div class="target" aria-label="Hayır seçeneği mühür dairesi"></div></div></div>
@@ -177,18 +267,18 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
      <ellipse cx="77" cy="167" rx="46" ry="7.5" fill="#71231f" opacity=".65"/>
     </svg>
    </div>
-   <div class="hint-plate" id="hint">MOUSE İLE NİŞAN AL · TIKLA VE MÜHÜRLE</div>
+   <div class="charge-ui" id="chargeUI"><div class="charge-label"><span id="chargeLabel">MÜHRÜ BASILI TUT</span><span id="chargeNumber">0%</span></div><div class="charge-track"><i id="chargeFill"></i></div></div><div class="hint-plate" id="hint">BASILI TUT · HİZALA · BIRAK</div>
    <div class="side-note">DÜŞÜNMEK SERBEST.<br>TAŞIRMAK YASAK.</div>
    <div class="fineprint">BU BİR OYUNDUR. GERÇEK SEÇİM KURALLARINI TEMSİL ETMEZ.</div>
    <div class="toast" id="toast" role="status">OY GEÇERLİ. ŞİMDİ BİR DAHA.</div>
    <div class="overlay" id="intro">
     <div class="dialog">
      <div class="mini-kicker">REFERANDUM / AYNEN.FUN</div>
-     <h1>İki seçenek.<br><span>Titreyen bir el.</span></h1>
-     <p>Bir ülke gerçekten bunu oyladı. Şimdi EVET veya HAYIR seç ve mührü çizginin içine sığdır. Elin titriyor, basarken de kayıyor.</p>
-     <div class="history-fact"><span class="fact-label">GERÇEK REFERANDUM / 2018</span><strong>İsviçre, ineklerin ve keçilerin boynuzları için sandığa gitti.</strong><span>Boynuzlu hayvan yetiştiren çiftçilere destek verilip verilmeyeceği oylandı. <a href="https://www.admin.ch/en/horned-cow-initiative" target="_blank" rel="noopener noreferrer">Gerçek arşiv ↗</a></span></div>
+     <h1>2 frank mı?<br><span>5 frank mı?</span></h1>
+     <p>İsviçre bu soruyu gerçekten oyladı. EVET veya HAYIR için mührü hedefe getir, <strong>basılı tut, bırakınca mühürle.</strong> Çizgiye değersen oy geçersiz.</p>
+     <div class="history-fact"><span class="fact-label">GERÇEK REFERANDUM / 7 ARALIK 1958</span><strong>İsviçre, 2 franklık oyun bahis limitini 5 frank yapmak için sandığa gitti.</strong><span>Dönemin izinli Kursaal eğlence salonlarındaki oyunlar için geçerliydi. <a href="https://swissvotes.ch/vote/189.00" target="_blank" rel="noopener noreferrer">Swissvotes arşivi ↗</a></span></div>
      <div class="rules"><div class="rule"><strong>5</strong>TUR</div><div class="rule"><strong>1</strong>MÜHÜR / TUR</div><div class="rule"><strong>9</strong>SN İLK TUR</div></div>
-     <button class="main-button" id="startBtn">MÜHRÜ AL →</button>
+     <button class="main-button" id="startBtn">MÜHRÜ ELİNE AL →</button>
     </div>
    </div>
    <div class="overlay hidden" id="outcome" role="dialog" aria-modal="true" aria-labelledby="outcomeTitle">
@@ -197,7 +287,7 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
      <div class="end-big" id="outcomeTitle">OY GEÇERSİZ</div>
      <p id="outcomeText">Mühür çizgiyi geçti.</p>
      <div class="end-explain" id="outcomeInfo">SAYIM KOMİSYONUNUN BİR AÇIKLAMASI BULUNMAMAKTADIR.</div>
-     <div class="historical-result"><span>GERÇEK REFERANDUM SONUCU · 25 KASIM 2018</span><strong>%54,7 HAYIR</strong><small>İsviçre'deki Boynuzlu İnek Girişimi reddedildi.</small><a href="https://www.admin.ch/en/horned-cow-initiative" target="_blank" rel="noopener noreferrer">Kaynak: İsviçre Federal Konseyi ↗</a></div>
+     <div class="historical-result"><span>GERÇEK REFERANDUM SONUCU · 7 ARALIK 1958</span><strong>%59,89 EVET</strong><small>Kursaal oyunlarında azami bahis 2 franktan 5 franka yükseldi.</small><a href="https://swissvotes.ch/vote/189.00" target="_blank" rel="noopener noreferrer">Kaynak: Swissvotes / Bern Üniversitesi ↗</a></div>
      <div class="actions"><button class="main-button" id="retryBtn">TEKRAR DENE ↻</button><button class="secondary-button" id="shareBtn">PAYLAŞ ↗</button></div>
     </div>
    </div>
@@ -217,8 +307,9 @@ var configurations=[
 ];
 var state='intro',round=0,tries=0,correct=0,deadline=0,remaining=9;
 var mouseX=0,mouseY=0,headX=0,headY=0,renderX=0,renderY=0,hasPointer=false,pressing=false,pressTimer=0;
-var pressStart=0,pressX=0,pressY=0,slipX=0,slipY=0,touchArmed=false;
+var pressStart=0,pressX=0,pressY=0,slipX=0,slipY=0,touchArmed=false,releaseAt=0,releaseHold=0,stageImpactTimer=0;
 var ticker=performance.now(),anim=0,inkSize=68,activePointer=null,toastTimer=0,successTimer=0;
+var chargeFill=document.getElementById('chargeFill'),chargeLabel=document.getElementById('chargeLabel'),chargeNumber=document.getElementById('chargeNumber'),stabilityFill=document.getElementById('stabilityFill');
 var targets=Array.prototype.slice.call(document.querySelectorAll('.target'));
 var prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var clamp=function(v,min,max){return Math.min(max,Math.max(min,v));};
@@ -245,7 +336,7 @@ function dots(){
 function eraseMarks(){Array.prototype.slice.call(stage.querySelectorAll('.inkmark')).forEach(function(el){el.remove();});}
 function setRound(){
  clearTimeout(successTimer);clearTimeout(pressTimer);clearTimeout(toastTimer);
- pressing=false;hasPointer=false;activePointer=null;touchArmed=false;
+ pressing=false;hasPointer=false;activePointer=null;touchArmed=false;releaseHold=0;clearTimeout(stageImpactTimer);
  var c=config(),short=window.innerWidth<600;
  var target=Math.min(c.target,short?c.target*.90:c.target);
  inkSize=Math.round(target*c.ratio);
@@ -256,10 +347,14 @@ function setRound(){
  document.getElementById('prompt').textContent=c.title;
  document.getElementById('subprompt').textContent=c.sub;
  document.getElementById('handStatus').textContent=['EL: HAFİF TİTREME','EL: KAYGAN','EL: KONTROL ZAYIF','EL: ÇOK KARARSIZ','EL: TAMAMEN KARARSIZ'][round];
- document.getElementById('hint').textContent=short?'PARMAĞINI SÜRÜKLE · BIRAKINCA MÜHÜRLE':'MOUSE İLE NİŞAN AL · TIKLA VE MÜHÜRLE';
+ document.getElementById('hint').textContent=short?'PARMAĞINLA HİZALA · BASILI TUT · BIRAK':'MOUSE İLE HİZALA · BASILI TUT · BIRAK';
+ chargeLabel.textContent='MÜHRÜ BASILI TUT';chargeNumber.textContent='0%';chargeFill.style.width='0%';
+ stage.classList.remove('charging','impact','miss','hit');stamp.classList.remove('dropping','impact');
+ stamp.style.setProperty('--press-y','0px');stamp.style.setProperty('--press-scale','1');
+ stabilityFill.style.width=(100-round*15)+'%';
  clock.classList.remove('warn');clock.textContent=c.seconds.toFixed(1);
  eraseMarks();dots();toast.classList.remove('on');
- stamp.classList.remove('on','pressed');aim.classList.remove('on','pressed');
+ stamp.classList.remove('on','pressed','dropping','impact');aim.classList.remove('on','pressed');
  ballot.style.transform='translate(-50%,-50%)';
  remaining=c.seconds;
  deadline=performance.now()+c.seconds*1000;
@@ -271,14 +366,15 @@ function markInk(x,y){
  mark.className='inkmark';mark.textContent='EVET';
  mark.style.left=x+'px';mark.style.top=y+'px';
  mark.style.setProperty('--ink-angle',(-8+Math.random()*17).toFixed(1)+'deg');
+ mark.style.setProperty('--ink-seed',Math.random().toFixed(2));
  stage.appendChild(mark);
 }
 function statusMsg(msg){toast.textContent=msg;toast.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(function(){toast.classList.remove('on');},1350);}
 function finish(valid,reason){
- if(state!=='playing'&&state!=='transition')return;
+ if(state!=='playing'&&state!=='transition'&&state!=='landing')return;
  clearTimeout(pressTimer);clearTimeout(successTimer);pressing=false;
  state='outcome';stage.style.cursor='default';
- stamp.classList.remove('on','pressed');aim.classList.remove('on','pressed');
+ stamp.classList.remove('on','pressed','dropping');aim.classList.remove('on','pressed');
  document.getElementById('outcomeTitle').textContent=valid?'OY GEÇERLİ':'OY GEÇERSİZ';
  document.getElementById('outcomeTitle').classList.toggle('valid',valid);
  document.getElementById('outcomeKicker').textContent=valid?'BEŞ TURUN TAMAMI TAMAMLANDI':'TUTANAK / İŞLEM SONUCU';
@@ -286,49 +382,84 @@ function finish(valid,reason){
  document.getElementById('outcomeInfo').textContent=valid?'TAM BEŞ DEFA AYNI İŞLEMİ BAŞARIYLA YAPTINIZ.':'TUR: '+(round+1)+' / 5   ·   DENEME: '+tries+'   ·   BAŞARILI MÜHÜR: '+correct;
  document.getElementById('retryBtn').textContent=valid?'YENİDEN BAŞLA ↻':'BU TURU TEKRAR DENE ↻';
  outcome.classList.remove('hidden');
+ outcome.classList.remove('result-animate');void outcome.offsetWidth;outcome.classList.add('result-animate');
  sound(valid?530:130,.25,valid?'sine':'triangle',.10);
 }
 function invalid(reason){
  tries++;vibrate([30,40,60]);sound(108,.23,'triangle',.12);
  finish(false,reason);
 }
+function stampThud(valid){
+ try{
+  var ctx=sound.ctx || (window.AudioContext||window.webkitAudioContext)&&new (window.AudioContext||window.webkitAudioContext)();
+  if(!ctx)return;sound.ctx=ctx;if(ctx.state==='suspended')ctx.resume();
+  var at=ctx.currentTime;
+  var o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='sine';o.frequency.setValueAtTime(118,at);o.frequency.exponentialRampToValueAtTime(47,at+.12);
+  g.gain.setValueAtTime(.22,at);g.gain.exponentialRampToValueAtTime(.001,at+.17);
+  o.connect(g);g.connect(ctx.destination);o.start(at);o.stop(at+.18);
+  var b=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.085),ctx.sampleRate),data=b.getChannelData(0);
+  for(var i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,2);
+  var n=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),ng=ctx.createGain();
+  n.buffer=b;filter.type='lowpass';filter.frequency.value=1050;ng.gain.value=.12;
+  n.connect(filter);filter.connect(ng);ng.connect(ctx.destination);n.start(at);
+  if(valid){setTimeout(function(){sound(780,.055,'sine',.045);},75);}
+ }catch(e){}
+}
 function performStamp(){
- if(state!=='playing')return;
- pressing=false;stamp.classList.remove('pressed');aim.classList.remove('pressed');
- var sx=renderX,sy=renderY,time=Math.max(0,deadline-performance.now());
- if(time<=0){invalid('Süre doldu. Mührün tam zamanında geçersiz oldu.');return;}
+ if(state!=='landing')return;
+ var sx=renderX,sy=renderY;
+ pressing=false;stamp.classList.remove('pressed','dropping');stamp.classList.add('impact');
+ aim.classList.remove('pressed','on');
+ stage.classList.add('impact');clearTimeout(stageImpactTimer);
+ stageImpactTimer=setTimeout(function(){stage.classList.remove('impact');stamp.classList.remove('impact');},430);
  markInk(sx,sy);
  var margin=1.5,chosen=null;
  for(var i=0;i<targets.length;i++){
-  var r=targets[i].getBoundingClientRect(),s=stage.getBoundingClientRect();
-  var cx=r.left+r.width/2-s.left,cy=r.top+r.height/2-s.top;
-  var d=Math.hypot(sx-cx,sy-cy);
-  var maxDist=r.width/2-inkSize/2-margin;
-  if(d<=maxDist){chosen=i;break;}
+  var r=targets[i].getBoundingClientRect(),sr=stage.getBoundingClientRect();
+  var cx=r.left+r.width/2-sr.left,cy=r.top+r.height/2-sr.top;
+  if(Math.hypot(sx-cx,sy-cy)<=r.width/2-inkSize/2-margin){chosen=i;break;}
  }
+ stampThud(chosen!==null);
  if(chosen===null){
-  var near=targets.some(function(t){var r=t.getBoundingClientRect(),s=stage.getBoundingClientRect();return Math.hypot(sx-(r.left+r.width/2-s.left),sy-(r.top+r.height/2-s.top))<r.width/2+inkSize/2;});
-  invalid(near?'Mühür çizgiye değdi. Evet, o bir milimetre de sayılıyor.':'Mühür daireyi bulamadı. Pusulayı bulmuş olması yeterli değil.');
+  stage.classList.add('miss');
+  var near=targets.some(function(t){var r=t.getBoundingClientRect(),sr=stage.getBoundingClientRect();return Math.hypot(sx-(r.left+r.width/2-sr.left),sy-(r.top+r.height/2-sr.top))<r.width/2+inkSize/2;});
+  invalid(near?'Mühür çizgiye temas etti. Sandık görevlisi milimetreleri sayıyor.':'İki seçenek vardı. Mühür ikisini de bulamadı.');
   return;
  }
- tries++;correct++;vibrate(25);sound(240,.08,'sine',.08);
+ tries++;correct++;vibrate(35);
+ stage.classList.add('hit');
  state='transition';
- statusMsg(round===4?'MÜHÜR GEÇERLİ. İNANILMAZ.':'GEÇERLİ. ŞİMDİ BİR DAHA.');
+ chargeLabel.textContent='GEÇERLİ';chargeNumber.textContent='✓';
+ statusMsg(round===4?'MÜHÜR GEÇERLİ. İNANILMAZ.':'GEÇERLİ. DEVAM EDİYORUZ.');
  successTimer=setTimeout(function(){
-  if(round===4)finish(true,'Oy geçerli. Kimse böyle olacağını beklemiyordu.');
+  if(round===4)finish(true,'Oy geçerli. Beş kez mühürledin. İsviçre 1958 bunu gerçekten oyladı.');
   else{round++;setRound();}
- },1000);
+ },940);
 }
 function startPress(){
  if(state!=='playing'||pressing||!hasPointer)return;
- var c=config(),now=performance.now();
- pressing=true;pressStart=now;pressX=renderX;pressY=renderY;
- // The last 220ms are deliberately unstable. Slip direction depends on timing.
- slipX=(Math.sin(now/213+round*1.7)*.78+Math.sin(now/71)*.22)*c.slip;
- slipY=(Math.cos(now/197+round*1.3)*.76+Math.sin(now/103)*.24)*c.slip;
- stamp.classList.add('pressed');aim.classList.add('pressed');
- sound(72,.08,'triangle',.035);
- pressTimer=setTimeout(performStamp,220);
+ pressing=true;pressStart=performance.now();releaseHold=0;
+ stage.classList.add('charging');stamp.classList.add('pressed');
+ chargeLabel.textContent='BASILI TUT · HİZALA';chargeNumber.textContent='0%';
+ // No instant score. The player can still reposition the wobbling stamp.
+ sound(77,.055,'sine',.024);
+}
+function releasePress(){
+ if(state!=='playing'||!pressing)return;
+ var now=performance.now();
+ pressing=false;state='landing';releaseAt=now;
+ releaseHold=clamp((now-pressStart)/900,0,1);
+ pressX=renderX;pressY=renderY;
+ var c=config();
+ // Deterministic bounded slip: timing matters, never a secret random penalty.
+ var slipFactor=.65+releaseHold*.7;
+ slipX=(Math.sin(now/208+round*.92)*.79+Math.sin(now/85)*.21)*c.slip*slipFactor;
+ slipY=(Math.cos(now/194+round*.8)*.77+Math.sin(now/107)*.23)*c.slip*slipFactor;
+ stage.classList.remove('charging');stamp.classList.remove('pressed');stamp.classList.add('dropping');
+ chargeLabel.textContent='MÜHÜR İNİYOR';chargeNumber.textContent='100%';chargeFill.style.width='100%';
+ pressTimer=setTimeout(performStamp,165);
+ vibrate(12);
 }
 function movePointer(e){
  if(state!=='playing')return;
@@ -344,15 +475,17 @@ stage.addEventListener('pointerdown',function(e){
  if(e.button!==0&&e.pointerType==='mouse')return;
  e.preventDefault();activePointer=e.pointerId;movePointer(e);
  try{stage.setPointerCapture(e.pointerId);}catch(err){}
- if(e.pointerType==='mouse'){startPress();}else{touchArmed=true;}
+ startPress();
 });
 stage.addEventListener('pointerup',function(e){
- if(activePointer===e.pointerId){
-  if(touchArmed&&state==='playing'){movePointer(e);touchArmed=false;startPress();}
-  activePointer=null;
- }
+ if(activePointer!==e.pointerId)return;
+ if(state==='playing'){movePointer(e);releasePress();}
+ activePointer=null;
 });
-stage.addEventListener('pointercancel',function(e){if(activePointer===e.pointerId){activePointer=null;touchArmed=false;}});
+stage.addEventListener('pointercancel',function(e){
+ if(activePointer!==e.pointerId)return;
+ activePointer=null;if(state==='playing'&&pressing){pressing=false;stage.classList.remove('charging');stamp.classList.remove('pressed');chargeFill.style.width='0%';chargeLabel.textContent='YENİDEN BASILI TUT';}
+});
 stage.addEventListener('pointerleave',function(){if(state==='playing'&&!pressing&&activePointer===null&&window.matchMedia('(pointer:fine)').matches){stamp.classList.remove('on');aim.classList.remove('on');}});
 document.addEventListener('keydown',function(e){
  if(e.key==='Escape'){location.href='/index.html';return;}
@@ -360,12 +493,18 @@ document.addEventListener('keydown',function(e){
  var d=e.shiftKey?2:9;
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].indexOf(e.key)>=0){
   e.preventDefault();
-  if(!hasPointer){var p=stage.getBoundingClientRect();mouseX=headX=p.width/2;mouseY=headY=p.height/2;hasPointer=true;}
+  if(!hasPointer){var rr=targets[0].getBoundingClientRect(),sr=stage.getBoundingClientRect();mouseX=headX=rr.left+rr.width/2-sr.left;mouseY=headY=rr.top+rr.height/2-sr.top;renderX=headX;renderY=headY;hasPointer=true;}
   if(e.key==='ArrowUp')mouseY-=d;if(e.key==='ArrowDown')mouseY+=d;
   if(e.key==='ArrowLeft')mouseX-=d;if(e.key==='ArrowRight')mouseX+=d;
-  headX=mouseX;headY=mouseY;stamp.classList.add('on');aim.classList.add('on');
- } else if(e.code==='Space'||e.key==='Enter'){e.preventDefault();if(!hasPointer){var p=stage.getBoundingClientRect();mouseX=headX=p.width/2;mouseY=headY=p.height/2;hasPointer=true;}startPress();}
+  stamp.classList.add('on');aim.classList.add('on');
+ }else if(e.code==='Space'||e.key==='Enter'){
+  e.preventDefault();if(e.repeat)return;
+  if(!hasPointer){var r=targets[0].getBoundingClientRect(),sr=stage.getBoundingClientRect();mouseX=headX=renderX=r.left+r.width/2-sr.left;mouseY=headY=renderY=r.top+r.height/2-sr.top;hasPointer=true;stamp.classList.add('on');aim.classList.add('on');}
+  startPress();
+ }
 });
+document.addEventListener('keyup',function(e){if((e.code==='Space'||e.key==='Enter')&&pressing){e.preventDefault();releasePress();}});
+
 document.getElementById('startBtn').addEventListener('click',function(){intro.classList.add('hidden');setRound();stage.focus({preventScroll:true});});
 document.getElementById('retryBtn').addEventListener('click',function(){
  outcome.classList.add('hidden');
@@ -373,7 +512,7 @@ document.getElementById('retryBtn').addEventListener('click',function(){
  setRound();
 });
 document.getElementById('shareBtn').addEventListener('click',function(){
- var valid=correct===5,shareText=valid?'Referandum oyununda 5/5 mühür geçerli. İsviçre ineklerin boynuzlarını oylamış, ben de damgayı tutturmuşum.':'Referandum oyununda '+(round+1)+'. turda oyum geçersiz sayıldı. Elim kaydı.';
+ var valid=correct===5,shareText=valid?'Referandum oyununda 5/5 mühür geçerli. İsviçre 2 frankı 5 franka çıkarmış, ben de mührü tutturmuşum.':'Referandum oyununda '+(round+1)+'. turda oyum geçersiz sayıldı. Elim kaydı.';
  var url=location.href.split('#')[0].split('?')[0];var btn=this;
  if(navigator.share)navigator.share({title:'Referandum — aynen.fun',text:shareText,url:url}).catch(function(){});
  else if(navigator.clipboard)navigator.clipboard.writeText(shareText+' '+url).then(function(){btn.textContent='KOPYALANDI ✓';setTimeout(function(){btn.textContent='PAYLAŞ ↗';},1500);});
@@ -385,16 +524,19 @@ function frame(now){
  if(state==='playing'){
   remaining=Math.max(0,(deadline-now)/1000);
   clock.textContent=remaining.toFixed(1);clock.classList.toggle('warn',remaining<3);
-  if(remaining<=0)invalid('Süre doldu. Oy kullanılmadan geçersiz sayıldı.');
+  if(remaining<=0)invalid('Süre doldu. Tercihinizi ifade edemeden süre doldu.');
  }
- if(state==='playing'||state==='transition'){
+ if(state==='playing'||state==='landing'||state==='transition'){
   var c=config(),t=now/1000,drift=prefersReduced?0:c.shift;
-  var dx=Math.sin(t*2.3+round*.2)*drift,dy=Math.cos(t*1.85)*drift*.5,angle=prefersReduced?0:Math.sin(t*1.7)*c.rotation;
-  // Freeze paper after contact so the real ink remains exactly where it landed.
+  var dx=Math.sin(t*2.2+round*.2)*drift,dy=Math.cos(t*1.8)*drift*.5;
+  var angle=prefersReduced?0:Math.sin(t*1.5)*c.rotation;
   if(state==='playing')ballot.style.transform='translate(-50%,-50%) translate('+dx.toFixed(2)+'px,'+dy.toFixed(2)+'px) rotate('+angle.toFixed(2)+'deg)';
   if(hasPointer){
-   var factor=prefersReduced?1:1-Math.pow(.69,dt/16.67);
-   if(!pressing){headX+=(mouseX-headX)*factor;headY+=(mouseY-headY)*factor;}
+   var factor=prefersReduced?1:1-Math.pow(pressing?.83:.77,dt/16.67);
+   if(state==='playing'){
+    headX+=(mouseX-headX)*factor;
+    headY+=(mouseY-headY)*factor;
+   }
    var near=0;
    if(state==='playing'&&!prefersReduced){
     var sr=stage.getBoundingClientRect(),nearest=Infinity;
@@ -402,25 +544,37 @@ function frame(now){
      var r=target.getBoundingClientRect();
      nearest=Math.min(nearest,Math.hypot(headX-(r.left+r.width/2-sr.left),headY-(r.top+r.height/2-sr.top)));
     });
-    near=clamp(1-nearest/130,0,1);
+    near=clamp(1-nearest/140,0,1);
    }
-   var boost=.75+near*.65;
-   var tremorX=prefersReduced?0:(Math.sin(now/83+round)*.55+Math.sin(now/29+round*2)*.30+Math.sin(now/15)*.15)*c.tremor*boost;
-   var tremorY=prefersReduced?0:(Math.cos(now/91+round*1.5)*.57+Math.sin(now/34+round)*.28+Math.cos(now/17)*.15)*c.tremor*boost;
-   var swayX=prefersReduced?0:Math.sin(now/650+round*.6)*c.sway;
-   var swayY=prefersReduced?0:Math.cos(now/750+round*.7)*c.sway*.72;
+   var boost=.76+near*.52+(pressing?.21:0);
+   var tremorX=prefersReduced?0:(Math.sin(now/88+round)*.53+Math.sin(now/33+round*2)*.31+Math.sin(now/18)*.16)*c.tremor*boost;
+   var tremorY=prefersReduced?0:(Math.cos(now/94+round*1.5)*.54+Math.sin(now/36+round)*.30+Math.cos(now/21)*.16)*c.tremor*boost;
+   var swayX=prefersReduced?0:Math.sin(now/620+round*.6)*c.sway;
+   var swayY=prefersReduced?0:Math.cos(now/720+round*.7)*c.sway*.72;
    var x,y;
-   if(pressing){
-    var p=clamp((now-pressStart)/220,0,1),ease=p*p*(3-2*p);
-    x=pressX+slipX*ease+tremorX*.28;
-    y=pressY+slipY*ease+tremorY*.28;
+   if(state==='landing'){
+    var p=clamp((now-releaseAt)/165,0,1),ease=p*p*(3-2*p);
+    x=pressX+slipX*ease+tremorX*.12;
+    y=pressY+slipY*ease+tremorY*.12;
+    stamp.style.setProperty('--press-y',(15+20*ease).toFixed(1)+'px');
+    stamp.style.setProperty('--press-scale',(1-.11*ease).toFixed(3));
    }else{
     x=headX+tremorX+swayX;
     y=headY+tremorY+swayY;
+    if(state==='playing'&&pressing){
+     var hold=clamp((now-pressStart)/900,0,1);
+     var chargePct=Math.round(hold*100);
+     chargeFill.style.width=chargePct+'%';chargeNumber.textContent=chargePct+'%';
+     stamp.style.setProperty('--press-y',(hold*14).toFixed(1)+'px');
+     stamp.style.setProperty('--press-scale',(1-hold*.025).toFixed(3));
+    }else if(state==='playing'){
+     stamp.style.setProperty('--press-y','0px');
+     stamp.style.setProperty('--press-scale','1');
+    }
    }
    renderX=clamp(x,0,stage.clientWidth);renderY=clamp(y,0,stage.clientHeight);
    stamp.style.left=renderX+'px';stamp.style.top=renderY+'px';
-   stamp.style.setProperty('--tilt',(-6+(prefersReduced?0:Math.sin(now/160)*Math.min(round+1,5)*1.7))+'deg');
+   stamp.style.setProperty('--tilt',(-5+(prefersReduced?0:Math.sin(now/167)*Math.min(round+1,5)*1.5))+'deg');
    aim.style.left=renderX+'px';aim.style.top=renderY+'px';
   }
  }
