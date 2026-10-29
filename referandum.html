@@ -226,6 +226,36 @@ animation:inkSpread .33s cubic-bezier(.16,.83,.15,1) both}
 @keyframes urgent{from{opacity:1;transform:scale(1)}to{opacity:.65;transform:scale(1.07)}}
 @media(max-width:750px){.stamp{width:124px;height:182px}.stability-track{width:38px}.single-tag{font-size:8px;padding:5px 6px}.hand-status{font-size:7px}.game-status{gap:6px}.info{gap:8px}}
 @media(prefers-reduced-motion:reduce){.timer.warn{animation:none}}
+
+/* Referandum — clear initial question, historical reveal after the vote */
+.dialog h1.intro-question{font-size:clamp(25px,3.1vw,38px);line-height:1.14;letter-spacing:-.058em;margin:15px auto 18px;max-width:440px;text-wrap:balance}
+.intro-question span{color:#f7c66b}
+.intro-vote-legend{display:grid;grid-template-columns:1fr 1fr;border:1px solid #35655a;margin:0 auto 13px;text-align:left;background:#0b2223}
+.intro-vote-legend>div{display:flex;flex-direction:column;gap:2px;padding:9px 13px}
+.intro-vote-legend>div+div{border-left:1px solid #35655a}
+.intro-vote-legend strong{color:#f2f9f2;font:700 13px var(--sans)}
+.intro-vote-legend span{font:10px var(--mono);color:#a9beb4}
+.dialog p.intro-instruction{font-size:12px;max-width:440px;line-height:1.48;margin:0 auto 14px;color:#b7ccc3}
+.choice strong{font-size:clamp(19px,3.7vh,30px);letter-spacing:-.055em;line-height:1}
+.choice span{color:#666e65;font-size:9px;letter-spacing:.01em}
+.historical-result{gap:5px;text-align:left;background:#0e2926;border:1px solid #32574b;padding:14px;margin-top:18px}
+.historical-result span{color:#76e8ce;font-weight:500;letter-spacing:.07em}
+.historical-result strong{font-size:clamp(18px,3.1vw,23px);line-height:1.15;color:#f6cb79}
+.historical-result small{line-height:1.5;color:#b8d1c3;font-size:11px}
+.historical-result small b{color:#f7d18d}
+@media(max-width:750px){
+ .dialog h1.intro-question{font-size:clamp(24px,6.6vw,32px);line-height:1.1;margin:11px auto 14px}
+ .intro-vote-legend>div{padding:8px 9px}
+ .dialog p.intro-instruction{font-size:11px;margin-bottom:12px}
+ .choice strong{font-size:clamp(16px,3vh,24px)}
+ .choice span{font-size:8px}
+ .historical-result{padding:10px;margin-top:11px}
+}
+@media(max-height:650px){
+ .dialog h1.intro-question{font-size:clamp(22px,4vh,30px);margin:8px auto}
+ .intro-vote-legend>div{padding:6px 9px}
+ .dialog p.intro-instruction{margin-bottom:7px}
+}
 </style>
 </head>
 <body>
@@ -241,18 +271,18 @@ animation:inkSpread .33s cubic-bezier(.16,.83,.15,1) both}
    <div class="game-status"><div class="stability"><span class="hand-status" id="handStatus">EL: TİTRİYOR</span><span class="stability-track"><i id="stabilityFill"></i></span></div><span class="single-tag">TEK HAK</span></div>
   </div>
   <section class="stage" id="stage" aria-label="Oy pusulası ve mühürleme alanı" tabindex="0">
-   <div class="desk-label"><b class="casino-chip" aria-hidden="true">₣</b> 1958 / İSVİÇRE / OYLAMA KABİNİ<span>2 CHF → 5 CHF · TEK HAK</span></div>
+   <div class="desk-label"><b class="casino-chip" aria-hidden="true">₣</b> REFERANDUM / OYLAMA KABİNİ<span>2 CHF → 5 CHF · TEK HAK</span></div>
    <article class="paper" id="ballot" aria-label="Kurgusal oyun pusulası">
-    <div class="document-id"><span>İSVİÇRE · 07.12.1958</span><span>OYUN PUSULASI / KURGU</span></div>
+    <div class="document-id"><span>TEK OYLAMA · 01/01</span><span>OYUN PUSULASI / KURGU</span></div>
     <div class="seal"><span class="seal-ring" aria-hidden="true">✳</span><span class="seal-text">OY VERME İŞLEMLERİ<br>DAİRE BAŞKANLIĞI</span></div>
     <div class="paper-title">REFERANDUM</div>
     <div class="referendum-topic">Kumarhanede tek seferde oynanabilecek azami bahis 2 franktan 5 franka çıkarılsın mı?</div>
-    <div class="paper-sub">1958 İSVİÇRE REFERANDUMU · SADELEŞTİRİLMİŞ SORU</div>
+    <div class="paper-sub">BİR TERCİH YAPINIZ · TEK MÜHÜR HAKKI</div>
     <div class="paper-rule"></div>
     <div class="paper-instruction"><span>TERCİH</span><span>MÜHRÜ BURAYA BASINIZ</span></div>
     <div class="paper-rows">
-     <div class="paper-row"><div class="choice"><strong>EVET</strong><span>01 / İLK SEÇENEK</span></div><div class="target-cell"><div class="target" aria-label="Evet seçeneği mühür dairesi"></div></div></div>
-     <div class="paper-row"><div class="choice"><strong>HAYIR</strong><span>02 / İKİNCİ SEÇENEK</span></div><div class="target-cell"><div class="target" aria-label="Hayır seçeneği mühür dairesi"></div></div></div>
+     <div class="paper-row"><div class="choice"><strong>EVET</strong><span>5 FRANKA ÇIKSIN</span></div><div class="target-cell"><div class="target" aria-label="Evet seçeneği mühür dairesi"></div></div></div>
+     <div class="paper-row"><div class="choice"><strong>HAYIR</strong><span>2 FRANK KALSIN</span></div><div class="target-cell"><div class="target" aria-label="Hayır seçeneği mühür dairesi"></div></div></div>
     </div>
     <div class="paper-footer">MÜHÜR İZİ ÇİZGİYE TEMAS EDERSE OYUNDA GEÇERSİZ SAYILIR.</div>
     <div class="paper-micro"><span>AYNEN.FUN / KURGU</span><span>İŞLEM NO: <span id="documentNo">00001</span></span></div>
@@ -284,9 +314,9 @@ animation:inkSpread .33s cubic-bezier(.16,.83,.15,1) both}
    <div class="overlay" id="intro">
     <div class="dialog">
      <div class="mini-kicker">REFERANDUM / AYNEN.FUN</div>
-     <h1>2 frank mı?<br><span>5 frank mı?</span></h1>
-     <p>Bir soru. Bir şans. <strong>Aşırı ağır ve titreyen</strong> mührü 4,5 saniye içinde hizala. <strong>Basılı tut, bırakınca mühürle.</strong></p>
-     <div class="history-fact"><span class="fact-label">GERÇEK REFERANDUM / 7 ARALIK 1958</span><strong>İsviçre, 2 franklık oyun bahis limitini 5 frank yapmak için sandığa gitti.</strong><span>Dönemin izinli Kursaal eğlence salonlarındaki oyunlar için geçerliydi. <a href="https://swissvotes.ch/vote/189.00" target="_blank" rel="noopener noreferrer">Swissvotes arşivi ↗</a></span></div>
+     <h1 class="intro-question">Kumarhanede tek seferde oynanabilecek azami bahis <span>2 franktan 5 franka</span> çıkarılsın mı?</h1>
+     <div class="intro-vote-legend"><div><strong>EVET</strong><span>5 frank olsun</span></div><div><strong>HAYIR</strong><span>2 frank kalsın</span></div></div>
+     <p class="intro-instruction"><strong>4,5 saniye.</strong> Ağır ve titreyen mührü hedefe getir. <strong>Basılı tut, sonra bırak.</strong> Çizgiye değersen oyun biter.</p>
      <div class="rules"><div class="rule"><strong>1</strong>SORU</div><div class="rule"><strong>1</strong>MÜHÜR</div><div class="rule"><strong>4,5</strong>SANİYE</div></div>
      <button class="main-button" id="startBtn">MÜHRÜ ELİNE AL →</button>
     </div>
@@ -297,7 +327,7 @@ animation:inkSpread .33s cubic-bezier(.16,.83,.15,1) both}
      <div class="end-big" id="outcomeTitle">OY GEÇERSİZ</div>
      <p id="outcomeText">Mühür çizgiyi geçti.</p>
      <div class="end-explain" id="outcomeInfo">SAYIM KOMİSYONUNUN BİR AÇIKLAMASI BULUNMAMAKTADIR.</div>
-     <div class="historical-result"><span>GERÇEK REFERANDUM SONUCU · 7 ARALIK 1958</span><strong>%59,89 EVET</strong><small>Kursaal oyunlarında azami bahis 2 franktan 5 franka yükseldi.</small><a href="https://swissvotes.ch/vote/189.00" target="_blank" rel="noopener noreferrer">Kaynak: Swissvotes / Bern Üniversitesi ↗</a></div>
+     <div class="historical-result"><span>FUN FACT / GERÇEK REFERANDUM</span><strong>İsviçre bunu gerçekten oyladı.</strong><small>7 Aralık 1958: Kumarhane türü izinli Kursaal salonlarında azami bahis 2 franktan 5 franka çıkarılsın mı? <b>%59,89 EVET</b> ile kabul edildi.</small><a href="https://swissvotes.ch/vote/189.00" target="_blank" rel="noopener noreferrer">Kaynak: Swissvotes / Bern Üniversitesi ↗</a></div>
      <div class="actions"><button class="main-button" id="retryBtn">TEKRAR DENE ↻</button><button class="secondary-button" id="shareBtn">PAYLAŞ ↗</button></div>
     </div>
    </div>
