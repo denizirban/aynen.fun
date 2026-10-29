@@ -87,6 +87,28 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.game-tile,.tile-illustration,.hub-cat{transition:none}}
 
+/* Responsive desktop layout: prevent the fixed-height scene from cutting off new games. */
+@media (min-width:761px){
+  .desktop-scene{height:auto;min-height:100svh;overflow:visible;padding:34px 3vw 80px}
+  .orbit-cards{
+    display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:22px 14px;align-items:start;width:min(100%,1240px);margin:0 auto
+  }
+  .game-tile{
+    position:relative;top:auto;left:auto;width:clamp(103px,10.6vw,148px);
+    justify-self:center
+  }
+  /* Reserve the middle of the second row for the site cat. */
+  .game-tile:nth-child(8){grid-column:4}
+  .landing-hub{top:192px;width:clamp(120px,10vw,154px)}
+}
+@media (min-width:761px) and (max-width:970px){
+  .desktop-scene{height:auto;padding:34px 2vw 64px}
+  .game-tile{width:clamp(100px,12vw,127px)}
+  .landing-hub{top:195px;width:140px}
+}
+
+
 /* The experiences retain their own compact, window-like presentation. */
 .modal{position:fixed;inset:0;background:rgba(255,255,255,.76);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
 .modal.on{display:flex}
