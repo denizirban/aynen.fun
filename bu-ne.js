@@ -5,7 +5,7 @@ const entries = window.BU_NE_OBJECTS || [];
 const $ = id => document.getElementById(id);
 const shell = $('object-shell'), photo = $('photo'), qa = $('questionarea');
 const imageCache = new Map(), answered = new Map();
-let deck=[], position=0, lastId=-1, examined=0, pageToken=0, imageToken=0, viewed = new Set(), busy=false;
+let deck=[], position=0, lastId=-1, examined=0, pageToken=0, imageToken=0, displayedImageId=null, viewed = new Set(), busy=false;
 const pad = n => String(n).padStart(3,'0');
 const esc = x => String(x).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function shuffle(xs) { for(let i=xs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [xs[i],xs[j]]=[xs[j],xs[i]];} return xs; }
@@ -17,18 +17,20 @@ function startDeck(previous) {
 }
 function current(){return entries[deck[position]];}
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2000);}
+/* Verified Commons file names. Prefer explicit object photos over a live search
+   on every page view: the Wikimedia search APIs can fail or be rate-limited. */
 const photoDirect={
+ 'MEMS Jiroskop':'Mpu6050-small-top-HD.jpg',
  'Ferrofluid':'Ferrofluid-1.JPG',
  'Prens Rupert Damlası':'Prince Ruperts drops.jpg',
  'Aerojel':'Aerogel.jpg',
  'Işık Değirmeni':'Crookes radiometer.jpg',
- 'Lav Lambası':'Lava_lamp_%28yellow%29.jpg',
- 'Bimetal Şerit':'Bimetallic strip.JPG'
+ 'Silikon Wafer':'Silicon wafer.jpg'
 };
 const commonsFile = name => 'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(name);
-const commonsSpecial = name => 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(name)+'?width=900';
+const commonsSpecial = name => 'https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/'+encodeURIComponent(name)+'&width=900';
 const timeoutFetch = async(url) => {
- const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),8500);
+ const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),6500);
  try { const res=await fetch(url,{signal:controller.signal,mode:'cors',credentials:'omit'}); if(!res.ok)throw Error('HTTP '+res.status);return res.json(); }
  finally { clearTimeout(timer); }
 };
@@ -41,7 +43,7 @@ function maybeImage(src){
   if(!src)return resolve(false);
   const im=new Image();let settled=false;
   const done=ok=>{if(settled)return;settled=true;clearTimeout(timer);resolve(ok)};
-  const timer=setTimeout(()=>done(false),9000);
+  const timer=setTimeout(()=>done(false),7500);
   im.onload=()=>done(im.naturalWidth>100 && im.naturalHeight>100);
   im.onerror=()=>done(false);
   im.src=src;
@@ -77,38 +79,51 @@ async function getCommonsImage(o){
  }
  throw Error('No photograph found');
 }
+/* A photo is only replaced after the new image has actually loaded.
+   Failed sources never leave the browser's broken-image alt text on screen. */
 async function loadPicture(o, requestId){
  const alt=o.name+' nesnesinin görseli';
  photo.alt=alt;
- photo.removeAttribute('src');
- shell.classList.add('loading');shell.classList.remove('error','zoom');
- $('photo-caption').textContent='GÖRSEL YÜKLENİYOR';
+ shell.classList.add('loading');
+ shell.classList.remove('error','zoom');
+ $('photo-caption').textContent='NESNE GÖRSELİ ARANIYOR';
  $('photo-credit').href=o.link;
- const saved=imageCache.get(o.id);
- const tryImage=async(candidate)=>{
+ photo.removeAttribute('src');
+ const show = async(candidate)=>{
   if(!candidate)return false;
   const ok=await maybeImage(candidate.src);
   if(requestId!==imageToken)return true;
-  if(ok){photo.onload=()=>{if(requestId===imageToken)shell.classList.remove('loading','error')};photo.onerror=()=>{if(requestId===imageToken)shell.classList.add('error')};photo.src=candidate.src;if(photo.complete&&photo.naturalWidth>0)shell.classList.remove('loading','error');$('photo-caption').textContent='GÖRSEL / NESNE';$('photo-credit').href=candidate.credit||o.link;imageCache.set(o.id,candidate);return true;}
-  return false;
+  if(!ok)return false;
+  photo.onerror=()=>{if(requestId===imageToken){photo.removeAttribute('src');shell.classList.remove('loading');shell.classList.add('error');$('photo-caption').textContent='GÖRSEL ERİŞİLEMİYOR';}};
+  photo.onload=()=>{if(requestId===imageToken){shell.classList.remove('loading','error');$('photo-caption').textContent='GERÇEK NESNE FOTOĞRAFI';}};
+  photo.src=candidate.src;
+  $('photo-credit').href=candidate.credit||o.link;
+  imageCache.set(o.id,candidate);
+  if(photo.complete&&photo.naturalWidth>0){shell.classList.remove('loading','error');$('photo-caption').textContent='GERÇEK NESNE FOTOĞRAFI';}
+  return true;
  };
- if(saved && await tryImage(saved))return;
+ const cached=imageCache.get(o.id);
+ if(cached && await show(cached))return;
+ if(requestId!==imageToken)return;
+ const fixed=photoDirect[o.name];
+ if(fixed && await show({src:commonsSpecial(fixed),credit:commonsFile(fixed)}))return;
  if(requestId!==imageToken)return;
  try {
   const result=await getWikipediaImage(o);
-  if(await tryImage(result))return;
+  if(await show(result))return;
  } catch(e){}
  if(requestId!==imageToken)return;
  try {
   const result=await getCommonsImage(o);
-  if(await tryImage(result))return;
+  if(await show(result))return;
  } catch(e){}
  if(requestId!==imageToken)return;
- const staticFilename=photoDirect[o.name];
- if(staticFilename && await tryImage({src:commonsSpecial(staticFilename),credit:commonsFile(staticFilename)}))return;
- if(requestId!==imageToken)return;
- photo.removeAttribute('src');shell.classList.remove('loading');shell.classList.add('error');
- $('photo-caption').textContent='GÖRSEL YÜKLENEMEDİ';$('photo-credit').href=o.link;
+ photo.removeAttribute('src');
+ photo.alt='';
+ shell.classList.remove('loading');
+ shell.classList.add('error');
+ $('photo-caption').textContent='FOTOĞRAFA ERİŞİLEMİYOR · TEMSİLÎ GÖRSEL';
+ $('photo-credit').href=o.link;
 }
 function updateLabels(){
  const o=current(),isAnswered=answered.has(o.id);
@@ -129,7 +144,7 @@ function render(){
  const token=++pageToken;
  updateLabels();
  shell.style.setProperty('--object-scale',o.name==='Işık Değirmeni'?'0.87':o.name==='Lav Lambası'?'0.90':'1');
- loadPicture(o,++imageToken);
+ if(displayedImageId!==o.id){displayedImageId=o.id;loadPicture(o,++imageToken);}
  if(!isAnswered){
   qa.innerHTML='<p class="ask">'+esc(o.question)+'</p><div class="choices">'+o.choices.map((choice,i)=>'<button class="choice" data-answer="'+i+'"><span class="number">'+String(i+1).padStart(2,'0')+'</span><span>'+esc(choice)+'</span></button>').join('')+'</div><button class="reveal-answer" type="button" id="show-answer">BİLMİYORUM, GÖSTER ↗</button>';
   qa.querySelectorAll('[data-answer]').forEach(b=>b.addEventListener('click',()=>{if(token===pageToken)answerCurrent(Number(b.dataset.answer));}));
