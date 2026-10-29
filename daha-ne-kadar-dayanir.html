@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="tr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f7f4">
+<meta name="description" content="Bir nesne seç. Koşulları değiştir. Zamanı ileri sar. Gerçekte nasıl eskidiğini keşfet.">
+<title>Daha Ne Kadar Dayanır? — aynen.fun</title><link rel="icon" href="/favicon.ico">
+<style>
+:root{--paper:#f7f7f4;--ink:#171717;--muted:#858580;--edge:#c8c8c3;--orange:#ef683f}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #ef683f;outline-offset:3px}
+.mono{font-family:"Courier New",Courier,monospace}
+header{height:67px;padding:21px clamp(18px,4vw,52px) 0;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;font-size:10px}
+.logo{font-weight:850;text-decoration:none;font-size:13px;letter-spacing:-.055em;position:relative;z-index:1}
+.logo:before{content:"";position:absolute;z-index:-1;left:4px;top:-19px;width:75px;height:56px;background:radial-gradient(ellipse at center,rgba(238,95,39,.52),transparent 70%);filter:blur(9px);pointer-events:none}
+.headstatus{text-align:right;font-size:9px;line-height:1.55;font-weight:bold;letter-spacing:.035em}.headstatus span{color:var(--muted)}
+main{width:min(1400px,100%);min-height:calc(100dvh - 175px);padding:6px clamp(18px,4vw,52px) 14px;margin:auto;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(335px,.8fr);gap:clamp(10px,2vw,34px);align-items:center}
+.scene{position:relative;height:min(69dvh,660px);min-height:380px;overflow:hidden;display:flex;align-items:center;justify-content:center;isolation:isolate;touch-action:pan-y}
+.scene:before{content:"";position:absolute;inset:10% 14% 11%;z-index:-1;background:radial-gradient(ellipse at center,rgba(234,228,212,.62) 0%,rgba(240,235,224,.24) 42%,transparent 74%);filter:blur(16px)}
+.scene:after{content:"";position:absolute;left:16%;right:16%;bottom:11%;height:19px;border-radius:50%;background:#2b272414;filter:blur(18px);z-index:0}
+.object-stage{position:relative;z-index:1;width:min(85%,620px);height:86%;display:flex;align-items:center;justify-content:center}
+.object-stage svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 17px 12px #2b251b18)}
+.object-stage svg .aging{opacity:var(--aging,.1);transition:opacity .19s}
+.object-stage svg .dust{opacity:calc(var(--aging,.1) * .6);transition:opacity .19s}
+.object-stage svg .cracked{opacity:calc(var(--aging,.1) * var(--aging,.1));transition:opacity .19s}
+.object-stage svg .fresh{opacity:calc(1 - var(--aging,.1) * .65)}
+.scene-label{position:absolute;left:14px;bottom:13px;font-size:9px;letter-spacing:.06em;font-weight:bold;color:#777;z-index:2}
+.scene-counter{position:absolute;right:14px;bottom:13px;font-size:9px;color:#888;z-index:2}
+.time-ghost{position:absolute;left:50%;top:39%;transform:translate(-50%,-50%);font-weight:900;line-height:1;letter-spacing:-.09em;font-size:clamp(58px,9vw,144px);color:#17171706;pointer-events:none;z-index:-1;white-space:nowrap}
+.panel{border:1px solid #aaa9a3;background:#f9f9f6de;max-height:calc(100dvh - 123px);display:flex;flex-direction:column;overflow:hidden}
+.panel .top{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;border-bottom:1px solid var(--edge);font:700 9px "Courier New",monospace}
+.panel .top a{text-decoration:none}
+.panel-scroll{padding:14px 17px 0;overflow-y:auto;scrollbar-width:thin;min-height:0}
+.kicker{font:9px/1.5 "Courier New",monospace;color:#888;letter-spacing:.06em}
+h1{font-size:clamp(28px,3vw,43px);font-weight:650;line-height:.99;letter-spacing:-.078em;margin:10px 0 8px;max-width:350px}
+.intro{font-size:12px;line-height:1.6;color:#777;margin:0 0 18px}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:9px;font-size:9px;font-weight:700;letter-spacing:.055em;margin:0 0 9px}
+.section-title span{color:#858580;font-weight:400}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.env{min-height:37px;border:1px solid var(--edge);background:#fff9;padding:8px 9px;text-align:left;font-size:11px;letter-spacing:-.015em;display:flex;align-items:center;justify-content:space-between;gap:5px}
+.env.on{border-color:#252525;background:#e8e8e3}
+.env:hover{border-color:#444}
+.env .dot{border:1px solid #888;width:9px;height:9px;flex:none;border-radius:50%}
+.env.on .dot{background:#1b1b1b;border-color:#1b1b1b;box-shadow:inset 0 0 0 2px #e8e8e3}
+.slider-head{display:flex;justify-content:space-between;align-items:end;margin-top:22px;gap:12px}
+.time-label{font-size:clamp(28px,3vw,43px);font-weight:700;letter-spacing:-.07em;line-height:1}
+.time-unit{font:10px/1.5 "Courier New",monospace;color:#777}
+.slider-wrap{padding:17px 0 3px;position:relative}
+input[type=range]{width:100%;display:block;cursor:ew-resize;accent-color:#222;appearance:none;background:linear-gradient(to right,#242424 0%,#242424 var(--pct,0%),#e2e2dc var(--pct,0%),#e2e2dc 100%);height:3px;border:0;border-radius:3px}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:#171717;border:3px solid #f7f7f4;box-shadow:0 0 0 1px #171717}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#171717;border:3px solid #f7f7f4;box-shadow:0 0 0 1px #171717}
+.ticks{display:flex;justify-content:space-between;color:#999;font:9px/1.8 "Courier New",monospace;padding-top:8px}
+.actions{display:flex;gap:7px;margin:13px 0 16px}
+.btn{flex:1;background:#efefe9;border:1px solid #a8a8a2;min-height:39px;font-size:10px;font-weight:bold;padding:9px 12px}
+.btn.primary{background:#222;color:white;border-color:#222}
+.btn:hover{filter:brightness(.94)}
+.meter{border-top:1px solid #d0d0ca;padding:12px 0 14px}
+.meter-title{display:flex;justify-content:space-between;gap:12px;font:700 10px "Courier New",monospace}
+.meter-track{width:100%;height:5px;background:#e3e3dc;margin:11px 0 5px}
+.meter-fill{height:100%;background:#202020;width:100%;transition:width .12s}
+.meter-note{font-size:10px;color:#777;line-height:1.4}
+.event{padding:10px 13px;border:1px solid #bebdb7;min-height:60px;background:#fff9}
+.event .tag{font:9px/1.2 "Courier New",monospace;color:#878780}
+.event p{font-size:12px;line-height:1.45;font-weight:600;margin:6px 0 0;letter-spacing:-.018em}
+.expand{border:0;background:none;padding:13px 0;width:100%;display:flex;justify-content:space-between;text-align:left;font-size:10px;font-weight:bold;text-decoration:underline;text-underline-offset:3px}
+.details{display:none;border-top:1px solid #cccac5;padding:12px 0 18px;font-size:11px;line-height:1.65;color:#444}
+.details.open{display:block}.details p{margin:0 0 10px}.details a{font:10px "Courier New",monospace;text-underline-offset:3px}
+.panel-foot{border-top:1px solid #b5b4af;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#efefeb}
+.panel-foot small{font:9px/1.4 "Courier New",monospace;color:#858580}
+.panel-foot button{border:1px solid #333;background:#fff;padding:9px 11px;font-size:10px;font-weight:bold}
+.objects{width:min(1400px,100%);padding:0 clamp(18px,4vw,52px) 14px;margin:auto}
+.objects-head{display:flex;justify-content:space-between;font:9px "Courier New",monospace;color:#868680;padding:0 0 10px}
+.object-strip{display:flex;overflow-x:auto;scrollbar-width:thin;gap:6px;padding:0 0 6px}
+.obj-tab{flex:0 0 auto;border:1px solid #d1d1cb;background:#f9f9f6;min-height:45px;padding:10px 12px;display:flex;align-items:center;gap:11px;font-size:11px;white-space:nowrap}
+.obj-tab .n{font:9px "Courier New",monospace;color:#aaa}
+.obj-tab.on{border-color:#222;background:#deded8}.obj-tab:hover{border-color:#555}
+footer{padding:4px clamp(18px,4vw,52px) 12px;display:flex;justify-content:space-between;gap:12px;color:#858580;font:9px "Courier New",monospace}
+footer a{text-decoration:none}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:10px 14px;background:#171717;color:white;font-size:11px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
+.toast.show{opacity:1}
+@media(max-width:900px){header{height:58px;padding-top:17px}main{min-height:0;grid-template-columns:1fr;gap:0;padding-bottom:5px}.scene{height:clamp(250px,40dvh,410px);min-height:0}.object-stage{height:91%;width:min(85%,490px)}.panel{max-height:none;margin-top:2px}.panel-scroll{overflow:visible}.objects{margin-top:14px}.scene-label,.scene-counter{bottom:4px}}
+@media(max-width:500px){header{padding:14px 15px 0;height:48px}.headstatus{font-size:8px}main{padding:0 12px}.scene{height:clamp(235px,34dvh,330px)}.object-stage{height:92%;width:88%}.panel .top{padding:10px 12px}.panel-scroll{padding:11px 13px 0}h1{font-size:31px;margin:7px 0}.intro{font-size:11px;margin-bottom:13px}.env{font-size:11px;min-height:36px}.slider-head{margin-top:15px}.time-label{font-size:34px}.actions{margin:10px 0}.objects{padding:0 12px 14px}.objects-head{font-size:8px}.obj-tab{min-height:40px;padding:8px 10px;font-size:10px}footer{padding:0 12px 12px;line-height:1.4}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+</style></head>
+<body>
+<header><a class="logo" href="/">AYNEN.</a><div class="headstatus mono">DENEY / ZAMAN <span>01</span><br><span>SİMÜLASYON · GERÇEK DÜNYA</span></div></header>
+<main>
+<section class="scene" aria-label="Nesnenin zaman içinde değişen görsel simülasyonu">
+ <div class="time-ghost mono" id="ghost">ŞİMDİ</div>
+ <div class="object-stage" id="art" aria-hidden="true"></div>
+ <span class="scene-label mono" id="scene-label">01 / MUZ</span>
+ <span class="scene-counter mono" id="scene-counter">ÖRNEK SENARYO</span>
+</section>
+<section class="panel">
+ <div class="top"><span>NE KADAR DAYANIR?</span><a href="/">← OYUNLARA DÖN</a></div>
+ <div class="panel-scroll">
+  <div class="kicker" id="type">01 — ORGANİK MADDE</div>
+  <h1 id="name">Daha Ne Kadar<br>Dayanır?</h1>
+  <p class="intro">Ortamı değiştir. Zamanı ileri sar. Bakalım ne kalacak.</p>
+  <div class="section-title">NEREDEN BAKIYORUZ? <span id="weather-label">KOŞUL SEÇ</span></div>
+  <div class="options" id="environments"></div>
+  <div class="slider-head"><div><div class="kicker">ARADAN GEÇEN ZAMAN</div><div class="time-label" id="time-label">0 gün</div></div><span class="time-unit" id="time-ceiling">0 — 24 GÜN</span></div>
+  <div class="slider-wrap"><input id="time" type="range" min="0" max="100" value="0" step=".2" aria-label="Zamanı ileri veya geri sar"><div class="ticks"><span>ŞİMDİ</span><span id="timeline-mid">ORTASI</span><span id="timeline-end">SON</span></div></div>
+  <div class="actions"><button class="btn primary" id="play">▶ ZAMANI AKIT</button><button class="btn" id="reset">↺ BAŞA DÖN</button></div>
+  <div class="meter"><div class="meter-title"><span id="meter-name">TAHMİNİ KULLANIM DURUMU</span><span id="meter-pct">YENİ</span></div><div class="meter-track"><div class="meter-fill" id="meter-fill"></div></div><div class="meter-note" id="meter-note">İllüstratif model; gerçek ürün ölçümü değildir.</div></div>
+  <div class="event" aria-live="polite"><span class="tag" id="event-tag">ŞİMDİ / NESNE</span><p id="event-text">Bir şeyler henüz değişmedi.</p></div>
+  <button class="expand" id="expand" aria-expanded="false">PEKİ GERÇEKTE NE OLUYOR? <span id="expand-arrow">+</span></button>
+  <div class="details" id="details"><p id="explain"></p><p id="fact"></p><p id="caution"></p><a id="source" target="_blank" rel="noopener noreferrer">KAYNAĞI GÖR ↗</a></div>
+ </div>
+ <div class="panel-foot"><small id="model-note">MODEL / YAKLAŞIK · ÖRNEK SENARYO</small><button id="share">PAYLAŞ ↗</button></div>
+</section>
+</main>
+<section class="objects"><div class="objects-head"><span>NESNE SEÇ / 10</span><span>SAĞA KAYDIR →</span></div><nav class="object-strip" id="objects" aria-label="Nesne seçimi"></nav></section>
+<footer><span>AYNEN.FUN · HER ŞEY ESKİR. BAZI ŞEYLER SADECE YAVAŞ.</span><a href="/">TÜM OYUNLAR ↗</a></footer>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const ITEMS=[{"id":"banana","name":"Muz","sub":"Organik madde","max":24,"base":8,"unit":"days","environments":[["Tezgâh",1],["Sıcak mutfak",1.7],["Buzdolabı",0.45],["Kapalı poşet",1.35]],"events":["Sarı. Gayet ikna edici.","Kabukta koyu benekler beliriyor.","Yumuşuyor. Smoothie ihtimali yükseldi.","Bozulma belirgin; güvenli tüketim ayrı değerlendirilmeli."],"explain":"Muz hasattan sonra da olgunlaşır. Etilen gazı süreci etkiler; sıcaklık arttıkça doku daha hızlı yumuşayabilir. Olgun muz buzdolabında daha yavaş yumuşar ama kabuğu kararabilir.","fun":"Kabuğun koyulaşması içinin aynı hızda bozulduğu anlamına gelmez.","material":"Meyve dokusu","source":"https://nutritionsource.hsph.harvard.edu/food-features/bananas/","context":"Bu bir gıda güvenliği testi değil. Küf ve kötü koku varsa tüketme.","shelf":"Görünüm, iç kaliteyi tek başına anlatmaz.","ending":"Muzun planı smoothie olmaktı. Sen engelledin."},{"id":"cable","name":"Şarj Kablosu","sub":"Elektronik aksesuar","max":2555,"base":540,"unit":"days","environments":[["Masada",1],["Sürekli bükülüyor",2.1],["Sıcak arabada",1.65],["Çekmecede",0.25]],"events":["Kablo yeni gibi.","Dış kılıfta yüzeysel izler var.","Konnektör yakını zorlanıyor.","Kılıf hasarlı. Kullanmak yerine değiştirmek güvenli olabilir."],"explain":"Kablonun ömrü yalnızca zamanla değil bükülme, çekilme, sürtünme ve sıcaklıkla değişir. Özellikle uç bağlantı bölgesindeki tekrar eden mekanik yük çatlaklara yol açabilir.","fun":"Kablo çoğunlukla ortasından değil, sürekli bükülen ucundan yorulur.","material":"Bakır + polimer","source":"https://www.ifixit.com/News","context":"Çıplak tel veya ısınma varsa kullanma. Görünümden elektrik güvenliği hesaplanamaz.","shelf":"Kullanım döngüleri ve mekanik yük önemli.","ending":"Şarj ediyor. Biraz oynatırsan etmiyor. Tanıdık."},{"id":"sponge","name":"Bulaşık Süngeri","sub":"Mutfak","max":120,"base":18,"unit":"days","environments":[["Günlük kullanım",1],["Sürekli ıslak",1.6],["Her kullanımdan sonra kuruyor",0.65],["Sıcak ve nemli",1.75]],"events":["Yeni sünger, yeni umutlar.","Renk ve doku değişiyor.","Kenarları ufalanıyor, koku oluşabilir.","Yıprandı. Hijyen için çoktan değiştirilmesi gerekebilir."],"explain":"Sünger gözenekleri su ve organik kalıntılar tutabilir. Nemli ortamlar mikroorganizmalar için uygun olabilir; görünümünün iyi olması temiz olduğunu kanıtlamaz.","fun":"Temizlik aracının kendisi de düzenli temizlenmesi veya değiştirilmesi gereken bir nesnedir.","material":"Poliüretan köpük","source":"https://ask.fsis.usda.gov/article/How-do-I-clean-my-kitchen-sponge","context":"Hijyen için yalnızca görsel yıpranma seviyesine güvenme.","shelf":"Temiz görünmesi güvenli olduğu anlamına gelmez.","ending":"Evi temizledi. Sonra ev ondan şüphelendi."},{"id":"tshirt","name":"Beyaz Tişört","sub":"Tekstil","max":3650,"base":900,"unit":"days","environments":[["Normal kullanım",1],["Sık sıcak yıkama",1.65],["Güneşte kuruyor",1.45],["Dolapta",0.22]],"events":["Beyaz. Hatta gerçekten beyaz.","Yaka ve dikişlerde yumuşama var.","Tonu soldu, kumaş inceldi.","Ev tişörtü olarak terfi etti."],"explain":"Pamuk lifleri yıkama, sürtünme, ısı ve UV ışığıyla zaman içinde yıpranır. Sık ve yüksek sıcaklıkta yıkama çekme ve solmayı artırabilir.","fun":"Çoğu tişört tamamen işe yaramadan önce rol değiştirir: dışarıdan eve.","material":"Pamuk / tekstil","source":"https://www.epa.gov/recycle/textiles","context":"Görsel eskime ile kumaşın kullanılabilirliği farklı şeylerdir.","shelf":"Onarılabilir ve yeniden kullanılabilir.","ending":"Artık dışarı çıkmıyor. Evde kariyeri başladı."},{"id":"battery","name":"Telefon Bataryası","sub":"Lityum iyon","max":3650,"base":1050,"unit":"days","environments":[["Günlük kullanım",1],["Sıcak araba",2.2],["Uzun süre tam dolu ve sıcakta",1.85],["Serin saklama",0.6]],"events":["Kapasite yeni gibi.","Azalan kapasite fark edilebilir.","Daha sık şarj gerekiyor.","Performansı belirgin düşmüş olabilir."],"explain":"Lityum iyon piller hem kullanım döngüleriyle hem de depolama sırasında kimyasal olarak yaşlanır. Yüksek sıcaklık ve uzun süre yüksek şarj seviyesi kapasite kaybını hızlandırabilir.","fun":"Pil kullanmasan da yıllar içinde yaşlanabilir.","material":"Li-ion hücre","source":"https://www.apple.com/batteries/maximizing-performance/","context":"Şişme, aşırı ısınma veya hasar güvenlik sorunudur. Bu model pil sağlığını ölçmez.","shelf":"Sıcaklık ve şarj alışkanlıkları belirleyici.","ending":"Telefonun hâlâ iyi. Prizle artık ciddi bir ilişkin var."},{"id":"sunscreen","name":"Güneş Kremi","sub":"Kozmetik / SPF","max":1460,"base":1095,"unit":"days","environments":[["Evde gölgede",1],["Sıcak arabada",1.9],["Plaj çantasında güneşte",1.65],["Serin dolapta",0.8]],"events":["Ambalaj sağlam, tarih kontrolü önemli.","Yüksek ısıya maruz kalması riski artırabilir.","Doku veya koku değişimi görülebilir.","Süre dolduysa kullanma; etiket tarihini kontrol et."],"explain":"SPF ürünleri için üreticinin son kullanma tarihi belirleyicidir. FDA, tarihsiz ürünlerde satın alımdan itibaren üç yıl sınırını önerir. Isı ve doğrudan güneş ürünün kararlılığını olumsuz etkileyebilir.","fun":"Cildini güneşten koruyan ürün, kendisi güneşte bekletilmemeli.","material":"UV filtreleri + taşıyıcı formül","source":"https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun","context":"Grafik SPF etkinliği ölçümü değildir; son kullanma tarihi geçerse kullanma.","shelf":"Ambalaj ve son kullanma tarihi öncelikli.","ending":"Korumaya çalıştığın güneşte kendisini unuttun."},{"id":"sneaker","name":"Spor Ayakkabı","sub":"Giyilebilir ürün","max":2555,"base":600,"unit":"days","environments":[["Günlük şehir yürüyüşü",1],["Her gün koşu",2],["Yağmur ve çamur",1.45],["Dolapta",0.35]],"events":["Taban yeni, çizgiler yerinde.","Tabanda aşınma başlıyor.","Yastıklama ve tutuş azalabilir.","Taban aşınmış. Kullanım biçimine göre değiştirme zamanı olabilir."],"explain":"Ayakkabı tabanı aşınır, orta taban köpüğü zamanla ve yükle yastıklama özelliğini kaybedebilir. Koşu ayakkabısında kilometre sayısı yalnızca takvim yaşından daha açıklayıcı olabilir.","fun":"Koşu ayakkabılarında sık aktarılan değişim aralığı yaklaşık 300–500 mildir; herkeste aynı değildir.","material":"Kauçuk + köpük + tekstil","source":"https://www.rei.com/learn/expert-advice/replace-shoes.html","context":"Bu sahne adım veya kilometre sayacı değildir.","shelf":"Kilometre, kullanım zemini ve taban yapısı önemli.","ending":"Ayakkabı yorgun. Sen de."},{"id":"earbuds","name":"Kablosuz Kulaklık","sub":"Elektronik","max":3650,"base":900,"unit":"days","environments":[["Günlük müzik",1],["Sporda ter",1.4],["Nemli çantada",1.6],["Kutuda saklı",0.5]],"events":["Ses geliyor. Her şey yolunda.","Şarj süresi azalmaya başlayabilir.","Batarya ve yüzeyler yıpranıyor.","Daha sık şarj, daha az müzik."],"explain":"Kablosuz kulaklıkların küçük lityum iyon pilleri yıllar ve şarj döngüleriyle kapasite kaybedebilir. Ter ve nemin etkisi cihazın koruma derecesine göre değişir.","fun":"Kulaklığın küçük bataryası değiştirilemiyorsa cihazın ömrünü sınırlayabilir.","material":"Plastik + elektronik + pil","source":"https://www.apple.com/batteries/maximizing-performance/","context":"Suya dayanıklılık, kalıcı su geçirmezlik anlamına gelmez.","shelf":"Batarya yaşlanması ses kalitesinden önce hissedilebilir.","ending":"Müzik devam ediyor. Şarj kutusu pek emin değil."},{"id":"card","name":"Banka Kartı","sub":"Plastik ve çip","max":3650,"base":1500,"unit":"days","environments":[["Cüzdanda",1],["Arka cepte bükülüyor",1.8],["Güneşte arabada",1.55],["Çekmecede",0.35]],"events":["Dört köşesi de yerinde.","Yüzey çizikleri beliriyor.","Kart eğilebilir, baskı silinebilir.","Çip veya anten hasarlıysa işlem başarısız olabilir."],"explain":"Kartlar genellikle katmanlı polimerlerden üretilir. Bükülme, sıcaklık ve sürtünme çip temaslarını, anteni veya baskıyı zamanla yıpratabilir.","fun":"Temassız kartın içinde görünmez anten halkası vardır.","material":"Polimer + metal + çip","source":"https://www.emvco.com/emv-technologies/contactless/","context":"Gerçek son kullanma tarihi kartın üzerinde yazan tarihtir.","shelf":"İşlevsel eskimeyle kartın geçerlilik tarihi aynı değildir.","ending":"Kart çalışıyor. Sadece köşeleri biraz hayat görmüş."},{"id":"bottle","name":"Plastik Şişe","sub":"PET ambalaj","max":36500,"base":120,"unit":"days","environments":[["Evde kullanım",1],["Güneş altında",1.9],["Denizde",1.4],["Kapalı alanda saklı",0.5]],"events":["Şişe biçimini koruyor.","Yüzeyde sararma veya yıpranma oluşabilir.","Çatlaklar ve daha küçük parçalar ortaya çıkabilir.","Parçalanmış olabilir; bu, doğadan yok olduğu anlamına gelmez."],"explain":"PET gibi yaygın plastikler UV, ısı ve mekanik etkiler altında parçalanabilir. Ancak parçalanma, malzemenin tamamen biyolojik olarak ayrışması demek değildir; mikroplastikler kalabilir.","fun":"Büyük parçanın gözden kaybolması, mikroplastik olarak yok olduğu anlamına gelmez.","material":"Polietilen tereftalat (PET)","source":"https://marinedebris.noaa.gov/what-marine-debris/plastic","context":"Çevrede çözünme için tek bir kesin yıl sayısı bilimsel olarak verilemez.","shelf":"Bu nesnede çizgi, ömür değil çevredeki parçalanmayı gösterir.","ending":"Şişe küçüldü. Problem küçülmedi."}];
+const $=id=>document.getElementById(id);
+let objIndex=0,environment=0,progress=0,raf=0,playStart=0,playInitial=0,notesOpen=false;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function formatTime(day){
+ if(day < 1) return day===0?'0 gün':Math.max(1,Math.round(day*24))+' saat';
+ if(day<60) return (day<10?day.toFixed(1):Math.round(day))+' gün';
+ if(day<650)return +(day/30.4375).toFixed(1)+' ay';
+ return +(day/365.25).toFixed(1)+' yıl';
+}
+function timePassed(item){return item.max*Math.pow(progress/100,1.74)}
+function conditions(){return ITEMS[objIndex].environments[environment]}
+function decay(){const o=ITEMS[objIndex],t=timePassed(o)*conditions()[1];return clamp(t/o.base,0,1.6)}
+function state(){return clamp(decay()/1.35,0,1)}
+function stage(){const v=decay();return v<.22?0:v<.65?1:v<1.15?2:3}
+function color(a,b,t){const hex=x=>x.replace('#','');const aa=hex(a),bb=hex(b);return '#'+[0,2,4].map(i=>Math.round(parseInt(aa.slice(i,i+2),16)*(1-t)+parseInt(bb.slice(i,i+2),16)*t).toString(16).padStart(2,'0')).join('')}
+function svgShell(content){
+ const defs='<defs><linearGradient id="body" x1="0" y1="0" x2=".95" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#f2f1eb" stop-opacity=".1"/><stop offset="1" stop-color="#111" stop-opacity=".13"/></linearGradient><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".4" stop-color="#dad9d6"/><stop offset=".68" stop-color="#a6a6a4"/><stop offset="1" stop-color="#efefee"/></linearGradient><pattern id="grain" width="13" height="12" patternUnits="userSpaceOnUse"><circle cx="4" cy="5" r="1.5" fill="#322d25" opacity=".5"/><circle cx="10" cy="8" r=".6" fill="#151515" opacity=".45"/></pattern><filter id="soft"><feGaussianBlur stdDeviation="3"/></filter></defs>';
+ return '<svg viewBox="0 0 640 520" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">'+defs+content+'</svg>';
+}
+function marks(count,seed,bounds){
+ let s='';for(let i=0;i<count;i++){const x=bounds[0]+((i*71+seed*19)%bounds[2]),y=bounds[1]+((i*43+seed*23)%bounds[3]),r=2+((i*13+seed)%6);s+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#5a4930" opacity="'+(.15+(i%3)*.15)+'"/>'}return s;
+}
+function drawObject(o,v){
+ const d=clamp(v/1.1,0,1),brown=color('#edc43d','#83623c',d),tan=color('#f8f8f6','#c6c2b5',d),pale=color('#fefefe','#b3ada0',d);
+ let s='';
+ if(o.id==='banana'){
+ s='<g transform="translate(-7 -9) rotate(-14 320 260)"><path d="M140 197 C177 358 337 424 477 298 C503 272 506 257 508 225 C440 300 300 338 224 271 C192 242 172 210 160 170Z" fill="'+brown+'" stroke="#4b4429" stroke-width="5" stroke-linejoin="round"/><path d="M172 209C241 333 381 345 488 264" stroke="'+color('#ffe985','#a59359',d)+'" stroke-width="16" fill="none" opacity=".7"/><path d="M153 171 L150 144 L162 131 L175 180Z" fill="#6b5934"/><path d="M501 235L519 220L518 237L506 253Z" fill="#564936"/><g class="aging">'+marks(52,3,[193,225,270,105])+'</g></g>';
+ } else if(o.id==='cable'){
+ s='<path d="M142 150 C118 276 175 390 318 370 C465 354 506 220 410 185 C336 159 309 261 375 281" fill="none" stroke="#98958c" stroke-width="31" stroke-linecap="round" opacity=".38"/><path d="M142 150 C118 276 175 390 318 370 C465 354 506 220 410 185 C336 159 309 261 375 281" fill="none" stroke="'+pale+'" stroke-width="23" stroke-linecap="round"/><path d="M142 150 C118 276 175 390 318 370" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".85"/><g transform="rotate(-15 145 142)"><rect x="124" y="105" width="43" height="68" rx="12" fill="'+tan+'" stroke="#7d7c75" stroke-width="2"/><rect x="130" y="68" width="31" height="43" rx="3" fill="url(#metal)" stroke="#777" stroke-width="2"/><rect x="137" y="64" width="17" height="8" rx="2" fill="#5a5a59"/></g><g transform="rotate(-31 383 283)"><rect x="359" y="263" width="43" height="46" rx="11" fill="'+tan+'" stroke="#89857d" stroke-width="2"/><rect x="367" y="230" width="27" height="39" rx="3" fill="url(#metal)" stroke="#777" stroke-width="2"/></g><g class="cracked" stroke="#4a4a44" fill="none" stroke-width="2"><path d="M130 180l18 12-16 12m10-3l-19 9M377 310l14-5-10 16"/></g>';
+ } else if(o.id==='sponge'){
+ s='<g transform="rotate(-14 320 260)"><rect x="174" y="157" width="305" height="205" rx="'+(26-d*13)+'" fill="'+color('#e7ca58','#8d9456',d)+'" stroke="#8c8642" stroke-width="3"/><rect x="174" y="157" width="305" height="65" rx="13" fill="'+color('#65a9a2','#6c7970',d)+'" opacity=".96"/><rect x="179" y="224" width="295" height="135" rx="19" fill="url(#grain)" opacity=".28"/><path d="M180 256 C260 232 353 294 473 261" fill="none" stroke="#fff" stroke-width="8" opacity=".25"/><g class="aging">'+marks(45,2,[190,237,262,110])+'</g><g class="cracked" stroke="#46432f" stroke-width="3" fill="none"><path d="M184 306l13 9-9 18m278-38l-15 13 4 17"/></g></g>';
+ } else if(o.id==='tshirt'){
+ s='<path d="M246 130Q317 166 389 130L490 189 444 275 400 253 410 418 226 418 236 253 192 275 149 189Z" fill="'+pale+'" stroke="#8d8d83" stroke-width="4" stroke-linejoin="round"/><path d="M279 144Q317 221 353 144" stroke="#b7b7b0" stroke-width="5" fill="none"/><path d="M248 254l-2 158m144-158l2 158" stroke="#c8c5bc" stroke-width="2" stroke-dasharray="8 5"/><path d="M230 415L405 415" stroke="#cccac4" stroke-width="7"/><g class="aging"><path d="M253 319Q320 342 379 309L402 362Q311 396 232 362Z" fill="#8e8376" opacity=".25"/>'+marks(30,9,[248,190,150,190])+'</g><g class="cracked" fill="#c1bdb3"><ellipse cx="285" cy="300" rx="15" ry="6"/><ellipse cx="374" cy="365" rx="9" ry="13"/></g>';
+ } else if(o.id==='battery'){
+ s='<g transform="rotate(-7 320 265)"><rect x="222" y="122" width="200" height="290" rx="27" fill="#333" stroke="#171717" stroke-width="5"/><rect x="240" y="139" width="164" height="244" rx="16" fill="'+color('#5e6159','#555044',d)+'"/><rect x="273" y="113" width="99" height="13" rx="5" fill="url(#metal)"/><path d="M262 190H381" stroke="#c7c6bd" stroke-width="2"/><text x="323" y="229" text-anchor="middle" fill="#eee" font-size="18" font-weight="700" font-family="Arial">Li-ion</text><rect x="278" y="249" width="86" height="45" rx="5" fill="none" stroke="#bbb" stroke-width="4"/><rect x="365" y="264" width="6" height="15" fill="#bbb"/><rect x="285" y="256" width="'+Math.round(72*(1-d))+'" height="31" rx="1" fill="'+color('#c3cfb3','#bd654c',d)+'"/><text x="323" y="341" text-anchor="middle" font-size="10" fill="#bdbbb4" font-family="monospace">RECHARGEABLE</text><g class="aging">'+marks(22,8,[248,155,148,221])+'</g></g>';
+ } else if(o.id==='sunscreen'){
+ s='<g transform="rotate(9 320 265)"><path d="M246 105H394L414 368H226Z" fill="'+color('#e7d7bf','#d4c6b5',d)+'" stroke="#a69d91" stroke-width="3"/><rect x="267" y="88" width="107" height="26" rx="7" fill="#ddd9d0" stroke="#969189" stroke-width="2"/><path d="M231 358H409L404 394H237Z" fill="#e5e1d9" stroke="#93918a" stroke-width="3"/><rect x="261" y="164" width="119" height="156" fill="'+color('#ffece0','#e4d8c9',d)+'"/><circle cx="320" cy="203" r="23" fill="'+color('#df8d55','#a68b75',d)+'"/><text x="320" y="264" text-anchor="middle" font-size="47" font-weight="800" fill="#55514c" font-family="Arial">50</text><text x="320" y="284" text-anchor="middle" font-size="15" font-weight="700" fill="#77736c" font-family="Arial">SPF</text><g class="aging">'+marks(32,3,[258,165,125,160])+'</g></g>';
+ } else if(o.id==='sneaker'){
+ s='<g transform="rotate(-4 320 300)"><path d="M140 306C193 297 205 224 250 204L322 241Q350 274 385 280L478 302Q516 316 526 361L123 361Z" fill="'+color('#eae9e1','#b7b2a5',d)+'" stroke="#5b5a55" stroke-width="4"/><path d="M129 359L530 359 514 388 127 388Z" fill="'+color('#fff','#8d8880',d)+'" stroke="#4e4c48" stroke-width="4"/><path d="M235 226L311 259 268 318 178 295" fill="'+color('#a5b3b8','#7e827e',d)+'" stroke="#716e68" stroke-width="3"/><path d="M264 267l55 26m-69-8l56 27m-70-8l53 28" stroke="#fff" stroke-width="5"/><path d="M126 372H514" stroke="#333" stroke-width="2" stroke-dasharray="15 9"/><g class="aging">'+marks(47,5,[174,278,315,86])+'</g><g class="cracked" fill="none" stroke="#595652" stroke-width="3"><path d="M411 381l-20-16-12 17M211 382l23-15 11 16"/></g></g>';
+ } else if(o.id==='earbuds'){
+ s='<g transform="translate(48 8) rotate(-8 256 250)"><path d="M213 186Q171 150 178 216Q188 253 226 239L233 296Q231 331 252 331Q272 329 272 305L271 216Q266 175 235 178Z" fill="url(#metal)" stroke="#979a9a" stroke-width="3"/><ellipse cx="197" cy="216" rx="29" ry="34" fill="'+color('#e7e7e3','#aaaba6',d)+'" stroke="#8e908c" stroke-width="3"/><ellipse cx="194" cy="217" rx="15" ry="16" fill="#555553"/><path d="M348 187Q391 151 384 217Q375 254 337 239L331 296Q331 330 311 330Q291 327 291 305L290 214Q295 174 325 177Z" fill="url(#metal)" stroke="#959795" stroke-width="3"/><ellipse cx="365" cy="216" rx="29" ry="34" fill="'+color('#e7e7e3','#aaaba6',d)+'" stroke="#8e908c" stroke-width="3"/><ellipse cx="368" cy="217" rx="15" ry="16" fill="#555553"/><g class="aging">'+marks(25,4,[175,205,208,120])+'</g></g>';
+ } else if(o.id==='card'){
+ s='<g transform="rotate(-12 320 265)"><rect x="143" y="165" width="360" height="235" rx="'+Math.max(5,18-12*d)+'" fill="'+color('#dfe6db','#b9bbb2',d)+'" stroke="#656d66" stroke-width="3"/><rect x="175" y="213" width="58" height="45" rx="7" fill="url(#metal)" stroke="#757575" stroke-width="2"/><path d="M201 214V255M177 237H230" stroke="#858585" stroke-width="2"/><path d="M176 300H445" stroke="#85918c" stroke-width="3" stroke-dasharray="25 9"/><text x="179" y="356" font-size="20" font-weight="bold" font-family="Arial" fill="#6c7870">0000  0000</text><circle cx="446" cy="351" r="24" fill="#ed977e" opacity=".65"/><circle cx="462" cy="351" r="24" fill="#e9c489" opacity=".65"/><g class="aging">'+marks(39,7,[162,183,317,192])+'</g><g class="cracked" fill="none" stroke="#625d55" stroke-width="3"><path d="M474 168l-18 29-15-5-22 35"/></g></g>';
+ } else if(o.id==='bottle'){
+ s='<g transform="rotate(-3 320 260)"><path d="M279 99H355V155L384 189Q402 206 402 248V408Q402 431 376 432H260Q237 432 237 411V247Q237 205 259 188L279 156Z" fill="'+color('#d5e6e5','#d5d6c9',d)+'" fill-opacity=".68" stroke="#8ba9ae" stroke-opacity=".7" stroke-width="4"/><rect x="275" y="79" width="84" height="34" rx="6" fill="'+color('#70a3bb','#858e8d',d)+'" stroke="#728c93" stroke-width="3"/><path d="M250 213H392M245 258H398M246 390H396" stroke="#b3c8c8" stroke-width="3" opacity=".58"/><path d="M254 283H390V357H254Z" fill="'+color('#94c8cd','#a4b4ac',d)+'" opacity=".93"/><path d="M259 304H389" stroke="#f2fcf8" stroke-width="13"/><text x="320" y="346" font-family="Arial" font-size="18" fill="#426d78" text-anchor="middle" font-weight="bold">H₂O</text><g class="aging">'+marks(39,5,[247,195,145,230])+'</g><g class="cracked" fill="none" stroke="#8a8b84" stroke-width="3"><path d="M385 198l-18 35 13 24-18 28m-116 43l18 15-12 28"/></g></g>';
+ }
+ return svgShell(s);
+}
+function update(){
+ const o=ITEMS[objIndex],days=timePassed(o),v=decay(),sv=state(),st=stage();
+ $('name').textContent=o.name;$('type').textContent=String(objIndex+1).padStart(2,'0')+' / '+o.sub.toUpperCase();
+ $('time-label').textContent=formatTime(days);$('time-ceiling').textContent='0 — '+formatTime(o.max);
+ $('timeline-mid').textContent=formatTime(o.max*Math.pow(.5,1.74));
+ $('timeline-end').textContent=formatTime(o.max);
+ $('time').value=progress;$('time').style.setProperty('--pct',progress+'%');
+ $('ghost').textContent=progress<1?'ŞİMDİ':formatTime(days).toUpperCase();
+ $('scene-label').textContent=String(objIndex+1).padStart(2,'0')+' / '+o.name.toUpperCase();
+ $('scene-counter').textContent=conditions()[0].toUpperCase();
+ $('event-tag').textContent='AŞAMA '+String(st+1).padStart(2,'0')+' / 04';
+ $('event-text').textContent=o.events[st];
+ $('meter-name').textContent=o.id==='bottle'?'GÖRSEL BÜTÜNLÜK · TAHMİN':'TAHMİNİ DURUM · TEMSİLİ';
+ const val=Math.round((1-sv)*100);
+ $('meter-pct').textContent=st===0?'YENİ':st===1?'DEĞİŞİYOR':st===2?'YIPRANDI':'İLERİ AŞAMA';
+ $('meter-fill').style.width=val+'%';
+ $('meter-note').textContent=o.shelf;
+ $('art').innerHTML=drawObject(o,v);$('art').style.setProperty('--aging',clamp((v-.08)*1.1,0,1));
+ $('explain').textContent=o.explain;
+ $('fact').textContent='İŞİN GARİBİ: '+o.fun;
+ $('caution').textContent=o.context;
+ $('source').href=o.source;
+}
+function renderOptions(){
+ const o=ITEMS[objIndex];
+ $('environments').innerHTML='';
+ o.environments.forEach((entry,i)=>{const b=document.createElement('button');b.type='button';b.className='env'+(i===environment?' on':'');b.setAttribute('aria-pressed',i===environment?'true':'false');b.innerHTML='<span>'+entry[0]+'</span><span class="dot" aria-hidden="true"></span>';b.onclick=()=>{environment=i;stop();renderOptions();update()};$('environments').appendChild(b)});
+ $('weather-label').textContent='4 SENARYO';
+}
+function renderTabs(){
+ $('objects').innerHTML='';
+ ITEMS.forEach((o,i)=>{const b=document.createElement('button');b.className='obj-tab'+(objIndex===i?' on':'');b.innerHTML='<span class="n">'+String(i+1).padStart(2,'0')+'</span>'+o.name;b.setAttribute('aria-current',objIndex===i?'true':'false');b.onclick=()=>{objIndex=i;environment=0;progress=0;stop();renderTabs();renderOptions();update()};$('objects').appendChild(b)});
+}
+function stop(){if(raf)cancelAnimationFrame(raf);raf=0;$('play').textContent='▶ ZAMANI AKIT'}
+function play(){
+ if(raf){stop();return}
+ if(progress>=99.9)progress=0;
+ playInitial=progress;playStart=performance.now();
+ $('play').textContent='Ⅱ DURDUR';
+ function tick(now){
+  progress=clamp(playInitial+(now-playStart)/70,0,100);
+  update();
+  if(progress<100)raf=requestAnimationFrame(tick);else stop();
+ }
+ raf=requestAnimationFrame(tick);
+}
+$('time').addEventListener('input',e=>{stop();progress=Number(e.target.value);update()});
+$('play').onclick=play;
+$('reset').onclick=()=>{stop();progress=0;update()};
+$('expand').onclick=()=>{notesOpen=!notesOpen;$('details').classList.toggle('open',notesOpen);$('expand').setAttribute('aria-expanded',String(notesOpen));$('expand-arrow').textContent=notesOpen?'−':'+'};
+let toastTimeout=0;
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>$('toast').classList.remove('show'),2300)}
+$('share').onclick=()=>{
+ const o=ITEMS[objIndex],msg=o.name+' / '+conditions()[0]+' / '+formatTime(timePassed(o))+' sonra: '+o.events[stage()]+' · Daha Ne Kadar Dayanır?';
+ const url=location.origin+location.pathname;
+ if(navigator.share)navigator.share({title:'Daha Ne Kadar Dayanır?',text:msg,url}).catch(()=>{});
+ else if(navigator.clipboard)navigator.clipboard.writeText(msg+' '+url).then(()=>toast('BAĞLANTI KOPYALANDI')).catch(()=>toast('PAYLAŞIM KULLANILAMIYOR'));
+ else toast('PAYLAŞIM KULLANILAMIYOR');
+};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
+renderTabs();renderOptions();update();
+</script></body></html>
