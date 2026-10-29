@@ -83,6 +83,68 @@ header a{font-size:12px;font-weight:700;text-decoration:none;color:var(--ink);wh
 @media(max-width:760px){header{height:49px}.overlay{inset:49px 0 0}.top-middle{gap:6px}.intro-title{font-size:15px}.counter{display:none}.sound{padding:7px 9px}.world-location b{font-size:22px}.noise-tag{font-size:9px}.crane{right:-15%;transform:scale(.6)}.world{min-height:150px}.truck-wrap{width:107vw;bottom:7%;left:50%}.budget{font-size:8px;padding:5px;bottom:6px}.budget b{font-size:10px}.hud{gap:4px;bottom:6px}.hud div{min-width:59px;padding:6px;font-size:7px}.hud strong{font-size:16px}.barrier{transform:scale(.57);left:-4%;bottom:8%}.gamepad{max-height:46dvh;grid-template-columns:1fr;gap:11px;padding:12px max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-bottom))}.story h2{font-size:clamp(15px,4.4vw,22px)}.story p{font-size:10px}.meters{gap:8px}.action-area{grid-template-columns:repeat(3,1fr);gap:6px}.route{min-height:43px;font-size:10px;padding:5px}.paper{max-height:calc(100dvh - 88px);box-shadow:5px 5px 0 #ffe000}}
 @media(max-height:650px) and (min-width:761px){header{height:46px}.overlay{inset:46px 0 0}.gamepad{padding-top:8px;padding-bottom:8px}.route{min-height:41px}}
 @media(prefers-reduced-motion:reduce){.truck-wrap img,.ghost-truck,.dust,.exclaim{animation:none!important}.shake{animation:none}}
+
+/* Arcade edition: 45-second skill loop, reactive hotspots, readable mobile targets. */
+.world{background:linear-gradient(#dfe3dc 0%,#ebede5 59%,#b4b9b2 60%,#909692 100%)}
+.world::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(transparent 70%,#0505050c);mix-blend-mode:multiply}
+.world-location{z-index:6}.noise-tag{z-index:6}.truck-wrap{bottom:3%;width:min(720px,75vw)}
+.world .budget{z-index:7}.hud{z-index:7}
+.gamepad{grid-template-columns:minmax(180px,.72fr) minmax(380px,1.75fr);max-height:46dvh;gap:18px;padding-top:13px;padding-bottom:13px}
+.story{gap:8px}.story h2{font-size:clamp(16px,2.1vw,25px)}.story p{font-size:11px}
+.action-panel{display:flex;flex-direction:column;gap:7px;justify-content:center;min-width:0}
+.action-area{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.route{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;overflow:hidden;min-height:72px;border:1.5px solid #202020;background:#e8e9e2;text-align:left;padding:8px;transition:background .1s,transform .1s}
+.route:hover:not(:disabled){background:#e5e8dd;transform:translateY(-1px)}
+.route.idle{background:#e4e4de;border-color:#c1c3bc;color:#80827c}
+.route.active{background:#ffe100;color:#111;border-color:#1e1e1e;box-shadow:2px 2px #111}
+.route.active:hover{background:#ffe822;transform:translateY(-2px)}
+.route.hot{background:#f06d36;color:#101010;animation:hotpulse .31s infinite alternate}
+.route.safe{background:#d5e5cb;color:#325c31;border-color:#5b7f52}
+.route:disabled{opacity:1;cursor:default;text-decoration:none}
+.route .zone{font:10px/1 'DM Mono',monospace;letter-spacing:-.02em;opacity:.8}
+.route .event{font:700 clamp(10px,1.35vw,15px)/1.05 'Space Grotesk',sans-serif;letter-spacing:-.03em;margin:3px 0 4px}
+.route .status{font:8px/1.1 'DM Mono',monospace;opacity:.75}
+.route .expiry{position:absolute;left:0;right:0;bottom:0;height:5px;background:#111;transform-origin:left;transform:scaleX(var(--left,0));transition:transform .06s linear}
+.route.safe .expiry{background:#447b49}
+.route.hit{animation:tilehit .25s}
+.abilities{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ability{min-height:37px;border:1.5px solid #111;background:#151515;color:white;font:700 11px/1.12 'Space Grotesk',sans-serif;letter-spacing:-.02em}
+.ability span{font:9px 'DM Mono',monospace;opacity:.7;margin-left:5px}
+.ability:disabled{opacity:.38;cursor:not-allowed}
+.ability.ready{background:#ffe100;color:#171717;animation:abilitypulse .8s ease-in-out infinite alternate}
+.ability:not(:disabled):active{transform:translateY(2px)}
+.arcade-progress{height:5px;background:#d1d3ca;border:1px solid #111;margin-top:5px;position:relative}
+.arcade-progress i{display:block;height:100%;width:0%;background:#181818;transition:width .1s}
+.game-legend{font:9px/1.5 'DM Mono',monospace;color:#666}
+.heart{font-size:15px;font-weight:800;letter-spacing:2px}
+.scoreburst{position:absolute;z-index:12;left:54%;top:47%;pointer-events:none;font:clamp(28px,4vw,58px)/1 'Archivo Black',sans-serif;color:#fff500;text-shadow:3px 4px #141414,0 0 12px #10101044;opacity:0;transform:translate(-50%,0) rotate(-5deg)}
+.scoreburst.show{animation:scorefloat .7s cubic-bezier(.16,.9,.2,1) both}
+.world.frenzy .noise-tag{background:#ed7134}
+.hud strong{font-size:clamp(17px,2.5vw,26px)}
+.budget b{font-size:clamp(12px,2vw,17px)}
+.paper h1{font-size:clamp(31px,7vw,60px)}
+.big-number{font:clamp(42px,8vw,72px)/1 'Archivo Black',sans-serif;letter-spacing:-.07em}
+.best-line{font:11px 'DM Mono',monospace;color:#5b5b5b}
+.report{padding:12px}.report>div{display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-bottom:1px solid #ddd;padding:4px 0}.report>div:last-child{border:0}.report b{font-size:18px}
+@keyframes hotpulse{to{background:#ffb11b}}@keyframes tilehit{50%{transform:scale(.96)}}@keyframes abilitypulse{to{background:#ffed79}}@keyframes scorefloat{0%{opacity:0;transform:translate(-50%,18px) rotate(-7deg) scale(.65)}15%{opacity:1}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-48px) rotate(4deg) scale(1.1)}}
+@media(max-width:760px){
+ .gamepad{grid-template-columns:1fr;gap:7px;max-height:50dvh;padding:8px 10px max(9px,env(safe-area-inset-bottom))}
+ .story{gap:5px}.story h2{font-size:clamp(14px,4vw,19px)}.story p{display:none}.eyebrow{font-size:9px}
+ .meters{gap:10px}.meter label{font-size:8px}.track{height:6px;margin-top:3px}
+ .action-panel{gap:5px}.action-area{gap:5px}.route{min-height:60px;padding:6px 7px}
+ .route .zone{font-size:8px}.route .event{font-size:11px;margin:3px 0}.route .status{font-size:7px}
+ .route.hot{animation:none}.abilities{gap:5px}.ability{min-height:34px;font-size:10px}
+ .game-legend{font-size:8px}.hud div{min-width:55px}.hud strong{font-size:16px}
+ .world-location{top:10px;left:12px}.world-location b{font-size:clamp(17px,5vw,25px)}
+ .noise-tag{top:10px;right:12px;font-size:8px;max-width:43%;padding:6px}
+ .truck-wrap{width:92vw;bottom:6%}.budget{bottom:9px}
+ .barrier{transform:scale(.6);left:-4%;bottom:12%}
+}
+@media(max-height:690px) and (max-width:760px){
+ .gamepad{max-height:53dvh}.route{min-height:52px}.action-panel{gap:4px}.route .event{font-size:10px}
+ .game-legend{display:none}.truck-wrap{width:83vw}
+}
+@media(prefers-reduced-motion:reduce){.route.hot,.ability.ready,.scoreburst.show{animation:none}}
 </style></head><body>
 <div class="shell">
 <header><a href="/" aria-label="aynen.fun ana sayfaya dön">← aynen.fun</a><div class="top-middle"><div class="intro-title">DAMPERLİ KAMYON</div><span class="brand">/ 08</span></div><div class="counter" id="timeDisplay">07:59 · ŞANTİYE SAATİ</div><button class="sound" id="soundBtn" type="button" aria-pressed="false">SES: KAPALI</button></header>
@@ -91,106 +153,252 @@ header a{font-size:12px;font-weight:700;text-decoration:none;color:var(--ink);wh
 <div class="world-location"><span id="cityText">İSTANBUL</span><b id="placeText">EVİNİN ÖNÜ</b></div><div class="noise-tag" id="roadSign">ALTERNATİF YOL KAPALI</div><div class="barrier"><span>YOL KAPALI</span></div><i class="cone one"></i><i class="cone two"></i>
 <div id="truck" class="truck-wrap"><img src="/damperli-kamyon.svg" alt="Sarı damperli kamyon" draggable="false"/></div>
 <img src="/damperli-kamyon.svg" alt="" aria-hidden="true" class="ghost-truck" id="otherTruck"/><div class="dust"></div><div class="exclaim" id="exclaim">TAK TAK TAK</div>
-<div class="budget">GÜNÜN HEDEFİ<b>10 SN SESSİZLİK</b></div><div class="hud"><div>YENİ ŞANTİYE<strong id="siteStat">01</strong></div><div>KAPANAN YOL<strong id="roadStat">00</strong></div><div>SESSİZLİK<strong id="quietStat">0.0s</strong></div></div>
+<div class="budget">HEDEF <b>45 SN DAYAN</b></div><div class="hud"><div>SKOR<strong id="siteStat">0</strong></div><div>KOMBO<strong id="roadStat">x0</strong></div><div>REKOR<strong id="quietStat">0</strong></div></div><div class="scoreburst" id="scoreburst" aria-hidden="true">+100</div>
 </div>
-<section class="gamepad" aria-label="Oyun kontrolleri"><div class="story"><div><span class="eyebrow" id="storyTag">DURUM RAPORU 001</span><h2 id="story">Biraz sakin bir yer arıyorsun.</h2><p id="subStory">Mantıklı bir talep.</p></div><div class="meters"><div class="meter"><label><span>SABIR</span><span id="patienceText">%100</span></label><div class="track"><div class="fill" id="patienceFill"></div></div></div><div class="meter"><label><span>GÜRÜLTÜ</span><span id="noiseText">%18</span></label><div class="track"><div class="fill red" id="noiseFill" style="width:18%"></div></div></div></div></div><div class="action-area" id="buttons">
-<button class="route" data-route="ev">EVE KAÇ</button><button class="route" data-route="park">PARKA GİT</button><button class="route" data-route="sahil">SAHİLE İN</button><button class="route" data-route="kafe">KAFEYE GİR</button><button class="route" data-route="koy">ŞEHİR DIŞI</button><button class="route headphones" data-route="kulak">KULAĞINI KAPAT</button>
-</div></section></div>
-<div id="intro" class="overlay"><div class="paper"><span class="stamp">TÜRKİYE ŞANTİYE SİMÜLATÖRÜ · 001</span><h1>DAMPERLİ<br>KAMYON.</h1><p>Tek görevin <b>10 saniye sessiz bir yer bulmak.</b> Nereye kaçarsan kaç, damperli kamyon senden önce orada olacak.</p>
-<label for="city" class="eyebrow">NEREDEN KAÇMAK İSTERSİN?</label><select id="city"><option>İstanbul</option><option>Ankara</option><option>İzmir</option><option>Antalya</option><option>Bursa</option><option>Trabzon</option><option>Fethiye</option><option>Türkiye geneli</option></select>
-<button class="primary" id="startSound">BAŞLA — SESLİ</button><button class="secondary" id="startSilent">SESSİZ BAŞLA (İYİ ŞANSLAR)</button><small>Sesler tarayıcıda üretilir; gerçek inşaat kaydı değildir. İstediğin an kapatabilirsin.</small></div></div>
-<div id="ending" class="overlay" hidden><div class="paper"><span class="stamp">RESMÎ ŞANTİYE RAPORU</span><h1 id="endTitle">SESSİZLİK<br>BULUNAMADI.</h1><p id="endingBlurb">Araman başarıyla başarısız oldu.</p><div class="report"><div>KAÇIŞ SÜRESİ: <b id="finalTime">0 SN</b></div><div>YENİ ŞANTİYE: <b id="finalSites">0</b></div><div>KAPANAN YOL: <b id="finalRoads">0</b></div><div>TOPLAM SESSİZLİK: <b id="finalQuiet">0 SANİYE</b></div></div><button class="primary" id="share">RAPORUMU PAYLAŞ</button><button class="secondary" id="again">BİR DAHA KAÇMAYI DENE</button><small>Dipnot: Kaçtığın yerde yol çalışması başlamış olabilir.</small></div></div>
+<section class="gamepad" aria-label="Şantiyeleri susturma kontrolleri">
+<div class="story"><div><span class="eyebrow" id="storyTag">08:00 — SESSİZLİK OPERASYONU</span><h2 id="story" aria-live="polite">Sarı şantiyelere bas. Sessiz yerlere dokunma.</h2><p id="subStory">Kapanan her şantiyenin yerini yenisi alacak.</p></div>
+<div class="meters"><div class="meter"><label><span>GÜRÜLTÜ</span><span id="noiseText">%20</span></label><div class="track"><div class="fill red" id="noiseFill" style="width:20%"></div></div></div>
+<div class="meter"><label><span>SÜRE</span><span id="patienceText">45.0 SN</span></label><div class="track"><div class="fill" id="patienceFill" style="width:100%"></div></div></div></div>
+<div class="arcade-progress" aria-label="Seviye ilerlemesi"><i id="waveProgress"></i></div></div>
+<div class="action-panel"><div class="action-area" id="buttons">
+<button class="route idle" data-slot="0" type="button" aria-label="Şantiye noktası 1"></button><button class="route idle" data-slot="1" type="button" aria-label="Şantiye noktası 2"></button><button class="route idle" data-slot="2" type="button" aria-label="Şantiye noktası 3"></button>
+<button class="route idle" data-slot="3" type="button" aria-label="Şantiye noktası 4"></button><button class="route idle" data-slot="4" type="button" aria-label="Şantiye noktası 5"></button><button class="route idle" data-slot="5" type="button" aria-label="Şantiye noktası 6"></button>
+</div><div class="abilities"><button class="ability" id="inspect" type="button" disabled>RUHSAT DENETİMİ <span id="inspectHint">6 KOMBO GEREK</span></button><button class="ability" id="ears" type="button">KULAĞINI KAPAT <span id="earsHint">1 HAK</span></button></div><div class="game-legend">SARI = TIKLA · YEŞİL = DOKUNMA · 45 SANİYE DAYAN</div></div></section></div>
+<div id="intro" class="overlay"><div class="paper"><span class="stamp">TÜRKİYE ŞANTİYE SİMÜLATÖRÜ · ARCADE EDITION</span><h1>DAMPERLİ<br>KAMYON.</h1><p><b>45 saniye</b> boyunca sokaktaki şantiyeleri susturmaya çalış. Sarı yerlere hızla bas. Yeşil, gerçekten sessiz olan yerlere dokunma. Her susturduğun şantiye, başka bir yerde yeniden açılabilir.</p>
+<label class="eyebrow" for="city">ŞANTİYE ŞEHRİNİ SEÇ</label><select id="city"><option>İstanbul</option><option>Ankara</option><option>İzmir</option><option>Antalya</option><option>Bursa</option><option>Trabzon</option><option>Fethiye</option><option>Türkiye geneli</option></select>
+<div class="best-line" id="introBest">REKORUN: 0 PUAN</div>
+<button class="primary" id="startSound" type="button">BAŞLA — SESLİ</button><button class="secondary" id="startSilent" type="button">SESSİZ BAŞLA</button><small>Sesleri oyunun içinde kapatabilirsin. Oyun refleks ve strateji gerektirir; skor her seferinde değişir.</small></div></div>
+<div id="ending" class="overlay" hidden><div class="paper"><span class="stamp" id="endBadge">RESMÎ ŞANTİYE RAPORU</span><h1 id="endTitle">SESSİZLİK<br>BULUNAMADI.</h1><p id="endingBlurb"></p><div class="big-number" id="endScore">0</div><div class="best-line" id="recordLine">EN YÜKSEK SKOR: 0</div><div class="report"><div>DAYANMA SÜRESİ <b id="finalTime">0 SN</b></div><div>SUSTURULAN ŞANTİYE <b id="finalSites">0</b></div><div>YENİ AÇILAN ŞANTİYE <b id="finalRoads">0</b></div><div>EN UZUN KOMBO <b id="finalQuiet">x0</b></div></div><button class="primary" id="again" type="button">REKORU GEÇ — TEKRAR OYNA</button><button class="secondary" id="share" type="button">ŞANTİYE RAPORUNU PAYLAŞ</button><small id="resultFooter">Belediye: Çalışmalar en kısa sürede tamamlanacaktır.</small></div></div>
 <script>
 (()=>{
+'use strict';
 const $=s=>document.querySelector(s);
-const routes={
-ev:["EVİNİN ÖNÜ","Eve kaçtın. Üst kat komple kırılıyor.","Bir komşu 'iki delik açacağız' demişti.","Üst kat"],
-park:["PARK","Parka gittin. Parkın altına otopark yapılıyor.","Yeşil alan geçici olarak hafriyat alanı.","Yeni otopark"],
-sahil:["SAHİL","Denize kaçtın. Sahil yolu kazılıyor.","Manzara güzel. Beton mikseri daha yakın.","Sahil düzenlemesi"],
-kafe:["KAFE","Sakin kafeyi buldun. Yan dükkânda hilti var.","Barista gürültü üstüne bir filtre kahve önerdi.","Sessiz kafe"],
-koy:["ŞEHİR DIŞI","Şehirden çıktın. Buraya da bir yol yapılıyor.","Gidiş yolun asfaltlanıyor. Dönüş yolun kazılıyor.","Alternatif güzergâh"]
+const buttons=[...document.querySelectorAll('[data-slot]')];
+const noiseTypes=[
+ ['HİLTİ','Yan daire sadece iki delik açıyor.','TAK TAK',1],
+ ['DAMPERLİ','Korna çalmıyor. Sadece var.','BİP BİP',1],
+ ['BETON MİKSERİ','Beton yetişecek. Sen yetişemeyeceksin.','GÜMMM',1],
+ ['YOL KAZISI','Dün kapattıkları yer bugün tekrar açılıyor.','TAK TAK',1],
+ ['GERİ VİTES','Bip sesine yeni bir bip eklendi.','BİP BİP',1],
+ ['ASFALT KESİMİ','Sokağı tamir etmek için tekrar kestiler.','ZZZTT',1],
+ ['HAFRİYAT','Kaldırım hafifçe ortadan kalktı.','DÜÜT',1],
+ ['İSKELE KURULUMU','İskele sabah 08:00’de kurulabiliyor.','TAK TAK',1],
+ ['MEGA ŞANTİYE','Birden fazla kamyon, tek bir sokak.','GÜMMMM',2]
+];
+const quietTypes=[['GÜVERCİN','Bu sefer gerçekten güvercin.'],['SİMİTÇİ','En azından iş makinesi değil.'],['YAPRAK HIŞIRTISI','Doğal ses. Şaşırtıcı.'],['ESEN RÜZGÂR','Belediye müdahale etmedi.']];
+const locations={
+ 'İstanbul':['NİŞANTAŞI','KAĞITHANE','BEŞİKTAŞ','KADIKÖY','SARIYER','ŞİŞLİ'],
+ 'Ankara':['KIZILAY','ÇANKAYA','BAHÇELİ','ULUS','DİKMEN','ÜMİTKÖY'],
+ 'İzmir':['ALSANCAK','KARŞIYAKA','BORNOVA','KONAK','GÜZELYALI','BALÇOVA'],
+ 'Antalya':['KONYAALTI','LARA','MURATPAŞA','KEPEZ','KUNDU','KALEİÇİ'],
+ 'Bursa':['NİLÜFER','OSMANGAZİ','MUDANYA','YILDIRIM','GÖRÜKLE','GEMLİK'],
+ 'Trabzon':['MEYDAN','ORTAHİSAR','AKÇAABAT','YOMRA','BOZTEPE','PELİTLİ'],
+ 'Fethiye':['ÇALIŞ','KARAGÖZLER','İNLİCE','HİSARÖNÜ','ÖLÜDENİZ','GÖCEK YOLU'],
+ 'Türkiye geneli':['EVİNİN ÖNÜ','SAHİL','SANAYİ','YOL AYRIMI','MAHALLE','PARK']
 };
-const sayings=["İnşaatın bitmesine çok az kaldı. (Tahmini: 2029)","Burası daha önce de kazılmıştı. Düzeltiliyor.","Bir kapalı yolu atlatıp iki şantiyeye ulaştın.","Çalışmalar gece yapılmasın demiştin. Artık sabah.","Korna sesinin arkasında bir şehir varmış.","Kamyonun geri vites sesi artık kişisel asistanın.","Şehir büyüyor. Senin sabrın küçülüyor.","Tebrikler. Alternatif yol da alternatif şekilde kapalı."];
-const signs=["YOL KAPALI","ALTERNATİF YOL DA KAPALI","GEÇİCİ OLARAK SÜRESİZ","BURADA ÇALIŞMA VAR","BİR ŞANTİYE DAHA","DİKKAT: HAFRİYAT","KISA SÜRELİ ÇALIŞMA","TRAFİĞE KAPALIDIR"];
-let state=null,clock=null,fxClock=null,audio=null;
-function stopTimers(){clearInterval(clock);clearInterval(fxClock);clock=fxClock=null}
-function say(title,detail){$('#story').textContent=title;$('#subStory').textContent=detail;$('#storyTag').textContent='DURUM RAPORU '+String((state?.round||0)+1).padStart(3,'0')}
-function paint(){
-$('#siteStat').textContent=String(state.sites).padStart(2,'0');$('#roadStat').textContent=String(state.roads).padStart(2,'0');
-$('#quietStat').textContent=state.quiet.toFixed(1)+'s';$('#patienceText').textContent='%'+Math.round(state.patience);$('#noiseText').textContent='%'+Math.round(state.noise);
-$('#patienceFill').style.width=state.patience+'%';$('#noiseFill').style.width=state.noise+'%';
-$('#timeDisplay').textContent=(state.elapsed>0?'08:':'07:')+String(state.elapsed>0?Math.min(59,state.elapsed-1):59).padStart(2,'0')+' · ŞANTİYE SAATİ';
+const quips=[
+ 'Şantiye durdu. Yan sokakta yenisi açıldı.','Zabıta geldi. Çay içildi. Şantiye devam.',
+ 'Hafriyat uzaklaştı. Geri geliyor.','Kapanan yol bu sabah daha yeni açılmıştı.',
+ 'Mahalle bir saniyeliğine sakinleşti.','Çalışmaların bitiş tarihi: çok yakında.',
+ 'Bir damperli gitti, yerine beton mikseri geldi.','Kamyonun geri vitesi sana hitaben çalıyor.',
+ 'Sakinlik şu an ihale aşamasında.','Burası yürüyüş yoluydu. Artık proje.'
+];
+const SPEED=45, TICK=60;
+let g=null,audio=null,loopId=null, lastFrame=0, introTouched=false;
+let best=0;
+try{best=parseInt(localStorage.getItem('damperli-arcade-best-v2')||'0',10)||0}catch(e){}
+$('#introBest').textContent='REKORUN: '+best+' PUAN';
+const pick=list=>list[Math.floor(Math.random()*list.length)];
+function soundToggle(on){
+ if(!on){if(audio){try{audio.ctx.close()}catch(e){}audio=null}$('#soundBtn').textContent='SES: KAPALI';$('#soundBtn').setAttribute('aria-pressed','false');return}
+ if(audio)return;
+ const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+ try{const ctx=new AC(),master=ctx.createGain();master.gain.value=.032;master.connect(ctx.destination);audio={ctx,master};ctx.resume();$('#soundBtn').textContent='SES: AÇIK';$('#soundBtn').setAttribute('aria-pressed','true')}catch(e){audio=null}
 }
-function impact(word){
-const world=$('#world'),truck=$('#truck'),x=$('#exclaim');
-world.classList.remove('shake');truck.classList.remove('drive');x.classList.remove('pop');void world.offsetWidth;
-x.textContent=word||'GÜMMM';world.classList.add('shake');truck.classList.add('drive');x.classList.add('pop');
-setTimeout(()=>{world.classList.remove('shake');truck.classList.remove('drive')},850);
+function tone(f=350,length=.1,kind='triangle',vol=.12,delay=0){
+ if(!audio)return;
+ let time=audio.ctx.currentTime+delay;
+ const o=audio.ctx.createOscillator(),amp=audio.ctx.createGain();
+ o.type=kind;o.frequency.setValueAtTime(Math.max(40,f),time);o.frequency.exponentialRampToValueAtTime(Math.max(35,f*.77),time+length);
+ amp.gain.setValueAtTime(.001,time);amp.gain.linearRampToValueAtTime(vol,time+.01);amp.gain.exponentialRampToValueAtTime(.001,time+length);
+ o.connect(amp);amp.connect(audio.master);o.start(time);o.stop(time+length+.03);
 }
-function tone(freq,duration,type='sine',vol=.22,delay=0){
-if(!audio)return;const now=audio.context.currentTime+delay;
-const osc=audio.context.createOscillator(),env=audio.context.createGain();
-osc.type=type;osc.frequency.setValueAtTime(freq,now);osc.frequency.exponentialRampToValueAtTime(Math.max(30,freq*.72),now+duration);
-env.gain.setValueAtTime(.0001,now);env.gain.exponentialRampToValueAtTime(vol,now+.018);env.gain.exponentialRampToValueAtTime(.0001,now+duration);
-osc.connect(env);env.connect(audio.master);osc.start(now);osc.stop(now+duration+.025)
+function sfx(which){
+ if(!audio)return;
+ if(which==='hit'){tone(400,.09,'triangle',.12);tone(600,.14,'sine',.1,.09)}
+ if(which==='miss'){tone(165,.24,'sawtooth',.24);tone(90,.24,'sawtooth',.15,.06)}
+ if(which==='beep'){tone(735,.1,'square',.06);tone(735,.1,'square',.06,.23)}
+ if(which==='power'){tone(350,.2,'triangle',.12);tone(500,.2,'triangle',.12,.1);tone(790,.27,'triangle',.12,.2)}
 }
-function metallic(){
-if(!audio)return;tone(94,.3,'sawtooth',.4);tone(880,.085,'square',.11);tone(560,.11,'triangle',.08,.12);tone(210,.19,'sawtooth',.13,.26)
+function announcer(message,detail,tag){
+ $('#story').textContent=message;$('#subStory').textContent=detail;
+ if(tag)$('#storyTag').textContent=tag;
 }
-function reverseBeep(){if(audio){tone(770,.13,'sine',.17);tone(770,.13,'sine',.17,.27)}}
-function mute(){if(audio){audio.master.disconnect();audio.context.close().catch(()=>{});audio=null}$('#soundBtn').textContent='SES: KAPALI';$('#soundBtn').setAttribute('aria-pressed','false')}
-function unmute(){
-if(audio)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
-try{const context=new C(),master=context.createGain();master.gain.value=.038;master.connect(context.destination);audio={context,master};context.resume();$('#soundBtn').textContent='SES: AÇIK';$('#soundBtn').setAttribute('aria-pressed','true');reverseBeep()}catch(e){audio=null}
+function pop(msg,hit){
+ const el=$('#scoreburst');el.textContent=msg;el.style.color=hit?'#ffe500':'#ff6d3e';
+ el.classList.remove('show');void el.offsetWidth;el.classList.add('show')
 }
-function end(){
-if(!state||!state.playing)return;state.playing=false;stopTimers();mute();$('#finalTime').textContent=state.elapsed+' SN';$('#finalSites').textContent=state.sites;$('#finalRoads').textContent=state.roads;
-$('#endTitle').innerHTML=state.won?'BULDUĞUN ŞEY<br>SESSİZLİK DEĞİL.':'SESSİZLİK<br>BULUNAMADI.';$('#finalQuiet').textContent=state.won?'10 SANİYE':'0 SANİYE';$('#endingBlurb').textContent=state.won?'İnşaat durmadı. Sen 10 saniye kulaklarını kapattın. Şehir tarihinde bir ilk.':state.city+' sınırlarında '+state.elapsed+' saniye boyunca huzur aradın. '+state.sites+' şantiye buldun. Şehir seni buldu.';
-$('#ending').hidden=false;
+function shake(word){
+ const world=$('#world'),truck=$('#truck'),x=$('#exclaim');
+ world.classList.remove('shake');truck.classList.remove('drive');x.classList.remove('pop');
+ void world.offsetWidth;x.textContent=word;world.classList.add('shake');truck.classList.add('drive');x.classList.add('pop');
+ setTimeout(()=>{world.classList.remove('shake');truck.classList.remove('drive')},370)
 }
-function choose(key){
-if(!state?.playing)return;
-if(key==='kulak'){
-state.patience=Math.max(0,state.patience-5);
-state.noise=Math.max(5,state.noise-32);state.silenceUntil=state.elapsed+2;if(audio)audio.master.gain.value=.003;say('Kulaklarını kapattın.','Damperli kamyon bu sefer titreşimle haber veriyor.');impact('TIK TIK');tone(140,.3,'sine',.12);
-}else{
-const [place,title,detail]=routes[key];state.round++;state.sites++;state.roads++;
-state.patience=Math.max(0,state.patience-(10+Math.min(15,state.round*1.6)));
-state.noise=Math.min(100,state.noise+9+state.round*3);
-$('#placeText').textContent=place;$('#roadSign').textContent=signs[Math.min(state.round,signs.length-1)];
-say(title, state.round%2?sayings[(state.round-1)%sayings.length]:detail);impact(['DÜÜT','TAK TAK','GÜMMM','BİP BİP'][state.round%4]);metallic();
-if(state.round>=3)$('#otherTruck').classList.add('visible');
-if(state.round>=5)document.querySelectorAll('.route:not(.headphones)').forEach(b=>{if(b.dataset.route===key){b.disabled=true;b.textContent='YOL KAPALI'}});
+function renderSlot(i,now){
+ const b=buttons[i],v=g.slots[i],zone=g.zones[i];
+ if(!v){b.className='route idle';b.disabled=true;b.style.setProperty('--left',0);
+ b.innerHTML='<span class="zone">'+zone+'</span><span class="event">ŞU AN SESSİZ</span><span class="status">BEKLEMEDE</span><i class="expiry"></i>';b.setAttribute('aria-label',zone+' şu an sessiz');return}
+ const remaining=Math.max(0,Math.min(1,(v.due-now)/(v.due-v.born)));
+ const urgent=!v.safe&&remaining<.38;
+ b.className='route '+(v.safe?'safe':urgent?'hot':'active');
+ b.disabled=false;b.style.setProperty('--left',remaining.toFixed(3));
+ b.innerHTML='<span class="zone">'+zone+'</span><span class="event">'+v.name+'</span><span class="status">'+(v.safe?'DOKUNMA · SESSİZ':(urgent?'HEMEN SUSTUR':'SUSTUR · +PUAN'))+'</span><i class="expiry"></i>';
+ b.setAttribute('aria-label',zone+': '+v.name+(v.safe?', dokunma':', sustur'));
 }
-paint();if(state.patience<=0||state.round>=9)end()
+function paint(now){
+ if(!g)return;
+ const noise=Math.max(0,Math.min(100,g.noise)),remaining=Math.max(0,SPEED-g.elapsed),phase=Math.min(4,1+Math.floor(g.elapsed/10));
+ $('#cityText').textContent=g.city.toLocaleUpperCase('tr-TR');
+ $('#siteStat').textContent=g.score.toLocaleString('tr-TR');$('#roadStat').textContent='x'+g.combo;
+ $('#quietStat').textContent=best.toLocaleString('tr-TR');
+ $('#noiseText').textContent='%'+Math.round(noise);
+ $('#noiseFill').style.width=noise+'%';
+ $('#patienceText').textContent=remaining.toFixed(1)+' SN';
+ $('#patienceFill').style.width=(remaining/SPEED*100)+'%';
+ $('#waveProgress').style.width=(g.elapsed/SPEED*100)+'%';
+ $('#timeDisplay').textContent='DALGA '+phase+'/4 · '+Math.ceil(remaining)+' SN';
+ $('#inspect').disabled=g.permits<1;
+ $('#inspect').classList.toggle('ready',g.permits>0);
+ $('#inspectHint').textContent=g.permits>0?'HAK: '+g.permits:(g.combo<6?'6 KOMBO GEREK':'HAK BİTTİ');
+ $('#ears').disabled=g.ears<1;
+ $('#earsHint').textContent=g.ears>0?'1 HAK':(g.freezeUntil>now?'ETKİN':'KULLANILDI');
+ for(let i=0;i<6;i++)renderSlot(i,now)
+}
+function putInSlot(index,now){
+ const safe=g.spawned>3 && Math.random()<.16;
+ const duration=safe?1600+Math.random()*550:Math.max(1250,3000-g.elapsed*26)+Math.random()*500;
+ const raw=safe?pick(quietTypes):pick(g.elapsed>25?noiseTypes:noiseTypes.slice(0,-1));
+ g.slots[index]={name:raw[0],detail:raw[1],word:raw[2]||'...',power:raw[3]||1,safe,born:now,due:now+duration};
+ g.spawned++;g.total++;
+ if(!safe){g.open++;$('#placeText').textContent=g.zones[index];$('#roadSign').textContent=raw[0]+' BAŞLADI';
+ if(g.open>3)$('#otherTruck').classList.add('visible');
+ if(g.spawned%3===0){shake(raw[2]);sfx('beep')}}
+}
+function spawn(now){
+ const empty=g.slots.map((v,i)=>v?null:i).filter(i=>i!==null);
+ if(!empty.length)return;
+ const index=pick(empty);putInSlot(index,now);
+}
+function missed(i,now){
+ const item=g.slots[i];if(!item)return;
+ g.slots[i]=null;
+ if(item.safe)return;
+ g.combo=0;g.noise+=12*item.power;g.failed++;
+ $('#roadSign').textContent='ŞANTİYE İZİN ALDI';
+ announcer('Şantiye başladı.','Susturamadığın kamyon kendine başka bir kamyon çağırdı.','DUYURU: YENİ YOL KAZISI');
+ pop('KAÇIRILDI',false);shake('BİP BİP');sfx('miss')
+}
+function tapSlot(index){
+ if(!g||!g.playing)return;
+ const item=g.slots[index],now=performance.now();
+ if(!item)return;
+ g.slots[index]=null;
+ if(item.safe){
+ g.noise=Math.min(100,g.noise+13);g.combo=0;g.falseHits++;
+ announcer('Simitçiyi susturdun.','İnşaatı değil. Normal hayatı durdurdun.','YANLIŞ ŞÜPHELİ');
+ pop('YANLIŞ!',false);sfx('miss');
+ }else{
+ g.combo++;g.maxCombo=Math.max(g.maxCombo,g.combo);g.stopped++;
+ const speedBonus=Math.round(Math.max(0,(item.due-now)/(item.due-item.born))*60);
+ const points=(100+Math.min(19,g.combo-1)*20+speedBonus)*(item.power||1);
+ g.score+=points;g.noise=Math.max(0,g.noise-8*(item.power||1));g.bestTick=now;
+ const msg=quips[(g.stopped-1)%quips.length];
+ announcer(msg,'+'+points+' puan · '+g.combo+' komboya ulaştın.','ŞANTİYE DURDURULDU · '+g.stopped);
+ $('#roadSign').textContent='GEÇİCİ OLARAK DURDU';
+ pop('+'+points,true);sfx('hit');
+ if([6,13,22].includes(g.combo)){g.permits=Math.min(2,g.permits+1);announcer('RUHSAT DENETİMİ AÇILDI','Bütün aktif şantiyeleri tek hamlede durdurabilirsin.','ÖZEL YETKİ KAZANILDI');sfx('power')}
+ }
+ paint(now)
+}
+function inspect(){
+ if(!g?.playing||g.permits<1)return;
+ g.permits--;
+ let n=0;for(let i=0;i<6;i++){if(g.slots[i]&&!g.slots[i].safe){n++;g.slots[i]=null;g.stopped++;g.score+=100;}}
+ g.noise=Math.max(0,g.noise-15);announcer('Denetim geldi. Hepsi sustu.','Denetim bitince ne olacağını biliyorsun.','RESMÎ DENETİM');
+ pop('+'+(n*100),true);sfx('power');shake('DUR!');
+ paint(performance.now())
+}
+function ears(){
+ if(!g?.playing||g.ears<1)return;
+ g.ears=0;g.freezeUntil=performance.now()+2600;g.noise=Math.max(0,g.noise-16);
+ if(audio)audio.master.gain.value=.002;
+ announcer('Kulaklarını kapattın.','Şantiye durmadı ama 2,6 saniyeliğine süreleri dondurdun.','GEÇİCİ HUZUR');
+ $('#roadSign').textContent='KİŞİSEL SESSİZLİK';
+ pop('2.6 SN!',true);paint(performance.now())
+}
+function finish(won){
+ if(!g?.playing)return;
+ g.playing=false;clearInterval(loopId);loopId=null;
+ g.score+=won?500:0;
+ const newBest=g.score>best;
+ if(newBest){best=g.score;try{localStorage.setItem('damperli-arcade-best-v2',String(best))}catch(e){}}
+ $('#endScore').textContent=g.score.toLocaleString('tr-TR')+' PUAN';
+ $('#endTitle').innerHTML=won?'45 SANİYE.<br>ŞEHİR HÂLÂ AYAKTA.':'ŞANTİYE<br>KAZANDI.';
+ $('#endBadge').textContent=newBest?'YENİ KİŞİSEL REKOR':won?'TAMAMLANAN VARDİYA':'RESMÎ ŞANTİYE RAPORU';
+ $('#endingBlurb').textContent=won?'45 saniye boyunca kamyonlardan hızlıydın. Fakat şehir daha fazlasını inşa edebilir.':'Gürültü %100’e ulaştı. Şehir senin dayanamadığını fark etmedi.';
+ $('#finalTime').textContent=Math.floor(g.elapsed)+' SN';
+ $('#finalSites').textContent=g.stopped;
+ $('#finalRoads').textContent=g.open;
+ $('#finalQuiet').textContent='x'+g.maxCombo;
+ $('#recordLine').textContent='EN YÜKSEK SKOR: '+best.toLocaleString('tr-TR')+(newBest?' · YENİ REKOR':'');
+ $('#resultFooter').textContent='Şantiye raporu gerçek veriye dayanmaz. Maalesef his gerçektir.';
+ $('#ending').hidden=false;$('#introBest').textContent='REKORUN: '+best+' PUAN';soundToggle(false);
+}
+function tick(){
+ if(!g?.playing)return;
+ const now=performance.now();
+ const dt=Math.min(.25,(now-lastFrame)/1000);lastFrame=now;
+ g.elapsed=Math.min(SPEED,(now-g.started)/1000);
+ const frozen=g.freezeUntil>now;
+ if(!frozen){
+  g.noise=Math.min(100,g.noise+.28*dt);
+  if(audio)audio.master.gain.value=.032;
+  for(let i=0;i<6;i++){if(g.slots[i]&&g.slots[i].due<=now)missed(i,now)}
+  if(now>=g.nextSpawn){spawn(now);g.nextSpawn=now+Math.max(540,1400-g.elapsed*19)+Math.random()*200}
+ }else{
+  for(const item of g.slots)if(item)item.due+=dt*1000;
+ }
+ if(g.elapsed>=SPEED){finish(true);return}
+ if(g.noise>=100){finish(false);return}
+ paint(now)
 }
 function start(withSound){
-stopTimers();mute();$('#ending').hidden=true;$('#intro').hidden=true;$('#otherTruck').classList.remove('visible');
-document.querySelectorAll('.route').forEach(b=>{b.disabled=false;const t={ev:'EVE KAÇ',park:'PARKA GİT',sahil:'SAHİLE İN',kafe:'KAFEYE GİR',koy:'ŞEHİR DIŞI',kulak:'KULAĞINI KAPAT'};b.textContent=t[b.dataset.route]});
-state={playing:true,city:$('#city').value,round:0,sites:1,roads:0,patience:100,noise:18,elapsed:0,quiet:0,silenceUntil:0,won:false};
-$('#cityText').textContent=state.city.toLocaleUpperCase('tr-TR');$('#placeText').textContent='EVİNİN ÖNÜ';$('#roadSign').textContent='ALTERNATİF YOL KAPALI';
-say('Saat 07:59. Biraz sessizlik arıyorsun.','İlk kamyon henüz senin bulunduğun sokağı keşfetmedi.');paint();if(withSound)unmute();
-clock=setInterval(()=>{
-if(!state?.playing)return;state.elapsed++;
-state.noise=Math.min(100,state.noise+2.5);state.patience=Math.max(0,state.patience-(state.elapsed%3===0?2:1));
-if(state.elapsed<=state.silenceUntil){state.quiet=Math.min(10,state.quiet+1);if(audio)audio.master.gain.value=.003;}else{state.quiet=0;if(audio)audio.master.gain.value=.038;}
-if(state.elapsed%5===0){
-state.sites++;state.roads++;state.noise=Math.min(100,state.noise+13);state.patience=Math.max(0,state.patience-7);
-say('Hiçbir yere gitmedin. Şantiye sana geldi.','Bulunduğun yerde sessizce durmak da bir seçenek değildi.');impact('BİP BİP');metallic();
-if(state.sites>=4)$('#otherTruck').classList.add('visible');
+ clearInterval(loopId);soundToggle(false);$('#intro').hidden=true;$('#ending').hidden=true;$('#otherTruck').classList.remove('visible');$('#world').classList.remove('frenzy');
+ const now=performance.now(),city=$('#city').value;
+ g={city,zones:locations[city]||locations['Türkiye geneli'],slots:Array(6).fill(null),playing:true,started:now,elapsed:0,score:0,combo:0,maxCombo:0,noise:20,stopped:0,failed:0,falseHits:0,spawned:0,total:0,open:0,permits:0,ears:1,freezeUntil:0,nextSpawn:now+400};
+ $('#placeText').textContent='EVİNİN ÖNÜ';$('#roadSign').textContent='KAZI BAŞLAYACAK';
+ announcer('Sarı şantiyeleri sustur!','Yeşillere dokunma. Her tıklama önemli.','08:00 — MESAİ BAŞLIYOR');
+ if(withSound)soundToggle(true);
+ lastFrame=now;paint(now);loopId=setInterval(tick,TICK)
 }
-paint();if(state.quiet>=10){state.won=true;end()}else if(state.patience<=0||state.elapsed>=45)end()
-},1000);
-fxClock=setInterval(()=>{if(!state?.playing)return;if(state.elapsed%2===0)reverseBeep();else tone(80,.22,'sawtooth',.1)},3100);
-}
-document.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.route)));
-$('#startSound').addEventListener('click',()=>start(true));$('#startSilent').addEventListener('click',()=>start(false));
-$('#soundBtn').addEventListener('click',()=>{if(audio)mute();else unmute()});
+buttons.forEach((b,i)=>b.addEventListener('click',()=>tapSlot(i)));
+$('#startSound').addEventListener('click',()=>start(true));
+$('#startSilent').addEventListener('click',()=>start(false));
 $('#again').addEventListener('click',()=>start(false));
+$('#inspect').addEventListener('click',inspect);
+$('#ears').addEventListener('click',ears);
+$('#soundBtn').addEventListener('click',()=>{if(audio)soundToggle(false);else soundToggle(true)});
 $('#share').addEventListener('click',async()=>{
-const t='Damperli Kamyon: '+state.city+'’da '+state.elapsed+' saniye sessizlik aradım. '+state.sites+' şantiye, '+state.roads+' kapalı yol, '+(state.won?'10 saniye (kulaklarımı kapatarak)':'0 saniye')+' sessizlik. https://aynen.fun/damperli-kamyon.html';
-try{if(navigator.share){await navigator.share({title:'Damperli Kamyon · aynen.fun',text:t})}else if(navigator.clipboard){await navigator.clipboard.writeText(t);$('#share').textContent='KOPYALANDI ✓'}else{window.prompt('Raporunu kopyala:',t)}}catch(e){if(e.name!=='AbortError')window.prompt('Raporunu kopyala:',t)}
+ if(!g)return;
+ const msg='Damperli Kamyon’da '+g.city+' şantiyeleriyle '+Math.floor(g.elapsed)+' saniye mücadele ettim. '+g.stopped+' şantiye susturdum, x'+g.maxCombo+' kombo yaptım. SKORUM: '+g.score+'. Sen geçebilir misin? https://aynen.fun/damperli-kamyon.html';
+ try{
+  if(navigator.share){await navigator.share({title:'Damperli Kamyon — aynen.fun',text:msg})}
+  else if(navigator.clipboard){await navigator.clipboard.writeText(msg);$('#share').textContent='RAPOR KOPYALANDI'}
+  else window.prompt('Raporunu kopyala:',msg)
+ }catch(e){if(e.name!=='AbortError')window.prompt('Raporunu kopyala:',msg)}
 });
-window.addEventListener('pagehide',()=>{stopTimers();mute()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&g?.playing){g.started+=2000;g.freezeUntil=Math.max(g.freezeUntil,performance.now()+2000)}});
+window.addEventListener('pagehide',()=>{clearInterval(loopId);soundToggle(false)});
+buttons.forEach((_,i)=>{const k=['1','2','3','4','5','6'][i];document.addEventListener('keydown',e=>{if(e.key===k&&!e.repeat&&g?.playing){e.preventDefault();tapSlot(i)}})});
 })();
 </script></body></html>
