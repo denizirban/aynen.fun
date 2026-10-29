@@ -45,7 +45,7 @@ const worlds=[
  ["AY YÜZEYİ","NASA henüz bilgi almadı.", "#161e32","#46516c","#626676",1.61],
  ["MARS","Mars'ta sanayi var mı?", "#cc9a82","#a36f55","#80543f",1.83]
 ];
-const state={running:false,over:false,gas:false,pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,lastGround:0,maxDist:0,smoke:[],shakes:0,toastTimer:0,clock:0};
+const state={running:false,over:false,gas:false,pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,lastGround:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0};
 let vw=0,vh=0,dpr=1;
 function resize(){const rect=canvas.getBoundingClientRect();dpr=Math.min(2,window.devicePixelRatio||1);vw=Math.max(200,rect.width);vh=Math.max(200,rect.height);canvas.width=Math.round(vw*dpr);canvas.height=Math.round(vh*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
 new ResizeObserver(resize).observe(canvas);resize();
@@ -106,7 +106,7 @@ function update(dt){
  if(state.speed>4.5&&state.landed){state.health-=Math.max(0,Math.abs(angleTarget)*state.speed-2.4)*.016*dt*60}
  if(state.pos>old&&state.gas&&Math.random()<.26){state.smoke.push({x:state.pos-48,y:state.y+10,r:2+Math.random()*5,life:1})}
  state.smoke=state.smoke.filter(p=>{p.life-=.025*dt*60;p.y-=.18*dt*60;p.r+=.13*dt*60;return p.life>0}).slice(-45);
- state.maxDist=Math.max(state.maxDist,state.pos);
+ state.clock+=dt;state.maxDist=Math.max(state.maxDist,state.pos);state.wheelSpin+=state.speed*dt*60/14;
  const idx=indexAt(state.pos);
  if(idx>state.visited){state.visited=idx;toast(worlds[idx][1].toUpperCase());}
  if(state.health<=0||Math.abs(state.angle)>1.52){state.health=Math.max(0,state.health);finish(false)}
@@ -120,19 +120,35 @@ function update(dt){
 function line(points,fill,stroke){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));if(fill){ctx.closePath();ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
 function drawCar(x,y,a){
  ctx.save();ctx.translate(x,y);ctx.rotate(a);
- ctx.shadowColor="#0005";ctx.shadowBlur=4;ctx.shadowOffsetY=4;
- // White Toros SW: long bonnet, rectangular glass and elongated squared rear.
- line([[-67,-5],[-60,-27],[-37,-29],[-21,-52],[39,-52],[55,-30],[67,-26],[71,-5]],"#eeeae1","#282828");
+ // suspension articulates over the terrain; body bounces independently from wheels
+ const front=clamp((levelAt(state.pos+44)-levelAt(state.pos))-slopeAt(state.pos)*44,-12,12);
+ const rear=clamp((levelAt(state.pos-42)-levelAt(state.pos))+slopeAt(state.pos)*42,-12,12);
+ const wobble=state.landed?Math.sin(state.clock*17)*Math.min(2,state.speed*.22):0;
+ ctx.translate(0,-2+wobble);
+ ctx.strokeStyle="#292929";ctx.lineWidth=4;
+ for(const [wx,off] of [[-43,rear],[45,front]]){
+  ctx.beginPath();ctx.moveTo(wx,-13);ctx.lineTo(wx,off+2);ctx.stroke();
+  ctx.strokeStyle="#8d8d8d";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(wx-5,-8);ctx.lineTo(wx+5,-3);ctx.lineTo(wx-5,2);ctx.lineTo(wx+5,7);ctx.stroke();ctx.strokeStyle="#292929";ctx.lineWidth=4;
+ }
+ // unmistakable long, square Toros wagon roof and flat front bonnet
+ ctx.shadowColor="#0004";ctx.shadowBlur=3;ctx.shadowOffsetY=3;
+ line([[-72,-6],[-72,-25],[-59,-29],[-43,-48],[24,-48],[43,-29],[65,-28],[73,-20],[74,-6]],"#ede9dc","#242424");
  ctx.shadowColor="transparent";
- line([[-29,-44],[9,-45],[9,-28],[-45,-28]],"#7495a2","#31383a");
- line([[14,-45],[34,-45],[47,-28],[14,-28]],"#7697a6","#31383a");
- ctx.fillStyle="#14191c";ctx.fillRect(-62,-21,129,7);ctx.fillRect(-65,-8,133,7);
- ctx.fillStyle="#aaa9a2";ctx.fillRect(-69,-15,7,10);ctx.fillRect(68,-16,7,10);
- ctx.fillStyle="#f0cb8a";ctx.fillRect(69,-23,5,7);ctx.fillStyle="#ad3330";ctx.fillRect(-69,-22,5,8);
- ctx.fillStyle="#777";ctx.fillRect(-30,-56,66,4);
- ctx.lineWidth=2;ctx.strokeStyle="#242424";ctx.beginPath();ctx.moveTo(-26,-57);ctx.lineTo(-26,-53);ctx.moveTo(34,-57);ctx.lineTo(34,-52);ctx.stroke();
- for(const wx of [-42,44]){ctx.fillStyle="#202326";ctx.beginPath();ctx.arc(wx,1,15,0,7);ctx.fill();ctx.fillStyle="#c6c7c4";ctx.beginPath();ctx.arc(wx,1,9,0,7);ctx.fill();ctx.fillStyle="#666";ctx.beginPath();ctx.arc(wx,1,3,0,7);ctx.fill()}
- ctx.strokeStyle="#737373";ctx.lineWidth=1;ctx.strokeRect(-4,-15,22,2);
+ line([[-39,-43],[-13,-43],[-13,-29],[-51,-29]],"#91b1b8","#292929");
+ line([[-9,-43],[20,-43],[36,-29],[-9,-29]],"#91b1b8","#292929");
+ ctx.fillStyle="#292929";ctx.fillRect(-68,-18,139,4);ctx.fillStyle="#bbb9ae";ctx.fillRect(-72,-10,146,4);
+ ctx.strokeStyle="#222";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-11,-44);ctx.lineTo(-11,-27);ctx.moveTo(39,-28);ctx.lineTo(39,-9);ctx.stroke();
+ ctx.fillStyle="#1b1b1b";ctx.fillRect(-9,-20,13,2);ctx.fillRect(45,-19,11,2);
+ ctx.fillStyle="#d9b978";ctx.fillRect(69,-24,5,8);ctx.fillStyle="#ad3a2b";ctx.fillRect(-73,-24,5,8);
+ ctx.fillStyle="#3c3c3c";ctx.fillRect(-40,-53,69,3);ctx.fillRect(-38,-56,3,6);ctx.fillRect(26,-56,3,6);
+ for(const [wx,off] of [[-43,rear],[45,front]]){
+  ctx.save();ctx.translate(wx,off);ctx.rotate(state.wheelSpin);
+  ctx.fillStyle="#1d1e1d";ctx.beginPath();ctx.arc(0,0,16,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#bcbeb8";ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="#4b4c4b";ctx.lineWidth=2;
+  for(let j=0;j<5;j++){let t=j*Math.PI*2/5;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(t)*8,Math.sin(t)*8);ctx.stroke()}
+  ctx.fillStyle="#444";ctx.beginPath();ctx.arc(0,0,3,0,7);ctx.fill();ctx.restore();
+ }
  ctx.restore();
 }
 function render(){
