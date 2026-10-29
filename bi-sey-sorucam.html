@@ -299,7 +299,7 @@ function finish(reason){
 }
 function resultText(){
  let r=endings[state.ending]||endings.never;
- return "Bi Şey Sorucam / "+r.headline+"\n"+state.messages+" mesaj · "+state.questions+" soru · %"+state.curiosity+" merak\n"+r.quote+"\nhttps://aynen.fun/bi-sey-sorucam.html";
+ return "Bi Şey Sorucam / "+r.headline+"\n"+state.messages+" mesaj · "+state.questions+" soru · %"+state.curiosity+" merak\n"+r.quote+"\nSen 55 saniyede soruyu sordurabilir misin?\nhttps://aynen.fun/bi-sey-sorucam.html";
 }
 $("shareBtn").onclick=async()=>{
  const text=resultText();
