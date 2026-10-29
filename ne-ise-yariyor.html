@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f8f8f6">
-<meta name="description" content="Çok tuhaf sekiz nesne. Hepsi gerçek. Ne işe yaradıklarını tahmin et.">
-<title>Ne İşe Yarıyor? — aynen.fun</title>
+<meta name="description" content="Sekiz garip nesne. Hepsi gerçek. Bu ne? Tahmin et, arkasındaki bilimi öğren.">
+<title>Bu Ne? — aynen.fun</title>
 <link rel="icon" href="/favicon.ico">
 <style>
 :root{color-scheme:light;--paper:#f8f8f6;--ink:#171717;--rule:#b9b9b4;--muted:#777;--accent:#e35a2b}
@@ -22,21 +22,21 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
 .status{text-align:right;text-transform:uppercase;font-size:9px;line-height:1.35;font-weight:700;letter-spacing:.01em}
 .status b{color:#48667d;font-weight:700}
 main{width:min(1370px,100%);margin:auto;min-height:calc(100dvh - 151px);display:grid;grid-template-columns:minmax(0,1.18fr) minmax(325px,.77fr);align-items:center;gap:clamp(12px,2vw,44px);padding:8px clamp(24px,5vw,72px) 28px}
-.gallery{min-width:0;min-height:400px;height:min(69dvh,640px);position:relative;display:grid;place-items:center;isolation:isolate}
+.gallery{min-width:0;min-height:400px;height:min(69dvh,640px);position:relative;display:grid;place-items:center;isolation:isolate;overflow:hidden;contain:layout}
 .gallery::before{content:"";position:absolute;z-index:-2;width:75%;height:70%;top:14%;left:11%;background:radial-gradient(ellipse at 50% 50%,#e8e8e2 0,rgba(239,236,229,.55) 34%,transparent 73%);opacity:.52;filter:blur(22px)}
 .gallery .halo{position:absolute;z-index:-1;top:12%;right:11%;width:115px;height:116px;background:radial-gradient(circle,rgba(239,108,53,.38),rgba(239,108,53,.02) 70%);filter:blur(22px);transition:transform .7s}
-.object-shell{width:78%;height:83%;display:grid;place-items:center;position:relative;transition:transform .52s cubic-bezier(.2,.76,.2,1),opacity .3s;cursor:zoom-in}
+.object-shell{position:absolute;inset:13% 13% 12%;width:74%;height:75%;min-width:0;min-height:0;display:block;overflow:visible;transition:transform .52s cubic-bezier(.2,.76,.2,1),opacity .3s;cursor:zoom-in;transform-origin:center center}
 .object-shell:hover{transform:translateY(-7px) rotate(-1deg)}
-.object-shell.zoom{transform:scale(1.35);cursor:zoom-out;z-index:2}
-.object-photo{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;filter:contrast(1.05) drop-shadow(0px 14px 11px rgba(0,0,0,.07));display:block;transition:opacity .35s}
+.object-shell.zoom{transform:scale(1.16);cursor:zoom-out;z-index:2}
+.object-photo{position:absolute;top:50%;left:50%;width:100%;height:100%;max-width:100%;max-height:100%;min-width:0;min-height:0;object-fit:contain;object-position:50% 50%;mix-blend-mode:multiply;filter:contrast(1.05) drop-shadow(0px 12px 8px rgba(0,0,0,.055));display:block;transform:translate(-50%,-50%) scale(var(--object-scale,1));transform-origin:center center;transition:opacity .35s}
 .object-shell.loading .object-photo{opacity:0}
 .fallback{position:absolute;width:55%;height:60%;inset:auto;display:none;place-items:center;font-size:90px;font-weight:100;opacity:.18}
 .object-shell.error .fallback{display:grid}
 .gallery-nav{position:absolute;top:46%;border:0;background:transparent;font-size:28px;font-weight:300;width:48px;height:56px;display:grid;place-items:center;z-index:4;transition:transform .2s}
 .gallery-nav:hover{transform:scale(1.22)}
 .gallery-nav.prev{left:0}.gallery-nav.next{right:0}
-.gallery-mark{position:absolute;bottom:4%;left:10%;font-size:9px;font-weight:700;letter-spacing:.07em}
-.gallery-caption{position:absolute;bottom:4%;right:8%;font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.08em}
+.gallery-mark{position:absolute;bottom:4%;left:10%;font-size:9px;font-weight:700;letter-spacing:.07em;z-index:3}
+.gallery-caption{position:absolute;bottom:4%;right:8%;font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.08em;z-index:3}
 .dossier{position:relative;width:100%;max-width:512px;background:rgba(248,248,246,.7);border:1px solid #979793;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);align-self:center}
 .rule-row{border-bottom:1px solid #a5a5a0;padding:11px 14px}
 .toprow{display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:700;min-height:38px}
@@ -84,8 +84,8 @@ footer .small{font-weight:400;color:#777;max-width:460px;line-height:1.5;text-al
 .toast{position:fixed;bottom:63px;left:50%;transform:translateX(-50%);background:#171717;color:white;padding:10px 13px;font:11px Arial,sans-serif;z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 @media(min-width:1000px){.dossier{transform:translateX(-1.5%)}}
-@media(max-width:850px){.chrome{height:60px;padding:18px 20px 0}.brand{font-size:12px}.brand span{font-size:8px}.status{font-size:8px}main{min-height:auto;padding:7px 20px 22px;grid-template-columns:1fr;gap:0}.gallery{height:clamp(270px,43dvh,440px);min-height:0}.object-shell{width:65%;height:84%}.gallery-nav.prev{left:1%}.gallery-nav.next{right:1%}.gallery-mark,.gallery-caption{bottom:1%}.dossier{max-width:620px;margin:13px auto 0}.headrow{min-height:83px}.questionarea{min-height:210px;padding:13px}.choice{min-height:43px}.title{font-size:28px}footer{padding:0 20px 17px;min-height:50px}}
-@media(max-width:420px){.gallery{height:290px}.object-shell{width:72%;height:81%}.gallery-nav{width:29px;font-size:25px}.chrome{padding-left:17px;padding-right:17px}.toprow,.bottomrow{padding-left:11px;padding-right:11px}main{padding-left:13px;padding-right:13px}.gallery-caption{right:2%}.gallery-mark{left:3%}footer{padding-left:16px;padding-right:16px}.headrow{min-height:78px}.title{font-size:27px}}
+@media(max-width:850px){.chrome{height:60px;padding:18px 20px 0}.brand{font-size:12px}.brand span{font-size:8px}.status{font-size:8px}main{min-height:auto;padding:7px 20px 22px;grid-template-columns:1fr;gap:0}.gallery{height:clamp(270px,43dvh,440px);min-height:0}.object-shell{inset:10% 18% 12%;width:64%;height:78%}.gallery-nav.prev{left:1%}.gallery-nav.next{right:1%}.gallery-mark,.gallery-caption{bottom:1%}.dossier{max-width:620px;margin:13px auto 0}.headrow{min-height:83px}.questionarea{min-height:210px;padding:13px}.choice{min-height:43px}.title{font-size:28px}footer{padding:0 20px 17px;min-height:50px}}
+@media(max-width:420px){.gallery{height:290px}.object-shell{inset:9% 14% 12%;width:72%;height:79%}.gallery-nav{width:29px;font-size:25px}.chrome{padding-left:17px;padding-right:17px}.toprow,.bottomrow{padding-left:11px;padding-right:11px}main{padding-left:13px;padding-right:13px}.gallery-caption{right:2%}.gallery-mark{left:3%}footer{padding-left:16px;padding-right:16px}.headrow{min-height:78px}.title{font-size:27px}}
 @media(max-height:620px) and (min-width:851px){.chrome{height:62px;padding-top:16px}main{min-height:calc(100dvh - 110px)}.gallery{height:75dvh;min-height:290px}.questionarea{min-height:190px;padding-top:9px;padding-bottom:9px}.choice{min-height:31px;padding:7px}.rule-row{padding-top:7px;padding-bottom:7px}.headrow{min-height:68px}.meta .item{padding:7px 12px}footer{min-height:45px;padding-bottom:10px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
@@ -109,7 +109,7 @@ footer .small{font-weight:400;color:#777;max-width:460px;line-height:1.5;text-al
  </section>
  <section class="dossier" id="dossier" aria-live="polite" aria-label="Nesne bilgi kartı">
   <div class="rule-row toprow mono"><span id="back" role="text">← NESNE ARŞİVİ</span><span class="light" id="collection">NO. 001—008</span></div>
-  <div class="rule-row headrow"><div class="eyebrow" id="eyebrow">BULUNDU / TANIMLANAMADI</div><h1 class="title" id="title">Bu ne işe yarıyor?</h1></div>
+  <div class="rule-row headrow"><div class="eyebrow" id="eyebrow">BULUNDU / TANIMLANAMADI</div><h1 class="title" id="title">Bu Ne?</h1></div>
   <div class="rule-row actionrow" style="padding:0"><button type="button" id="shuffle">RASTGELE NESNE ↗</button><button type="button" id="share">PAYLAŞ ↗</button></div>
   <div class="rule-row meta" style="padding:0"><div class="item"><small class="mono">MALZEME</small><strong id="material">—</strong></div><div class="item"><small class="mono">KOLEKSİYON</small><strong id="category">—</strong></div></div>
   <div class="questionarea" id="questionarea"></div>
@@ -131,8 +131,8 @@ var objects=[
 {slug:'rupert',name:'Prens Rupert Damlası',material:'HIZLA SOĞUTULMUŞ CAM',category:'CAM / GERİLME',photo:'Prince Ruperts drops.jpg',credit:'Michael Grogan · Kamu malı',question:'Bu cam damlanın en garip özelliği ne?',choices:['Suyun içinde yüzebiliyor.','Baş kısmı darbelere çok dayanıklı; kuyruğu kırılırsa tümü parçalanıyor.','Sadece karanlıkta saydamlaşıyor.'],correct:1,story:'Erimiş cam soğuk suya damlatılır. Dış yüzeyi önce sertleşir; içeride çok büyük gerilmeler hapsolur. Kalın ucu dirençliyken ince kuyruktan başlayan çatlak tüm damlayı aniden dağıtır.',fact:'Aynı nesnede hem çok yüksek yüzey dayanımı hem de aşırı kırılganlık var.',link:'https://en.wikipedia.org/wiki/Prince_Rupert%27s_drop'},
 {slug:'aerogel',name:'Silika Aerojel',material:'SİLİKA + HAVA',category:'GÖZENEKLİ MALZEME',photo:'Aerogel.jpg',credit:'GOKLuLe · CC BY-SA 3.0',question:'Bu yarı saydam katı niçin bu kadar hafif?',choices:['İçi neredeyse tamamen küçük hava boşluklarından oluşuyor.','Dünya ile aynı yönde manyetik itiş yapıyor.','Sadece fotoğrafı var; elle tutulamıyor.'],correct:0,story:'Aerojel, sıvı kısmı özel yöntemlerle uzaklaştırılmış çok gözenekli bir katıdır. Silika aerojellerde yapının büyük çoğunluğu boşluktur; bu yüzden çok hafif ve güçlü ısı yalıtkanı olabilirler.',fact:'Bazen “donmuş duman” diye anılır. Duman değildir.',link:'https://en.wikipedia.org/wiki/Aerogel'},
 {slug:'klein',name:'Klein Şişesi',material:'CAM / MATEMATİKSEL MODEL',category:'TOPOLOJİ',photo:'Klein bottle glass1.jpg',credit:'PaulT / Gunther Tschuch · CC BY-SA',question:'Bu şişeyi neden normal şekilde dolduramazsın?',choices:['Camı içine dökülen her sıvıyı emiyor.','Tabanı yalnızca ısıyla açılıyor.','Matematiksel olarak içiyle dışı ayrı olmayan bir yüzeyi temsil ediyor.'],correct:2,story:'Klein şişesi matematikte tek taraflı, sınırı olmayan bir yüzeydir. Üç boyutlu cam modelleri kendi içinden geçiyormuş gibi görünür; gerçek geometrisi dört boyutta kesişmeden düşünülebilir.',fact:'Şişe gibi görünüyor. Ama bir şişeden beklediğin iç ve dış ayrımı burada yok.',link:'https://en.wikipedia.org/wiki/Klein_bottle'},
-{slug:'crookes',name:'Crookes Radyometresi',material:'CAM + İNCE KANATÇIKLAR',category:'ISI / GAZ',photo:'Crookes radiometer.jpg',credit:'Timeline · Serbest kullanım',question:'Işık vurduğunda içindeki kanatçıkları ne döndürüyor?',choices:['Görünür ışığın rüzgârı.','Kanatların farklı ısınmasıyla seyrek gazda oluşan kuvvetler.','İçeride saklı minik bir pil.'],correct:1,story:'Cam kürenin içindeki kanatçıkların bir yüzü koyu, diğeri açıktır. Işıkla farklı ısınmaları seyrek gazda sıcaklığa bağlı kuvvetler üretir. Kanatlar bu nedenle döner.',fact:'Adı “ışık değirmeni” olsa da hareketin temel açıklaması doğrudan ışık basıncı değildir.',link:'https://en.wikipedia.org/wiki/Crookes_radiometer'},
-{slug:'lava',name:'Lav Lambası',material:'BALMUMU + SIVI + ISI',category:'YOĞUNLUK',photo:'Lava_lamp_%28yellow%29.jpg',raw:true,credit:'DMGualtieri · CC BY-SA',question:'Bu lambanın içindeki şekiller nasıl yukarı çıkıyor?',choices:['Sıvının içinde görünmez motor var.','Isınan mumun yoğunluğu değişiyor; yükselip soğuyunca geri iniyor.','Baloncuklar manyetik alanla itiliyor.'],correct:1,story:'Alttaki ısı kaynağı renkli mum benzeri karışımı ısıtır. Genleşip çevresindeki sıvıya göre hafiflediğinde yükselir; üstte soğuyunca tekrar aşağı iner.',fact:'Lambanın numarası ışıkta değil, yoğunluk farkında.',link:'https://en.wikipedia.org/wiki/Lava_lamp'},
+{scale:0.88,slug:'crookes',name:'Crookes Radyometresi',material:'CAM + İNCE KANATÇIKLAR',category:'ISI / GAZ',photo:'Crookes radiometer.jpg',credit:'Timeline · Serbest kullanım',question:'Işık vurduğunda içindeki kanatçıkları ne döndürüyor?',choices:['Görünür ışığın rüzgârı.','Kanatların farklı ısınmasıyla seyrek gazda oluşan kuvvetler.','İçeride saklı minik bir pil.'],correct:1,story:'Cam kürenin içindeki kanatçıkların bir yüzü koyu, diğeri açıktır. Işıkla farklı ısınmaları seyrek gazda sıcaklığa bağlı kuvvetler üretir. Kanatlar bu nedenle döner.',fact:'Adı “ışık değirmeni” olsa da hareketin temel açıklaması doğrudan ışık basıncı değildir.',link:'https://en.wikipedia.org/wiki/Crookes_radiometer'},
+{scale:0.94,slug:'lava',name:'Lav Lambası',material:'BALMUMU + SIVI + ISI',category:'YOĞUNLUK',photo:'Lava_lamp_%28yellow%29.jpg',raw:true,credit:'DMGualtieri · CC BY-SA',question:'Bu lambanın içindeki şekiller nasıl yukarı çıkıyor?',choices:['Sıvının içinde görünmez motor var.','Isınan mumun yoğunluğu değişiyor; yükselip soğuyunca geri iniyor.','Baloncuklar manyetik alanla itiliyor.'],correct:1,story:'Alttaki ısı kaynağı renkli mum benzeri karışımı ısıtır. Genleşip çevresindeki sıvıya göre hafiflediğinde yükselir; üstte soğuyunca tekrar aşağı iner.',fact:'Lambanın numarası ışıkta değil, yoğunluk farkında.',link:'https://en.wikipedia.org/wiki/Lava_lamp'},
 {slug:'bimetal',name:'Bimetal Şerit',material:'İKİ FARKLI METAL',category:'ISIL GENLEŞME',photo:'Bimetallic strip.JPG',credit:'Dmitry G · CC BY-SA 3.0',question:'Bu iki katmanlı metal ısınınca ne yapabilir?',choices:['Bir metale dönüşür.','Kendi kendine manyetik olur.','İki metal farklı miktarda uzandığı için bükülür.'],correct:2,story:'Birbirine bağlanmış iki metalin ısıl genleşmesi farklıysa sıcaklık değişince şerit eğilir. Bu davranış mekanik sıcaklık anahtarları ve termostatlarda kullanılır.',fact:'Birçok termostatta sıcaklık değişimini elektroniğe gerek kalmadan harekete çevirebilir.',link:'https://en.wikipedia.org/wiki/Bimetallic_strip'},
 {slug:'galton',name:'Galton Tahtası',material:'BİLYELER + ÇİVİ DİZİSİ',category:'OLASILIK',photo:'GaltonBoard.png',credit:'Mark Hebner · Creative Commons',question:'Bu bilyeler en çok neden ortada birikiyor?',choices:['Birçok rastgele sağ-sol sapmanın toplamı ortayı daha olası kılıyor.','Ortadaki bölmede gizli mıknatıs var.','Bilyeler ağırlıklarını düşerken değiştiriyor.'],correct:0,story:'Bilyeler her çivi sırasından geçerken sağa ya da sola sapabilir. Çok sayıda benzer bağımsız sapma, bilyelerin çoğunun merkeze yakın bölmelere düşmesine yol açar.',fact:'Çok sayıda küçük rastlantı birlikte şaşırtıcı derecede düzenli bir dağılım oluşturabilir.',link:'https://en.wikipedia.org/wiki/Galton_board'}
 ];
@@ -153,13 +153,14 @@ function render(){
  $('status').textContent='GÖRÜNTÜLENEN: '+pad(index+1);
  $('collection').textContent='NO. '+pad(index+1)+' / '+pad(objects.length);
  $('eyebrow').textContent=done?'TEŞHİS EDİLDİ / GERÇEK NESNE':'BULUNDU / TANIMLANAMADI';
- $('title').textContent=done?o.name:'Bu ne işe yarıyor?';
+ $('title').textContent=done?o.name:'Bu Ne?';
  $('title').classList.toggle('reveal',done);
  $('material').textContent=done?o.material:'BİLİNMİYOR';
  $('category').textContent=done?o.category:'BİLİNMİYOR';
  $('photo-index').textContent=pad(index+1)+' / '+pad(objects.length);
  $('photo-caption').textContent=done?o.name.toUpperCase():'GERÇEK NESNE / GERÇEK FOTOĞRAF';
  shell.className='object-shell loading';
+ shell.style.setProperty('--object-scale', String(o.scale||1));
  photo.alt=o.name+' — gerçek fotoğraf';
  photo.onload=function(){shell.classList.remove('loading','error')};
  photo.onerror=function(){shell.classList.remove('loading');shell.classList.add('error')};
@@ -197,7 +198,7 @@ function showSummary(){
  $('share-result').onclick=share;
  updatedCount();
 }
-function share(){var c=counts(),s='8 garip nesneden '+c.correct+' tanesini bildim. Sen kaçını bilirsin?';var url=location.origin+location.pathname;if(navigator.share)navigator.share({title:'Ne İşe Yarıyor? — aynen.fun',text:s,url:url}).catch(function(){});else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(s+' '+url).then(function(){showToast('BAĞLANTI KOPYALANDI')}).catch(function(){showToast('PAYLAŞIM KULLANILAMIYOR')});else showToast('BAĞLANTI: '+url)}
+function share(){var c=counts(),s='8 garip nesneden '+c.correct+' tanesini bildim. Sen kaçını bilirsin?';var url=location.origin+location.pathname;if(navigator.share)navigator.share({title:'Bu Ne? — aynen.fun',text:s,url:url}).catch(function(){});else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(s+' '+url).then(function(){showToast('BAĞLANTI KOPYALANDI')}).catch(function(){showToast('PAYLAŞIM KULLANILAMIYOR')});else showToast('BAĞLANTI: '+url)}
 $('prev').addEventListener('click',function(){navigate(-1)});
 $('next').addEventListener('click',function(){navigate(1)});
 $('shuffle').addEventListener('click',function(){var j=index;while(j===index)j=Math.floor(Math.random()*objects.length);index=j;render()});
