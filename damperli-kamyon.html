@@ -99,7 +99,7 @@ header a{font-size:12px;font-weight:700;text-decoration:none;color:var(--ink);wh
 <div id="intro" class="overlay"><div class="paper"><span class="stamp">TÜRKİYE ŞANTİYE SİMÜLATÖRÜ · 001</span><h1>DAMPERLİ<br>KAMYON.</h1><p>Tek görevin <b>10 saniye sessiz bir yer bulmak.</b> Nereye kaçarsan kaç, damperli kamyon senden önce orada olacak.</p>
 <label for="city" class="eyebrow">NEREDEN KAÇMAK İSTERSİN?</label><select id="city"><option>İstanbul</option><option>Ankara</option><option>İzmir</option><option>Antalya</option><option>Bursa</option><option>Trabzon</option><option>Fethiye</option><option>Türkiye geneli</option></select>
 <button class="primary" id="startSound">BAŞLA — SESLİ</button><button class="secondary" id="startSilent">SESSİZ BAŞLA (İYİ ŞANSLAR)</button><small>Sesler tarayıcıda üretilir; gerçek inşaat kaydı değildir. İstediğin an kapatabilirsin.</small></div></div>
-<div id="ending" class="overlay" hidden><div class="paper"><span class="stamp">RESMÎ ŞANTİYE RAPORU</span><h1>SESSİZLİK<br>BULUNAMADI.</h1><p id="endingBlurb">Araman başarıyla başarısız oldu.</p><div class="report"><div>KAÇIŞ SÜRESİ: <b id="finalTime">0 SN</b></div><div>YENİ ŞANTİYE: <b id="finalSites">0</b></div><div>KAPANAN YOL: <b id="finalRoads">0</b></div><div>TOPLAM SESSİZLİK: <b>0 SANİYE</b></div></div><button class="primary" id="share">RAPORUMU PAYLAŞ</button><button class="secondary" id="again">BİR DAHA KAÇMAYI DENE</button><small>Dipnot: Kaçtığın yerde yol çalışması başlamış olabilir.</small></div></div>
+<div id="ending" class="overlay" hidden><div class="paper"><span class="stamp">RESMÎ ŞANTİYE RAPORU</span><h1 id="endTitle">SESSİZLİK<br>BULUNAMADI.</h1><p id="endingBlurb">Araman başarıyla başarısız oldu.</p><div class="report"><div>KAÇIŞ SÜRESİ: <b id="finalTime">0 SN</b></div><div>YENİ ŞANTİYE: <b id="finalSites">0</b></div><div>KAPANAN YOL: <b id="finalRoads">0</b></div><div>TOPLAM SESSİZLİK: <b id="finalQuiet">0 SANİYE</b></div></div><button class="primary" id="share">RAPORUMU PAYLAŞ</button><button class="secondary" id="again">BİR DAHA KAÇMAYI DENE</button><small>Dipnot: Kaçtığın yerde yol çalışması başlamış olabilir.</small></div></div>
 <script>
 (()=>{
 const $=s=>document.querySelector(s);
@@ -119,7 +119,7 @@ function paint(){
 $('#siteStat').textContent=String(state.sites).padStart(2,'0');$('#roadStat').textContent=String(state.roads).padStart(2,'0');
 $('#quietStat').textContent=state.quiet.toFixed(1)+'s';$('#patienceText').textContent='%'+Math.round(state.patience);$('#noiseText').textContent='%'+Math.round(state.noise);
 $('#patienceFill').style.width=state.patience+'%';$('#noiseFill').style.width=state.noise+'%';
-$('#timeDisplay').textContent=(state.elapsed>0?'08:':'07:')+String(state.elapsed>0?Math.min(59,state.elapsed):59).padStart(2,'0')+' · ŞANTİYE SAATİ';
+$('#timeDisplay').textContent=(state.elapsed>0?'08:':'07:')+String(state.elapsed>0?Math.min(59,state.elapsed-1):59).padStart(2,'0')+' · ŞANTİYE SAATİ';
 }
 function impact(word){
 const world=$('#world'),truck=$('#truck'),x=$('#exclaim');
@@ -145,14 +145,14 @@ try{const context=new C(),master=context.createGain();master.gain.value=.038;mas
 }
 function end(){
 if(!state||!state.playing)return;state.playing=false;stopTimers();mute();$('#finalTime').textContent=state.elapsed+' SN';$('#finalSites').textContent=state.sites;$('#finalRoads').textContent=state.roads;
-$('#endingBlurb').textContent=state.city+' sınırlarında '+state.elapsed+' saniye boyunca huzur aradın. '+state.sites+' şantiye buldun. Şehir seni buldu.';
+$('#endTitle').innerHTML=state.won?'BULDUĞUN ŞEY<br>SESSİZLİK DEĞİL.':'SESSİZLİK<br>BULUNAMADI.';$('#finalQuiet').textContent=state.won?'10 SANİYE':'0 SANİYE';$('#endingBlurb').textContent=state.won?'İnşaat durmadı. Sen 10 saniye kulaklarını kapattın. Şehir tarihinde bir ilk.':state.city+' sınırlarında '+state.elapsed+' saniye boyunca huzur aradın. '+state.sites+' şantiye buldun. Şehir seni buldu.';
 $('#ending').hidden=false;
 }
 function choose(key){
 if(!state?.playing)return;
 if(key==='kulak'){
 state.patience=Math.max(0,state.patience-5);
-state.noise=Math.max(5,state.noise-32);say('Kulaklarını kapattın.','Damperli kamyon bu sefer titreşimle haber veriyor.');impact('TIK TIK');tone(140,.3,'sine',.12);
+state.noise=Math.max(5,state.noise-32);state.silenceUntil=state.elapsed+2;if(audio)audio.master.gain.value=.003;say('Kulaklarını kapattın.','Damperli kamyon bu sefer titreşimle haber veriyor.');impact('TIK TIK');tone(140,.3,'sine',.12);
 }else{
 const [place,title,detail]=routes[key];state.round++;state.sites++;state.roads++;
 state.patience=Math.max(0,state.patience-(10+Math.min(15,state.round*1.6)));
@@ -167,19 +167,19 @@ paint();if(state.patience<=0||state.round>=9)end()
 function start(withSound){
 stopTimers();mute();$('#ending').hidden=true;$('#intro').hidden=true;$('#otherTruck').classList.remove('visible');
 document.querySelectorAll('.route').forEach(b=>{b.disabled=false;const t={ev:'EVE KAÇ',park:'PARKA GİT',sahil:'SAHİLE İN',kafe:'KAFEYE GİR',koy:'ŞEHİR DIŞI',kulak:'KULAĞINI KAPAT'};b.textContent=t[b.dataset.route]});
-state={playing:true,city:$('#city').value,round:0,sites:1,roads:0,patience:100,noise:18,elapsed:0,quiet:0};
+state={playing:true,city:$('#city').value,round:0,sites:1,roads:0,patience:100,noise:18,elapsed:0,quiet:0,silenceUntil:0,won:false};
 $('#cityText').textContent=state.city.toLocaleUpperCase('tr-TR');$('#placeText').textContent='EVİNİN ÖNÜ';$('#roadSign').textContent='ALTERNATİF YOL KAPALI';
 say('Saat 07:59. Biraz sessizlik arıyorsun.','İlk kamyon henüz senin bulunduğun sokağı keşfetmedi.');paint();if(withSound)unmute();
 clock=setInterval(()=>{
 if(!state?.playing)return;state.elapsed++;
 state.noise=Math.min(100,state.noise+2.5);state.patience=Math.max(0,state.patience-(state.elapsed%3===0?2:1));
-if(state.noise<8)state.quiet=Math.min(10,state.quiet+1);else state.quiet=0;
+if(state.elapsed<=state.silenceUntil){state.quiet=Math.min(10,state.quiet+1);if(audio)audio.master.gain.value=.003;}else{state.quiet=0;if(audio)audio.master.gain.value=.038;}
 if(state.elapsed%5===0){
 state.sites++;state.roads++;state.noise=Math.min(100,state.noise+13);state.patience=Math.max(0,state.patience-7);
 say('Hiçbir yere gitmedin. Şantiye sana geldi.','Bulunduğun yerde sessizce durmak da bir seçenek değildi.');impact('BİP BİP');metallic();
 if(state.sites>=4)$('#otherTruck').classList.add('visible');
 }
-paint();if(state.quiet>=10||state.patience<=0||state.elapsed>=45)end()
+paint();if(state.quiet>=10){state.won=true;end()}else if(state.patience<=0||state.elapsed>=45)end()
 },1000);
 fxClock=setInterval(()=>{if(!state?.playing)return;if(state.elapsed%2===0)reverseBeep();else tone(80,.22,'sawtooth',.1)},3100);
 }
@@ -188,7 +188,7 @@ $('#startSound').addEventListener('click',()=>start(true));$('#startSilent').add
 $('#soundBtn').addEventListener('click',()=>{if(audio)mute();else unmute()});
 $('#again').addEventListener('click',()=>start(false));
 $('#share').addEventListener('click',async()=>{
-const t='Damperli Kamyon: '+state.city+'’da '+state.elapsed+' saniye sessizlik aradım. '+state.sites+' şantiye, '+state.roads+' kapalı yol, 0 saniye sessizlik. https://aynen.fun/damperli-kamyon.html';
+const t='Damperli Kamyon: '+state.city+'’da '+state.elapsed+' saniye sessizlik aradım. '+state.sites+' şantiye, '+state.roads+' kapalı yol, '+(state.won?'10 saniye (kulaklarımı kapatarak)':'0 saniye')+' sessizlik. https://aynen.fun/damperli-kamyon.html';
 try{if(navigator.share){await navigator.share({title:'Damperli Kamyon · aynen.fun',text:t})}else if(navigator.clipboard){await navigator.clipboard.writeText(t);$('#share').textContent='KOPYALANDI ✓'}else{window.prompt('Raporunu kopyala:',t)}}catch(e){if(e.name!=='AbortError')window.prompt('Raporunu kopyala:',t)}
 });
 window.addEventListener('pagehide',()=>{stopTimers();mute()});
