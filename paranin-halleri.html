@@ -122,7 +122,7 @@ const PRESET=[
 [1927,'note','E1',1000,'Bin lira, 1927 modeli','İlk bin lira banknotunun arka yüzünde Sakarya demiryolu hattı vardı.','O yıllarda banknot kupürleri 1 liradan 1.000 liraya uzanıyordu.'],
 [1934,'coin','C1928-1945',1,'Bir lira, gerçekten gümüş','1934’te gümüş 1 liralık madeni para basıldı.','Aynı birim farklı yıllarda gümüş, alüminyum veya çift renkli alaşım oldu.'],
 [1937,'note','E2',5,'Harfler değişti, para da','İkinci emisyon banknotları yeni Türk alfabesini kullanan ilk seriler arasındaydı.','E2 grubunun ilk banknotları 1937’de tedavüle girdi.'],
-[1940,'coin','C1928-1945',0.25,'Çeyrek kuruş vardı','1940–1942 yılları arasında çeyrek kuruş (10 para) basıldı.','Bugün tek bir kuruşun dörtte biri kulağa tuhaf geliyor.'],
+[1940,'coin','C1928-1945',10,'Çeyrek kuruş vardı','1940–1942 yılları arasında çeyrek kuruş (10 para) basıldı.','Bugün tek bir kuruşun dörtte biri kulağa tuhaf geliyor.'],
 [1942,'note','E2',1,'Bir liralık banknota dönüş','1942’de 1 lira yeniden banknot olarak tedavüle çıktı.','O dönemin banknotlarında İnönü portresi de bulunuyordu.'],
 [1942,'note','E3',100,'Arka yüzde üzüm taşıyan kız','Üçüncü emisyon 100 liranın arkasında üzüm tutan bir kız tasviri vardı.','Bir paranın arka yüzü bazen bir zaman kapsülüdür.'],
 [1947,'note','E3',50,'Ankara keçileri sahnede','Üçüncü emisyon elli liralarda Ankara keçileri yer aldı.','Yün, tarım ve yerel yaşam para tasarımlarına giriyordu.'],
@@ -177,7 +177,7 @@ const x={all:PRESET.map((v,i)=>i),note:PRESET.map((v,i)=>v[1]==='note'?i:-1).fil
 const media={};let mode='all',pos=0,back=false,loadDone=false,requestId=0,zeroDone=false;
 const records=PRESET.map((p,i)=>({id:i,year:p[0],type:p[1],group:p[2],value:p[3],headline:p[4],fact:p[5],context:p[6]}));
 const format=n=>n===.25?'¼':Number(n).toLocaleString('tr-TR');
-function denom(r){return format(r.value)+(r.type==='coin'&&r.value<1?' kuruş':r.type==='coin'&&r.group==='C2005-2008'?(r.value===50?' yeni kuruş':' YTL'):r.group==='E8'?' YTL':r.type==='coin'&&r.value===50&&r.year>=2005?' kuruş':' TL')}
+function denom(r){if(r.type==='note')return format(r.value)+(r.group==='E8'?' YTL':' TL');if(r.year===1940&&r.value===10)return '10 para (¼ kuruş)';if(r.year<1980 && r.year!==1934)return format(r.value)+' kuruş';if(r.group==='C2005-2008')return format(r.value)+(r.value===50?' yeni kuruş':' YTL');if(r.year>=2009&&r.value===50)return '50 kuruş';return format(r.value)+' TL'}
 function groups(r){return r.type==='note'?r.group+' · BANKNOT':'MADENİ PARA'}
 function source(r){return BASE+WIKI[r.type]}
 function similar(a,b){return a.group===b.group && a.type===b.type && Math.abs(a.year-b.year)<=12}
