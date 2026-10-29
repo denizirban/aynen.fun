@@ -175,7 +175,7 @@ function readName(k){
 }
 function full(k){
  if(k===0)return '1';
- if(k>0){return ('1'+'0'.repeat(k)).replace(/\\B(?=(\\d{3})+(?!\\d))/g,' ')}
+ if(k>0){return ('1'+'0'.repeat(k)).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
  return '0,'+'0'.repeat(-k-1)+'1';
 }
 function explain(k){
