@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f8f8f6">
+<meta name="description" content="Elindeki madenle kaç çip fabrikası, uzay teleskobu ya da NVIDIA alabilirsin? Gerçek sayılarla tamamen gereksiz karşılaştırmalar.">
+<link rel="icon" href="/favicon.ico">
+<title>Değerli Madenler — aynen.fun</title>
+<style>
+:root{--ink:#161616;--muted:#777;--paper:#f8f8f6;--edge:#d6d6d1;--metal:#c7a55c;--light:#e9dfbc}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;min-height:100dvh;color:var(--ink);background:var(--paper);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,a{font:inherit}button{cursor:pointer;color:inherit}a{color:inherit}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #2a5ca5;outline-offset:3px}
+.mono{font-family:"Courier New",Courier,monospace}
+.wrap{max-width:1250px;margin:auto;padding:18px clamp(15px,3.5vw,42px) 22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 27px}
+.logo{text-decoration:none;font-size:13px;font-weight:800;letter-spacing:-.05em}.logo span{font-size:9px;font-weight:400;letter-spacing:.04em;margin-left:11px;color:var(--muted)}
+.topnote{font:9px "Courier New",monospace;color:var(--muted);text-align:right}
+.intro{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:0 0 20px}
+.intro .over{font:9px/1.5 "Courier New",monospace;letter-spacing:.1em;color:#777}
+h1{font-size:clamp(35px,5.2vw,66px);letter-spacing:-.085em;line-height:1;margin:5px 0 7px;font-weight:800}
+.intro p{font-size:12px;color:#696969;margin:0;line-height:1.45}
+.intro .edition{font:9px/1.7 "Courier New",monospace;color:#888;white-space:nowrap;text-align:right}
+.board{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:13px;align-items:stretch}
+.panel{background:white;border:1px solid var(--edge);border-radius:4px;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--edge);font:10px "Courier New",monospace;letter-spacing:.05em}
+.panel-head .light{font-size:9px;color:#888}
+.ore-scene{height:clamp(178px,27vh,278px);min-height:178px;position:relative;overflow:hidden;background:linear-gradient(180deg,#fbfbf9 0%,#f4f2ed 75%,#e6e2d9 75%,#e6e2d9 100%);isolation:isolate}
+.ore-scene:before{content:"";position:absolute;top:13%;left:12%;width:76%;height:73%;background:radial-gradient(ellipse at center,var(--light),transparent 68%);opacity:.65;filter:blur(22px);z-index:-1}
+.ore-scene:after{content:"";position:absolute;inset:auto 0 23% 0;height:1px;background:#c5c1b9}
+.scene-heading{position:absolute;top:16px;left:17px;font:9px "Courier New",monospace;color:#97948b;letter-spacing:.05em}
+.scene-scale{position:absolute;right:15px;top:16px;font:9px "Courier New",monospace;color:#97948b;text-align:right}
+.ore-bed{position:absolute;inset:31px 10% 15% 10%;display:flex;justify-content:center;align-items:end;gap:clamp(5px,1.3vw,18px);transform:perspective(750px) rotateX(3deg)}
+.rock{position:relative;flex:0 1 70px;width:clamp(25px,8vw,70px);height:var(--h);border:1px solid #605f56;clip-path:polygon(22% 0,83% 4%,100% 26%,89% 92%,54% 100%,0 86%,7% 25%);background:linear-gradient(115deg,#5f5e5b 0 18%,var(--metal) 19% 48%,#f3edd7 52%,var(--metal) 56% 73%,#5e605b 100%);box-shadow:0 6px 6px #0002;transform:rotate(var(--r)) translateY(var(--y));opacity:var(--o);transition:height .4s,opacity .35s,transform .4s}
+.rock:after{content:"";position:absolute;inset:15% 23% 20% 12%;clip-path:polygon(3% 9%,92% 0,58% 94%,0 65%);background:#fff;opacity:.25}
+.rock:nth-child(3n+1){filter:saturate(.75)}.rock:nth-child(4n+1){filter:brightness(.89)}
+.scene-shelf{position:absolute;bottom:7%;left:13%;right:13%;height:5%;border-radius:50%;background:#96948c;filter:blur(10px);opacity:.18}
+.scene-caption{position:absolute;bottom:9px;left:15px;font:9px "Courier New",monospace;color:#838076}
+.ore-controls{padding:15px 16px 13px}
+.sectionlabel{font:9px/1.4 "Courier New",monospace;color:#8c8c8c;letter-spacing:.07em;margin-bottom:9px}
+.metal-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.metalbtn{min-width:0;border:1px solid #ddd;border-radius:3px;background:#fff;text-align:left;padding:10px 11px 9px;transition:background .15s}
+.metalbtn[aria-pressed=true]{background:#191919;color:#fff;border-color:#191919}
+.metalbtn .mname{display:block;font-size:11px;font-weight:700}
+.metalbtn .msym{display:block;margin-top:4px;font:9px "Courier New",monospace;opacity:.62}
+.amountline{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:17px 0 9px}
+.amountline strong{display:block;font-size:clamp(25px,3vw,38px);font-weight:800;letter-spacing:-.068em;line-height:1}
+.amountline small{display:block;font:9px "Courier New",monospace;color:#878787;margin-bottom:5px}
+.usd{text-align:right}.usd strong{font-size:clamp(17px,2.15vw,24px);letter-spacing:-.055em}
+#amount{width:100%;height:5px;appearance:none;-webkit-appearance:none;background:linear-gradient(90deg,var(--metal) 0%,#ededeb 0%);border-radius:3px;margin:13px 0;cursor:pointer}
+#amount::-webkit-slider-thumb{appearance:none;width:21px;height:21px;background:#171717;border:4px solid #fff;box-shadow:0 0 0 1px #222;border-radius:50%}
+#amount::-moz-range-thumb{width:16px;height:16px;background:#171717;border:4px solid #fff;box-shadow:0 0 0 1px #222;border-radius:50%}
+.ticks{display:flex;justify-content:space-between;font:9px "Courier New",monospace;color:#999}
+.quickrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:15px}
+.smallbtn{background:#f6f6f4;border:1px solid #d8d8d2;padding:10px 12px;border-radius:3px;font:10px "Courier New",monospace;min-height:37px;flex:1}
+.smallbtn:hover,.targetbtn:hover{border-color:#222}
+.target-header{padding:16px 17px 0}
+.target-header .line1{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.target-header .line1 span{font:9px "Courier New",monospace;color:#858585}
+.target-header h2{font-size:clamp(21px,2.9vw,36px);margin:9px 0 4px;letter-spacing:-.075em;line-height:1.07}
+.target-price{font:11px "Courier New",monospace;color:#666;display:block;margin-top:6px}
+.target-graphic{height:125px;display:grid;place-items:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 70%,#ededeb 5%,#f8f8f7 65%);margin:12px 16px 12px;border:1px solid #efefec}
+.target-graphic svg{width:min(210px,65%);height:108px;overflow:visible;filter:drop-shadow(7px 8px 0 #00000013);transition:transform .3s;transform:rotate(-6deg)}
+.target-graphic:hover svg{transform:rotate(0deg) scale(1.035)}
+.graphic-micro{position:absolute;right:13px;bottom:10px;font:9px "Courier New",monospace;color:#9c9c9c}
+.targets{padding:0 16px 13px}
+.target-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.targetbtn{min-width:0;border:1px solid #dcdcd8;background:#fff;border-radius:3px;text-align:left;padding:9px 9px 8px;min-height:50px}
+.targetbtn[aria-pressed=true]{border-color:#111;background:#f0f0ed}
+.targetbtn b{font-size:10px;line-height:1.1;display:block;font-weight:700}
+.targetbtn small{font:8px "Courier New",monospace;color:#9b9b9b;display:block;margin-top:6px}
+.answer{border-top:1px solid var(--edge);padding:14px 17px 15px;margin-top:auto}
+.answer .eyebrow{font:9px "Courier New",monospace;color:#777;margin-bottom:7px}
+.answer .line{font-size:clamp(18px,2.5vw,27px);font-weight:800;line-height:1.16;letter-spacing:-.065em;max-width:490px}
+.answer .mini{font:10px/1.55 "Courier New",monospace;color:#888;margin-top:7px}
+.bar{height:8px;background:#eee;margin-top:12px;overflow:hidden;border-radius:1px}
+.bar>i{height:100%;width:0;background:#181818;display:block;transition:width .3s}
+.bar-meta{display:flex;justify-content:space-between;gap:12px;margin:7px 0 10px;font:9px "Courier New",monospace;color:#7d7d7d}
+.answer-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.primary{background:#181818;color:white;border:1px solid #181818;padding:11px 12px;font-size:10px;font-weight:700;min-height:42px;border-radius:2px}
+.secondary{background:#fff;border:1px solid #c7c7c1;padding:11px 12px;font-size:10px;font-weight:700;min-height:42px;border-radius:2px}
+.primary:hover{background:#3b3b3b}.secondary:hover{background:#f2f2ee}
+.sourcebox{margin:12px 0 0;border:1px solid #d7d7d0;background:#fff;border-radius:3px}
+.sourcebox summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:12px;padding:13px 16px;font:10px "Courier New",monospace}
+.sourcebox summary::-webkit-details-marker{display:none}
+.sourcebox .content{border-top:1px solid #ddd;padding:14px 16px;color:#666;font:11px/1.65 Arial,sans-serif}
+.sourcebox .content p{margin:0 0 9px}.sourcebox a{text-underline-offset:2px}
+.sourcebox .content .links{display:flex;flex-wrap:wrap;gap:6px 15px;font:10px "Courier New",monospace}
+.bottom{font:9px/1.6 "Courier New",monospace;display:flex;gap:16px;align-items:center;justify-content:space-between;color:#8d8d8d;padding:14px 1px 0}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;color:white;padding:11px 16px;font:11px "Courier New",monospace;opacity:0;pointer-events:none;transition:opacity .2s;z-index:6}
+.toast.show{opacity:1}
+@media(min-width:901px) and (min-height:740px){.board{min-height:570px}}
+@media(max-width:900px){.intro .edition{display:none}.board{grid-template-columns:1fr}.ore-scene{height:250px}.target-graphic{height:160px}.wrap{padding-top:15px}header{margin-bottom:23px}}
+@media(max-width:460px){.wrap{padding:14px 12px 18px}header{margin-bottom:20px}.intro{margin-bottom:16px}h1{font-size:40px}.intro p{font-size:11px}.ore-scene{height:208px}.metalbtn{padding:9px}.target-header{padding:14px 13px 0}.target-graphic{height:125px;margin:10px 13px}.targets{padding:0 13px 13px}.targetbtn{padding:9px 7px;min-height:49px}.targetbtn b{font-size:9px}.targetbtn small{font-size:8px}.answer{padding:14px}.ore-controls{padding:13px}.bottom{display:block}.topnote{font-size:8px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="logo" href="/">aynen.fun <span>← OYUNLAR</span></a><div class="topnote">EKONOMİK BİR FELAKET SİMÜLATÖRÜ<br>29.10.2026 · SABİT VERİ SETİ</div></header>
+<section class="intro"><div><div class="over">MADEN / PİYASA / TAMAMEN GEREKSİZ HESAPLAR</div><h1>Değerli Madenler.</h1><p>Kaç ton altınla bir çip şirketi alınır? Hesap makinesi sağlıklı. Kararların değil.</p></div><div class="edition">001 / 034<br>DEĞER HESABI<br>USD BAZINDA</div></section>
+<main class="board">
+<section class="panel" aria-label="Maden seçimi ve miktarı">
+<div class="panel-head"><strong>01 / YER ALTINDAN</strong><span class="light" id="metal-top">Au · ALTIN</span></div>
+<div class="ore-scene" id="scene"><div class="scene-heading">SAF METAL GÖRSELLEŞTİRMESİ</div><div class="scene-scale">MİKTAR DEĞİŞTİKÇE<br>SAHNE DEĞİŞİR</div><div class="scene-shelf"></div><div class="ore-bed" id="ore-bed" aria-hidden="true"></div><div class="scene-caption" id="scene-caption">20 TONLUK KAMYON DEĞİL, SADECE BİR KIYAS</div></div>
+<div class="ore-controls">
+<div class="sectionlabel">MADENİNİ SEÇ</div><div class="metal-list" id="metals"></div>
+<div class="amountline"><div><small>ELİNDEKİ SAF METAL</small><strong id="quantity">1 ton</strong></div><div class="usd"><small>TAHMİNİ SPOT DEĞER</small><strong id="valuation">$0</strong></div></div>
+<input type="range" id="amount" min="-1" max="12" step=".05" value="6" aria-label="Maden miktarı; logaritmik ölçek">
+<div class="ticks"><span>0,1 g</span><span>1 kg</span><span>1 ton</span><span>1.000 ton</span><span>1 milyon ton</span></div>
+<div class="quickrow"><button class="smallbtn" id="less" type="button">÷ 10 AZALT</button><button class="smallbtn" id="more" type="button">× 10 ARTTIR</button><button class="smallbtn" id="random" type="button">↝ SAÇMA KIYAS</button></div>
+</div>
+</section>
+<section class="panel" aria-label="Satın alma karşılaştırması">
+<div class="panel-head"><strong>02 / PEKİ NE ALIYORSUN?</strong><span class="light">12 HEDEF / GERÇEK SAYILAR</span></div>
+<div class="target-header"><div class="line1"><span id="target-type">ŞİRKET PİYASA DEĞERİ</span><span id="target-date">29.10.2026</span></div><h2 id="target-name">NVIDIA'nın tamamı</h2><span class="target-price" id="target-price">$5,17 trilyon</span></div>
+<div class="target-graphic"><svg id="target-art" viewBox="0 0 220 120" role="img" aria-label="Teknoloji nesnesi çizimi"><rect x="64" y="22" width="93" height="80" rx="7" fill="#181818"/><rect x="76" y="34" width="68" height="56" rx="2" fill="#d0d0d0"/><path d="M90 61h39m-20-18v35" stroke="#333" stroke-width="8"/><path d="M72 14V5M92 14V5M112 14V5M132 14V5M153 14V5M72 109v8M92 109v8M112 109v8M132 109v8M153 109v8M54 34h-12m12 20h-12m12 20h-12m12 20h-12m114-60h12m-12 20h12m-12 20h12m-12 20h12" stroke="#171717" stroke-width="5" stroke-linecap="square"/></svg><span class="graphic-micro">İLLÜSTRASYON / ÖLÇEKLİ DEĞİL</span></div>
+<div class="targets"><div class="sectionlabel">SATIN ALMA HEDEFİ</div><div class="target-grid" id="target-grid"></div></div>
+<div class="answer" aria-live="polite"><div class="eyebrow">KISA CEVAP</div><div class="line" id="answer">Bir miktar altın, çok az NVIDIA.</div><div class="mini" id="explain">Hesaplanıyor.</div><div class="bar"><i id="fill"></i></div><div class="bar-meta"><span id="percent">%0</span><span id="needed">Gereken: —</span></div><div class="answer-actions"><button type="button" class="primary" id="match">TAM YETECEK KADAR KAZ</button><button type="button" class="secondary" id="share">SONUCU PAYLAŞ ↗</button></div></div>
+</section>
+</main>
+<details class="sourcebox"><summary><span>GERÇEK VERİLER / KAYNAKLAR / HESAPLAMA</span><span>+</span></summary><div class="content"><p id="method">Karşılaştırma, saf metalin referans spot fiyatı × metal miktarı hesabıdır. Tüm fiyatlar ABD dolarıdır. Çıkarma, saflaştırma, taşıma, vergi, primler, şirket satın alma kontrol primi ve fiyat oynaklığı dahil değildir. Metalin doğal cevher miktarı ile saf metal miktarı aynı değildir.</p><p><strong id="current-source">Mevcut karşılaştırma</strong></p><div class="links" id="sources"></div><p style="margin-top:10px">Borsa şirketlerinde değer, şirketin gerçek bir satış fiyatı değil piyasa değeridir. Webb, Burj Khalifa ve Falcon 9 için tarihsel maliyetler kullanılır; bunlar bugünkü satın alma teklifleri değildir. Sabit referanslar: 29 Ekim 2026 (bazı maliyet tahminleri daha eski).</p></div></details>
+<footer class="bottom"><span>AYNEN.FUN — HER ŞEYİN BİR BEDELİ VAR. SATILIK OLMASA DA.</span><span>YATIRIM TAVSİYESİ DEĞİLDİR · TAMAMEN KIYASLAMA</span></footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(function(){
+'use strict';
+var OZ=31.1034768,LB=453.59237;
+var metals=[
+{id:'au',name:'Altın',symbol:'Au',usd:4025.30/OZ,unit:'troy ons',ref:4025.30,color:'#c5a25a',light:'#e4d59b',url:'https://www.kitco.com/charts/gold',fact:'24 ayar, saf altın. 1 troy ons = 31,1034768 gram.'},
+{id:'ag',name:'Gümüş',symbol:'Ag',usd:52.56/OZ,unit:'troy ons',ref:52.56,color:'#b4b6ba',light:'#e1e2e4',url:'https://invest.alexlexington.com/spot-prices/silver',fact:'Gümüş; güneş panellerinde, elektronik devrelerde ve elektrik kontaklarında da kullanılır.'},
+{id:'pt',name:'Platin',symbol:'Pt',usd:1484/OZ,unit:'troy ons',ref:1484,color:'#9caaa7',light:'#dce6df',url:'https://invest.alexlexington.com/spot-prices',fact:'Platin, katalizörlerde ve endüstriyel uygulamalarda kullanılan kıymetli bir metaldir.'},
+{id:'pd',name:'Paladyum',symbol:'Pd',usd:1007.50/OZ,unit:'troy ons',ref:1007.50,color:'#b1a4a0',light:'#eadfdb',url:'https://invest.alexlexington.com/spot-prices',fact:'Paladyum özellikle araç egzoz katalizörlerinde kullanılır.'},
+{id:'cu',name:'Bakır',symbol:'Cu',usd:6.63/LB,unit:'libre',ref:6.63,color:'#b97852',light:'#f0d5c1',url:'https://goldexpay.com/commodities',fact:'Bakır elektrikli araç, şebeke ve veri merkezi altyapısının temel metallerindendir.'},
+{id:'ni',name:'Nikel',symbol:'Ni',usd:7.10/LB,unit:'libre',ref:7.10,color:'#969b8b',light:'#dce2d6',url:'https://europe.miningforum.com/metal-prices-charts',fact:'Nikel paslanmaz çelik ve bazı şarj edilebilir pil kimyalarında kullanılır.'}
+];
+var targets=[
+{id:'nvda',name:"NVIDIA'nın tamamı",short:'NVIDIA',kind:'ŞİRKET PİYASA DEĞERİ',price:5.17e12,date:'29.10.2026',src:'https://stockanalysis.com/stocks/nvda/market-cap/',note:'NVIDIA hisselerinin toplam piyasa değeri. Şirketin gerçekte satın alınabileceği fiyat değildir.',art:'chip'},
+{id:'tsmc',name:"TSMC'nin tamamı",short:'TSMC',kind:'ŞİRKET PİYASA DEĞERİ',price:2.279e12,date:'29.10.2026',src:'https://companiesmarketcap.com/tsmc/marketcap/',note:'Apple, NVIDIA ve başka firmalar için çip üreten dev dökümhanenin piyasa değeri.',art:'chip'},
+{id:'amd',name:"AMD'nin tamamı",short:'AMD',kind:'ŞİRKET PİYASA DEĞERİ',price:927.9e9,date:'29.10.2026',src:'https://stockanalysis.com/stocks/amd/market-cap/',note:'Mikroişlemci ve GPU tasarımcısı AMD’nin yaklaşık piyasa değeri.',art:'chip'},
+{id:'intel',name:"Intel'in tamamı",short:'Intel',kind:'ŞİRKET PİYASA DEĞERİ',price:487.15e9,date:'29.10.2026',src:'https://stockanalysis.com/stocks/intc/market-cap/',note:'Intel’in referans tarihteki yaklaşık piyasa değeri.',art:'chip'},
+{id:'arizona',name:'TSMC Arizona yatırım programı',short:'Arizona çip',kind:'AÇIKLANAN TOPLAM YATIRIM',price:165e9,date:'2025 duyurusu',src:'https://pr.tsmc.com/english/news/3210',note:'Tek fabrika değil: Arizona’da duyurulan fabrika, paketleme ve Ar-Ge yatırımlarının toplam planlanan bütçesi.',art:'factory'},
+{id:'webb',name:'James Webb Uzay Teleskobu',short:'James Webb',kind:'TARİHSEL GÖREV MALİYETİ',price:10e9,date:'NASA / ESA',src:'https://esawebb.org/about/faq/',note:'İnşa, test, fırlatma, devreye alma ve ilk beş yıllık bilim operasyonları dahil yaklaşık tutar.',art:'space'},
+{id:'burj',name:'Burj Khalifa inşaatı',short:'Burj Khalifa',kind:'TARİHSEL İNŞAAT MALİYETİ',price:1.5e9,date:'2004–2010',src:'https://www.ice.org.uk/what-is-civil-engineering/infrastructure-projects/burj-khalifa',note:'Dünyanın en yüksek binasının tarihsel inşaat bedeli. Bugünkü piyasa değeri değil.',art:'tower'},
+{id:'highna',name:'1 adet High-NA EUV makinesi',short:'High-NA EUV',kind:'TAHMİNİ CİHAZ MALİYETİ',price:400e6,date:'2026 tahmini',src:'https://www.reuters.com/world/asia-pacific/asml-extends-chipmaking-dominance-customers-embrace-high-na-2026-09-14/',note:'Yeni nesil çip üretim ekipmanı. Yaklaşık 400 milyon dolar; konfigürasyon ve sözleşmeye göre değişebilir.',art:'machine'},
+{id:'euv',name:'1 adet standart EUV makinesi',short:'EUV makine',kind:'TAHMİNİ CİHAZ MALİYETİ',price:200e6,date:'2026 tahmini',src:'https://www.reuters.com/world/asia-pacific/asml-extends-chipmaking-dominance-customers-embrace-high-na-2026-09-14/',note:'Bir çip fabrikası değil; fabrikanın içindeki tek bir yüksek teknoloji üretim cihazı.',art:'machine'},
+{id:'falcon',name:'Falcon 9 standart fırlatma',short:'Falcon 9',kind:'LİSTE FİYATI (TARİHSEL)',price:69.75e6,date:'2024 fiyat listesi',src:'https://www.spacex.com/media/Capabilities%26Services.pdf',note:'SpaceX’in 2024 tarihli standart fırlatma liste fiyatı. Bugünkü teklif ve görev maliyeti farklı olabilir.',art:'rocket'},
+{id:'h100',name:'8 GPU’lu yeni H100 sunucusu',short:'8× H100',kind:'AĞUSTOS 2026 SATIŞ İLANI MEDYANI',price:324438,date:'31.08.2026',src:'https://hashrateindex.com/blog/announcement-introducing-the-ai-hardware-price-index/',note:'Yeni 8× H100 HGX sunucusunun ilan fiyatı medyanı. Çip başına fiyat değil, komple sistem.',art:'chip'},
+{id:'share',name:'1 adet NVIDIA hissesi',short:'1 NVDA',kind:'BORSA HİSSE FİYATI',price:214.01,date:'29.10.2026',src:'https://stockanalysis.com/stocks/nvda/',note:'Şirketin küçük bir parçası. Bir hisse satın almak şirketin tamamını satın almak değildir.',art:'chip'}
+];
+var els={};
+['metals','target-grid','quantity','valuation','amount','metal-top','scene','ore-bed','scene-caption','target-type','target-date','target-name','target-price','target-art','answer','explain','fill','percent','needed','sources','current-source','less','more','random','match','share','toast'].forEach(function(id){els[id.replace(/-/g,'')]=document.getElementById(id)});
+var mi=0,ti=0,grams=1e6,toastTimer=0;
+var trInt=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:1});
+function small(n){if(n>=1e12)return trInt.format(n/1e12)+' trilyon';if(n>=1e9)return trInt.format(n/1e9)+' milyar';if(n>=1e6)return trInt.format(n/1e6)+' milyon';if(n>=1e3)return trInt.format(n/1e3)+' bin';if(n>=1)return trInt.format(n);return new Intl.NumberFormat('tr-TR',{maximumSignificantDigits:3}).format(n)}
+function money(n){return '$'+small(n)}
+function weight(g){if(g>=1e12)return small(g/1e12)+' milyar ton';if(g>=1e9)return small(g/1e9)+' milyon ton';if(g>=1e6)return small(g/1e6)+' ton';if(g>=1e3)return small(g/1e3)+' kg';return small(g)+' g'}
+function percent(n){if(n>=100)return '%100+';if(n>=1)return '%'+new Intl.NumberFormat('tr-TR',{maximumFractionDigits:2}).format(n);if(n>=.001)return '%'+new Intl.NumberFormat('tr-TR',{maximumSignificantDigits:2}).format(n);return '%'+n.toExponential(1).replace('e-',' × 10⁻').replace('e+',' × 10^')}
+function setAmount(n){grams=Math.max(.1,Math.min(1e12,n));els.amount.value=Math.log10(grams).toFixed(2);render()}
+function toast(msg){els.toast.textContent=msg;els.toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){els.toast.classList.remove('show')},2200)}
+function selectMetal(i){mi=i;render()}
+function selectTarget(i){ti=i;render()}
+function art(kind){
+if(kind==='space')return '<g fill="#fff" stroke="#111" stroke-width="3"><path d="M110 18l27 38-27 48-27-48z" fill="#d9d9d7"/><path d="M110 18l-21 39 21 47 21-47Z" fill="#f3c46b"/><path d="M30 57l50-15v30L30 87zM190 57l-50-15v30l50 15Z" fill="#cbd6d9"/><path d="M80 55h60"/></g><circle cx="110" cy="59" r="9" fill="#131313"/>';
+if(kind==='tower')return '<path d="M105 10L115 10 120 30 135 30 144 104 72 104 83 30 98 30Z" fill="#d6ddd9" stroke="#171717" stroke-width="3"/><path d="M87 44h45M84 60h52M80 76h59M76 93h64" stroke="#222" stroke-width="3"/><path d="M108 10V0" stroke="#222" stroke-width="2"/>';
+if(kind==='rocket')return '<path d="M110 9C91 29 86 59 95 83H125C133 59 129 29 110 9Z" fill="#e8e8e8" stroke="#111" stroke-width="3"/><circle cx="110" cy="44" r="11" fill="#bdd3d7" stroke="#111" stroke-width="3"/><path d="M94 67L71 94l25-6M126 67l23 27-25-6" fill="#c7c7c7" stroke="#111" stroke-width="3"/><path d="M104 86l-4 23 10-11 10 11-4-23" fill="#ebbd65" stroke="#111" stroke-width="2"/>';
+if(kind==='factory')return '<path d="M35 52L63 37V52L92 37V52L123 37V52H172V103H35Z" fill="#e3e3df" stroke="#111" stroke-width="3"/><path d="M43 32V12h20v30M134 52V16h24v36" fill="#b6b9b9" stroke="#111" stroke-width="3"/><path d="M48 69h16v18H48zM78 69h16v18H78zM109 69h16v18h-16zM141 69h16v18h-16z" fill="#a9c3c8" stroke="#222" stroke-width="2"/>';
+if(kind==='machine')return '<rect x="30" y="26" width="160" height="76" rx="3" fill="#dadada" stroke="#171717" stroke-width="4"/><rect x="44" y="40" width="76" height="43" fill="#252525"/><path d="M50 47h62v27H50z" fill="#99b1b0"/><circle cx="155" cy="54" r="15" fill="#fff" stroke="#111" stroke-width="3"/><path d="M144 85h39M151 92h29" stroke="#111" stroke-width="4"/><path d="M52 12h109v14H52Z" fill="#b1b1b1" stroke="#111" stroke-width="3"/>';
+return '<rect x="64" y="22" width="93" height="80" rx="7" fill="#171717"/><rect x="76" y="34" width="68" height="56" rx="2" fill="#d6d6d6"/><path d="M90 61h39m-20-18v35" stroke="#333" stroke-width="8"/><path d="M72 14V5M92 14V5M112 14V5M132 14V5M153 14V5M72 109v8M92 109v8M112 109v8M132 109v8M153 109v8M54 34h-12m12 20h-12m12 20h-12m12 20h-12m114-60h12m-12 20h12m-12 20h12m-12 20h12" stroke="#171717" stroke-width="5" stroke-linecap="square"/>';
+}
+function renderOre(){
+var count=Math.min(11,Math.max(1,Math.round((Math.log10(grams)+1.5)*.85))),h=Math.min(172,35+count*11),html='';
+for(var i=0;i<count;i++){var n=i%5;html+='<div class="rock" style="--h:'+Math.max(30,h-(n*8)+((i*13)%19))+'px;--r:'+((i%2?1:-1)*(i*3%13))+'deg;--y:'+((i*7)%17)+'px;--o:'+(.78+i*.018)+'"></div>'}
+els.orebed.innerHTML=html;
+els.scenecaption.textContent=grams>=2e7?'BİR KAMYON ARTIK YETMEYEBİLİR':grams<100?'MİKROSKOPİK BİR SERVET':'MİKTAR TEMSİLÎ OLARAK GÖSTERİLİR';
+}
+function render(){
+var m=metals[mi],t=targets[ti],cash=grams*m.usd,ratio=cash/t.price,n=t.price/m.usd;
+document.documentElement.style.setProperty('--metal',m.color);
+document.documentElement.style.setProperty('--light',m.light);
+els.metaltop.textContent=m.symbol+' · '+m.name.toUpperCase();
+els.quantity.textContent=weight(grams);els.valuation.textContent=money(cash);
+els.amount.style.background='linear-gradient(90deg,'+m.color+' 0%, '+m.color+' '+(((Math.log10(grams)+1)/13)*100).toFixed(1)+'%,#e8e8e5 '+(((Math.log10(grams)+1)/13)*100).toFixed(1)+'%,#e8e8e5 100%)';
+els.targettype.textContent=t.kind;els.targetdate.textContent=t.date;els.targetname.textContent=t.name;els.targetprice.textContent=money(t.price);
+els.targetart.innerHTML=art(t.art);renderOre();
+els.metals.querySelectorAll('button').forEach(function(b,i){b.setAttribute('aria-pressed',i===mi)});
+els.targetgrid.querySelectorAll('button').forEach(function(b,i){b.setAttribute('aria-pressed',i===ti)});
+var message='';
+if(ratio>=1){message=small(ratio)+' adet '+t.short+' değerindesin.';els.explain.textContent='Matematikte yeterli. Gerçek hayatta satın alma garantisi yok.';}
+else if(ratio>=.1){message=t.short+' için biraz daha kaz.';els.explain.textContent='Şu anda sadece '+percent(ratio*100)+' kadarına denk geliyor.';}
+else if(ratio>=.00001){message=t.short+' için hâlâ erken.';els.explain.textContent=weight(grams)+' '+m.name.toLowerCase()+' = '+money(cash)+'. '+t.short+' ise '+money(t.price)+'.';}
+else{message='Madenin var. '+t.short+' yok.';els.explain.textContent='Bu servet, hedefin yalnızca '+percent(ratio*100)+' kadarına denk geliyor.';}
+els.answer.textContent=message;els.fill.style.width=Math.max(0,Math.min(100,ratio*100))+'%';els.percent.textContent=percent(ratio*100);els.needed.textContent='GEREKEN '+weight(n);
+els.currentsource.textContent=m.name+' ('+money(m.ref)+' / '+m.unit+') × '+weight(grams)+' = '+money(cash)+'. '+t.name+': '+money(t.price)+'.';
+els.sources.innerHTML='';
+[{label:m.name+' · metal fiyatı ↗',url:m.url},{label:t.short+' · hedef verisi ↗',url:t.src}].forEach(function(a){var link=document.createElement('a');link.href=a.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=a.label;els.sources.appendChild(link)});
+document.getElementById('method').textContent='Saf '+m.name.toLowerCase()+' spot fiyatı: '+money(m.ref)+' / '+m.unit+'. '+m.fact+' Karşılaştırma saf metalin spot değerine dayanır; cevher çıkarımı, saflaştırma, maliyet, vergi ve şirket satın alma primi dahil değildir. '+t.note;
+}
+metals.forEach(function(m,i){var b=document.createElement('button');b.type='button';b.className='metalbtn';b.innerHTML='<span class="mname">'+m.name+'</span><span class="msym">'+m.symbol+' / '+money(m.usd*1e3)+'/kg</span>';b.onclick=function(){selectMetal(i)};els.metals.appendChild(b)});
+targets.forEach(function(t,i){var b=document.createElement('button');b.type='button';b.className='targetbtn';b.innerHTML='<b>'+t.short+'</b><small>'+money(t.price)+'</small>';b.onclick=function(){selectTarget(i)};els.targetgrid.appendChild(b)});
+els.amount.oninput=function(){grams=Math.pow(10,+this.value);render()};
+els.less.onclick=function(){setAmount(grams/10)};els.more.onclick=function(){setAmount(grams*10)};
+els.match.onclick=function(){var exact=targets[ti].price/metals[mi].usd;if(exact>1e12){setAmount(1e12);toast('ÖLÇEĞİN SONU. DAHA FAZLA MADEN LAZIM.')}else{setAmount(exact);toast('KAĞIT ÜSTÜNDE TAM YETİYOR.')}};
+var picks=[[0,0,.003],[1,7,.08],[4,10,1.5],[5,5,.015],[2,3,.0007],[3,6,1.4],[0,9,2.5],[4,0,.00007],[1,11,10],[5,7,.6]];
+var rnd=0;els.random.onclick=function(){var p=picks[rnd%picks.length];rnd++;mi=p[0];ti=p[1];setAmount(targets[ti].price/metals[mi].usd*p[2]);toast('YENİ BİR EKONOMİK KARŞILAŞTIRMA')};
+els.share.onclick=function(){
+var m=metals[mi],t=targets[ti],needed=t.price/m.usd,r=grams*m.usd/t.price;
+var txt=weight(grams)+' '+m.name.toLowerCase()+' buldum. '+t.short+' için '+(r>=1?'matematikte yeterli.':'ancak '+percent(r*100)+' ediyor.')+' Tamamı için '+weight(needed)+' gerekiyor. — Değerli Madenler';
+var u=new URL(location.href);u.searchParams.set('m',m.id);u.searchParams.set('t',t.id);u.searchParams.set('g',Number(grams.toPrecision(5)));var url=u.toString();
+if(navigator.share){navigator.share({title:'Değerli Madenler — aynen.fun',text:txt,url:url}).catch(function(){})}
+else if(navigator.clipboard){navigator.clipboard.writeText(txt+' '+url).then(function(){toast('SONUÇ KOPYALANDI')}).catch(function(){window.prompt('Paylaş',txt+' '+url)})}
+else window.prompt('Paylaş',txt+' '+url);
+};
+try{var p=new URLSearchParams(location.search);var mm=metals.findIndex(function(m){return m.id===p.get('m')}),tt=targets.findIndex(function(t){return t.id===p.get('t')}),gg=Number(p.get('g'));if(mm>=0)mi=mm;if(tt>=0)ti=tt;if(gg>0&&Number.isFinite(gg))grams=Math.min(1e12,Math.max(.1,gg));}catch(e){}
+setAmount(grams);
+})();
+</script>
+</body>
+</html>
