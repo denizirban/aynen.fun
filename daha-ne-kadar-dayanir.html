@@ -146,7 +146,7 @@ footer a{text-decoration:none}
 <script>
 const ITEMS=[{"id":"banana","name":"Muz","sub":"Organik madde","max":24,"base":8,"unit":"days","environments":[["Tezgâh",1],["Sıcak mutfak",1.7],["Buzdolabı",0.45],["Kapalı poşet",1.35]],"events":["Sarı. Gayet ikna edici.","Kabukta koyu benekler beliriyor.","Yumuşuyor. Smoothie ihtimali yükseldi.","Bozulma belirgin; güvenli tüketim ayrı değerlendirilmeli."],"explain":"Muz hasattan sonra da olgunlaşır. Etilen gazı süreci etkiler; sıcaklık arttıkça doku daha hızlı yumuşayabilir. Olgun muz buzdolabında daha yavaş yumuşar ama kabuğu kararabilir.","fun":"Kabuğun koyulaşması içinin aynı hızda bozulduğu anlamına gelmez.","material":"Meyve dokusu","source":"https://nutritionsource.hsph.harvard.edu/food-features/bananas/","context":"Bu bir gıda güvenliği testi değil. Küf ve kötü koku varsa tüketme.","shelf":"Görünüm, iç kaliteyi tek başına anlatmaz.","ending":"Muzun planı smoothie olmaktı. Sen engelledin."},{"id":"cable","name":"Şarj Kablosu","sub":"Elektronik aksesuar","max":2555,"base":540,"unit":"days","environments":[["Masada",1],["Sürekli bükülüyor",2.1],["Sıcak arabada",1.65],["Çekmecede",0.25]],"events":["Kablo yeni gibi.","Dış kılıfta yüzeysel izler var.","Konnektör yakını zorlanıyor.","Kılıf hasarlı. Kullanmak yerine değiştirmek güvenli olabilir."],"explain":"Kablonun ömrü yalnızca zamanla değil bükülme, çekilme, sürtünme ve sıcaklıkla değişir. Özellikle uç bağlantı bölgesindeki tekrar eden mekanik yük çatlaklara yol açabilir.","fun":"Kablo çoğunlukla ortasından değil, sürekli bükülen ucundan yorulur.","material":"Bakır + polimer","source":"https://www.ifixit.com/News","context":"Çıplak tel veya ısınma varsa kullanma. Görünümden elektrik güvenliği hesaplanamaz.","shelf":"Kullanım döngüleri ve mekanik yük önemli.","ending":"Şarj ediyor. Biraz oynatırsan etmiyor. Tanıdık."},{"id":"sponge","name":"Bulaşık Süngeri","sub":"Mutfak","max":120,"base":18,"unit":"days","environments":[["Günlük kullanım",1],["Sürekli ıslak",1.6],["Her kullanımdan sonra kuruyor",0.65],["Sıcak ve nemli",1.75]],"events":["Yeni sünger, yeni umutlar.","Renk ve doku değişiyor.","Kenarları ufalanıyor, koku oluşabilir.","Yıprandı. Hijyen için çoktan değiştirilmesi gerekebilir."],"explain":"Sünger gözenekleri su ve organik kalıntılar tutabilir. Nemli ortamlar mikroorganizmalar için uygun olabilir; görünümünün iyi olması temiz olduğunu kanıtlamaz.","fun":"Temizlik aracının kendisi de düzenli temizlenmesi veya değiştirilmesi gereken bir nesnedir.","material":"Poliüretan köpük","source":"https://ask.fsis.usda.gov/article/How-do-I-clean-my-kitchen-sponge","context":"Hijyen için yalnızca görsel yıpranma seviyesine güvenme.","shelf":"Temiz görünmesi güvenli olduğu anlamına gelmez.","ending":"Evi temizledi. Sonra ev ondan şüphelendi."},{"id":"tshirt","name":"Beyaz Tişört","sub":"Tekstil","max":3650,"base":900,"unit":"days","environments":[["Normal kullanım",1],["Sık sıcak yıkama",1.65],["Güneşte kuruyor",1.45],["Dolapta",0.22]],"events":["Beyaz. Hatta gerçekten beyaz.","Yaka ve dikişlerde yumuşama var.","Tonu soldu, kumaş inceldi.","Ev tişörtü olarak terfi etti."],"explain":"Pamuk lifleri yıkama, sürtünme, ısı ve UV ışığıyla zaman içinde yıpranır. Sık ve yüksek sıcaklıkta yıkama çekme ve solmayı artırabilir.","fun":"Çoğu tişört tamamen işe yaramadan önce rol değiştirir: dışarıdan eve.","material":"Pamuk / tekstil","source":"https://www.epa.gov/recycle/textiles","context":"Görsel eskime ile kumaşın kullanılabilirliği farklı şeylerdir.","shelf":"Onarılabilir ve yeniden kullanılabilir.","ending":"Artık dışarı çıkmıyor. Evde kariyeri başladı."},{"id":"battery","name":"Telefon Bataryası","sub":"Lityum iyon","max":3650,"base":1050,"unit":"days","environments":[["Günlük kullanım",1],["Sıcak araba",2.2],["Uzun süre tam dolu ve sıcakta",1.85],["Serin saklama",0.6]],"events":["Kapasite yeni gibi.","Azalan kapasite fark edilebilir.","Daha sık şarj gerekiyor.","Performansı belirgin düşmüş olabilir."],"explain":"Lityum iyon piller hem kullanım döngüleriyle hem de depolama sırasında kimyasal olarak yaşlanır. Yüksek sıcaklık ve uzun süre yüksek şarj seviyesi kapasite kaybını hızlandırabilir.","fun":"Pil kullanmasan da yıllar içinde yaşlanabilir.","material":"Li-ion hücre","source":"https://www.apple.com/batteries/maximizing-performance/","context":"Şişme, aşırı ısınma veya hasar güvenlik sorunudur. Bu model pil sağlığını ölçmez.","shelf":"Sıcaklık ve şarj alışkanlıkları belirleyici.","ending":"Telefonun hâlâ iyi. Prizle artık ciddi bir ilişkin var."},{"id":"sunscreen","name":"Güneş Kremi","sub":"Kozmetik / SPF","max":1460,"base":1095,"unit":"days","environments":[["Evde gölgede",1],["Sıcak arabada",1.9],["Plaj çantasında güneşte",1.65],["Serin dolapta",0.8]],"events":["Ambalaj sağlam, tarih kontrolü önemli.","Yüksek ısıya maruz kalması riski artırabilir.","Doku veya koku değişimi görülebilir.","Süre dolduysa kullanma; etiket tarihini kontrol et."],"explain":"SPF ürünleri için üreticinin son kullanma tarihi belirleyicidir. FDA, tarihsiz ürünlerde satın alımdan itibaren üç yıl sınırını önerir. Isı ve doğrudan güneş ürünün kararlılığını olumsuz etkileyebilir.","fun":"Cildini güneşten koruyan ürün, kendisi güneşte bekletilmemeli.","material":"UV filtreleri + taşıyıcı formül","source":"https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun","context":"Grafik SPF etkinliği ölçümü değildir; son kullanma tarihi geçerse kullanma.","shelf":"Ambalaj ve son kullanma tarihi öncelikli.","ending":"Korumaya çalıştığın güneşte kendisini unuttun."},{"id":"sneaker","name":"Spor Ayakkabı","sub":"Giyilebilir ürün","max":2555,"base":600,"unit":"days","environments":[["Günlük şehir yürüyüşü",1],["Her gün koşu",2],["Yağmur ve çamur",1.45],["Dolapta",0.35]],"events":["Taban yeni, çizgiler yerinde.","Tabanda aşınma başlıyor.","Yastıklama ve tutuş azalabilir.","Taban aşınmış. Kullanım biçimine göre değiştirme zamanı olabilir."],"explain":"Ayakkabı tabanı aşınır, orta taban köpüğü zamanla ve yükle yastıklama özelliğini kaybedebilir. Koşu ayakkabısında kilometre sayısı yalnızca takvim yaşından daha açıklayıcı olabilir.","fun":"Koşu ayakkabılarında sık aktarılan değişim aralığı yaklaşık 300–500 mildir; herkeste aynı değildir.","material":"Kauçuk + köpük + tekstil","source":"https://www.rei.com/learn/expert-advice/replace-shoes.html","context":"Bu sahne adım veya kilometre sayacı değildir.","shelf":"Kilometre, kullanım zemini ve taban yapısı önemli.","ending":"Ayakkabı yorgun. Sen de."},{"id":"earbuds","name":"Kablosuz Kulaklık","sub":"Elektronik","max":3650,"base":900,"unit":"days","environments":[["Günlük müzik",1],["Sporda ter",1.4],["Nemli çantada",1.6],["Kutuda saklı",0.5]],"events":["Ses geliyor. Her şey yolunda.","Şarj süresi azalmaya başlayabilir.","Batarya ve yüzeyler yıpranıyor.","Daha sık şarj, daha az müzik."],"explain":"Kablosuz kulaklıkların küçük lityum iyon pilleri yıllar ve şarj döngüleriyle kapasite kaybedebilir. Ter ve nemin etkisi cihazın koruma derecesine göre değişir.","fun":"Kulaklığın küçük bataryası değiştirilemiyorsa cihazın ömrünü sınırlayabilir.","material":"Plastik + elektronik + pil","source":"https://www.apple.com/batteries/maximizing-performance/","context":"Suya dayanıklılık, kalıcı su geçirmezlik anlamına gelmez.","shelf":"Batarya yaşlanması ses kalitesinden önce hissedilebilir.","ending":"Müzik devam ediyor. Şarj kutusu pek emin değil."},{"id":"card","name":"Banka Kartı","sub":"Plastik ve çip","max":3650,"base":1500,"unit":"days","environments":[["Cüzdanda",1],["Arka cepte bükülüyor",1.8],["Güneşte arabada",1.55],["Çekmecede",0.35]],"events":["Dört köşesi de yerinde.","Yüzey çizikleri beliriyor.","Kart eğilebilir, baskı silinebilir.","Çip veya anten hasarlıysa işlem başarısız olabilir."],"explain":"Kartlar genellikle katmanlı polimerlerden üretilir. Bükülme, sıcaklık ve sürtünme çip temaslarını, anteni veya baskıyı zamanla yıpratabilir.","fun":"Temassız kartın içinde görünmez anten halkası vardır.","material":"Polimer + metal + çip","source":"https://www.emvco.com/emv-technologies/contactless/","context":"Gerçek son kullanma tarihi kartın üzerinde yazan tarihtir.","shelf":"İşlevsel eskimeyle kartın geçerlilik tarihi aynı değildir.","ending":"Kart çalışıyor. Sadece köşeleri biraz hayat görmüş."},{"id":"bottle","name":"Plastik Şişe","sub":"PET ambalaj","max":36500,"base":120,"unit":"days","environments":[["Evde kullanım",1],["Güneş altında",1.9],["Denizde",1.4],["Kapalı alanda saklı",0.5]],"events":["Şişe biçimini koruyor.","Yüzeyde sararma veya yıpranma oluşabilir.","Çatlaklar ve daha küçük parçalar ortaya çıkabilir.","Parçalanmış olabilir; bu, doğadan yok olduğu anlamına gelmez."],"explain":"PET gibi yaygın plastikler UV, ısı ve mekanik etkiler altında parçalanabilir. Ancak parçalanma, malzemenin tamamen biyolojik olarak ayrışması demek değildir; mikroplastikler kalabilir.","fun":"Büyük parçanın gözden kaybolması, mikroplastik olarak yok olduğu anlamına gelmez.","material":"Polietilen tereftalat (PET)","source":"https://marinedebris.noaa.gov/what-marine-debris/plastic","context":"Çevrede çözünme için tek bir kesin yıl sayısı bilimsel olarak verilemez.","shelf":"Bu nesnede çizgi, ömür değil çevredeki parçalanmayı gösterir.","ending":"Şişe küçüldü. Problem küçülmedi."}];
 const $=id=>document.getElementById(id);
-let objIndex=0,environment=0,progress=0,raf=0,playStart=0,playInitial=0,notesOpen=false;
+let objIndex=0,environment=0,progress=0,raf=0,playStart=0,playInitial=0,notesOpen=false,comparing=false,compareEnvironment=1,lastFrame=-1;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function formatTime(day){
  if(day < 1) return day===0?'0 gün':Math.max(1,Math.round(day*24))+' saat';
@@ -156,9 +156,65 @@ function formatTime(day){
 }
 function timePassed(item){return item.max*Math.pow(progress/100,1.74)}
 function conditions(){return ITEMS[objIndex].environments[environment]}
-function decay(){const o=ITEMS[objIndex],t=timePassed(o)*conditions()[1];return clamp(t/o.base,0,1.6)}
+function decayFor(env){const o=ITEMS[objIndex],t=timePassed(o)*o.environments[env][1];return clamp(t/o.base,0,1.6)}
+function decay(){return decayFor(environment)}
 function state(){return clamp(decay()/1.35,0,1)}
-function stage(){const v=decay();return v<.22?0:v<.65?1:v<1.15?2:3}
+function stageFor(v){return v<.22?0:v<.65?1:v<1.15?2:3}
+function stage(){return stageFor(decay())}
+const TIPS={
+ banana:'Olgun muzu buzdolabına alabilirsin. Kabuğu kararabilir ama içi daha yavaş yumuşar.',
+ cable:'Fişi kablodan değil, başlığından tutarak çıkar. Keskin bükülmeleri azalt.',
+ sponge:'Kullanımdan sonra durula, suyunu sık, kurut. Koku veya aşınma varsa değiştir.',
+ tshirt:'Etiketine uygun, daha düşük sıcaklıkta yıka. Mümkünse gölgede kurut.',
+ battery:'Sıcaktan uzak tut. Pil sağlığını cihazın gerçek ayarlarından kontrol et.',
+ sunscreen:'Son kullanma tarihine bak. Sıcak arabada veya doğrudan güneşte bırakma.',
+ sneaker:'Islanan ayakkabıyı uygun şekilde kurut; mümkünse dönüşümlü kullan.',
+ earbuds:'Şarj kutusunu kuru tut. Cihazı sıcaktan ve uzun süreli nemden koru.',
+ card:'Sürekli bükülmesini ve aşırı sıcakta kalmasını önle.',
+ bottle:'Yerel ayrıştırma sistemine göre geri dönüştür; doğaya bırakma.'
+};
+function stageProgress(which,env=environment){
+ if(which===0)return 0;
+ const threshold=[0,.23,.66,1.16][which],o=ITEMS[objIndex],day=threshold*o.base/o.environments[env][1];
+ return clamp(100*Math.pow(day/o.max,1/1.74),0,100);
+}
+function selectStage(which){stop();progress=stageProgress(which);update()}
+function buildMilestones(){
+ const labels=['YENİ','İLK İZ','YIPRANMA','SON AŞAMA'];
+ $('milestones').innerHTML='';
+ labels.forEach((label,i)=>{
+  const btn=document.createElement('button');btn.type='button';btn.className='milestone';btn.textContent=label;
+  const day=ITEMS[objIndex].max*Math.pow(stageProgress(i)/100,1.74);
+  btn.title=label+' · yaklaşık '+formatTime(day);
+  btn.onclick=()=>selectStage(i);$('milestones').appendChild(btn);
+ });
+}
+function preferredComparison(){
+ const options=ITEMS[objIndex].environments.map((e,i)=>({factor:e[1],i})).filter(x=>x.i!==environment);
+ return options.reduce((best,x)=>!best||Math.abs(x.factor-conditions()[1])>Math.abs(best.factor-conditions()[1])?x:best,null)?.i??1;
+}
+function climateOf(text){
+ const s=text.toLocaleLowerCase('tr');
+ if(/güneş|sıcak|plaj|araba/.test(s))return 'warm';
+ if(/soğu|serin|buzdolabı/.test(s))return 'cool';
+ if(/nem|ıslak|yağmur|çamur|deniz/.test(s))return 'wet';
+ if(/çekmece|dolap|kutuda/.test(s))return 'dark';
+ return 'normal';
+}
+function renderCompareSelect(){
+ const select=$('compare-env');select.innerHTML='';
+ ITEMS[objIndex].environments.forEach((e,i)=>{
+  const opt=document.createElement('option');opt.value=i;opt.textContent=e[0];select.appendChild(opt);
+ });
+ if(compareEnvironment===environment)compareEnvironment=preferredComparison();
+ select.value=String(compareEnvironment);
+ $('compare-options').hidden=!comparing;
+ $('compare').textContent=comparing?'⇄ TEK GÖRÜNÜM':'⇄ KIYASLA';
+ $('compare').setAttribute('aria-pressed',String(comparing));
+ $('art').classList.toggle('is-compare',comparing);
+ $('scene').classList.toggle('compare-active',comparing);
+}
+
 function color(a,b,t){const hex=x=>x.replace('#','');const aa=hex(a),bb=hex(b);return '#'+[0,2,4].map(i=>Math.round(parseInt(aa.slice(i,i+2),16)*(1-t)+parseInt(bb.slice(i,i+2),16)*t).toString(16).padStart(2,'0')).join('')}
 function svgShell(content){
  const defs='<defs><linearGradient id="body" x1="0" y1="0" x2=".95" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#f2f1eb" stop-opacity=".1"/><stop offset="1" stop-color="#111" stop-opacity=".13"/></linearGradient><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".4" stop-color="#dad9d6"/><stop offset=".68" stop-color="#a6a6a4"/><stop offset="1" stop-color="#efefee"/></linearGradient><pattern id="grain" width="13" height="12" patternUnits="userSpaceOnUse"><circle cx="4" cy="5" r="1.5" fill="#322d25" opacity=".5"/><circle cx="10" cy="8" r=".6" fill="#151515" opacity=".45"/></pattern><filter id="soft"><feGaussianBlur stdDeviation="3"/></filter></defs>';
@@ -210,7 +266,26 @@ function update(){
  $('meter-pct').textContent=st===0?'YENİ':st===1?'DEĞİŞİYOR':st===2?'YIPRANDI':'İLERİ AŞAMA';
  $('meter-fill').style.width=val+'%';
  $('meter-note').textContent=o.shelf;
- $('art').innerHTML=drawObject(o,v);$('art').style.setProperty('--aging',clamp((v-.08)*1.1,0,1));
+ $('preservation-tip').textContent=TIPS[o.id]||'Sıcaklık, kullanım sıklığı ve nem yaşlanmayı etkileyebilir.';
+ $('milestones').querySelectorAll('button').forEach((b,i)=>b.classList.toggle('current',i===st));
+ const art=$('art'),level=clamp((v-.08)*1.1,0,1);
+ if(comparing){
+  const alt=decayFor(compareEnvironment),altStage=stageFor(alt);
+  const left=conditions()[0],right=o.environments[compareEnvironment][0];
+  function pane(name,deg,sid){
+   return '<div class="compare-pane"><div class="compare-visual" style="--aging:'+clamp((deg-.08)*1.1,0,1)+'">'+drawObject(o,deg)+'</div><div class="compare-pane-label">'+name+'</div><div class="compare-pane-status">AŞAMA '+(sid+1)+'/4</div></div>';
+  }
+  art.innerHTML='<div class="compare-split">'+pane(left,v,st)+pane(right,alt,altStage)+'</div>';
+  const difference=Math.abs(v-alt);
+  $('compare-insight').hidden=false;
+  $('compare-insight').textContent=difference<.10?'Bu noktada iki koşulun farkı az. Zamanı biraz ileri sar.':
+   v>alt?left+' koşulunda şematik model daha hızlı yıpranma gösteriyor.':
+         right+' koşulunda şematik model daha hızlı yıpranma gösteriyor.';
+ }else{
+  art.innerHTML=drawObject(o,v);art.style.setProperty('--aging',level);
+  $('compare-insight').hidden=true;
+ }
+ $('scene').dataset.climate=comparing?'normal':climateOf(conditions()[0]);
  $('explain').textContent=o.explain;
  $('fact').textContent='İŞİN GARİBİ: '+o.fun;
  $('caution').textContent=o.context;
@@ -220,11 +295,16 @@ function renderOptions(){
  const o=ITEMS[objIndex];
  $('environments').innerHTML='';
  o.environments.forEach((entry,i)=>{const b=document.createElement('button');b.type='button';b.className='env'+(i===environment?' on':'');b.setAttribute('aria-pressed',i===environment?'true':'false');b.innerHTML='<span>'+entry[0]+'</span><span class="dot" aria-hidden="true"></span>';b.onclick=()=>{environment=i;stop();renderOptions();update()};$('environments').appendChild(b)});
- $('weather-label').textContent='4 SENARYO';
+ $('weather-label').textContent=o.environments.length+' SENARYO';
+ if(comparing && compareEnvironment===environment)compareEnvironment=preferredComparison();
+ if(comparing)renderCompareSelect();
+ buildMilestones();
 }
 function renderTabs(){
+ const previousScroll=$('objects').scrollLeft;
  $('objects').innerHTML='';
- ITEMS.forEach((o,i)=>{const b=document.createElement('button');b.className='obj-tab'+(objIndex===i?' on':'');b.innerHTML='<span class="n">'+String(i+1).padStart(2,'0')+'</span>'+o.name;b.setAttribute('aria-current',objIndex===i?'true':'false');b.onclick=()=>{objIndex=i;environment=0;progress=0;stop();renderTabs();renderOptions();update()};$('objects').appendChild(b)});
+ ITEMS.forEach((o,i)=>{const b=document.createElement('button');b.className='obj-tab'+(objIndex===i?' on':'');b.innerHTML='<span class="n">'+String(i+1).padStart(2,'0')+'</span>'+o.name;b.setAttribute('aria-current',objIndex===i?'true':'false');b.onclick=()=>{objIndex=i;environment=0;compareEnvironment=1;progress=0;stop();renderTabs();renderOptions();if(comparing)renderCompareSelect();update()};$('objects').appendChild(b)});
+ $('objects').scrollLeft=previousScroll;
 }
 function stop(){if(raf)cancelAnimationFrame(raf);raf=0;$('play').textContent='▶ ZAMANI AKIT'}
 function play(){
@@ -233,7 +313,9 @@ function play(){
  playInitial=progress;playStart=performance.now();
  $('play').textContent='Ⅱ DURDUR';
  function tick(now){
-  progress=clamp(playInitial+(now-playStart)/70,0,100);
+  if(lastFrame>=0 && now-lastFrame<30){raf=requestAnimationFrame(tick);return}
+  lastFrame=now;
+  progress=clamp(playInitial+(now-playStart)/105,0,100);
   update();
   if(progress<100)raf=requestAnimationFrame(tick);else stop();
  }
@@ -242,16 +324,27 @@ function play(){
 $('time').addEventListener('input',e=>{stop();progress=Number(e.target.value);update()});
 $('play').onclick=play;
 $('reset').onclick=()=>{stop();progress=0;update()};
+$('compare').onclick=()=>{
+ stop();comparing=!comparing;
+ if(comparing){compareEnvironment=preferredComparison();if(progress<9)progress=36}
+ renderCompareSelect();update();
+};
+$('compare-env').onchange=e=>{
+ const target=Number(e.target.value);
+ if(target===environment){$('compare-env').value=String(compareEnvironment);toast('FARKLI BİR ORTAM SEÇ');return}
+ compareEnvironment=target;stop();update();
+};
+$('swap').onclick=()=>{const old=environment;environment=compareEnvironment;compareEnvironment=old;stop();renderOptions();renderCompareSelect();update()};
 $('expand').onclick=()=>{notesOpen=!notesOpen;$('details').classList.toggle('open',notesOpen);$('expand').setAttribute('aria-expanded',String(notesOpen));$('expand-arrow').textContent=notesOpen?'−':'+'};
 let toastTimeout=0;
 function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>$('toast').classList.remove('show'),2300)}
 $('share').onclick=()=>{
- const o=ITEMS[objIndex],msg=o.name+' / '+conditions()[0]+' / '+formatTime(timePassed(o))+' sonra: '+o.events[stage()]+' · Daha Ne Kadar Dayanır?';
+ const o=ITEMS[objIndex],msg=o.name+' / '+formatTime(timePassed(o))+' sonra · '+(comparing?'Kıyas: '+conditions()[0]+' vs '+o.environments[compareEnvironment][0]:conditions()[0])+' · '+o.events[stage()]+' · Daha Ne Kadar Dayanır?';
  const url=location.origin+location.pathname;
  if(navigator.share)navigator.share({title:'Daha Ne Kadar Dayanır?',text:msg,url}).catch(()=>{});
  else if(navigator.clipboard)navigator.clipboard.writeText(msg+' '+url).then(()=>toast('BAĞLANTI KOPYALANDI')).catch(()=>toast('PAYLAŞIM KULLANILAMIYOR'));
  else toast('PAYLAŞIM KULLANILAMIYOR');
 };
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
-renderTabs();renderOptions();update();
+renderTabs();renderOptions();renderCompareSelect();update();
 </script></body></html>
