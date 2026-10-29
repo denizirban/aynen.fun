@@ -158,7 +158,7 @@ var mi=0,ti=0,grams=1e6,toastTimer=0;
 var trInt=new Intl.NumberFormat('tr-TR',{maximumFractionDigits:1});
 function small(n){if(n>=1e12)return trInt.format(n/1e12)+' trilyon';if(n>=1e9)return trInt.format(n/1e9)+' milyar';if(n>=1e6)return trInt.format(n/1e6)+' milyon';if(n>=1e3)return trInt.format(n/1e3)+' bin';if(n>=1)return trInt.format(n);return new Intl.NumberFormat('tr-TR',{maximumSignificantDigits:3}).format(n)}
 function money(n){return '$'+small(n)}
-function weight(g){if(g>=1e12)return small(g/1e12)+' milyar ton';if(g>=1e9)return small(g/1e9)+' milyon ton';if(g>=1e6)return small(g/1e6)+' ton';if(g>=1e3)return small(g/1e3)+' kg';return small(g)+' g'}
+function weight(g){if(g>=1e15)return small(g/1e15)+' milyar ton';if(g>=1e12)return small(g/1e12)+' milyon ton';if(g>=1e9)return small(g/1e9)+' bin ton';if(g>=1e6)return small(g/1e6)+' ton';if(g>=1e3)return small(g/1e3)+' kg';return small(g)+' g'}
 function percent(n){if(n>=100)return '%100+';if(n>=1)return '%'+new Intl.NumberFormat('tr-TR',{maximumFractionDigits:2}).format(n);if(n>=.001)return '%'+new Intl.NumberFormat('tr-TR',{maximumSignificantDigits:2}).format(n);return '%'+n.toExponential(1).replace('e-',' × 10⁻').replace('e+',' × 10^')}
 function setAmount(n){grams=Math.max(.1,Math.min(1e12,n));els.amount.value=Math.log10(grams).toFixed(2);render()}
 function toast(msg){els.toast.textContent=msg;els.toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){els.toast.classList.remove('show')},2200)}
