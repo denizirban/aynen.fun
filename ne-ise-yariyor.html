@@ -171,6 +171,18 @@ main{grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:clamp(20px,3
  footer{padding-bottom:8px}
 }
 
+
+/* Missing image state: a clean neutral technical placeholder, never a broken img. */
+.object-shell.loading .object-photo,.object-shell.error .object-photo{visibility:hidden!important}
+.object-shell .fallback{position:absolute;inset:0;width:100%;height:100%;display:none;place-content:center;justify-items:center;gap:14px;opacity:1;pointer-events:none;color:#777;text-align:center}
+.object-shell.loading .fallback,.object-shell.error .fallback{display:grid}
+.object-shell .fallback svg{width:min(52%,245px);height:auto;max-height:58%;opacity:.55}
+.object-shell .fallback span{font:10px/1.4 "Courier New",monospace;letter-spacing:.07em;max-width:260px}
+.object-shell.loading .fallback span{visibility:hidden}
+.object-shell.loading .fallback svg{opacity:.18;animation:objpulse 1.8s ease-in-out infinite}
+.object-shell.error .fallback::after{content:none}
+@keyframes objpulse{50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.object-shell.loading .fallback svg{animation:none}}
 </style>
 </head>
 <body>
@@ -184,7 +196,7 @@ main{grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:clamp(20px,3
   <button class="gallery-nav prev" type="button" id="prev" aria-label="Önceki nesne">‹</button>
   <div class="object-shell loading" id="object-shell" title="Büyütmek için dokun">
    <img class="object-photo" id="photo" alt="" width="900" height="700">
-   <div class="fallback" aria-hidden="true">?</div>
+   <div class="fallback" aria-hidden="true"><svg viewBox="0 0 240 220" role="presentation" focusable="false"><g fill="none" stroke="#555" stroke-width="1.5"><path d="M120 17L204 65V155L120 203L36 155V65Z"/><path d="M120 17V203M36 65L204 155M204 65L36 155"/><circle cx="120" cy="110" r="48"/><circle cx="120" cy="110" r="28"/><path d="M73 63L168 158M167 63L73 158"/><circle cx="120" cy="110" r="7" fill="#444"/><path d="M120 3V17M120 203V217M22 110H36M204 110H218"/></g></svg><span>GÖRSEL ŞU ANDA ERİŞİLEMİYOR</span></div>
   </div>
   <button class="gallery-nav next" type="button" id="next" aria-label="Sonraki nesne">›</button>
   <span class="gallery-mark mono" id="photo-index">001</span>
