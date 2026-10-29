@@ -80,12 +80,6 @@ a{color:inherit;text-decoration:none}
 .track{height:5px;background:#ebebeb;margin:6px 0 0;overflow:hidden}
 .track b{height:100%;background:#111;display:block;transition:width .38s}
 .meter:nth-child(1) .track b{background:#8a74c4}.meter:nth-child(2) .track b{background:#7e806a}.meter:nth-child(3) .track b{background:#111}
-#reaction{display:none;border-top:1px solid #111;margin-top:12px;padding-top:12px}
-#reaction.active{display:block}
-#reaction h3{font-size:clamp(22px,2.4vw,30px);line-height:1.09;letter-spacing:-.05em;margin:7px 0}
-#reaction p{font-size:12px}
-.reaction-tag{font:9px ui-monospace,monospace}
-#playScreen.answered .ticket,#playScreen.answered .answers{display:none}
 .result-page .panel{background:#fff}
 .receipt{border:1px solid #111;padding:15px;margin:12px 0 0;background:#f9f8f5}
 .receipt-brand{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #111;padding-bottom:10px;font:10px ui-monospace,monospace}
@@ -213,7 +207,7 @@ a{color:inherit;text-decoration:none}
         <div class="progress" id="roundProgress" aria-hidden="true"></div>
         <div class="ticket"><div class="eyebrow" id="eventTag">BİR İŞARET GELDİ</div><h2 id="eventTitle"></h2><p id="eventDesc"></p></div>
         <div class="answers" id="answers"></div>
-        <div id="reaction"><div class="reaction-tag">EVRENİN OTOMATİK YANITI / OYUN KURGUSU</div><h3 id="reactionTitle"></h3><p id="reactionDesc"></p><button type="button" class="primary" id="next">SONRAKİ İŞARET <span>↗</span></button></div>
+        
         <div class="meter-box"><div class="meters">
           <div class="meter"><small>KOZMİK<br>TİTREŞİM</small><div class="val" id="vibe">0</div><div class="track"><b id="vibeTrack" style="width:0%"></b></div></div>
           <div class="meter"><small>GÖRÜLEN<br>İŞARETLER</small><div class="val" id="signs">0</div><div class="track"><b id="signsTrack" style="width:0%"></b></div></div>
@@ -346,7 +340,7 @@ function showSceneEvent(day){
 
 function renderRound(){
  if(state.day>=7){finish();return;}
- const r=R[state.day];showSceneEvent(state.day);$("playScreen").classList.remove("answered");
+ const r=R[state.day];showSceneEvent(state.day);
  $("roundLabel").textContent="KOZMİK GÜN "+String(state.day+1).padStart(2,"0")+" / 07";
  $("eventTag").textContent=r.tag;$("eventTitle").textContent=r.title;$("eventDesc").textContent=r.desc;
  const bar=$("roundProgress");bar.replaceChildren();
@@ -355,25 +349,21 @@ function renderRound(){
  r.opts.forEach((item,i)=>{
   const b=document.createElement("button");b.className="answer";const lbl=document.createElement("span");lbl.textContent=item[0];const a=document.createElement("span");a.textContent="↗";b.append(lbl,a);b.addEventListener("click",()=>answer(i));$("answers").append(b);
  });
- $("next").innerHTML=state.day===6?"EVRENİN RAPORUNU AÇ <span>↗</span>":"SONRAKİ İŞARET <span>↗</span>";
- $("reaction").classList.remove("active");$("universe").dataset.mood="idle";
+ $("universe").dataset.mood="idle";
  status("İŞARET "+(state.day+1)+"/7 · KARAR BEKLENİYOR");updateMeters();
 }
 function answer(i){
- if($("playScreen").classList.contains("answered"))return;
- const o=R[state.day].opts[i];state.vibe=clamp(state.vibe+o[1],0,100);state.signs+=o[2];state.progress=clamp(state.progress+o[3],0,100);
+ if(state.ended||state.day>=R.length)return;
+ const o=R[state.day].opts[i];
+ state.vibe=clamp(state.vibe+o[1],0,100);
+ state.signs+=o[2];
+ state.progress=clamp(state.progress+o[3],0,100);
  if(o[5]==="action")state.actions++;else state.ritual++;
  state.history.push({day:state.day,choice:o[0],kind:o[5]});
- $("universe").dataset.mood=o[5];
- $("reactionTitle").textContent=o[5]==="action"?(state.wish==="custom"?"Kader kendi kendine tıklamadı.":"Evren şu anda senden not alıyor."):"Evrenden otomatik yanıt.";
- $("reactionDesc").textContent=o[4]+(o[5]==="action"?" "+W[state.wish].action:"");
- $("reaction").classList.add("active");$("playScreen").classList.add("answered");
- stamp(o[5]==="action"?"GERÇEK AKSİYON":"KOZMİK İŞARET");
- particles(o[5]==="ritual"?9:4);
- status(o[5]==="action"?"GERÇEK İLERLEME TESPİT EDİLDİ":"EVREN GÖRDÜ. BELKİ.");
- updateMeters();
+ // No per-answer reaction page: advance straight to the next question.
+ state.day++;
+ renderRound();
 }
-$("next").addEventListener("click",()=>{state.day++;renderRound();});
 function verdict(){
  if(state.progress>=75)return ["Evren yerine sen çalışmışsın.","Kozmik titreşim ayrı, iş bitirmek ayrı. Yanlışlıkla ikincisini başardın."];
  if(state.progress>=43)return ["İşaret var. Biraz da icraat.","Bir elinde kristal, diğer elinde yapılacaklar listesi. Sistem kararsız."];
