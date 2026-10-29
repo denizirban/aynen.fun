@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7f6f2">
-<meta name="description" content="Referandum: 1958 İsviçre bahis limiti 2 franktan 5 franka çıksın mı? EVET veya HAYIR. Basılı tut, mührü bırak, çizginin dışına taşırma. aynen.fun">
+<meta name="description" content="Referandum: Tek soru, bir mühür, 4,5 saniye. Ağır titreyen damgayı EVET veya HAYIR dairesine bas. İsviçre 1958.">
 <title>Referandum — Oy Geçersiz | aynen.fun</title>
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -216,6 +216,16 @@ animation:inkSpread .33s cubic-bezier(.16,.83,.15,1) both}
 @media(max-height:600px){.seal{display:none}.paper{top:44%}.paper-title{font-size:14px}.referendum-topic{font-size:11px}.charge-ui{bottom:49px}.dialog h1{font-size:32px}.dialog{max-height:calc(100dvh - 20px)}}
 @media(prefers-reduced-motion:reduce){.inkmark,.result-animate .end-big,.stamp.impact svg,.stage.impact .paper{animation:none!important}}
 
+
+/* One-shot heavy physics mode */
+.single-tag{padding:6px 9px;border:1px solid #f1b95e;color:#ffd18a;border-radius:3px;font:500 10px var(--mono);white-space:nowrap}
+.stability-track{width:72px}.stability-track i{background:linear-gradient(90deg,#f64c66,#f4b460)}
+.stamp{width:155px;height:218px;transform:translate(-50%,-87%);filter:drop-shadow(11px 18px 15px #000c)}
+.stamp.pressed{filter:drop-shadow(5px 8px 8px #000b) drop-shadow(0 0 20px #f6ca8280)}
+.timer.warn{animation:urgent .3s ease-in-out infinite alternate}
+@keyframes urgent{from{opacity:1;transform:scale(1)}to{opacity:.65;transform:scale(1.07)}}
+@media(max-width:750px){.stamp{width:124px;height:182px}.stability-track{width:38px}.single-tag{font-size:8px;padding:5px 6px}.hand-status{font-size:7px}.game-status{gap:6px}.info{gap:8px}}
+@media(prefers-reduced-motion:reduce){.timer.warn{animation:none}}
 </style>
 </head>
 <body>
@@ -223,12 +233,12 @@ animation:inkSpread .33s cubic-bezier(.16,.83,.15,1) both}
  <header class="topbar">
   <a class="back" href="/index.html" aria-label="Ana sayfaya dön">aynen.<small>← OYUNLAR</small></a>
   <div class="game-title">Referandum <span style="color:#aaa">/</span> MÜHÜRLE</div>
-  <div class="top-right"><span class="round-label">TUR <strong id="roundNo">01 / 05</strong></span><span class="timer" id="clock" aria-live="off">09.0</span></div>
+  <div class="top-right"><span class="round-label">TEK OY <strong id="roundNo">01 / 01</strong></span><span class="timer" id="clock" aria-live="off">04.5</span></div>
  </header>
  <main class="game">
   <div class="info">
-   <div><strong id="prompt">Mühür, dairenin dışına taşmamalı.</strong><p id="subprompt">Herhangi bir tercihi mühürle. Sadece bir hakkın var.</p></div>
-   <div class="game-status"><div class="stability"><span class="hand-status" id="handStatus">EL: TİTRİYOR</span><span class="stability-track"><i id="stabilityFill"></i></span></div><div class="progress-dots" id="progress" aria-label="Tur ilerlemesi"><i class="current"></i><i></i><i></i><i></i><i></i></div></div>
+   <div><strong id="prompt">4,5 saniye. Tek soru. Tek ağır mühür.</strong><p id="subprompt">EVET veya HAYIR. Çok ağır mühür, çok küçük hata payı.</p></div>
+   <div class="game-status"><div class="stability"><span class="hand-status" id="handStatus">EL: TİTRİYOR</span><span class="stability-track"><i id="stabilityFill"></i></span></div><span class="single-tag">TEK HAK</span></div>
   </div>
   <section class="stage" id="stage" aria-label="Oy pusulası ve mühürleme alanı" tabindex="0">
    <div class="desk-label"><b class="casino-chip" aria-hidden="true">₣</b> 1958 / İSVİÇRE / OYLAMA KABİNİ<span>2 CHF → 5 CHF · TEK HAK</span></div>
@@ -275,9 +285,9 @@ animation:inkSpread .33s cubic-bezier(.16,.83,.15,1) both}
     <div class="dialog">
      <div class="mini-kicker">REFERANDUM / AYNEN.FUN</div>
      <h1>2 frank mı?<br><span>5 frank mı?</span></h1>
-     <p>İsviçre bu soruyu gerçekten oyladı. EVET veya HAYIR için mührü hedefe getir, <strong>basılı tut, bırakınca mühürle.</strong> Çizgiye değersen oy geçersiz.</p>
+     <p>Bir soru. Bir şans. <strong>Aşırı ağır ve titreyen</strong> mührü 4,5 saniye içinde hizala. <strong>Basılı tut, bırakınca mühürle.</strong></p>
      <div class="history-fact"><span class="fact-label">GERÇEK REFERANDUM / 7 ARALIK 1958</span><strong>İsviçre, 2 franklık oyun bahis limitini 5 frank yapmak için sandığa gitti.</strong><span>Dönemin izinli Kursaal eğlence salonlarındaki oyunlar için geçerliydi. <a href="https://swissvotes.ch/vote/189.00" target="_blank" rel="noopener noreferrer">Swissvotes arşivi ↗</a></span></div>
-     <div class="rules"><div class="rule"><strong>5</strong>TUR</div><div class="rule"><strong>1</strong>MÜHÜR / TUR</div><div class="rule"><strong>9</strong>SN İLK TUR</div></div>
+     <div class="rules"><div class="rule"><strong>1</strong>SORU</div><div class="rule"><strong>1</strong>MÜHÜR</div><div class="rule"><strong>4,5</strong>SANİYE</div></div>
      <button class="main-button" id="startBtn">MÜHRÜ ELİNE AL →</button>
     </div>
    </div>
@@ -297,16 +307,11 @@ animation:inkSpread .33s cubic-bezier(.16,.83,.15,1) both}
 <script>
 (function(){
 'use strict';
-var stage=document.getElementById('stage'),ballot=document.getElementById('ballot'),stamp=document.getElementById('stamp'),aim=document.getElementById('aim'),clock=document.getElementById('clock'),progress=document.getElementById('progress'),intro=document.getElementById('intro'),outcome=document.getElementById('outcome'),toast=document.getElementById('toast');
-var configurations=[
- {seconds:9,shift:0,rotation:0,target:106,ratio:.66,tremor:2.8,sway:2.2,slip:3.2,title:'İki seçenek. Tek mühür. Titreyen bir el.',sub:'Birini seç, daireden taşırma. Basarken mühür kayabilir.'},
- {seconds:8,shift:1.5,rotation:.3,target:102,ratio:.68,tremor:4.2,sway:3.4,slip:4.5,title:'Elin biraz daha titriyor.',sub:'Daire aynı yerde gibi. Mühür pek öyle düşünmüyor.'},
- {seconds:7,shift:3,rotation:.55,target:98,ratio:.69,tremor:5.5,sway:4.5,slip:5.4,title:'Mühür basarken elin kayabilir.',sub:'Nişan almak kolay. Tam o an basmak mesele.'},
- {seconds:6,shift:5,rotation:.7,target:95,ratio:.70,tremor:6.7,sway:5.7,slip:6.5,title:'Eller kontrol altında. Resmî açıklama bu.',sub:'Lütfen titremediğinizi varsayınız.'},
- {seconds:5,shift:7,rotation:1,target:92,ratio:.70,tremor:8,sway:7,slip:7.8,title:'Son mühür. Elinizin sakin olması bekleniyor.',sub:'Süre dar, daire dar, el pek işbirlikçi değil.'}
-];
-var state='intro',round=0,tries=0,correct=0,deadline=0,remaining=9;
-var mouseX=0,mouseY=0,headX=0,headY=0,renderX=0,renderY=0,hasPointer=false,pressing=false,pressTimer=0;
+var stage=document.getElementById('stage'),ballot=document.getElementById('ballot'),stamp=document.getElementById('stamp'),aim=document.getElementById('aim'),clock=document.getElementById('clock'),intro=document.getElementById('intro'),outcome=document.getElementById('outcome'),toast=document.getElementById('toast');
+// ONE referendum, ONE stamp. Everything is intentionally difficult from the start.
+var configuration={seconds:4.5,shift:4.4,rotation:.75,target:92,ratio:.75,tremor:7.3,sway:6.7,slip:7.8,title:'4,5 saniye. Tek soru. Tek ağır mühür.',sub:'EVET veya HAYIR. Basılı tut, bırak. Bir şansın var.'};
+var state='intro',round=0,tries=0,correct=0,deadline=0,remaining=4.5;
+var mouseX=0,mouseY=0,headX=0,headY=0,handVX=0,handVY=0,renderX=0,renderY=0,hasPointer=false,pressing=false,pressTimer=0;
 var pressStart=0,pressX=0,pressY=0,slipX=0,slipY=0,touchArmed=false,releaseAt=0,releaseHold=0,stageImpactTimer=0;
 var ticker=performance.now(),anim=0,inkSize=68,activePointer=null,toastTimer=0,successTimer=0;
 var chargeFill=document.getElementById('chargeFill'),chargeLabel=document.getElementById('chargeLabel'),chargeNumber=document.getElementById('chargeNumber'),stabilityFill=document.getElementById('stabilityFill');
@@ -327,33 +332,29 @@ function sound(freq,len,type,vol){
 }
 function vibrate(ms){if(navigator.vibrate)navigator.vibrate(ms);}
 function stagePos(e){var r=stage.getBoundingClientRect();return {x:clamp(e.clientX-r.left,0,r.width),y:clamp(e.clientY-r.top,0,r.height)};}
-function config(){return configurations[round];}
-function dots(){
- progress.innerHTML='';
- for(var i=0;i<5;i++){var d=document.createElement('i');if(i<round)d.className='done';else if(i===round)d.className='current';progress.appendChild(d);}
- progress.setAttribute('aria-label','Tur '+(round+1)+' / 5');
-}
+function config(){return configuration;}
+
 function eraseMarks(){Array.prototype.slice.call(stage.querySelectorAll('.inkmark')).forEach(function(el){el.remove();});}
 function setRound(){
  clearTimeout(successTimer);clearTimeout(pressTimer);clearTimeout(toastTimer);
- pressing=false;hasPointer=false;activePointer=null;touchArmed=false;releaseHold=0;clearTimeout(stageImpactTimer);
+ pressing=false;hasPointer=false;activePointer=null;touchArmed=false;releaseHold=0;handVX=0;handVY=0;clearTimeout(stageImpactTimer);
  var c=config(),short=window.innerWidth<600;
  var target=Math.min(c.target,short?c.target*.90:c.target);
  inkSize=Math.round(target*c.ratio);
  document.documentElement.style.setProperty('--target',target+'px');
  document.documentElement.style.setProperty('--mark',inkSize+'px');
- document.getElementById('roundNo').textContent=('0'+(round+1)).slice(-2)+' / 05';
+ document.getElementById('roundNo').textContent='01 / 01';
  document.getElementById('documentNo').textContent=('0000'+(tries+1)).slice(-5);
  document.getElementById('prompt').textContent=c.title;
  document.getElementById('subprompt').textContent=c.sub;
- document.getElementById('handStatus').textContent=['EL: HAFİF TİTREME','EL: KAYGAN','EL: KONTROL ZAYIF','EL: ÇOK KARARSIZ','EL: TAMAMEN KARARSIZ'][round];
+ document.getElementById('handStatus').textContent='MÜHÜR: AŞIRI AĞIR';
  document.getElementById('hint').textContent=short?'PARMAĞINLA HİZALA · BASILI TUT · BIRAK':'MOUSE İLE HİZALA · BASILI TUT · BIRAK';
  chargeLabel.textContent='MÜHRÜ BASILI TUT';chargeNumber.textContent='0%';chargeFill.style.width='0%';
  stage.classList.remove('charging','impact','miss','hit');stamp.classList.remove('dropping','impact');
  stamp.style.setProperty('--press-y','0px');stamp.style.setProperty('--press-scale','1');
- stabilityFill.style.width=(100-round*15)+'%';
+ stabilityFill.style.width='14%';
  clock.classList.remove('warn');clock.textContent=c.seconds.toFixed(1);
- eraseMarks();dots();toast.classList.remove('on');
+ eraseMarks();toast.classList.remove('on');
  stamp.classList.remove('on','pressed','dropping','impact');aim.classList.remove('on','pressed');
  ballot.style.transform='translate(-50%,-50%)';
  remaining=c.seconds;
@@ -377,10 +378,10 @@ function finish(valid,reason){
  stamp.classList.remove('on','pressed','dropping');aim.classList.remove('on','pressed');
  document.getElementById('outcomeTitle').textContent=valid?'OY GEÇERLİ':'OY GEÇERSİZ';
  document.getElementById('outcomeTitle').classList.toggle('valid',valid);
- document.getElementById('outcomeKicker').textContent=valid?'BEŞ TURUN TAMAMI TAMAMLANDI':'TUTANAK / İŞLEM SONUCU';
+ document.getElementById('outcomeKicker').textContent=valid?'TEK MÜHÜR / BAŞARILI':'TEK MÜHÜR / GEÇERSİZ';
  document.getElementById('outcomeText').textContent=reason;
- document.getElementById('outcomeInfo').textContent=valid?'TAM BEŞ DEFA AYNI İŞLEMİ BAŞARIYLA YAPTINIZ.':'TUR: '+(round+1)+' / 5   ·   DENEME: '+tries+'   ·   BAŞARILI MÜHÜR: '+correct;
- document.getElementById('retryBtn').textContent=valid?'YENİDEN BAŞLA ↻':'BU TURU TEKRAR DENE ↻';
+ document.getElementById('outcomeInfo').textContent=valid?'TEK DENEME. BİR MÜHÜR. BİR MUCİZE.':'TEK DENEME. OYUNUN KURALLARI DEĞİŞMEDİ.';
+ document.getElementById('retryBtn').textContent='TEKRAR DENE ↻';
  outcome.classList.remove('hidden');
  outcome.classList.remove('result-animate');void outcome.offsetWidth;outcome.classList.add('result-animate');
  sound(valid?530:130,.25,valid?'sine':'triangle',.10);
@@ -431,12 +432,10 @@ function performStamp(){
  stage.classList.add('hit');
  state='transition';
  chargeLabel.textContent='GEÇERLİ';chargeNumber.textContent='✓';
- statusMsg(round===4?'MÜHÜR GEÇERLİ. İNANILMAZ.':'GEÇERLİ. DEVAM EDİYORUZ.');
- successTimer=setTimeout(function(){
-  if(round===4)finish(true,'Oy geçerli. Beş kez mühürledin. İsviçre 1958 bunu gerçekten oyladı.');
-  else{round++;setRound();}
- },940);
+ statusMsg('GEÇERLİ. BİR MUCİZE.');
+ successTimer=setTimeout(function(){finish(true,'Tek seferde geçerli mühür. İsviçre 1958 bunu gerçekten oyladı.');},760);
 }
+
 function startPress(){
  if(state!=='playing'||pressing||!hasPointer)return;
  pressing=true;pressStart=performance.now();releaseHold=0;
@@ -449,11 +448,11 @@ function releasePress(){
  if(state!=='playing'||!pressing)return;
  var now=performance.now();
  pressing=false;state='landing';releaseAt=now;
- releaseHold=clamp((now-pressStart)/900,0,1);
+ releaseHold=clamp((now-pressStart)/650,0,1);
  pressX=renderX;pressY=renderY;
  var c=config();
  // Deterministic bounded slip: timing matters, never a secret random penalty.
- var slipFactor=.65+releaseHold*.7;
+ var slipFactor=.95+(1-releaseHold)*.56;
  slipX=(Math.sin(now/208+round*.92)*.79+Math.sin(now/85)*.21)*c.slip*slipFactor;
  slipY=(Math.cos(now/194+round*.8)*.77+Math.sin(now/107)*.23)*c.slip*slipFactor;
  stage.classList.remove('charging');stamp.classList.remove('pressed');stamp.classList.add('dropping');
@@ -465,7 +464,7 @@ function movePointer(e){
  if(state!=='playing')return;
  var p=stagePos(e);mouseX=p.x;mouseY=p.y;
  if(!hasPointer){
-  headX=p.x;headY=p.y;renderX=p.x;renderY=p.y;hasPointer=true;
+  headX=p.x;headY=p.y;renderX=p.x;renderY=p.y;handVX=0;handVY=0;hasPointer=true;
  }
  stamp.classList.add('on');aim.classList.add('on');
 }
@@ -508,11 +507,11 @@ document.addEventListener('keyup',function(e){if((e.code==='Space'||e.key==='Ent
 document.getElementById('startBtn').addEventListener('click',function(){intro.classList.add('hidden');setRound();stage.focus({preventScroll:true});});
 document.getElementById('retryBtn').addEventListener('click',function(){
  outcome.classList.add('hidden');
- if(round===4&&correct===5){round=0;tries=0;correct=0;}
+ round=0;tries=0;correct=0;
  setRound();
 });
 document.getElementById('shareBtn').addEventListener('click',function(){
- var valid=correct===5,shareText=valid?'Referandum oyununda 5/5 mühür geçerli. İsviçre 2 frankı 5 franka çıkarmış, ben de mührü tutturmuşum.':'Referandum oyununda '+(round+1)+'. turda oyum geçersiz sayıldı. Elim kaydı.';
+ var valid=correct===1,shareText=valid?'Referandum: 4,5 saniyede tek mühür geçerli.':'Referandum: 4,5 saniyede oyum geçersiz. Elim kaydı.';
  var url=location.href.split('#')[0].split('?')[0];var btn=this;
  if(navigator.share)navigator.share({title:'Referandum — aynen.fun',text:shareText,url:url}).catch(function(){});
  else if(navigator.clipboard)navigator.clipboard.writeText(shareText+' '+url).then(function(){btn.textContent='KOPYALANDI ✓';setTimeout(function(){btn.textContent='PAYLAŞ ↗';},1500);});
@@ -524,7 +523,7 @@ function frame(now){
  if(state==='playing'){
   remaining=Math.max(0,(deadline-now)/1000);
   clock.textContent=remaining.toFixed(1);clock.classList.toggle('warn',remaining<3);
-  if(remaining<=0)invalid('Süre doldu. Tercihinizi ifade edemeden süre doldu.');
+  if(remaining<=0)invalid('4,5 saniye doldu. Mühür kâğıda yetişemedi.');
  }
  if(state==='playing'||state==='landing'||state==='transition'){
   var c=config(),t=now/1000,drift=prefersReduced?0:c.shift;
@@ -532,10 +531,14 @@ function frame(now){
   var angle=prefersReduced?0:Math.sin(t*1.5)*c.rotation;
   if(state==='playing')ballot.style.transform='translate(-50%,-50%) translate('+dx.toFixed(2)+'px,'+dy.toFixed(2)+'px) rotate('+angle.toFixed(2)+'deg)';
   if(hasPointer){
-   var factor=prefersReduced?1:1-Math.pow(pressing?.83:.77,dt/16.67);
+   // Spring inertia: the stamp is heavy, follows late and overshoots.
    if(state==='playing'){
-    headX+=(mouseX-headX)*factor;
-    headY+=(mouseY-headY)*factor;
+    var step=Math.min(dt/16.667,1.8),damping=Math.pow(pressing?.88:.87,step);
+    handVX=(handVX+(mouseX-headX)*.026*step)*damping;
+    handVY=(handVY+(mouseY-headY)*.026*step)*damping;
+    handVX=clamp(handVX,-27,27);handVY=clamp(handVY,-27,27);
+    headX=clamp(headX+handVX*step,0,stage.clientWidth);
+    headY=clamp(headY+handVY*step,0,stage.clientHeight);
    }
    var near=0;
    if(state==='playing'&&!prefersReduced){
@@ -546,7 +549,7 @@ function frame(now){
     });
     near=clamp(1-nearest/140,0,1);
    }
-   var boost=.76+near*.52+(pressing?.21:0);
+   var boost=.96+near*.62+(pressing?.26:0);
    var tremorX=prefersReduced?0:(Math.sin(now/88+round)*.53+Math.sin(now/33+round*2)*.31+Math.sin(now/18)*.16)*c.tremor*boost;
    var tremorY=prefersReduced?0:(Math.cos(now/94+round*1.5)*.54+Math.sin(now/36+round)*.30+Math.cos(now/21)*.16)*c.tremor*boost;
    var swayX=prefersReduced?0:Math.sin(now/620+round*.6)*c.sway;
@@ -562,7 +565,7 @@ function frame(now){
     x=headX+tremorX+swayX;
     y=headY+tremorY+swayY;
     if(state==='playing'&&pressing){
-     var hold=clamp((now-pressStart)/900,0,1);
+     var hold=clamp((now-pressStart)/650,0,1);
      var chargePct=Math.round(hold*100);
      chargeFill.style.width=chargePct+'%';chargeNumber.textContent=chargePct+'%';
      stamp.style.setProperty('--press-y',(hold*14).toFixed(1)+'px');
