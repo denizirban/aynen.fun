@@ -67,6 +67,8 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
 .hint-plate{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;border:1px solid #d0ccc5;background:#f8f7f3e8;box-shadow:0 4px 15px #59493312;white-space:nowrap;font:10px var(--mono);padding:10px 13px;z-index:10;pointer-events:none}
 .hint-plate:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red)}
 .side-note{position:absolute;right:clamp(15px,4vw,45px);bottom:25px;font:9px/1.65 var(--mono);color:#8b867e;text-align:right;pointer-events:none}
+.game-status{display:flex;align-items:center;gap:15px}
+.hand-status{font:500 9px var(--mono);letter-spacing:.02em;color:#ac4239;white-space:nowrap}
 .progress-dots{display:flex;gap:6px;align-items:center}
 .progress-dots i{display:block;width:7px;height:7px;border-radius:50%;border:1px solid #aaa7a0}
 .progress-dots i.done{background:#3d6f5a;border-color:#3d6f5a}
@@ -96,7 +98,8 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
 .topbar{height:51px;flex-basis:51px;grid-template-columns:auto 1fr auto;gap:9px;padding:0 12px}
 .back{font-size:16px}.back small{display:none}.game-title{font-size:11px;text-align:left;overflow:hidden;text-overflow:ellipsis}
 .top-right{gap:8px}.top-right .round-label{display:none}.top-right strong{font-size:10px}.timer{font-size:19px!important;min-width:44px}
-.info{min-height:57px;padding:8px 13px}.info strong{font-size:11px}.info p{font-size:10px}.progress-dots{gap:4px}.progress-dots i{width:6px;height:6px}
+.info{min-height:57px;padding:8px 13px}.info strong{font-size:11px}.info p{font-size:10px}.game-status{gap:8px}.hand-status{font-size:8px}
+.progress-dots{gap:4px}.progress-dots i{width:6px;height:6px}
 .desk-label,.side-note{display:none}
 .paper{top:47%;width:min(87vw,calc((100dvh - 177px)*.725));padding:clamp(11px,2vh,19px);gap:3px}
 .paper-title{font-size:clamp(13px,2vh,18px)}
@@ -123,7 +126,7 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
  <main class="game">
   <div class="info">
    <div><strong id="prompt">Mühür, dairenin dışına taşmamalı.</strong><p id="subprompt">Herhangi bir tercihi mühürle. Sadece bir hakkın var.</p></div>
-   <div class="progress-dots" id="progress" aria-label="Tur ilerlemesi"><i class="current"></i><i></i><i></i><i></i><i></i></div>
+   <div class="game-status"><span class="hand-status" id="handStatus">EL: TİTRİYOR</span><div class="progress-dots" id="progress" aria-label="Tur ilerlemesi"><i class="current"></i><i></i><i></i><i></i><i></i></div></div>
   </div>
   <section class="stage" id="stage" aria-label="Oy pusulası ve mühürleme alanı" tabindex="0">
    <div class="desk-label">MÜHÜRLEME MASASI / NO. 03<span>KAĞIDI KAYDIRMAYINIZ.</span></div>
@@ -131,13 +134,12 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
     <div class="document-id"><span>FORM 001/EVET</span><span>ÖRNEK / RESMÎ DEĞİLDİR</span></div>
     <div class="seal"><span class="seal-ring" aria-hidden="true">✳</span><span class="seal-text">OY VERME İŞLEMLERİ<br>DAİRE BAŞKANLIĞI</span></div>
     <div class="paper-title">OY PUSULASI</div>
-    <div class="paper-sub">YALNIZCA BİR TERCİHİ İŞARETLEYİNİZ</div>
+    <div class="paper-sub">İKİ SEÇENEKTEN BİRİNİ İŞARETLEYİNİZ</div>
     <div class="paper-rule"></div>
     <div class="paper-instruction"><span>TERCİH</span><span>EVET MÜHRÜ</span></div>
     <div class="paper-rows">
-     <div class="paper-row"><div class="choice"><strong>YARIN BAKARIZ</strong><span>01 / GÜNDEM</span></div><div class="target-cell"><div class="target" aria-label="Yarın Bakarız mühür dairesi"></div></div></div>
-     <div class="paper-row"><div class="choice"><strong>BİR DAHA DÜŞÜNELİM</strong><span>02 / GÜNDEM</span></div><div class="target-cell"><div class="target" aria-label="Bir Daha Düşünelim mühür dairesi"></div></div></div>
-     <div class="paper-row"><div class="choice"><strong>HİÇ FARK ETMEZ</strong><span>03 / GÜNDEM</span></div><div class="target-cell"><div class="target" aria-label="Hiç Fark Etmez mühür dairesi"></div></div></div>
+     <div class="paper-row"><div class="choice"><strong>EVET</strong><span>01 / İLK SEÇENEK</span></div><div class="target-cell"><div class="target" aria-label="Evet seçeneği mühür dairesi"></div></div></div>
+     <div class="paper-row"><div class="choice"><strong>HAYIR</strong><span>02 / İKİNCİ SEÇENEK</span></div><div class="target-cell"><div class="target" aria-label="Hayır seçeneği mühür dairesi"></div></div></div>
     </div>
     <div class="paper-footer">MÜHÜR İZİ ÇİZGİYE TEMAS EDERSE OYUNDA GEÇERSİZ SAYILIR.</div>
     <div class="paper-micro"><span>AYNEN.FUN / KURGU</span><span>İŞLEM NO: <span id="documentNo">00001</span></span></div>
@@ -162,7 +164,7 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
      <ellipse cx="77" cy="167" rx="46" ry="7.5" fill="#71231f" opacity=".65"/>
     </svg>
    </div>
-   <div class="hint-plate" id="hint">MOUSE'U HAREKET ETTİR · TIKLA VE MÜHÜRLE</div>
+   <div class="hint-plate" id="hint">MOUSE İLE NİŞAN AL · TIKLA VE MÜHÜRLE</div>
    <div class="side-note">DÜŞÜNMEK SERBEST.<br>TAŞIRMAK YASAK.</div>
    <div class="fineprint">BU BİR OYUNDUR. GERÇEK SEÇİM KURALLARINI TEMSİL ETMEZ.</div>
    <div class="toast" id="toast" role="status">OY GEÇERLİ. ŞİMDİ BİR DAHA.</div>
@@ -170,7 +172,7 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
     <div class="dialog">
      <div class="mini-kicker">AYNEN.FUN / RESMÎ GİBİ GÖRÜNEN BİR OYUN</div>
      <h1>Bir milimetre.<br><span>Oy geçersiz.</span></h1>
-     <p>Elindeki mührü yuvarlağın tam içine bas. Kenara değme. Süreyi kaçırma. Kâğıtla aranı iyi tut.</p>
+     <p>İki seçenekten birini mühürle. Elin titriyor, basarken de kayıyor. Çizgiye değersen oyun biter.</p>
      <div class="rules"><div class="rule"><strong>5</strong>TUR</div><div class="rule"><strong>1</strong>MÜHÜR / TUR</div><div class="rule"><strong>9</strong>SN İLK TUR</div></div>
      <button class="main-button" id="startBtn">MÜHRÜ AL →</button>
     </div>
@@ -192,14 +194,15 @@ button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible
 'use strict';
 var stage=document.getElementById('stage'),ballot=document.getElementById('ballot'),stamp=document.getElementById('stamp'),aim=document.getElementById('aim'),clock=document.getElementById('clock'),progress=document.getElementById('progress'),intro=document.getElementById('intro'),outcome=document.getElementById('outcome'),toast=document.getElementById('toast');
 var configurations=[
- {seconds:9,shift:0,rotation:0,target:92,ratio:.72,title:'Mühür, dairenin dışına taşmamalı.',sub:'Herhangi bir tercihi mühürle. Sadece bir hakkın var.'},
- {seconds:8,shift:3,rotation:.45,target:88,ratio:.77,title:'Kâğıt biraz hareketli. Mühür yine sabit.',sub:'Önemli olan milimetreler. Kimse nedenini açıklamadı.'},
- {seconds:7,shift:7,rotation:.9,target:84,ratio:.8,title:'Masanın camı kapanmak üzere.',sub:'Şu an acele etmeniz rica olunur.'},
- {seconds:6,shift:11,rotation:1.25,target:80,ratio:.83,title:'Daire küçüldü. Prosedür aynı.',sub:'Lütfen normalmiş gibi davranınız.'},
- {seconds:5,shift:14,rotation:1.65,target:77,ratio:.85,title:'Son bir mühür. Daha dikkatli. Daha hızlı.',sub:'Kural değişmedi. Sadece imkânsızlaştı.'}
+ {seconds:9,shift:0,rotation:0,target:106,ratio:.66,tremor:2.8,sway:2.2,slip:3.2,title:'İki seçenek. Tek mühür. Titreyen bir el.',sub:'Birini seç, daireden taşırma. Basarken mühür kayabilir.'},
+ {seconds:8,shift:1.5,rotation:.3,target:102,ratio:.68,tremor:4.2,sway:3.4,slip:4.5,title:'Elin biraz daha titriyor.',sub:'Daire aynı yerde gibi. Mühür pek öyle düşünmüyor.'},
+ {seconds:7,shift:3,rotation:.55,target:98,ratio:.69,tremor:5.5,sway:4.5,slip:5.4,title:'Mühür basarken elin kayabilir.',sub:'Nişan almak kolay. Tam o an basmak mesele.'},
+ {seconds:6,shift:5,rotation:.7,target:95,ratio:.70,tremor:6.7,sway:5.7,slip:6.5,title:'Eller kontrol altında. Resmî açıklama bu.',sub:'Lütfen titremediğinizi varsayınız.'},
+ {seconds:5,shift:7,rotation:1,target:92,ratio:.70,tremor:8,sway:7,slip:7.8,title:'Son mühür. Elinizin sakin olması bekleniyor.',sub:'Süre dar, daire dar, el pek işbirlikçi değil.'}
 ];
 var state='intro',round=0,tries=0,correct=0,deadline=0,remaining=9;
-var mouseX=0,mouseY=0,headX=0,headY=0,hasPointer=false,pressing=false,pressTimer=0;
+var mouseX=0,mouseY=0,headX=0,headY=0,renderX=0,renderY=0,hasPointer=false,pressing=false,pressTimer=0;
+var pressStart=0,pressX=0,pressY=0,slipX=0,slipY=0,touchArmed=false;
 var ticker=performance.now(),anim=0,inkSize=68,activePointer=null,toastTimer=0,successTimer=0;
 var targets=Array.prototype.slice.call(document.querySelectorAll('.target'));
 var prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -224,12 +227,12 @@ function dots(){
  for(var i=0;i<5;i++){var d=document.createElement('i');if(i<round)d.className='done';else if(i===round)d.className='current';progress.appendChild(d);}
  progress.setAttribute('aria-label','Tur '+(round+1)+' / 5');
 }
-function eraseMarks(){Array.prototype.slice.call(ballot.querySelectorAll('.inkmark')).forEach(function(el){el.remove();});}
+function eraseMarks(){Array.prototype.slice.call(stage.querySelectorAll('.inkmark')).forEach(function(el){el.remove();});}
 function setRound(){
  clearTimeout(successTimer);clearTimeout(pressTimer);clearTimeout(toastTimer);
- pressing=false;hasPointer=false;activePointer=null;
+ pressing=false;hasPointer=false;activePointer=null;touchArmed=false;
  var c=config(),short=window.innerWidth<600;
- var target=Math.min(c.target,short?c.target*.82:c.target);
+ var target=Math.min(c.target,short?c.target*.90:c.target);
  inkSize=Math.round(target*c.ratio);
  document.documentElement.style.setProperty('--target',target+'px');
  document.documentElement.style.setProperty('--mark',inkSize+'px');
@@ -237,7 +240,8 @@ function setRound(){
  document.getElementById('documentNo').textContent=('0000'+(tries+1)).slice(-5);
  document.getElementById('prompt').textContent=c.title;
  document.getElementById('subprompt').textContent=c.sub;
- document.getElementById('hint').textContent=short?'PARMAĞINI YERLEŞTİR · DOKUN':'MOUSE’U HAREKET ETTİR · TIKLA VE MÜHÜRLE';
+ document.getElementById('handStatus').textContent=['EL: HAFİF TİTREME','EL: KAYGAN','EL: KONTROL ZAYIF','EL: ÇOK KARARSIZ','EL: TAMAMEN KARARSIZ'][round];
+ document.getElementById('hint').textContent=short?'PARMAĞINI SÜRÜKLE · BIRAKINCA MÜHÜRLE':'MOUSE İLE NİŞAN AL · TIKLA VE MÜHÜRLE';
  clock.classList.remove('warn');clock.textContent=c.seconds.toFixed(1);
  eraseMarks();dots();toast.classList.remove('on');
  stamp.classList.remove('on','pressed');aim.classList.remove('on','pressed');
@@ -248,12 +252,11 @@ function setRound(){
  stage.style.cursor=window.matchMedia('(pointer:fine)').matches?'none':'default';
 }
 function markInk(x,y){
- var rect=ballot.getBoundingClientRect(),mark=document.createElement('div');
+ var mark=document.createElement('div');
  mark.className='inkmark';mark.textContent='EVET';
- mark.style.left=((x+stage.getBoundingClientRect().left-rect.left)/rect.width*100)+'%';
- mark.style.top=((y+stage.getBoundingClientRect().top-rect.top)/rect.height*100)+'%';
- mark.style.setProperty('--ink-angle',((-8+Math.random()*17).toFixed(1))+'deg');
- ballot.appendChild(mark);
+ mark.style.left=x+'px';mark.style.top=y+'px';
+ mark.style.setProperty('--ink-angle',(-8+Math.random()*17).toFixed(1)+'deg');
+ stage.appendChild(mark);
 }
 function statusMsg(msg){toast.textContent=msg;toast.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(function(){toast.classList.remove('on');},1350);}
 function finish(valid,reason){
@@ -277,7 +280,7 @@ function invalid(reason){
 function performStamp(){
  if(state!=='playing')return;
  pressing=false;stamp.classList.remove('pressed');aim.classList.remove('pressed');
- var sx=headX,sy=headY,time=Math.max(0,deadline-performance.now());
+ var sx=renderX,sy=renderY,time=Math.max(0,deadline-performance.now());
  if(time<=0){invalid('Süre doldu. Mührün tam zamanında geçersiz oldu.');return;}
  markInk(sx,sy);
  var margin=1.5,chosen=null;
@@ -302,16 +305,21 @@ function performStamp(){
  },1000);
 }
 function startPress(){
- if(state!=='playing'||pressing)return;
- pressing=true;stamp.classList.add('pressed');aim.classList.add('pressed');
+ if(state!=='playing'||pressing||!hasPointer)return;
+ var c=config(),now=performance.now();
+ pressing=true;pressStart=now;pressX=renderX;pressY=renderY;
+ // The last 220ms are deliberately unstable. Slip direction depends on timing.
+ slipX=(Math.sin(now/213+round*1.7)*.78+Math.sin(now/71)*.22)*c.slip;
+ slipY=(Math.cos(now/197+round*1.3)*.76+Math.sin(now/103)*.24)*c.slip;
+ stamp.classList.add('pressed');aim.classList.add('pressed');
  sound(72,.08,'triangle',.035);
- pressTimer=setTimeout(performStamp,125);
+ pressTimer=setTimeout(performStamp,220);
 }
 function movePointer(e){
  if(state!=='playing')return;
  var p=stagePos(e);mouseX=p.x;mouseY=p.y;
- if(!hasPointer||e.pointerType==='touch'){
-  headX=p.x;headY=p.y;hasPointer=true;
+ if(!hasPointer){
+  headX=p.x;headY=p.y;renderX=p.x;renderY=p.y;hasPointer=true;
  }
  stamp.classList.add('on');aim.classList.add('on');
 }
@@ -319,14 +327,17 @@ stage.addEventListener('pointermove',function(e){if(state!=='playing')return;if(
 stage.addEventListener('pointerdown',function(e){
  if(state!=='playing'||!outcome.classList.contains('hidden')||!intro.classList.contains('hidden'))return;
  if(e.button!==0&&e.pointerType==='mouse')return;
- e.preventDefault();activePointer=e.pointerId;
- movePointer(e);
- if(e.pointerType!=='mouse'){headX=mouseX;headY=mouseY;}
+ e.preventDefault();activePointer=e.pointerId;movePointer(e);
  try{stage.setPointerCapture(e.pointerId);}catch(err){}
- startPress();
+ if(e.pointerType==='mouse'){startPress();}else{touchArmed=true;}
 });
-stage.addEventListener('pointerup',function(e){if(activePointer===e.pointerId)activePointer=null;});
-stage.addEventListener('pointercancel',function(e){if(activePointer===e.pointerId)activePointer=null;});
+stage.addEventListener('pointerup',function(e){
+ if(activePointer===e.pointerId){
+  if(touchArmed&&state==='playing'){movePointer(e);touchArmed=false;startPress();}
+  activePointer=null;
+ }
+});
+stage.addEventListener('pointercancel',function(e){if(activePointer===e.pointerId){activePointer=null;touchArmed=false;}});
 stage.addEventListener('pointerleave',function(){if(state==='playing'&&!pressing&&activePointer===null&&window.matchMedia('(pointer:fine)').matches){stamp.classList.remove('on');aim.classList.remove('on');}});
 document.addEventListener('keydown',function(e){
  if(e.key==='Escape'){location.href='/index.html';return;}
@@ -356,32 +367,50 @@ document.getElementById('shareBtn').addEventListener('click',function(){
 function frame(now){
  anim=requestAnimationFrame(frame);
  var dt=Math.min(50,now-ticker);ticker=now;
- if(state==='playing'||state==='transition'){
-  var c=config(),t=now/1000;
-  var drift=prefersReduced?0:c.shift;
-  var dx=Math.sin(t*2.3+round*.2)*drift,dy=Math.cos(t*1.85)*drift*.5,angle=prefersReduced?0:Math.sin(t*1.7)*c.rotation;
-  ballot.style.transform='translate(-50%,-50%) translate('+dx.toFixed(2)+'px,'+dy.toFixed(2)+'px) rotate('+angle.toFixed(2)+'deg)';
- }
  if(state==='playing'){
   remaining=Math.max(0,(deadline-now)/1000);
-  clock.textContent=remaining.toFixed(1);
-  clock.classList.toggle('warn',remaining<3);
-  if(remaining<=0){invalid('Süre doldu. Oy kullanılmadan geçersiz sayıldı.');}
+  clock.textContent=remaining.toFixed(1);clock.classList.toggle('warn',remaining<3);
+  if(remaining<=0)invalid('Süre doldu. Oy kullanılmadan geçersiz sayıldı.');
  }
  if(state==='playing'||state==='transition'){
+  var c=config(),t=now/1000,drift=prefersReduced?0:c.shift;
+  var dx=Math.sin(t*2.3+round*.2)*drift,dy=Math.cos(t*1.85)*drift*.5,angle=prefersReduced?0:Math.sin(t*1.7)*c.rotation;
+  // Freeze paper after contact so the real ink remains exactly where it landed.
+  if(state==='playing')ballot.style.transform='translate(-50%,-50%) translate('+dx.toFixed(2)+'px,'+dy.toFixed(2)+'px) rotate('+angle.toFixed(2)+'deg)';
   if(hasPointer){
-   var factor=prefersReduced?1:1-Math.pow(.76,dt/16.67);
-   headX+=(mouseX-headX)*factor;headY+=(mouseY-headY)*factor;
-   var wobble=state==='playing'&&!prefersReduced?Math.sin(now/120)*Math.min(round+1,4)*.36:0;
-   var x=headX+wobble,y=headY;
-   stamp.style.left=x+'px';stamp.style.top=y+'px';
-   stamp.style.setProperty('--tilt',(-6+Math.sin(now/160)*Math.min(round+1,4)*1.1)+'deg');
-   aim.style.left=x+'px';aim.style.top=y+'px';
-   // Hit test uses the rendered stamp location rather than the raw pointer.
-   headX=x;
+   var factor=prefersReduced?1:1-Math.pow(.69,dt/16.67);
+   if(!pressing){headX+=(mouseX-headX)*factor;headY+=(mouseY-headY)*factor;}
+   var near=0;
+   if(state==='playing'&&!prefersReduced){
+    var sr=stage.getBoundingClientRect(),nearest=Infinity;
+    targets.forEach(function(target){
+     var r=target.getBoundingClientRect();
+     nearest=Math.min(nearest,Math.hypot(headX-(r.left+r.width/2-sr.left),headY-(r.top+r.height/2-sr.top)));
+    });
+    near=clamp(1-nearest/130,0,1);
+   }
+   var boost=.75+near*.65;
+   var tremorX=prefersReduced?0:(Math.sin(now/83+round)*.55+Math.sin(now/29+round*2)*.30+Math.sin(now/15)*.15)*c.tremor*boost;
+   var tremorY=prefersReduced?0:(Math.cos(now/91+round*1.5)*.57+Math.sin(now/34+round)*.28+Math.cos(now/17)*.15)*c.tremor*boost;
+   var swayX=prefersReduced?0:Math.sin(now/650+round*.6)*c.sway;
+   var swayY=prefersReduced?0:Math.cos(now/750+round*.7)*c.sway*.72;
+   var x,y;
+   if(pressing){
+    var p=clamp((now-pressStart)/220,0,1),ease=p*p*(3-2*p);
+    x=pressX+slipX*ease+tremorX*.28;
+    y=pressY+slipY*ease+tremorY*.28;
+   }else{
+    x=headX+tremorX+swayX;
+    y=headY+tremorY+swayY;
+   }
+   renderX=clamp(x,0,stage.clientWidth);renderY=clamp(y,0,stage.clientHeight);
+   stamp.style.left=renderX+'px';stamp.style.top=renderY+'px';
+   stamp.style.setProperty('--tilt',(-6+(prefersReduced?0:Math.sin(now/160)*Math.min(round+1,5)*1.7))+'deg');
+   aim.style.left=renderX+'px';aim.style.top=renderY+'px';
   }
  }
 }
+
 requestAnimationFrame(frame);
 })();
 </script>
