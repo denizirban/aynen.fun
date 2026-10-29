@@ -40,52 +40,52 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-vis
 (function(){
 'use strict';
 var steps=['check','dolmus','cay','zil','pos','trafik','dolmus2','bekle'];
-var i=0,fail=0,ticks=0,stage='intro',timer=null,raf=0,last=0,meter=0,done=false,selected=[],presses=0,passTime=0;
+var i=0,fail=0,ticks=0,stage='intro',timer=null,raf=0,last=0,meter=0,done=false,selected=[],presses=0,passTime=0,wrongZil=0,trafikChoice=0;
 var $=x=>document.getElementById(x),content=$('content'),lv=$('level'),dt=$('detail'),bar=$('track'),msg='';var clean=()=>{if(timer)clearTimeout(timer);timer=null;if(raf)cancelAnimationFrame(raf);raf=0;};
 function ui(eyebrow,title,help,body){content.innerHTML='<div class="eyebrow">'+eyebrow+'</div><h2 class="question">'+title+'</h2><p class="help">'+help+'</p><div class="zone" id="zone">'+body+'</div><p class="result-msg" id="msg" role="status"></p>';}
 function say(t){var e=$('msg');if(e)e.textContent=t;}
 function button(t,fn){var b=document.createElement('button');b.className='btn';b.textContent=t;b.onclick=fn;return b;}
 function go(){if(done)return;clean();i++;if(i>=steps.length){end();return;}show();}
-function bad(text){fail++;say(text);content.classList.remove('shake');void content.offsetWidth;content.style.transform='translateX(3px)';timer=setTimeout(()=>content.style.transform='',130);}
-function show(){clean();stage='play';ticks++;lv.textContent='DOĞRULAMA '+String(i+1).padStart(2,'0')+' / 08';dt.textContent='İNSANLIK ORANI: %'+Math.round(100*i/8);bar.style.width=100*i/8+'%';$('footerState').textContent='HATA SAYISI: '+fail;var z;
+function bad(text){fail++;say(text);content.classList.remove('shake');void content.offsetWidth;content.style.transform='translateX(3px)';setTimeout(()=>{if(content)content.style.transform=''},130);}
+function show(){clean();stage='play';if(i===5)trafikChoice=0;ticks++;lv.textContent='DOĞRULAMA '+String(i+1).padStart(2,'0')+' / 08';dt.textContent='İNSANLIK ORANI: %'+Math.round(100*i/8);bar.style.width=100*i/8+'%';$('footerState').textContent='HATA SAYISI: '+fail;var z;
 switch(steps[i]){
 case 'check':
  ui('TEST 01 / BAŞLANGIÇ','Robot değilim.','Aşağıdaki kutuyu işaretleyin. Şimdilik bu kadar.','<div class="check"><label><input type="checkbox" id="human"> Ben robot değilim</label><div class="captcha-brand"><strong>▦</strong>aynenCAPTCHA</div></div>');
  $('human').onchange=()=>{passTime=performance.now();timer=setTimeout(go,500);};break;
 case 'dolmus':
- selected=[];ui('TEST 02 / GÖRSEL TANIMA','Dolmuşu seçin.','Tüm dolmuşları işaretleyin. Sarı olan her şey taksi değildir.','<div class="grid" id="grid"></div>');
- var items=[['🚕','TAKSİ',0],['🚐','DOLMUŞ',1],['🚌','OTOBÜS',0],['🚐','MİNİBÜS',1],['🚑','AMBULANS',0],['🚐','DOLMUŞ',1],['🚚','KAMYON',0],['🚙','ARABA',0],['🚐','DOLMUŞ',1]];
+ selected=[];ui('TEST 02 / GÖRSEL TANIMA','Hangileri dolmuş?','Tüm dolmuşları seç. Plakaya değil, niyete bak.','<div class="grid" id="grid"></div>');
+ var items=[['🚕','TAKSİ',0],['🚐','DOLMUŞ',1],['🚌','İETT',0],['🚐','DOLMUŞ',1],['🚑','AMBULANS',0],['🚐','DOLMUŞ',1],['🚚','KAMYON',0],['🚙','SERVİS',0],['🚐','DOLMUŞ',1]];
  $('grid').innerHTML=items.map((a,j)=>'<button class="tile" data-idx="'+j+'" aria-pressed="false" type="button"><span aria-hidden="true" style="font-size:34px">'+a[0]+'</span><span>'+a[1]+'</span></button>').join('');
  $('grid').querySelectorAll('button').forEach(b=>b.onclick=()=>{let n=Number(b.dataset.idx);selected[n]=!selected[n];b.classList.toggle('selected',!!selected[n]);b.setAttribute('aria-pressed',!!selected[n]+'');});
  z=$('zone');z.appendChild(button('DOĞRULA →',()=>{if(items.every((x,j)=>!!selected[j]===!!x[2]))go();else bad('Eksik dolmuş var. Bir de fazla araç seçmiş olabilirsin.')}));break;
 case 'cay':
- meter=0;ui('TEST 03 / HASSASİYET','Çayı tavında bırak.','Ne açık, ne de kaşık dikilecek kadar koyu. Yeşil aralıkta durdur.','<div class="tea"><div class="tea-liquid" id="liquid"></div></div><div class="gauge"><i id="fill"></i></div>');
+ meter=0;ui('TEST 03 / HASSASİYET','Çay açık olsun. Ama çok da açık değil.','Misafir “açık olsun” dedi. Tam kararında durdur. Çay rengi iki saniyede bir değişiyor.','<div class="tea"><div class="tea-liquid" id="liquid"></div></div><div class="gauge"><i id="fill"></i></div>');
  z=$('zone');z.appendChild(button('TAMAM. BU KADAR ÇAY.',()=>{if(meter>=66&&meter<=82)go();else bad(meter<66?'Bu bildiğin sıcak su.':'Bu çayla asfalt atılır.')}));
  last=performance.now();function animateTea(now){if(i!==2||stage!=='play')return;meter=18+66*(.5-.5*Math.cos((now-last)/770));$('fill').style.width=meter+'%';$('liquid').style.height=(meter*.83)+'%';raf=requestAnimationFrame(animateTea);}raf=requestAnimationFrame(animateTea);break;
 case 'zil':
- ui('TEST 04 / APARTMAN','Kargocuya kapıyı aç.','"3. kat, soldaki daire" dedi. Bu apartmanda her katta iki daire var.','<div class="bell" id="bells"></div>');
+ ui('TEST 04 / APARTMAN','Kargo: Evde misiniz?','Üçüncü kat, soldaki daire. Her katta iki daire var. Yanlış zile basarsan tüm apartman sana bakacak.','<div class="bell" id="bells"></div>');
  $('bells').innerHTML=[1,2,3,4,5,6].map(n=>'<button type="button" data-n="'+n+'"><small>'+Math.ceil(n/2)+'. KAT</small>'+n+'</button>').join('');
- $('bells').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(Number(b.dataset.n)===5)go();else bad('"Ben bir alt kattayım" diye bağırdılar.')});break;
+ $('bells').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(Number(b.dataset.n)===5)go();else{wrongZil++;bad(wrongZil===1?'"Kim o?" — "Kargo." — "Bize gelmedi."':wrongZil===2?'"Bir üst kattayım!" diye bağırdılar.':'Apartman grubu seni konuşuyor.')}});break;
 case 'pos':
- presses=0;ui('TEST 05 / ÖDEME','Hesap kimde?','POS cihazını üç kez yakala. Ortamdaki herkes "ben ödeyeceğim" diyor.','<div class="pos" id="pos"><button type="button" id="posbtn">POS BENDE</button></div><div class="note" id="poscount">0 / 3 BAŞARILI HAMLE</div>');
+ presses=0;ui('TEST 05 / ÖDEME','Hesabı ben ödeyeceğim.','POS cihazı elden ele kaçıyor. Üç kere yakala. Herkes “yok yok, ben” diyor.','<div class="pos" id="pos"><button type="button" id="posbtn">POS BENDE</button></div><div class="note" id="poscount">0 / 3 BAŞARILI HAMLE</div>');
  var p=$('posbtn');p.onclick=()=>{presses++;$('poscount').textContent=presses+' / 3 BAŞARILI HAMLE';if(presses>=3){go();return;}p.style.setProperty('--posx',20+Math.random()*60+'%');p.style.setProperty('--posy',25+Math.random()*50+'%');};break;
 case 'trafik':
- ui('TEST 06 / İSTANBUL','Hangi yol daha hızlı?','Saat 18.15, Cuma. İki seçenek var.','<div class="choicegrid"><button id="bridge">KÖPRÜ</button><button id="tunnel">TÜNEL</button></div>');
- $('bridge').onclick=()=>{bad('Köprüde trafik var.');timer=setTimeout(go,700)};
- $('tunnel').onclick=()=>{bad('Tünelde de trafik var.');timer=setTimeout(go,700)};break;
+ ui('TEST 06 / İSTANBUL','Cuma 18.15. Karşıya nasıl geçersin?','Trafik uygulaması iki yola da yeşil gösteriyor. Birini seç.','<div class="choicegrid"><button id="bridge">KÖPRÜ<br><small>26 DK</small></button><button id="tunnel">TÜNEL<br><small>24 DK</small></button></div>');
+ function stuck(which){if(trafikChoice)return;trafikChoice=1;bad(which==='bridge'?'26 dakika yazıyordu. 1 saat 40 dakika oldu.':'24 dakika yazıyordu. Tünelin girişine daha gelmedin.');$('bridge').disabled=true;$('tunnel').disabled=true;timer=setTimeout(()=>{say('İstanbul testini geçtin: İkisine de inanmadın.');timer=setTimeout(go,850)},1050)}
+ $('bridge').onclick=()=>stuck('bridge');$('tunnel').onclick=()=>stuck('tunnel');break;
 case 'dolmus2':
- ui('TEST 07 / TOPLU TAŞIMA','İnecek var.','Dolmuş şoförüne tam doğru anda seslen. Araç durağa yaklaşırken düğmeye bas.','<div style="width:min(340px,100%);font-size:45px" id="vehicle">🚐 —————————— 🚏</div><div class="queue-meter"><i id="queueFill"></i></div>');
+ ui('TEST 07 / TOPLU TAŞIMA','Müsait bir yerde.','Dolmuş durağa yaklaşıyor. Ne çok erken ne de köşeyi döndükten sonra seslen.','<div style="width:min(340px,100%);font-size:45px" id="vehicle">🚐 —————————— 🚏</div><div class="queue-meter"><i id="queueFill"></i></div>');
  z=$('zone');z.appendChild(button('MÜSAİT BİR YERDE!',()=>{if(meter>=70&&meter<=90)go();else bad(meter<70?'Daha gelmedik.':'Durağı geçtik. Bir sonrakinde.')}));
  meter=0;last=performance.now();function animateQueue(now){if(i!==6||stage!=='play')return;meter=(now-last)/35%100;$('queueFill').style.width=meter+'%';raf=requestAnimationFrame(animateQueue)}raf=requestAnimationFrame(animateQueue);break;
 case 'bekle':
- ui('TEST 08 / SON ONAY','Sadece bekle.','Hiçbir şeye dokunmadan 4 saniye bekle. Gerçek insan sabırsızlanır.','<div class="queue-meter"><i id="queueFill"></i></div><button class="btn outline" id="impatient">BİTTİ Mİ?</button><div class="note" id="waiting">DOĞRULANIYOR...</div>');
+ ui('TEST 08 / SON ONAY','Son kontrol: Sırada bekle.','Önünde tek kişi var. 4 saniye boyunca “BİTTİ Mİ?” tuşuna dokunma. Türk insanı için zor olabilir.','<div class="queue-meter"><i id="queueFill"></i></div><button class="btn outline" id="impatient">BİTTİ Mİ?</button><div class="note" id="waiting">DOĞRULANIYOR...</div>');
  var start=performance.now();$('impatient').onclick=()=>{bad('Bu hareket çok insancaydı. Baştan sayıyoruz.');start=performance.now()};function wait(now){if(i!==7||stage!=='play')return;let pct=Math.min(100,((now-start)/4000)*100);$('queueFill').style.width=pct+'%';if(pct>=100){go();return;}raf=requestAnimationFrame(wait);}raf=requestAnimationFrame(wait);break;
 }
 }
 function end(){done=true;stage='end';bar.style.width='100%';dt.textContent='İNSANLIK ORANI: %100';lv.textContent='DOĞRULAMA TAMAMLANDI';$('footerState').textContent='ONAYLI İNSAN / HATA: '+fail;
 let label=fail===0?'Şüpheli derecede sorunsuz.':fail<=3?'Evet, fazlasıyla insansın.':'Bu kadar uğraşan robot olamaz.';
 ui('RESMÎ OLMAYAN SONUÇ','İnsanlık onaylandı.','Bu belge hiçbir kurumda geçerli değildir.','<div class="badge">✓</div><div class="endline">'+label+'</div><p class="final-note">8 kontrol tamamlandı. '+fail+' hata yaptın. İstanbul trafiğinden sağ çıktın. Daha fazla kanıt istemiyoruz.</p>');
-let z=$('zone');z.appendChild(button('BİR DAHA KANITLA ↻',()=>{i=0;fail=0;done=false;show()}));z.appendChild(button('SONUCUMU PAYLAŞ ↗',async()=>{let t='İnsan mısın? 8/8 doğrulama tamamlandı. '+fail+' hata. '+label;try{if(navigator.share)await navigator.share({title:'İnsan mısın? — aynen.fun',text:t,url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(t+' '+location.href);say('Sonuç kopyalandı.');}else prompt('Paylaş:',t+' '+location.href);}catch(e){}}));
+let z=$('zone');z.appendChild(button('BİR DAHA KANITLA ↻',()=>{i=0;fail=0;done=false;wrongZil=0;trafikChoice=0;show()}));z.appendChild(button('SONUCUMU PAYLAŞ ↗',async()=>{let t='İnsan mısın? 8/8 doğrulama tamamlandı. '+fail+' hata. '+label;try{if(navigator.share)await navigator.share({title:'İnsan mısın? — aynen.fun',text:t,url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(t+' '+location.href);say('Sonuç kopyalandı.');}else prompt('Paylaş:',t+' '+location.href);}catch(e){}}));
 }
 show();
 })();
