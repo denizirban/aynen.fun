@@ -111,6 +111,7 @@ footer a{text-decoration:none}
 .scene-counter{max-width:56%;text-align:right}
 @media(max-width:900px){.object-stage.is-compare{width:100%;height:94%}.compare-visual{height:75%}.compare-pane{padding-bottom:4px}.compare-pane-status,.compare-pane-label{font-size:9px}}
 @media(max-width:500px){.compare-options{padding:6px;gap:5px}.compare-options>span{font-size:8px}.compare-options select{font-size:10px}.compare-visual{height:70%}.milestone{font-size:8px;padding:5px 1px 6px}.preservation{padding-top:8px}}
+.objects-head{align-items:center}.objects-head .surprise{border:0;background:transparent;padding:3px 0 8px;font:700 9px "Courier New",monospace;color:#171717}.objects-head .surprise:hover{text-decoration:underline}.obj-tab:focus-visible{outline-offset:-3px}
 </style></head>
 <body>
 <header><a class="logo" href="/">AYNEN.</a><div class="headstatus mono">DENEY / ZAMAN <span>01</span><br><span>SİMÜLASYON · GERÇEK DÜNYA</span></div></header>
@@ -140,7 +141,7 @@ footer a{text-decoration:none}
  <div class="panel-foot"><small id="model-note">ŞEMATİK MODEL · KESİN ÖMÜR TAHMİNİ DEĞİL</small><button id="share">PAYLAŞ ↗</button></div>
 </section>
 </main>
-<section class="objects"><div class="objects-head"><span id="object-total">NESNE SEÇ / 13</span><span>SAĞA KAYDIR →</span></div><nav class="object-strip" id="objects" aria-label="Nesne seçimi"></nav></section>
+<section class="objects"><div class="objects-head"><span id="object-total">NESNE SEÇ / 13</span><button class="surprise" id="surprise" title="Rastgele bir nesneye geç">RASTGELE NESNE ↗</button></div><nav class="object-strip" id="objects" aria-label="Nesne seçimi"></nav></section>
 <footer><span>AYNEN.FUN · HER ŞEY ESKİR. BAZI ŞEYLER SADECE YAVAŞ.</span><a href="/">TÜM OYUNLAR ↗</a></footer>
 <div class="toast" id="toast" role="status"></div>
 <script>
@@ -359,11 +360,40 @@ let toastTimeout=0;
 function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>$('toast').classList.remove('show'),2300)}
 $('share').onclick=()=>{
  const o=ITEMS[objIndex],msg=o.name+' / '+formatTime(timePassed(o))+' sonra · '+(comparing?'Kıyas: '+conditions()[0]+' vs '+o.environments[compareEnvironment][0]:conditions()[0])+' · '+o.events[stage()]+' · Daha Ne Kadar Dayanır?';
- const url=location.origin+location.pathname;
- if(navigator.share)navigator.share({title:'Daha Ne Kadar Dayanır?',text:msg,url}).catch(()=>{});
- else if(navigator.clipboard)navigator.clipboard.writeText(msg+' '+url).then(()=>toast('BAĞLANTI KOPYALANDI')).catch(()=>toast('PAYLAŞIM KULLANILAMIYOR'));
+ const url=new URL(location.href);
+ url.searchParams.set('ob',o.id);
+ url.searchParams.set('env',String(environment));
+ url.searchParams.set('t',String(Math.round(progress)));
+ if(comparing)url.searchParams.set('vs',String(compareEnvironment));else url.searchParams.delete('vs');
+ if(navigator.share)navigator.share({title:'Daha Ne Kadar Dayanır?',text:msg,url:url.href}).catch(()=>{});
+ else if(navigator.clipboard)navigator.clipboard.writeText(msg+' '+url.href).then(()=>toast('BAĞLANTI KOPYALANDI')).catch(()=>toast('PAYLAŞIM KULLANILAMIYOR'));
  else toast('PAYLAŞIM KULLANILAMIYOR');
 };
+$('surprise').onclick=()=>{
+ let next=objIndex;
+ while(next===objIndex)next=Math.floor(Math.random()*ITEMS.length);
+ objIndex=next;environment=0;compareEnvironment=1;progress=27;
+ stop();renderTabs();renderOptions();renderCompareSelect();update();
+ const selected=$('objects').children[objIndex];
+ if(selected)selected.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
+const initialParams=new URLSearchParams(location.search);
+const linkedObject=ITEMS.findIndex(o=>o.id===initialParams.get('ob'));
+if(linkedObject>=0){
+ objIndex=linkedObject;
+ const pEnv=Number(initialParams.get('env'));
+ environment=Number.isInteger(pEnv)&&pEnv>=0&&pEnv<ITEMS[objIndex].environments.length?pEnv:0;
+ const pTime=Number(initialParams.get('t'));
+ progress=Number.isFinite(pTime)?clamp(pTime,0,100):0;
+ const pVs=initialParams.get('vs');
+ if(pVs!==null){
+  const envVs=Number(pVs);
+  if(Number.isInteger(envVs)&&envVs>=0&&envVs<ITEMS[objIndex].environments.length&&envVs!==environment){comparing=true;compareEnvironment=envVs}
+ }
+}
 renderTabs();renderOptions();renderCompareSelect();update();
+if(linkedObject>=0){
+ const el=$('objects').children[objIndex];if(el)el.scrollIntoView({block:'nearest',inline:'center'});
+}
 </script></body></html>
