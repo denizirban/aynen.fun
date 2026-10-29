@@ -87,28 +87,6 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.game-tile,.tile-illustration,.hub-cat{transition:none}}
 
-/* Responsive desktop layout: prevent the fixed-height scene from cutting off new games. */
-@media (min-width:761px){
-  .desktop-scene{height:auto;min-height:100svh;overflow:visible;padding:34px 3vw 80px}
-  .orbit-cards{
-    display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
-    gap:22px 14px;align-items:start;width:min(100%,1240px);margin:0 auto
-  }
-  .game-tile{
-    position:relative;top:auto;left:auto;width:clamp(103px,10.6vw,148px);
-    justify-self:center
-  }
-  /* Reserve the middle of the second row for the site cat. */
-  .game-tile:nth-child(8){grid-column:4}
-  .landing-hub{top:192px;width:clamp(120px,10vw,154px)}
-}
-@media (min-width:761px) and (max-width:970px){
-  .desktop-scene{height:auto;padding:34px 2vw 64px}
-  .game-tile{width:clamp(100px,12vw,127px)}
-  .landing-hub{top:195px;width:140px}
-}
-
-
 /* The experiences retain their own compact, window-like presentation. */
 .modal{position:fixed;inset:0;background:rgba(255,255,255,.76);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
 .modal.on{display:flex}
@@ -159,29 +137,76 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
 .lamb-card-thumb .game-index{z-index:3!important;background:#e7ffa9!important;color:#311b4d!important}
 
 
-/* Full-cover desktop pages: a scroll position never leaves half a game card visible. */
-.catalog-pagination[hidden]{display:none!important}
-.catalog-pagination{display:flex;align-items:center;justify-content:center;gap:18px;flex:0 0 auto;padding:5px 0 1px;font:500 11px/1 'DM Mono',monospace;color:#858585}
-.catalog-pagination button{display:grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid #d3d3d1;border-radius:50%;background:transparent;color:#111;font:400 22px/1 Arial,sans-serif}
-.catalog-pagination button:hover:not(:disabled){border-color:#111;background:#fff}
-.catalog-pagination button:disabled{opacity:.25;cursor:default}
-.catalog-page-count{display:inline-block;min-width:46px;text-align:center}
-@media(min-width:761px){
- .desktop-scene.is-paged{display:flex;flex-direction:column;height:100svh;min-height:0;overflow:hidden;padding:10px 22px 9px}
- .desktop-scene.is-paged .landing-hub{position:relative;left:auto;top:auto;transform:none;flex:0 0 auto;width:clamp(52px,8vh,78px);margin:0 auto}
- .desktop-scene.is-paged .orbit-cards{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row;
-  align-content:space-evenly;justify-items:center;gap:clamp(6px,1.3vh,16px) 16px;
-  flex:1;min-height:0;width:min(100%,1040px);margin:0 auto;padding:0
- }
- .desktop-scene.is-paged .game-tile{
-  position:relative;top:auto;left:auto;grid-column:auto;
-  width:min(100%,clamp(96px,10.5vw,142px));gap:3px;justify-self:center
- }
- .desktop-scene.is-paged .game-name{font-size:clamp(10px,.86vw,12px);line-height:1.16;min-height:2.32em}
- .desktop-scene.is-paged .game-tile[hidden]{display:none!important}
+
+/* aynen.fun desktop constellation: all covers visible at once, with deliberate asymmetry.
+   Mobile retains the original scrollable gallery. */
+@media (min-width:761px){
+  html,body{height:100%;overflow:hidden}
+  .desktop-scene{
+    position:relative;display:block;width:100%;height:100svh;min-height:0;
+    padding:0;margin:0;overflow:hidden
+  }
+  .orbit-cards{
+    position:absolute;inset:0;display:block;width:100%;height:100%;
+    padding:0;margin:0
+  }
+  .desktop-scene .game-tile{
+    position:absolute;z-index:2;top:var(--orbit-y);left:var(--orbit-x);
+    width:clamp(67px,min(9.2vw,16vh),116px);display:flex;
+    gap:3px;transform:translate(-50%,-50%) rotate(var(--angle)) scale(var(--orbit-size,1));
+    transform-origin:center;transition:transform .2s ease;
+    grid-column:auto;justify-self:auto;
+  }
+  .desktop-scene .game-tile:hover,.desktop-scene .game-tile:focus-visible{
+    z-index:10;transform:translate(-50%,-50%) rotate(0deg) scale(calc(var(--orbit-size,1) * 1.12))
+  }
+  .desktop-scene .game-tile:active{transform:translate(-50%,-50%) scale(.96)}
+  .desktop-scene .game-name{
+    font-size:clamp(8px,min(.82vw,1.65vh),11px);line-height:1.18;
+    min-height:2.36em;max-width:100%;overflow-wrap:normal
+  }
+  .desktop-scene .game-index{font-size:clamp(7px,.65vw,9px)}
+  .desktop-scene .landing-hub{
+    position:absolute;z-index:1;left:50%;top:48%;transform:translate(-50%,-50%);
+    width:clamp(55px,min(8vw,13vh),108px);margin:0;pointer-events:none
+  }
+  .desktop-scene .game-tile:nth-child(1){--orbit-x:8.5%;--orbit-y:11.2%;--orbit-size:0.95}
+  .desktop-scene .game-tile:nth-child(2){--orbit-x:22.4%;--orbit-y:12.7%;--orbit-size:1.03}
+  .desktop-scene .game-tile:nth-child(3){--orbit-x:35.8%;--orbit-y:9.8%;--orbit-size:1}
+  .desktop-scene .game-tile:nth-child(4){--orbit-x:50.5%;--orbit-y:11.6%;--orbit-size:1.04}
+  .desktop-scene .game-tile:nth-child(5){--orbit-x:64.7%;--orbit-y:10.4%;--orbit-size:0.91}
+  .desktop-scene .game-tile:nth-child(6){--orbit-x:79.5%;--orbit-y:12.9%;--orbit-size:0.99}
+  .desktop-scene .game-tile:nth-child(7){--orbit-x:7.8%;--orbit-y:30.9%;--orbit-size:1.01}
+  .desktop-scene .game-tile:nth-child(8){--orbit-x:21.1%;--orbit-y:28.4%;--orbit-size:0.96}
+  .desktop-scene .game-tile:nth-child(9){--orbit-x:36.7%;--orbit-y:32%;--orbit-size:1.03}
+  .desktop-scene .game-tile:nth-child(10){--orbit-x:49.2%;--orbit-y:28.5%;--orbit-size:0.94}
+  .desktop-scene .game-tile:nth-child(11){--orbit-x:65.4%;--orbit-y:31.4%;--orbit-size:1.05}
+  .desktop-scene .game-tile:nth-child(12){--orbit-x:78.5%;--orbit-y:29.3%;--orbit-size:0.95}
+  .desktop-scene .game-tile:nth-child(13){--orbit-x:92.2%;--orbit-y:31.3%;--orbit-size:0.97}
+  .desktop-scene .game-tile:nth-child(14){--orbit-x:8.7%;--orbit-y:47.2%;--orbit-size:1.02}
+  .desktop-scene .game-tile:nth-child(15){--orbit-x:22.2%;--orbit-y:49%;--orbit-size:0.94}
+  .desktop-scene .game-tile:nth-child(16){--orbit-x:35.7%;--orbit-y:46.1%;--orbit-size:1.05}
+  .desktop-scene .game-tile:nth-child(17){--orbit-x:64.1%;--orbit-y:49.4%;--orbit-size:0.97}
+  .desktop-scene .game-tile:nth-child(18){--orbit-x:77.5%;--orbit-y:47%;--orbit-size:1.01}
+  .desktop-scene .game-tile:nth-child(19){--orbit-x:91.3%;--orbit-y:48%;--orbit-size:0.99}
+  .desktop-scene .game-tile:nth-child(20){--orbit-x:20.8%;--orbit-y:65.2%;--orbit-size:1.04}
+  .desktop-scene .game-tile:nth-child(21){--orbit-x:36.3%;--orbit-y:68%;--orbit-size:0.91}
+  .desktop-scene .game-tile:nth-child(22){--orbit-x:49%;--orbit-y:63.6%;--orbit-size:1.05}
+  .desktop-scene .game-tile:nth-child(23){--orbit-x:64.7%;--orbit-y:67.9%;--orbit-size:0.95}
+  .desktop-scene .game-tile:nth-child(24){--orbit-x:77.6%;--orbit-y:65.4%;--orbit-size:1.04}
+  .desktop-scene .game-tile:nth-child(25){--orbit-x:92%;--orbit-y:67%;--orbit-size:0.98}
+  .desktop-scene .game-tile:nth-child(26){--orbit-x:7.9%;--orbit-y:85.8%;--orbit-size:0.96}
+  .desktop-scene .game-tile:nth-child(27){--orbit-x:22.7%;--orbit-y:84.1%;--orbit-size:1.04}
+  .desktop-scene .game-tile:nth-child(28){--orbit-x:35.6%;--orbit-y:87.2%;--orbit-size:0.93}
+  .desktop-scene .game-tile:nth-child(29){--orbit-x:50.5%;--orbit-y:85%;--orbit-size:1.06}
+  .desktop-scene .game-tile:nth-child(30){--orbit-x:64.3%;--orbit-y:87.2%;--orbit-size:0.96}
+  .desktop-scene .game-tile:nth-child(31){--orbit-x:78.9%;--orbit-y:84.9%;--orbit-size:1.02}
 }
-@media(max-width:760px){.catalog-pagination{display:none!important}}
+/* In unusually short desktop windows, scrolling is safer than clipping content. */
+@media (min-width:761px) and (max-height:510px){
+ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
+ .desktop-scene{height:510px;min-height:510px}
+}
 
 </style>
 </head>
@@ -279,11 +304,6 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
 <span class="game-thumb lamb-card-thumb"><span class="game-index" aria-hidden="true">22</span><img src="/beyaz-kuzu.svg" alt="" loading="lazy" width="500" height="500"></span>
 <span class="game-name">Beyaz Kuzuyu Düşünme</span>
 </a><a class="game-tile is-color" href="/batar-mi.html" style="--x:46%;--y:755px;--angle:-3deg" aria-label="Batar mı startup oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">23</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="tile-illustration"><rect x="33" y="33" width="96" height="62" rx="7" fill="#d7f0b9" stroke="#101010" stroke-width="3"/><path d="M52 75L72 59L88 65L112 42" fill="none" stroke="#101010" stroke-width="5" stroke-linecap="round"/><path d="M99 43h13v13" fill="none" stroke="#101010" stroke-width="4"/><circle cx="47" cy="29" r="14" fill="#ffb3b9" stroke="#101010" stroke-width="3"/><text x="47" y="34" font-size="15" text-anchor="middle" font-weight="700">?</text></svg></span><span class="game-name">Batar mı?</span></a><a class="game-tile" href="/yeni-kare.html" style="--x:12%;--y:772px;--angle:2.8deg" aria-label="Yeni Kare bulmaca oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">24</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="tile-illustration"><rect x="29" y="13" width="99" height="87" fill="#fff" stroke="#111" stroke-width="3"/><g stroke="#111" stroke-width="2"><path d="M29 42H128M29 71H128M62 13V100M95 13V100"/></g><rect x="29" y="13" width="33" height="29" fill="#111"/><rect x="95" y="42" width="33" height="29" fill="#111"/><rect x="62" y="71" width="33" height="29" fill="#111"/><text x="45" y="62" font-size="16" font-weight="700">A</text><text x="76" y="33" font-size="16" font-weight="700">İ</text><text x="110" y="91" font-size="16" font-weight="700">?</text></svg></span><span class="game-name">Yeni Kare</span></a><a class="game-tile is-color" href="/sanssizlikta-dunya-rekoru.html" style="--x:27%;--y:800px;--angle:-3deg" aria-label="Şanssızlıkta Dünya Rekoru oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">25</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="tile-illustration"><rect x="18" y="8" width="123" height="97" rx="6" fill="#f4d4bd" stroke="#111" stroke-width="3"/><path d="M52 66l23-44 20 30 14-10 7 36" fill="none" stroke="#111" stroke-width="5"/><path d="M45 87H120" stroke="#111" stroke-width="3"/><text x="26" y="26" font-family="monospace" font-size="12" font-weight="700">?!</text></svg></span><span class="game-name">Şanssızlıkta Dünya Rekoru</span></a><a class="game-tile is-color" href="/trafik.html" style="--x:73%;--y:800px;--angle:3deg" aria-label="Trafik simülasyonunu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">26</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="tile-illustration"><path d="M8 52L74 22L153 59L91 99Z" fill="#d9e6e2" stroke="#111" stroke-width="3"/><path d="M57 32v45M100 33v52" stroke="#111" stroke-width="7"/><path d="M16 63Q79 39 141 77" stroke="#4a7890" fill="none" stroke-width="8"/><path d="M38 48L80 68L121 53" stroke="#111" fill="none" stroke-width="3"/></svg></span><span class="game-name">Trafik</span></a><a class="game-tile is-color" href="/yaratici-bakanlik.html" style="--x:48%;--y:946px;--angle:-3deg" aria-label="Yaratıcı Bakanlık oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">27</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="tile-illustration"><rect x="34" y="15" width="93" height="82" rx="6" fill="#e5dbce" stroke="#111" stroke-width="3"/><path d="M50 33h60M50 46h60M50 60h60M50 74h40" stroke="#111" stroke-width="3"/><circle cx="110" cy="79" r="19" fill="#f0c3b7" stroke="#111" stroke-width="3"/><text x="110" y="85" text-anchor="middle" font-size="21" font-weight="800">₺</text></svg></span><span class="game-name">Yaratıcı Bakanlık</span></a><a class="game-tile is-color" href="/toros.html" style="--x:68%;--y:1090px;--angle:2deg" aria-label="Toros arazi sürüş oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="tile-illustration"><path d="M0 86L28 72L58 91L91 67L120 91L160 72V112H0Z" fill="#829a76"/><g transform="translate(2 2)"><path d="M15 74L20 55H41L51 37H115L134 57H145L148 75Z" fill="#eeeae1" stroke="#161616" stroke-width="3"/><path d="M55 42H83V57H46ZM88 42H112L129 57H88Z" fill="#8aa9b1" stroke="#161616" stroke-width="2"/><path d="M20 63H145" stroke="#151515" stroke-width="5"/><circle cx="45" cy="78" r="14" fill="#191919"/><circle cx="45" cy="78" r="8" fill="#ccc"/><circle cx="121" cy="78" r="14" fill="#191919"/><circle cx="121" cy="78" r="8" fill="#ccc"/></g></svg></span><span class="game-name">Toros</span></a><a class="game-tile is-color" href="/adacayi.html" style="--x:51%;--y:1180px;--angle:-2deg" aria-label="Adaçayı oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 73L43 48 81 54 107 39 149 62 122 89 67 91Z" fill="#c5d3ae" stroke="#222" stroke-width="2"/><path d="M39 69V32M72 74V23M111 73V36" stroke="#624d36" stroke-width="5"/><path d="M22 43Q40 2 58 42Z" fill="#4f8156"/><path d="M52 32Q72 -4 92 33Z" fill="#6e9963"/><path d="M94 46Q110 12 129 45Z" fill="#3f704e"/><circle cx="136" cy="21" r="13" fill="#f2cf6a"/></svg></span><span class="game-name">Adaçayı</span></a><a class="game-tile is-color" href="/bir-bag-meselesi.html" style="--x:65%;--y:1230px;--angle:2deg" aria-label="Bir Bağ Meselesi oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span><svg viewBox="0 0 160 112" class="tile-illustration" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 96L78 43L155 94V112H5Z" fill="#d0b88c"/><path d="M9 88L80 47L154 90" stroke="#715f45" stroke-width="5" fill="none"/><g stroke="#536747" stroke-width="5" fill="none"><path d="M33 97L93 65M57 105L111 79M83 110L132 91"/></g><g fill="#698456"><ellipse cx="71" cy="75" rx="13" ry="8" transform="rotate(-35 71 75)"/><ellipse cx="100" cy="82" rx="12" ry="7" transform="rotate(-35 100 82)"/></g><g fill="#694759"><circle cx="86" cy="66" r="6"/><circle cx="93" cy="72" r="6"/><circle cx="85" cy="80" r="6"/><circle cx="93" cy="86" r="5"/></g><circle cx="129" cy="29" r="17" fill="#efce74"/></svg></span><span class="game-name">Bir Bağ Meselesi</span></a><a class="game-tile" href="/insan-misin.html" style="--x:80%;--y:1080px;--angle:2deg" aria-label="İnsan mısın? oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">33</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="25" y="14" width="110" height="84" rx="5" fill="#f5f5f1" stroke="#101010" stroke-width="3"/><rect x="40" y="40" width="27" height="27" rx="2" fill="white" stroke="#1b1b1b" stroke-width="3"/><path d="m45 52 9 9 16-20" fill="none" stroke="#2068df" stroke-width="6"/><text x="77" y="48" font-family="Arial,Helvetica" font-size="11" font-weight="700" fill="#111">İNSAN</text><text x="77" y="63" font-family="Arial,Helvetica" font-size="11" font-weight="700" fill="#111">MISIN?</text></svg></span><span class="game-name">İnsan mısın?</span></a></div>
-<nav class="catalog-pagination" id="catalog-pagination" aria-label="Oyun sayfaları" hidden>
-<button type="button" data-page="previous" aria-label="Önceki oyunlar">‹</button>
-<span class="catalog-page-count" aria-live="polite">1 / 1</span>
-<button type="button" data-page="next" aria-label="Sonraki oyunlar">›</button>
-</nav>
 </main>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Oyun penceresi"><div class="panel"><div class="modal-top mono"><span id="modal-label">AYNEN. / OYUN</span><button class="close" id="close" aria-label="Oyunu kapat">×</button></div><div class="stage" id="stage"></div><div class="mono" style="font-size:10px;color:#999;text-align:right" id="round">AYNEN.FUN / BETA</div></div></div>
@@ -326,5 +346,4 @@ let requested=new URLSearchParams(location.search).get('game');if(requested==='p
  },{passive:true});
 })();
 </script>
-<script src="/catalog-pagination.js?v=1" defer></script>
 </body></html>
