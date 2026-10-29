@@ -149,7 +149,7 @@ const PRESET=[
 [1993,'note','E7',500000,'Yarım milyon, tek kâğıt','500.000 liranın arka yüzünde Çanakkale Şehitleri Anıtı vardı.','1993’te yarım milyonluk kupür gündelik dile girdi.'],
 [1995,'note','E7',1000000,'Milyoner olmak kolaylaştı','1995’te 1.000.000 liralık banknot dolaşıma girdi.','Arka yüzde Atatürk Barajı yer alıyordu.'],
 [1997,'note','E7',5000000,'Beş milyon liralık banknot','1997’de 5 milyon liralık banknot çıkarıldı.','Arka yüzde Anıtkabir bulunuyordu.'],
-[1999,'note','E7',10000000,'Sekiz sıfır bir kâğıtta','1999’da 10 milyon liralık banknot tedavüle çıktı.','Arka yüzde Piri Reis Haritası vardı.'],
+[1999,'note','E7',10000000,'Yedi sıfır bir kâğıtta','1999’da 10 milyon liralık banknot tedavüle çıktı.','Arka yüzde Piri Reis Haritası vardı.'],
 [1999,'coin','C1988-2005',100000,'Yüz bin lira, bozukluk','1999 yılında 100.000 lira değerinde madeni para basıldı.','Cepte taşınan rakamlar iyice uzadı.'],
 [2001,'note','E7',20000000,'20.000.000 TL. Tek banknot.','2001’de çıkan 20 milyonluk banknotun arkasında Efes Antik Kenti vardı.','Türkiye’nin eski lira serisinde en yüksek banknot kupürüydü.'],
 [2002,'coin','C1988-2005',250000,'Çeyrek milyonluk metal','Eski TL’nin madeni paraları 250.000 liraya kadar yükseldi.','En yüksek nominal eski lira madeni para kupürü: 250.000 TL.'],
@@ -161,7 +161,7 @@ const PRESET=[
 [2005,'note','E8',100,'İshak Paşa Sarayı','100 Yeni Türk Lirasının arka yüzünde İshak Paşa Sarayı bulunuyordu.','Yeni liraya geçişin en büyük banknotlarından biri.'],
 [2005,'coin','C2005-2008',1,'Çift renkli yeni lira','2005’te 1 YTL, iki renkli metal olarak basıldı.','Aynı reform madeni paraları da yeniledi.'],
 [2005,'coin','C2005-2008',50,'Yeni kuruş cebimizde','2005’te 50 yeni kuruş iki renkli olarak basıldı.','Yeni kuruşta da sıfırların temizlendiği bir dönem başladı.'],
-[2009,'note','E9',5,'Bu beş lira neden mor?','5 TL banknotlarının ana rengi, 50 TL ile karışmaması için 2013’te mora çevrildi.','Arka yüzde bilim tarihçisi Aydın Sayılı var.'],
+[2009,'note','E9',5,'Bu beş lira neden mor?','2009’da kahverengi çıkan 5 TL, 50 TL ile karışmaması için 2013’te mora çevrildi.','Arka yüzde bilim tarihçisi Aydın Sayılı var.'],
 [2009,'note','E9',10,'Cahit Arf cebimizde','10 liranın arkasında matematikçi Cahit Arf, sayılar ve ikili sistem bulunur.','Banknotun arkasında matematik var.'],
 [2009,'note','E9',20,'20 liranın mimarı','20 liranın arka yüzünde Mimar Kemaleddin yer alıyor.','Mimari formlar da banknotun tasarımında.'],
 [2009,'note','E9',50,'50 lirada bir yazar','50 liranın arkasında yazar Fatma Aliye Topuz bulunuyor.','Mürekkep, kalem ve kitap motiflerine bak.'],
@@ -223,11 +223,11 @@ function parseSource(html,type){
    if(!imgs[0]&&!imgs[1])return;
    const labels=cells.slice(2,5).map(c=>valueFromCell(c.textContent));
    const v=labels.find(n=>n!==null);if(v===undefined)return;
-   const urls=imgs.map(normalizeImg);
+   const urls=imgs.map(normalizeImg);const fileLinks=imgs.map(img=>{const a=img&&img.closest('a[href]');if(!a)return null;try{return new URL(a.getAttribute('href'),'https://tr.wikipedia.org').href;}catch{return null;}});
    if(!urls[0]&&!urls[1])return;
    const rowtext=tr.textContent.replace(/\s+/g,' ');
    const years=[...rowtext.matchAll(/\b(19\d\d|20\d\d)\b/g)].map(m=>Number(m[1]));
-   found.push({group,value:v,year:years[0]||null,front:urls[0]||null,back:urls[1]||null});
+   found.push({group,value:v,year:years[0]||null,front:urls[0]||null,back:urls[1]||null,fileLinks});
   });
  });
  let count=0;
@@ -259,7 +259,7 @@ async function loadImages(){
  loadDone=true;renderImage();
 }
 function renderImage(){
- const r=records[x[mode][pos]],img=$('photo'),state=$('artstate'),entry=media[r.id],url=entry&&(back?entry.back:entry.front);
+ const r=records[x[mode][pos]],img=$('photo'),state=$('artstate'),entry=media[r.id],url=entry&&(back?entry.back:entry.front);const fileLink=entry&&entry.fileLinks&&entry.fileLinks[back?1:0];$('source').href=fileLink||source(r);$('source').textContent=fileLink?'GÖRSEL KAYNAĞI ↗':'KAYNAK / VİKİPEDİ ↗';
  img.hidden=true;img.removeAttribute('src');
  img.onerror=null;img.onload=null;
  const seq=++requestId;
@@ -289,7 +289,7 @@ function render(){
  $('facthead').textContent=r.headline;
  $('fact').textContent=r.fact;
  $('context').textContent=r.context;
- $('source').href=source(r);
+ $('source').href=source(r);$('source').textContent='KAYNAK / VİKİPEDİ ↗';
  $('counter').textContent=String(pos+1).padStart(2,'0')+' / '+String(arr.length).padStart(2,'0');
  $('scrub').max=arr.length-1;$('scrub').value=pos;
  $('face').textContent='ÖN YÜZ';$('bill').classList.toggle('coin',r.type==='coin');
