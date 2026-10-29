@@ -113,7 +113,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offse
 <section class="intro" aria-label="Oyun bilgisi">
 <div class="overline">GERİLİM SİMÜLATÖRÜ / v1.0</div>
 <h1>bi şey<br><em>sorucam.</em></h1>
-<p class="description">55 saniyede soruyu sordurmaya çalış. Karşı tarafın başka planları var. İlk cevapla süre başlar.</p>
+<p class="description">Soruyu sordurmaya çalış. Ya da görüldü bırak. İki taraf da konuşmayı bitirmemekte başarılı.</p>
 <div class="livebox">
 <div class="small">CANLI KONUŞMA RAPORU</div>
 <div class="metric-row">
@@ -132,7 +132,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offse
 <div class="timer" id="timer" aria-label="Kalan süre">00:55</div>
 </div>
 <div class="thread" id="thread" role="log" aria-live="polite" aria-relevant="additions text"><div class="day">BUGÜN · BİR SÜRE ÖNCE</div></div>
-<div class="composer" id="composer"><div class="composer-label" id="composerLabel">NE CEVAP VERECEKSİN? · İLK CEVAPLA SÜRE BAŞLAR</div><div class="options" id="options"></div></div>
+<div class="composer" id="composer"><div class="composer-label" id="composerLabel">NE YAPACAKSIN? · İLK HAMLEYLE SÜRE BAŞLAR</div><div class="options" id="options"></div></div>
 <div class="overlay" id="resultOverlay" aria-live="polite">
 <div class="small">AYNEN.FUN · RESMÎ OLMAYAN SOHBET RAPORU</div>
 <h2 id="endHeading"></h2><p id="endSubtitle"></p>
@@ -161,24 +161,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offse
 (()=>{
 "use strict";
 const $=id=>document.getElementById(id);
-const scenes=[
- {incoming:null,opts:[["sor",2,0],["neyle ilgili?",1,1],["korkutma beni",0,2]]},
- {incoming:{kind:"text",text:"şimdi yanlış anlama ama"},opts:[["yanlış anlamam, sor",2,-1],["o cümleyle başladıysan...",0,2],["bana soru soracaktın",1,1]]},
- {incoming:{kind:"deleted",text:"ya senin hakkında bi..."},opts:[["sıkıntı yok, sor",2,-1],["ne sildin?",0,2],["ss aldım",0,3]]},
- {incoming:{kind:"voice",text:"Sesli mesaj · 0:43"},opts:[["yazabilirsin, dinliyorum",2,0],["dinledim. soru nerede?",1,1],["bi daha at",0,1]]},
- {incoming:{kind:"story",text:"bu arada birazdan söyleyeceğim"},opts:[["buradayım, sor",2,-1],["story atmaya vaktin var",0,2],["ben de story atıyorum",0,1]]},
- {incoming:{kind:"text",text:"bi şey daha sorucam önce"},opts:[["önce ilk soruyu sor",2,0],["sor tabii",0,-1],["ben artık yokum",0,0,"quit"]]},
- {incoming:{kind:"text",text:"tamam soruyorum"},opts:[["dinliyorum",2,-1],["?????",0,2],["ne diyeceksen de artık",1,2]]}
-];
-const variants=[
- ["bi şey sorucam","sana bi şey sorabilir miyim"],
- ["şimdi yanlış anlama ama","bana kızma ama"],
- ["ya senin hakkında bi...","aslında seninle ilgili..."],
- ["Sesli mesaj · 0:43","Sesli mesaj · 1:12"],
- ["bu arada birazdan söyleyeceğim","az sonra söylüyorum"],
- ["bi şey daha sorucam önce","öncesinde ufak bi şey"],
- ["tamam soruyorum","şimdi gerçekten soruyorum"]
-];
+const scenes=[{"incoming":null,"opts":[["sor",2,0],["ne oldu?",1,0],["görüldü bırak",0,0,"ghostSelf"]]},{"incoming":{"kind":"text","text":"ya biraz garip bi şey"},"opts":[["dinliyorum",2,-1],["neyle ilgili",1,0],["şu an müsait değilim",0,0,"ghostSelf"]]},{"incoming":{"kind":"deleted","text":"aslında seninle ilgili..."},"opts":[["ne yazdın",0,1],["neyse sor",2,0],["görüldü bırak",0,0,"ghostSelf"]]},{"incoming":{"kind":"voice","text":"Sesli mesaj · 0:12"},"opts":[["dinledim de anlamadım",1,0],["yazsana",2,-1],["cevap verme",0,0,"ghostSelf"]]},{"incoming":{"kind":"story","text":"neyse dur ya"},"opts":[["story attın ama",0,2],["tamam",2,-1],["sohbeti sessize al",0,0,"ghostSelf"]]},{"incoming":{"kind":"text","text":"müsait misin şu an"},"opts":[["evet",2,0],["konu ne",1,1],["yarın bakarım",0,0,"ghostSelf"]]},{"incoming":{"kind":"text","text":"tamam söylüyorum"},"opts":[["söyle",2,-1],["bi saattir bekliyorum",0,2],["görüldü bırak",0,0,"ghostSelf"]]}];
+const variants=[["bi şey sorucam","bi şey sorabilir miyim"],["ya biraz garip bi şey","saçma gelmesin ama"],["aslında seninle ilgili...","birinden bi şey duydum..."],["Sesli mesaj · 0:12","Sesli mesaj · 0:18"],["neyse dur ya","bi dk"],["müsait misin şu an","şimdi sorabilir miyim"],["tamam söylüyorum","bi dakika şimdi"]];
 const state={step:0,clarity:0,pressure:0,curiosity:42,messages:1,questions:0,startTime:null,time:55,timer:null,phase:"choice",run:0,history:[],ending:null,variants:[],typing:null,handlers:[],auto:[]};
 let voicePlayed=false;
 function escapeText(v){return String(v);}
@@ -222,10 +206,10 @@ function choose(index){
  state.history.push({step:state.step,answer:item[0]});
  addBubble(item[0],"me");$("composerLabel").textContent="İLETİLDİ · ÇİFT TİK GERÇEK SORU SAYILMAZ";
  $("options").replaceChildren();metrics();
- if(item[3]==="quit"){schedule(()=>{systemMessage("Bu sohbetten ayrıldın.");finish("quit");},420);return;}
+ if(item[3]==="ghostSelf"){schedule(()=>{systemMessage("Mesajı gördün. Cevap vermedin.");$("onlineStatus").textContent="son görülme: az önce";finish("ghostSelf");},650);return;}
  const justAnswered=state.step;state.step++;
  schedule(()=>{if(state.ending)return;typing(true);},230);
- const delay=550+Math.floor(Math.random()*620);
+ const delay=1100+Math.floor(Math.random()*1200);
  schedule(()=>{if(state.ending||justAnswered!==state.step-1)return;typing(false);
  if(state.step>=scenes.length){finalAnswer();return;}
  receive();},delay);
@@ -240,7 +224,7 @@ function receive(){
  if(event.kind==="text"){addBubble(variant);}
  else if(event.kind==="deleted"){
   let b=addBubble(variant);
-  schedule(()=>{if(state.ending)return;b.querySelector(".body").textContent="Bu mesaj silindi.";b.classList.add("deleted");bottom();},550);
+  schedule(()=>{if(state.ending)return;b.querySelector(".body").textContent="Bu mesaj silindi.";b.classList.add("deleted");bottom();},950);
  }else if(event.kind==="voice"){
   let b=addBubble("","them");
   b.querySelector(".body").remove();let wrap=node("div","voice");
@@ -256,11 +240,11 @@ function receive(){
   $("thread").append(button);button.onclick=()=>{$("storyView").classList.add("show");};bottom();
   addBubble(variant);
  }
- schedule(()=>{if(state.ending)return;renderChoices();},event.kind==="deleted"?630:180);
+ schedule(()=>{if(state.ending)return;renderChoices();},event.kind==="deleted"?1150:430);
 }
 function renderChoices(){
  state.phase="choice";
- $("composer").classList.remove("hidden");$("composerLabel").textContent="NE CEVAP VERECEKSİN?";
+ $("composer").classList.remove("hidden");$("composerLabel").textContent="NE YAPACAKSIN?";
  const options=$("options");options.replaceChildren();
  scenes[state.step].opts.forEach((o,i)=>{
   let button=node("button","choice");button.type="button";
@@ -271,16 +255,17 @@ function renderChoices(){
 function finalAnswer(){
  state.phase="transition";typing(true);
  schedule(()=>{if(state.ending)return;typing(false);
-  const success=state.clarity>=12&&state.pressure<=1&&state.time>0;
-  if(success){state.questions=1;addBubble("şey... saat kaç?");}
+  const success=state.clarity>=11&&state.pressure<=2&&state.time>0;
+  if(success){state.questions=1;addBubble(["bi de şey, senin numaranı ona verebilir miyim","bugün günlerden neydi ya","sence ona yazsam mı"][Math.floor(Math.random()*3)]+"?");}
   else if(state.pressure>=7){$("onlineStatus").textContent="son görülme: az önce";systemMessage("Mesaj görüldü. Sonra çevrimdışı oldu.");}
-  else {addBubble("yok ya boşver");}
+  else {addBubble(["neyse ya sonra anlatırım","boşver uzun konu","yok bi şey ya"][Math.floor(Math.random()*3)]);}
   metrics();schedule(()=>finish(success?"success":state.pressure>=7?"ghost":"never"),900);
  },800);
 }
 const endings={
  success:{headline:"Sonunda sordu.",title:"43 saniyelik psikolojik savaş.",quote:"Sorduğu soru: 'Şey, saat kaç?' Kurumsal soruşturma tamamlandı.",label:"SORUYU SORDURDUN · NADİR SON"},
- ghost:{headline:"Ghosted.",title:"Görüldü. Soru görülmedi.",quote:"Birisi çevrimiçiydi. Cevap vermemeyi tercih etti. Daha açıklayıcı bir işaret bulunamadı.",label:"DİJİTAL KAYBOLUŞ"},
+ ghost:{headline:"Ghosted.",title:"Çevrimiçi. Sana değil.",quote:"Mesajlar okundu. Konuşma tamamlanmadı.",label:"DİJİTAL KAYBOLUŞ"},
+ ghostSelf:{headline:"Sen ghostladın.",title:"Görüldü. Bilerek.",quote:"Soru sorulmadı. Ama bu kez merakından sen sorumlusun.",label:"BİLİNÇLİ SESSİZLİK"},
  never:{headline:"Yok ya boşver.",title:"Son %1 kişisel sebeplerle iptal.",quote:"Bu konuşmanın tek somut sonucu merak oldu.",label:"SOHBET YARIM KALDI"},
  timeout:{headline:"Süre doldu.",title:"Soruya hâlâ ulaşamadın.",quote:"55 saniye. Birkaç mesaj. Henüz özne veya yüklem içeren bir soru yok.",label:"ZAMAN AŞIMI"},
  quit:{headline:"Sen vazgeçtin.",title:"Birileri sınır koymayı başardı.",quote:"Soru hâlâ sorulmadı. En azından beklemeyi bıraktın.",label:"GÖNÜLLÜ AYRILIŞ"}
