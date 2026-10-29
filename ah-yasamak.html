@@ -37,6 +37,91 @@ const RECIPES=[["Su","Mineraller","Sulu iyon ortamı","Çözünebilir mineraller
 const base=['Su','Karbon','Enerji','Mineraller'], allCount=base.length+RECIPES.length;
 const $=id=>document.getElementById(id),canon=(a,b)=>[a,b].sort((x,y)=>x.localeCompare(y,'tr')).join('|'),map=new Map(RECIPES.map(r=>[canon(r[0],r[1]),r]));
 let known=base.slice(),selected=[],last=null,points=0,busy=false,conditions={temp:40,ph:7,energy:50};
+let filterGroup='all',searchQuery='',hintStep=0,hintRecipe=null,labLog=[];
+try{const raw=JSON.parse(localStorage.getItem('ahy-log-v1'));if(Array.isArray(raw))labLog=raw.filter(e=>e&&typeof e.a==='string'&&typeof e.b==='string'&&typeof e.status==='string').slice(0,40)}catch{}
+const EVIDENCE_NOTES={
+ 'Vezikül':['Basit lipit karışımları suda kendiliğinden zar kesecikleri oluşturabilir. Bu, canlı hücre oluşumu değildir.','https://science.nasa.gov/astrobiology/learning-resources/alp/first-cells-arise/','NASA Astrobiology'],
+ 'Kuruma-ıslanma döngüsü':['2024 PNAS çalışmasında uygun nükleotitlerle ıslanma-kuruma döngülerinde 53 birime kadar oligomerler raporlandı. Bu oyundaki birleşim, aynı deney değil.','https://pubmed.ncbi.nlm.nih.gov/39585974/','PNAS 2024'],
+ 'Lipit toplulukları':['Amfifilik bileşiklerin kendiliğinden bir araya gelmesi, yaşamın kökeni araştırmalarında incelenir.','https://science.nasa.gov/astrobiology/learning-resources/alp/first-cells-arise/','NASA Astrobiology'],
+ 'İçerik taşıyan vezikül':['Model ön-hücrelerde zar içinde nükleik asitlerin tutulması ve reaksiyonları laboratuvar deneyleriyle araştırılıyor.','https://pubmed.ncbi.nlm.nih.gov/24288333/','Science 2013'],
+ 'Şablon kopyalama deneyi':['Enzim dışı şablon destekli RNA sentezinin belirli koşullardaki aşamaları laboratuvarda gösterilmiştir.','https://pubmed.ncbi.nlm.nih.gov/24288333/','Science 2013'],
+ 'Kısmi RNA kopyalama':['Model ön-hücrelerde aktivasyon kimyasıyla RNA şablonlarının kısmi kopyalanması gösterilmiştir; kendini sürdüren yaşam değildir.','https://pubmed.ncbi.nlm.nih.gov/24288333/','Science 2013'],
+ 'Zar içi RNA kopyalama':['Yağ asidi vezikülleri içinde enzim dışı RNA kopyalama adımları araştırılmıştır; yaşayan hücre yapılmadı.','https://pubmed.ncbi.nlm.nih.gov/24288333/','Science 2013'],
+ 'Zar büyüme modeli':['Laboratuvar ortamında bazı basit zar keseciklerinin büyüme ve bölünme davranışları gösterildi; kalıtsal hücre bölünmesiyle aynı değil.','https://pubmed.ncbi.nlm.nih.gov/38038709/','ACS 2023']
+};
+function groupFor(name){
+ const n=name.toLocaleLowerCase('tr');
+ if(/rna|nükleot|şablon|kopyala|kalıtım|oligon|baz eşle|fosfodi|genetik|zincir|polimer/.test(n))return 'rna';
+ if(/vezik|lipit|amfifil|misel|zar|ozmot|kapsül|ön-hücre|bölünme|içerik taşı|membran/.test(n))return 'membrane';
+ if(/enerji|elektrokim|proton|gradyan|ısıl|ısı|termal|kataliz/.test(n))return 'energy';
+ return 'other';
+}
+function renderInventory(){
+ const list=$('ingredients');list.replaceChildren();
+ const q=searchQuery.toLocaleLowerCase('tr').trim();
+ const items=known.filter(n=>(filterGroup==='all'||groupFor(n)===filterGroup)&&(!q||n.toLocaleLowerCase('tr').includes(q)));
+ $('available').textContent=items.length===known.length?known.length+' kullanılabilir':items.length+' / '+known.length+' gösteriliyor';
+ $('tray-note').textContent=items.length?'Bir bileşen seç, sonra ikincisini seç.':'Bu filtrede bileşen bulunamadı.';
+ items.forEach(name=>{
+  const b=document.createElement('button');b.type='button';b.className='ingredient'+(selected.includes(name)?' active':'');
+  b.setAttribute('aria-pressed',String(selected.includes(name)));
+  const dot=document.createElement('span');dot.className='dot';b.append(dot,document.createTextNode(name));
+  b.onclick=()=>{if(busy)return;if(selected.length===2)selected=[];if(selected.includes(name)){selected=selected.filter(n=>n!==name)}else selected.push(name);last=null;hideEvidence();draw()};
+  list.append(b);
+ });
+}
+function renderPaths(){
+ const targets=[['Vezikül','Zar'],['RNA benzeri zincirler','RNA'],['Proton gradyanı modeli','Enerji'],['Kalıtım problemi','Kalıtım']];
+ $('research-paths').replaceChildren();
+ targets.forEach(([item,label])=>{
+  const b=document.createElement('div');b.className='research-path'+(known.includes(item)?' done':'');
+  const title=document.createElement('b');title.textContent=label;b.append(title);
+  b.title=known.includes(item)?item+' keşfedildi':item+' henüz keşfedilmedi';$('research-paths').append(b)
+ });
+}
+function hideEvidence(){$('evidence').hidden=true;$('evidence').replaceChildren()}
+function showEvidence(r){
+ const box=$('evidence');box.replaceChildren();box.hidden=false;
+ const status=r[4];const labels={'deneysel':'DENEYSEL DAYANAĞI OLAN SÜREÇ','hipotez':'ARAŞTIRILAN HİPOTEZ','model':'EĞİTİM MODELİ','açık soru':'AÇIK BİLİMSEL SORU','gözlem':'GÖZLENEN İLKE','fizik':'FİZİKSEL İLKE'};
+ const badge=document.createElement('span');badge.className='evidence-tag';badge.textContent=labels[status]||'BİLİMSEL BAĞLAM';box.append(badge);
+ const note=EVIDENCE_NOTES[r[2]];
+ const paragraph=document.createElement('div');paragraph.textContent=note?note[0]:status==='deneysel'?'İlgili süreçler laboratuvarda incelenmiştir; iki soyut bileşenin oyundaki birleşimi tek başına gerçek deney tarifi değildir.':status==='hipotez'?'Bu olası yol araştırılıyor; yaşamın kökeninde gerçekten gerçekleştiği kanıtlanmadı.':status==='açık soru'?'Araştırmacıların henüz tam cevaplayamadığı bir aşama.':status==='model'?'Kavramlar arasındaki ilişkiyi gösteren basitleştirilmiş bir eğitim modeli.':'Koşullar ve bileşik kimliği, gerçek fizik ve kimyada belirleyicidir.';
+ box.append(paragraph);
+ if(note){const a=document.createElement('a');a.href=note[1];a.textContent=note[2]+' · Çalışmayı oku ↗';a.target='_blank';a.rel='noopener noreferrer';box.append(a)}
+}
+function renderLog(){
+ $('log-count').textContent=labLog.length+' kayıt';
+ $('log-entries').replaceChildren();
+ if(!labLog.length){const p=document.createElement('p');p.textContent='Henüz deney kaydı yok.';$('log-entries').append(p);}
+ labLog.slice(0,12).forEach(entry=>{
+  const b=document.createElement('button');b.type='button';b.className='log-entry';
+  const detail=document.createElement('span'),title=document.createElement('b'),small=document.createElement('small'),replay=document.createElement('span');
+  title.textContent=entry.a+' + '+entry.b;small.textContent=entry.status+' · '+entry.result;
+  detail.append(title,small);replay.className='replay';replay.textContent='YENİDEN ↗';b.append(detail,replay);
+  b.onclick=()=>{if(busy||!known.includes(entry.a)||!known.includes(entry.b))return;
+   selected=[entry.a,entry.b];last=null;
+   if(entry.conditions){
+    conditions={temp:Number(entry.conditions.temp),ph:Number(entry.conditions.ph),energy:Number(entry.conditions.energy)};
+    syncControls();
+   }
+   filterGroup='all';searchQuery='';$('find-ingredient').value='';
+   syncFilters();hideEvidence();draw();explain('DENEMEYİ TEKRARLA',entry.a+' + '+entry.b,'Eski koşullar yüklendi. İstersen değiştirip BİRLEŞTİR.');
+  };$('log-entries').append(b);
+ });
+}
+function logAttempt(a,b,status,result){
+ labLog.unshift({a,b,status,result,conditions:{...conditions}});
+ labLog=labLog.slice(0,40);
+ try{localStorage.setItem('ahy-log-v1',JSON.stringify(labLog))}catch{}
+ renderLog();
+}
+function syncControls(){
+ [['temp','tv',' °C'],['ph','pv',''],['energy','ev','%']].forEach(([key,id,unit])=>{$(key).value=conditions[key];$(id).textContent=conditions[key]+unit});
+}
+function syncFilters(){
+ Array.from($('ingredient-filters').children).forEach(b=>{const active=b.dataset.group===filterGroup;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+}
+
 try{const saved=JSON.parse(localStorage.getItem('ahy-v3'));if(Array.isArray(saved))known=[...base,...saved.filter(x=>!base.includes(x)&&RECIPES.some(r=>r[2]===x))]}catch{}
 points=(known.length-4)*75;
 function art(name){const svg=(body)=>'<svg viewBox="0 0 100 100" aria-hidden="true">'+body+'</svg>';const circ=(x,y,r,stroke='#171717',fill='white')=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" stroke="'+stroke+'" stroke-width="2.6" fill="'+fill+'"/>';const bond=(a,b,c,d)=>'<path d="M'+a+' '+b+'L'+c+' '+d+'" stroke="#333" stroke-width="3" stroke-linecap="round"/>';
@@ -50,12 +135,17 @@ if(name.includes('Lipit')||name.includes('Amfifilik'))return svg('<g class="orbi
 if(name.includes('Karbon')||name.includes('organik')||name.includes('peptit')||name.includes('kimya')||name.includes('kataliz'))return svg(bond(21,23,50,45)+bond(50,45,80,26)+bond(50,45,70,78)+bond(70,78,30,80)+circ(21,23,7)+circ(50,45,10)+circ(80,26,7)+circ(70,78,8)+circ(30,80,7));
 return svg(circ(50,50,24)+circ(23,29,6)+circ(79,67,8)+bond(28,33,42,42)+bond(61,55,72,63))}
 function object(name,result){const o=document.createElement('div');o.className='object'+(result?' result':'')+(!name?' placeholder':'');const a=document.createElement('div');a.className='art';a.innerHTML=art(name);const t=document.createElement('strong');t.textContent=name||'Seç';o.append(a,t);return o}
-function draw(){const scene=$('scene');scene.replaceChildren();if(selected.length){scene.append(object(selected[0]));const plus=document.createElement('span');plus.className='plus';plus.textContent='+';scene.append(plus,object(selected[1]))}else if(last){scene.append(object(last,true))}else{scene.append(object(null));const plus=document.createElement('span');plus.className='plus';plus.textContent='+';scene.append(plus,object(null))}$('mix').disabled=selected.length!==2||busy;$('counter').textContent=known.length+' / '+allCount+' keşif';$('available').textContent=known.length+' kullanılabilir';$('points').textContent=points+' KP';$('hint').textContent=known.length===allCount?'Keşif ağını tamamladın.': 'Takılırsan İPUCU düğmesi açılabilecek bir sonraki birleşimi seçer.';const list=$('ingredients');list.replaceChildren();known.forEach(name=>{const b=document.createElement('button');b.className='ingredient'+(selected.includes(name)?' active':'');const dot=document.createElement('span');dot.className='dot';b.append(dot,document.createTextNode(name));b.onclick=()=>{if(busy)return;if(selected.length===2)selected=[];selected.push(name);last=null;draw()};list.append(b)});const milestones=[5,9,14,21,32,40,55,65,allCount],next=milestones.find(n=>known.length<n)||allCount;$('mission').textContent=known.length===allCount?'Tüm keşifler tamam. Sorular devam ediyor.':next===5?'İlk yeni yapıyı keşfet.':next===9?'9 farklı bileşene ulaş.':next===14?'14 farklı bileşene ulaş.':next===21?'21 farklı bileşene ulaş.':next===32?'Zarlar ve ön-hücrelerle 32 keşfe ulaş.':next===40?'RNA ve enerji araştırmalarında 40 keşfe ulaş.':'Keşif ağını tamamla.';$('progress').style.width=Math.round(known.length/next*100)+'%'}
+function draw(){const scene=$('scene');scene.replaceChildren();if(selected.length){scene.append(object(selected[0]));const plus=document.createElement('span');plus.className='plus';plus.textContent='+';scene.append(plus,object(selected[1]))}else if(last){scene.append(object(last,true))}else{scene.append(object(null));const plus=document.createElement('span');plus.className='plus';plus.textContent='+';scene.append(plus,object(null))}$('mix').disabled=selected.length!==2||busy;$('counter').textContent=known.length+' / '+allCount+' keşif';$('points').textContent=points+' KP';$('hint').textContent=known.length===allCount?'Keşif ağını tamamladın.':'İPUCU üç aşamalı: önce fikir, sonra çift, en son model koşulları.';renderInventory();renderPaths();const milestones=[5,9,14,21,32,40,55,65,allCount],next=milestones.find(n=>known.length<n)||allCount;$('mission').textContent=known.length===allCount?'Tüm keşifler tamam. Sorular devam ediyor.':next===5?'İlk yeni yapıyı keşfet.':next===9?'9 farklı bileşene ulaş.':next===14?'14 farklı bileşene ulaş.':next===21?'21 farklı bileşene ulaş.':next===32?'Zarlar ve ön-hücrelerle 32 keşfe ulaş.':next===40?'RNA ve enerji araştırmalarında 40 keşfe ulaş.':'Keşif ağını tamamla.';$('progress').style.width=Math.round(known.length/next*100)+'%'}
 function suggest(){const choices=RECIPES.filter(r=>!known.includes(r[2])&&known.includes(r[0])&&known.includes(r[1]));if(!choices.length){explain('KEŞİF','Tüm erişilebilir deneyler tamam.','Bilimsel araştırma devam ediyor.');return}const r=choices[0];selected=[r[0],r[1]];last=null;conditions.temp=Math.max(r[5],Math.min(r[6],conditions.temp));conditions.ph=Math.max(r[7],Math.min(r[8],conditions.ph));conditions.energy=Math.max(r[9],conditions.energy);[['temp','tv',' °C'],['ph','pv',''],['energy','ev','%']].forEach(([key,id,unit])=>{$(key).value=conditions[key];$(id).textContent=conditions[key]+unit});draw();explain('SONRAKİ DENEY',r[0]+' + '+r[1],'Koşulları ayarladım. BİRLEŞTİR düğmesine bas.')}$('help').onclick=suggest;function explain(status,title,description){$('kind').textContent=status;$('result').textContent=title;$('description').textContent=description}
 function mix(){if(busy||selected.length!==2)return;busy=true;$('mix').disabled=true;$('scene').classList.add('fusing');setTimeout(()=>{const r=map.get(canon(...selected));if(!r){last=null;explain('MODEL DIŞI','Bu ikili için tanımlı yol yok.','Kimyasal sistemlerde her birleşim yeni ürün vermez. Başka iki bileşen dene.')}else{const [a,b,name,desc,status,tmin,tmax,pmin,pmax,emin]=r;const valid=conditions.temp>=tmin&&conditions.temp<=tmax&&conditions.ph>=pmin&&conditions.ph<=pmax&&conditions.energy>=emin;if(!valid){last=null;explain('KOŞULLAR UYGUN DEĞİL',name+' oluşmadı','Bu eğitim modelinin koşul aralığı: '+tmin+'–'+tmax+' °C; pH '+pmin+'–'+pmax+'; minimum enerji %'+emin+'. Bunlar deneysel eşikler değil.')}else{const fresh=!known.includes(name);last=name;if(fresh){known.push(name);points+=75;try{localStorage.setItem('ahy-v3',JSON.stringify(known.slice(4)))}catch{}}explain(status.toLocaleUpperCase('tr')+(fresh?' · +75 KP':''),name,desc)}}selected=[];busy=false;$('scene').classList.remove('fusing');draw();if(last){$('scene').classList.add('reveal');setTimeout(()=>$('scene').classList.remove('reveal'),420)}},420)}
 $('mix').onclick=mix;$('undo').onclick=()=>{if(busy)return;selected=[];last=null;draw()};$('reset').onclick=()=>{if(busy)return;known=base.slice();points=0;selected=[];last=null;try{localStorage.removeItem('ahy-v3')}catch{}explain('BAŞLANGIÇ','İki bileşen seç.','Sıfırdan başladın.');draw()};
 [['temp','tv',' °C'],['ph','pv',''],['energy','ev','%']].forEach(([key,id,unit])=>{$(key).oninput=e=>{conditions[key]=Number(e.target.value);$(id).textContent=conditions[key]+unit}});
 const scienceTexts={experiment:'Lipit benzeri amfifillerin uygun koşullarda vezikül oluşturması ve bazı şablon destekli polimerleşme süreçleri laboratuvarda araştırılmıştır.',hypothesis:'Hidrotermal gözenekler, mineral yüzeyleri ve prebiyotik sentez yolları, yaşamın kökeni için araştırılan olası mekanizmalardır.',open:'İlk kalıtım, enerji kullanımı, zar büyümesi ve bölünmenin bir araya nasıl geldiği bilinmiyor. Bu oyunda canlı oluşturulmaz.'};
 [['tab-experiment','experiment'],['tab-hypothesis','hypothesis'],['tab-open','open']].forEach(([id,k])=>{$(id).onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$('science').textContent=scienceTexts[k]}});
-draw()})();
+$('find-ingredient').oninput=e=>{searchQuery=e.target.value||'';renderInventory()};
+Array.from($('ingredient-filters').children).forEach(b=>{
+ b.onclick=()=>{filterGroup=b.dataset.group;syncFilters();renderInventory()}
+});
+$('log-clear').onclick=()=>{labLog=[];try{localStorage.removeItem('ahy-log-v1')}catch{}renderLog()};
+renderLog();syncFilters();draw()})();
 </script></body></html>
