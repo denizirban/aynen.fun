@@ -358,6 +358,7 @@ function tick(){
  if(!g?.playing)return;
  const now=performance.now();
  const dt=Math.min(.25,(now-lastFrame)/1000);lastFrame=now;
+ if(document.hidden)return;
  g.elapsed=Math.min(SPEED,(now-g.started)/1000);
  const frozen=g.freezeUntil>now;
  if(!frozen){
@@ -368,6 +369,10 @@ function tick(){
  }else{
   for(const item of g.slots)if(item)item.due+=dt*1000;
  }
+ const newWave=Math.min(4,1+Math.floor(g.elapsed/10));
+ if(newWave!==g.wave){g.wave=newWave;const names=['','KOMŞU MATKABI','YOL BAKIMI','HAFRİYAT KONVOYU'];
+ announcer(names[newWave-1]||'Şantiyeler büyüyor.','Şimdi daha hızlı gelecekler.','DALGA '+newWave+'/4');
+ $('#world').classList.toggle('frenzy',newWave>=3);pop('DALGA '+newWave,true);sfx('power');}
  if(g.elapsed>=SPEED){finish(true);return}
  if(g.noise>=100){finish(false);return}
  paint(now)
@@ -375,7 +380,7 @@ function tick(){
 function start(withSound){
  clearInterval(loopId);soundToggle(false);$('#intro').hidden=true;$('#ending').hidden=true;$('#otherTruck').classList.remove('visible');$('#world').classList.remove('frenzy');
  const now=performance.now(),city=$('#city').value;
- g={city,zones:locations[city]||locations['Türkiye geneli'],slots:Array(6).fill(null),playing:true,started:now,elapsed:0,score:0,combo:0,maxCombo:0,noise:20,stopped:0,failed:0,falseHits:0,spawned:0,total:0,open:0,permits:0,ears:1,freezeUntil:0,nextSpawn:now+400};
+ g={city,zones:locations[city]||locations['Türkiye geneli'],slots:Array(6).fill(null),playing:true,started:now,elapsed:0,score:0,combo:0,maxCombo:0,noise:20,stopped:0,failed:0,falseHits:0,spawned:0,total:0,open:0,permits:0,ears:1,freezeUntil:0,nextSpawn:now+400,wave:1,pauseStarted:0};
  $('#placeText').textContent='EVİNİN ÖNÜ';$('#roadSign').textContent='KAZI BAŞLAYACAK';
  announcer('Sarı şantiyeleri sustur!','Yeşillere dokunma. Her tıklama önemli.','08:00 — MESAİ BAŞLIYOR');
  if(withSound)soundToggle(true);
@@ -397,7 +402,15 @@ $('#share').addEventListener('click',async()=>{
   else window.prompt('Raporunu kopyala:',msg)
  }catch(e){if(e.name!=='AbortError')window.prompt('Raporunu kopyala:',msg)}
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&g?.playing){g.started+=2000;g.freezeUntil=Math.max(g.freezeUntil,performance.now()+2000)}});
+document.addEventListener('visibilitychange',()=>{
+ if(!g?.playing)return;
+ const now=performance.now();
+ if(document.hidden){g.pauseStarted=now;return}
+ if(g.pauseStarted){const off=now-g.pauseStarted;g.started+=off;g.nextSpawn+=off;
+ if(g.freezeUntil>g.pauseStarted)g.freezeUntil+=off;
+ for(const item of g.slots)if(item){item.born+=off;item.due+=off;}
+ g.pauseStarted=0;lastFrame=now;}
+});
 window.addEventListener('pagehide',()=>{clearInterval(loopId);soundToggle(false)});
 buttons.forEach((_,i)=>{const k=['1','2','3','4','5','6'][i];document.addEventListener('keydown',e=>{if(e.key===k&&!e.repeat&&g?.playing){e.preventDefault();tapSlot(i)}})});
 })();
