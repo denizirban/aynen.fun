@@ -41,18 +41,32 @@ function show(name,rec){selected=name;card.classList.add('on');$('name').textCon
 function renderGallery(){let g=$('gallery');if(!g){g=document.createElement('div');g.id='gallery';g.className='gallery';$('scene').after(g)}g.innerHTML='';taxa.forEach(name=>{const b=document.createElement('button');b.className='gallery-item';b.innerHTML='<span class="gallery-image">✿</span><span>'+safe(label(name))+'</span>';b.onclick=()=>{mode='single';selected=name;queue();show(name)};g.append(b);photo(name).then(im=>{if(im&&b.isConnected)b.querySelector('.gallery-image').innerHTML='<img loading="lazy" alt="" src="'+safe(im.url)+'">'})})}
 function queue(){clearTimeout(timer);timer=setTimeout(load,playing?80:250)}
 async function load(){const token=++request;const y=+timeline.value,begin=Math.max(1950,Math.floor((y-1950)/5)*5),finish=Math.min(2025,begin+4);
-year.textContent=y;wrap.replaceChildren();status.textContent=begin+'–'+finish+' gözlem kayıtları yükleniyor…';
+year.textContent=y;status.textContent=begin+'–'+finish+' gözlem kayıtları yükleniyor…';
 const q=new URLSearchParams({country:'TR',hasCoordinate:'true',hasGeospatialIssue:'false',year:begin+','+finish,limit:'300'});
-if(mode==='single'&&selected)q.set('scientificName',selected);else q.set('taxonKey','2927179');
+if(mode==='single'&&selected)q.set('scientificName',selected);else q.set('scientificName','Salvia');
 if(regions[region])regions[region].forEach(p=>q.append('stateProvince',p));
 const key=q.toString();
 try{let d=dataCache.get(key);if(!d){d=await get(GBIF+'/occurrence/search?'+q);dataCache.set(key,d);if(dataCache.size>35)dataCache.delete(dataCache.keys().next().value)}
-if(token!==request)return;
+if(token!==request)return;wrap.replaceChildren();
 const used=new Set(),chosen=[];for(const rec of d.results||[]){const name=rec.species?.match(/^Salvia [a-z-]+/)?.[0]||rec.scientificName?.match(/^Salvia [a-z-]+/)?.[0];if(!name)continue;const lon=rec.decimalLongitude,lat=rec.decimalLatitude;if(!(lon>=25.5&&lon<=45.2&&lat>=35.7&&lat<=42.2))continue;const id=name+'|'+lon.toFixed(1)+'|'+lat.toFixed(1);if(used.has(id))continue;used.add(id);chosen.push({name,rec,lon,lat});if(chosen.length>=55)break}
 records=chosen;chosen.forEach(x=>makeSpecimen(x.name,x,x.rec));
 status.textContent=begin+'–'+finish+' · '+region+' · '+chosen.length+' harita örneği · '+new Set(chosen.map(x=>x.name)).size+' tür. '+(d.count>300?'İlk 300 GBIF kaydından örneklendi. ':'')+'Gözlem sayısı popülasyon değildir.';
-if(!chosen.length)status.textContent=begin+'–'+finish+' döneminde seçili filtrede haritada gösterilebilecek kayıt bulunamadı. Aşağıdaki fotoğraflı tür koleksiyonundan keşfe devam edebilirsin.';
-}catch(e){if(token!==request)return;status.textContent='Canlı gözlemler yüklenemedi. Aşağıdaki adaçayı koleksiyonu kullanılabilir. ('+e.message+')'}}
+if(!chosen.length){status.textContent=begin+'–'+finish+' döneminde kayıt bulunamadı. Yakın yıllardaki gerçek kayıtlar aranıyor…';await fallbackObservations(token,begin,finish)}
+}catch(e){if(token!==request)return;status.textContent='Canlı gözlemler yeniden deneniyor…';await fallbackObservations(token,begin,finish)}}
+
+async function fallbackObservations(token,begin,finish){
+const candidates=mode==='single'&&selected?[selected]:['Salvia fruticosa','Salvia tomentosa','Salvia sclarea','Salvia viridis','Salvia verticillata','Salvia officinalis','Salvia nemorosa','Salvia aethiopis'];
+const batches=await Promise.all(candidates.map(async name=>{
+try{const q=new URLSearchParams({country:'TR',scientificName:name,hasCoordinate:'true',hasGeospatialIssue:'false',limit:'30'});
+if(regions[region])regions[region].forEach(p=>q.append('stateProvince',p));
+const d=await get(GBIF+'/occurrence/search?'+q);return(d.results||[]).map(rec=>({name,rec,lon:rec.decimalLongitude,lat:rec.decimalLatitude}))}catch(e){return[]}}));
+if(token!==request)return;
+const all=batches.flat().filter(x=>Number.isFinite(x.lon)&&Number.isFinite(x.lat)&&x.lon>=25.5&&x.lon<=45.2&&x.lat>=35.7&&x.lat<=42.2);
+const seen=new Set();const unique=all.filter(x=>{const key=x.name+'|'+x.lon.toFixed(1)+'|'+x.lat.toFixed(1);if(seen.has(key))return false;seen.add(key);return true}).slice(0,38);
+wrap.replaceChildren();unique.forEach(x=>makeSpecimen(x.name,x,x.rec));
+status.textContent=unique.length?'Seçilen dönemde kayıt bulunamadı. Haritada '+unique.length+' doğrulanmış tarihsel gözlem gösteriliyor (farklı yıllardan). Yıl filtresi uygulanmadı.':'Bu filtre için koordinatlı GBIF kaydı bulunamadı. Fotoğraflı tür galerisi aşağıda.';
+}
+
 const regionSelect=document.createElement('select');regionSelect.id='region-list';regionSelect.setAttribute('aria-label','Bölge seç');regionSelect.innerHTML=Object.keys(regions).map(k=>'<option>'+k+'</option>').join('');regionSelect.onchange=()=>{region=regionSelect.value;queue()};$('status').before(regionSelect);
 const allBtn=document.createElement('button');allBtn.id='all-species';allBtn.textContent='TÜM TÜRLERİ GÖSTER';allBtn.onclick=()=>{mode='all';selected=null;card.classList.remove('on');queue()};$('actions').prepend(allBtn);
 timeline.oninput=()=>{year.textContent=timeline.value;queue()};$('close').onclick=()=>{card.classList.remove('on');selected=null};$('random').onclick=()=>show(taxa[Math.floor(Math.random()*taxa.length)]);
