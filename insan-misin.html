@@ -34,47 +34,44 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-vis
 @media(max-height:620px){.content{padding:16px}.title{margin:12px 0 8px}.panel{min-height:410px}.question{font-size:25px}.help{margin-bottom:13px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
 </style></head>
-<body><div class="shell"><nav class="nav"><a href="/">← aynen.fun</a><span>İNSAN DOĞRULAMA SİSTEMİ / TR</span></nav><header class="title"><h1>İnsan mısın?</h1><p>İma, bağlam, belirsizlik. İnsanla makineyi ayırmaya çalışan sekiz deney.</p></header>
+<body><div class="shell"><nav class="nav"><a href="/">← aynen.fun</a><span>İNSAN DOĞRULAMA SİSTEMİ / TR</span></nav><header class="title"><h1>İnsan mısın?</h1><p>Sekiz kontrol. Kesin sonuç yok.</p></header>
 <main class="panel"><div><div class="hud"><span class="progress" id="level">DOĞRULAMA / BAŞLANGIÇ</span><span class="detail" id="detail">İNSANLIK ORANI: %0</span></div><div class="track"><i id="track"></i></div></div><section class="content" id="content" aria-live="polite"></section><footer class="foot"><span>BU BİR OYUNDUR. GERÇEK KİMLİK DOĞRULAMASI YAPMAZ.</span><span id="footerState">AYNEN.FUN / CAPTCHA-TR</span></footer></main></div>
 <script>
 (function(){
 'use strict';
-var steps=['check','context','intent','pattern','pragmatic','ambiguity','timing','last'];
-var i=0,fail=0,done=false,timer=null,raf=0,started=0,signals={context:0,intent:0,pattern:0,pragmatic:0,ambiguity:0,timing:0},choices=[];
+var steps=['check','absence','interrupt','uncertainty','memory','silence','misread','last'];
+var i=0,done=false,timer=null,raf=0,started=0,answers=[],quiet=0,errors=0;
 var $=x=>document.getElementById(x),content=$('content'),lv=$('level'),dt=$('detail'),bar=$('track');
 function clean(){if(timer)clearTimeout(timer);timer=null;if(raf)cancelAnimationFrame(raf);raf=0}
 function ui(k,q,h,b){content.innerHTML='<div class="eyebrow">'+k+'</div><h2 class="question">'+q+'</h2><p class="help">'+h+'</p><div class="zone" id="zone">'+b+'</div><p class="result-msg" id="msg" role="status"></p>'}
 function say(t){let e=$('msg');if(e)e.textContent=t}
 function button(t,fn,outline){let b=document.createElement('button');b.className='btn'+(outline?' outline':'');b.textContent=t;b.onclick=fn;return b}
 function next(){clean();i++;if(i>=steps.length)end();else show()}
-function respond(key,value,feedback){signals[key]=value;choices.push({key:key,value:value});say(feedback);content.querySelectorAll('button,input').forEach(x=>x.disabled=true);timer=setTimeout(next,1050)}
-function answers(arr,key){let z=$('zone');z.innerHTML='<div class="choicegrid">'+arr.map((x,n)=>'<button type="button" data-n="'+n+'">'+x[0]+'</button>').join('')+'</div>';z.querySelectorAll('button').forEach(b=>b.onclick=()=>{let x=arr[+b.dataset.n];respond(key,x[1],x[2])})}
-function show(){clean();lv.textContent='İNSAN DOĞRULAMA '+String(i+1).padStart(2,'0')+' / 08';dt.textContent='ANALİZ: %'+Math.round(i/8*100);bar.style.width=(i/8*100)+'%';$('footerState').textContent='DAVRANIŞ SİNYALİ: '+choices.length;switch(steps[i]){
+function record(key,value,feedback){answers.push({key,value});say(feedback);content.querySelectorAll('button,input').forEach(x=>x.disabled=true);timer=setTimeout(next,1000)}
+function choices(list,key){let z=$('zone');z.innerHTML='<div class="choicegrid">'+list.map((x,n)=>'<button type="button" data-n="'+n+'">'+x[0]+'</button>').join('')+'</div>';z.querySelectorAll('button').forEach(b=>b.onclick=()=>{let x=list[+b.dataset.n];record(key,x[1],x[2])})}
+function show(){clean();lv.textContent='KONTROL '+String(i+1).padStart(2,'0')+' / 08';dt.textContent='TAMAMLANDI: %'+Math.round(i/8*100);bar.style.width=i/8*100+'%';$('footerState').textContent='KAYIT: '+answers.length;switch(steps[i]){
 case 'check':
-ui('01 / ÖN KONTROL','Ben robot değilim.','Bu kutu hiçbir şeyi kanıtlamıyor. Ama herkes buradan başlıyor.','<div class="check"><label><input type="checkbox" id="human"> Ben robot değilim</label><div class="captcha-brand"><strong>▦</strong>aynenCAPTCHA</div></div>');$('human').onchange=()=>{say('Kutuyu işaretlemek kolay. Asıl test şimdi.');timer=setTimeout(next,850)};break;
-case 'context':
-ui('02 / BAĞLAM','“Çay koyayım mı?”','Misafirsin. Ev sahibi üçüncü kez soruyor. Az önce iki kez “yok” dedin.','');
-answers([['Yok, teşekkür ederim.',0,'Tutarlı. Ama üçüncü teklifin sosyal anlamı farklı olabilir.'],['Bir bardak içerim.',1,'Bağlam değişti: üçüncü teklif bazen nezaket ritüelidir.'],['Çayın kaynama noktası 100°C.',-1,'Bilgi doğru olabilir; soruyla ilişkisi zayıf.'],['Önce içecek envanteri çıkaralım.',-1,'Sistematik ama biraz fazla sistematik.']],'context');break;
-case 'intent':
-ui('03 / NİYET OKUMA','“Sen bilirsin.”','Arkadaşın iki restoran arasında seçim yapmanı istedi. Birini söyledin. “Sen bilirsin” dedi.','');
-answers([['Tamam, o zaman oraya gidiyoruz.',0,'Söyleneni doğrudan aldın.'],['İstemiyorsan diğerine gidelim mi?',1,'Cümlenin arkasındaki olası tereddüdü fark ettin.'],['Karar yetkisi bana devredildi.',-1,'Biçimsel olarak mantıklı; sosyal olarak riskli.'],['Restoranların puanını tekrar hesaplarım.',0,'Veri topladın ama asıl ipucu ton ve bağlamdı.']],'intent');break;
-case 'pattern':
-ui('04 / ÖRÜNTÜ','Biri “Nasılsın?” dedi.','Sokakta karşılaştınız. Yürümeye devam ediyor. Cevap için yaklaşık iki saniyen var.','');
-answers([['İyiyim, sen?',1,'Sosyal ritmin kısa cevabını yakaladın.'],['Son 30 gündeki sağlık durumum şöyle...',-1,'Kelimesi kelimesine yanıt; bağlam için fazla ayrıntı.'],['Önce nasıl hissettiğimi tanımlayalım.',-1,'Yanıt vermeden ölçüm tasarladın.'],['Bu sorunun birden fazla anlamı var.',0,'Doğru, ama yürümeye devam ediyor.']],'pattern');break;
-case 'pragmatic':
-ui('05 / SÖYLENMEYEN','“Kapı açık kalmış.”','Biri salonda otururken bunu sana söylüyor. Kapının yanındasın.','');
-answers([['Evet, açık.',0,'Gözlemi doğruladın. İstek hâlâ havada.'],['Kapıyı kapatırım.',1,'Doğrudan söylenmeyen isteği yorumladın.'],['Kapının açık olma nedenlerini sıralarım.',-1,'Analiz ettin. Kapı hâlâ açık.'],['Kapı kavramını netleştirelim.',-1,'Tanım doğru olsa bile cereyan devam ediyor.']],'pragmatic');break;
-case 'ambiguity':
-ui('06 / BELİRSİZLİK','“Gelirken bir şey al.”','Evden çıktın. Mesaj geldi. Başka açıklama yok.','');
-answers([['Ne alayım?',1,'Eksik bilgiyi fark edip netleştirdin.'],['Bir adet herhangi bir şey alırım.',-1,'Kelimesi kelimesine uyum; yüksek yanlış anlama riski.'],['En popüler market ürününü alırım.',0,'Tahmin yaptın; gerekçe eksik.'],['Bütün marketi fotoğraflarım.',-1,'Kapsamlı ama pahalı bir çözüm.']],'ambiguity');break;
-case 'timing':
-ui('07 / ZAMANLAMA','Mesaj: “Müsait misin?”','Karşı taraf yazmaya devam ediyor… Sence hemen ne yapmalı?','');
-answers([['“Evet, ne oldu?” yazarım.',1,'Doğal bir karşılık verdin.'],['Yazması bitsin diye biraz beklerim.',1,'Beklemek de bağlama uygun olabilir.'],['Müsaitlik durumumu JSON olarak yollarım.',-1,'Makine için kullanışlı; arkadaşın için tuhaf.'],['Cevap vermeden takvimimi gönderirim.',0,'İyi niyetli ama gereğinden fazla.']],'timing');break;
+ui('01 / DOĞRULAMA','Robot değilim.','Kutuyu işaretle.','<div class="check"><label><input type="checkbox" id="human"> Ben robot değilim</label><div class="captcha-brand"><strong>▦</strong>aynenCAPTCHA</div></div>');$('human').onchange=()=>record('check','yes','Kaydedildi.');break;
+case 'absence':
+ui('02 / EKSİK BİLGİ','Hangisi farklı?','● ● ● ● ●','<div class="choicegrid"><button data-n="0">1.</button><button data-n="1">2.</button><button data-n="2">3.</button><button data-n="3">4.</button></div>');
+$('zone').querySelectorAll('button').forEach(b=>b.onclick=()=>record('absence',b.dataset.n,'Hepsi aynıydı.'));break;
+case 'interrupt':
+ui('03 / İLETİŞİM','“Müsait misin?”','Bir arkadaşından mesaj geldi.','');choices([['Evet, ne oldu?','direct',''],['Ne için?','clarify',''],['Birazdan.','delay',''],['Mesajı açmam.','ignore','']],'interrupt');break;
+case 'uncertainty':
+ui('04 / KESİNLİK','Birini seç.','İki seçenek arasında hiçbir fark yok.','<div class="choicegrid"><button data-n="left">SOL</button><button data-n="right">SAĞ</button></div>');
+$('zone').querySelectorAll('button').forEach(b=>b.onclick=()=>record('uncertainty',b.dataset.n,'Seçimin kaydedildi.'));break;
+case 'memory':
+ui('05 / HAFIZA','Biraz önce hangisini seçtin?','Sol mu, sağ mı?','');choices([['SOL','left',''],['SAĞ','right',''],['HATIRLAMIYORUM','unknown',''],['FARK ETMEZ','indifferent','']],'memory');break;
+case 'silence':
+ui('06 / SABIR','Bekle.','Bir sonraki adıma geçmek için hiçbir şey yapmana gerek yok.','<div class="queue-meter"><i id="queueFill"></i></div><div class="note" id="countdown">...</div>');
+started=performance.now();function wait(t){if(i!==5||done)return;let p=Math.min(100,(t-started)/3400*100);$('queueFill').style.width=p+'%';if(p>=100){record('silence','wait','');return}raf=requestAnimationFrame(wait)}raf=requestAnimationFrame(wait);break;
+case 'misread':
+ui('07 / TALİMAT','Bu soruyu cevaplama.','Aşağıdaki seçeneklerden birine basarsan cevap vermiş olursun.','<div class="choicegrid"><button data-n="yes">TAMAM</button><button data-n="no">CEVAPLAMAYACAĞIM</button></div><div class="note">Bu aşama 5 saniye sonra kendiliğinden geçer.</div>');
+$('zone').querySelectorAll('button').forEach(b=>b.onclick=()=>record('misread',b.dataset.n,'Talimatı okudun.'));started=performance.now();function hold(t){if(i!==6||done)return;if(t-started>=5000){record('misread','none','');return}raf=requestAnimationFrame(hold)}raf=requestAnimationFrame(hold);break;
 case 'last':
-ui('08 / SINIR TESTİ','Peki ya robotlar bunları da yapabiliyorsa?','Sence insanı robottan ayıran tek bir güvenilir davranış testi var mı?','');
-answers([['Hayır. Tek bir davranış kesin kanıt değildir.',1,'Evet. İnsan gibi davranmak insan olduğunu kesin olarak göstermez.'],['Evet. İroniyi anlamak yalnızca insana özgüdür.',0,'Güncel sistemler ironiyi de yorumlayabiliyor.'],['Evet. Çok hızlı cevap vermek robot olduğunu kanıtlar.',0,'Hız tek başına güvenilir bir ölçüt değil.'],['Evet. CAPTCHA çözmek yalnızca insanlara özgüdür.',0,'CAPTCHA başarısı da kimliği kesin olarak kanıtlamaz.']],'ambiguity');break;
+ui('08 / SON SORU','İnsan olduğunu nasıl kanıtlarsın?','Tek bir cevap seç.','');choices([['Konuşarak.','talk',''],['Hata yaparak.','error',''],['Bekleyerek.','wait',''],['Kanıtlayamam.','uncertain','']],'last');break;
 }}
-function end(){if(done)return;done=true;clean();bar.style.width='100%';lv.textContent='DOĞRULAMA RAPORU';dt.textContent='TEST TAMAMLANDI';let human=Object.values(signals).filter(x=>x===1).length;let label=human>=5?'BAĞLAM DUYARLILIĞI YÜKSEK':human>=3?'İNSAN GİBİ, AMA ŞÜPHELİ':'KELİMESİ KELİMESİNE YAŞIYORSUN';ui('SONUÇ / DENEYSEL','İnsan olduğun kanıtlanamadı.','Davranışların incelendi. Türün hakkında kesin sonuca varılamadı.','<div class="badge">'+human+'/6</div><div class="endline">'+label+'</div><p class="final-note">Bağlam, ima, belirsizlik ve sosyal ritim test edildi.<br>Bu bir mizah oyunudur; gerçek bot veya insan tespiti yapmaz.</p>');let z=$('zone');z.appendChild(button('YENİDEN DENE ↻',()=>{i=0;fail=0;done=false;signals={context:0,intent:0,pattern:0,pragmatic:0,ambiguity:0,timing:0};choices=[];show()}));z.appendChild(button('SONUCUMU PAYLAŞ ↗',async()=>{let t='İnsan mısın? '+human+'/6 — '+label+'. İnsan olduğum hâlâ kanıtlanamadı. Sen dene.';try{if(navigator.share)await navigator.share({title:'İnsan mısın? — aynen.fun',text:t,url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(t+' '+location.href);say('Sonuç kopyalandı.')}else prompt('Paylaş:',t+' '+location.href)}catch(e){}}));}
+function end(){if(done)return;done=true;clean();bar.style.width='100%';lv.textContent='DOĞRULAMA BİTTİ';dt.textContent='SONUÇ HAZIR';let prev=answers.find(x=>x.key==='uncertainty'),memory=answers.find(x=>x.key==='memory'),silent=answers.find(x=>x.key==='misread');let mismatch=prev&&memory&&prev.value!==memory.value;let title=mismatch?'KENDİNLE ÇELİŞTİN':silent&&silent.value==='none'?'TALİMATI UYGULADIN':'İNSAN OLABİLİRSİN';let caption=mismatch?'Bir önceki cevabını yanlış hatırladın.':silent&&silent.value==='none'?'Cevap vermemen de kaydedildi.':'Cevapların kaydedildi.';ui('SONUÇ','Doğrulanamadı.','Bu test insan ile yapay zekâyı güvenilir biçimde ayıramaz.','<div class="badge">?</div><div class="endline">'+title+'</div><p class="final-note">'+caption+'<br>Testin kendisi de kesin sonuç vermiyor.</p>');let z=$('zone');z.appendChild(button('TEKRAR DENE ↻',()=>{i=0;done=false;answers=[];show()}));z.appendChild(button('PAYLAŞ ↗',async()=>{let t='İnsan mısın? Sonucum: '+title+'. Sen de dene.';try{if(navigator.share)await navigator.share({title:'İnsan mısın? — aynen.fun',text:t,url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(t+' '+location.href);say('Kopyalandı.')}else prompt('Paylaş:',t+' '+location.href)}catch(e){}}));}
 
 show();
 })();
