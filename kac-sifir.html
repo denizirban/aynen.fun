@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fafaf8">
+<meta name="description" content="Bir sıfır daha. Bir sıfır daha. Trilyondan googol'e, milyonda birden daha da küçüğe. Sayıların ölçeğini keşfet.">
+<link rel="icon" href="/favicon.ico">
+<title>Kaç Sıfır? — aynen.fun</title>
+<style>
+:root{--bg:#fafaf8;--ink:#111;--muted:#777;--line:#e1e1de;--track:#1d1d1d}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100svh;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}button{cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #164dcd;outline-offset:4px}
+a{color:inherit}
+.page{min-height:100svh;max-width:1180px;margin:0 auto;padding:clamp(16px,3vh,30px) clamp(18px,4vw,48px) 19px;display:flex;flex-direction:column;gap:0}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.back{font-size:12px;letter-spacing:-.03em;text-decoration:none;font-weight:800}
+.back span{font-weight:400;margin-left:10px;color:#999;letter-spacing:0}
+.topright{font:10px/1.4 "Courier New",monospace;color:var(--muted)}
+.hero{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;flex:1;min-height:285px;padding:35px 0 13px}
+.eyebrow{font:10px "Courier New",monospace;color:#858585;letter-spacing:.09em}
+h1{font-size:clamp(22px,3.2vw,39px);letter-spacing:-.072em;font-weight:800;line-height:1.05;margin:5px 0 23px}
+.power{font-size:clamp(80px,15vw,190px);font-weight:750;letter-spacing:-.09em;line-height:.94;font-variant-numeric:tabular-nums;white-space:nowrap;display:inline-flex;align-items:flex-start;gap:0}
+.power sup{font-size:.32em;letter-spacing:-.09em;position:relative;top:.06em;margin-left:.13em;line-height:1}
+.name{font-size:clamp(25px,5vw,58px);font-weight:800;letter-spacing:-.07em;line-height:1.16;margin-top:23px;min-height:1.18em;max-width:100%;overflow-wrap:anywhere}
+.explanation{font-size:clamp(11px,1.35vw,14px);color:#888;margin-top:10px;max-width:530px;line-height:1.5;min-height:1.5em}
+.zeros-wrap{width:min(100%,780px);margin:20px auto 0;padding:12px 0 0;border-top:1px solid var(--line);min-height:57px}
+.zeros-head{display:flex;justify-content:space-between;align-items:center;gap:12px;font:10px "Courier New",monospace;color:#888;margin:0 0 9px}
+.zeros{font:clamp(11px,1.5vw,14px)/1.65 "Courier New",monospace;color:#3c3c3c;word-break:break-word;overflow-wrap:anywhere;max-height:68px;overflow:hidden;font-variant-numeric:tabular-nums;letter-spacing:1.4px}
+.zeros.long{letter-spacing:1px}
+.controls{padding:10px 0 0;margin:0 auto;width:min(100%,790px)}
+.scale-labels{display:flex;justify-content:space-between;font:10px "Courier New",monospace;letter-spacing:.03em;color:#818181}
+.track-row{display:flex;align-items:center;gap:17px;margin:12px 0 10px}
+.step{width:57px;height:57px;border:1px solid #cfcfcb;background:#fff;font:700 17px Arial,sans-serif;flex:none;border-radius:50%;transition:background .18s,transform .18s;display:flex;align-items:center;justify-content:center}
+.step:hover{background:#f0f0ec}.step:active{transform:scale(.94)}
+.slider{flex:1;min-width:0;appearance:none;-webkit-appearance:none;height:2px;background:linear-gradient(to right,#151515 0%,#151515 var(--progress,56%),#d2d2ce var(--progress,56%),#d2d2ce 100%);cursor:pointer;touch-action:pan-y}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:23px;height:23px;background:#111;border:5px solid var(--bg);border-radius:50%;box-shadow:0 0 0 1px #111}
+.slider::-moz-range-thumb{width:14px;height:14px;background:#111;border:5px solid var(--bg);border-radius:50%;box-shadow:0 0 0 1px #111}
+.undertrack{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:30px}
+.multiplier{font:10px "Courier New",monospace;color:#8b8b8b}
+.skip{display:flex;gap:7px}
+.skip button{border:0;background:transparent;padding:7px 3px;font:10px "Courier New",monospace;text-decoration:underline;text-underline-offset:3px}
+.fact{width:min(100%,790px);margin:14px auto 0;border-top:1px solid var(--line);padding:14px 0 0;display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.fact-left{display:flex;flex-direction:column;gap:6px;max-width:670px}
+.fact-label{font:10px "Courier New",monospace;color:#888;letter-spacing:.03em}
+.fact-text{font-size:13px;line-height:1.5;letter-spacing:-.01em;color:#3d3d3d;min-height:2.8em}
+.share{border:1px solid #222;background:transparent;font:10px "Courier New",monospace;padding:11px 14px;white-space:nowrap;min-height:40px}
+.share:hover{background:#111;color:#fff}
+footer{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:22px;font:9px/1.5 "Courier New",monospace;color:#999}
+footer a{text-underline-offset:3px}
+.motion .power,.motion .name{animation:pop .19s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:.56;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:650px){
+.page{padding:17px 17px 14px;min-height:100svh}
+.hero{padding:15px 0;min-height:300px}
+h1{font-size:26px;margin:7px 0 20px}
+.power{font-size:clamp(76px,23vw,140px)}
+.name{font-size:clamp(26px,9vw,44px);margin-top:22px}
+.explanation{font-size:12px}
+.zeros-wrap{margin-top:21px}
+.zeros{font-size:11px;max-height:56px}
+.track-row{gap:10px}
+.step{width:48px;height:48px;font-size:14px}
+.multiplier{font-size:9px}
+.skip button{font-size:9px}
+.fact{margin-top:14px}
+.fact-text{font-size:12px}
+.share{padding:10px;font-size:9px}
+footer{font-size:8px;margin-top:20px}
+}
+@media(max-width:370px){.topright{font-size:8px}.skip button{font-size:8px}.fact{gap:8px}}
+@media(max-height:700px) and (min-width:651px){.hero{min-height:250px;padding:15px 0 4px}.power{font-size:clamp(85px,14vh,140px)}.name{font-size:clamp(26px,5vh,48px)}.page{padding-top:14px}.zeros-wrap{margin-top:13px}footer{margin-top:12px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="page" id="page">
+<header>
+<a class="back" href="/">aynen.fun <span>← OYUNLAR</span></a>
+<span class="topright">SAYILARIN SONU YOK. BU SAYFANIN VAR.</span>
+</header>
+<main class="hero" aria-label="Sayı ölçeği simülasyonu">
+<div class="eyebrow">BİR SAYININ NE KADAR BÜYÜYEBİLECEĞİNİ GÖR</div>
+<h1>Kaç Sıfır?</h1>
+<div class="power" id="power" aria-label="On üzeri on iki">10<sup id="exp">12</sup></div>
+<div class="name" id="name" aria-live="polite" aria-atomic="true">Trilyon</div>
+<div class="explanation" id="explanation">1'in ardından 12 sıfır.</div>
+<div class="zeros-wrap">
+<div class="zeros-head"><span id="number-caption">SAYININ TAM YAZILIŞI</span><span id="zeros-count">12 SIFIR</span></div>
+<div class="zeros" id="zeros">1 000 000 000 000</div>
+</div>
+</main>
+<div class="controls">
+<div class="scale-labels"><span>← DAHA KÜÇÜK</span><span>DAHA BÜYÜK →</span></div>
+<div class="track-row">
+<button class="step" type="button" id="smaller" aria-label="Sayıyı ona böl">÷10</button>
+<input class="slider" type="range" min="-100" max="100" value="12" step="1" id="scale" aria-label="Onun kuvveti; eksi yüz ile artı yüz arasında">
+<button class="step" type="button" id="bigger" aria-label="Sayıyı onla çarp">×10</button>
+</div>
+<div class="undertrack">
+<span class="multiplier" id="hint">HER ADIMDA 10 KAT DEĞİŞİR.</span>
+<div class="skip"><button type="button" id="previous">← ÖNCEKİ İSİM</button><button type="button" id="next">SONRAKİ İSİM →</button></div>
+</div>
+</div>
+<div class="fact">
+<div class="fact-left"><div class="fact-label">BUNU BİLİYOR MUYDUN?</div><div class="fact-text" id="fact">1 trilyon, 1 milyarın 1000 katıdır.</div></div>
+<button class="share" id="share" type="button">PAYLAŞ ↗</button>
+</div>
+<footer>
+<span>10⁻¹² = TRİLYONDA BİR. −10¹² = NEGATİF TRİLYON. AYNI ŞEY DEĞİL.</span>
+<a href="https://www.bipm.org/en/measurement-units/si-prefixes/" target="_blank" rel="noopener noreferrer">BİRİM ÖNEKLERİ / BIPM ↗</a>
+</footer>
+</div>
+<script>
+(function(){
+'use strict';
+var names={
+0:'Bir',1:'On',2:'Yüz',3:'Bin',6:'Milyon',9:'Milyar',12:'Trilyon',15:'Katrilyon',18:'Kentilyon',21:'Sekstilyon',24:'Septilyon',27:'Oktilyon',30:'Nonilyon',33:'Desilyon',36:'Undesilyon',39:'Dodesilyon',42:'Tredesilyon',45:'Katordesilyon',48:'Kendesilyon',51:'Seksdesilyon',54:'Septendesilyon',57:'Oktodesilyon',60:'Novemdesilyon',63:'Vigintilyon',66:'Anvigintilyon',69:'Dovigintilyon',72:'Trevigintilyon',75:'Katorvigintilyon',78:'Kenvigintilyon',81:'Sesvigintilyon',84:'Septemvigintilyon',87:'Oktovigintilyon',90:'Novemvigintilyon',93:'Trigintilyon',96:'Antrigintilyon',99:'Dotrigintilyon',100:'Googol'
+};
+var small={1:'Onda bir',2:'Yüzde bir',3:'Binde bir',6:'Milyonda bir',9:'Milyarda bir',12:'Trilyonda bir',15:'Katrilyonda bir',18:'Kentilyonda bir',21:'Sekstilyonda bir',24:'Septilyonda bir',27:'Oktilyonda bir',30:'Nonilyonda bir'};
+var facts={
+'-30':'10⁻³⁰ = quecto. 2022 yılında uluslararası ölçü sistemine eklenen en küçük SI önekidir.',
+'-27':'10⁻²⁷ = ronto. 2022 yılında kabul edilen dört yeni SI önekinden biridir.',
+'-24':'10⁻²⁴ = yocto. Metrenin septilyonda biri kadar küçüktür.',
+'-21':'10⁻²¹ = zepto. Bir zeptosaniye, saniyenin sekstilyonda biridir.',
+'-18':'10⁻¹⁸ = atto. Bir attosaniye, saniyenin kentilyonda biridir.',
+'-15':'10⁻¹⁵ = femto. Bir femtometre, metrenin katrilyonda biridir.',
+'-12':'10⁻¹² = pico. Bir pikometre, metrenin trilyonda biridir.',
+'-9':'10⁻⁹ = nano. DNA çift sarmalının çapı yaklaşık 2,5 nanometredir.',
+'-6':'10⁻⁶ = mikro. Bir mikrometre, metrenin milyonda biridir.',
+'-3':'10⁻³ = mili. Bir milimetre, bir metrenin binde biridir.',
+'-2':'10⁻² = santi. Bir santimetre, bir metrenin yüzde biridir.',
+'-1':'10⁻¹ = desi. Bir desimetre, metrenin onda biridir.',
+0:'10⁰ = 1. Sıfırıncı kuvvet, sıfır değil birdir.',
+1:'10¹ = 10. Bir adımda sayı 10 katına çıktı.',
+2:'10² = 100. Bir adımda yine 10 katına çıktı.',
+3:'10³ = 1000. Bin, 1’in ardından gelen üç sıfırdır.',
+6:'10⁶ = 1 milyon. Bir milyon, binin 1000 katıdır.',
+9:'10⁹ = 1 milyar. Bir milyar, bir milyonun 1000 katıdır.',
+12:'10¹² = 1 trilyon. Bir trilyon, bir milyarın 1000 katıdır.',
+15:'10¹⁵ = 1 katrilyon. Bir katrilyon, bir trilyonun 1000 katıdır.',
+18:'10¹⁸ = 1 kentilyon. SI sisteminde bu büyüklüğün öneki exa’dır.',
+21:'10²¹ = 1 sekstilyon. SI öneki zetta’dır.',
+24:'10²⁴ = 1 septilyon. SI öneki yotta’dır.',
+27:'10²⁷ = 1 oktilyon. SI öneki ronna, 2022’de kabul edildi.',
+30:'10³⁰ = 1 nonilyon. SI öneki quetta, 2022’de kabul edildi.',
+33:'10³³ = 1 desilyon. Artık resmî SI öneklerinin en büyüğü olan quetta’yı da geçtik.',
+80:'10⁸⁰, gözlemlenebilir evrendeki atomların sayısı için sık kullanılan kaba bir büyüklük tahminidir.',
+100:'Googol = 10¹⁰⁰. Son sayı değildir; bir sıfır daha ekleyebilirsin.'
+};
+var e=12;
+var el={exp:document.getElementById('exp'),power:document.getElementById('power'),name:document.getElementById('name'),explanation:document.getElementById('explanation'),zeros:document.getElementById('zeros'),count:document.getElementById('zeros-count'),caption:document.getElementById('number-caption'),slider:document.getElementById('scale'),fact:document.getElementById('fact'),share:document.getElementById('share')};
+function special(k){return Object.prototype.hasOwnProperty.call(names,k)}
+function readName(k){
+ if(k===100)return 'Googol';
+ if(k===0)return 'Bir';
+ if(k>0){
+  if(special(k))return names[k];
+  var g=Math.floor(k/3)*3, n=k-g;
+  if(g===0)return names[k]||'On üzeri '+k;
+  return (n===1?'10 ':n===2?'100 ':'')+names[g];
+ }
+ var abs=-k;
+ if(small[abs])return small[abs];
+ if(abs===4)return 'On binde bir';
+ if(abs===5)return 'Yüz binde bir';
+ if(abs<=30){
+  var ceil=Math.ceil(abs/3)*3, d=ceil-abs;
+  if(d===1 || d===2)return (d===1?'10 ':'100 ')+(small[ceil]||'') ;
+ }
+ return 'On üzeri eksi '+abs;
+}
+function full(k){
+ if(k===0)return '1';
+ if(k>0){var arr=['1'];for(var i=0;i<k;i+=3){arr.push('0'.repeat(Math.min(3,k-i)))}return arr.join(' ')}
+ return '0,'+'0'.repeat(-k-1)+'1';
+}
+function explain(k){
+ if(k===0)return 'Tam ortadayız. Bir tane.';
+ if(k>0)return '1\'in ardından '+k+' sıfır.';
+ return 'Virgülden sonra '+(-k-1)+' sıfır, ardından 1.';
+}
+function factFor(k){
+ if(facts[k])return facts[k];
+ if(k<0)return '10 üzeri '+k+' = 1 / 10 üzeri '+(-k)+'. Sayı pozitif kalır ama gittikçe sıfıra yaklaşır.';
+ return '10 üzeri '+k+', 10 üzeri '+(k-1)+' sayısının tam 10 katıdır. Her yeni basamak yeni bir sıfır getirir.';
+}
+function setExp(n,animate){
+ e=Math.max(-100,Math.min(100,Math.round(n)));
+ el.exp.textContent=e<0?'−'+(-e):''+e;
+ el.power.setAttribute('aria-label','On üzeri '+(e<0?'eksi '+(-e):e));
+ el.name.textContent=readName(e);
+ el.explanation.textContent=explain(e);
+ el.zeros.textContent=full(e);
+ el.zeros.classList.toggle('long',Math.abs(e)>30);
+ el.count.textContent=e>0?e+' SIFIR':e===0?'0 SIFIR':(-e)+' ONDALIK BASAMAK';
+ el.caption.textContent=e>=0?'SAYININ TAM YAZILIŞI':'SAYININ ONDALIK YAZILIŞI';
+ el.slider.value=e;
+ el.slider.style.setProperty('--progress',((e+100)/200*100).toFixed(2)+'%');
+ el.fact.textContent=factFor(e);
+ if(animate&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  var p=document.getElementById('page');p.classList.remove('motion');void p.offsetWidth;p.classList.add('motion');
+ }
+ var u=new URL(location.href);u.searchParams.set('e',e);history.replaceState(null,'',u.pathname+u.search);
+}
+function jump(dir){
+ var n=e;
+ if(dir>0){
+  if(n<0)n=Math.min(0,n+3);else if(n<100)n=Math.min(100,Math.floor(n/3)*3+3);
+ }else{
+  if(n>0)n=Math.max(0,Math.ceil(n/3)*3-3);else if(n>-100)n=Math.max(-100,Math.ceil(n/3)*3-3);
+ }
+ setExp(n,true);
+}
+document.getElementById('smaller').addEventListener('click',function(){setExp(e-1,true)});
+document.getElementById('bigger').addEventListener('click',function(){setExp(e+1,true)});
+document.getElementById('previous').addEventListener('click',function(){jump(-1)});
+document.getElementById('next').addEventListener('click',function(){jump(1)});
+el.slider.addEventListener('input',function(){setExp(Number(this.value),true)});
+document.addEventListener('keydown',function(ev){
+ if(ev.altKey||ev.ctrlKey||ev.metaKey||ev.target===el.slider)return;
+ if(ev.key==='ArrowLeft'){ev.preventDefault();setExp(e-1,true)}
+ if(ev.key==='ArrowRight'){ev.preventDefault();setExp(e+1,true)}
+});
+var wheelLock=0;
+document.querySelector('.hero').addEventListener('wheel',function(ev){
+ if(Math.abs(ev.deltaY)<5||Math.abs(ev.deltaY)<Math.abs(ev.deltaX))return;
+ var now=Date.now();if(now-wheelLock<160)return;
+ wheelLock=now;setExp(e+(ev.deltaY>0?1:-1),true);
+},{passive:true});
+el.share.addEventListener('click',function(){
+ var url=location.href;var message=readName(e)+' = 10^'+e+'. Kaç Sıfır? — aynen.fun';
+ if(navigator.share){navigator.share({title:'Kaç Sıfır? — aynen.fun',text:message,url:url}).catch(function(){})}
+ else if(navigator.clipboard){navigator.clipboard.writeText(message+' '+url).then(function(){el.share.textContent='KOPYALANDI ✓';setTimeout(function(){el.share.textContent='PAYLAŞ ↗'},1700)}).catch(function(){window.prompt('Sonuç',message+' '+url)})}
+ else window.prompt('Sonuç',message+' '+url);
+});
+var initial=new URLSearchParams(location.search).get('e');
+if(initial!==null&&/^[-+]?\d{1,3}$/.test(initial))e=Number(initial);
+setExp(e,false);
+})();
+</script>
+</body>
+</html>
