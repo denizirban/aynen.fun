@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f8f8f6">
+<meta name="description" content="Çok tuhaf sekiz nesne. Hepsi gerçek. Ne işe yaradıklarını tahmin et.">
+<title>Ne İşe Yarıyor? — aynen.fun</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+:root{color-scheme:light;--paper:#f8f8f6;--ink:#171717;--rule:#b9b9b4;--muted:#777;--accent:#e35a2b}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--paper)}
+body{margin:0;color:var(--ink);background:var(--paper);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh}
+button{color:inherit;font:inherit;cursor:pointer}a{color:inherit}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mono{font-family:"Courier New",Courier,monospace}
+.chrome{height:81px;display:flex;align-items:flex-start;justify-content:space-between;padding:27px clamp(22px,4vw,57px) 0;gap:18px;position:relative;z-index:3}
+.brand{position:relative;display:inline-flex;align-items:center;gap:17px;min-height:27px;color:var(--ink);font-weight:800;font-size:12px;letter-spacing:-.045em;text-decoration:none}
+.brand::before{content:"";position:absolute;z-index:-1;width:94px;height:69px;left:10px;top:-20px;pointer-events:none;background:radial-gradient(ellipse at center,rgba(239,94,34,.65) 0,rgba(244,102,54,.27) 34%,transparent 72%);filter:blur(10px)}
+.brand span{font-weight:400;letter-spacing:.1em;font-size:9px}
+.status{text-align:right;text-transform:uppercase;font-size:9px;line-height:1.35;font-weight:700;letter-spacing:.01em}
+.status b{color:#48667d;font-weight:700}
+main{width:min(1370px,100%);margin:auto;min-height:calc(100dvh - 151px);display:grid;grid-template-columns:minmax(0,1.18fr) minmax(325px,.77fr);align-items:center;gap:clamp(12px,2vw,44px);padding:8px clamp(24px,5vw,72px) 28px}
+.gallery{min-width:0;min-height:400px;height:min(69dvh,640px);position:relative;display:grid;place-items:center;isolation:isolate}
+.gallery::before{content:"";position:absolute;z-index:-2;width:75%;height:70%;top:14%;left:11%;background:radial-gradient(ellipse at 50% 50%,#e8e8e2 0,rgba(239,236,229,.55) 34%,transparent 73%);opacity:.52;filter:blur(22px)}
+.gallery .halo{position:absolute;z-index:-1;top:12%;right:11%;width:115px;height:116px;background:radial-gradient(circle,rgba(239,108,53,.38),rgba(239,108,53,.02) 70%);filter:blur(22px);transition:transform .7s}
+.object-shell{width:78%;height:83%;display:grid;place-items:center;position:relative;transition:transform .52s cubic-bezier(.2,.76,.2,1),opacity .3s;cursor:zoom-in}
+.object-shell:hover{transform:translateY(-7px) rotate(-1deg)}
+.object-shell.zoom{transform:scale(1.35);cursor:zoom-out;z-index:2}
+.object-photo{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;filter:contrast(1.05) drop-shadow(0px 14px 11px rgba(0,0,0,.07));display:block;transition:opacity .35s}
+.object-shell.loading .object-photo{opacity:0}
+.fallback{position:absolute;width:55%;height:60%;inset:auto;display:none;place-items:center;font-size:90px;font-weight:100;opacity:.18}
+.object-shell.error .fallback{display:grid}
+.gallery-nav{position:absolute;top:46%;border:0;background:transparent;font-size:28px;font-weight:300;width:48px;height:56px;display:grid;place-items:center;z-index:4;transition:transform .2s}
+.gallery-nav:hover{transform:scale(1.22)}
+.gallery-nav.prev{left:0}.gallery-nav.next{right:0}
+.gallery-mark{position:absolute;bottom:4%;left:10%;font-size:9px;font-weight:700;letter-spacing:.07em}
+.gallery-caption{position:absolute;bottom:4%;right:8%;font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.08em}
+.dossier{position:relative;width:100%;max-width:512px;background:rgba(248,248,246,.7);border:1px solid #979793;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);align-self:center}
+.rule-row{border-bottom:1px solid #a5a5a0;padding:11px 14px}
+.toprow{display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:700;min-height:38px}
+.toprow .light{color:#6d6d6d;font-weight:400}
+.headrow{min-height:103px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.eyebrow{font:9px/1.4 "Courier New",monospace;letter-spacing:.08em;color:#737373}
+.title{font-weight:600;font-size:clamp(24px,3vw,41px);letter-spacing:-.075em;line-height:1.04;margin:0}
+.title.reveal{font-size:clamp(25px,3vw,36px)}
+.actionrow{display:grid;grid-template-columns:1fr 1fr;background:rgba(202,202,202,.45)}
+.actionrow button{border:0;background:transparent;min-height:43px;font-size:10px;font-weight:700}
+.actionrow button+button{border-left:1px solid #aaa}
+.actionrow button:hover{background:#e6e2dc}
+.meta{display:grid;grid-template-columns:1fr 1fr}
+.meta .item{padding:12px 13px;border-right:1px solid #aaa}
+.meta .item:last-child{border-right:0}
+.meta small{font-size:9px;font-weight:700;display:block;margin-bottom:7px}
+.meta strong{font-size:10px;font-weight:400;display:block;color:#686868;line-height:1.5}
+.questionarea{padding:16px 14px 17px;min-height:244px}
+.ask{font-size:12px;line-height:1.55;margin:0 0 10px;font-weight:600;letter-spacing:-.015em}
+.choices{display:grid;gap:7px}
+.choice{width:100%;border:1px solid #bab9b5;min-height:38px;padding:9px 11px;background:rgba(255,255,255,.58);display:flex;align-items:center;gap:10px;text-align:left;font-size:11px;line-height:1.4;transition:background .15s}
+.choice:hover:not(:disabled){background:#e8e6e1;border-color:#777}
+.choice:disabled{cursor:default;opacity:.55}
+.choice.correct{border-color:#272727;background:#e8e9e3;color:#222;opacity:1}
+.choice.wrong{background:#f7e8e2;border-color:#d49d89;opacity:1}
+.choice .number{font:9px "Courier New",monospace;color:#777;width:15px;flex:none}
+.answerline{margin:0 0 8px;font:700 10px/1.4 "Courier New",monospace;letter-spacing:.04em}
+.answerline.good{color:#496249}.answerline.bad{color:#af4d32}
+.explain{font-size:11px;line-height:1.67;margin:0 0 9px}
+.fact{border-top:1px solid #ccc;margin-top:10px;padding-top:11px;font-size:11px;line-height:1.6}
+.fact b{font-size:9px;display:block;margin-bottom:3px;letter-spacing:.08em}
+.source{font:9px/1.5 "Courier New",monospace;margin-top:12px;color:#737373}
+.source a{text-underline-offset:2px}
+.bottomrow{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:10px 14px;font:9px "Courier New",monospace;color:#606060}
+.bottomrow button{font-size:9px;border:0;background:none;padding:6px 0;text-decoration:underline;text-underline-offset:3px;font-weight:bold}
+.progress{height:2px;width:100%;background:#deded9}
+.progress span{display:block;height:100%;background:#242424;width:0;transition:width .3s}
+footer{padding:0 clamp(22px,4vw,57px) 22px;min-height:55px;display:flex;align-items:end;justify-content:space-between;font-size:9px;font-weight:bold;gap:12px}
+footer .small{font-weight:400;color:#777;max-width:460px;line-height:1.5;text-align:right}
+.finish{padding:18px 0 4px}
+.finish h2{font-size:48px;letter-spacing:-.085em;margin:6px 0 12px}
+.finish p{font-size:12px;line-height:1.65;color:#555;margin:0 0 20px}
+.finish .btn{border:1px solid #888;background:#eee;padding:12px 14px;font-size:11px;font-weight:700;margin:0 8px 8px 0}
+.finish .btn:hover{background:#deded9}
+.toast{position:fixed;bottom:63px;left:50%;transform:translateX(-50%);background:#171717;color:white;padding:10px 13px;font:11px Arial,sans-serif;z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media(min-width:1000px){.dossier{transform:translateX(-1.5%)}}
+@media(max-width:850px){.chrome{height:60px;padding:18px 20px 0}.brand{font-size:12px}.brand span{font-size:8px}.status{font-size:8px}main{min-height:auto;padding:7px 20px 22px;grid-template-columns:1fr;gap:0}.gallery{height:clamp(270px,43dvh,440px);min-height:0}.object-shell{width:65%;height:84%}.gallery-nav.prev{left:1%}.gallery-nav.next{right:1%}.gallery-mark,.gallery-caption{bottom:1%}.dossier{max-width:620px;margin:13px auto 0}.headrow{min-height:83px}.questionarea{min-height:210px;padding:13px}.choice{min-height:43px}.title{font-size:28px}footer{padding:0 20px 17px;min-height:50px}}
+@media(max-width:420px){.gallery{height:290px}.object-shell{width:72%;height:81%}.gallery-nav{width:29px;font-size:25px}.chrome{padding-left:17px;padding-right:17px}.toprow,.bottomrow{padding-left:11px;padding-right:11px}main{padding-left:13px;padding-right:13px}.gallery-caption{right:2%}.gallery-mark{left:3%}footer{padding-left:16px;padding-right:16px}.headrow{min-height:78px}.title{font-size:27px}}
+@media(max-height:620px) and (min-width:851px){.chrome{height:62px;padding-top:16px}main{min-height:calc(100dvh - 110px)}.gallery{height:75dvh;min-height:290px}.questionarea{min-height:190px;padding-top:9px;padding-bottom:9px}.choice{min-height:31px;padding:7px}.rule-row{padding-top:7px;padding-bottom:7px}.headrow{min-height:68px}.meta .item{padding:7px 12px}footer{min-height:45px;padding-bottom:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="chrome">
+ <a class="brand" href="/" aria-label="aynen.fun ana sayfa">AYNEN. <span>OBJECT STUDY</span></a>
+ <div class="status mono">KOLEKSİYON / 001<br><b id="status">GÖRÜNTÜLENEN: NESNE</b></div>
+</header>
+<main>
+ <section class="gallery" aria-label="Nesne fotoğrafı">
+  <span class="halo" aria-hidden="true"></span>
+  <button class="gallery-nav prev" type="button" id="prev" aria-label="Önceki nesne">‹</button>
+  <div class="object-shell loading" id="object-shell" title="Büyütmek için dokun">
+   <img class="object-photo" id="photo" alt="" width="900" height="700">
+   <div class="fallback" aria-hidden="true">?</div>
+  </div>
+  <button class="gallery-nav next" type="button" id="next" aria-label="Sonraki nesne">›</button>
+  <span class="gallery-mark mono" id="photo-index">01 / 08</span>
+  <span class="gallery-caption mono" id="photo-caption">GERÇEK NESNE / GERÇEK FOTOĞRAF</span>
+ </section>
+ <section class="dossier" id="dossier" aria-live="polite" aria-label="Nesne bilgi kartı">
+  <div class="rule-row toprow mono"><span id="back" role="text">← NESNE ARŞİVİ</span><span class="light" id="collection">NO. 001—008</span></div>
+  <div class="rule-row headrow"><div class="eyebrow" id="eyebrow">BULUNDU / TANIMLANAMADI</div><h1 class="title" id="title">Bu ne işe yarıyor?</h1></div>
+  <div class="rule-row actionrow" style="padding:0"><button type="button" id="shuffle">RASTGELE NESNE ↗</button><button type="button" id="share">PAYLAŞ ↗</button></div>
+  <div class="rule-row meta" style="padding:0"><div class="item"><small class="mono">MALZEME</small><strong id="material">—</strong></div><div class="item"><small class="mono">KOLEKSİYON</small><strong id="category">—</strong></div></div>
+  <div class="questionarea" id="questionarea"></div>
+  <div class="progress" role="progressbar" aria-label="Yanıtlanan nesneler" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="progress"><span id="bar"></span></div>
+  <div class="bottomrow"><span id="count">0 / 8 NESNE ÇÖZÜLDÜ</span><button type="button" id="result">SONUCU GÖR →</button></div>
+ </section>
+</main>
+<footer>
+ <a href="/" style="text-decoration:none">AYNEN.FUN / OYUNLAR</a>
+ <span class="small">Bir nesnenin normal görünmesi, normal olduğu anlamına gelmez.</span>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+var commons='https://commons.wikimedia.org/wiki/File:';
+var objects=[
+{slug:'ferro',name:'Ferrofluid',material:'DEMİR OKSİT + TAŞIYICI SIVI',category:'MANYETİK SIVI',photo:'Ferrofluid-1.JPG',credit:'Mnolf · CC BY-SA 2.0 / GFDL',question:'Bu siyah sıvı neden diken diken oluyor?',choices:['Sıvının içindeki küçük parçacıklar manyetik alana tepki veriyor.','Su yüzeyindeki basınç sıvıyı kristale çeviriyor.','Sıvı ışık görünce aniden donuyor.'],correct:0,story:'Bu sıvının içinde çok küçük manyetik parçacıklar bulunuyor. Mıknatıs yaklaştığında parçacıklar ve yüzey gerilimi bir araya gelerek sivri desenler oluşturuyor.',fact:'Ferrofluid sıvı kalır. Dikenli görünümüne rağmen bir katıya dönüşmez.',link:'https://en.wikipedia.org/wiki/Ferrofluid'},
+{slug:'rupert',name:'Prens Rupert Damlası',material:'HIZLA SOĞUTULMUŞ CAM',category:'CAM / GERİLME',photo:'Prince Ruperts drops.jpg',credit:'Michael Grogan · Kamu malı',question:'Bu cam damlanın en garip özelliği ne?',choices:['Suyun içinde yüzebiliyor.','Baş kısmı darbelere çok dayanıklı; kuyruğu kırılırsa tümü parçalanıyor.','Sadece karanlıkta saydamlaşıyor.'],correct:1,story:'Erimiş cam soğuk suya damlatılır. Dış yüzeyi önce sertleşir; içeride çok büyük gerilmeler hapsolur. Kalın ucu dirençliyken ince kuyruktan başlayan çatlak tüm damlayı aniden dağıtır.',fact:'Aynı nesnede hem çok yüksek yüzey dayanımı hem de aşırı kırılganlık var.',link:'https://en.wikipedia.org/wiki/Prince_Rupert%27s_drop'},
+{slug:'aerogel',name:'Silika Aerojel',material:'SİLİKA + HAVA',category:'GÖZENEKLİ MALZEME',photo:'Aerogel.jpg',credit:'GOKLuLe · CC BY-SA 3.0',question:'Bu yarı saydam katı niçin bu kadar hafif?',choices:['İçi neredeyse tamamen küçük hava boşluklarından oluşuyor.','Dünya ile aynı yönde manyetik itiş yapıyor.','Sadece fotoğrafı var; elle tutulamıyor.'],correct:0,story:'Aerojel, sıvı kısmı özel yöntemlerle uzaklaştırılmış çok gözenekli bir katıdır. Silika aerojellerde yapının büyük çoğunluğu boşluktur; bu yüzden çok hafif ve güçlü ısı yalıtkanı olabilirler.',fact:'Bazen “donmuş duman” diye anılır. Duman değildir.',link:'https://en.wikipedia.org/wiki/Aerogel'},
+{slug:'klein',name:'Klein Şişesi',material:'CAM / MATEMATİKSEL MODEL',category:'TOPOLOJİ',photo:'Klein bottle glass1.jpg',credit:'PaulT / Gunther Tschuch · CC BY-SA',question:'Bu şişeyi neden normal şekilde dolduramazsın?',choices:['Camı içine dökülen her sıvıyı emiyor.','Tabanı yalnızca ısıyla açılıyor.','Matematiksel olarak içiyle dışı ayrı olmayan bir yüzeyi temsil ediyor.'],correct:2,story:'Klein şişesi matematikte tek taraflı, sınırı olmayan bir yüzeydir. Üç boyutlu cam modelleri kendi içinden geçiyormuş gibi görünür; gerçek geometrisi dört boyutta kesişmeden düşünülebilir.',fact:'Şişe gibi görünüyor. Ama bir şişeden beklediğin iç ve dış ayrımı burada yok.',link:'https://en.wikipedia.org/wiki/Klein_bottle'},
+{slug:'crookes',name:'Crookes Radyometresi',material:'CAM + İNCE KANATÇIKLAR',category:'ISI / GAZ',photo:'Crookes radiometer.jpg',credit:'Timeline · Serbest kullanım',question:'Işık vurduğunda içindeki kanatçıkları ne döndürüyor?',choices:['Görünür ışığın rüzgârı.','Kanatların farklı ısınmasıyla seyrek gazda oluşan kuvvetler.','İçeride saklı minik bir pil.'],correct:1,story:'Cam kürenin içindeki kanatçıkların bir yüzü koyu, diğeri açıktır. Işıkla farklı ısınmaları seyrek gazda sıcaklığa bağlı kuvvetler üretir. Kanatlar bu nedenle döner.',fact:'Adı “ışık değirmeni” olsa da hareketin temel açıklaması doğrudan ışık basıncı değildir.',link:'https://en.wikipedia.org/wiki/Crookes_radiometer'},
+{slug:'lava',name:'Lav Lambası',material:'BALMUMU + SIVI + ISI',category:'YOĞUNLUK',photo:'Lava_lamp_%28yellow%29.jpg',raw:true,credit:'DMGualtieri · CC BY-SA',question:'Bu lambanın içindeki şekiller nasıl yukarı çıkıyor?',choices:['Sıvının içinde görünmez motor var.','Isınan mumun yoğunluğu değişiyor; yükselip soğuyunca geri iniyor.','Baloncuklar manyetik alanla itiliyor.'],correct:1,story:'Alttaki ısı kaynağı renkli mum benzeri karışımı ısıtır. Genleşip çevresindeki sıvıya göre hafiflediğinde yükselir; üstte soğuyunca tekrar aşağı iner.',fact:'Lambanın numarası ışıkta değil, yoğunluk farkında.',link:'https://en.wikipedia.org/wiki/Lava_lamp'},
+{slug:'bimetal',name:'Bimetal Şerit',material:'İKİ FARKLI METAL',category:'ISIL GENLEŞME',photo:'Bimetallic strip.JPG',credit:'Dmitry G · CC BY-SA 3.0',question:'Bu iki katmanlı metal ısınınca ne yapabilir?',choices:['Bir metale dönüşür.','Kendi kendine manyetik olur.','İki metal farklı miktarda uzandığı için bükülür.'],correct:2,story:'Birbirine bağlanmış iki metalin ısıl genleşmesi farklıysa sıcaklık değişince şerit eğilir. Bu davranış mekanik sıcaklık anahtarları ve termostatlarda kullanılır.',fact:'Birçok termostatta sıcaklık değişimini elektroniğe gerek kalmadan harekete çevirebilir.',link:'https://en.wikipedia.org/wiki/Bimetallic_strip'},
+{slug:'galton',name:'Galton Tahtası',material:'BİLYELER + ÇİVİ DİZİSİ',category:'OLASILIK',photo:'GaltonBoard.png',credit:'Mark Hebner · Creative Commons',question:'Bu bilyeler en çok neden ortada birikiyor?',choices:['Birçok rastgele sağ-sol sapmanın toplamı ortayı daha olası kılıyor.','Ortadaki bölmede gizli mıknatıs var.','Bilyeler ağırlıklarını düşerken değiştiriyor.'],correct:0,story:'Bilyeler her çivi sırasından geçerken sağa ya da sola sapabilir. Çok sayıda benzer bağımsız sapma, bilyelerin çoğunun merkeze yakın bölmelere düşmesine yol açar.',fact:'Çok sayıda küçük rastlantı birlikte şaşırtıcı derecede düzenli bir dağılım oluşturabilir.',link:'https://en.wikipedia.org/wiki/Galton_board'}
+];
+var index=0,answers={},summary=false,photo=document.getElementById('photo'),shell=document.getElementById('object-shell'),qa=document.getElementById('questionarea'),toastTimer=0;
+var $=function(id){return document.getElementById(id)};
+var pad=function(n){return String(n).padStart(2,'0')};
+function hasAnswer(i){return Object.prototype.hasOwnProperty.call(answers,i)}
+function counts(){var total=0,correct=0;Object.keys(answers).forEach(function(k){total++;if(answers[k]===objects[k].correct)correct++});return {total:total,correct:correct}}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+function imageUrl(o){return 'https://commons.wikimedia.org/wiki/Special:FilePath/'+(o.raw?o.photo:encodeURIComponent(o.photo))+'?width=850'}
+function photoLink(o){return commons+encodeURIComponent(o.photo.replace(/%28/g,'(').replace(/%29/g,')'))}
+function showToast(s){clearTimeout(toastTimer);$('toast').textContent=s;$('toast').classList.add('show');toastTimer=setTimeout(function(){$('toast').classList.remove('show')},2200)}
+function updatedCount(){var c=counts();$('count').textContent=c.total+' / '+objects.length+' NESNE ÇÖZÜLDÜ';$('bar').style.width=(100*c.total/objects.length)+'%';$('progress').setAttribute('aria-valuenow',c.total);$('progress').setAttribute('aria-valuemax',objects.length)}
+function choose(n){if(summary||hasAnswer(index))return;answers[index]=n;render()}
+function render(){
+ summary=false;
+ var o=objects[index],done=hasAnswer(index),c=counts();
+ $('status').textContent='GÖRÜNTÜLENEN: '+pad(index+1);
+ $('collection').textContent='NO. '+pad(index+1)+' / '+pad(objects.length);
+ $('eyebrow').textContent=done?'TEŞHİS EDİLDİ / GERÇEK NESNE':'BULUNDU / TANIMLANAMADI';
+ $('title').textContent=done?o.name:'Bu ne işe yarıyor?';
+ $('title').classList.toggle('reveal',done);
+ $('material').textContent=done?o.material:'BİLİNMİYOR';
+ $('category').textContent=done?o.category:'BİLİNMİYOR';
+ $('photo-index').textContent=pad(index+1)+' / '+pad(objects.length);
+ $('photo-caption').textContent=done?o.name.toUpperCase():'GERÇEK NESNE / GERÇEK FOTOĞRAF';
+ shell.className='object-shell loading';
+ photo.alt=o.name+' — gerçek fotoğraf';
+ photo.onload=function(){shell.classList.remove('loading','error')};
+ photo.onerror=function(){shell.classList.remove('loading');shell.classList.add('error')};
+ photo.src=imageUrl(o);
+ $('prev').disabled=index===0;
+ $('prev').style.opacity=index===0?'.3':'1';
+ var html='';
+ if(!done){
+  html='<p class="ask">'+escapeHTML(o.question)+'</p><div class="choices">';
+  o.choices.forEach(function(option,j){html+='<button class="choice" type="button" data-choice="'+j+'"><span class="number">'+pad(j+1)+'</span>'+escapeHTML(option)+'</button>'});
+  html+='</div>';
+ }else{
+  html='<div class="answerline '+(answers[index]===o.correct?'good':'bad')+'">'+(answers[index]===o.correct?'DOĞRU TAHMİN.':'BEKLENEN CEVAP BU DEĞİLDİ.')+'</div>';
+  html+='<p class="explain">'+escapeHTML(o.story)+'</p><div class="fact"><b>İŞİN GARİBİ</b>'+escapeHTML(o.fact)+'</div>';
+  html+='<div class="source">KAYNAK: <a href="'+o.link+'" target="_blank" rel="noopener noreferrer">BİLİMSEL ARKA PLAN ↗</a><br>FOTOĞRAF: <a href="'+photoLink(o)+'" target="_blank" rel="noopener noreferrer">'+escapeHTML(o.credit)+' ↗</a></div>';
+  html+='<button class="choice correct" id="continue" style="justify-content:space-between;margin-top:15px;font-weight:700">SONRAKİ NESNE <span>→</span></button>';
+ }
+ qa.innerHTML=html;
+ qa.querySelectorAll('[data-choice]').forEach(function(btn){btn.addEventListener('click',function(){choose(Number(btn.dataset.choice))})});
+ var ct=$('continue');if(ct)ct.addEventListener('click',function(){if(index===objects.length-1)showSummary();else navigate(1)});
+ $('result').textContent=c.total===objects.length?'SONUCU GÖR →':'SONUCU GÖR →';
+ updatedCount();
+}
+function navigate(dir){if(summary)summary=false;index=(index+dir+objects.length)%objects.length;render()}
+function showSummary(){
+ summary=true;var c=counts();
+ $('eyebrow').textContent='ENVANTER KAPANDI';
+ $('title').textContent='İnceleme tamamlandı.';
+ $('title').classList.remove('reveal');
+ $('material').textContent='8 / GERÇEK NESNE';
+ $('category').textContent='MALZEME BİLİMİ';
+ $('status').textContent='KOLEKSİYON: TAMAMLANDI';
+ qa.innerHTML='<div class="finish"><div class="eyebrow">BULGU RAPORU</div><h2>'+c.correct+' / '+objects.length+'</h2><p>'+ (c.total<objects.length?'Henüz '+(objects.length-c.total)+' nesneye bakmadın. ':'')+(c.correct>=7?'Garipliği tanımakta iyisin.':c.correct>=4?'Eşyalara biraz daha kuşkuyla bakabilirsin.':'Nesneler senden daha karmaşık çıktı.')+'</p><button type="button" class="btn" id="again">TEKRAR İNCELE ↗</button><button type="button" class="btn" id="share-result">SONUCU PAYLAŞ ↗</button></div>';
+ $('again').onclick=function(){index=0;answers={};render()};
+ $('share-result').onclick=share;
+ updatedCount();
+}
+function share(){var c=counts(),s='8 garip nesneden '+c.correct+' tanesini bildim. Sen kaçını bilirsin?';var url=location.origin+location.pathname;if(navigator.share)navigator.share({title:'Ne İşe Yarıyor? — aynen.fun',text:s,url:url}).catch(function(){});else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(s+' '+url).then(function(){showToast('BAĞLANTI KOPYALANDI')}).catch(function(){showToast('PAYLAŞIM KULLANILAMIYOR')});else showToast('BAĞLANTI: '+url)}
+$('prev').addEventListener('click',function(){navigate(-1)});
+$('next').addEventListener('click',function(){navigate(1)});
+$('shuffle').addEventListener('click',function(){var j=index;while(j===index)j=Math.floor(Math.random()*objects.length);index=j;render()});
+$('share').addEventListener('click',share);
+$('result').addEventListener('click',showSummary);
+shell.addEventListener('click',function(){shell.classList.toggle('zoom')});
+document.addEventListener('keydown',function(e){if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowLeft'){navigate(-1)}else if(e.key==='ArrowRight'){navigate(1)}else if(e.key==='Escape'){shell.classList.remove('zoom')}else if(e.key==='Enter'&&hasAnswer(index)&&!summary){if(index===objects.length-1)showSummary();else navigate(1)}else if(/^[123]$/.test(e.key)&&!summary)choose(Number(e.key)-1)});
+render();
+})();
+</script>
+</body>
+</html>
