@@ -24,6 +24,7 @@ if(api){
   const cells=new Map(), microbes=new Map(), tissues=new Map();
   const captures=new Map(),lastInfected=new Map(),interactions=[];
   const ingestion=new Map();
+  const maxDetail=window.matchMedia('(max-width: 700px)').matches?2:3;
   const v3=new THREE.Vector3();
   let previousFrame=0,quality=1,slowFrames=0,fastFrames=0,active=true;
   const colors={
@@ -76,7 +77,7 @@ if(api){
    const organelleGeo=tiny;
    const organelleMaterial=new THREE.MeshBasicMaterial({color:palette[1],transparent:true,opacity:.40,depthWrite:false});
    const organelles=[];
-   for(let i=0;i<5;i++){
+   for(let i=0;i<maxDetail+1;i++){
      const p=new THREE.Mesh(organelleGeo,organelleMaterial);
      p.scale.set(.06+(i%3)*.025,.045+(i%2)*.02,.05);
      p.position.set(Math.sin(i*2.37)*.48,Math.cos(i*2.57)*.55,.37+(i%2)*.05);
@@ -92,7 +93,9 @@ if(api){
        group.add(limb);arms.push(limb);
      }
    }
-   group.userData={type,seed:id*1.93,body,glow,nucleus,material,morph,organelles,arms};
+   const vesicle=new THREE.Mesh(tiny,new THREE.MeshBasicMaterial({color:0xffd0a0,transparent:true,opacity:0,depthWrite:false}));
+   vesicle.position.set(.23,-.25,.45);vesicle.scale.set(.12,.12,.08);group.add(vesicle);
+   group.userData={type,seed:id*1.93,body,glow,nucleus,material,morph,organelles,arms,vesicle};
    scene.add(group);return group;
   };
   const microMat={
@@ -158,6 +161,7 @@ if(api){
    previousFrame=now;
    resize();
    const d=api.read(),state=d.state;
+   if(state.phase==='paused')previousFrame=now;
    if(!d.agents||!state)return;
    const cam=d.camera;
    // World-to-screen camera units: match the original 2D scene on any aspect ratio.
@@ -175,6 +179,14 @@ if(api){
     mesh.scale.set(r*pulse,r*(1+Math.sin(phase*.65)*.035),r);
     mesh.rotation.z=Math.sin(phase*.62)*.07;
     mesh.userData.material.emissiveIntensity=a.hit>0?.66:.22;
+    if(a.type==='macro'){
+     let recent=-1;
+     for(const capture of ingestion.values())if(capture.owner===a.id)recent=Math.max(recent,1-(time-capture.t)/850);
+     const dig=Math.max(0,recent);
+     mesh.userData.vesicle.material.opacity=.62*dig;
+     mesh.userData.vesicle.scale.setScalar(.10+.15*(1-dig));
+     mesh.userData.vesicle.position.x=.24+Math.sin(phase*3)*.05;
+    }
     if(mesh.userData.arms.length){
       const food=d.particles.filter(p=>p.type==='bacteria').sort((p,q)=>Math.hypot(p.x-a.x,p.y-a.y)-Math.hypot(q.x-a.x,q.y-a.y))[0];
       const dd=food?Math.hypot(food.x-a.x,food.y-a.y):Infinity;
