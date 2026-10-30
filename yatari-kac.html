@@ -151,8 +151,12 @@
 .lab-links{display:flex;flex-wrap:wrap;gap:8px}
 .lab-links a{font:9px 'DM Mono',monospace;color:#111;text-underline-offset:3px}
 @media(max-width:760px){.scenario-lab summary{font-size:10px}.lab-content{gap:8px;padding:11px}.lab-numbers b{font-size:22px}}
+
+.surprise-file{border:1px solid #111;background:#ddff68;font:700 10px 'DM Mono',monospace;padding:10px;width:100%;min-height:39px}
+.surprise-file:hover{background:#f9b3ba}
+@media(max-width:760px){.surprise-file{font-size:9px;padding:8px;min-height:35px}}
 </style></head><body><main class="app">
-<header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 08</span></header>
+<header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 16</span></header>
 <section class="frame"><div class="left"><div><div class="eyebrow">TÜRKİYE / CEZA &amp; İNFAZ</div><h1 class="title">Yatarı<br><span>kaç?</span></h1><p class="sub">Verilen hapis cezası ile infaz süresi aynı şey değil. Sence kaç yıl?</p></div><div class="casebox"><div class="case-label"><span class="number" id="caseNo">01</span> DOSYA / VARSAYIMSAL SENARYO</div><h2 class="crime" id="crime">Genel infaz rejimi</h2><p class="facts" id="facts"></p><div class="sentence" id="sentence">6 yıl <small>hapis cezası</small></div></div></div>
 <div class="right"><div class="right-top"><div id="guess"><div class="eyebrow">TAHMİNİNİ YAP</div><div class="prompt">Cezaevinde yaklaşık<br>kaç yıl kalır?</div><div class="dial"><button class="step" id="minus" type="button" aria-label="Bir yıl azalt">−</button><div class="value" id="value">3</div><button class="step" id="plus" type="button" aria-label="Bir yıl artır">+</button></div><div class="unit">YIL / HİPOTETİK CEZAEVİ SÜRESİ</div><input class="slider" id="slider" type="range" min="0" max="30" value="3" step=".5" aria-label="Yıl tahmini"><button class="answer" type="button" id="reveal">KARARI GÖR →</button></div>
 <div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">VARSAYIMSAL CEZAEVİ SÜRESİ</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><div class="compare"><div class="eyebrow">CEZANIN AŞAMALARI</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div><details class="legal-drawer" id="legalDrawer"><summary>HUKUKİ AYRINTILAR <span aria-hidden="true">⌄</span></summary><div class="legal-drawer-content"><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div></div></details><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><div class="timeline-screen"><div class="timeline-heading"><span class="mono">İNFAZ ZAMAN ÇİZGİSİ</span><span class="mono" id="timelineClock">0.0 YIL</span></div>
@@ -177,7 +181,7 @@
 <div class="lab-contrast" id="labContrast">Genel rejimde 12 yıl cezanın koşullu salıverilme eşiği 6 yıldır.</div>
 <p class="lab-hint">*Tekerrür hükümleri ve önceki mahkûmiyetin etkisi ayrıca değerlendirilir. Bu kontrol gerçek dosya için tahliye hesabı yapmaz.</p>
 <div class="lab-links"><a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 / MADDE 107–108 ↗</a><a href="https://adlisicil.adalet.gov.tr/Home/SayfaDetay/ceza-infaz-kurumu-istatistikleri-2025-haber-bulteni-yayimlandi04052026091434" target="_blank" rel="noopener">2025 RESMÎ İSTATİSTİKLER ↗</a></div>
-</div></details><button type="button" class="compare-toggle" id="compareToggle" aria-expanded="false">AYNI CEZAYI KARŞILAŞTIR ↗</button><button type="button" class="next" id="next">SONRAKİ DOSYA →</button></div></div><div class="right-bottom"><strong id="state">08 DOSYA / TAHMİN ET</strong><div class="progress" id="dots"></div></div></div></section>
+</div></details><button type="button" class="compare-toggle" id="compareToggle" aria-expanded="false">AYNI CEZAYI KARŞILAŞTIR ↗</button><button type="button" class="next" id="next">SONRAKİ DOSYA →</button><button type="button" class="surprise-file" id="surpriseFile">RASTGELE DOSYA ↗</button></div></div><div class="right-bottom"><strong id="state">16 DOSYA / TAHMİN ET</strong><div class="progress" id="dots"></div></div></div></section>
 <footer class="foot"><span class="disclaimer">Yalnızca varsayımsal eğitim senaryosu. Gerçek infaz/tahliye hesabı değildir.</span><span class="mono"><a href="/" aria-label="Ana sayfa">← ÇIKIŞ</a></span></footer>
 </main><script>
 const cases=[
@@ -188,9 +192,17 @@ const cases=[
 {title:"Genel infaz rejimi",years:4,ratio:.5,description:"İstisnai infaz rejimi uygulanmayan bir suçtan 4 yıl hapis. Yetişkin, iyi hâlli, tek mahkûmiyet.",law:"5275 m.107/2 — genel kural 1/2."},
 {title:"Eziyet",years:6,ratio:2/3,description:"TCK m.96 kapsamında 6 yıl süreli hapis cezası. Yetişkin, tek mahkûmiyet, iyi hâl.",law:"5275 m.107/2-c — eziyet suçu için 2/3."},
 {title:"Genel infaz rejimi",years:14,ratio:.5,description:"İstisna kapsamında olmayan bir suçtan 14 yıl hapis. Tek mahkûmiyet, yetişkin ve iyi hâl.",law:"5275 m.107/2 — genel kural 1/2."},
-{title:"Özel hayatın gizliliği",years:6,ratio:2/3,description:"TCK m.134 kapsamında 6 yıl süreli hapis cezası. Yetişkin, tek mahkûmiyet, iyi hâl.",law:"5275 m.107/2-f — özel hayat suçları için 2/3."}
+{title:"Özel hayatın gizliliği",years:6,ratio:2/3,description:"TCK m.134 kapsamında 6 yıl süreli hapis cezası. Yetişkin, tek mahkûmiyet, iyi hâl.",law:"5275 m.107/2-f — özel hayat suçları için 2/3."},
+{"title":"Haberleşmenin gizliliği","years":9,"ratio":0.6666666666666666,"description":"TCK m.132 kapsamında kesinleşmiş 9 yıl süreli hapis cezası varsayımı. Yetişkin, tek mahkûmiyet, iyi hâl.","law":"5275 m.107/2-f — TCK 132 için 2/3."},
+{"title":"Kişisel veriler","years":12,"ratio":0.6666666666666666,"description":"TCK m.136 kapsamında 12 yıl süreli hapis cezası varsayımı. Yetişkin, tek mahkûmiyet, iyi hâl.","law":"5275 m.107/2-f — TCK 136 için 2/3."},
+{"title":"Cinsel taciz","years":6,"ratio":0.6666666666666666,"description":"TCK m.105 kapsamında kesinleşmiş 6 yıl süreli hapis cezası varsayımı. Yetişkin, tek mahkûmiyet, iyi hâl.","law":"5275 m.107/2-d — TCK 105 için 2/3."},
+{"title":"Nitelikli yaralama","years":18,"ratio":0.6666666666666666,"description":"TCK m.87/2-d kapsamındaki neticesi sebebiyle ağırlaşmış yaralama için 18 yıl kesinleşmiş hapis cezası varsayımı.","law":"5275 m.107/2-b — TCK 87/2-d için 2/3."},
+{"title":"İlk tekerrür","years":12,"ratio":0.6666666666666666,"description":"Tekerrür hükümlerinin uygulandığı süreli hapis için 12 yıl örneği. Önceki mahkûmiyet ve 108/2 üst sınırı ayrıca önemli.","law":"5275 m.108/1-d, m.108/2 — genel oran 2/3; önceki ceza üst sınırı etkileyebilir."},
+{"title":"İkinci tekerrür","years":12,"ratio":0.75,"description":"Mahkeme hükmünde ikinci defa tekerrür uygulanan 12 yıl süreli hapis cezası varsayımı.","law":"5275 m.108/3 — süreli hapis için 3/4."},
+{"title":"Genel infaz rejimi","years":16,"ratio":0.5,"description":"Özel infaz oranına tabi olmadığı varsayılan 16 yıllık kesinleşmiş süreli hapis cezası.","law":"5275 m.107/2 — genel koşullu salıverilme oranı 1/2."},
+{"title":"Kasten öldürme","years":18,"ratio":0.6666666666666666,"description":"TCK m.81 kapsamındaki süreli hapis için 18 yıllık kesinleşmiş ceza varsayımı.","law":"5275 m.107/2-a — TCK m.81 için 2/3."}
 ];
-let index=0,guess=3,score=0,solved=false;
+let index=0,guess=3,score=0,solved=false;let visited=new Set();
 const $=id=>document.getElementById(id);
 const format=n=>Number.isInteger(n)?n.toLocaleString('tr-TR'):n.toLocaleString('tr-TR',{maximumFractionDigits:1});
 // All scenarios assume an offense committed after 4 June 2025, one final
@@ -223,7 +235,7 @@ function setGuess(v){guess=clamp(v,0,cases[index].years);$('slider').value=guess
 $('minus').onclick=()=>setGuess(guess-.5);$('plus').onclick=()=>setGuess(guess+.5);
 $('slider').oninput=e=>setGuess(Number(e.target.value));
 $('reveal').onclick=()=>{
- if(solved)return;solved=true;
+ if(solved)return;solved=true;visited.add(index);
  const c=cases[index],x=legalExample(c),diff=Math.abs(guess-x.illustrative);
  if(diff<=.25)score++;
  $('feedback').textContent=diff<=.25?'YAKIN TAHMİN':diff<=1?'AZ FARKLA':'SENİN TAHMİNİN: '+format(guess)+' YIL';
@@ -268,7 +280,9 @@ $('compareToggle').onclick=()=>{
  $('compareToggle').textContent=box.hidden?'AYNI CEZAYI KARŞILAŞTIR ↗':'KARŞILAŞTIRMAYI KAPAT ×';
  if(box.hidden)stopPlayback();else{ $('timelineScrub').value=0;renderTimeline(0); }
 };
-$('next').onclick=()=>{if(index===cases.length-1){index=0;score=0}else index++;draw()};
+$('next').onclick=()=>{if(index===cases.length-1){index=0;score=0;visited.clear()}else index++;draw()};
+$('surpriseFile').onclick=()=>{const remaining=cases.map((_,i)=>i).filter(i=>i!==index&&!visited.has(i));const available=remaining.length?remaining:cases.map((_,i)=>i).filter(i=>i!==index);index=available[Math.floor(Math.random()*available.length)];draw();};
+
 
 // Explorer: only the statutory conditional-release threshold is simulated.
 // Prison time and release dates require independent checks.
