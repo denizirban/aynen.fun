@@ -143,9 +143,9 @@ if(api){
     if(map===tissues&&mesh.material)mesh.material.dispose();
     if(map===microbes&&mesh.geometry)mesh.geometry.dispose();
     if(map===cells&&mesh.userData){
-      mesh.traverse(o=>{if(o.isMesh&&o.material&&![
-       mesh.userData.material].includes(o.material)&&!o.material.userData?.shared) o.material.dispose();});
-      mesh.userData.material.dispose();
+      const unique=new Set([mesh.userData.material,mesh.userData.glow.material,mesh.userData.nucleus.material,mesh.userData.vesicle.material]);
+      for(const arm of mesh.userData.arms)unique.add(arm.material);
+      for(const material of unique)material.dispose();
     }
    }
   }
