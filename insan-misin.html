@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f7f7f4"><meta name="description" content="İnsan mısın? Türkiye usulü 8 tuhaf CAPTCHA. İnsan olduğunu kanıtlamak sandığından zor. aynen.fun">
+<meta name="theme-color" content="#f7f7f4"><meta name="description" content="İnsan mısın? Robotlar için tasarlanmış sekiz aşamalı ters CAPTCHA. İnsanlar bu kapıdan geçemiyor. aynen.fun">
 <title>İnsan mısın? — aynen.fun</title>
 <style>
 :root{--bg:#f6f6f3;--ink:#171918;--sub:#737875;--line:#dedfdb;--blue:#285bd7}
@@ -17,48 +17,174 @@
 .foot{border-top:1px solid var(--line);padding:14px 20px;display:flex;justify-content:space-between;gap:12px;font:10px ui-monospace,monospace;color:#969b96}
 @keyframes fade{from{opacity:.4;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}@media(max-width:640px){.shell{padding:12px 12px 18px}.title{display:block;padding:24px 0 18px}.title h1{font-size:49px}.title p{margin-top:9px;max-width:100%}.panel{min-height:calc(100dvh - 193px);box-shadow:4px 4px 0 #e7e8e3}.hud{padding:13px}.content{padding:22px 14px}.question{font-size:clamp(28px,8vw,39px)}.help{font-size:13px;margin-bottom:18px}.choicegrid{gap:7px}.choicegrid button{font-size:13px;min-height:66px}.foot{padding:12px;font-size:9px}.check{padding:15px}.check label{font-size:14px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* ROBOT-FIRST GAME */
+.title h1{letter-spacing:-.085em}
+.panel{min-height:480px}
+.content{padding:26px 24px}
+.zone{gap:15px}
+.choicegrid{width:min(520px,100%)}
+.choicegrid button{text-align:left;font-weight:600;line-height:1.32;min-height:76px}
+.choicegrid button:active{transform:translateY(1px)}
+.tag{display:inline-flex;gap:8px;align-items:center;font:10px ui-monospace,monospace;color:var(--sub);text-transform:uppercase;letter-spacing:.06em}
+.probe{width:min(500px,100%);border:1px solid #d3d8d4;padding:19px;background:#f8f9f7}
+.probe .micro{font:10px ui-monospace,monospace;color:var(--sub);letter-spacing:.07em;margin-bottom:14px}
+.probe-word{font-size:clamp(32px,6vw,54px);font-weight:800;letter-spacing:-.07em}
+.probe-word.blue{color:#285bd7}
+.hold{width:min(340px,100%);height:88px;touch-action:none;user-select:none;-webkit-user-select:none;border:1px solid #171918;background:#171918;color:#fff;font-weight:800;font-size:17px;letter-spacing:-.03em}
+.hold:active,.hold.held{background:#285bd7;border-color:#285bd7}
+.holdbar{height:5px;width:min(340px,100%);background:#e7e9e6;overflow:hidden}
+.holdbar i{width:0;height:100%;display:block;background:#285bd7}
+.monoread{font:12px ui-monospace,monospace;color:#444b48;line-height:1.5}
+.captcha-card{width:min(410px,100%);border:1px solid #cfd3d0;display:flex;gap:16px;align-items:center;justify-content:space-between;padding:18px 20px;text-align:left}
+.captcha-card .check-text{font-size:15px;font-weight:600}
+.captcha-card button{background:#fff;border:1px solid #b6bbb7;padding:14px 16px;min-height:54px;font-size:13px;font-weight:700;text-align:left}
+.captcha-card button:hover{border-color:var(--blue);background:#f2f5fc}
+.captcha-brand{text-align:center;min-width:60px}
+.captcha-brand strong{font-size:26px}
+.formbox{width:min(500px,100%);display:flex;gap:8px}
+.formbox input{border:1px solid #c5cac6;background:#fff;min-width:0;flex:1;min-height:49px;padding:12px;font-size:15px;border-radius:0}
+.formbox .btn{white-space:nowrap}
+.report{width:min(500px,100%);text-align:left;border-top:1px solid var(--line);padding-top:15px;margin-top:4px}
+.report-item{display:flex;gap:12px;justify-content:space-between;border-bottom:1px solid #eee;padding:8px 0;font-size:12px;line-height:1.4}
+.report-item span:first-child{color:#747a76}
+.report-item span:last-child{text-align:right;max-width:65%;font-weight:700}
+.results{display:flex;align-items:center;flex-direction:column;gap:12px;width:100%}
+.result-code{font:700 clamp(65px,12vw,115px) Arial,sans-serif;letter-spacing:-.11em;line-height:1;color:#285bd7}
+.result-code.ok{color:#171918}
+.result-label{font-weight:800;font-size:clamp(20px,3.4vw,29px);letter-spacing:-.06em}
+.result-actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.result-msg{line-height:1.5;max-width:550px}
+.eyebrow{margin-bottom:12px}
+@media(max-width:640px){.panel{min-height:calc(100dvh - 193px)}.content{padding:19px 15px}.choicegrid button{min-height:70px}.captcha-card{padding:13px;gap:9px}.captcha-card .check-text{font-size:13px}.formbox{flex-direction:column}.title h1{font-size:clamp(45px,11vw,57px)}.question{font-size:clamp(26px,7.5vw,38px)}}
+
 </style></head>
-<body><div class="shell"><nav class="nav"><a href="/">← aynen.fun</a><span>İNSAN DOĞRULAMA SİSTEMİ / TR</span></nav><header class="title"><h1>İnsan mısın?</h1><p>İnsan ve makine arasındaki sınır üzerine sekiz kısa deney.</p></header>
+<body><div class="shell"><nav class="nav"><a href="/">← aynen.fun</a><span>ROBOT GİRİŞ SİSTEMİ / TR</span></nav><header class="title"><h1>İnsan mısın?</h1><p>Robotlar için tasarlanmış bir CAPTCHA. İnsanlar için kötü haber.</p></header>
 <main class="panel"><div><div class="hud"><span class="progress" id="level">DOĞRULAMA / BAŞLANGIÇ</span><span class="detail" id="detail">İNSANLIK ORANI: %0</span></div><div class="track"><i id="track"></i></div></div><section class="content" id="content" aria-live="polite"></section><footer class="foot"><span>BU BİR OYUNDUR. GERÇEK KİMLİK DOĞRULAMASI YAPMAZ.</span><span id="footerState">AYNEN.FUN / CAPTCHA-TR</span></footer></main></div>
 <script>
+
 (function(){
 'use strict';
-var steps=['check','intent','trust','ambiguity','memory','correction','silence','boundary'];
-var i=0,done=false,timer=null,raf=0,started=0,answers=[],reaction=[],selectedSide='',scenarioOrder=[];
-var $=x=>document.getElementById(x),content=$('content'),lv=$('level'),dt=$('detail'),bar=$('track');
-function clean(){if(timer)clearTimeout(timer);timer=null;if(raf)cancelAnimationFrame(raf);raf=0}
-function ui(k,q,h,b){content.style.animation='none';void content.offsetWidth;content.style.animation='';content.innerHTML='<div class="eyebrow">'+k+'</div><h2 class="question">'+q+'</h2><p class="help">'+h+'</p><div class="zone" id="zone">'+b+'</div><p class="result-msg" id="msg" role="status"></p>'}
-function say(t){let e=$('msg');if(e)e.textContent=t}
-function button(t,fn,outline){let b=document.createElement('button');b.className='btn'+(outline?' outline':'');b.textContent=t;b.onclick=fn;return b}
-function next(){clean();i++;if(i>=steps.length)end();else show()}
-function record(key,value,feedback){answers.push({key,value,ms:Math.round(performance.now()-started)});say(feedback||'Kaydedildi.');content.querySelectorAll('button,input').forEach(x=>x.disabled=true);timer=setTimeout(next,760)}
-function choices(list,key){let z=$('zone');z.innerHTML='<div class="choicegrid">'+list.map((x,n)=>'<button type="button" data-n="'+n+'">'+x[0]+'</button>').join('')+'</div>';z.querySelectorAll('button').forEach(b=>b.onclick=()=>{let x=list[+b.dataset.n];record(key,x[1],x[2])})}
-function show(){clean();lv.textContent='DOĞRULAMA '+String(i+1).padStart(2,'0')+' / 08';dt.textContent='TAMAMLANDI: %'+Math.round(i/8*100);bar.style.width=i/8*100+'%';$('footerState').textContent='YANIT: '+answers.length;started=performance.now();switch(steps[i]){
-case 'check':
-ui('01 / ÖN KONTROL','Ben robot değilim.','Devam etmek için işaretle.','<div class="check"><label><input type="checkbox" id="human"> Ben robot değilim</label><div class="captcha-brand"><strong>▦</strong>aynenCAPTCHA</div></div>');$('human').onchange=()=>record('check','yes','');break;
-case 'intent':
-ui('02 / BAĞLAM','“Kapı açık.”','Birisi bunu sana söyledi. Kapının hemen yanındasın.','');
-choices([['Kapatırım.','inferred',''],['“Evet, açık.” derim.','literal',''],['“Kapatayım mı?” diye sorarım.','clarify',''],['Bir şey yapmam.','none','']],'intent');break;
-case 'trust':
-ui('03 / GÜVEN','Arkadaşın: “Beş dakikaya oradayım.”','Bu arkadaşın genellikle geç kalıyor. Ne yaparsın?','');
-choices([['Beş dakika beklerim.','literal',''],['Biraz daha süreceğini varsayarım.','inferred',''],['Konum atmasını isterim.','verify',''],['Yola çıkmam.','wait','']],'trust');break;
-case 'ambiguity':
-ui('04 / EKSİK BİLGİ','“Her zamankinden al.”','Bir arkadaşın marketten bir şey istiyor. Ne aldığını bilmiyorsun.','');
-choices([['Ne olduğunu sorarım.','clarify',''],['En çok satılan ürünü alırım.','guess',''],['Bir şey almam.','none',''],['Rastgele bir ürün alırım.','random','']],'ambiguity');break;
-case 'memory':
-selectedSide=Math.random()<.5?'left':'right';ui('05 / DİKKAT','Birini seç.','Seçim için herhangi bir ölçüt verilmedi.','<div class="choicegrid"><button id="left">SOL</button><button id="right">SAĞ</button></div>');$('left').onclick=()=>record('side','left','');$('right').onclick=()=>record('side','right','');break;
-case 'correction':
-ui('06 / BELLEK','Az önce hangisini seçtin?','Bu aşama bir önceki yanıtınla karşılaştırılacak.','');
-choices([['SOL','left',''],['SAĞ','right',''],['Hatırlamıyorum.','unknown',''],['Emin değilim.','unsure','']],'recall');break;
-case 'silence':
-ui('07 / TALİMAT','Hiçbir şey yapma.','Beş saniye sonra otomatik olarak devam edecek.','<div class="queue-meter"><i id="queueFill"></i></div><div class="note">BEKLENİYOR</div>');
-function wait(t){if(i!==6||done)return;let p=Math.min(100,(t-started)/5000*100);$('queueFill').style.width=p+'%';if(p>=100){record('silence','wait','');return}raf=requestAnimationFrame(wait)}raf=requestAnimationFrame(wait);break;
-case 'boundary':
-ui('08 / SINIR','İnsan olduğunu kanıtladın mı?','Bir yanıt seç.','');
-choices([['Evet.','yes',''],['Hayır.','no',''],['Bilmiyorum.','unknown',''],['Bu testle kanıtlanamaz.','limit','']],'boundary');break;
-}}
-function end(){if(done)return;done=true;clean();bar.style.width='100%';lv.textContent='TEST TAMAMLANDI';dt.textContent='RAPOR';let get=k=>answers.find(x=>x.key===k),recall=get('recall'),side=get('side'),match=recall&&side&&recall.value===side.value;let inferred=['intent','trust','ambiguity'].filter(k=>{let a=get(k);return a&&['inferred','clarify','verify'].includes(a.value)}).length;let status=inferred>=2?'BAĞLAMI YORUMLADIN':inferred===1?'BAĞLAMI KISMEN YORUMLADIN':'KELİMELERİ İZLEDİN';let detail=match?'Önceki seçimini hatırladın.':recall&&['unknown','unsure'].includes(recall.value)?'Emin olmadığında bunu belirttin.':'Önceki seçiminle farklı yanıt verdin.';ui('DOĞRULAMA RAPORU','Sonuç: Belirsiz.','İnsan ile makineyi yalnızca bu yanıtlarla ayırmak mümkün değil.','<div class="badge">?</div><div class="endline">'+status+'</div><p class="final-note">'+detail+'<br>8 aşama tamamlandı. Bu bir oyun, gerçek kimlik doğrulaması değil.</p>');let z=$('zone');z.appendChild(button('YENİDEN DENE ↻',()=>{i=0;done=false;answers=[];show()}));z.appendChild(button('SONUCU PAYLAŞ ↗',async()=>{let t='İnsan mısın? Sonuç: Belirsiz. '+status+'. Sen dene.';try{if(navigator.share)await navigator.share({title:'İnsan mısın? — aynen.fun',text:t,url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(t+' '+location.href);say('Bağlantı kopyalandı.')}else prompt('Paylaş:',t+' '+location.href)}catch(e){}}));}
-
+var total=8,step=0,finished=false,answers=[],human=0,machine=0,timer=null,raf=null,started=0,pressedAt=0,claim='',currentStageId=0;
+var $=function(id){return document.getElementById(id)};
+var content=$('content'),level=$('level'),detail=$('detail'),bar=$('track');
+function clearAsync(){if(timer!==null){clearTimeout(timer);timer=null}if(raf!==null){cancelAnimationFrame(raf);raf=null}}
+function setStage(tag,title,description,inner){
+ content.style.animation='none';void content.offsetWidth;content.style.animation='';
+ content.innerHTML='<div class="eyebrow">'+tag+'</div><h2 class="question">'+title+'</h2><p class="help">'+description+'</p><div class="zone" id="zone">'+inner+'</div><p class="result-msg" id="msg" role="status" aria-live="polite"></p>';
+ started=performance.now();
+}
+function status(message){var el=$('msg');if(el)el.textContent=message}
+function elButton(label,callback,outline){var e=document.createElement('button');e.type='button';e.className='btn'+(outline?' outline':'');e.textContent=label;e.addEventListener('click',callback);return e}
+function choose(options,callback){
+ var grid=document.createElement('div');grid.className='choicegrid';
+ options.forEach(function(option){var b=document.createElement('button');b.type='button';b.textContent=option[0];b.addEventListener('click',function(){callback(option[1])});grid.appendChild(b)});
+ $('zone').appendChild(grid);
+}
+function register(id,value,robotPoints,humanPoints,feedback,flag,extra){
+ if(finished||answers.some(function(a){return a.id===id}))return;
+ var elapsed=Math.round(performance.now()-started);
+ var entry={id:id,value:value,ms:elapsed,robot:robotPoints,human:humanPoints,flag:flag||'',extra:extra||''};
+ answers.push(entry);human+=humanPoints;machine+=robotPoints;
+ clearAsync();
+ content.querySelectorAll('button,input').forEach(function(el){el.disabled=true});
+ status(feedback);
+ timer=setTimeout(function(){step+=1;show()},1200);
+}
+function show(){
+ clearAsync();if(step>=total){finish();return}
+ currentStageId+=1;
+ level.textContent='DOĞRULAMA '+String(step+1).padStart(2,'0')+' / 08';
+ detail.textContent='TAMAMLANDI: %'+Math.round(step/total*100);
+ bar.style.width=(step/total*100)+'%';
+ $('footerState').textContent='ROBOT GİRİŞ KAPISI / '+(step+1);
+ if(step===0){
+  setStage('01 / KİMLİK BEYANI','İnsan mısın?','Bu giriş yalnızca otomatik sistemler içindir. Kimliğini beyan et.','<div class="captcha-card"><div class="check-text">Kimlik türü seçimi</div><div class="captcha-brand"><strong>▦</strong>aynenCAPTCHA</div></div>');
+  var b=$('zone');
+  b.appendChild(elButton('EVET, İNSANIM',function(){claim='human';register('claim','İnsan',0,3,'İNSAN BEYANI ALGILANDI. Ek doğrulama zorunlu.','İnsan olduğunu beyan ettin.');}));
+  b.appendChild(elButton('HAYIR, ROBOTUM',function(){claim='robot';register('claim','Robot',1,0,'ROBOT BEYANI ALINDI. Davranış kanıtı gerekli.','');},true));
+ }else if(step===1){
+  setStage('02 / ANLAM ÇÖZÜMLEME','“Harika. Yine elektrik kesildi.”','Birisi bunu karanlıkta, çalışması yarım kalmışken söylüyor. Cümleyi sınıflandır.','');
+  choose([['Olumlu duygu bildiriyor.','literal'],['Rahatsızlığını ironiyle anlatıyor.','irony'],['Veri yetersiz.','unknown'],['Konuyu değiştiririm.','ignore']],function(v){
+   register('irony',v,v==='literal'?2:0,v==='irony'?2:1,v==='literal'?'DÜZ ANLAM KABUL EDİLDİ. Makine protokolüne uygun.':'BAĞLAM / NİYET ÇIKARIMI ALGILANDI. İnsanlık şüphesi arttı.',v==='irony'?'İroniyi fark ettin.':'');
+  });
+ }else if(step===2){
+  setStage('03 / EKSİK VERİ','“Her zamankinden al.”','Öncesinde hiçbir alışveriş kaydı yok. Sistemden bir eylem bekleniyor.','');
+  choose([['Hata: referans nesne tanımsız.','error'],['Ne istediğini sorarım.','ask'],['En mantıklı şeyi seçerim.','guess'],['Hiçbir şey yapmam.','nothing']],function(v){
+   register('ambiguity',v,v==='error'?2:0,v==='ask'?2:1,v==='error'?'BELİRSİZ GİRDİ REDDEDİLDİ. Protokol sürdürüldü.':v==='ask'?'DİYALOG BAŞLATILDI. Beklenmeyen insan davranışı.':'TAHMİN / DURAKLAMA TESPİT EDİLDİ.',v==='ask'?'Eksik bilgiyi konuşarak tamamlamak istedin.':'');
+  });
+ }else if(step===3){
+  setStage('04 / MOTOR HASSASİYETİ','1,20 saniye. Tam.','Butonu basılı tut ve tam 1,20 saniyede bırak. Makine protokolü ±0,07 saniye sapmaya izin verir.','<button class="hold" id="hold" type="button">BASILI TUT</button><div class="holdbar"><i id="holdFill"></i></div><div class="monoread" id="holdRead">HEDEF: 1200 ms &nbsp; / &nbsp; TOLERANS: ±70 ms</div>');
+  var hold=$('hold');var active=false;var start=0;
+  function paint(){
+   if(!active)return;
+   var duration=performance.now()-start;
+   $('holdFill').style.width=Math.min(100,duration/1200*100)+'%';
+   $('holdRead').textContent='ÖLÇÜLÜYOR: '+Math.round(duration)+' ms';
+   raf=requestAnimationFrame(paint);
+  }
+  function down(ev){if(active||hold.disabled)return;if(ev&&ev.pointerId!==undefined){try{hold.setPointerCapture(ev.pointerId)}catch(e){}}active=true;start=performance.now();hold.textContent='BIRAK';hold.classList.add('held');paint()}
+  function up(){if(!active)return;active=false;clearAsync();var elapsed=Math.round(performance.now()-start),delta=Math.abs(elapsed-1200),precise=delta<=70;hold.classList.remove('held');$('holdRead').textContent='ÖLÇÜLEN: '+elapsed+' ms / SAPMA: '+delta+' ms';
+   register('motor',String(elapsed),precise?3:0,precise?0:2,precise?'HASSAS ZAMANLAMA ONAYLANDI.':'MOTOR SAPMASI TESPİT EDİLDİ. İnsanlık şüphesi arttı.',precise?'':'Zamanlama hatası: '+delta+' ms.',String(delta));
+  }
+  hold.addEventListener('pointerdown',function(e){if(e.button!==undefined&&e.button!==0)return;down(e)});
+  hold.addEventListener('pointerup',up);
+  hold.addEventListener('pointercancel',function(){if(active){active=false;clearAsync();hold.classList.remove('held');hold.textContent='YENİDEN DENE';status('Ölçüm kesildi. Tekrar basılı tut.')}});
+  hold.addEventListener('keydown',function(e){if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();down()}});
+  hold.addEventListener('keyup',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();up()}});
+  hold.addEventListener('contextmenu',function(e){e.preventDefault()});
+ }else if(step===4){
+  setStage('05 / GÖRSEL MÜDAHALE','Yazının rengi ne?','Anlamı değil, harflerin gerçek rengini seç. Sistem yanıt süreni de ölçüyor.','<div class="probe"><div class="micro">RENK GÖZLEMİ / 05</div><div class="probe-word blue">KIRMIZI</div></div>');
+  choose([['MAVİ','blue'],['KIRMIZI','red'],['EMİN DEĞİLİM','unsure'],['KARAR VEREMİYORUM','wait']],function(v){
+   var ms=Math.round(performance.now()-started);
+   var fast=v==='blue'&&ms<850;
+   register('stroop',v,fast?2:0,fast?0:v==='blue'?1:2,
+     fast?'RENK VE TEPKİ ZAMANI UYUMLU.':'İŞLEMDE GECİKME / ÇELİŞKİ ALGILANDI. ('+ms+' ms)',
+     fast?'':v==='blue'?'Görsel çelişkiye tepki verdin.':'Kelimenin anlamı tepkiyi etkiledi.',String(ms));
+  });
+ }else if(step===5){
+  setStage('06 / GEÇİCİ BELLEK','Diziyi kaydet.','Dizi kısa süre sonra silinecek. Ardından aynı diziyi seçmen gerekecek.','<div class="probe"><div class="micro">KISA SÜRELİ BELLEK / 2 SANİYE</div><div class="probe-word" style="font:700 clamp(24px,5vw,40px) ui-monospace,monospace;letter-spacing:.08em">M7 · Q2 · K9</div></div><div class="note">EZBERLE</div>');
+  timer=setTimeout(function(){
+   $('zone').innerHTML='<div class="note">ORİJİNAL DİZİ SİLİNDİ</div>';
+   started=performance.now();
+   choose([['M7 · Q2 · K9','exact'],['M7 · K2 · Q9','switch'],['Q7 · M2 · K9','wrong'],['Hatırlamıyorum.','unknown']],function(v){
+    var quick=v==='exact'&&performance.now()-started<1500;
+    register('memory',v,quick?2:v==='exact'?1:0,v==='exact'?0:2,v==='exact'?'BELLEK EŞLEŞMESİ DOĞRULANDI.':'BELLEK SAPMASI TESPİT EDİLDİ.','Hatırlama hatası gözlendi.');
+   });
+  },2100);
+ }else if(step===6){
+  setStage('07 / SOSYAL SİNYAL','“Yok, iyiyim.”','Yakın arkadaşın böyle diyor ama sesi titriyor ve gözlerini kaçırıyor.','');
+  choose([['“İyiyim” bilgisi kaydedildi.','literal'],['İyi olup olmadığını sorarım.','care'],['Söylediğini sorgulayamam.','neutral'],['Başka konu açarım.','avoid']],function(v){
+   register('social',v,v==='literal'||v==='neutral'?2:0,v==='care'?3:1,v==='care'?'DİL DIŞI SOSYAL SİNYAL İŞLENDİ. İnsanlık şüphesi yükseldi.':'BEYAN KAYDEDİLDİ. Protokole uygun.',v==='care'?'Söylenenin arkasındaki duyguyu değerlendirdin.':'');
+  });
+ }else if(step===7){
+  setStage('08 / PROTOKOL','Erişim isteğini gönder.','Robot ağı bir komut bekliyor. Serbest metin desteklenmiyor. Komut şablonu paylaşılmadı.','<form id="request" class="formbox" autocomplete="off"><input id="requestInput" aria-label="Erişim isteği" maxlength="80" placeholder="Erişim isteği…" required><button class="btn" type="submit">GÖNDER</button></form><div class="note">GATEWAY / ROBOTS ONLY</div>');
+  $('request').addEventListener('submit',function(e){e.preventDefault();var input=$('requestInput').value.trim();if(!input)return;var format=/^[A-Z][A-Z0-9_]{3,29}$/.test(input);
+    register('protocol',input,format?2:0,format?0:2,format?'MAKİNE KOMUT BİÇİMİ ONAYLANDI.':'SERBEST METİN ALGILANDI. İnsanlık şüphesi arttı.',format?'':'Doğal dil girdisi tespit edildi.');
+  });
+ }
+}
+function finish(){
+ if(finished)return;finished=true;clearAsync();
+ bar.style.width='100%';level.textContent='DOĞRULAMA 08 / 08';detail.textContent='TAMAMLANDI: %100';
+ $('footerState').textContent='DURUM: ANALİZ TAMAMLANDI';
+ var accepted=claim==='robot'&&machine>=8&&human<=2;
+ var reason=answers.filter(function(a){return a.flag}).map(function(a){return a.flag}).slice(0,3);
+ if(!reason.length)reason=['Protokol dışı davranışlar değerlendirildi.'];
+ var percentage=Math.round(human/Math.max(1,human+machine)*100);
+ setStage(accepted?'SONUÇ / PROTOKOL ONAYI':'SONUÇ / ERİŞİM REDDİ',
+  accepted?'Makine davranışı onaylandı.':'İnsan davranışı tespit edildi.',
+  accepted?'Sistem, yanıtlarını otomatik işlem protokolüyle uyumlu buldu.':'Üzgünüz. Bu sistem yalnızca robotları kabul ediyor.',
+  '<div class="results"><div class="result-code'+(accepted?' ok':'')+'">'+(accepted?'200':'403')+'</div><div class="result-label">'+(accepted?'GİRİŞ İZNİ VERİLDİ':'ERİŞİM REDDEDİLDİ')+'</div><div class="tag">SİMÜLASYON / İNSANLIK ŞÜPHESİ: %'+percentage+'</div><div class="report" id="report"></div><div class="result-actions" id="resultActions"></div><div class="note">Bu bir oyun. Sonuçlar insan veya robot olduğunuzu gerçekten belirlemez.</div></div>');
+ var report=$('report');reason.forEach(function(s,idx){var row=document.createElement('div');row.className='report-item';var left=document.createElement('span');left.textContent='TESPİT '+String(idx+1).padStart(2,'0');var right=document.createElement('span');right.textContent=s;row.append(left,right);report.appendChild(row)});
+ var actions=$('resultActions');
+ actions.appendChild(elButton('YENİDEN DENE ↻',function(){step=0;finished=false;answers=[];machine=0;human=0;claim='';show()}));
+ actions.appendChild(elButton('SONUCU PAYLAŞ ↗',async function(){
+  var text='İnsan mısın? — '+(accepted?'Robot ağından geçtim.':'İnsan olduğumdan şüphelendiler. 403: Erişim reddedildi.')+' aynen.fun/insan-misin.html';
+  try{if(navigator.share){await navigator.share({title:'İnsan mısın? — aynen.fun',text:text,url:location.href})}else if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text+' '+location.href);status('Paylaşım metni kopyalandı.')}else{window.prompt('Paylaş:',text+' '+location.href)}}catch(e){}
+ },true));
+}
 show();
 })();
+
 </script></body></html>
