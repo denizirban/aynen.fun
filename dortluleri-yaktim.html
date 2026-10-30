@@ -36,6 +36,10 @@ h1{font-size:clamp(34px,5.8vw,72px);letter-spacing:-.085em;line-height:.96;margi
 .panel button{border:1px solid var(--ink);min-height:61px;padding:10px 15px;background:#fff;color:var(--ink);font-weight:800;letter-spacing:-.025em}
 .panel button.primary{background:var(--ink);color:white;flex:1;font-size:clamp(15px,2.4vw,20px)}
 .panel button.primary:hover{background:#353535}
+.panel button.primary.danger{background:#f4af20;color:#151515;border-color:#b5790b;animation:beep 1s ease-in-out infinite}
+@keyframes beep{50%{box-shadow:inset 0 0 0 4px rgba(255,255,255,.55)}}
+@media(prefers-reduced-motion:reduce){.panel button.primary.danger{animation:none}}
+.stat .countdown{color:#bf741d}
 .panel button:disabled{color:#a2a2a2;border-color:#ccc;background:#ededeb;cursor:not-allowed}
 .panel .aux{min-width:96px;font-size:12px}
 .panel .how{margin:auto 0;flex:1;min-width:0;font:10px/1.5 ui-monospace,Menlo,monospace;color:#777}
@@ -82,24 +86,24 @@ h1{font-size:clamp(34px,5.8vw,72px);letter-spacing:-.085em;line-height:.96;margi
 <body>
 <main class="page">
 <div class="nav"><a href="/" aria-label="aynen.fun ana sayfaya dön">← aynen.fun</a><span>ŞEHİR SİMÜLASYONU / 06 DURAK</span></div>
-<div class="heading"><h1>Dörtlüleri Yaktım.</h1><p class="sub">İki dakikaya geliyorum.<br>Gelmediğin her saniye puan.</p></div>
+<div class="heading"><h1>Dörtlüleri Yaktım.</h1><p class="sub">İki dakikaya geliyorum.<br>Kaçabilirsen puan senin.</p></div>
 <div class="dashboard" aria-live="off">
 <div class="stat"><span>BEKLEYEN ARAÇ</span><strong id="queue">0</strong></div>
-<div class="stat"><span>TOPLAM GECİKME</span><strong id="delay">0 sn</strong></div>
+<div class="stat"><span>KASADAKİ + RİSKTE</span><strong id="delay">0 sn</strong></div>
 <div class="stat"><span>DENETİME KALAN</span><strong id="clock">—</strong></div>
-<div class="stat"><span>DURAK</span><strong id="stage">1 / 6</strong></div>
+<div class="stat"><span>KIL PAYI SERİSİ</span><strong id="streak">0</strong></div>
 </div>
 <section class="scene" id="frame" aria-label="Yukarıdan görülen minyatür bir şehir yolunda park etme oyunu">
 <canvas id="game" role="img" aria-label="İki şeritli yol, akan araçlar ve dörtlülerini yakan park edilmiş otomobil"></canvas>
-<div class="corner"><span id="district">MARKET ÖNÜ</span><span id="risk">ÇARPAN ×1.0</span></div>
+<div class="corner"><span id="district">1/6 · MARKET ÖNÜ</span><span id="risk">NOKTA ×1.0</span></div>
 <div class="alert" id="toast" role="status" aria-live="polite"></div>
 <div class="hint" id="hint">Arabayı yol boyunca sürükle · Sonra PARK ET</div>
 <div class="modal" id="modal">
 <div class="card">
 <div class="micro" id="kicker">PARK ETME SİMÜLATÖRÜ / AY NEN</div>
-<h2 id="modalTitle">Bir dakikaya geliyorum.</h2>
-<p id="modalText">Arabayı yolda istediğin yere sürükle. PARK ET'e basınca dörtlüler yanar, trafik kendi sorununu çözmeye çalışır. Denetim gelmeden arabayı alıp bir sonraki yere git.</p>
-<div class="results" id="results" hidden><div><b id="endScore">0 sn</b><span>TOPLAM GECİKME</span></div><div><b id="endStage">0 / 6</b><span>TAMAMLANAN DURAK</span></div></div>
+<h2 id="modalTitle">İki dakikaya geliyorum.</h2>
+<p id="modalText">Arabayı sürükleyip sarı bölgeye park et. Trafik sıkıştıkça puan birikir. Denetim yaklaşırken arabayı alıp kaç: kaçarsan puan kasada, yakalanırsan o durağın bütün puanı gider.</p>
+<div class="results" id="results" hidden><div><b id="endScore">0 sn</b><span>KASAYA KONAN</span></div><div><b id="endStage">0 / 6</b><span>KURTULUNAN DURAK</span></div><div><b id="endBest">0 sn</b><span>KİŞİSEL REKOR</span></div><div><b id="endPeak">0</b><span>EN UZUN KUYRUK</span></div></div>
 <div class="actions"><button id="start" type="button">DÖRTLÜLERİ YAKMAYA BAŞLA ↗</button><button id="share" class="secondary" type="button" hidden>SONUCU PAYLAŞ</button></div>
 </div></div>
 </section>
@@ -108,7 +112,7 @@ h1{font-size:clamp(34px,5.8vw,72px);letter-spacing:-.085em;line-height:.96;margi
 <button type="button" class="primary" id="action" disabled>PARK ET · ⚡</button>
 <button type="button" class="aux" id="sound" aria-pressed="false">SES: KAPALI</button>
 </div>
-<div class="foot"><span>Fizik tabanlı trafik karikatürü. Gerçek sürüş / park tavsiyesi değildir.</span><button type="button" id="restart">YENİDEN BAŞLA ↺</button></div>
+<div class="foot"><span id="best">KİŞİSEL REKOR: — · GERÇEK PARK TAVSİYESİ DEĞİLDİR</span><button type="button" id="restart">YENİDEN BAŞLA ↺</button></div>
 </main>
 <script>
 (function(){
@@ -125,13 +129,15 @@ var stages=[
  {name:'HAVAALANI',sign:'GİDİŞ',tag:'BAVUL İNDİRİYORUM',color:'#e2e3e1',target:485,rate:.68,deadline:11}
 ];
 var palette=['#a4b9bc','#d8ac86','#adacb3','#bac4ab','#d2b78f','#cbd4c7','#8eabb6'];
-var s={phase:'intro',level:0,carX:560,dragging:false,cars:[],oncoming:[],spawn:0,wave:0,elapsed:0,delay:0,queue:0,score:0,passed:0,peak:0,clock:0,announce:0,flash:0,bonus:1,fail:false,muted:true,toastTimer:null,clockTime:0};
+var s={phase:'intro',level:0,carX:560,dragging:false,cars:[],oncoming:[],spawn:0,wave:0,elapsed:0,delay:0,queue:0,score:0,bank:0,levelDelay:0,lost:0,streak:0,passed:0,peak:0,stagePeak:0,milestones:0,clock:0,announce:0,flash:0,bonus:1,fail:false,muted:true,toastTimer:null,clockTime:0};
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function random(a,b){return a+Math.random()*(b-a)}
+function bestScore(){try{return Number(localStorage.getItem('aynen-dortlu-best')||0)}catch(e){return 0}}
+function updateBest(){setText('best','KİŞİSEL REKOR: '+bestScore()+' sn · GERÇEK PARK TAVSİYESİ DEĞİLDİR')}
 function resize(){
  var r=canvas.getBoundingClientRect();dpr=Math.min(2,window.devicePixelRatio||1);
  canvas.width=Math.max(1,Math.round(r.width*dpr));canvas.height=Math.max(1,Math.round(r.height*dpr));
- scale=Math.min(r.width/720,r.height/520);
+ scale=Math.min(r.width/900,r.height/520);
  offX=(r.width-900*scale)/2;offY=(r.height-520*scale)/2;
  draw();
 }
@@ -152,22 +158,24 @@ function playTone(freq,duration,volume){
  }catch(e){}
 }
 function reset(){
- Object.assign(s,{phase:'placing',level:0,carX:560,dragging:false,cars:[],oncoming:[],spawn:0,wave:0,elapsed:0,delay:0,queue:0,score:0,passed:0,peak:0,clock:0,announce:0,flash:0,bonus:1,fail:false,clockTime:0});
+ Object.assign(s,{phase:'placing',level:0,carX:560,dragging:false,cars:[],oncoming:[],spawn:0,wave:0,elapsed:0,delay:0,queue:0,score:0,bank:0,levelDelay:0,lost:0,streak:0,passed:0,peak:0,stagePeak:0,milestones:0,clock:0,announce:0,flash:0,bonus:1,fail:false,clockTime:0});
  $('modal').hidden=true;
- setupStage();toast('PARK YERİNİ SEÇ');playTone(440,.08);
+ setupStage();updateBest();toast('PARK YERİNİ SEÇ');playTone(440,.08);
 }
 function setupStage(){
- s.phase='placing';s.carX=stages[s.level].target;s.cars=[];s.oncoming=[];s.spawn=0;s.wave=0;s.elapsed=0;s.queue=0;s.bonus=1;s.announce=0;
+ s.phase='placing';s.carX=stages[s.level].target;s.cars=[];s.oncoming=[];s.spawn=0;s.wave=0;s.elapsed=0;s.queue=0;s.stagePeak=0;s.milestones=0;s.levelDelay=0;s.bonus=1;s.announce=0;
  for(var i=0;i<5;i++){
   s.cars.push(makeCar(-110+i*108,i%3===0?1:2,i%4===0?'van':'car'));
   s.oncoming.push(makeCar(970+i*136,0,'car'));
  }
- setText('district',stages[s.level].name);
- setText('stage',(s.level+1)+' / '+stages.length);
- setText('risk','ÇARPAN ×1.0');
+ setText('district',(s.level+1)+'/'+stages.length+' · '+stages[s.level].name);
+ setText('streak',String(s.streak));
+ setText('risk','NOKTA ×1.0');
  setText('clock','—');
  setText('queue','0');
- setText('delay',Math.floor(s.delay)+' sn');
+ setText('delay',Math.floor(s.bank)+' sn');
+ $('action').classList.remove('danger');
+ $('clock').classList.remove('countdown');
  setText('instruction','01 / ARABAYI SÜRÜKLE\n02 / PARK ET');
  $('instruction').style.whiteSpace='pre-line';
  setText('hint','Arabayı sağa sola sürükle · Sonra PARK ET');
@@ -181,44 +189,58 @@ function makeCar(x,lane,type){
 function locateSpot(v){
  s.carX=clamp(v,255,735);
  var proximity=Math.max(0,1-Math.abs(s.carX-stages[s.level].target)/220);
- s.bonus=1+proximity*.8;
- setText('risk','ÇARPAN ×'+s.bonus.toFixed(1));
+ s.bonus=1+proximity*1.4;
+ setText('risk','NOKTA ×'+s.bonus.toFixed(1));
 }
 function park(){
  if(s.phase!=='placing')return;
  s.phase='parked';s.elapsed=0;s.spawn=0;
- setText('action','ARABAYI AL ↗');
- setText('instruction','NE KADAR BEKLERSEN\nO KADAR TRAFİK');
+ setText('action','KAÇ / PUANI AL ↗');
+ setText('instruction','GECİKME BİRİKİYOR\nSON SANİYE ×1.7');
  setText('hint','Dörtlüler yanıyor. Denetim gelmeden git.');
  toast(stages[s.level].tag);
  playTone(660,.075);
 }
 function leave(){
  if(s.phase!=='parked')return;
- if(s.elapsed<3){toast('DAHA YENİ GELDİN.');return}
- s.passed++;s.score+=Math.round(s.elapsed*2);
+ var remaining=stages[s.level].deadline-s.elapsed;
+ var nearMiss=remaining<=2.5;
+ var tension=nearMiss?1.7:remaining<=5?1.25:1;
+ s.streak=nearMiss?s.streak+1:0;
+ var chain=1+Math.min(s.streak,5)*.28;
+ var earned=Math.max(0,Math.round(s.levelDelay*tension*chain));
+ s.bank+=earned;s.delay=s.bank;s.passed++;
+ setText('delay',Math.floor(s.bank)+' sn');
+ setText('streak',String(s.streak));
+ $('action').classList.remove('danger');
+ $('clock').classList.remove('countdown');
  if(s.level>=stages.length-1){finish(false,true);return}
- s.level++;
- setupStage();
- toast('YER DEĞİŞTİRİLDİ. MESELE YOK.');
- playTone(530,.10);
+ s.level++;setupStage();
+ toast('+'+earned+' sn · '+(nearMiss?'KIL PAYI ×'+chain.toFixed(1):'ŞİMDİLİK KURTULDUN.'));
+ playTone(nearMiss?820:530,.11);
 }
 function finish(busted,complete){
  s.phase='end';s.fail=busted;
- var title=busted?'İki dakika doldu.':'Kimse görmeden gittin.';
- var text=busted?'Denetim geldi. Dörtlüler resmî belge sayılmadı.':'Altı ayrı durak. Tek bir park yeri bile aramadın.';
+ var lost=Math.floor(s.levelDelay),isBest=s.bank>bestScore();
+ var title=busted?'Dörtlüler kurtarmadı.':isBest?'Trafik seni unutmayacak.':'Kimse görmeden gittin.';
+ var text=busted?'Denetim geldi. Bu durakta biriktirdiğin '+lost+' saniye gitti. Önceki durakların puanı kasada.':'Altı ayrı durak. Bir defa bile yer aramadın.';
+ if(busted)s.streak=0;
  $('modal').hidden=false;
  setText('kicker','AYNEN.FUN / PARK RAPORU');
  setText('modalTitle',title);
  setText('modalText',text);
  setText('start','TEKRAR DENE ↺');
  $('results').hidden=false;$('share').hidden=false;
- setText('endScore',Math.floor(s.delay)+' sn');
+ setText('endScore',Math.floor(s.bank)+' sn');
  setText('endStage',s.passed+' / '+stages.length);
+ setText('endPeak',String(s.peak));
  $('action').disabled=true;
- setText('hint','Dörtlüler kapandı.');
- try{var best=Number(localStorage.getItem('aynen-dortlu-best')||0);if(s.delay>best)localStorage.setItem('aynen-dortlu-best',String(Math.floor(s.delay)))}catch(e){}
- window.AynenShareResult={title:'Dörtlüleri Yaktım — aynen.fun',text:Math.floor(s.delay)+' saniyelik trafik gecikmesi yarattım. '+s.passed+' duraktan kaçtım. İki dakikaya geliyorum.',url:'https://aynen.fun/dortluleri-yaktim.html'};
+ setText('hint',busted?'Denetim geldi. Bu duraktaki puanlar silindi.':'Dörtlüler kapandı.');
+ $('action').classList.remove('danger');
+ try{if(s.bank>bestScore())localStorage.setItem('aynen-dortlu-best',String(Math.floor(s.bank)))}catch(e){}
+ setText('endBest',bestScore()+' sn');updateBest();
+ setText('delay',Math.floor(s.bank)+' sn');
+ window.AynenShareResult={title:'Dörtlüleri Yaktım — aynen.fun',text:'Bir şehre '+Math.floor(s.bank)+' saniye gecikme, '+s.peak+' araçlık kuyruk bıraktım. '+s.passed+'/6 durak. İki dakikaya geliyorum.',url:'https://aynen.fun/dortluleri-yaktim.html'};
  if(busted)playTone(180,.22);else playTone(770,.18);
 }
 function advance(dt){
@@ -229,7 +251,7 @@ function advance(dt){
  var stage=stages[s.level],next=stage.deadline-s.elapsed;
  if(s.elapsed>=stage.deadline){finish(true,false);return}
  setText('clock',Math.max(0,Math.ceil(next))+' sn');
- var rate=stage.rate;
+ var rate=stage.rate*Math.max(.65,1-s.elapsed*.024);
  s.spawn+=dt;
  while(s.spawn>rate){s.spawn-=rate;s.wave++;
   var lane=(s.wave%4===0)?1:2,kind=s.level>=2&&s.wave%6===3?'bus':s.wave%5===2?'van':'car';
@@ -262,6 +284,8 @@ function advance(dt){
   if(c.target===2&&c.x<s.carX)gap=Math.min(gap,s.carX-c.x-(c.len+61)/2);
   var safeDist=24+c.v*.65+Math.max(0,c.v*c.v/(2*145));
   var wanted=gap<safeDist?0:gap<safeDist+75?c.desired*(gap-safeDist)/75:c.desired;
+  // A parked car triggers a bottleneck in the neighboring lane too; traffic ripples backward.
+  if(c.target===1&&Math.abs(c.x-s.carX)<165)wanted=Math.min(wanted,Math.max(19,57-s.queue*3));
   var accel=(wanted<c.v?-165:58);
   c.v=clamp(c.v+accel*dt,0,Math.max(c.desired,wanted));
   c.x+=c.v*dt;
@@ -269,21 +293,27 @@ function advance(dt){
   c.y+=(cy-c.y)*Math.min(1,dt*2.5);
   if(c.x<s.carX+80&&c.x>s.carX-570&&c.v<c.desired*.75){
    var lost=(1-c.v/c.desired)*dt*s.bonus;
-   s.delay+=lost;s.score+=Math.round(lost*100);
+   s.levelDelay+=lost;s.score+=Math.round(lost*100);
   }
  }
  s.cars=s.cars.filter(function(c){return c.x<1050&&c.x>-250});
  s.queue=s.cars.filter(function(c){return c.x<s.carX-18&&c.x>s.carX-660&&c.v<18}).length;
+ s.stagePeak=Math.max(s.stagePeak,s.queue);
  s.peak=Math.max(s.peak,s.queue);
+ if(s.queue>=3&&s.milestones<1){s.milestones=1;toast('ÜÇÜNCÜ ARABA DA DURDU.');playTone(260,.07)}
+ if(s.queue>=6&&s.milestones<2){s.milestones=2;toast('ŞERİT GİTTİ. ŞEHİR AYAKTA.');playTone(210,.09)}
+ if(s.queue>=9&&s.milestones<3){s.milestones=3;toast('TRAFİĞİN ARTIK BİR ADI VAR.');playTone(170,.12)}
  for(var q=0;q<s.oncoming.length;q++)s.oncoming[q].x-=s.oncoming[q].v*dt;
  s.oncoming=s.oncoming.filter(function(c){return c.x>-170});
  if(s.oncoming.length<5)s.oncoming.push(makeCar(1010+random(0,90),0,'car'));
  setText('queue',String(s.queue));
- setText('delay',Math.floor(s.delay)+' sn');
+ setText('delay',Math.floor(s.bank+s.levelDelay)+' sn');
+ if(next<=3){$('action').classList.add('danger');$('clock').classList.add('countdown')}
+ else{$('action').classList.remove('danger');$('clock').classList.remove('countdown')}
  if(next<4&&s.announce===0){s.announce=1;toast('DENETİM GELİYOR.');playTone(330,.13)}
  if(next>=4)s.announce=0;
- if(s.elapsed>4&&s.elapsed-dt<=4)toast('ARKA TARAFTA KUYRUK VAR.');
- if(s.elapsed>8&&s.elapsed-dt<=8)toast('İKİ DAKİKAYA GELİYORUM.');
+ if(s.elapsed>4&&s.elapsed-dt<=4&&s.queue<3)toast('BİRİ KORNA ÇALDI.');
+ if(s.elapsed>8&&s.elapsed-dt<=8&&s.queue<6)toast('BİRAZDAN GELİYORUM.');
  if(Math.floor(s.flash*2)!==Math.floor((s.flash-dt)*2))playTone(430,.022,.009);
 }
 function rect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(x,y,w,h)}
@@ -359,6 +389,8 @@ function drawVehicle(c){
  round(ww*.35,hh*.43,11,5,2,'#262727');
  rect(ww/2-3,-hh*.34,3,6,'#f5e3a4');
  rect(ww/2-3,hh*.19,3,6,'#f5e3a4');
+ if(c.v<26&&c.lane!==0){rect(-ww/2-2,-hh*.3,5,7,'#de634d');rect(-ww/2-2,hh*.15,5,7,'#de634d')}
+ if(c.type==='bus'){label('34',0,5,14,'#393d35')}
  ctx.restore();
 }
 function drawPlayer(){
@@ -382,6 +414,17 @@ function drawPlayer(){
   label('↔',0,-35,19,'#111')}
  ctx.restore();
 }
+function drawReaction(){
+ if(s.phase!=='parked'||s.elapsed<3.3)return;
+ var stopped=s.cars.filter(function(c){return c.x<s.carX-42&&c.x>70&&c.v<22});
+ if(!stopped.length)return;
+ var c=stopped[Math.floor(s.flash/2.4)%stopped.length];
+ var words=['?', 'YOL?', 'HADİ.', '...'];
+ var phrase=words[Math.floor(s.flash/2.4)%words.length];
+ round(c.x-24,c.y-52,48,25,8,'#fffdf6','#252525',1.3);
+ label(phrase,c.x,c.y-34,13,'#151515');
+ line(c.x,c.y-27,c.x+4,c.y-19,'#252525',1.2);
+}
 function drawPolice(){
  if(s.phase!=='parked')return;
  var remain=stages[s.level].deadline-s.elapsed;
@@ -402,7 +445,7 @@ function draw(){
  drawBuildings();drawRoad();
  for(var i=0;i<s.oncoming.length;i++)drawVehicle(s.oncoming[i]);
  for(var j=0;j<s.cars.length;j++)drawVehicle(s.cars[j]);
- drawPlayer();drawPolice();
+ drawPlayer();drawReaction();drawPolice();
  // Location label and readable minimap HUD in canvas.
  round(14,14,138,27,3,'#f9f9f7dd','#777',1);
  label('PARK YASAĞI',83,32,11,'#111');
@@ -451,7 +494,7 @@ function frame(ts){
  if(document.visibilityState!=='hidden')advance(dt);
  draw();raf=requestAnimationFrame(frame);
 }
-resize();raf=requestAnimationFrame(frame);
+resize();updateBest();raf=requestAnimationFrame(frame);
 })();
 </script>
 <script src="/share-kit.js?v=1" defer></script>
