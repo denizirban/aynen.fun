@@ -157,7 +157,7 @@ function reset(){
  setupStage();toast('PARK YERİNİ SEÇ');playTone(440,.08);
 }
 function setupStage(){
- s.phase='placing';s.carX=stages[s.level].target;s.cars=[];s.oncoming=[];s.spawn=0;s.wave=0;s.elapsed=0;s.queue=0;s.bonus=1;
+ s.phase='placing';s.carX=stages[s.level].target;s.cars=[];s.oncoming=[];s.spawn=0;s.wave=0;s.elapsed=0;s.queue=0;s.bonus=1;s.announce=0;
  for(var i=0;i<5;i++){
   s.cars.push(makeCar(-110+i*108,i%3===0?1:2,i%4===0?'van':'car'));
   s.oncoming.push(makeCar(970+i*136,0,'car'));
@@ -277,14 +277,13 @@ function advance(dt){
  s.peak=Math.max(s.peak,s.queue);
  for(var q=0;q<s.oncoming.length;q++)s.oncoming[q].x-=s.oncoming[q].v*dt;
  s.oncoming=s.oncoming.filter(function(c){return c.x>-170});
- s.oncoming.push();
  if(s.oncoming.length<5)s.oncoming.push(makeCar(1010+random(0,90),0,'car'));
  setText('queue',String(s.queue));
  setText('delay',Math.floor(s.delay)+' sn');
  if(next<4&&s.announce===0){s.announce=1;toast('DENETİM GELİYOR.');playTone(330,.13)}
  if(next>=4)s.announce=0;
- if(s.elapsed>4&&s.elapsed<4.05)toast('ARKA TARAFTA KUYRUK VAR.');
- if(s.elapsed>8&&s.elapsed<8.05)toast('İKİ DAKİKAYA GELİYORUM.');
+ if(s.elapsed>4&&s.elapsed-dt<=4)toast('ARKA TARAFTA KUYRUK VAR.');
+ if(s.elapsed>8&&s.elapsed-dt<=8)toast('İKİ DAKİKAYA GELİYORUM.');
  if(Math.floor(s.flash*2)!==Math.floor((s.flash-dt)*2))playTone(430,.022,.009);
 }
 function rect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(x,y,w,h)}
