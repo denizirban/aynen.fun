@@ -116,7 +116,7 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 <h1>DÜĞÜN<br>KONVOYU GP</h1>
 <p>Arabayı yönlendir, <b style="color:#ffdf81">+ işaretli araca yaklaşınca korna çal</b>, konvoyu büyüt. Salona geç kalma.</p><div class="mode-options"><button type="button" class="mode-option" id="mode-quick" aria-pressed="true">HIZLI YARIŞ</button><button type="button" class="mode-option" id="mode-daily" aria-pressed="false">GÜNÜN KONVOYU</button></div><p class="mode-caption" id="mode-caption">Hemen başla. Her seferinde yeni konvoy.</p>
 <div class="rules">
-<div><strong>← → SÜRÜŞ</strong>Sağa sola geç; çarpmadan sıyrıl.</div>
+<div><strong>← → SÜRÜŞ</strong>Mobilde ekrana basıp sürükle; bilgisayarda ← →.</div>
 <div><strong>KORNA = ARAÇ TOPLA</strong>Yakınken bas. X: dörtlü koruması.</div>
 </div>
 <p>3 kısa etap · 3 can · <span class="accent">en büyük konvoyu sen kur.</span></p>
@@ -139,6 +139,7 @@ c.imageSmoothingEnabled=false;c.setTransform(2,0,0,2,0,0);
 const overlay=document.getElementById("overlay"),menu=document.getElementById("menu"),banner=document.getElementById("banner"),soundBtn=document.getElementById("sound"),pauseBtn=document.getElementById("pause"),hornBtn=document.getElementById("horn");
 let mode="menu",muted=false,audio=null,last=0,seconds=0,objects=[],spawnTimer=0,nextId=1,noticeTimer=0,flash=0,runSeed=0;
 const input={left:false,right:false,brake:false,boost:false};
+const gesture={active:false,id:null,target:0};
 let drumClock=0,drumStep=0,roadCut=[false,false],rivalEventDone=false;
 const dortluBtn=document.getElementById("dortlu"),comboFloat=document.getElementById("combo-float"),tutorialEl=document.getElementById("tutorial"),progressEl=document.getElementById("h-progress"),progressTrack=document.getElementById("progress-track"),missionProgress=document.getElementById("m-progress"),missionStreak=document.getElementById("m-streak"),missionLap=document.getElementById("m-lap"),missionStrip=document.getElementById("mission-strip");
 let runMode="quick",dailyKey="",runRng=null,attempts=0,tutorialStage=0,tutorialClock=0,runEvents=[],hadHorn=false,firstGame=true;
@@ -190,7 +191,7 @@ function hideTutorial(){tutorialEl.classList.remove("on");tutorialClock=0}
 function start(){
 g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,halay:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
 dailyKey=trDay();runRng=runMode==="daily"?seededRandom(stringHash("dugun-gp-v4-"+dailyKey)):null;attempts++;tutorialStage=0;hadHorn=false;runEvents=[];
-lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];rivalEventDone=false;comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=(runMode==="daily"?stringHash("scene-"+dailyKey):Math.random()*10000);flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",1.7);missionStrip.style.display="flex";progressTrack.style.display="block";updateHud();showTutorial("← → YÖNLENDİR · + GELİNCE KORNA ÇAL",3.3);
+lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];rivalEventDone=false;comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=(runMode==="daily"?stringHash("scene-"+dailyKey):Math.random()*10000);flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";gesture.active=false;gesture.id=null;last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",1.7);missionStrip.style.display="flex";progressTrack.style.display="block";updateHud();showTutorial("← → YÖNLENDİR · + GELİNCE KORNA ÇAL",3.3);
 }
 function bestScore(){try{return Number(localStorage.getItem("dugun-gp-best")||0)}catch(e){return 0}}
 function saveBest(){try{if(g.score>bestScore())localStorage.setItem("dugun-gp-best",String(g.score))}catch(e){}}
@@ -311,7 +312,10 @@ g.hornCD=.90;pulse=.42;g.horns++;hadHorn=true;tone(350,.16,"sawtooth",.065);setT
 let gathered=0;
 for(const o of objects){if(o.type==="guest"&&!o.joined&&!o.passed&&o.z<.75&&o.z>.08&&Math.abs(o.lane-g.lane)<.67){
 o.joined=true;o.pop=1;gathered++;g.joined++;g.convoy++;g.combo++;if(g.combo===3){g.halay=5.5;announce("HALAY MODU! 5 SN · 2× PUAN",1.6)}
-const gained=(170+Math.min(g.combo,8)*45)*(g.halay>0?2:1);g.score+=gained;g.comboClock=5.5;g.maxConvoy=Math.max(g.maxConvoy,g.convoy);g.bestCombo=Math.max(g.bestCombo,g.combo);showCombo("+"+gained+"  ·  "+g.combo+"× SERİ");makeConfetti(o.z,o.lane,18);g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
+const perfect=o.z>=.24&&o.z<=.49&&Math.abs(o.lane-g.lane)<.30;
+const gained=(170+Math.min(g.combo,8)*45+(perfect?175:0))*(g.halay>0?2:1);g.score+=gained;
+if(perfect){g.perfect=(g.perfect||0)+1;makeConfetti(o.z,o.lane,10);}
+g.comboClock=5.5;g.maxConvoy=Math.max(g.maxConvoy,g.convoy);g.bestCombo=Math.max(g.bestCombo,g.combo);showCombo("+"+gained+(perfect?" · TAM ZAMANINDA!":" · "+g.combo+"× SERİ"));makeConfetti(o.z,o.lane,18);g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
 }}
 if(gathered)announce(gathered>1?gathered+" ARAÇ DAHA KATILDI!":["DAYININ ARKADAŞI DA GELDİ","KONVOYA +1 ARAÇ","HALA OĞLU YETİŞTİ","KORNAYI DUYUP GELDİ"][Math.floor(rand(0,4))],1.3);
 else{g.combo=0;announce("KORNA ÇALINDI. DUYAN YOK.",.6)}
@@ -349,8 +353,11 @@ function update(dt){
  if(comboFloatTime<0)comboFloat.classList.remove("on");
  if(noticeTimer<=0)banner.classList.remove("show");
  flash=Math.max(0,flash-dt);pulse=Math.max(0,pulse-dt);rumble=Math.max(0,rumble-dt);
- const steer=(Number(input.right)-Number(input.left))*dt*(input.brake?1.50:1.20);
- g.lane=clamp(g.lane+steer,innerHeight>innerWidth?-.64:-1.04,innerHeight>innerWidth?.64:1.04);
+ const laneLimit=innerHeight>innerWidth?.85:1.04;
+ const steer=(Number(input.right)-Number(input.left))*dt*(input.brake?1.50:1.2);
+ if(gesture.active)g.lane+=(clamp(gesture.target,-laneLimit,laneLimit)-g.lane)*Math.min(1,dt*6.3);
+ else g.lane+=steer;
+ g.lane=clamp(g.lane,-laneLimit,laneLimit);
  const targetSpeed=input.brake?74:input.boost?173:136;
  g.speed+=(targetSpeed-g.speed)*Math.min(1,dt*(input.brake?2.3:.95));
  g.distance+=g.speed*dt*.315;g.time-=dt;
@@ -409,10 +416,10 @@ function update(dt){
    if(delta<.31){
     if(g.invuln<=0){
      g.hearts--;g.invuln=1.35;g.speed=Math.max(58,g.speed-47);g.combo=0;g.comboClock=0;
-     g.convoy=Math.max(1,g.convoy-1);g.chaos=clamp(g.chaos+12,0,100);flash=.28;rumble=.42;
+     g.convoy=Math.max(1,g.convoy-1);g.chaos=clamp(g.chaos+6,0,100);flash=.28;rumble=.42;spawnTimer=Math.max(spawnTimer,1.45);
      tone(105,.27,"sawtooth",.06);announce(["DAYI ANİ FREN YAPTI!","YANLIŞ KONVOYA GİRDİN!","GÖZÜN YOLDA OLSUN!","KONVOY KARIŞTI!"][Math.floor(rand(0,4))],1.25);
      if(g.hearts<=0){finish(false);return}
-    }else{g.score+=90;showCombo("+90 · DÖRTLÜ KALKANI")}
+    }else if(g.dortluOn>0){g.score+=90;showCombo("+90 · DÖRTLÜ KALKANI")}
    }else if(delta<.56){
     g.nearMiss++;const gain=100*(g.halay>0?2:1);g.score+=gain;showCombo("+"+gain+" · KIL PAYI!");
     if(g.nearMiss%4===0){g.score+=250;announce("4 YAKIN GEÇİŞ · BONUS!",1.1)}
@@ -421,7 +428,7 @@ function update(dt){
  }
  objects=objects.filter(o=>o.z>-.14);
  if(Math.abs(g.lane)>.94){g.speed=Math.max(46,g.speed-dt*31);g.chaos=Math.min(100,g.chaos+dt*.7)}
- if(!helpShown&&seconds>4&&objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.7&&o.z>.19)){
+ if(!helpShown&&seconds>3&&objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.72&&o.z>.19)){
    helpShown=true;showTutorial("ŞİMDİ KORNA!  + ARACI KONVOYA KAT",2.3);
  }
  for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=54*dt;p.life-=dt}
@@ -830,10 +837,22 @@ if(e.code==="Enter"&&mode==="menu"){e.preventDefault();start()}
 });
 addEventListener("keyup",e=>{if(keys[e.code]){e.preventDefault();input[keys[e.code]]=false}});
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&mode==="playing")pause()});
-addEventListener("blur",()=>{Object.keys(input).forEach(k=>input[k]=false);if(mode==="playing")pause()});
-canvas.addEventListener("pointerdown",e=>{if(mode!=="playing")return;const r=canvas.getBoundingClientRect();const xx=(e.clientX-r.left)/r.width;input.left=xx<.43;input.right=xx>.57});
-canvas.addEventListener("pointerup",()=>{input.left=false;input.right=false});
-canvas.addEventListener("pointercancel",()=>{input.left=false;input.right=false});
+addEventListener("blur",()=>{Object.keys(input).forEach(k=>input[k]=false);gesture.active=false;gesture.id=null;if(mode==="playing")pause()});
+function canvasSteer(e){
+ const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/Math.max(1,r.width);
+ gesture.target=clamp((x-.5)*2.05,-1,1);
+}
+canvas.addEventListener("pointerdown",e=>{
+ if(mode!=="playing")return;
+ if(e.pointerType==="mouse"&&e.button!==0)return;
+ e.preventDefault();gesture.active=true;gesture.id=e.pointerId;canvasSteer(e);
+ try{canvas.setPointerCapture(e.pointerId)}catch(err){}
+});
+canvas.addEventListener("pointermove",e=>{if(gesture.active&&e.pointerId===gesture.id){e.preventDefault();canvasSteer(e)}});
+function endCanvasSteer(e){if(e.pointerId===gesture.id){gesture.active=false;gesture.id=null}}
+canvas.addEventListener("pointerup",endCanvasSteer);
+canvas.addEventListener("pointercancel",endCanvasSteer);
+canvas.addEventListener("lostpointercapture",endCanvasSteer);
 })();
 </script>
 </body>
