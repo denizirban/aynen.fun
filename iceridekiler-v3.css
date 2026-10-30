@@ -294,3 +294,13 @@ body{background:#030307}
  .metric-head b{font-size:11px}
  .action{min-height:57px}
 }
+
+/* Between-event feedback remains compact and outside the action area. */
+.episode-report{position:absolute;z-index:6;left:30px;bottom:118px;width:248px;padding:11px 13px;background:#121522e8;border:1px solid #a9daa750;border-radius:11px;backdrop-filter:blur(16px);box-shadow:0 12px 32px #0009}
+.episode-report[hidden]{display:none}
+.report-eyebrow{font-size:8px;color:#a8ebbd;margin-bottom:5px}
+.episode-report strong{font-size:12px;color:#f1e7d8;display:block}
+.report-metrics{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.report-metrics span{font:8px 'DM Mono',monospace;border-radius:5px;padding:5px;background:#ffffff12;color:#d5c6ee}
+.episode-report p{font-size:10px;color:#afabb9;line-height:1.45;margin:0}
+@media(max-width:700px){.episode-report{left:9px;right:52px;width:auto;bottom:calc(159px + env(safe-area-inset-bottom));padding:9px 11px}.episode-report strong{font-size:11px}.episode-report p{font-size:9px}.report-metrics{margin:5px 0}}
