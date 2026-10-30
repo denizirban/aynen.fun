@@ -39,6 +39,26 @@ button.chip:hover{background:rgba(255,255,255,.18)}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 #flash{position:fixed;inset:0;z-index:7;pointer-events:none;opacity:0;background:#fff;transition:opacity .5s}
 #flash.on{opacity:1;transition:opacity .23s}
+#flash{background:radial-gradient(circle at 50% 50%,#fff 0%,#e6c8da 11%,#7e81b5 30%,#121727 85%);transform:scale(2.7);filter:blur(35px);transition:opacity .45s,transform .7s,filter .7s}
+#flash.on{transform:scale(.54);filter:blur(0);transition:opacity .32s,transform .48s,filter .48s}
+#mission{position:fixed;z-index:5;right:27px;top:115px;text-align:right;pointer-events:none;font:500 10px/1.9 var(--mono);letter-spacing:.055em;color:#eee}
+#mission strong{display:block;font-size:11px;font-weight:500;color:#fff}
+#mission span{display:block;opacity:.75}
+#screenTint{position:fixed;z-index:2;pointer-events:none;inset:0;background:radial-gradient(ellipse at 50% 85%,transparent 45%,#04091338);mix-blend-mode:multiply}
+#finalScreen{position:fixed;z-index:10;inset:0;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 65% 24%,#39335b 0%,#12161e 45%,#080d13 100%);padding:24px}
+#finalScreen.open{display:flex}
+.finalInner{width:min(630px,100%);text-align:center;position:relative}
+.finalRing{width:clamp(112px,20vw,185px);height:clamp(112px,20vw,185px);border:1px solid #d4c2e9;border-radius:50%;margin:0 auto 30px;display:grid;place-items:center;box-shadow:0 0 80px #987acc55,inset 0 0 80px #987acc33;position:relative}
+.finalRing:after{content:"";position:absolute;inset:17px;border:1px dashed #e5c2f7a8;border-radius:50%;animation:turn 22s linear infinite}
+@keyframes turn{to{transform:rotate(360deg)}}
+.finalRing b{font-size:65px;font-weight:300}
+.finalInner h2{font-size:clamp(42px,8vw,86px);font-weight:500;line-height:1.02;letter-spacing:-.087em;margin:12px 0 15px}
+.finalInner p{font-size:clamp(13px,1.7vw,17px);max-width:470px;margin:0 auto 30px;line-height:1.6;color:#c8cbd7}
+.finalStats{display:flex;justify-content:center;gap:22px;margin:21px auto 30px;font:11px var(--mono);color:#d5d0e4}
+.finalInner button{border:1px solid #fff9;background:white;color:#111;padding:15px 22px;border-radius:30px;font:600 12px var(--mono);margin:4px}
+.finalInner button.subtle{background:transparent;color:#fff}
+@media(max-width:700px){#mission{top:auto;bottom:calc(103px + env(safe-area-inset-bottom));right:16px;font-size:9px;max-width:140px;line-height:1.5}#mission strong{font-size:10px}.finalStats{gap:12px;flex-wrap:wrap}.finalInner button{font-size:11px;padding:13px 15px}}
+@media(prefers-reduced-motion:reduce){.finalRing:after{animation:none}}
 #start{position:fixed;z-index:9;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,rgba(9,12,19,.78),rgba(11,12,14,.37) 55%,rgba(9,9,13,.25));transition:opacity .75s,visibility .75s}
 #start.hide{opacity:0;visibility:hidden;pointer-events:none}
 #start-inner{width:min(570px,calc(100vw - 55px));margin-right:auto;margin-left:clamp(28px,11vw,185px)}
@@ -74,13 +94,14 @@ h1{font-size:clamp(73px,20vw,115px);margin:13px 0 20px}#start p{font-size:14px;m
 </head>
 <body>
 <canvas id="world" aria-label="Yanlış Kapı üç boyutlu oyun alanı"></canvas>
-<div id="grain"></div><div id="reticle"></div><div id="flash"></div>
+<div id="grain"></div><div id="screenTint"></div><div id="reticle"></div><div id="flash"></div>
 <div id="hud"><a class="brand" href="/" aria-label="aynen.fun ana sayfa"><b>↖</b> AYNEN.FUN / YANLIŞ KAPI</a><div id="meta"><span class="chip" id="progress">00 GEÇİŞ · 00/05 KEŞİF</span><button class="chip" id="sound" aria-label="Sesi aç veya kapat">SES KAPALI</button><button class="chip" id="helpBtn" aria-label="Yardım">?</button></div></div>
-<div id="topCenter"><span id="worldNum">DÜNYA 00 / EŞİK</span><div id="worldTitle">Hangi kapı yanlış?</div></div>
+<div id="topCenter"><span id="worldNum">DÜNYA 00 / EŞİK</span><div id="worldTitle">Hangi kapı yanlış?</div></div><div id="mission"><strong id="missionTitle">BEŞ ANOMALİYİ BUL</strong><span id="missionInfo">0/5 · Final kapısını aç</span><span id="extraInfo">0/5 · Yan deney</span></div>
 <button id="back" aria-label="Başlangıç koridoruna dön">← KORİDORA DÖN</button>
 <div id="floorUI"><button id="action">KAPIYI AÇ ↗</button><span id="microText">Kapıya dokun · fareyle etrafına bak · W A S D ile yürü</span></div>
 <div id="mobilePad" aria-label="Hareket kontrolü"><div id="nub"></div></div>
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="finalScreen" role="dialog" aria-modal="true" aria-label="Yanlış Kapı final ekranı"><div class="finalInner"><div class="finalRing"><b>∞</b></div><div class="eyebrow">BU KAPI HİÇ OLMAMALIYDI</div><h2>Çıkış, girişin<br>içindeymiş.</h2><p>Beş dünyanın tamamını gördün. Ama kapılardan hangisinin yanlış olduğunu hâlâ bilmiyorsun.</p><div class="finalStats"><span id="endWorlds">5/5 DÜNYA</span><span id="endDoors">00 GEÇİŞ</span><span id="endExtras">00/05 GİZLİ DENEY</span></div><button id="again">YENİDEN KAYBOL ↗</button><button id="finalShare" class="subtle">SONUCU PAYLAŞ ↗</button></div></div>
 <div id="start"><div id="start-inner"><div class="eyebrow">AYNEN.FUN PRESENTS<br>AN IMPOSSIBLE JOURNEY / 001</div><h1>Yanlış<br>Kapı.</h1><p>Her kapının ardında başka bir gerçeklik var. Hiçbiri olması gerektiği yerde değil.</p><button id="begin">İÇERİ GİR <span aria-hidden="true">↗</span></button><div class="introfoot">5 DÜNYA · 5 GİZLİ ANOMALİ · SONSUZ GEÇİŞ<br>DESKTOP + MOBİL / KULAKLIK ÖNERİLİR</div></div></div>
 <div id="help"><div class="helpCard"><h2>Nasıl kaybolunur?</h2><p>MASAÜSTÜ: Fareyi sürükleyerek etrafına bak. W A S D veya ok tuşları ile yürü. Bir kapıya tıkla ya da kapının içine yürü.</p><p>MOBİL: Ekranı sürükle, bakış açını değiştir. Sağ alt köşedeki yuvarlağı sürükleyerek yürü. Kapılara ve gizemli nesnelere dokun.</p><p>Her dünyada dokunabileceğin gizli bir anomali var. Bulduklarını kaydediyoruz. Başlangıç koridoruna her zaman dönebilirsin.</p><button id="closeHelp">ANLADIM →</button><button id="share" style="margin-left:8px">PAYLAŞ ↗</button></div></div>
 <div id="fallback">3D sahne yüklenemedi.<br>İnternet bağlantını kontrol edip sayfayı yenile.<br><button onclick="location.reload()" style="margin-top:20px;padding:12px 18px">YENİDEN DENE</button></div>
@@ -105,16 +126,17 @@ const clock=new THREE.Clock(), raycaster=new THREE.Raycaster();
 const pointer=new THREE.Vector2();
 const move=new THREE.Vector3();
 let yaw=0,pitch=0,active=false,mode=-1,transitioning=false,hoverHit=null,walking=false,touchAxis={x:0,y:0},toastTimer=0;
-const keys=new Set(),interactives=[],animates=[];
+const keys=new Set(),interactives=[],animates=[];let microState={},transitionTimer=null;
 const worlds=[
 {name:"Ters Çekim",subtitle:"Yerçekimi bir fikirden ibaret.",a:"#9c86ed",b:"#1e143f",sky:"#37325b",floor:"#ada0db"},
 {name:"Tavan Deniz",subtitle:"Okyanus başının üzerinde.",a:"#58d8d7",b:"#034b70",sky:"#042d46",floor:"#306b76"},
 {name:"Zamansız Çöl",subtitle:"Burada saatler eskimez.",a:"#ffb47b",b:"#b84d43",sky:"#683c3c",floor:"#a8634d"},
 {name:"Ölçek Hatası",subtitle:"Belki de sen küçüldün.",a:"#dfe2aa",b:"#708c58",sky:"#294337",floor:"#687a53"},
-{name:"Kırık Perspektif",subtitle:"Gözünün gördüğü tek gerçek değil.",a:"#eac5f8",b:"#4c71ce",sky:"#222947",floor:"#8a88b0"}
+{name:"Kırık Perspektif",subtitle:"Gözünün gördüğü tek gerçek değil.",a:"#eac5f8",b:"#4c71ce",sky:"#222947",floor:"#8a88b0"},
+{name:"Kapının Kendisi",subtitle:"Bütün kapılar aynı yere çıkıyor.",a:"#dbc1ff",b:"#13101b",sky:"#1d1a2a",floor:"#332e3b"}
 ];
-let store={count:0,found:[],history:[]};
-try{const s=JSON.parse(localStorage.getItem("yanlis-kapi-v1")||"null");if(s&&Array.isArray(s.found)){store={count:+s.count||0,found:s.found.filter(n=>Number.isInteger(n)&&n>=0&&n<5),history:Array.isArray(s.history)?s.history.slice(-15):[]};}}catch(e){}
+let store={count:0,found:[],extras:[],history:[],finals:0};
+try{const s=JSON.parse(localStorage.getItem("yanlis-kapi-v1")||"null");if(s&&Array.isArray(s.found)){store={count:+s.count||0,found:s.found.filter(n=>Number.isInteger(n)&&n>=0&&n<5),extras:Array.isArray(s.extras)?s.extras.filter(n=>Number.isInteger(n)&&n>=0&&n<5):[],history:Array.isArray(s.history)?s.history.slice(-15):[],finals:+s.finals||0};}}catch(e){}
 function save(){try{localStorage.setItem("yanlis-kapi-v1",JSON.stringify(store));}catch(e){}}
 function hash(n){let x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x);}
 let seed=(new URLSearchParams(location.search).get("seed")||"").replace(/[^0-9]/g,"");
@@ -153,7 +175,7 @@ return p;
 }
 function hazeCloud(x,y,z,color,r=1.5){const m=new THREE.MeshBasicMaterial({color,transparent:true,opacity:.14,depthWrite:false});for(let i=0;i<5;i++){const p=mesh(new THREE.SphereGeometry(r*(.5+hash(i+x)*.5),16,10),m,x+i*.48-1,y+hash(i)*.28,z+hash(i+4),root);animates.push({type:"float",obj:p,base:y+hash(i)*.28,phase:i+x,amp:.14});}}
 function particles(num,color,wide=28,high=11,depth=40,r=.055){const pts=[];for(let i=0;i<num;i++){pts.push({x:(hash(i+4)*2-1)*wide/2,y:.2+hash(i+16)*high,z:(hash(i+77)*2-1)*depth/2,phase:hash(i+322)*10});}const g=new THREE.SphereGeometry(r,7,5);const m=new THREE.MeshBasicMaterial({color,transparent:true,opacity:.54});for(const pt of pts){const o=mesh(g,m,pt.x,pt.y,pt.z);animates.push({type:"float",obj:o,base:pt.y,phase:pt.phase,amp:.14+.3*hash(pt.phase)});}}
-function clear(){interactives.length=0;animates.length=0;root.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(m.map)m.map.dispose();m.dispose();});}});while(root.children.length)root.remove(root.children[0]);}
+function clear(){interactives.length=0;animates.length=0;microState={};hoverHit=null;$("action").classList.remove("on");root.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(m.map)m.map.dispose();m.dispose();});}});while(root.children.length)root.remove(root.children[0]);}
 function setCamera(){camera.position.set(0,2.1,small?8:7.5);yaw=0;pitch=-.035;camera.rotation.set(pitch,yaw,0);}
 function hall(){
 mode=-1;clear();ambient("#b0b4b9",.012);
@@ -176,11 +198,13 @@ hazeCloud(side*7,7.6,-8,"#edeef0",1.7);
 }
 for(let i=0;i<7;i++){const z=-8+i*2.5;const x=(i%2?1:-1)*(5.1+hash(i)*3.2);cactus(x,z,1+hash(i+22));}
 for(let i=0;i<17;i++){const x=(hash(i+3)*2-1)*7;const z=-13+hash(i+9)*20;const p=mesh(new THREE.ConeGeometry(.13+hash(i)*.18,.5+hash(i)*1.2,5),new THREE.MeshPhysicalMaterial({color:i%2?"#9bd9ed":"#edc4e5",transparent:true,opacity:.75,transmission:.12,roughness:.25}),x,4.4+hash(i+5)*4,z);p.rotation.z=Math.PI;animates.push({type:"float",obj:p,base:p.position.y,phase:i,amp:.35});}
-const themes=ordered();currentDoors=themes;
-themes.forEach((id,i)=>door((i-1)*6.45,-14.6,id,worlds[id].name,worlds[id],.92));
+const themes=ordered();const unlocked=store.found.length>=5;
+currentDoors=unlocked?[themes[0],-4,themes[1]]:themes;
+currentDoors.forEach((id,i)=>door((i-1)*6.45,-14.6,id,id===-4?"OLMAMASI GEREKEN KAPI":worlds[id].name,worlds[id===-4?5:id],.92));
+if(unlocked){const halo=ring(3,.055,"#f1d7ff",0,3.1,-13.6);halo.rotation.x=.28;spin(halo,.16);glow("#b98cf7",7,0,6,-10,18);}
 glow("#f1d3be",4,0,8,-9,28);
 particles(small?27:45,"#ffffff",21,10,33,.045);
-setCamera();$("worldNum").textContent="DÜNYA 00 / EŞİK";$("worldTitle").textContent="Hangi kapı yanlış?";$("back").classList.remove("on");
+setCamera();$("worldNum").textContent="DÜNYA 00 / EŞİK";$("worldTitle").textContent=store.found.length===5?"Altıncı kapı belirdi.":"Hangi kapı yanlış?";$("back").classList.remove("on");
 $("microText").textContent=small?"Kapıya dokun · sürükleyerek bak · sağ alttan yürü":"Kapıya tıkla · fareyle etrafına bak · W A S D ile yürü";
 update();
 }
@@ -241,14 +265,18 @@ for(let i=0;i<10;i++){const r=ring(.6+i*.26,.025,"#a8a3ef",0,4,-8-i*.8);r.rotati
 const prism=mesh(new THREE.OctahedronGeometry(1.25,0),new THREE.MeshPhysicalMaterial({color:"#f9ceff",metalness:.38,roughness:.1,transparent:true,opacity:.8}),-4,3,-4);secret(prism,4,"Işığı kıran prizma");
 particles(70,"#d9ddff",39,14,52,.065);
 }
-const builders=[buildGravity,buildOcean,buildDesert,buildScale,buildPrism];
+const builders=[buildGravity,buildOcean,buildDesert,buildScale,buildPrism,buildFinal];
 function populate(id){
-mode=id;clear();builders[id]();door(0,-14.9,-2,"SONRAKİ KAPI",{a:worlds[id].a,b:worlds[(id+1)%5].b},.95);
-const sideDoor=door(9,-11.4,-3,"KORİDOR",{a:"#bdc0c7",b:"#303a49"},.7);
-setCamera();$("back").classList.add("on");$("worldNum").textContent="DÜNYA "+String(store.count).padStart(2,"0")+" / 05";$("worldTitle").textContent=worlds[id].name;$("microText").textContent=worlds[id].subtitle+" Gizli nesneyi bul.";
-update();
+mode=id;clear();builders[id]();
+if(id<5){door(0,-14.9,-2,"SONRAKİ KAPI",{a:worlds[id].a,b:worlds[(id+1)%5].b},.95);door(9,-11.4,-3,"KORİDOR",{a:"#bdc0c7",b:"#303a49"},.7);}
+setCamera();$("back").classList.add("on");$("worldNum").textContent=id===5?"DÜNYA ∞ / OLMAMALIYDI":"DÜNYA "+String(id+1).padStart(2,"0")+" / 05";$("worldTitle").textContent=worlds[id].name;$("microText").textContent=id===5?"Kapıların arasında gerçekten bir çıkış var mı?":worlds[id].subtitle+" Gizli nesneyi bul.";
+update();}
+function update(){
+$("progress").textContent=String(store.count).padStart(2,"0")+" GEÇİŞ · "+String(new Set(store.found).size).padStart(2,"0")+"/05 KEŞİF";
+$("missionTitle").textContent=mode===5?"BU KAPIYI AÇ":store.found.length>=5?"FİNAL KAPISI AÇILDI":"BEŞ ANOMALİYİ BUL";
+$("missionInfo").textContent=store.found.length+"/5 ana keşif · "+(mode===5?"Ortadaki kapıya yaklaş":store.found.length>=5?"Koridora dön":"Beyaz ışıklı nesneleri ara");
+$("extraInfo").textContent=store.extras.length+"/5 gizli etkileşim";
 }
-function update(){$("progress").textContent=String(store.count).padStart(2,"0")+" GEÇİŞ · "+String(new Set(store.found).size).padStart(2,"0")+"/05 KEŞİF";}
 function toast(message){$("toast").textContent=message;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),3100);}
 function transition(fn){if(transitioning)return;transitioning=true;$("flash").classList.add("on");tone(540,.13);setTimeout(()=>{fn();$("flash").classList.remove("on");transitioning=false;},350);}
 function go(id){transition(()=>{if(id===-3){hall();toast("Yine aynı koridor. Kapılar değişmiş.");return;}if(id===-2){hall();toast("Üç yeni kapı belirdi.");return;}if(id<0)return;store.count++;store.history.push(id);store.history=store.history.slice(-15);save();populate(id);toast("Burası "+worlds[id].name+".");});}
