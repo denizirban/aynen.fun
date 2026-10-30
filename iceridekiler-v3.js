@@ -20,12 +20,12 @@ const campaign=[
 {id:'return-virus',title:'Bir kez daha',desc:'İlk viral karşılaşma hatırlanıyor mu?',kind:'virus',antigen:'virus-V',count:17,x:295,y:220,base:110,goal:'Hafıza yanıtını kullanarak enfekte hücreleri kontrol et.',fact:'Hafıza B ve T hücreleri sonraki uygun antijen karşılaşmalarında daha hızlı yanıt verebilir.'}
 ];
 const costs={patrol:21,alarm:24,target:27,calm:18,repair:22};
-const DEFAULT=()=>({version:2,phase:'intro',returnPhase:'between',chapter:0,clock:0,chapterTime:0,tissue:94,energy:82,inflam:7,memory:0,signals:0,presentation:0,antibody:0,points:9,score:0,kills:0,peak:7,focus:{x:450,y:260},logs:[],history:[],levels:{macro:1,neutro:0,dend:0,nk:0,tcell:0,bcell:0,treg:0,fibro:0},memories:{'bakteri-A':0,'virus-V':0},actionReady:{},unlocks:{},streak:0,completed:false,eventsMade:0,speed:1,mode:'campaign',dynamicWave:null});
+const DEFAULT=()=>({version:2,phase:'intro',returnPhase:'between',chapter:0,clock:0,chapterTime:0,tissue:94,energy:82,inflam:7,memory:0,signals:0,presentation:0,antibody:0,points:9,score:0,kills:0,peak:7,focus:{x:450,y:260},logs:[],history:[],levels:{macro:1,neutro:0,dend:0,nk:0,tcell:0,bcell:0,treg:0,fibro:0},memories:{'bakteri-A':0,'virus-V':0},actionReady:{},unlocks:{},streak:0,completed:false,eventsMade:0,speed:1,mode:'campaign',dynamicWave:null,fx:true,focusSet:false,peakThreat:0,chapterMilestone:0});
 let raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
 let state=DEFAULT(), agents=[],particles=[],hosts=[],bursts=[],signals=[],debris=[],flares=[],selected=null,frameTime=0,saveTime=0,uiTime=0,renderTs=0,maxId=0;
 const animReduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(raw&&raw.state&&raw.state.version===2&&!raw.state.completed){
- state=Object.assign(DEFAULT(),raw.state);state.levels=Object.assign(DEFAULT().levels,raw.state.levels||{});state.memories=Object.assign(DEFAULT().memories,raw.state.memories||{});state.actionReady=raw.state.actionReady||{};
+ state=Object.assign(DEFAULT(),raw.state);state.levels=Object.assign(DEFAULT().levels,raw.state.levels||{});state.memories=Object.assign(DEFAULT().memories,raw.state.memories||{});state.actionReady=raw.state.actionReady||{};state.fx=raw.state.fx!==false;
  state.logs=(raw.state.logs||[]).slice(0,25);state.history=(raw.state.history||[]).slice(0,12);
  agents=Array.isArray(raw.agents)?raw.agents.filter(a=>types[a.type]&&Number.isFinite(a.x)&&Number.isFinite(a.y)).slice(0,140):[];agents.forEach(a=>{if(a.permanent===undefined)a.permanent=['macro','dend','fibro','treg'].includes(a.type)});
  particles=Array.isArray(raw.particles)?raw.particles.filter(b=>Number.isFinite(b.x)&&Number.isFinite(b.y)).slice(0,100):[];
@@ -51,8 +51,8 @@ function event(msg){state.logs.unshift({time:Math.round(state.clock),text:msg});
 function save(){try{localStorage.setItem(KEY,JSON.stringify({state,agents,particles,hosts,debris,signals}));$('saved').textContent='KAYDEDİLDİ ✓'}catch(e){$('saved').textContent='KAYIT YOK'}}
 function resetWorld(){agents=[];particles=[];hosts=[];debris=[];signals=[];bursts=[];flares=[];for(let i=0;i<5;i++)addAgent('macro').permanent=true;addAgent('dend').permanent=true;addAgent('fibro').permanent=true;addAgent('treg').permanent=true;for(let k=0;k<22;k++){let x=80+(k%6)*148+rnd(-22,22),y=95+Math.floor(k/6)*109+rnd(-21,21);hosts.push({id:++maxId,x,y,infect:0,dead:false,heal:0});}}
 if(!hosts.length||!agents.length)resetWorld();
-function start(){if(state.phase!=='intro')return;state.phase='between';$('overlay').hidden=true;event('Doku devriyesi başladı.');updateUi(true);save();}
-function beginChapter(){if(state.phase!=='between'||(state.chapter>=campaign.length&&state.mode!=='sandbox'))return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;
+function start(){if(state.phase!=='intro')return;state.phase='between';$('overlay').hidden=true;event('Doku devriyesi başladı.');notice('İlk olayı başlat; canlılara dokunarak bilgi al.');updateUi(true);save();}
+function beginChapter(){if(state.phase!=='between'||(state.chapter>=campaign.length&&state.mode!=='sandbox'))return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;state.chapterMilestone=0;state.focusSet=false;
  const memo=state.memories[w.antigen]||0;state.activation=(w.antigen&&memo>0)?Math.min(55,memo):0;state.focus={x:w.x,y:w.y};particles=[];debris=[];signals=[];
  if(w.kind==='debris'){for(let i=0;i<w.count;i++)debris.push({id:++maxId,x:w.x+rnd(-115,115),y:w.y+rnd(-80,80),hp:3});}
  else for(let i=0;i<w.count;i++)addParticle(w.kind,w.x,w.y,w.antigen);
@@ -63,11 +63,11 @@ function beginChapter(){if(state.phase!=='between'||(state.chapter>=campaign.len
  else state.inflam=clamp(state.inflam+12,0,100);
  event('OLAY '+(state.chapter+1)+': '+w.title);updateUi(true);save();}
 function finishChapter(){if(state.phase!=='active')return;const w=wave();state.phase='between';const gained=Math.max(5,Math.round(4+state.tissue/13+Math.max(0,45-state.inflam)/20));state.points+=gained;state.score+=Math.round(state.tissue)+gained*2;
- if(w.antigen){let gain=clamp(Math.round(16+state.activation*.22+state.presentation*.12),12,35);state.memories[w.antigen]=clamp((state.memories[w.antigen]||0)+gain,0,100);}
+ if(w.antigen){let gain=clamp(Math.round(4+state.activation*.16+state.presentation*.09),4,30);state.memories[w.antigen]=clamp((state.memories[w.antigen]||0)+gain,0,100);}
  const m=Object.values(state.memories);state.memory=Math.round(m.reduce((a,b)=>a+b,0)/m.length);
  state.history.push({title:w.title,tissue:Math.round(state.tissue),inflam:Math.round(state.inflam),memo:state.memory});state.history=state.history.slice(-40);agents=agents.filter(a=>a.permanent);
  state.chapter++;state.inflam=Math.max(5,state.inflam-10);state.energy=Math.min(100,state.energy+24);
- event('Doku dengelendi. +'+gained+' araştırma puanı.');
+ event('Olay temizlendi. +'+gained+' araştırma puanı.');notice('Olay tamamlandı · +'+gained+' araştırma');
  if(state.chapter>=campaign.length){if(state.mode==='sandbox'){state.dynamicWave=makeProceduralWave(state.chapter);state.points+=3;event('Yeni doku olayı ortaya çıktı. +3 araştırma.');}else{complete(true);return;}}updateUi(true);save();}
 function complete(success){state.phase='finished';state.completed=true;save();
  const good=success&&state.tissue>=75&&state.peak<65;
@@ -89,20 +89,21 @@ function downloadCard(title){const c=document.createElement('canvas');c.width=10
 function beginEndless(){state.completed=false;state.mode='sandbox';state.phase='between';state.dynamicWave=makeProceduralWave(state.chapter);$('overlay').hidden=true;event('Serbest yaşam başladı. Her olay farklı bir denge gerektirir.');updateUi(true);save();}
 function restart(){if(!confirm('Mevcut oyunu silip yeniden başlatmak istiyor musun?'))return;try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
 function notice(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(notice.timer);notice.timer=setTimeout(()=>el.classList.remove('show'),2100)}
+function showFieldFlash(kind){const f=$('field-flash');if(!f)return;f.className='field-flash on '+kind;clearTimeout(showFieldFlash.timer);showFieldFlash.timer=setTimeout(()=>{f.className='field-flash'},370)}
 function skill(kind){
  if(state.phase!=='active')return;const cost=costs[kind];if(!cost)return;
  if(state.energy<cost){notice('Enerji yeterli değil.');return}
  if(state.clock<(state.actionReady[kind]||0)){notice('Bu müdahale henüz hazır değil.');return}
  if(kind==='target'&&wave().antigen===null){notice('Bu olayda antijene özgü saldırı gerekli değil.');return}
- state.energy-=cost;state.actionReady[kind]=state.clock+6;
+ state.energy-=cost;state.actionReady[kind]=state.clock+6;state.focusSet=true;
  const pos=state.focus;
- if(kind==='patrol'){addAgent('macro',pos.x+rnd(-50,50),pos.y+rnd(-50,50));state.inflam+=2;event('Makrofaj desteği gönderildi.')}
- if(kind==='alarm'){for(let i=0;i<3;i++)addAgent('neutro',rnd(35,90),rnd(80,455));addSignal(pos.x,pos.y,24,'alarm');state.inflam+=18;event('Nötrofiller çağrıldı; inflamasyon arttı.')}
+ if(kind==='patrol'){addAgent('macro',pos.x+rnd(-42,42),pos.y+rnd(-42,42));addSignal(pos.x,pos.y,14,'rally');state.inflam+=2;event('Makrofaj desteği odak bölgesine ulaştı.')}
+ if(kind==='alarm'){for(let i=0;i<3;i++)addAgent('neutro',rnd(35,90),rnd(80,455));addSignal(pos.x,pos.y,28,'rally');state.inflam+=18;event('Nötrofiller seçilen bölgeye yönlendirildi; inflamasyon arttı.')}
  if(kind==='target'){const antigen=wave().antigen,delay=state.presentation>=25||state.memories[antigen]>=15;
-   if(!delay){state.presentation+=10;state.activation+=12;event('Antijen sunumu güçlendiriliyor.');}else{state.activation+=39;addAgent(wave().kind==='virus'?'tcell':'bcell');addAgent(wave().kind==='virus'?'tcell':'bcell');event('Özgül yanıt güçlendirildi.');}addSignal(pos.x,pos.y,13,'adaptive');state.inflam+=3;}
+   if(!delay){state.presentation+=10;state.activation+=12;event('Antijen sunumu güçlendiriliyor.');}else{state.activation+=39;addAgent(wave().kind==='virus'?'tcell':'bcell');addAgent(wave().kind==='virus'?'tcell':'bcell');event('Özgül yanıt güçlendirildi.');}addSignal(pos.x,pos.y,22,'rally');state.inflam+=3;}
  if(kind==='calm'){state.inflam-=19;addAgent('treg',pos.x+rnd(-40,40),pos.y+rnd(-40,40));addSignal(pos.x,pos.y,17,'calm');event('Düzenleyici yanıt desteklendi.')}
  if(kind==='repair'){state.tissue+=7;addAgent('fibro',pos.x+rnd(-50,50),pos.y+rnd(-30,30));state.inflam-=3;addSignal(pos.x,pos.y,16,'repair');event('Doku onarımına kaynak aktarıldı.')}
- state.inflam=clamp(state.inflam,0,100);state.tissue=clamp(state.tissue,0,100);pop(pos.x,pos.y,'#79a890');updateUi(true);save();}
+ state.inflam=clamp(state.inflam,0,100);state.tissue=clamp(state.tissue,0,100);pop(pos.x,pos.y,'#79a890');showFieldFlash(kind);updateUi(true);save();}
 const upgrades=[
 ['macro','Makrofaj','Fagositoz · devriye',5],['neutro','Nötrofil','İlk yanıt · hızlı göç',7],['dend','Dendritik','Antijen sunumu',7],['nk','NK hücresi','Viral erken yanıt',10],
 ['tcell','T hücresi','Özgül enfekte hücre yanıtı',12],['bcell','B hücresi','Antikor üretimi',12],['treg','Treg','İnflamasyon dengesi',9],['fibro','Fibroblast','Doku onarımı',8]
@@ -154,10 +155,11 @@ function updateUi(force){const w=wave();['tissue','energy','inflam','memory'].fo
  const small=btn.querySelector('small');if(small)small.textContent=remaining>0?remaining+' sn bekle':'−'+costs[act]+' enerji';});
  renderUpgrades();drawLogs();renderHistory();}
 function pickTarget(a){const kind=wave().kind;let pick=null,best=Infinity;
+ const priority=(t)=>distance(a,t)-(state.focusSet&&distance(t,state.focus)<165?Math.min(65,types[a.type].speed*1.1):0);
  if(a.type==='fibro'||a.type==='treg'||a.type==='bcell'){return null;}
- if((a.type==='nk'||a.type==='tcell')&&kind==='virus'){for(const h of hosts){if(h.infect<=0||h.dead)continue;const d=distance(a,h);if(d<best){best=d;pick={obj:h,kind:'host',range:40}}}return pick;}
- if(kind==='bacteria'&&['macro','neutro','dend'].includes(a.type)){for(const b of particles){if(b.type!=='bacteria')continue;const d=distance(a,b);if(d<best){best=d;pick={obj:b,kind:'bug',range:39}}}}
- if((kind==='debris'||kind==='virus')&&['macro','neutro','dend'].includes(a.type)){for(const b of debris){const d=distance(a,b);if(d<best){best=d;pick={obj:b,kind:'debris',range:39}}}}
+ if((a.type==='nk'||a.type==='tcell')&&kind==='virus'){for(const h of hosts){if(h.infect<=0||h.dead)continue;const d=priority(h);if(d<best){best=d;pick={obj:h,kind:'host',range:40}}}return pick;}
+ if(kind==='bacteria'&&['macro','neutro','dend'].includes(a.type)){for(const b of particles){if(b.type!=='bacteria')continue;const d=priority(b);if(d<best){best=d;pick={obj:b,kind:'bug',range:39}}}}
+ if((kind==='debris'||kind==='virus')&&['macro','neutro','dend'].includes(a.type)){for(const b of debris){const d=priority(b);if(d<best){best=d;pick={obj:b,kind:'debris',range:39}}}}
  return pick;}
 function follow(a,aim,dt){const d=types[a.type];let x=0,y=0;
  if(aim){const dx=aim.x-a.x,dy=aim.y-a.y,length=Math.max(1,Math.hypot(dx,dy));x=dx/length;y=dy/length;}
@@ -172,6 +174,12 @@ function stepAgents(dt){
  if(a.age>a.life){agents.splice(i,1);continue;}
  const target=state.phase==='active'?pickTarget(a):null;
  let aim=target?target.obj:null;
+ // Recruitment gradients bring newly summoned cells to the chosen region, while
+ // close-range phagocytosis and cytotoxicity still take precedence.
+ if(state.phase==='active'&&['neutro','macro','dend','nk','tcell'].includes(type)){
+   const rally=signals.filter(q=>q.kind==='rally').slice(-1)[0];
+   if(rally&&rally.age<9&&distance(a,rally)>65&&(!target||distance(a,target.obj)>155))aim=rally;
+ }
  if(!aim&&state.phase==='active'&&['neutro','macro','dend'].includes(type)&&w.kind!=='allergen'){
   const sig=signals.filter(v=>v.kind==='alarm').sort((p,q)=>distance(a,p)-distance(a,q))[0];if(sig)aim=sig;else aim=state.focus;}
  if(!aim&&type==='fibro'&&state.tissue<92)aim=state.focus;
@@ -221,6 +229,15 @@ function step(dt){state.clock+=dt;stepSignals(dt);
  if(w.kind==='bacteria'&&state.chapterTime>5&&agents.filter(a=>a.type==='neutro').length<3)addAgent('neutro');
  if(state.chapterTime>8&&state.chapterTime<9){addSignal(w.x,w.y,20,'alarm');}
  if(state.chapterTime>13&&state.chapterTime<13.08&&w.antigen){event('Antijen sunumu başladı.');}
+ // A slow environmental shift is signaled once rather than appearing as a random punishment.
+ if(state.chapterTime>15&&state.chapterMilestone===0){
+   state.chapterMilestone=1;
+   if(w.kind==='bacteria'){addSignal(w.x,w.y,18,'alarm');event('Bakteri kolonisi büyümeye başladı.');notice('Bakteri yayılıyor · dokuya odaklan');}
+   else if(w.kind==='virus'){event('Enfekte hücrelerde çoğalma sinyalleri arttı.');notice('Viral çoğalma · hedefli yanıtı değerlendir');}
+   else if(w.kind==='allergen'){event('Alerjenler gerçek bir enfeksiyon değil.');notice('Gereksiz inflamasyona dikkat');}
+   else {event('Doku temizliği ve yeniden yapılanma sürüyor.');}
+ }
+ state.peakThreat=Math.max(state.peakThreat,particles.length+debris.length+hosts.filter(h=>h.infect>0).length);
  state.peak=Math.max(state.peak,state.inflam);state.tissue=clamp(state.tissue,0,100);
  if(state.tissue<5||state.inflam>98){event('Doku dengesi kaybedildi.');complete(false);return;}
  if(w.kind==='allergen'&&state.chapterTime>21&&enemy===0){finishChapter();return}
@@ -387,7 +404,7 @@ let inspectSnapshot='';
 function inspect(ev){const rect=C.getBoundingClientRect();const x=(ev.clientX-rect.left)/rect.width*W,y=(ev.clientY-rect.top)/rect.height*H;
  let found=null,best=55;for(const a of agents){const d=Math.hypot(x-a.x,y-a.y);if(d<best){found=a;best=d;}}
  if(found){if(window.openBiologyPanel)window.openBiologyPanel('inspect');const d=types[found.type];$('selection').textContent=d.label+(found.hit>0?' / aktif yanıt':' / devriyede');$('detail').innerHTML='<strong>'+d.label+'</strong><p style="margin:5px 0 0">'+d.info+'</p><span class="detail-kind">'+d.group.toUpperCase()+' · 1 CANLI HÜCRE</span>';if($('cell-legend'))$('cell-legend').textContent=d.label+' · '+d.group;}
- else{state.focus={x:clamp(x,45,W-45),y:clamp(y,45,H-45)};$('selection').textContent='Odak seçildi: müdahaleler bu bölgede uygulanacak.';notice('Müdahale odağı değişti.');updateUi(true);}}
+ else{state.focus={x:clamp(x,45,W-45),y:clamp(y,45,H-45)};state.focusSet=true;if(state.phase==='active')addSignal(state.focus.x,state.focus.y,13,'rally');$('selection').textContent='Müdahale odağı değişti';notice('Bu bölgeye müdahale edebilirsin.');updateUi(true);}}
 let reportShown=false;
 function loop(t){if(!frameTime)frameTime=t;const dt=Math.min(.04,(t-frameTime)/1000);frameTime=t;const run=state.phase!=='paused'&&state.phase!=='finished'&&document.visibilityState==='visible';
  if(run){let remain=dt*state.speed;while(remain>0){const d=Math.min(remain,.04);step(d);remain-=d;}}
