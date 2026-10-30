@@ -200,7 +200,7 @@ const hazards=[
 {type:'kasa',width:94,height:70,label:'MEYVE KASASI',note:'Manav kasaları biraz taştı.'},
 {type:'saksi',width:70,height:90,label:'SAKSI',note:'Çiçekçi dükkânı bütün sokağa yayıldı.'}
 ];
-let previous='',hudTick=0,mode='endless',seed=0,randomState=1,dailyStamp='',targetMeters=0,startedBest=0,missionIndex=0,missionProgress=0,missionStartMeters=0,missionDoneTimer=0,nearMax=0,tricks=0,cleared=0,maxCombo=0,unlocked=[],metTarget=false;
+let previous='',hudTick=0,mode='endless',seed=0,randomState=1,dailyStamp='',targetMeters=0,startedBest=0,missionIndex=0,missionProgress=0,missionStartMeters=0,missionDoneTimer=0,spawnCount=0,nearMax=0,tricks=0,cleared=0,maxCombo=0,unlocked=[],metTarget=false;
 const allStickers=['DUBA USTASI','MARTI NÖBETİ','TAKSİ DİKKAT','KAZI BİTMEZ','SİMİT HATTI'];
 const stickerMap={duba:0,marti:1,taksi:2,cukur:3,simit:4};
 const missions=[{text:'3 engel geç',kind:'pass',goal:3},{text:'2 numara yap',kind:'trick',goal:2},{text:'200 m ilerle',kind:'meters',goal:200},{text:'2 ramak kala geçiş',kind:'near',goal:2},{text:'6 engel geç',kind:'pass',goal:6},{text:'400 m ilerle',kind:'meters',goal:400}];
@@ -333,7 +333,7 @@ $('dailyStart').addEventListener('click',()=>{
 
 function reset(){
  setupMode();
- run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';metTarget=false;missionIndex=0;missionProgress=0;missionStartMeters=0;missionDoneTimer=0;nearMax=0;tricks=0;cleared=0;maxCombo=0;
+ run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';metTarget=false;missionIndex=0;missionProgress=0;missionStartMeters=0;missionDoneTimer=0;spawnCount=0;nearMax=0;tricks=0;cleared=0;maxCombo=0;
  Object.assign(player,{y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0,airClears:0});
  $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;$('share').textContent='ARKADAŞINA MEYDAN OKU ↗';$('combo').hidden=true;
  missionPanel();
@@ -442,13 +442,13 @@ $('shareCard').addEventListener('click',async()=>{
 });
 
 function spawn(){
- const stage=Math.floor(distance/2800);
- const warmup=elapsed<18;
+ const stage=spawnCount>=16?2:spawnCount>=8?1:0;
+ const warmup=spawnCount<8;
  const pool=hazards.filter(h=>warmup?['duba','koli','tabure','scooter'].includes(h.type):stage>0||!['taksi','barikat'].includes(h.type));
  let h=pool[Math.floor(randGame()*pool.length)];
  for(let i=0;i<5&&h.type===previous;i++)h=pool[Math.floor(randGame()*pool.length)];
  previous=h.type;
- obstacles.push({...h,x:W+80,passed:false,hit:false,near:false});
+ obstacles.push({...h,x:W+80,passed:false,hit:false,near:false});spawnCount++;
  const baseGap=W<590?370:430;
  const ease=clamp(1-elapsed/32,0,1);
  // Keep the minimum approach time readable at higher speeds.
