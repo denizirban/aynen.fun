@@ -143,7 +143,7 @@ let drumClock=0,drumStep=0,roadCut=[false,false],rivalEventDone=false;
 const dortluBtn=document.getElementById("dortlu"),comboFloat=document.getElementById("combo-float"),tutorialEl=document.getElementById("tutorial"),progressEl=document.getElementById("h-progress"),progressTrack=document.getElementById("progress-track"),missionProgress=document.getElementById("m-progress"),missionStreak=document.getElementById("m-streak"),missionLap=document.getElementById("m-lap"),missionStrip=document.getElementById("mission-strip");
 let runMode="quick",dailyKey="",runRng=null,attempts=0,tutorialStage=0,tutorialClock=0,runEvents=[],hadHorn=false,firstGame=true;
 let lastLap=1,comboFloatTime=0,particles=[],pulse=0,rumble=0,helpShown=false,goalUnlocked=[false,false,false];
-let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,halay:0,halay:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
+let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,halay:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const rand=(a,b)=>a+Math.random()*(b-a);
 const siteBase="https://aynen.fun/dugun-konvoyu-gp.html";
@@ -188,7 +188,7 @@ function showTutorial(msg,ttl){
 }
 function hideTutorial(){tutorialEl.classList.remove("on");tutorialClock=0}
 function start(){
-g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
+g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,halay:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
 dailyKey=trDay();runRng=runMode==="daily"?seededRandom(stringHash("dugun-gp-v4-"+dailyKey)):null;attempts++;tutorialStage=0;hadHorn=false;runEvents=[];
 lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];rivalEventDone=false;comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=(runMode==="daily"?stringHash("scene-"+dailyKey):Math.random()*10000);flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",1.7);missionStrip.style.display="flex";progressTrack.style.display="block";updateHud();showTutorial("← → YÖNLENDİR · + GELİNCE KORNA ÇAL",3.3);
 }
