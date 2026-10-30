@@ -69,8 +69,8 @@ function update(){
  $('clock').textContent=model?timeFormat(model.time):'00:00';
  $('modeLabel').textContent=mode==='build'?'BUILD MODE / TAP TO PLACE':mode==='running'?(paused?'PAUSED / RESUME':'TEST MODE / LIVE'):'RESULT / EDIT TO IMPROVE';
  $('stageCaption').textContent=mode==='build'?'BİR HÜCRE SEÇ • YEŞİL YUVALARA DOKUN • CANLANDIR':mode==='running'?(paused?'DENEY DURAKLATILDI':'İTİŞ · DÖNÜŞ · SÜRTÜNME · ENERJİ'):'SONUÇLAR HAZIR';
- $('runLabel').textContent=mode==='build'?'CANLANDIR':mode==='running'?(paused?'DEVAM ET':'DURAKLAT'):'YENİDEN DENE';
- $('runSubtitle').textContent=mode==='build'?'SİMÜLASYONU BAŞLAT':mode==='running'?(paused?'SİMÜLASYONA DÖN':'SİMÜLASYONU DURDUR'):'AYNI GÖVDE';
+ $('runLabel').textContent=mode==='build'?'CANLANDIR':mode==='running'?(paused?'DEVAM ET':'DURAKLAT'):'DÜZENLE';
+ $('runSubtitle').textContent=mode==='build'?'SİMÜLASYONU BAŞLAT':mode==='running'?(paused?'SİMÜLASYONA DÖN':'SİMÜLASYONU DURDUR'):'GÖVDEYİ DEĞİŞTİR';
  $('runGlyph').innerHTML='<use href="#'+(mode==='running'&&!paused?'i-pause':'i-play')+'"/>';
  $('runBtn').disabled=mode==='build'&&!s.q.muscle;
  if(drawerType==='analysis')renderDrawer();
@@ -106,7 +106,7 @@ function makePreset(){
 }
 function enterBuild(){mode='build';paused=false;model=null;results=null;$('resultScrim').classList.remove('open');update()}
 function setLevel(n){if(n<0||n>=MISSIONS.length)return;level=n;closeDrawer();enterBuild();update();notice('GÖREV '+String(n+1).padStart(2,'0')+' / '+MISSIONS[n].name)}
-function stepButton(){if(mode==='build'||mode==='result'){run();return}paused=!paused;update();sound('tap')}
+function stepButton(){if(mode==='result'){enterBuild();return}if(mode==='build'){run();return}paused=!paused;update();sound('tap')}
 function startModel(){
  const s=getStats(),mission=MISSIONS[level];
  if(!s.q.muscle){notice('ÖNCE KAS HÜCRESİ EKLE');sound('error');return}
@@ -174,8 +174,10 @@ function simulate(dt){
  a.energy=Math.max(0,a.energy-s.consumption*dt*(1+.12*N));
  if(!a.trail.length||pixelD(a.x,a.y,a.trail[a.trail.length-1][0],a.trail[a.trail.length-1][1])>4){a.trail.push([a.x,a.y]);if(a.trail.length>520)a.trail.shift()}
  const checkpointTotal=m.check.length+1,segmentStart=a.checkIndex?m.check[a.checkIndex-1]:m.start;
- const travel=pixelD(a.x,a.y,segmentStart[0],segmentStart[1]),segLength=pixelD(target[0],target[1],segmentStart[0],segmentStart[1]);
- a.progress=clamp((a.checkIndex+clamp(travel/Math.max(segLength,1),0,1))/checkpointTotal,0,.995);
+ const dx=(target[0]-segmentStart[0])*W,dy=(target[1]-segmentStart[1])*H;
+ const curX=(a.x-segmentStart[0])*W,curY=(a.y-segmentStart[1])*H;
+ const along=clamp((curX*dx+curY*dy)/Math.max(dx*dx+dy*dy,1),0,1);
+ a.progress=clamp((a.checkIndex+along)/checkpointTotal,0,.995);
  if(pixelD(a.x,a.y,target[0],target[1])<Math.min(W,H)*.083){
   if(a.checkIndex<m.check.length){a.checkIndex++;notice('IŞIK NOKTASI '+a.checkIndex+' / '+m.check.length);sound('save');a.progress=a.checkIndex/checkpointTotal}
   else{a.progress=1;finish(true,'success');return}
@@ -334,7 +336,7 @@ function drawArena(time){
 }
 function render(time){
  if(!last)last=time;let dt=Math.min((time-last)/1000,.033);last=time;t=time;
- if(mode==='running'&&!paused&&model)simulate(dt);
+ if(mode==='running'&&!paused&&model){if(precision){simulate(dt*.5);if(mode==='running')simulate(dt*.5)}else simulate(dt)}
  drawBackground(time);
  if(mode==='build')drawBuild(time);else if(model)drawArena(time);
  // Abstract orbital overlays
