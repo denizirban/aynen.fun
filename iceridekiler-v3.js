@@ -48,9 +48,19 @@ function addParticle(type,x,y,antigen){if(particles.length>=80)return;particles.
 function addSignal(x,y,power,kind){signals.push({x,y,power,age:0,kind:kind||'alarm'});if(signals.length>28)signals.shift();}
 function pop(x,y,color){bursts.push({x,y,r:0,life:0,color:color||'#8fb99f'});if(bursts.length>45)bursts.shift();}
 function event(msg){state.logs.unshift({time:Math.round(state.clock),text:msg});state.logs=state.logs.slice(0,25);state.eventsMade++;drawLogs();}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({state,agents,particles,hosts,debris,signals}));$('saved').textContent='KAYDEDİLDİ ✓'}catch(e){$('saved').textContent='KAYIT YOK'}}
+function save(){try{state.camera={x:CAMERA.x,y:CAMERA.y,zoom:CAMERA.zoom};localStorage.setItem(KEY,JSON.stringify({state,agents,particles,hosts,debris,signals}));$('saved').textContent='KAYDEDİLDİ ✓'}catch(e){$('saved').textContent='KAYIT YOK'}}
 function resetWorld(){agents=[];particles=[];hosts=[];debris=[];signals=[];bursts=[];flares=[];for(let i=0;i<5;i++)addAgent('macro').permanent=true;addAgent('dend').permanent=true;addAgent('fibro').permanent=true;addAgent('treg').permanent=true;for(let k=0;k<22;k++){let x=80+(k%6)*148+rnd(-22,22),y=95+Math.floor(k/6)*109+rnd(-21,21);hosts.push({id:++maxId,x,y,infect:0,dead:false,heal:0});}}
 if(!hosts.length||!agents.length)resetWorld();
+const CAMERA={x:450,y:262.5,zoom:1};
+if(state.camera&&Number.isFinite(state.camera.x)&&Number.isFinite(state.camera.y)&&Number.isFinite(state.camera.zoom)){
+ CAMERA.x=state.camera.x;CAMERA.y=state.camera.y;CAMERA.zoom=clamp(state.camera.zoom,1,3.2);
+}
+function limitCamera(){
+ CAMERA.zoom=clamp(CAMERA.zoom,1,3.2);
+ const rx=W/(2*CAMERA.zoom),ry=H/(2*CAMERA.zoom);
+ CAMERA.x=clamp(CAMERA.x,rx,W-rx);CAMERA.y=clamp(CAMERA.y,ry,H-ry);
+}
+limitCamera();
 function start(){if(state.phase!=='intro')return;state.phase='between';$('overlay').hidden=true;event('Doku devriyesi başladı.');notice('İlk olayı başlat; canlılara dokunarak bilgi al.');updateUi(true);save();}
 function beginChapter(){if(state.phase!=='between'||(state.chapter>=campaign.length&&state.mode!=='sandbox'))return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;state.chapterMilestone=0;state.focusSet=false;
  const memo=state.memories[w.antigen]||0;state.activation=(w.antigen&&memo>0)?Math.min(55,memo):0;state.focus={x:w.x,y:w.y};particles=[];debris=[];signals=[];
@@ -301,6 +311,7 @@ function resizeScene(){
  if(C.width!==w||C.height!==h){C.width=w;C.height=h;}
  VIEW.w=w;VIEW.h=h;VIEW.sx=w/W;VIEW.sy=h/H;
  VIEW.scale=Math.max(.8,Math.min(2.25,Math.min(VIEW.sx,VIEW.sy)*1.45));
+ limitCamera();
 }
 function drawDust(t){
  if(!state.fx)return;
@@ -334,6 +345,8 @@ function paint(t){
  let a=c.createRadialGradient(w*.46,h*.65,0,w*.46,h*.65,Math.max(w,h)*.55);
  a.addColorStop(0,'rgba(97,46,47,.075)');a.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=a;c.fillRect(0,0,w,h);
  drawDust(t);
+ c.save();c.translate(w*.5,h*.5);c.scale(CAMERA.zoom,CAMERA.zoom);c.translate(-CAMERA.x*VIEW.sx,-CAMERA.y*VIEW.sy);
+ paintZones(t);
  if(state.phase==='active'&&state.fx){
   const ww=wave(),xx=ww.x*VIEW.sx,yy=ww.y*VIEW.sy,kind=ww.kind;
   const tint={bacteria:'234,111,101',virus:'100,139,252',allergen:'245,135,198',debris:'244,186,105'}[kind]||'236,168,131';
@@ -388,6 +401,7 @@ function paint(t){
   c.moveTo(x+s,y);c.lineTo(x+s*2,y);c.moveTo(x,y-s*2);c.lineTo(x,y-s);c.moveTo(x,y+s);c.lineTo(x,y+s*2);c.stroke();
   c.beginPath();c.arc(x,y,22*VIEW.scale,0,TWO);c.strokeStyle='rgba(238,194,154,.14)';c.stroke();c.restore();
  }
+ c.restore();
 }
 function paintParticle(p,t){
  let c=ctx,x=p.x*VIEW.sx,y=p.y*VIEW.sy,s=VIEW.scale;
@@ -451,8 +465,149 @@ function paintAgent(u,t){
  c.restore();
 }
 
+
+/* Tissue regions share one simulated field: this camera explores rather than
+   swapping arbitrary level backgrounds. All positions remain in world coordinates. */
+const ZONES=[
+ {x:108,y:266,r:83,name:'DAMAR',color:'74,190,234'},
+ {x:440,y:274,r:170,name:'DOKU',color:'239,158,125'},
+ {x:710,y:106,r:82,name:'LENF DÜĞÜMÜ',color:'181,140,255'},
+ {x:766,y:416,r:98,name:'ONARIM',color:'111,215,169'}
+];
+function paintZones(t){
+ const c=ctx;
+ // A luminous capillary connects the vessel to surrounding tissue.
+ c.save();c.strokeStyle='rgba(83,202,233,.09)';c.lineWidth=23*VIEW.scale;
+ c.shadowColor='#5ec4eb';c.shadowBlur=17;
+ c.beginPath();c.moveTo(108*VIEW.sx,0);c.bezierCurveTo(57*VIEW.sx,170*VIEW.sy,165*VIEW.sx,330*VIEW.sy,88*VIEW.sx,525*VIEW.sy);c.stroke();
+ c.shadowBlur=0;c.strokeStyle='rgba(149,210,234,.14)';c.lineWidth=1.1*VIEW.scale;c.stroke();
+ // Lymphatic transport as fine connected channels.
+ c.lineWidth=1.1*VIEW.scale;c.strokeStyle='rgba(180,137,254,.15)';c.setLineDash([5*VIEW.scale,12*VIEW.scale]);
+ c.beginPath();c.moveTo(460*VIEW.sx,263*VIEW.sy);c.bezierCurveTo(570*VIEW.sx,188*VIEW.sy,618*VIEW.sx,117*VIEW.sy,711*VIEW.sx,106*VIEW.sy);c.stroke();c.setLineDash([]);
+ c.restore();
+ for(const z of ZONES){
+  const x=z.x*VIEW.sx,y=z.y*VIEW.sy,r=z.r*VIEW.scale,alpha=state.fx?.10:.055;
+  const gr=c.createRadialGradient(x,y,0,x,y,r);
+  gr.addColorStop(0,'rgba('+z.color+','+alpha+')');
+  gr.addColorStop(.52,'rgba('+z.color+','+(alpha*.25)+')');
+  gr.addColorStop(1,'rgba('+z.color+',0)');
+  c.fillStyle=gr;c.beginPath();c.arc(x,y,r,0,TWO);c.fill();
+  c.beginPath();c.arc(x,y,r*.82,0,TWO);c.strokeStyle='rgba('+z.color+',.13)';c.lineWidth=1;c.setLineDash([3,8]);c.stroke();c.setLineDash([]);
+  c.fillStyle='rgba('+z.color+',.64)';c.font=(9*VIEW.scale)+'px DM Mono,monospace';c.textAlign='center';c.fillText(z.name,x,y-r*.84);c.textAlign='start';
+ }
+}
+function screenPoint(ev){
+ const r=C.getBoundingClientRect();
+ const sx=(ev.clientX-r.left)/Math.max(1,r.width)*VIEW.w;
+ const sy=(ev.clientY-r.top)/Math.max(1,r.height)*VIEW.h;
+ return {px:sx,py:sy,x:clamp(CAMERA.x+(sx-VIEW.w/2)/(VIEW.sx*CAMERA.zoom),0,W),y:clamp(CAMERA.y+(sy-VIEW.h/2)/(VIEW.sy*CAMERA.zoom),0,H)};
+}
+function moveCamera(x,y){CAMERA.x=x;CAMERA.y=y;limitCamera();updateCameraUI();}
+function zoomCamera(to,clientX,clientY){
+ const rect=C.getBoundingClientRect(),cx=clientX??(rect.left+rect.width*.5),cy=clientY??(rect.top+rect.height*.5);
+ const p=screenPoint({clientX:cx,clientY:cy});
+ CAMERA.zoom=clamp(to,1,3.2);
+ CAMERA.x=p.x-(p.px-VIEW.w*.5)/(VIEW.sx*CAMERA.zoom);
+ CAMERA.y=p.y-(p.py-VIEW.h*.5)/(VIEW.sy*CAMERA.zoom);
+ limitCamera();updateCameraUI();
+}
+function updateCameraUI(){
+ const read=$('zoom-readout');if(read)read.textContent=CAMERA.zoom.toFixed(1)+'×';
+ $('zoom-out').disabled=CAMERA.zoom<=1.001;
+ $('zoom-in').disabled=CAMERA.zoom>=3.199;
+}
+function paintMiniMap(){
+ const el=$('minimap');if(!el)return;
+ const c=el.getContext('2d'),w=el.width,h=el.height;
+ c.clearRect(0,0,w,h);c.fillStyle='#080b15';c.fillRect(0,0,w,h);
+ for(const z of ZONES){
+  const x=z.x/W*w,y=z.y/H*h,r=z.r/W*w;
+  const grad=c.createRadialGradient(x,y,0,x,y,r*1.8);
+  grad.addColorStop(0,'rgba('+z.color+',.36)');grad.addColorStop(1,'rgba('+z.color+',0)');
+  c.fillStyle=grad;c.beginPath();c.arc(x,y,r*1.8,0,TWO);c.fill();
+  c.strokeStyle='rgba('+z.color+',.45)';c.lineWidth=1;c.beginPath();c.arc(x,y,r*.72,0,TWO);c.stroke();
+ }
+ for(const p of particles.slice(0,40)){c.fillStyle=p.type==='virus'?'#9aa7ff':'#ffa28d';c.beginPath();c.arc(p.x/W*w,p.y/H*h,1.7,0,TWO);c.fill();}
+ const rw=w/CAMERA.zoom,rh=h/CAMERA.zoom,x=CAMERA.x/W*w-rw/2,y=CAMERA.y/H*h-rh/2;
+ c.strokeStyle='#f9e2b7';c.lineWidth=1.6;c.strokeRect(x,y,rw,rh);
+ c.fillStyle='#fff1c7';c.beginPath();c.arc(state.focus.x/W*w,state.focus.y/H*h,2.4,0,TWO);c.fill();
+}
+function setupCamera(){
+ updateCameraUI();
+ $('zoom-in').addEventListener('click',()=>zoomCamera(CAMERA.zoom*1.32));
+ $('zoom-out').addEventListener('click',()=>zoomCamera(CAMERA.zoom/1.32));
+ $('zoom-home').addEventListener('click',()=>{CAMERA.zoom=1;moveCamera(W/2,H/2)});
+ const panel=$('world-map'),toggle=$('map-toggle');
+ const showMap=show=>{panel.hidden=!show;toggle.setAttribute('aria-expanded',String(show));if(show)paintMiniMap();};
+ toggle.addEventListener('click',()=>showMap(panel.hidden));
+ $('map-close').addEventListener('click',()=>showMap(false));
+ $('minimap').addEventListener('click',e=>{
+  const r=e.currentTarget.getBoundingClientRect();
+  const x=clamp((e.clientX-r.left)/r.width,0,1)*W,y=clamp((e.clientY-r.top)/r.height,0,1)*H;
+  CAMERA.zoom=Math.max(1.65,CAMERA.zoom);
+  moveCamera(x,y);paintMiniMap();notice('Doku haritasında yeni bölgeye geçildi.');
+ });
+ C.addEventListener('wheel',e=>{
+  if(state.phase==='intro')return;
+  e.preventDefault();zoomCamera(CAMERA.zoom*Math.exp(-e.deltaY*.0016),e.clientX,e.clientY);
+ },{passive:false});
+ const pointers=new Map();
+ let gestureMoved=false,downStart={x:0,y:0};
+ C.addEventListener('pointerdown',e=>{
+  if(state.phase==='intro'||state.phase==='finished')return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});gestureMoved=pointers.size>1;
+  if(pointers.size===1)downStart={x:e.clientX,y:e.clientY};
+  if(C.setPointerCapture)try{C.setPointerCapture(e.pointerId)}catch(err){}
+ });
+ C.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;
+  const prev=new Map(pointers);
+  const old=prev.get(e.pointerId);
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const rect=C.getBoundingClientRect();
+  if(pointers.size===2){
+   gestureMoved=true;
+   const arr=[...pointers.values()],older=[...prev.values()];
+   const mid={x:(arr[0].x+arr[1].x)/2,y:(arr[0].y+arr[1].y)/2};
+   const oldMid={x:(older[0].x+older[1].x)/2,y:(older[0].y+older[1].y)/2};
+   const d=Math.max(1,Math.hypot(arr[0].x-arr[1].x,arr[0].y-arr[1].y));
+   const od=Math.max(1,Math.hypot(older[0].x-older[1].x,older[0].y-older[1].y));
+   zoomCamera(CAMERA.zoom*d/od,mid.x,mid.y);
+   CAMERA.x-=(mid.x-oldMid.x)*W/Math.max(1,rect.width)/CAMERA.zoom;
+   CAMERA.y-=(mid.y-oldMid.y)*H/Math.max(1,rect.height)/CAMERA.zoom;
+  }else if(pointers.size===1){
+   if(Math.hypot(e.clientX-downStart.x,e.clientY-downStart.y)>7)gestureMoved=true;
+   if(gestureMoved){
+    CAMERA.x-=(e.clientX-old.x)*W/Math.max(1,rect.width)/CAMERA.zoom;
+    CAMERA.y-=(e.clientY-old.y)*H/Math.max(1,rect.height)/CAMERA.zoom;
+   }
+  }
+  limitCamera();updateCameraUI();
+  if(e.cancelable)e.preventDefault();
+ });
+ const finish=e=>{
+  if(!pointers.has(e.pointerId))return;
+  const only=pointers.size===1;
+  pointers.delete(e.pointerId);
+  if(only&&!gestureMoved&&e.type==='pointerup')inspect(e);
+  if(pointers.size===0)gestureMoved=false;
+ };
+ C.addEventListener('pointerup',finish);C.addEventListener('pointercancel',finish);
+ C.addEventListener('keydown',e=>{
+  if(e.key==='+'||e.key==='='){e.preventDefault();zoomCamera(CAMERA.zoom*1.3);}
+  else if(e.key==='-'){e.preventDefault();zoomCamera(CAMERA.zoom/1.3);}
+  else if(e.key==='0'){e.preventDefault();CAMERA.zoom=1;moveCamera(W/2,H/2);}
+  else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
+   e.preventDefault();const dx=e.key==='ArrowRight'?65:e.key==='ArrowLeft'?-65:0;
+   const dy=e.key==='ArrowDown'?65:e.key==='ArrowUp'?-65:0;
+   moveCamera(CAMERA.x+dx/CAMERA.zoom,CAMERA.y+dy/CAMERA.zoom);
+  }
+ });
+}
+
 let inspectSnapshot='';
-function inspect(ev){const rect=C.getBoundingClientRect();const x=(ev.clientX-rect.left)/rect.width*W,y=(ev.clientY-rect.top)/rect.height*H;
+function inspect(ev){const pt=screenPoint(ev);const x=pt.x,y=pt.y;
  let found=null,best=55;for(const a of agents){const d=Math.hypot(x-a.x,y-a.y);if(d<best){found=a;best=d;}}
  if(found){if(window.openBiologyPanel)window.openBiologyPanel('inspect');const d=types[found.type];const portrait=$('cell-portrait');if(portrait){portrait.style.setProperty('--portrait-color',ART[found.type].light);portrait.style.setProperty('--portrait-edge',ART[found.type].edge);portrait.classList.add('selected');}$('selection').textContent=d.label+(found.hit>0?' / aktif yanıt':' / devriyede');$('detail').innerHTML='<strong>'+d.label+'</strong><p style="margin:5px 0 0">'+d.info+'</p><span class="detail-kind">'+d.group.toUpperCase()+' · 1 CANLI HÜCRE</span>';if($('cell-legend'))$('cell-legend').textContent=d.label+' · '+d.group;}
  else{state.focus={x:clamp(x,45,W-45),y:clamp(y,45,H-45)};state.focusSet=true;if(state.phase==='active')addSignal(state.focus.x,state.focus.y,13,'rally');$('selection').textContent='Müdahale odağı değişti';notice('Bu bölgeye müdahale edebilirsin.');updateUi(true);}}
@@ -460,6 +615,7 @@ let reportShown=false;
 function loop(t){if(!frameTime)frameTime=t;const dt=Math.min(.04,(t-frameTime)/1000);frameTime=t;const run=state.phase!=='paused'&&state.phase!=='finished'&&document.visibilityState==='visible';
  if(run){let remain=dt*state.speed;while(remain>0){const d=Math.min(remain,.04);step(d);remain-=d;}}
  paint(t);
+ if(!$('world-map').hidden&&t-(loop.lastMap||0)>180){paintMiniMap();loop.lastMap=t;}
  if(t-uiTime>260){uiTime=t;updateUi(false)}
  if(t-saveTime>4500&&state.phase!=='intro'&&state.phase!=='finished'){saveTime=t;save()}
  requestAnimationFrame(loop);}
@@ -514,9 +670,9 @@ function setupVisualOptions(){
  btn.addEventListener('click',()=>{state.fx=!state.fx;sync();save();notice(state.fx?'Görsel efektler açık.':'Ekonomik görsel mod açık.');});
  sync();
 }
-function init(){resizeScene();window.addEventListener('resize',resizeScene,{passive:true});setupDrawer();setupSound();setupVisualOptions();
+function init(){resizeScene();window.addEventListener('resize',resizeScene,{passive:true});setupDrawer();setupSound();setupVisualOptions();setupCamera();
  if($('campaign-progress'))$('campaign-progress').hidden=false;
- $('start').onclick=start;$('next').onclick=beginChapter;$('reset').onclick=restart;C.addEventListener('click',inspect);
+ $('start').onclick=start;$('next').onclick=beginChapter;$('reset').onclick=restart;
  document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>skill(b.dataset.action)));
  $('speed').onclick=()=>{state.speed=state.speed===1?2:state.speed===2?3:1;updateUi(true);save()};
  $('pause').onclick=()=>{if(state.phase==='active'||state.phase==='between'){state.returnPhase=state.phase;state.phase='paused';event('Duraklatıldı.');}
