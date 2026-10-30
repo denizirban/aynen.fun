@@ -295,6 +295,7 @@ function drawLabRings(time,x,y,r){
   circle(x+Math.cos(an)*r*.97,y+Math.sin(an)*r*.31,2,'#5a88bc88')}
  ctx.restore();
 }
+function baseOf(x,y){return {x:baseX+(x-y)*unit*.9,y:baseY+(x+y)*unit*.40}}
 function drawBuild(time){
  const x=baseX,y=baseY+unit*1.20;
  drawLabRings(time,x,y,unit*3);
