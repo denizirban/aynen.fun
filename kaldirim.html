@@ -130,6 +130,9 @@ canvas{width:100%;height:100%;display:block}
 #resultAchievement{border:1px dashed #a27b5b;background:#f4dfbd;padding:10px;margin:0 0 12px;font-size:12px;line-height:1.5;font-weight:800}
 #collection{margin-top:10px;border-top:1px solid #cbbb9e;padding-top:9px;color:#625445;font:10px/1.6 'Courier New',monospace}
 #shareCard{background:#e8d9c4;font-size:12px}
+.socialRow{display:flex;gap:7px;margin:8px 0 3px}.socialRow button{flex:1;background:#f6ead8;border:1px solid #7f6b55;padding:9px 7px;font:700 11px 'Courier New',monospace;color:#332b25}
+.socialRow button:active{background:#ead5b6}
+
 #results:not([hidden])~.sub{display:none}
 @media(max-width:650px){
 #target{top:127px;left:10px;font-size:8px;max-width:170px;padding:4px 6px}
@@ -172,6 +175,7 @@ canvas{width:100%;height:100%;display:block}
 <div id="resultAchievement" hidden></div>
 <div class="stats"><div><b id="resultM">0 m</b><small>MESAFE</small></div><div><b id="resultS">0</b><small>PUAN</small></div><div><b id="resultB">0 m</b><small>REKOR</small></div></div><button class="share" id="share" type="button">ARKADAŞINA MEYDAN OKU ↗</button>
 <button class="share" id="shareCard" type="button">SONUÇ KARTINI KAYDET</button>
+<div class="socialRow"><button type="button" id="shareWa">WHATSAPP</button><button type="button" id="shareX">X</button></div>
 <div id="collection" hidden></div></div>
 <span class="sub">BAS · BIRAK · ZIPLA / HAVADA DOKUN: NUMARA</span>
 </div></div>
@@ -200,7 +204,7 @@ const hazards=[
 {type:'kasa',width:94,height:70,label:'MEYVE KASASI',note:'Manav kasaları biraz taştı.'},
 {type:'saksi',width:70,height:90,label:'SAKSI',note:'Çiçekçi dükkânı bütün sokağa yayıldı.'}
 ];
-let previous='',hudTick=0,mode='endless',seed=0,randomState=1,dailyStamp='',targetMeters=0,startedBest=0,missionIndex=0,missionProgress=0,missionStartMeters=0,missionDoneTimer=0,spawnCount=0,nearMax=0,tricks=0,cleared=0,maxCombo=0,unlocked=[],metTarget=false;
+let previous='',hudTick=0,mode='endless',seed=0,randomState=1,dailyStamp='',targetMeters=0,startedBest=0,missionIndex=0,missionProgress=0,missionStartMeters=0,missionDoneTimer=0,spawnCount=0,nearMax=0,tricks=0,cleared=0,maxCombo=0,unlocked=[],metTarget=false,passedRecord=false;
 const allStickers=['DUBA USTASI','MARTI NÖBETİ','TAKSİ DİKKAT','KAZI BİTMEZ','SİMİT HATTI'];
 const stickerMap={duba:0,marti:1,taksi:2,cukur:3,simit:4};
 const missions=[{text:'3 engel geç',kind:'pass',goal:3},{text:'2 numara yap',kind:'trick',goal:2},{text:'200 m ilerle',kind:'meters',goal:200},{text:'2 ramak kala geçiş',kind:'near',goal:2},{text:'6 engel geç',kind:'pass',goal:6},{text:'400 m ilerle',kind:'meters',goal:400}];
@@ -333,7 +337,7 @@ $('dailyStart').addEventListener('click',()=>{
 
 function reset(){
  setupMode();
- run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';metTarget=false;missionIndex=0;missionProgress=0;missionStartMeters=0;missionDoneTimer=0;spawnCount=0;nearMax=0;tricks=0;cleared=0;maxCombo=0;
+ run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';metTarget=false;missionIndex=0;missionProgress=0;missionStartMeters=0;missionDoneTimer=0;spawnCount=0;nearMax=0;tricks=0;cleared=0;maxCombo=0;passedRecord=false;
  Object.assign(player,{y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0,airClears:0});
  $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;$('share').textContent='ARKADAŞINA MEYDAN OKU ↗';$('combo').hidden=true;
  missionPanel();
@@ -408,6 +412,14 @@ $('share').addEventListener('click',async()=>{
  }catch(e){if(e.name==='AbortError')return}
  window.prompt('Arkadaşına gönder:',txt+'\n'+url);
 });
+$('shareWa').addEventListener('click',()=>{
+ const url='https://wa.me/?text='+encodeURIComponent(shareMessage()+'\n'+challengeUrl());
+ window.open(url,'_blank','noopener,noreferrer');
+});
+$('shareX').addEventListener('click',()=>{
+ const url='https://twitter.com/intent/tweet?text='+encodeURIComponent(shareMessage())+'&url='+encodeURIComponent(challengeUrl());
+ window.open(url,'_blank','noopener,noreferrer');
+});
 function makeResultCard(){
  const out=document.createElement('canvas');out.width=1080;out.height=1350;
  const c=out.getContext('2d');
@@ -465,6 +477,7 @@ function update(dt){
  if(z!==zone){zone=z;$('status').textContent=names[z]+' · KALDIRIM DURUMU BELİRSİZ';if(z>0)toast(names[z]+'. KALDIRIM HALA YOK.')}
  if(missionDoneTimer>0)missionDoneTimer-=dt;
  if(mode==='duel'&&!metTarget&&targetMeters&&Math.floor(distance/10)>targetMeters){metTarget=true;toast('ARKADAŞINI GEÇTİN.');sfx('point')}
+ if(!passedRecord&&startedBest>=30&&Math.floor(distance/10)>startedBest){passedRecord=true;toast('YENİ REKOR.');sfx('point')}
  if(missionIndex<missions.length&&missions[missionIndex].kind==='meters')missionEvent('meters');
  if(player.charging){
   player.charge=Math.min(.65,player.charge+dt);
