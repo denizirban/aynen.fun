@@ -48,7 +48,30 @@
 .attack-note{font-size:10px}
 .result-compare{gap:7px}
 .result-compare>div{padding:10px}
-}</style></head><body><div class="page"><nav class="nav"><a href="/">← aynen.fun</a><span>FUTBOL / HAKEM AKADEMİSİ</span></nav><header class="intro"><h1>Ofsaytımsı.</h1><p>Pozisyonu sen belirle. Tartışmayı biz hallederiz.</p></header><main id="app" class="shell"></main><div class="below"><span>Oyun kurgusaldır. Kural bölümü gerçek ofsayt prensiplerine dayanır.</span><span>AYNEN.FUN</span></div><footer class="footer">KARARINIZ İNCELENMEKTEDİR. / SONSUZA KADAR</footer></div>
+}
+.match-ticker{display:flex;align-items:center;gap:9px;padding:8px 18px;background:#f4f7f1;color:#596b59;border-bottom:1px solid #dfe7dc;font:500 10px/1.3 'DM Mono',monospace}
+.live-label{color:#ad3d36;letter-spacing:.05em}.live-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#c34535;vertical-align:middle}.timeline{height:3px;width:65px;max-width:16%;margin-left:auto;background:#dae6d8;overflow:hidden;flex:none}.timeline i{display:block;height:100%;background:#436a47}
+.stadium{background:#eef3eb}.stands{display:flex;height:43px;background:#314a39;border-bottom:3px solid #b9c9ae;overflow:hidden}.stand{flex:1;min-width:0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}.stand:first-child{border-right:1px solid #556d59}
+.fans{position:absolute;inset:0;background-image:radial-gradient(circle at 5px 7px,#decaaa 0 2px,transparent 2.5px),radial-gradient(ellipse 4px 6px at 6px 18px,var(--shirt) 0 4px,transparent 4.5px),radial-gradient(circle at 20px 19px,#decaaa 0 2px,transparent 2.5px),radial-gradient(ellipse 4px 6px at 20px 29px,var(--shirt) 0 4px,transparent 4.5px);background-size:28px 29px}
+.stand span:not(.fans){font:500 9px 'DM Mono',monospace;color:white;position:relative;background:#22392dd9;padding:5px 9px;border-radius:3px;white-space:nowrap}
+.stand-clock{display:flex;align-items:center;padding:0 9px;color:#d4e2d0;font:500 10px 'DM Mono',monospace;background:#202e27;z-index:1}
+.stand[data-mood=joy] .fans{animation:tribune .3s alternate infinite}.stand[data-mood=angry] .fans{animation:tribune .65s alternate infinite}
+.stand[data-mood=angry] span:not(.fans){background:#8b4239}.stand[data-mood=joy] span:not(.fans){background:#32673b}
+.stadium .pitch-wrap{padding:9px 14px 4px;position:relative;overflow:hidden}.stadium .pitch{max-height:375px;cursor:default;touch-action:auto}
+.pitch.attack-motion #attacker{animation:runIn 1.32s ease-out both}
+.pitch.attack-motion #ball{animation:ballFlight 1.32s ease-in-out both}
+.hide-guide{opacity:0;pointer-events:none}#varGuide{transition:opacity .2s}
+.scene-overlay{position:absolute;inset:9px 14px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;pointer-events:none;opacity:0;transform:scale(.95);transition:opacity .22s,transform .22s;background:#263e2c34}
+.scene-overlay.visible{opacity:1;transform:scale(1)}.scene-overlay strong{font:700 clamp(34px,7vw,70px)/1 'Space Grotesk',sans-serif;letter-spacing:-.065em;color:#fff;text-shadow:0 3px 12px #1e3324}.scene-overlay small{font:500 10px 'DM Mono',monospace;color:#fff;background:#263e30cf;padding:6px 9px;border-radius:3px}.scene-overlay.no-goal strong{font-size:clamp(28px,6vw,57px)}
+.touchline{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:5px 14px 12px}.manager{min-width:0;display:flex;align-items:center;gap:8px;min-height:60px;padding:8px 10px;border:1px solid #d9e4d8;background:#f9fbf7;border-radius:6px}.manager.other{flex-direction:row-reverse;text-align:right}.coach{flex:none;height:43px}.coach-label{font:500 9px 'DM Mono',monospace;color:#879286;margin-bottom:3px}.coach-line{font:500 11px/1.35 'Space Grotesk',sans-serif;color:#37493a}.manager[data-mood=joy]{background:#e4f0e2;border-color:#afd0ae}.manager[data-mood=angry]{background:#f8efe9;border-color:#dfc5b5}.manager[data-mood=joy] .coach{animation:coachUp .45s ease-in-out 3}.manager[data-mood=angry] .coach{animation:coachNo .26s ease-in-out 4}
+.score-flash strong{animation:scored .48s ease-in-out 2}
+.review-tools{grid-column:1/-1;display:flex;gap:13px;border-top:1px solid #edf0eb;padding-top:10px}.review-tools button{padding:7px 0;border:0;background:transparent;color:#527057;font:500 10px 'DM Mono',monospace}.review-tools button:disabled{opacity:.38}
+@keyframes runIn{0%{transform:translateX(-60px)}85%{transform:translateX(5px)}100%{transform:translateX(0)}}
+@keyframes ballFlight{0%{transform:translate(0,0)}50%{transform:translate(calc(var(--pass-shift)*.5),-30px)}100%{transform:translate(0,0)}}
+@keyframes tribune{to{transform:translateY(-5px)}}@keyframes coachUp{50%{transform:translateY(-7px)}}@keyframes coachNo{50%{transform:rotate(8deg)}}@keyframes scored{50%{color:#367744;transform:scale(1.13)}}
+@media(max-width:620px){.stands{height:37px}.stand span:not(.fans){font-size:8px;padding:4px 5px}.match-ticker{padding:7px 10px;font-size:9px;gap:6px}.timeline{width:31px}.stadium .pitch-wrap{padding:5px 7px 3px}.stadium .pitch{aspect-ratio:900/500}.scene-overlay{inset:5px 7px 3px}.touchline{padding:4px 7px 8px;gap:5px}.manager{padding:5px;min-height:58px;gap:5px}.coach{height:34px}.coach svg{width:24px;height:34px}.coach-label{font-size:8px}.coach-line{font-size:10px}.review-tools button{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.pitch.attack-motion #attacker,.pitch.attack-motion #ball,.stand .fans,.manager .coach,.score-flash strong{animation:none!important}}
+</style></head><body><div class="page"><nav class="nav"><a href="/">← aynen.fun</a><span>FUTBOL / HAKEM AKADEMİSİ</span></nav><header class="intro"><h1>Ofsaytımsı.</h1><p>Maç biter. Tartışma bitmez.</p></header><main id="app" class="shell"></main><div class="below"><span>Oyun kurgusaldır. Kural bölümü gerçek ofsayt prensiplerine dayanır.</span><span>AYNEN.FUN</span></div><footer class="footer">KARARINIZ İNCELENMEKTEDİR. / SONSUZA KADAR</footer></div>
 <script>(function game() {
   'use strict';
   const app=document.getElementById('app');
@@ -74,6 +97,7 @@
     {def:69,attack:74,ball:44,keeperForward:true,tip:'Kaleci ilerideyse sondan ikinci rakip kim?',quip:'Son pozisyon. Tartışma yeni başladı.'}
   ];
   const N=cases.length;
+  let activeCases=cases.slice(),previewing=false,guideOpen=false,previewTimer=null,fxTimer=null,linesUsed=0,incidentGoals=[0,1],story='';
   let home='GS',away='FB',round=0,correct=0,wrong=0,score=[0,0],fair=[0,0],selectedX=65,answered=false,scenario=null,dragging=false;
   const findClub=(id)=>clubs.find(c=>c.id===id);
   const side=(i)=>findClub(i===0?home:away);
@@ -92,23 +116,23 @@
     return `<button type="button" class="team-choice" data-${which}="${club.id}" aria-pressed="${active}"><i class="team-mark" style="background:${club.kit}" aria-hidden="true"></i><span>${club.name}</span></button>`;
   }
   function intro(){
-    app.innerHTML=`<section class="stage-screen setup-screen">
-      <div class="micro">FUTBOL / 8 POZİSYON / TEK HAKEM</div>
-      <h2>Maçı sen yönet.</h2>
-      <p>İki takım seç. Pozisyonları incele, ofsayt kararını ver. Düdüğün golü de skoru da değiştirecek.</p>
-      <div class="team-section"><div class="team-label"><span>01 / SENİN TAKIMIN</span><span>${findClub(home).name.toUpperCase()}</span></div>
-      <div class="team-grid">${clubs.map(c=>clubButton(c,'home')).join('')}</div></div>
-      <div class="team-section"><div class="team-label"><span>02 / RAKİBİN</span><span>${findClub(away).name.toUpperCase()}</span></div>
-      <div class="team-grid">${clubs.map(c=>clubButton(c,'away')).join('')}</div></div>
-      <div class="start-row"><button class="main-start" id="kickoff">MAÇI BAŞLAT →</button><div class="micro">AYNI TAKIMI SEÇERSEN TAKIMLAR YER DEĞİŞTİRİR.</div></div>
-    </section>`;
-    app.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>pickClub('home',b.dataset.home));
-    app.querySelectorAll('[data-away]').forEach(b=>b.onclick=()=>pickClub('away',b.dataset.away));
-    document.getElementById('kickoff').onclick=start;
+   cancelFx();
+   app.innerHTML=`<section class="stage-screen setup-screen"><div class="micro">90 DAKİKA / 8 KRİTİK POZİSYON</div><h2>Maçı sen yönet.</h2>
+   <p>İki takım seç. Gol, ofsayt, tribünler ve teknik direktörler. Bütün gözler kararında.</p>
+   <div class="team-section"><div class="team-label"><span>01 / SENİN TAKIMIN</span><span>${findClub(home).name.toUpperCase()}</span></div><div class="team-grid">${clubs.map(c=>clubButton(c,'home')).join('')}</div></div>
+   <div class="team-section"><div class="team-label"><span>02 / RAKİBİN</span><span>${findClub(away).name.toUpperCase()}</span></div><div class="team-grid">${clubs.map(c=>clubButton(c,'away')).join('')}</div></div>
+   <div class="start-row"><button class="main-start" id="kickoff">MAÇI BAŞLAT →</button><div class="micro">AYNI TAKIMI SEÇERSEN TAKIMLAR YER DEĞİŞTİRİR.</div></div></section>`;
+   app.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>pickClub('home',b.dataset.home));
+   app.querySelectorAll('[data-away]').forEach(b=>b.onclick=()=>pickClub('away',b.dataset.away));
+   document.getElementById('kickoff').onclick=start;
   }
   function start(){
-    round=0;correct=0;wrong=0;score=[0,0];fair=[0,0];
-    next();
+   cancelFx();round=0;correct=0;wrong=0;score=[0,0];fair=[0,0];linesUsed=0;
+   activeCases=cases.slice();
+   for(let i=activeCases.length-2;i>0;i--){const j=Math.floor(Math.random()*(i+1));[activeCases[i],activeCases[j]]=[activeCases[j],activeCases[i]];}
+   if(Math.random()<.5)attackOrder.reverse();
+   incidentGoals=[Math.floor(Math.random()*2),Math.floor(Math.random()*2)];
+   next();
   }
   function opponents(){
     const line=scenario.def;
@@ -125,52 +149,68 @@
   function offsideLine(){return opponents().map(p=>p.x).sort((a,b)=>b-a)[1];}
   function isOffside(){return selectedX>50&&selectedX>Math.max(offsideLine(),scenario.ball);}
   function pitch(){
-    const dx=X(offsideLine()),ax=X(selectedX),bx=X(scenario.ball);
-    const atk=side(attackingSide()),def=side(1-attackingSide());
-    const players=opponents().map(p=>{
-      const px=X(p.x),goalkeeper=p.role==='KALECİ';
-      return `<g><circle cx="${px}" cy="${p.y}" r="17" fill="${goalkeeper?'#dca260':def.ink}" stroke="#ffffff" stroke-width="2.5"/><text x="${px}" y="${p.y+4}" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">${goalkeeper?'K':'S'}</text></g>`;
-    }).join('');
-    return `<svg class="pitch" id="pitch" viewBox="0 0 900 420" role="img" tabindex="0" aria-label="Ofsayt pozisyonu. Hücumcuyu sürükle veya sol sağ ok tuşuyla hareket ettir.">
-      <rect width="900" height="420" fill="#e5eee2"/>
-      <g stroke="#f8faf6" stroke-width="2" fill="none"><rect x="18" y="17" width="864" height="386" rx="2"/><path d="M450 17V403"/><circle cx="450" cy="210" r="62"/><rect x="18" y="113" width="115" height="193"/><rect x="767" y="113" width="115" height="193"/><rect x="18" y="153" width="52" height="113"/><rect x="830" y="153" width="52" height="113"/></g>
-      <rect x="${dx}" y="17" width="${882-dx}" height="386" fill="#c0d4bd" opacity=".23"/>
-      <line x1="${dx}" y1="17" x2="${dx}" y2="403" stroke="#47694a" stroke-width="2" stroke-dasharray="7 7"/>
-      ${players}
-      <g fill="${atk.ink}" stroke="#fff" stroke-width="3"><circle cx="${bx}" cy="236" r="17"/><circle id="attacker" cx="${ax}" cy="160" r="20"/></g>
-      <circle cx="${bx+15}" cy="256" r="8" fill="white" stroke="#252525" stroke-width="2"/>
-      <g fill="#37463d" font-size="11"><text x="${bx-17}" y="280">PAS</text><text id="playerLabel" x="${ax-29}" y="123">SÜRÜKLE ↔</text><text x="${Math.min(dx+6,738)}" y="34">OFSAYT ÇİZGİSİ</text></g>
-      <path id="passLine" d="M${bx+18} 233L${ax-10} 175" stroke="#7d9980" stroke-width="1.8" stroke-dasharray="5 6" fill="none"/>
-      <text x="44" y="38" fill="#8ba089" font-size="11">HÜCUM →</text>
-    </svg>`;
+   const dx=X(offsideLine()),ax=X(selectedX),bx=X(scenario.ball);
+   const atk=side(attackingSide()),def=side(1-attackingSide());
+   const players=opponents().map(p=>{
+     const px=X(p.x),keeper=p.role==='KALECİ';
+     return `<g><circle cx="${px}" cy="${p.y}" r="17" fill="${keeper?'#dca260':def.ink}" stroke="#fff" stroke-width="2.5"/><text x="${px}" y="${p.y+4}" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">${keeper?'K':'S'}</text></g>`;
+   }).join('');
+   return `<svg class="pitch" id="pitch" viewBox="0 0 900 420" role="img" aria-label="Pas anındaki ofsayt pozisyonu. Sarı kaleci, diğerleri savunma oyuncusu.">
+   <defs><pattern id="striped-grass" width="136" height="420" patternUnits="userSpaceOnUse"><rect width="136" height="420" fill="#dcebdd"/><rect width="68" height="420" fill="#d3e5d2"/></pattern></defs>
+   <rect width="900" height="420" fill="url(#striped-grass)"/>
+   <g stroke="#f9fcf9" stroke-width="2" fill="none"><rect x="18" y="17" width="864" height="386" rx="2"/><path d="M450 17V403"/><circle cx="450" cy="210" r="62"/><rect x="18" y="113" width="115" height="193"/><rect x="767" y="113" width="115" height="193"/><rect x="18" y="153" width="52" height="113"/><rect x="830" y="153" width="52" height="113"/></g>
+   <g id="varGuide" class="${guideOpen?'':'hide-guide'}"><rect x="${dx}" y="17" width="${882-dx}" height="386" fill="#aac5a8" opacity=".23"/><line x1="${dx}" y1="17" x2="${dx}" y2="403" stroke="#35673e" stroke-width="2.5" stroke-dasharray="7 7"/><text x="${Math.min(dx+7,740)}" y="35" fill="#2d4f35" font-size="11">OFSAYT ÇİZGİSİ</text></g>
+   ${players}
+   <g fill="${atk.ink}" stroke="#fff" stroke-width="3"><circle cx="${bx}" cy="236" r="17"/><circle id="attacker" cx="${ax}" cy="160" r="20"/></g>
+   <circle id="ball" cx="${bx+15}" cy="256" r="8" fill="#fff" stroke="#2b2b2b" stroke-width="2" style="--pass-shift:${ax-bx-15}px"/>
+   <g fill="#34493c" font-size="11"><text x="${bx-16}" y="282">PAS</text><text x="${ax-29}" y="123">HÜCUMCU</text></g>
+   <path d="M${bx+18} 233L${ax-10} 175" stroke="#789979" stroke-width="1.8" stroke-dasharray="5 6" fill="none"/>
+   <text x="42" y="38" fill="#789479" font-size="11">HÜCUM →</text></svg>`;
   }
   function next(){
-    answered=false;dragging=false;scenario=cases[round];selectedX=scenario.attack;paint();
+   cancelFx();answered=false;dragging=false;guideOpen=false;
+   if(round===1)story="22′  ·  KALECİ ÇIKARDI  ·  OYUN DEVAM EDİYOR";
+   else if(round===3){const i=incidentGoals[0];score[i]++;fair[i]++;story=`38′  ·  GOL! ${side(i).name.toUpperCase()}  ·  MAÇ DEVAM EDİYOR`;}
+   else if(round===5)story="64′  ·  TOP DİREKTEN DÖNDÜ  ·  TRİBÜNLER AYAKTA";
+   else if(round===7){const i=incidentGoals[1];score[i]++;fair[i]++;story=`88′  ·  GOL! ${side(i).name.toUpperCase()}  ·  SON DAKİKALAR`;}
+   else story=`${times[round]}′  ·  ${side(attackingSide()).name.toUpperCase()} ATAKTA`;
+   scenario=activeCases[round];selectedX=scenario.attack;paint();runAttack();
   }
   function scoreClub(i){
     const c=side(i);
     return `<div class="club ${i===1?'right':''}">${i===1?`<div><div class="k">${c.name.toUpperCase()}</div><strong id="score-${i}">${score[i]}</strong></div><i style="background:${c.kit}" aria-hidden="true"></i>`:`<i style="background:${c.kit}" aria-hidden="true"></i><div><div class="k">${c.name.toUpperCase()}</div><strong id="score-${i}">${score[i]}</strong></div>`}</div>`;
   }
   function paint(){
-    const at=side(attackingSide());
-    app.innerHTML=`<div class="scorebar">${scoreClub(0)}
-      <div class="center"><span class="progress">${times[round]}'</span><br>POZİSYON ${round+1}/${N}<br>${correct} DOĞRU KARAR</div>
-      ${scoreClub(1)}</div>
-      <div class="pitch-wrap">${pitch()}</div>
-      <div class="hint"><span>● PAS ANI · K: KALECİ · S: SAVUNMACI</span><span>HÜCUM SAĞA →</span></div>
-      <section class="controls"><div><div class="question">Ofsayt mı?</div>
-        <div class="attack-note"><i class="attack-dot" style="background:${at.ink}"></i>${at.name.toUpperCase()} ATAKTA · GOL POZİSYONU</div>
-        <div class="micro">${scenario.tip} · Oyuncuyu sürükle.</div></div>
-        <div class="decisions"><button id="off">OFSAYT</button><button id="on">DEVAM</button></div>
-      </section><div id="verdict" class="verdict" aria-live="polite"></div>`;
-    const svg=document.getElementById('pitch');
-    svg.addEventListener('pointerdown',e=>{if(answered)return;dragging=true;svg.setPointerCapture(e.pointerId);move(e);});
-    svg.addEventListener('pointermove',e=>{if(dragging)move(e);});
-    svg.addEventListener('pointerup',()=>{dragging=false;});
-    svg.addEventListener('pointercancel',()=>{dragging=false;});
-    svg.addEventListener('keydown',e=>{if(answered)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();selectedX=Math.max(0,Math.min(100,selectedX+(e.key==='ArrowRight'?1:-1)));updateAttacker();}});
-    document.getElementById('off').onclick=()=>judge(true);
-    document.getElementById('on').onclick=()=>judge(false);
+   const atk=side(attackingSide());
+   app.innerHTML=`<div class="scorebar" id="scoreboard">${scoreClub(0)}
+   <div class="center"><span class="progress">${times[round]}' <span class="live-dot"></span></span><br>POZİSYON ${round+1}/${N}<br>${correct} DOĞRU KARAR</div>${scoreClub(1)}</div>
+   <div class="match-ticker"><span class="live-label">CANLI</span><span id="ticker" aria-live="polite">${story}</span><span class="timeline"><i style="width:${Math.round((round+1)/N*100)}%"></i></span></div>
+   <div class="stadium" id="stadium">
+   <div class="stands">
+   <div class="stand" id="stand-0" style="--shirt:${side(0).ink}"><div class="fans" aria-hidden="true"></div><span id="fans-0">EV SAHİBİ TRİBÜNÜ</span></div>
+   <span class="stand-clock">90′</span>
+   <div class="stand" id="stand-1" style="--shirt:${side(1).ink}"><div class="fans" aria-hidden="true"></div><span id="fans-1">DEPLASMAN TRİBÜNÜ</span></div></div>
+   <div class="pitch-wrap">${pitch()}<div class="scene-overlay" id="sceneOverlay" aria-hidden="true"><strong>ATAK!</strong><small>${atk.name.toUpperCase()} HÜCUMDA</small></div></div>
+   <div class="touchline">
+   ${[0,1].map(i=>`<div class="manager ${i===1?'other':''}" id="manager-${i}" data-mood="neutral" style="--shirt:${side(i).ink}">
+   <span class="coach" aria-hidden="true">${coachFigure()}</span><div><div class="coach-label">TEKNİK ALAN · ${side(i).id}</div><div class="coach-line" id="coach-${i}">${i===attackingSide()?'Atağı takip ediyor.':'Savunmaya sesleniyor.'}</div></div></div>`).join('')}
+   </div></div>
+   <div class="hint"><span id="phaseHint">HÜCUM GELİŞİYOR...</span><span>HÜCUM SAĞA →</span></div>
+   <section class="controls"><div><div class="question">Ofsayt mı?</div><div class="attack-note"><i class="attack-dot" style="background:${atk.ink}"></i>${atk.name.toUpperCase()} ATAKTA · GOL POZİSYONU</div>
+   <div class="micro" id="decisionHelp">Pas anı bekleniyor.</div></div>
+   <div class="decisions"><button id="off" disabled>OFSAYT</button><button id="on" disabled>DEVAM</button></div>
+   <div class="review-tools"><button id="replay" disabled>↶ TEKRAR İZLE</button><button id="line" disabled>VAR ÇİZGİSİ <span id="lineCount">(${2-linesUsed} HAK)</span></button></div></section>
+   <div id="verdict" class="verdict" aria-live="polite"></div>`;
+   document.getElementById('off').onclick=()=>judge(true);
+   document.getElementById('on').onclick=()=>judge(false);
+   document.getElementById('replay').onclick=runAttack;
+   document.getElementById('line').onclick=()=>{
+     if(previewing||answered||guideOpen||linesUsed>=2)return;
+     linesUsed++;guideOpen=true;
+     document.getElementById('varGuide').classList.remove('hide-guide');
+     document.getElementById('line').disabled=true;
+     document.getElementById('lineCount').textContent=`(${2-linesUsed} HAK)`;
+   };
   }
   function updateAttacker(){
     const s=document.getElementById('pitch'),attacker=document.getElementById('attacker'),lbl=document.getElementById('playerLabel');
@@ -183,27 +223,34 @@
     selectedX=Math.max(0,Math.min(100,Math.round(x)));updateAttacker();
   }
   function judge(whistle){
-    if(answered)return;
-    answered=true;dragging=false;
-    const actualOffside=isOffside(),isCorrect=whistle===actualOffside,idx=attackingSide(),team=side(idx);
-    if(isCorrect)correct++;else wrong++;
-    if(!whistle)score[idx]++;
-    if(!actualOffside)fair[idx]++;
-    document.getElementById('score-0').textContent=score[0];
-    document.getElementById('score-1').textContent=score[1];
-    document.getElementById('off').disabled=document.getElementById('on').disabled=true;
-    const reason=actualOffside?
-      'Pas anında hücumcu rakip yarı sahada, hem toptan hem sondan ikinci rakipten ileride. Bu pozisyonda pası alıyor.':
-      'Pas anında hücumcu, ofsayt için gereken üç konum koşulunu aynı anda karşılamıyor.';
-    const action=whistle?'GOL İPTAL.':'GOL!';
-    const result=whistle?`${team.name} için gol sayılmadı.`:`${team.name} skora bir gol ekledi.`;
-    const box=document.getElementById('verdict');box.classList.add('on');
-    box.innerHTML=`<div class="impact">${isCorrect?'KURALA UYGUN KARAR':'HATALI HAKEM KARARI'} · ${score[0]}–${score[1]}</div>
-      <div><b>${action}</b></div><p>${result} ${isCorrect?'Kararın doğru.':'Kararın maçın gidişatını değiştirmiş olabilir.'}</p>
-      <div class="rule-note">KURALA GÖRE: <strong>${actualOffside?'OFSAYT':'DEVAM'}</strong>. ${reason}</div>
-      <div class="micro" style="margin:10px 0 12px">STÜDYO: ${scenario.quip}</div>
-      <button id="continue">${round===N-1?'MAÇI BİTİR':'SONRAKİ POZİSYON →'}</button>`;
-    document.getElementById('continue').onclick=()=>{round++;round===N?finish():next();};
+   if(answered||previewing)return;
+   answered=true;cancelFx();
+   const actualOffside=isOffside(),hit=actualOffside===whistle,i=attackingSide(),attacker=side(i);
+   if(hit)correct++;else wrong++;
+   if(!whistle)score[i]++;
+   if(!actualOffside)fair[i]++;
+   document.getElementById('score-0').textContent=score[0];
+   document.getElementById('score-1').textContent=score[1];
+   ['off','on','replay','line'].forEach(id=>document.getElementById(id).disabled=true);
+   document.getElementById('varGuide').classList.remove('hide-guide');
+   const action=whistle?'GOL İPTAL.':'GOL!';
+   document.getElementById('phaseHint').textContent=`${times[round]}' · ${action}`;
+   document.getElementById('ticker').textContent=`${times[round]}' · ${attacker.name.toUpperCase()} · ${action} · ${score[0]}–${score[1]}`;
+   const overlay=document.getElementById('sceneOverlay');
+   overlay.className='scene-overlay visible '+(whistle?'no-goal':'goal');
+   overlay.innerHTML=`<strong>${action}</strong><small>${hit?'KARAR DOĞRU':'TARTIŞMA BAŞLADI'}</small>`;
+   document.getElementById('scoreboard').classList.add('score-flash');
+   crowdReact(whistle,hit);
+   fxTimer=setTimeout(()=>{overlay.classList.remove('visible');document.getElementById('scoreboard')?.classList.remove('score-flash');},1400);
+   const reason=actualOffside?'Pas anında hücumcu rakip yarı sahada, toptan ve sondan ikinci rakipten ileride. Pası alarak oyuna katılıyor.':'Pas anında hücumcu ofsayt konumunun üç koşulunu aynı anda taşımıyor.';
+   const box=document.getElementById('verdict');box.classList.add('on');
+   box.innerHTML=`<div class="impact">${hit?'KURALA UYGUN KARAR':'HATALI HAKEM KARARI'} · ${score[0]}–${score[1]}</div>
+   <div><b>${action}</b></div>
+   <p>${whistle?attacker.name+' golü iptal edildi.':attacker.name+' golü skora yazıldı.'} ${round>=6?'Son dakikalarda tansiyon yüksek.':'Tribünlerden tepki var.'}</p>
+   <div class="rule-note">KURALA GÖRE: <strong>${actualOffside?'OFSAYT':'DEVAM'}</strong>. ${reason}</div>
+   <div class="micro" style="margin:10px 0 12px">MAÇ SONRASI: ${scenario.quip}</div>
+   <button id="continue">${round===N-1?'MAÇI BİTİR':'MAÇA DEVAM ET →'}</button>`;
+   document.getElementById('continue').onclick=()=>{round++;round===N?finish():next();};
   }
   function finish(){
     const diff=score[0]-score[1],outcome=diff>0?'KAZANDIN.':diff<0?'KAYBETTİN.':'BERABERE.';
@@ -233,6 +280,43 @@
         else window.prompt('Sonucu kopyala:',msg);
       }catch(_){}
     };
+  }
+  function runAttack(){
+   if(answered)return;
+   clearTimeout(previewTimer);previewing=true;
+   const pitchEl=document.getElementById('pitch'),overlay=document.getElementById('sceneOverlay');
+   pitchEl.classList.remove('attack-motion');void pitchEl.getBoundingClientRect().width;
+   pitchEl.classList.add('attack-motion');overlay.className='scene-overlay visible';
+   overlay.innerHTML=`<strong>ATAK!</strong><small>${side(attackingSide()).name.toUpperCase()} HÜCUMDA</small>`;
+   document.getElementById('phaseHint').textContent='HÜCUM GELİŞİYOR...';
+   ['off','on','replay','line'].forEach(id=>document.getElementById(id).disabled=true);
+   previewTimer=setTimeout(()=>{
+     previewing=false;pitchEl.classList.remove('attack-motion');overlay.classList.remove('visible');
+     document.getElementById('phaseHint').textContent='PAS ANI · K: KALECİ · S: SAVUNMACI';
+     document.getElementById('decisionHelp').textContent=scenario.tip+' · Karar senin.';
+     ['off','on','replay'].forEach(id=>document.getElementById(id).disabled=false);
+     document.getElementById('line').disabled=linesUsed>=2||guideOpen;
+   },1400);
+  }
+  function cancelFx(){clearTimeout(previewTimer);clearTimeout(fxTimer);previewing=false;}
+  function coachFigure(){
+   return `<svg viewBox="0 0 42 52" width="35" height="43" focusable="false">
+   <circle cx="20" cy="10" r="7" fill="#d9c4a9" stroke="#443f38" stroke-width="1.3"/>
+   <path d="M13 8Q17 -1 24 4Q29 6 27 11L24 7L14 9Z" fill="#343c3c"/>
+   <path d="M13 21L27 21L32 43L10 43Z" fill="var(--shirt)" stroke="#37463b" stroke-width="1.3"/>
+   <path d="M13 25L4 37M27 25L36 33" stroke="#42433e" stroke-width="4" stroke-linecap="round"/>
+   <path d="M16 43L15 50M26 43L28 50" stroke="#434741" stroke-width="4" stroke-linecap="round"/></svg>`;
+  }
+  function crowdReact(whistle,hit){
+   const attacker=attackingSide();
+   for(let i=0;i<2;i++){
+     const isAttacking=i===attacker,joy=whistle?!isAttacking:isAttacking;
+     document.getElementById('manager-'+i).dataset.mood=joy?'joy':'angry';
+     const line=joy?(whistle?'Kulübe rahatladı. Eli havada.':'Kulübe sahaya fırladı.'):(whistle?'Gol iptal. Çizgiye itiraz ediyor.':'Dördüncü hakeme itiraz ediyor.');
+     document.getElementById('coach-'+i).textContent=!hit&&!joy?'VAR ekranını işaret ediyor.':line;
+     document.getElementById('stand-'+i).dataset.mood=joy?'joy':'angry';
+     document.getElementById('fans-'+i).textContent=joy?(whistle?'ALKIŞ!':'GOOOL!'):(whistle?'İTİRAZ!':'ISLIKLAR');
+   }
   }
   intro();
 })();</script></body></html><script src="/share-kit.js?v=1" defer></script>
