@@ -252,6 +252,30 @@ body{overflow:hidden}
  .panel.minimized{left:auto!important;right:9px!important;bottom:max(9px,env(safe-area-inset-bottom))!important;padding:7px!important}
  .city-pins button{min-height:31px!important}
 }
+
+/* Compact explore-first UI — event sheet anchored below the scene, controls not covering objects. */
+.panel{width:min(405px,37vw)!important;right:18px!important;bottom:18px!important;max-height:65dvh!important;box-shadow:0 10px 32px #233d2e36!important}
+.panel .event-tools{position:sticky!important;top:0!important;justify-content:space-between!important}
+.panel .event-tools button{min-height:42px!important}
+.panel.minimized{width:min(405px,37vw)!important;max-height:130px!important}
+.panel.minimized>*:not(.event-tools){display:none!important}
+.panel.minimized #area,.panel.minimized #title{display:block!important}
+.panel.minimized #title{font:700 21px/1.04 Georgia,serif!important;max-width:100%;padding:3px 2px 6px}
+.panel.minimized #area{font:9px monospace!important}
+.panel.minimized{overflow:hidden!important}
+.infaz-track,.infaz-stages{display:none!important}
+.infaz-sample{font:11px/1.48 Arial,sans-serif}
+@media(max-width:780px){
+ .panel{left:8px!important;right:8px!important;bottom:max(8px,env(safe-area-inset-bottom))!important;width:auto!important;max-height:58dvh!important;border-radius:18px!important;box-shadow:0 5px 18px #18352732!important}
+ .panel.minimized{left:8px!important;right:8px!important;bottom:max(8px,env(safe-area-inset-bottom))!important;width:auto!important;max-height:116px!important;min-height:0!important;padding:8px 10px!important}
+ .panel.minimized #title{font-size:18px!important;margin-top:2px!important}
+ .panel .event-tools button{min-height:38px!important;flex:1!important}
+ .panel .event-tools .panel-toggle{flex:0 0 40px!important}
+ .panel .event-tools{gap:7px!important}
+ .panel .switches{grid-template-columns:1fr 1fr!important}
+ .hintpill{display:none!important}
+ .discover-hotspots{clip-path:inset(0 0 18% 0)!important}
+}
 </style></head><body><main class="app"><header class="bar"><a class="brand" href="/">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><section class="stage">
 <div class="world"><div class="hintpill" id="hint">BİR YERE DOKUN ↓</div><svg class="scene" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Yemyeşil ağaçların arasında elle çizilmiş pastel bir Türkiye mahallesi. Binalara dokunarak olayları keşfet.">
 <defs>
@@ -395,19 +419,19 @@ const ranges={
  'Aracın önünü kesip kişiyi zorla alıkoydu':{label:'TCK 109 • Fiilin özelliklerine göre değişir',ratio:null}
 };
 function renderInfaz(){
- const c=currentCase(active),o=c.options[Math.min(Math.max(0,Number(selected[active])||0),c.options.length-1)],data=ranges[o[0]],yes=/SUÇ|DOLANDIRICILIK|İNFAZ/.test(o[1])&&!/DEĞİL|YOK|OTOMATİK/.test(o[1]);
- $('infaz').hidden=!yes;
- if(!yes)return;
- $('ceza').textContent=data?.label||'Suç türüne göre ceza değişir';
- $('infazNote').textContent='Kanuni ceza aralığı, verilen hüküm ve cezaevinde kalış süresi aynı şey değildir.';
- const yrs=Number($('demoPenalty').value),fraction=data?.ratio??.5;
+ const c=currentCase(active),i=Math.min(Math.max(0,Number(selected[choiceKey(active)])||0),c.options.length-1),o=c.options[i];
+ const alleged=/SUÇ|DOLANDIRICILIK|İNFAZ|MAHKÛM|HAPİS/.test(o[1])&&!/SUÇ DEĞİL|YOK|OTOMATİK|HAPİS SUÇU DEĞİL/.test(o[1]);
+ $('infaz').hidden=false;
+ $('ceza').textContent=alleged?'İnfaz ancak kesinleşmiş hükümden sonra':'Bu seçimde kesinleşmiş hapis cezası yok';
+ $('infazNote').textContent=alleged?'Suç ihtimali, ceza verileceği veya kişinin cezaevine gireceği anlamına gelmez.':'İdari ceza, hukuk davası, soruşturma ve hapis infazı farklı aşamalardır.';
+ const yrs=Number($('demoPenalty').value);
  $('penaltyOut').textContent=yrs+' yıl';
- $('infazFill').style.width=(fraction*100)+'%';
- $('infazSample').textContent='YALNIZCA ÖRNEK: '+yrs+' yıl kesinleşmiş hapis ve genel 1/2 infaz oranı varsayılırsa koşullu salıverilme eşiği '+(yrs/2).toLocaleString('tr-TR')+' yıldır. Bu, cezaevinden çıkış tarihi değildir; suç tarihi, infaz rejimi, iyi hâl ve denetimli serbestlik ayrıca değerlendirilir.';
+ $('infazFill').style.width='0%';
+ $('infazSample').textContent='ÖRNEK HÜKÜM: '+yrs+' yıl hapis. 5275 sayılı Kanun m.107 bazı süreli hapis cezalarında 1/2 genel eşiği öngörür; birçok suçta özel oranlar, tekerrür, suç tarihi ve istisnalar vardır. Bu senaryoda suç vasfı ve kesinleşmiş hüküm belli olmadığı için otomatik salıverilme tarihi hesaplanamaz. Avukat ve infaz savcılığı değerlendirmesi gerekir.';
 }
 $('demoPenalty').addEventListener('input',renderInfaz);
 
-let active='apartment',selected={};try{selected=JSON.parse(localStorage.getItem('yatari-city-choices')||'{}')}catch(e){}
+let active='cafe',selected={};chapter.cafe=7;try{selected=JSON.parse(localStorage.getItem('yatari-city-choices')||'{}')}catch(e){}
 
 // Curated clause descriptions: show what the cited provisions regulate, not just their numbers.
 const lawIndex={
@@ -480,4 +504,6 @@ $('randomEvent').onclick=()=>{chapter[active]=((chapter[active]||0)+1)%(episodes
 document.querySelectorAll('.building').forEach(el=>{el.addEventListener('click',()=>render(el.dataset.place));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();render(el.dataset.place)}})});
 $('panelToggle').onclick=()=>{const p=$('casePanel'),closed=p.classList.toggle('minimized');$('panelToggle').setAttribute('aria-expanded',String(!closed));$('panelToggle').setAttribute('aria-label',closed?'Olay panelini genişlet':'Olay panelini küçült')};
 render(active);
+if(window.matchMedia('(max-width:780px)').matches){$('casePanel').classList.add('minimized');$('panelToggle').setAttribute('aria-expanded','false');}
+document.querySelectorAll('.discover-hotspots button,.city-pins button').forEach(b=>b.addEventListener('click',()=>{if(window.matchMedia('(max-width:780px)').matches){$('casePanel').classList.remove('minimized');$('panelToggle').setAttribute('aria-expanded','true');}}));
 </script></body></html>
