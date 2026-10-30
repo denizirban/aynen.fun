@@ -265,7 +265,7 @@ $('speed').onclick=function(){speed=speed===1?.5:1;updateControls()};
 $('seek').addEventListener('input',function(){playing=false;setTime(Number(this.value));stateLabel('KAYIT İNCELENİYOR')});
 $('reset').onclick=function(){playing=false;setTime(0);stateLabel('BAŞA SARILDI')};
 $('hint').onclick=function(){
- if(finished)return;hinted=true;var p=people[stories[level].culprit],side=p.x<355?'sol',p.x>685?'sağ':'orta';
+ if(finished)return;hinted=true;var p=people[stories[level].culprit],side=p.x<355?'sol':p.x>685?'sağ':'orta';
  $('note').textContent='İPUCU: İlk hareket meydanın '+side+' tarafında gerçekleşti. İlk 2 saniyeyi izle.';
  stateLabel('İPUCU AÇILDI');
 };
