@@ -398,7 +398,29 @@ body{overflow:hidden}
  .hotspot svg{width:30px!important;height:30px!important}
 }
 .tenancy-spot .object-art{background:#f6d7ad!important}@media(max-width:780px){.tenancy-spot{min-width:38px!important}}
-</style></head><body><main class="app"><header class="bar"><a class="brand" href="/">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><nav class="slim-rail" aria-label="Şehir araçları"><button id="railEvents" title="Olayları aç" aria-label="Olayları aç">▦</button><button id="railNext" title="Sonraki olay" aria-label="Sonraki olay">↻</button><button id="railPanel" title="Olay kartını aç veya kapat" aria-label="Olay kartını aç veya kapat">☰</button><a href="/" title="Ana sayfa" aria-label="Ana sayfa">⌂</a></nav><section class="stage">
+
+/* Calm discovery mode: only one location's objects are visible. */
+.discover-guide{position:absolute;z-index:35;top:78px;left:14px;padding:9px 13px;background:#fff0d7ef;border:1px solid #628063;border-radius:24px;color:#284833;font:700 12px Arial;pointer-events:none}
+.discover-guide span{color:#b47959}
+.discover-hotspots .hotspot{display:none!important}
+.discover-hotspots .hotspot.is-visible{display:flex!important}
+.discover-hotspots .hotspot .hotspot-name{display:none!important}
+.discover-hotspots .hotspot.is-visible .hotspot-name{display:inline!important}
+.panel.minimized{display:none!important}
+.panel{right:70px!important;width:min(355px,calc(100vw - 90px))!important;max-height:62dvh!important}
+.scene .building{cursor:pointer}
+.city-pins{display:flex!important;position:absolute;left:12px;right:70px;top:auto!important;bottom:14px!important;z-index:12;flex-wrap:wrap;gap:7px;pointer-events:none}
+.city-pins button{position:static!important;pointer-events:auto!important;min-height:38px!important;display:inline-flex!important;align-items:center!important;padding:9px 11px!important;font-size:10px!important}
+.city-pins button.active{background:#a9cc8b!important}
+@media(max-width:780px){
+ .discover-guide{top:61px;left:8px;padding:7px 10px;font-size:10px}
+ .city-pins{left:7px;right:53px;bottom:max(8px,env(safe-area-inset-bottom));gap:5px}
+ .city-pins button{font-size:9px!important;padding:7px!important;min-height:34px!important}
+ .panel{right:53px!important;bottom:57px!important;width:calc(100vw - 60px)!important;max-height:50dvh!important}
+ .discover-hotspots .hotspot.is-visible .hotspot-name{display:none!important}
+ .discover-hotspots .hotspot.is-visible{min-width:44px!important}
+}
+</style></head><body><main class="app"><header class="bar"><a class="brand" href="/">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><nav class="slim-rail" aria-label="Şehir araçları"><button id="railEvents" title="Olayları aç" aria-label="Olayları aç">▦</button><button id="railNext" title="Sonraki olay" aria-label="Sonraki olay">↻</button><button id="railPanel" title="Olay kartını aç veya kapat" aria-label="Olay kartını aç veya kapat">☰</button><a href="/" title="Ana sayfa" aria-label="Ana sayfa">⌂</a></nav><div class="discover-guide" id="discoverGuide">Bir mekân seç <span>→</span></div><section class="stage">
 <div class="world"><div class="hintpill" id="hint">BİR YERE DOKUN ↓</div><svg class="scene" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Yemyeşil ağaçların arasında elle çizilmiş pastel bir Türkiye mahallesi. Binalara dokunarak olayları keşfet.">
 <defs>
 <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".43" numOctaves="3" seed="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".115"/></feComponentTransfer></filter>
@@ -612,9 +634,10 @@ function renderLaw(c,option){
  else{const p=document.createElement('p');p.textContent='Bu olayda suç tanımı yanında özel hukuk, idare hukuku veya usul kuralları da gündeme gelebilir.';node.appendChild(p)}
  $('lawApplication').textContent='BU OLAYDA: '+option[2];
 }
+function showDiscovery(key){document.querySelectorAll('.discover-hotspots .hotspot').forEach(b=>b.classList.toggle('is-visible',b.dataset.hotspot===key));$('discoverGuide').textContent=cases[key].label+' · Nesneye dokun';document.querySelectorAll('.city-pins button').forEach(b=>b.classList.toggle('active',b.dataset.goto===key));}
 function render(key){active=key;const c=currentCase(key),choice=Math.min(Math.max(0,Number(selected[choiceKey(key)])||0),c.options.length-1);
  $('area').textContent=cases[key].label+' / OLAY '+((chapter[key]||0)+1)+' / '+(episodes[key].length+1);
- buildArchive(key);
+ buildArchive(key);showDiscovery(key);
  $('title').textContent=c.title;$('story').textContent=c.story;
  $('switches').replaceChildren();
  c.options.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.className='switch'+(i===choice?' selected':'');b.textContent=o[0];b.setAttribute('aria-pressed',String(i===choice));b.onclick=()=>{selected[choiceKey(key)]=i;try{localStorage.setItem('yatari-city-choices',JSON.stringify(selected))}catch(e){}render(key)};$('switches').appendChild(b)});
@@ -631,7 +654,7 @@ $('randomEvent').onclick=()=>{chapter[active]=((chapter[active]||0)+1)%(episodes
 document.querySelectorAll('.building').forEach(el=>{el.addEventListener('click',()=>render(el.dataset.place));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();render(el.dataset.place)}})});
 $('panelToggle').onclick=()=>{const p=$('casePanel'),closed=p.classList.toggle('minimized');$('panelToggle').setAttribute('aria-expanded',String(!closed));$('panelToggle').setAttribute('aria-label',closed?'Olay panelini genişlet':'Olay panelini küçült')};
 render(active);
-$('casePanel').classList.remove('minimized');
+$('casePanel').classList.add('minimized');showDiscovery('cafe');
 document.querySelectorAll('.discover-hotspots button,.city-pins button').forEach(b=>b.addEventListener('click',()=>{if(true){$('casePanel').classList.remove('minimized');$('panelToggle').setAttribute('aria-expanded','true');}}));
 $('casePanel').classList.add('minimized');
 $('railEvents').onclick=()=>{const a=$('archive');$('casePanel').classList.remove('minimized');a.hidden=!a.hidden;$('archiveToggle').setAttribute('aria-expanded',String(!a.hidden));};
