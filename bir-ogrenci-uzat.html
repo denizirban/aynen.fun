@@ -114,11 +114,85 @@ main{max-width:1100px;height:100dvh;min-height:550px;margin:auto;padding:14px 16
  .scene-message{bottom:6px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+
+/* 2026 refresh: cinematic ride, compact dashboard, legible interaction */
+
+.passing-landscape{animation:pastLeft 3.4s linear infinite alternate}
+.passing-landscape-right{animation:pastRight 3.7s linear infinite alternate}
+@keyframes pastLeft{from{transform:translateX(-16px)}to{transform:translateX(34px)}}
+@keyframes pastRight{from{transform:translateX(34px)}to{transform:translateX(-20px)}}
+@media(prefers-reduced-motion:reduce){.passing-landscape,.passing-landscape-right{animation:none!important}}
+
+body{background:#f6f2e9}
+main{max-width:1120px}
+.scene{border-color:#332918;box-shadow:0 2px 0 #33291815;background:#c1985d}
+.scene-illustration{filter:saturate(1.14) contrast(1.08);transform:translateX(0) scale(1.02);transform-origin:center;animation:gentleRide 5.8s ease-in-out infinite alternate;will-change:transform}
+.scene.turn .scene-illustration{animation:hardTurn .44s ease-in-out infinite alternate}
+@keyframes gentleRide{from{transform:translateX(-4px) translateY(-2px) scale(1.025)}to{transform:translateX(5px) translateY(2px) scale(1.04)}}
+@keyframes hardTurn{from{transform:translateX(-12px) rotate(-.55deg) scale(1.06)}to{transform:translateX(11px) rotate(.7deg) scale(1.06)}}
+.sunbeams{background:linear-gradient(122deg,rgba(255,231,162,.31),transparent 36%),linear-gradient(18deg,rgba(116,70,29,.36),transparent 45%);overflow:hidden}
+.sunbeams:after{content:"";position:absolute;inset:-30% -10%;background:linear-gradient(116deg,transparent 23%,rgba(255,229,161,.22) 27%,transparent 35%,rgba(255,236,186,.12) 57%,transparent 64%);animation:glideSun 13s linear infinite alternate}
+@keyframes glideSun{0%{transform:translateX(-7%)}100%{transform:translateX(7%)}}
+.scene:before{content:"";position:absolute;z-index:1;inset:0;pointer-events:none;background:radial-gradient(ellipse at 74% 19%,rgba(255,225,147,.23),transparent 53%),linear-gradient(to top,rgba(30,23,16,.28),transparent 38%)}
+.hand{width:68px;height:68px;background:#4e4b3c99;border:1.5px solid #f6e8caba;box-shadow:0 2px 17px #241b1670,0 0 0 1px #fff5 inset;transition:opacity .14s,background .12s,border-color .12s,box-shadow .12s;transform:translate(-50%,-50%) translate(var(--sway,0px),var(--bob,0px));user-select:none}
+.hand svg{width:31px;height:31px;filter:drop-shadow(0 1px 2px #41382c44)}
+.hand.disabled{opacity:.76}
+.hand.used{opacity:.36}
+.hand.target{color:#2e271e;background:#fff4d2f7;border:3px solid #f6af23;box-shadow:0 0 0 7px #ffe1a251,0 0 24px #ffcf84ac,0 5px 18px #30221778;opacity:1;animation:focusHand .9s ease-in-out infinite alternate}
+.hand.target span{font-weight:900;color:#3a2818}
+.hand.possible{opacity:1;background:#f9f2d9c7;color:#483b29;border:2px dashed #fff6dd}
+.hand.possible span{color:#403427}
+@keyframes focusHand{to{box-shadow:0 0 0 13px #ffe1a21b,0 0 33px #ffcf84ae,0 5px 18px #30221778}}
+.hand.target:before{inset:-13px;border-color:#fff0bc}
+.scene-header{z-index:5}
+.scene-header span{backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);font-weight:600}
+.scene-header .light{background:#f1e6cbee;border-color:#f0bc61;color:#694d29}
+.stop-note{z-index:5}
+.scene-message{font-weight:900;letter-spacing:.055em;max-width:94%;background:#fcf5e4f0}
+.scene-message.memory{background:#f9d087;color:#3d2914;border-color:#956537;box-shadow:0 4px 0 #3d291466;animation:memoryFlash .9s ease-in-out infinite alternate}
+@keyframes memoryFlash{to{filter:brightness(1.09)}}
+.ticket-fly{z-index:10;min-width:54px;padding:7px 10px;box-shadow:2px 6px 0 #33291e55;transition:left .16s ease-out,top .16s ease-out,transform .16s ease-out}
+.scene-status{position:absolute;z-index:8;top:52px;left:12px;display:flex;gap:6px;pointer-events:none;align-items:center}
+.scene-status span{font:700 10px ui-monospace,Menlo,monospace;color:#3f352a;background:#f8eed6ed;border:1px solid #9e8561;padding:6px 8px}
+.scene-status .rush{background:#f5bd66;color:#442911}
+.orderbar{background:#fdfbf4;border-color:#cfc0a9;box-shadow:inset 0 1px 0 #fff}
+.receipt small{color:#94794e}.receipt b{letter-spacing:-.045em}
+.guide .progress{height:5px;background:#e8dec9;max-width:none}
+.guide .progress i{background:#487755}
+.step-meter{height:5px;max-width:none;background:#e7decd;margin-top:2px;overflow:hidden}
+.step-meter i{display:block;height:100%;width:100%;background:#e1ad4d;transition:width .06s linear}
+.step-meter i.urgent{background:#c96f3c}
+.instruction-extra{font:9px/1.25 ui-monospace,Menlo,monospace;color:#867a69}
+.bonus-pop{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%);z-index:11;font-size:clamp(23px,5vw,51px);font-weight:900;letter-spacing:-.07em;color:#fff8e8;text-shadow:0 3px 0 #413025,0 8px 22px #23160f;pointer-events:none;opacity:0;scale:.85}
+.bonus-pop.show{animation:popBonus .64s ease-out both}
+@keyframes popBonus{0%{opacity:0;scale:.75}18%{opacity:1;scale:1.09}68%{opacity:1;scale:1}100%{opacity:0;scale:.95}}
+.footnote{font:9px ui-monospace,Menlo,monospace;color:#858075}
+@media(max-width:640px){
+ .hand{width:55px;height:55px}
+ .hand svg{height:27px;width:27px}
+ .hand span{font-size:7px}
+ .scene-status{top:35px;left:7px}
+ .scene-status span{font-size:8px;padding:4px 6px}
+ .stop-note{top:35px;right:7px}
+ .guide{gap:3px}
+ .instruction-extra{font-size:8px}
+ .scene-illustration{filter:saturate(1.12) contrast(1.05)}
+ .hero h1{font-size:clamp(31px,8.2vw,47px)}
+}
+@media(max-width:400px){
+ .scene-status span:first-child{display:none}
+ .hand{width:53px;height:53px}
+ .scene-message{font-size:9px}
+ .scoreline .stat b{font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){.scene-illustration,.scene.turn .scene-illustration,.sunbeams:after,.hand.target,.scene-message.memory,.bonus-pop.show{animation:none!important;transform:none}}
+
 </style>
 </head>
 <body>
 <main>
-<div class="topline"><a href="/">← aynen.fun</a><span>DOLMUŞ / SON DURAK: BELLİ DEĞİL</span></div>
+<div class="topline"><a href="/">← aynen.fun</a><span id="dailyLabel">GÜNÜN SEFERİ / DOLMUŞ</span></div>
 <div class="hero"><h1>Bir Öğrenci Uzat.</h1><p>Para öne.<br>Para üstü arkaya.<br>Dolmuş devam ediyor.</p></div>
 <div class="scoreline">
 <div class="stat"><small>KİŞİ</small><b id="count">0</b></div>
@@ -147,12 +221,12 @@ main{max-width:1100px;height:100dvh;min-height:550px;margin:auto;padding:14px 16
 <!-- side windows and passing light -->
 <g clip-path="url(#leftWindow)">
 <rect width="280" height="520" fill="url(#sky)"/>
-<g filter="url(#outsideBlur)" opacity=".82"><rect x="-20" y="325" width="290" height="30" fill="#70948e"/><rect x="-15" y="369" width="280" height="22" fill="#776a4c"/><rect x="5" y="265" width="45" height="140" fill="#71958d"/><rect x="86" y="296" width="67" height="100" fill="#98a997"/><path d="M0 428L250 350" stroke="#b3764b" stroke-width="24"/></g>
+<g class="passing-landscape" filter="url(#outsideBlur)" opacity=".82"><rect x="-20" y="325" width="290" height="30" fill="#70948e"/><rect x="-15" y="369" width="280" height="22" fill="#776a4c"/><rect x="5" y="265" width="45" height="140" fill="#71958d"/><rect x="86" y="296" width="67" height="100" fill="#98a997"/><path d="M0 428L250 350" stroke="#b3764b" stroke-width="24"/></g>
 <path d="M0 160L260 405L240 470L0 290Z" fill="#ffdb8d" opacity=".45"/>
 </g>
 <g clip-path="url(#rightWindow)">
 <rect x="736" y="130" width="264" height="370" fill="url(#sky)"/>
-<g filter="url(#outsideBlur)"><path d="M740 375L1040 344" stroke="#668f83" stroke-width="40"/><path d="M740 433L1000 392" stroke="#ca9359" stroke-width="55"/><rect x="839" y="244" width="29" height="151" fill="#68857b"/><rect x="936" y="267" width="54" height="115" fill="#8fa291"/></g>
+<g class="passing-landscape-right" filter="url(#outsideBlur)"><path d="M740 375L1040 344" stroke="#668f83" stroke-width="40"/><path d="M740 433L1000 392" stroke="#ca9359" stroke-width="55"/><rect x="839" y="244" width="29" height="151" fill="#68857b"/><rect x="936" y="267" width="54" height="115" fill="#8fa291"/></g>
 <path d="M780 180L1000 395V458L761 250Z" fill="#ffe49e" opacity=".42"/>
 </g>
 <path d="M0 157L214 176 255 410 0 483" fill="none" stroke="#6a4c30" stroke-width="15"/>
@@ -210,16 +284,17 @@ main{max-width:1100px;height:100dvh;min-height:550px;margin:auto;padding:14px 16
 <g stroke="#f4dda0" opacity=".07" stroke-width="2"><path d="M2 201H999M3 211H997M3 364H997M3 375H997M3 522H997"/></g>
 </svg>
 <div class="sunbeams" aria-hidden="true"></div>
-<div class="scene-header"><span>HAT 34 · AKŞAM SEFERİ</span><span class="light" id="direction">ÜCRET → ŞOFÖRE</span></div>
+<div class="scene-header"><span>HAT 34 · GÜN BATIMI SEFERİ</span><span class="light" id="direction">ÜCRET → ŞOFÖRE</span></div>
+<div class="scene-status"><span id="levelBadge">1. SEVİYE · SAKİN</span><span id="deadlineBadge">RAHAT DAVRAN</span></div>
 <div class="stop-note" id="situation">DURAK: MARKET ÖNÜ</div>
 <div class="ticket-fly" id="banknote" hidden>₺50</div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div><div class="bonus-pop" id="bonusPop" aria-hidden="true"></div>
 <div class="scene-message" id="sceneMessage">Işıklı ele dokun. Para öne gitsin.</div>
 <div class="modal" id="modal">
 <div class="card">
 <small id="modalKicker">DOLMUŞ İÇİ EĞİTİM / 00:00</small>
 <h2 id="modalTitle">Bir öğrenci uzatır mısınız?</h2>
-<p id="modalText">Işıklı ellere sırayla dokun. Parayı şoföre götür, para üstünü arkaya ulaştır. Hızlandıkça seri yap, yanlış ele dokunursan zaman kaybedersin.</p>
+<p id="modalText">Işıklı ellere dokun: parayı şoföre, para üstünü yolcuya ulaştır. İlk birkaç kişiden sonra para üstünün <strong>hangi arka yolcuya</strong> ait olduğunu da hatırlaman gerekecek. Virajlarda eller kayacak; yanlış ele verirsen süre gider.</p>
 <div class="report" id="report" hidden>
 <div><b id="resultPeople">0</b><span>PARASI ULAŞAN YOLCU</span></div>
 <div><b id="resultScore">0</b><span>PUAN</span></div>
@@ -232,26 +307,26 @@ main{max-width:1100px;height:100dvh;min-height:550px;margin:auto;padding:14px 16
 </section>
 <div class="orderbar">
 <div class="receipt"><small>ARKADAN GELEN</small><b id="request">1 ÖĞRENCİ</b><span id="payment">₺50 uzatıldı · ₺30 üstü</span></div>
-<div class="guide"><small id="stepLabel">NE YAPMALI?</small><b id="guideText">Sarı ışıklı ele dokun</b><div class="progress"><i id="progress"></i></div></div>
+<div class="guide"><small id="stepLabel">NE YAPMALI?</small><b id="guideText">Sarı ışıklı ele dokun</b><div class="progress"><i id="progress"></i></div><div class="step-meter"><i id="stepMeter"></i></div><div class="instruction-extra" id="tip">Her uzatış için süren var.</div></div>
 </div>
 <div class="controls"><div id="next" aria-live="polite">IŞIKLI ELE DOKUN →</div><button type="button" id="sound" aria-pressed="false">SES KAPALI</button></div>
 <div class="bottom"><span>KURGUSAL ÜCRETLER · GERÇEK DOLMUŞ TARİFESİ DEĞİL</span><button type="button" id="restart">YENİDEN BAŞLA ↺</button></div>
 </main>
 <script>
+
 (function(){
 'use strict';
 var $=function(id){return document.getElementById(id)},scene=$('scene');
 var handCoords=[
- {x:25,y:79,label:'ARKA SOL'},
- {x:75,y:77,label:'ARKA SAĞ'},
- {x:32,y:62,label:'ORTA SOL'},
- {x:69,y:57,label:'ORTA SAĞ'},
- {x:44,y:43,label:'ÖN KOLTUK'},
- {x:59,y:29,label:'ŞOFÖR'}
+ {x:25,y:79,label:'ARKA SOL'},{x:75,y:77,label:'ARKA SAĞ'},
+ {x:32,y:62,label:'ORTA SOL'},{x:69,y:57,label:'ORTA SAĞ'},
+ {x:44,y:43,label:'ÖN KOLTUK'},{x:59,y:29,label:'ŞOFÖR'}
 ];
 var handSvg='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 26V15a3 3 0 0 1 6 0v9-14a3 3 0 0 1 6 0v13-11a3 3 0 0 1 6 0v11-7a3 3 0 0 1 6 0v14l-5 11H19l-9-13c-2-3 2-6 5-3l4 5"/></svg>';
-var handButtons=[];
-var routes=[[0,2,4,5],[1,3,4,5],[0,3,4,5],[1,2,4,5],[0,2,5],[1,3,5]];
+var hands=[],routes=[
+ [0,2,4,5],[1,3,4,5],[0,3,4,5],[1,2,4,5],
+ [0,2,3,4,5],[1,3,2,4,5],[0,2,5],[1,3,5]
+];
 var orders=[
  {name:'1 ÖĞRENCİ',fee:20,paid:50},
  {name:'1 TAM',fee:35,paid:50},
@@ -261,178 +336,240 @@ var orders=[
  {name:'3 ÖĞRENCİ',fee:60,paid:100},
  {name:'1 ÖĞRENCİ',fee:20,paid:20},
  {name:'1 TAM',fee:35,paid:100},
- {name:'2 ÖĞRENCİ + 1 TAM',fee:75,paid:100}
+ {name:'2 ÖĞRENCİ + 1 TAM',fee:75,paid:100},
+ {name:'4 ÖĞRENCİ',fee:80,paid:100}
 ];
 var stops=['MARKET ÖNÜ','DOLMUŞ DURAĞI','OKUL YOLU','KAVŞAK','SAHİL','SON DURAK'];
+var nowDate=new Date(),dayKey=nowDate.getUTCFullYear()+'-'+String(nowDate.getUTCMonth()+1).padStart(2,'0')+'-'+String(nowDate.getUTCDate()).padStart(2,'0');
+var daySeed=Number(dayKey.replace(/-/g,''))||20261030;
 var s={
- mode:'intro',count:0,score:0,streak:0,bestStreak:0,mistakes:0,remaining:60,total:60,route:[],sequence:[],step:0,returning:false,order:null,lock:0,sway:0,elapsed:0,toastTimeout:0,sound:false,audio:null,last:0,orderStart:0,events:0,passDone:false,roundId:0
+ mode:'intro',count:0,score:0,streak:0,bestStreak:0,mistakes:0,
+ remaining:60,route:[],sequence:[],step:0,returning:false,order:null,lock:0,
+ sway:0,elapsed:0,stepRemaining:4.5,stepMax:4.5,orderStart:0,
+ audio:null,sound:false,last:0,lastHud:0,roundId:0,seed:daySeed,
+ remembered:0,missed:0,turnUntil:0,events:0,memory:false,memoryHit:false,
+ toastTimeout:0,popTimer:0,pause:false
 };
 function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
 function best(){try{return Number(localStorage.getItem('aynen-ogrenci-best')||0)}catch(e){return 0}}
-function high(silent){try{if(s.score>best())localStorage.setItem('aynen-ogrenci-best',String(s.score))}catch(e){}}
-function rand(i){return Math.floor(Math.random()*i)}
-function set(id,value){$(id).textContent=value}
-function toast(text){
- set('toast',text);$('toast').classList.add('show');
- clearTimeout(s.toastTimeout);s.toastTimeout=setTimeout(function(){$('toast').classList.remove('show')},1100);
+function high(){try{if(s.score>best())localStorage.setItem('aynen-ogrenci-best',String(s.score))}catch(e){}}
+function rand(max){s.seed=(Math.imul(s.seed,1664525)+1013904223)>>>0;return s.seed%max}
+function set(id,t){$(id).textContent=t}
+function toast(t){
+ set('toast',t);$('toast').classList.add('show');
+ clearTimeout(s.toastTimeout);
+ s.toastTimeout=setTimeout(function(){$('toast').classList.remove('show')},1150);
 }
-function beep(freq,duration,volume){
+function pop(t){
+ var el=$('bonusPop');el.classList.remove('show');el.textContent=t;
+ void el.offsetWidth;
+ el.classList.add('show');
+ clearTimeout(s.popTimer);
+ s.popTimer=setTimeout(function(){el.classList.remove('show')},700);
+}
+function beep(f,ms,vol){
  if(!s.sound)return;
- try{
-  var C=window.AudioContext||window.webkitAudioContext;if(!C)return;
-  if(!s.audio)s.audio=new C();if(s.audio.state==='suspended')s.audio.resume();
-  var t=s.audio.currentTime,osc=s.audio.createOscillator(),g=s.audio.createGain();
-  osc.type='sine';osc.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(volume||.035,t);g.gain.exponentialRampToValueAtTime(.001,t+duration);
-  osc.connect(g);g.connect(s.audio.destination);osc.start(t);osc.stop(t+duration);
+ try{var C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+  if(!s.audio)s.audio=new C();
+  if(s.audio.state==='suspended')s.audio.resume();
+  var t=s.audio.currentTime,o=s.audio.createOscillator(),g=s.audio.createGain();
+  o.type='sine';o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(vol||.025,t);
+  g.gain.exponentialRampToValueAtTime(.001,t+ms);
+  o.connect(g);g.connect(s.audio.destination);o.start(t);o.stop(t+ms);
  }catch(e){}
 }
 function populateHands(){
  for(var i=0;i<handCoords.length;i++){
-  var v=handCoords[i],b=document.createElement('button');
-  b.type='button';b.className='hand disabled';b.style.left=v.x+'%';b.style.top=v.y+'%';
-  b.setAttribute('aria-label',v.label);b.innerHTML=handSvg+'<span>'+v.label+'</span>';
+  var c=handCoords[i],b=document.createElement('button');
+  b.type='button';b.className='hand disabled';
+  b.style.left=c.x+'%';b.style.top=c.y+'%';
+  b.setAttribute('aria-label',c.label);
+  b.innerHTML=handSvg+'<span>'+c.label+'</span>';
   (function(id){b.addEventListener('click',function(){tap(id)})})(i);
-  handButtons.push(b);scene.appendChild(b);
+  hands.push(b);scene.appendChild(b);
  }
+}
+function level(){
+ return s.count<3?0:s.count<7?1:s.count<12?2:3;
+}
+function stepLimit(){
+ return [4.3,3.25,2.45,2.05][level()];
 }
 function hud(){
  set('count',String(s.count));
  set('score',String(s.score));
  set('combo','×'+Math.min(5,1+Math.floor(s.streak/3)));
  set('time',Math.max(0,Math.ceil(s.remaining))+' sn');
- $('time').classList.toggle('low',s.remaining<12);
-}
-function currentTarget(){return s.sequence[s.step]}
-function refreshHands(){
- var target=currentTarget();
- for(var i=0;i<handButtons.length;i++){
-  var b=handButtons[i],next=s.mode==='playing'&&!s.lock&&i===target;
-  b.classList.toggle('target',next);
-  b.classList.toggle('disabled',!next);
-  b.classList.toggle('used',s.sequence.indexOf(i)!==-1&&s.sequence.indexOf(i)<s.step);
-  b.disabled=s.mode!=='playing'||s.lock>0;
-  b.style.setProperty('--sway',(Math.sin(s.elapsed*1.8+i*.7)*s.sway).toFixed(1)+'px');
+ $('time').classList.toggle('low',s.remaining<=12);
+ var pct=clamp(100*s.stepRemaining/s.stepMax,0,100);
+ $('stepMeter').style.width=pct+'%';
+ $('stepMeter').classList.toggle('urgent',pct<29);
+ if(s.mode==='playing'&&!s.lock){
+  set('deadlineBadge',pct<29?'ACELE ET!':Math.ceil(s.stepRemaining)+' sn / EL');
  }
 }
-function positionMoney(x,y,label){
- var n=$('banknote');n.hidden=false;
- n.style.setProperty('--money-x',x+'%');n.style.setProperty('--money-y',y+'%');
- n.textContent=label;
- n.classList.toggle('returning',s.returning);
+function target(){return s.sequence[s.step]}
+function isMemoryStep(){return s.mode==='playing'&&s.memory&&s.returning&&s.step===s.sequence.length-1}
+function refreshHands(){
+ var tar=target(),memory=isMemoryStep();
+ for(var i=0;i<hands.length;i++){
+  var b=hands[i],active=s.mode==='playing'&&s.lock===0&&i===tar&&!memory;
+  b.classList.toggle('target',active);
+  b.classList.toggle('possible',memory&&s.lock===0&&(i===0||i===1));
+  b.classList.toggle('disabled',!active&&!memory);
+  b.classList.toggle('used',s.mode==='playing'&&s.sequence.indexOf(i)!==-1&&s.sequence.indexOf(i)<s.step);
+  b.disabled=s.mode!=='playing'||s.lock>0;
+  b.style.setProperty('--sway',(Math.sin(s.elapsed*2.4+i*1.1)*s.sway).toFixed(1)+'px');
+  b.style.setProperty('--bob',(Math.cos(s.elapsed*2.1+i*1.8)*s.sway*.37).toFixed(1)+'px');
+ }
+ scene.classList.toggle('turn',s.mode==='playing'&&s.elapsed<s.turnUntil);
+ $('sceneMessage').classList.toggle('memory',memory);
+ if(memory){
+  set('sceneMessage','PARA ÜSTÜ KİMİN?');
+  set('guideText','Arkada doğru yolcuyu seç');
+  set('tip','İlk parayı hangi taraftan aldın?');
+  set('next','PARA ÜSTÜNÜN SAHİBİNİ BUL');
+ }else if(s.mode==='playing'&&!s.lock){
+  set('next',s.returning?'PARA ÜSTÜ ARKAYA ←':'PARAYI ŞOFÖRE →');
+ }
+}
+function positionMoney(x,y,t){
+ var b=$('banknote');b.hidden=false;
+ b.style.setProperty('--money-x',x+'%');b.style.setProperty('--money-y',y+'%');
+ b.textContent=t;b.classList.toggle('returning',s.returning);
 }
 function prepareOrder(){
  if(s.mode!=='playing')return;
- s.roundId++;s.step=0;s.returning=false;s.lock=0;s.orderStart=s.elapsed;s.passDone=false;
- var index=s.count % orders.length;
- s.order=orders[(index+Math.floor(s.count/5))%orders.length];
- s.route=routes[(s.count+Math.floor(s.count/3))%routes.length].slice();
+ s.roundId++;s.step=0;s.returning=false;s.lock=0;s.memoryHit=false;
+ s.orderStart=s.elapsed;s.stepMax=stepLimit();s.stepRemaining=s.stepMax;
+ // Identical shuffled route/order for everyone on the same UTC day.
+ s.order=s.count===0?orders[0]:orders[rand(orders.length)];
+ var pool=level()===0?routes.slice(0,4):level()===1?routes.slice(0,6):routes;
+ s.route=s.count===0?routes[0].slice():pool[rand(pool.length)].slice();
  s.sequence=s.route.slice();
+ s.memory=s.count>=4&&s.order.paid>s.order.fee;
  set('request',s.order.name);
- set('payment','₺'+s.order.paid+' uzatıldı · ₺'+(s.order.paid-s.order.fee)+' üstü');
- set('stepLabel','01 / ÜCRETİ GÖNDER');
+ set('payment','₺'+s.order.paid+' verildi · ₺'+(s.order.paid-s.order.fee)+' üstü');
+ set('stepLabel','01 / PARAYI ÖNE GÖNDER');
  set('guideText','Sarı ışıklı ele dokun');
+ set('tip',s.memory?'Arkada kim verdiğini unutma.':'Önce sarı ışıklı ele dokun.');
  set('direction','ÜCRET → ŞOFÖRE');
- set('sceneMessage','PARAYI ÖNE GÖNDER');
- set('situation','DURAK: '+stops[Math.min(stops.length-1,Math.floor(s.count/2))]);
+ set('sceneMessage','PARAYI ÖNE UZAT');
+ set('situation','DURAK: '+stops[Math.min(stops.length-1,Math.floor(s.count/3))]);
+ set('levelBadge',[ 'SEVİYE 1 · ALIŞTIRMA','SEVİYE 2 · VİRAJ','SEVİYE 3 · YOĞUN','SEVİYE 4 · SON DURAK'][level()]);
+ set('deadlineBadge',s.stepMax.toFixed(1)+' sn / EL');
  $('progress').style.width='0%';
- set('next','IŞIKLI ELE DOKUN →');
  positionMoney(50,91,'₺'+s.order.paid);
- refreshHands();
+ refreshHands();hud();
+}
+function markStep(){
+ s.stepRemaining=s.stepMax;s.lock=.12;
+ $('progress').style.width=clamp(100*s.step/s.sequence.length,0,100)+'%';
 }
 function handoff(id){
- s.lock=.17;
- var coords=handCoords[id];positionMoney(coords.x,coords.y,s.returning?'₺'+(s.order.paid-s.order.fee):'₺'+s.order.paid);
- s.step++;
- var pct=clamp(100*s.step/s.sequence.length,0,100);
- $('progress').style.width=pct+'%';
- beep(s.returning?420+s.step*38:480+s.step*60,.06,.021);
+ var c=handCoords[id];s.lock=.13;
+ positionMoney(c.x,c.y,s.returning?'₺'+(s.order.paid-s.order.fee):'₺'+s.order.paid);
+ if(isMemoryStep()){s.memoryHit=true;s.remembered++}
+ s.step++;markStep();
+ beep(s.returning?520+s.step*32:580+s.step*55,.06,.022);
  if(s.step===s.sequence.length){
-  if(!s.returning && s.order.paid>s.order.fee){
-   s.lock=.35;
-   set('sceneMessage','PARA ÜSTÜ GERİ GELİYOR');
-   set('guideText','Şimdi arkaya uzat');
-   set('stepLabel','02 / PARA ÜSTÜNÜ GÖNDER');
+  if(!s.returning&&s.order.paid>s.order.fee){
+   s.lock=.36;s.returning=true;s.sequence=s.route.slice(0,-1).reverse();s.step=0;
+   s.stepRemaining=s.stepMax;
    set('direction','← PARA ÜSTÜ');
+   set('sceneMessage','PARA ÜSTÜ GERİ GELİYOR');
+   set('guideText','Sarı ışıklı ele dokun');
+   set('tip',s.memory?'Parayı veren arka yolcuyu hatırla.':'Para üstünü arkaya ulaştır.');
+   set('stepLabel','02 / PARA ÜSTÜNÜ GERİ VER');
+   set('next','PARA ÜSTÜ ARKAYA ←');
    toast('₺'+(s.order.paid-s.order.fee)+' PARA ÜSTÜ!');
-   s.returning=true;
-   s.sequence=s.route.slice(0,-1).reverse();
-   s.step=0;
+   $('progress').style.width='0%';
    var epoch=s.roundId;
    setTimeout(function(){
-    if(s.mode!=='playing'||s.roundId!==epoch)return;
+    if(s.mode!=='playing'||epoch!==s.roundId)return;
     positionMoney(handCoords[5].x,handCoords[5].y,'₺'+(s.order.paid-s.order.fee));
     s.lock=0;refreshHands();
-   },340);
-  }else{
-   s.passDone=true;
-   completeOrder();
-  }
- }else{
-  refreshHands();
- }
+   },350);
+  }else completeOrder();
+ }else refreshHands();
+}
+function mistake(timeout){
+ s.mistakes++;s.streak=0;
+ var penalty=timeout?2.3:1.6;
+ s.remaining=Math.max(0,s.remaining-penalty);
+ s.stepRemaining=s.stepMax;
+ set('tip',timeout?'Gecikme cezası: -2,3 saniye':'Yanlış el: -1,6 saniye');
+ toast(timeout?'PARA NEREDE KALDI? -2,3 sn':['ONA DEĞİL. -1,6 sn','PARA ÜSTÜ KİMİN? -1,6 sn','ELDEN ELE. RASTGELE DEĞİL.'][s.mistakes%3]);
+ beep(185,.15,.06);hud();
+ if(s.remaining<=0)end();
 }
 function tap(id){
  if(s.mode!=='playing'||s.lock>0)return;
- if(id===currentTarget()){
-  handoff(id);
- }else{
-  s.mistakes++;s.streak=0;s.remaining=Math.max(0,s.remaining-1.5);
-  toast(['YANLIŞ EL.','ONA DEĞİL.','BİR ÖĞRENCİ DEDİK.','ELDEN ELE, RASTGELE DEĞİL.'][s.mistakes%4]);
-  beep(155,.17,.07);hud();
-  if(s.remaining<=0)end();
- }
+ if(id===target())handoff(id);else mistake(false);
 }
 function completeOrder(){
- var speed=Math.max(0,11-(s.elapsed-s.orderStart));
  s.count++;s.streak++;s.bestStreak=Math.max(s.bestStreak,s.streak);
- var multiplier=Math.min(5,1+Math.floor(s.streak/3));
- var added=Math.round((60+speed*6)*multiplier);
- s.score+=added;
- s.remaining=Math.min(75,s.remaining+1.6);
- hud();set('sceneMessage','+'+added+' PUAN · '+s.streak+' SERİ');
- toast(s.count%3===0?'PARA ÜSTÜ DE SAHİBİNİ BULDU.':'+'+added+' PUAN');
- beep(720+s.streak*25,.1,.035);
- if(s.count%5===0){s.remaining=Math.min(75,s.remaining+3);toast('DOLMUŞ DEVAM EDİYOR. +3 SANİYE')}
- s.lock=.5;
- var completed=s.count,epoch=s.roundId;
- setTimeout(function(){if(s.mode==='playing'&&s.count===completed&&s.roundId===epoch)prepareOrder()},520);
+ var quick=Math.max(0,11-(s.elapsed-s.orderStart));
+ var mult=Math.min(5,1+Math.floor(s.streak/3));
+ var reward=Math.round((65+quick*5)*mult+(s.memoryHit?85:0));
+ s.score+=reward;
+ s.remaining=Math.min(67,s.remaining+1.15);
+ hud();pop('+'+reward);
+ set('sceneMessage',s.memoryHit?'PARA ÜSTÜ SAHİBİNİ BULDU':'PARA YERİNE ULAŞTI');
+ toast(s.memoryHit?'KİMİN PARASI OLDUĞUNU HATIRLADIN.':s.count%3===0?'ŞOFÖR GÖZ KIRPTI.':'+'+reward+' PUAN');
+ if(s.count%5===0){s.remaining=Math.min(67,s.remaining+2.5);toast('BİR DURAK DAHA. +2,5 sn')}
+ if(s.count===4||s.count===8||s.count===13){
+  s.turnUntil=s.elapsed+4.5;
+  toast('VİRAJ!');
+ }
+ beep(730+s.streak*25,.1,.045);
+ s.lock=.48;
+ var count=s.count,epoch=s.roundId;
+ setTimeout(function(){
+  if(s.mode==='playing'&&count===s.count&&epoch===s.roundId)prepareOrder();
+ },500);
 }
 function start(){
- Object.assign(s,{mode:'playing',count:0,score:0,streak:0,bestStreak:0,mistakes:0,remaining:60,route:[],sequence:[],step:0,returning:false,order:null,lock:0,sway:0,elapsed:0,events:0,passDone:false,roundId:s.roundId+1});
- $('modal').hidden=true;
- $('report').hidden=true;$('share').hidden=true;
- $('start').textContent='TEKRAR OYNA →';
- hud();prepareOrder();beep(500,.1,.04);
+ Object.assign(s,{
+  mode:'playing',count:0,score:0,streak:0,bestStreak:0,mistakes:0,remaining:60,
+  route:[],sequence:[],step:0,returning:false,order:null,lock:0,sway:0,
+  elapsed:0,orderStart:0,stepRemaining:4.3,stepMax:4.3,
+  last:0,lastHud:0,roundId:s.roundId+1,seed:daySeed,
+  remembered:0,missed:0,turnUntil:0,events:0,memory:false,memoryHit:false
+ });
+ $('modal').hidden=true;$('report').hidden=true;$('share').hidden=true;
+ set('start','TEKRAR OYNA ↻');set('next','IŞIKLI ELE DOKUN →');
+ hud();prepareOrder();beep(570,.08,.04);
 }
 function end(){
  if(s.mode!=='playing')return;
  s.mode='end';high();
  hud();refreshHands();$('banknote').hidden=true;
  $('modal').hidden=false;
- set('modalKicker','AYNEN.FUN / DOLMUŞ RAPORU');
- set('modalTitle',s.count>=12?'Şoför seni işe alsın.':s.count>=7?'Para üstü profesörü.':'Bir öğrenci uzatır mısın?');
- set('modalText',s.count+' yolcunun parasını ulaştırdın. '+s.mistakes+' kere yanlış ele verdin. Dolmuş hâlâ gidiyor.');
- set('resultPeople',String(s.count));
- set('resultScore',String(s.score));
- set('resultBest',String(best()));
- set('resultMistakes',String(s.mistakes));
+ set('modalKicker','GÜNÜN SEFERİ · '+dayKey+' · AY NEN.FUN');
+ var rank=s.count>=14?'KENDİSİNİ MUAVİN SANDI.':s.count>=9?'DOLMUŞ SENİN SAYENDE GİDİYOR.':s.count>=5?'PARA ÜSTÜ SANA EMANET.':'BİR ÖĞRENCİ UZATIR MISIN?';
+ set('modalTitle',rank);
+ set('modalText',s.count+' yolcunun parasını ulaştırdın. '+s.remembered+' kez para üstünün sahibini hatırladın. '+s.mistakes+' kere yanlış ele uzattın. Aynı günün seferini arkadaşın da oynayabilir.');
+ set('resultPeople',String(s.count));set('resultScore',String(s.score));
+ set('resultBest',String(best()));set('resultMistakes',String(s.mistakes));
  $('report').hidden=false;$('share').hidden=false;
- set('sceneMessage','SEFER BİTTİ');
- window.AynenShareResult={title:'Bir Öğrenci Uzat — aynen.fun',text:s.count+' yolcunun parasını uzattım, '+s.score+' puan topladım, '+s.mistakes+' kere yanlış ele verdim. Dolmuş daha gelmedi.',url:'https://aynen.fun/bir-ogrenci-uzat.html'};
- beep(290,.25,.06);
+ set('sceneMessage','SEFER BİTTİ');$('sceneMessage').classList.remove('memory');
+ window.AynenShareResult={title:'Bir Öğrenci Uzat — aynen.fun',text:dayKey+' seferinde '+s.count+' yolcunun parasını uzattım. '+s.score+' puan, '+s.remembered+' doğru para üstü, '+s.bestStreak+' seri. Sen kaç yolcu yetiştirirsin?',url:'https://aynen.fun/bir-ogrenci-uzat.html'};
+ beep(310,.24,.07);
 }
-function frame(time){
- if(!s.last)s.last=time;
- var dt=clamp((time-s.last)/1000,0,.05);s.last=time;
- if(s.mode==='playing'){
+function frame(t){
+ if(!s.last)s.last=t;
+ var dt=clamp((t-s.last)/1000,0,.05);s.last=t;
+ if(s.mode==='playing'&&document.visibilityState!=='hidden'){
   s.remaining-=dt;s.elapsed+=dt;
-  s.sway=s.count<3?2:s.count<6?4:s.count<10?7:9;
+  s.sway=s.count<3?1.5:s.count<7?3.7:s.count<12?6:8;
+  if(s.elapsed<s.turnUntil)s.sway+=6;
   if(s.remaining<=0){s.remaining=0;end()}
   else{
-   if(s.lock>0){s.lock=Math.max(0,s.lock-dt)}
-   if(s.events<1&&s.count>=4){s.events=1;toast('VİRAJA GİRDİK.')}
-   if(s.events<2&&s.count>=9){s.events=2;toast('ŞOFÖR: PARA ÜSTÜ KİMİN?')}
-   refreshHands();hud();
+   if(s.lock>0)s.lock=Math.max(0,s.lock-dt);
+   else{s.stepRemaining-=dt;if(s.stepRemaining<=0)mistake(true)}
+   refreshHands();
+   if(s.elapsed-s.lastHud>.07){s.lastHud=s.elapsed;hud()}
   }
  }
  requestAnimationFrame(frame);
@@ -445,6 +582,7 @@ $('sound').addEventListener('click',function(){
 });
 window.addEventListener('blur',function(){s.last=0});
 document.addEventListener('visibilitychange',function(){s.last=0});
+set('dailyLabel','GÜNÜN SEFERİ / '+dayKey);
 populateHands();hud();refreshHands();
 requestAnimationFrame(frame);
 })();
