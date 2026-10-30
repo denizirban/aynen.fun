@@ -255,6 +255,47 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 #room .hotspot:hover .halo{fill:#b6784e}
 #game.evening #sceneShade{background:linear-gradient(180deg,rgba(243,174,102,.14),rgba(85,57,29,.18))}
 #game.night #sceneShade{background:linear-gradient(180deg,rgba(66,66,91,.16),rgba(27,39,46,.37))}
+
+/* Usable game v4: find actual objects, readable nested task actions, non-overlapping menus */
+#room{--cam-zoom:1;--cam-x:0px;--cam-y:0px;transform-origin:center}
+#tasks{width:318px;max-height:calc(100dvh - 285px);display:flex;flex-direction:column;overflow:hidden}
+#tasks.collapsed{width:318px;max-height:57px}
+#tasks .task-list{min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;flex:1}
+#tasks .tasks-head,#tasks .task-filters,#tasks .todo-foot{flex-shrink:0}
+.job-wrap{display:flex;position:relative;align-items:stretch;gap:1px;border-bottom:1px solid #e7e3d5;border-radius:9px;min-height:62px}
+.job-wrap:hover,.job-wrap.active{background:#e9eee0}.job-wrap.late{background:#f6dfd7}
+.job-wrap .job{min-width:0;flex:1;border:0;border-radius:9px;background:transparent;min-height:61px;padding:9px 3px 11px 5px;gap:7px}
+.job-wrap .job .emoji{width:27px;flex:0 0 27px}.job-wrap .job .jobbody{flex:1;min-width:0}.job-wrap .job b{font-size:11px}.job-wrap .job .remaining{font-size:9px;padding:4px 3px;flex-shrink:0}
+.job-locate{flex:0 0 auto;align-self:center;margin-right:3px;border:1px solid #a8ba9a;border-radius:8px;background:#e1ebd8;color:#456a4b;padding:8px 5px;font:700 9px 'DM Mono',monospace;min-height:37px}
+.job-locate:hover,.job-locate:focus-visible{background:#436846;color:white}
+.job-progress{bottom:3px;left:48px;right:58px;pointer-events:none}
+#action{left:50%!important;right:auto!important;top:auto!important;bottom:85px!important;transform:translateX(-50%)!important;width:min(344px,calc(100vw - 20px));max-height:min(45dvh,380px);overflow-y:auto;z-index:27;background:#fffdf3fa}
+#progress{display:none!important}
+#findHint{position:absolute;z-index:27;top:77px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:9px;background:#fbf6df;border:1px solid #8ca185;border-radius:22px;box-shadow:0 6px 20px #0002;padding:7px 9px 7px 13px;max-width:70vw;font:10px 'DM Mono',monospace;color:#476448}
+#findHint.hidden{display:none}#findHintText{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#findHint button{width:24px;height:24px;flex:0 0 24px;border-radius:50%;background:#e4ead6;border:0;font-size:17px;color:#425b46}
+.scene-item{cursor:pointer;outline:0}.scene-item:hover,.scene-item:focus-visible{filter:drop-shadow(0 0 8px #f5ffc2)}
+#game.finding #focusOuter{animation:targetPulse 1.25s infinite alternate}
+@keyframes targetPulse{to{stroke-width:9;opacity:.5}}
+.hotspot .spot-label{opacity:0;pointer-events:none}.hotspot:hover .spot-label,.hotspot:focus-visible .spot-label,.hotspot.working .spot-label{opacity:1}
+.hotspot:not(.working):not(.blink){opacity:.65}
+#tasks .task-list::-webkit-scrollbar{width:5px}#tasks .task-list::-webkit-scrollbar-thumb{background:#c4c7b2;border-radius:6px}
+#hint{display:none}
+@media(max-width:1120px){#tasks,#tasks.collapsed{width:264px}#action{width:min(310px,calc(100vw - 18px))}}
+@media(max-width:850px){#tasks{max-height:calc(100dvh - 210px)}#action{bottom:105px!important}#findHint{top:58px;max-width:85vw}}
+@media(max-width:650px){
+ #room{transform:translate3d(var(--cam-x),var(--cam-y),0) scale(var(--cam-zoom));width:100%;height:100%}
+ #tasks{left:7px;right:7px;top:auto;bottom:7px;width:auto;max-height:55dvh;z-index:24}
+ #tasks.collapsed{left:7px;width:49vw;max-width:209px;max-height:53px}
+ #tasks .task-list{max-height:37dvh}
+ .job-wrap .job{min-height:60px}.job-wrap .job .emoji{width:24px;flex-basis:24px}.job-wrap .job b{font-size:10px}
+ .job-wrap .job .remaining{font-size:8px}.job-locate{font-size:8px;padding:7px 4px;min-height:33px}
+ #action{left:7px!important;right:7px!important;bottom:100px!important;top:auto!important;transform:none!important;width:auto!important;max-height:48dvh;z-index:29}
+ #findHint{top:57px;max-width:96vw;font-size:9px}
+ #cameraTools{bottom:76px}#game:has(#action.visible) #cameraTools{display:none}
+ .hotspot .spot-label{display:none}
+}
+@media(prefers-reduced-motion:reduce){#game.finding #focusOuter{animation:none}}
 </style>
 </head>
 <body>
@@ -495,6 +536,13 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 <g class="hotspot" data-station="laundry" role="button" tabindex="0" aria-label="Tezgah dolabı"><circle class="halo" cx="1211" cy="703" r="24"/><text class="sym" x="1211" y="707">🧺</text><text class="spot-label" x="1211" y="670">DOLAP</text></g>
 <g class="hotspot" data-station="desk" role="button" tabindex="0" aria-label="Laptop"><circle class="halo" cx="920" cy="395" r="24"/><text class="sym" x="920" y="399">📱</text><text class="spot-label" x="920" y="360">MASAÜSTÜ</text></g>
 <g class="hotspot" data-station="pet" role="button" tabindex="0" aria-label="Köpeğin maması"><circle class="halo" cx="318" cy="726" r="24"/><text class="sym" x="318" y="730">🐾</text><text class="spot-label" x="318" y="693">MAMA</text></g>
+<!-- Tappable objects specific to household tasks -->
+<g class="scene-item" data-item="charger" role="button" tabindex="0" aria-label="Şarj kablosu ve adaptör" transform="translate(973 484)">
+<ellipse cy="22" rx="43" ry="10" fill="#3c3526" opacity=".15"/><path d="M-35 7Q-43-17-20-15Q-7-12-5 9Q1 30 20 10" fill="none" stroke="#39423d" stroke-width="7" stroke-linecap="round"/><path d="M-35 7Q-43-17-20-15Q-7-12-5 9Q1 30 20 10" fill="none" stroke="#a5ae9a" stroke-width="2" stroke-linecap="round"/><rect x="14" y="-27" width="30" height="24" rx="5" fill="#ede8d9" stroke="#546055" stroke-width="3" transform="rotate(-13 25 -15)"/><path d="M43-21l11-3M44-12l10-2" stroke="#6a7769" stroke-width="3"/><rect x="-41" y="3" width="17" height="12" rx="3" fill="#424b45"/></g>
+<g class="scene-item" data-item="lost" role="button" tabindex="0" aria-label="Kayıp kumanda" transform="translate(559 601)"><ellipse cy="9" rx="26" ry="7" fill="#353b2c" opacity=".18"/><rect x="-23" y="-9" width="47" height="17" rx="5" fill="#424a41" stroke="#849186" stroke-width="2" transform="rotate(-12)"/><circle cx="-12" cy="-3" r="3" fill="#d16e54"/><circle cx="4" cy="-5" r="2" fill="#d7d9ba"/></g>
+<g class="scene-item" data-item="crumb" role="button" tabindex="0" aria-label="Masaya dökülmüş su" transform="translate(744 556)"><path d="M-34 12Q-43-8-18-8Q-6-20 14-11Q45-10 43 5Q20 22-5 17Q-24 21-34 12Z" fill="#a4c9bc" stroke="#79a6a0" stroke-width="2" opacity=".87"/></g>
+<g class="scene-item" data-item="snack" role="button" tabindex="0" aria-label="Atıştırmalık" transform="translate(539 567)"><ellipse rx="36" ry="15" fill="#f3e5c6" stroke="#a5a187" stroke-width="3"/><path d="M-21-2L0-12L21-5L8 9Z" fill="#da9b58"/><path d="M0-12L11-4" stroke="#7b9e5a" stroke-width="4"/></g>
+<g id="focusTarget" visibility="hidden" pointer-events="none"><circle id="focusOuter" r="53" fill="#f8ffe9" fill-opacity=".18" stroke="#efffca" stroke-width="5" stroke-dasharray="9 6"/><circle r="34" fill="none" stroke="#3e6a46" stroke-width="4"/><path d="M-70 0h23M47 0h23M0-70v23M0 47v23" stroke="#f9ffe2" stroke-width="5"/><rect x="-104" y="-98" width="208" height="31" rx="10" fill="#fffbe6" stroke="#547351" stroke-width="2"/><text id="focusLabel" y="-77" text-anchor="middle" font-size="13" font-family="Arial" font-weight="700" fill="#2f533a">NESNENİN YERİ</text></g>
 <rect width="1400" height="900" fill="url(#grain)" pointer-events="none"/>
 </svg>
 <div id="sceneShade"></div><div class="stage-vignette" aria-hidden="true"></div><div class="scene-caption"><span class="scene-dot"></span><span>EV / MUTFAK</span><span class="scene-sep">·</span><span id="sceneMood">GÜNDÜZ</span></div><div id="cameraTools" aria-label="Kamera kontrolleri"><button type="button" id="cameraOut" aria-label="Uzaklaştır">−</button><button type="button" id="cameraReset" aria-label="Kamerayı sıfırla">⌖</button><button type="button" id="cameraIn" aria-label="Yakınlaştır">+</button></div>
@@ -503,7 +551,7 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 <div class="clock"><div><small id="dayLabel">GÜN 01 / AKŞAM</small><strong id="time">17:00</strong></div><div class="controls"><button class="mini" id="pause" aria-label="Duraklat">Ⅱ</button><button class="mini" id="saveNow" aria-label="Kaydet" title="Kaydet">⌑</button><button class="mini on" data-speed="1">1×</button><button class="mini" data-speed="2">2×</button><button class="mini" data-speed="3">3×</button></div></div>
 <div class="stats"><div class="stat"><label>EVİN HUZURU</label><strong id="peace">75%</strong></div><div class="stat"><label>ENERJİN</label><strong id="energy">100%</strong></div><div class="stat"><label>BÜTÇE</label><strong id="cash">₺420</strong></div></div>
 </header>
-<div id="hint">Odada bir nesneye veya görev listesine dokun.</div>
+<div id="hint">Göreve dokun: yerini gösterelim.</div><div id="findHint" class="hidden" role="status" aria-live="polite"><span id="findHintText">Nesnenin yeri</span><button id="clearFind" aria-label="Vurguyu kapat">×</button></div>
 <section id="tasks" class="collapsed" aria-label="Yapılacak işler"><div class="tasks-head" id="tasksHead" role="button" tabindex="0" aria-label="Görev listesini aç veya kapat"><b>YAPILACAKLAR <span id="count">0</span></b><span id="fold">LİSTEYİ AÇ +</span></div><div id="taskFilters" class="task-filters" role="group" aria-label="Görev filtresi"><button type="button" class="active" data-task-filter="all" aria-pressed="true">TÜMÜ</button><button type="button" data-task-filter="house" aria-pressed="false">EV</button><button type="button" data-task-filter="family" aria-pressed="false">AİLE</button><button type="button" data-task-filter="urgent" aria-pressed="false">ACİL</button></div><div class="task-list" id="taskList"></div><div class="todo-foot"><span class="todo-dot"></span><span>Görev seç, sıraya ekle veya ailene devret.</span></div></section>
 <div id="progress"><strong id="progressName">Çalışılıyor...</strong><small id="progressWho">Sen</small><div class="bar"><i id="progressFill"></i></div></div>
 <div id="action"><button class="close-action" id="closeAction" aria-label="Kapat">×</button><div class="eyebrow" id="actionMeta">YAPILACAK İŞ</div><h2 id="actionTitle"></h2><p id="actionDesc"></p><div class="action-buttons"><button class="primary" id="doIt">BEN YAPAYIM</button><button id="delegate">EŞİME VER</button><button id="askKid">ÇOCUĞA VER</button></div></div>
@@ -636,7 +684,7 @@ function careAction(kind){
  if(time>=22*60)finishDay();
 }
 
-var taskFilter='all',cameraScale=1.055,cameraX=0,cameraY=0,previousTaskHtml='',previousGoalHtml='',lastSceneMood='';
+var taskFilter='all',cameraScale=1,cameraX=0,cameraY=0,previousTaskHtml='',previousGoalHtml='',lastSceneMood='';
 function appliesFilter(j){
  if(taskFilter==='house')return ['stove','sink','table','floor','laundry'].includes(j.spot);
  if(taskFilter==='family')return ['kid','pet','desk'].includes(j.spot);
@@ -644,7 +692,8 @@ function appliesFilter(j){
  return true
 }
 function setFilter(v){taskFilter=v;previousTaskHtml='';document.querySelectorAll('[data-task-filter]').forEach(function(b){var active=b.dataset.taskFilter===v;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});render()}
-function setCamera(z){cameraScale=Math.max(.9,Math.min(1.6,z));$('#room').style.setProperty('--cam-zoom',cameraScale.toFixed(3))}
+function setCamera(z){cameraScale=Math.max(.86,Math.min(1.45,z));$('#room').style.setProperty('--cam-zoom',cameraScale.toFixed(3))}
+function resetCameraView(){setCamera(1);cameraX=0;cameraY=0;$('#room').style.setProperty('--cam-x','0px');$('#room').style.setProperty('--cam-y','0px')}
 function updateSceneFeedback(){
  var busy=[current,helper,childTask].filter(Boolean);
  var steam=busy.some(function(j){return j.spot==='stove'});
@@ -660,8 +709,17 @@ function render(){
  $('#partnerQueue').textContent='EŞ / '+([helper].concat(partnerQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||'Beklemede');
  var live=jobs.filter(function(j){return j.remaining>0});$('#count').textContent=live.length+' / '+done+' bitti';
  live.sort(function(a,b){return a.due-b.due});
- var filtered=live.filter(appliesFilter);var visibleJobHtml=filtered.map(function(j){var late=time>j.due,active=(current&&current.id===j.id)||(helper&&helper.id===j.id)||(childTask&&childTask.id===j.id);var ownership=j.assigned==='partner'?'Eşin yapıyor / sırada · ':j.assigned==='self'?'Sen yapıyorsun / sırada · ':j.assigned==='kid'?'Çocuk yapıyor · ':'';return '<button class="job'+(late?' late':'')+(active?' active':'')+'" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+ownership+Math.ceil(j.remaining)+' dk iş</small></span><span class="remaining">'+(late?'GEÇ '+Math.ceil(time-j.due)+'dk':format(j.due)) + '</span>'+(j.assigned?'<span class="job-progress"><i style="width:'+Math.min(100,100*(1-j.remaining/j.dur))+'%"></i></span>':'')+'</button>'}).join('')||'<p style="font-size:12px;padding:12px">Bu kategoride bekleyen iş yok.</p>';if(visibleJobHtml!==previousTaskHtml){$('#taskList').innerHTML=visibleJobHtml;previousTaskHtml=visibleJobHtml}
- updateSceneFeedback();document.querySelectorAll('[data-station]').forEach(function(el){var spot=el.getAttribute('data-station');var related=live.filter(function(j){return j.spot===spot});el.setAttribute('aria-disabled',related.length?'false':'true');el.classList.toggle('blink',related.some(function(j){return time>j.due-16&&!j.assigned}));});
+ var filtered=live.filter(appliesFilter);
+ var visibleJobHtml=filtered.map(function(j){
+ var late=time>j.due,active=[current,helper,childTask].some(function(v){return v&&v.id===j.id});
+ var owner=j.assigned==='self'?'Sen yapıyorsun · ':j.assigned==='partner'?'Eşin yapıyor · ':j.assigned==='kid'?'Çocuk yapıyor · ':'';
+ return '<div class="job-wrap'+(late?' late':'')+(active?' active':'')+'">'+
+ '<button type="button" class="job job-open" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+owner+Math.ceil(j.remaining)+' dk</small></span><span class="remaining">'+(late?'GEÇ '+Math.ceil(time-j.due)+'dk':format(j.due))+'</span></button>'+
+ '<button type="button" class="job-locate" data-locate="'+j.id+'" aria-label="'+j.name+' görevini sahnede bul">BUL ⌕</button>'+
+ (j.assigned?'<span class="job-progress"><i style="width:'+Math.min(100,100*(1-j.remaining/j.dur))+'%"></i></span>':'')+'</div>'
+ }).join('')||'<p class="no-tasks">Bu kategoride bekleyen iş yok.</p>';
+ if(visibleJobHtml!==previousTaskHtml){$('#taskList').innerHTML=visibleJobHtml;previousTaskHtml=visibleJobHtml}
+ updateSceneFeedback();updateTaskObjects();document.querySelectorAll('[data-station]').forEach(function(el){var spot=el.getAttribute('data-station');var related=live.filter(function(j){return j.spot===spot});el.setAttribute('aria-disabled',related.length?'false':'true');el.classList.toggle('blink',related.some(function(j){return time>j.due-16&&!j.assigned}));});
  $('#game').classList.toggle('evening',time>=19*60&&time<21*60);$('#game').classList.toggle('night',time>=21*60);
  var j=current||helper||childTask;if(j){$('#progress').classList.add('on');$('#progressName').textContent=j.name;$('#progressWho').textContent=current?'Sen':helper?'Eşin':'Çocuk';$('#progressFill').style.width=Math.min(100,Math.round(100*(1-j.remaining/j.dur)))+'%'}else $('#progress').classList.remove('on');
  renderProgression();if(started&&performance.now()-lastSave>4000){saveGame();}
@@ -679,19 +737,41 @@ function showSavePreview(){var s=getSave();if(!s){$('#resume').hidden=true;$('#s
 }
 
 function find(id){return jobs.find(function(j){return j.id===Number(id)&&j.remaining>0})}
-function placeAction(spot){
- var box=$('#action');
- box.style.left='';box.style.top='';box.style.right='';box.style.bottom='';
- if(innerWidth<=850||!spot)return;
- var el=document.querySelector('[data-station="'+spot+'"]');if(!el||!el.getBoundingClientRect)return;
- var rect=el.getBoundingClientRect(),winHeight=window.innerHeight||900;
- var x=Math.max(330,Math.min(innerWidth-336,rect.left-305));
- var y=Math.max(92,Math.min(winHeight-330,rect.top-35));
- box.style.left=Math.round(x)+'px';box.style.top=Math.round(y)+'px';box.style.right='auto';box.style.bottom='auto'
-}
-function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=null;$('#askKid').hidden=false;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+' ÖNCESİ / '+Math.ceil(j.remaining)+' DK';$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'SIRAYA EKLE':'BEN YAPAYIM';$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?'EŞE SIRALA':'EŞİME VER';$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j));$('#action').classList.add('visible');placeAction(j.spot);if(innerWidth<850)$('#tasks').classList.add('collapsed');}
+function placeAction(){var el=$('#action');el.style.left='';el.style.top='';el.style.bottom='';el.style.right=''}
 
-function hideAction(){$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;placeAction(null)}
+var taskLocations={charger:[973,484],lost:[559,601],crumb:[744,556],snack:[539,567],water:[585,545],again:[1320,405],hungry:[1200,310],pet2:[335,785],tea:[1198,309],fridge:[1200,687],guest:[703,536]};
+var stationLocations={stove:[1200,311],sink:[1329,406],table:[706,526],kid:[738,610],floor:[555,778],laundry:[1205,699],desk:[914,462],pet:[337,787]};
+var taskBeingFound=null;
+function updateTaskObjects(){document.querySelectorAll('[data-item]').forEach(function(el){el.style.display=jobs.some(function(j){return j.key===el.dataset.item&&j.remaining>0})?'':'none'})}
+function showTaskTarget(j){
+ if(!j)return;
+ taskBeingFound=j.id;
+ var xy=taskLocations[j.key]||stationLocations[j.spot]||[730,510];
+ $('#focusTarget').setAttribute('transform','translate('+xy[0]+' '+xy[1]+')');
+ $('#focusTarget').setAttribute('visibility','visible');
+ $('#focusLabel').textContent=(j.key==='charger'?'ŞARJ ALETİ':j.name).slice(0,25).toLocaleUpperCase('tr-TR');
+ $('#findHintText').textContent='BULUNDU · '+j.name+(j.key==='charger'?' · laptopun yanında':'');
+ $('#findHint').classList.remove('hidden');$('#game').classList.add('finding');
+}
+function clearTaskTarget(){taskBeingFound=null;$('#focusTarget').setAttribute('visibility','hidden');$('#findHint').classList.add('hidden');$('#game').classList.remove('finding')}
+function locateJob(j){
+ if(!j||!started||ended)return;
+ choose(j);showTaskTarget(j);
+ $('#tasks').classList.add('collapsed');$('#fold').textContent='LİSTEYİ AÇ +';
+ setCamera(Math.max(1.08,Math.min(1.21,cameraScale)));
+ $('#room').style.setProperty('--cam-x','0px');$('#room').style.setProperty('--cam-y','0px');cameraX=0;cameraY=0;
+ var obj=document.querySelector('[data-item="'+j.key+'"]')||document.querySelector('[data-station="'+j.spot+'"]');
+ if(!obj||!obj.getBoundingClientRect)return;
+ requestAnimationFrame(function(){
+ var b=obj.getBoundingClientRect(),vh=window.innerHeight||800;
+ cameraX=Math.max(-innerWidth*.3,Math.min(innerWidth*.3,innerWidth*.5-(b.left+b.width/2)));
+ cameraY=Math.max(-vh*.3,Math.min(vh*.3,vh*.42-(b.top+b.height/2)));
+ $('#room').style.setProperty('--cam-x',Math.round(cameraX)+'px');$('#room').style.setProperty('--cam-y',Math.round(cameraY)+'px');
+ });
+}
+function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=null;showTaskTarget(j);$('#askKid').hidden=false;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+' ÖNCESİ / '+Math.ceil(j.remaining)+' DK';$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'SIRAYA EKLE':'BEN YAPAYIM';$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?'EŞE SIRALA':'EŞİME VER';$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j));$('#action').classList.add('visible');placeAction(j.spot);if(innerWidth<850)$('#tasks').classList.add('collapsed');}
+
+function hideAction(){$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;clearTaskTarget();placeAction(null)}
 function startSelf(){
  if(current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('Sen: '+current.name)}}
 function startPartner(){if(helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message('Eşin başladı: '+helper.name)}}
@@ -772,10 +852,12 @@ function frame(now){
  requestAnimationFrame(frame)
 }
 $('#start').onclick=function(){if(getSave()&&!confirm('Kaldığın oyunun kaydı silinecek. Yeni oyuna başlansın mı?'))return;reset('fresh')};$('#resume').onclick=loadSave;$('#again').onclick=function(){reset('next')};$('#newFromStart').onclick=function(){if(confirm('Kaydedilen ilerlemenin üzerine yeni oyun başlasın mı?'))reset('fresh')};$('#doIt').onclick=function(){work('self')};$('#delegate').onclick=function(){work('partner')};$('#askKid').onclick=function(){work('kid')};$('#closeAction').onclick=hideAction;$('#saveNow').onclick=function(){saveGame();message('Oyun kaydedildi.');};
-$('#taskList').addEventListener('click',function(e){var b=e.target.closest('[data-job]');if(b)choose(find(b.dataset.job))});
-document.querySelectorAll('[data-station]').forEach(function(el){function click(){var arr=jobs.filter(function(j){return j.remaining>0&&j.spot===el.dataset.station}).sort(function(a,b){return a.due-b.due});if(arr.length)choose(arr[0]);else message('Burada şimdilik iş yok. Şüpheli.')}
+$('#taskList').addEventListener('click',function(e){var b=e.target.closest('[data-locate]');if(b){locateJob(find(b.dataset.locate));return}b=e.target.closest('[data-job]');if(b)locateJob(find(b.dataset.job))});
+document.querySelectorAll('[data-station]').forEach(function(el){function click(){var arr=jobs.filter(function(j){return j.remaining>0&&j.spot===el.dataset.station}).sort(function(a,b){return a.due-b.due});if(arr.length)locateJob(arr[0]);else message('Burada şimdilik iş yok. Şüpheli.')}
  el.addEventListener('click',click);el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();click()}})
 });
+document.querySelectorAll('[data-item]').forEach(function(el){function clickItem(){var j=jobs.find(function(v){return v.remaining>0&&v.key===el.dataset.item});if(j)locateJob(j)}el.addEventListener('click',clickItem);el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();clickItem()}})});
+$('#clearFind').onclick=function(){hideAction();resetCameraView()};
 $('#pause').onclick=function(){if(!started||ended)return;paused=!paused;this.textContent=paused?'▶':'Ⅱ';saveGame();message(paused?'Zaman durdu. Gerçekte durmuyor.':'Herkes yine bir şey istiyor.')};
 document.querySelectorAll('[data-speed]').forEach(function(b){b.onclick=function(){speed=Number(this.dataset.speed);document.querySelectorAll('[data-speed]').forEach(function(n){n.classList.toggle('on',n===b)});saveGame();message(speed+'× hız. Riskli bir karar.')}});
 function fold(){var el=$('#tasks');el.classList.toggle('collapsed');$('#fold').textContent=el.classList.contains('collapsed')?'LİSTEYİ AÇ +':'KAPAT −'}
@@ -796,7 +878,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
 document.querySelectorAll('[data-task-filter]').forEach(function(b){b.addEventListener('click',function(){setFilter(b.dataset.taskFilter)})});
 $('#cameraIn').onclick=function(){setCamera(cameraScale+.14)};
 $('#cameraOut').onclick=function(){setCamera(cameraScale-.14)};
-$('#cameraReset').onclick=function(){setCamera(1.055);cameraX=0;cameraY=0;$('#room').style.setProperty('--cam-x','0px');$('#room').style.setProperty('--cam-y','0px')};
+$('#cameraReset').onclick=function(){resetCameraView();clearTaskTarget()};
 $('#room').addEventListener('wheel',function(e){if(!started||ended)return;e.preventDefault();setCamera(cameraScale+(e.deltaY<0?.075:-.075))},{passive:false});
 $('#openNotebook').onclick=function(){openNote('upgrades')};
 $('#goalMore').onclick=function(){openNote('goals')};
