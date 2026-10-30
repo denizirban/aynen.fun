@@ -20,7 +20,7 @@ const campaign=[
 {id:'return-virus',title:'Bir kez daha',desc:'İlk viral karşılaşma hatırlanıyor mu?',kind:'virus',antigen:'virus-V',count:17,x:295,y:220,base:110,goal:'Hafıza yanıtını kullanarak enfekte hücreleri kontrol et.',fact:'Hafıza B ve T hücreleri sonraki uygun antijen karşılaşmalarında daha hızlı yanıt verebilir.'}
 ];
 const costs={patrol:21,alarm:24,target:27,calm:18,repair:22};
-const DEFAULT=()=>({version:2,phase:'intro',returnPhase:'between',chapter:0,clock:0,chapterTime:0,tissue:94,energy:82,inflam:7,memory:0,signals:0,presentation:0,antibody:0,points:9,score:0,kills:0,peak:7,focus:{x:450,y:260},logs:[],history:[],levels:{macro:1,neutro:0,dend:0,nk:0,tcell:0,bcell:0,treg:0,fibro:0},memories:{'bakteri-A':0,'virus-V':0},actionReady:{},unlocks:{},streak:0,completed:false,eventsMade:0,speed:1});
+const DEFAULT=()=>({version:2,phase:'intro',returnPhase:'between',chapter:0,clock:0,chapterTime:0,tissue:94,energy:82,inflam:7,memory:0,signals:0,presentation:0,antibody:0,points:9,score:0,kills:0,peak:7,focus:{x:450,y:260},logs:[],history:[],levels:{macro:1,neutro:0,dend:0,nk:0,tcell:0,bcell:0,treg:0,fibro:0},memories:{'bakteri-A':0,'virus-V':0},actionReady:{},unlocks:{},streak:0,completed:false,eventsMade:0,speed:1,mode:'campaign',dynamicWave:null});
 let raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
 let state=DEFAULT(), agents=[],particles=[],hosts=[],bursts=[],signals=[],debris=[],flares=[],selected=null,frameTime=0,saveTime=0,uiTime=0,renderTs=0,maxId=0;
 const animReduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -35,7 +35,14 @@ if(raw&&raw.state&&raw.state.version===2&&!raw.state.completed){
  maxId=Math.max(0,...agents.map(a=>a.id||0),...particles.map(a=>a.id||0));
  if(state.phase==='active'){state.phase='paused';state.returnPhase='active';}
 }
-const wave=()=>campaign[Math.min(state.chapter,campaign.length-1)];
+function makeProceduralWave(level){
+ const k=['bacteria','virus','debris','allergen'][((level*7+Math.floor(level/3))%4)];
+ const example=campaign.find(e=>e.kind===k)||campaign[0];
+ const titles={bacteria:'Bariyer yeniden zorlanıyor',virus:'Yeni viral temas',debris:'Doku onarım nöbeti',allergen:'Gereksiz alarm ihtimali'};
+ const antigens={bacteria:level%3===0?'bakteri-A':'bakteri-B',virus:level%4===0?'virus-V':'virus-X'};
+ return {id:'sandbox-'+level,title:titles[k],desc:example.desc,kind:k,antigen:antigens[k]||null,count:Math.min(26,12+Math.floor(level*.75)),x:290+(level*139)%330,y:160+(level*91)%180,base:95,goal:example.goal,fact:example.fact};
+}
+const wave=()=>state.mode==='sandbox'&&state.chapter>=campaign.length?(state.dynamicWave||makeProceduralWave(state.chapter)):campaign[Math.min(state.chapter,campaign.length-1)];
 function addAgent(type,x,y){if(!types[type]||agents.length>=100)return null;const fromVessel=type==='neutro'||type==='nk'||type==='tcell'||type==='bcell',a={id:++maxId,type,x:x??(fromVessel?rnd(38,115):rnd(90,810)),y:y??rnd(75,445),vx:rnd(-1,1),vy:rnd(-1,1),angle:rnd(0,TWO),age:0,hit:0,life:type==='neutro'?rnd(58,90):2000};agents.push(a);return a;}
 function addParticle(type,x,y,antigen){if(particles.length>=80)return;particles.push({id:++maxId,type,x:clamp((x??450)+rnd(-60,60),25,W-25),y:clamp((y??260)+rnd(-50,50),22,H-22),hp:type==='allergen'?1:type==='debris'?1:6,age:0,angle:rnd(0,TWO),antigen:antigen||wave().antigen});}
 function addSignal(x,y,power,kind){signals.push({x,y,power,age:0,kind:kind||'alarm'});if(signals.length>28)signals.shift();}
@@ -58,16 +65,16 @@ function beginChapter(){if(state.phase!=='between'||state.chapter>=campaign.leng
 function finishChapter(){if(state.phase!=='active')return;const w=wave();state.phase='between';const gained=Math.max(5,Math.round(4+state.tissue/13+Math.max(0,45-state.inflam)/20));state.points+=gained;state.score+=Math.round(state.tissue)+gained*2;
  if(w.antigen){let gain=clamp(Math.round(16+state.activation*.22+state.presentation*.12),12,35);state.memories[w.antigen]=clamp((state.memories[w.antigen]||0)+gain,0,100);}
  const m=Object.values(state.memories);state.memory=Math.round(m.reduce((a,b)=>a+b,0)/m.length);
- state.history.push({title:w.title,tissue:Math.round(state.tissue),inflam:Math.round(state.inflam),memo:state.memory});
+ state.history.push({title:w.title,tissue:Math.round(state.tissue),inflam:Math.round(state.inflam),memo:state.memory});state.history=state.history.slice(-40);
  state.chapter++;state.inflam=Math.max(5,state.inflam-10);state.energy=Math.min(100,state.energy+24);
  event('Doku dengelendi. +'+gained+' araştırma puanı.');
- if(state.chapter>=campaign.length){complete(true);return;}updateUi(true);save();}
+ if(state.chapter>=campaign.length){if(state.mode==='sandbox'){state.dynamicWave=makeProceduralWave(state.chapter);state.points+=3;event('Yeni doku olayı ortaya çıktı. +3 araştırma.');}else{complete(true);return;}}updateUi(true);save();}
 function complete(success){state.phase='finished';state.completed=true;save();
  const good=success&&state.tissue>=75&&state.peak<65;
  const title=!success?'Doku savunmasız kaldı.':good?'Soğukkanlı koruyucu':state.peak>70?'Fazla hevesli savunma':'Pahalı bir zafer';
  const sub=!success?'Doku zarar gördü. Farklı hücrelere ve onarıma yatırım yaparak yeniden dene.':good?'Savunmayı doku onarımıyla dengede tuttun.':'Sistem ayakta. Ama bu savunmanın bir bedeli oldu.';
  const memory=state.memory;
- const markup='<div class="result"><span class="mono">İÇERİDEKİLER / VÜCUT RAPORU</span><h2>'+title+'</h2><p>'+sub+'</p><div class="result-stats"><span>DOKU<b>'+Math.round(state.tissue)+'</b></span><span>HAFIZA<b>'+memory+'</b></span><span>İNFLAMASYON ZİRVESİ<b>'+Math.round(state.peak)+'</b></span></div><div class="report-meta">'+state.chapter+' olay · '+state.kills+' temizlenen patojen · '+Math.round(state.score)+' puan</div><div class="result-actions"><button class="solid" id="result-share">PAYLAŞ</button><button class="ghost" id="result-image">KARTI İNDİR</button><button class="ghost" id="result-again">YENİDEN</button></div><div class="share-row"><a id="share-x" target="_blank" rel="noopener noreferrer">X</a><a id="share-wa" target="_blank" rel="noopener noreferrer">WhatsApp</a><button id="copy-result">Bağlantıyı kopyala</button></div></div>';
+ const markup='<div class="result"><span class="mono">İÇERİDEKİLER / VÜCUT RAPORU</span><h2>'+title+'</h2><p>'+sub+'</p><div class="result-stats"><span>DOKU<b>'+Math.round(state.tissue)+'</b></span><span>HAFIZA<b>'+memory+'</b></span><span>İNFLAMASYON ZİRVESİ<b>'+Math.round(state.peak)+'</b></span></div><div class="report-meta">'+state.chapter+' olay · '+state.kills+' temizlenen patojen · '+Math.round(state.score)+' puan</div><div class="result-actions"><button class="solid" id="result-share">PAYLAŞ</button><button class="ghost" id="result-image">KARTI İNDİR</button><button class="ghost" id="result-again">YENİDEN</button></div>'+(success&&state.mode!=='sandbox'?'<button class="solid wide" style="margin-top:10px" id="result-endless">SERBEST YAŞAMA DEVAM ET →</button>':'')+'<div class="share-row"><a id="share-x" target="_blank" rel="noopener noreferrer">X</a><a id="share-wa" target="_blank" rel="noopener noreferrer">WhatsApp</a><button id="copy-result">Bağlantıyı kopyala</button></div></div>';
  $('overlay-content').innerHTML=markup;$('overlay').hidden=false;
  const msg='İçeridekiler: '+title+' | Doku '+Math.round(state.tissue)+' | Hafıza '+memory+' | '+state.chapter+' olay. https://aynen.fun/iceridekiler.html';
  $('share-x').href='https://twitter.com/intent/tweet?text='+encodeURIComponent(msg);
@@ -75,10 +82,11 @@ function complete(success){state.phase='finished';state.completed=true;save();
  $('copy-result').onclick=()=>copyText(msg);
  $('result-share').onclick=()=>{if(navigator.share)navigator.share({title:'İçeridekiler',text:msg,url:'https://aynen.fun/iceridekiler.html'}).catch(()=>{});else copyText(msg)};
  $('result-image').onclick=()=>downloadCard(title);
- $('result-again').onclick=restart;
+ $('result-again').onclick=restart;if($('result-endless'))$('result-endless').onclick=beginEndless;
  updateUi(true);}
 function copyText(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>notice('Bağlantı kopyalandı.')).catch(()=>notice('Kopyalanamadı.'))}else notice(t);}
 function downloadCard(title){const c=document.createElement('canvas');c.width=1080;c.height=1080;const z=c.getContext('2d');z.fillStyle='#f2f4ee';z.fillRect(0,0,1080,1080);z.fillStyle='#b2d2bf';z.beginPath();z.arc(785,340,245,0,TWO);z.fill();z.fillStyle='#638e79';z.beginPath();z.ellipse(780,340,105,83,.3,0,TWO);z.fill();z.fillStyle='#202824';z.font='bold 31px Arial';z.fillText('aynen.fun  /  içeridekiler',80,98);z.font='bold 73px Arial';z.fillText(title.slice(0,22),80,705);z.font='29px Arial';z.fillText('DOKU   '+Math.round(state.tissue)+'     HAFIZA   '+state.memory+'     OLAY   '+state.chapter,80,782);z.strokeStyle='#33483e';z.lineWidth=3;z.beginPath();z.moveTo(80,817);z.lineTo(1000,817);z.stroke();z.font='26px Arial';z.fillText('Mikropları durdur. Dokuyu koru.',80,881);const a=document.createElement('a');a.download='iceridekiler-sonuc.png';a.href=c.toDataURL('image/png');a.click();}
+function beginEndless(){state.completed=false;state.mode='sandbox';state.phase='between';state.dynamicWave=makeProceduralWave(state.chapter);$('overlay').hidden=true;event('Serbest yaşam başladı. Her olay farklı bir denge gerektirir.');updateUi(true);save();}
 function restart(){if(!confirm('Mevcut oyunu silip yeniden başlatmak istiyor musun?'))return;try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
 function notice(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(notice.timer);notice.timer=setTimeout(()=>el.classList.remove('show'),2100)}
 function skill(kind){
@@ -117,10 +125,19 @@ let lastLog='';
 function drawLogs(){const key=JSON.stringify(state.logs);if(key===lastLog)return;lastLog=key;
  $('log').innerHTML='';state.logs.slice(0,7).forEach(e=>{const p=document.createElement('p'),t=document.createElement('em');t.textContent=String(Math.floor(e.time/60)).padStart(2,'0')+':'+String(e.time%60).padStart(2,'0');p.append(t,document.createTextNode(e.text));$('log').append(p);});
  $('event-count').textContent=state.logs.length+' KAYIT';}
+let historySnapshot='';
+function renderHistory(){const el=$('history');if(!el)return;const data=state.history.slice(-10),key=JSON.stringify(data);if(historySnapshot===key)return;historySnapshot=key;
+ if(!data.length){el.innerHTML='<span class="muted">İlk olayın ardından doku geçmişi burada oluşacak.</span>';return;}
+ let pts=data.map((v,i)=>({x:12+i*(256/Math.max(1,data.length-1)),y:100-v.tissue*.84}));
+ let path=pts.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+ let svg='<svg viewBox="0 0 280 118" aria-label="Doku sağlığının olaylara göre seyri" role="img"><line x1="8" y1="18" x2="272" y2="18" stroke="#dbe5db"/><line x1="8" y1="100" x2="272" y2="100" stroke="#dbe5db"/><text x="8" y="14" font-size="9" fill="#819487">100</text><text x="8" y="114" font-size="9" fill="#819487">0</text><path d="'+path+'" fill="none" stroke="#598c74" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+ pts.forEach(p=>svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="4" fill="#8abfa4" stroke="#598c74" stroke-width="1"/>');svg+='</svg>';
+ el.innerHTML=svg+'<p class="history-last">'+data[data.length-1].title+' · doku '+data[data.length-1].tissue+'/100</p>';
+}
 function updateUi(force){const w=wave();['tissue','energy','inflam','memory'].forEach(n=>{$(n+'-n').textContent=Math.round(state[n]);$(n+'-bar').style.width=clamp(state[n],0,100)+'%'});
- $('points').textContent=state.points+' ARAŞTIRMA';$('chapter').textContent='OLAY '+String(Math.min(state.chapter+1,campaign.length)).padStart(2,'0')+' / '+campaign.length.toString().padStart(2,'0');
- $('episode-title').textContent=state.chapter>=campaign.length?'Doku raporu hazır.':w.title;
- $('episode-desc').textContent=state.chapter>=campaign.length?'Tüm senaryolar tamamlandı.':w.desc;
+ $('points').textContent=state.points+' ARAŞTIRMA';$('chapter').textContent=state.mode==='sandbox'?'SERBEST YAŞAM · '+(state.chapter-5)+'. OLAY':'OLAY '+String(Math.min(state.chapter+1,campaign.length)).padStart(2,'0')+' / '+campaign.length.toString().padStart(2,'0');
+ $('episode-title').textContent=state.chapter>=campaign.length&&state.mode!=='sandbox'?'Doku raporu hazır.':w.title;
+ $('episode-desc').textContent=state.chapter>=campaign.length&&state.mode!=='sandbox'?'Tüm senaryolar tamamlandı.':w.desc;
  $('next').disabled=state.phase!=='between';$('next').textContent=state.chapter===0?'İLK OLAYI BAŞLAT →':'SONRAKİ OLAY →';
  $('scene-label').textContent=state.phase==='active'?'BAĞIŞIKLIK / AKTİF YANIT':state.phase==='paused'?'SİSTEM / DURAKLATILDI':'DOKU / GÖZETİM';
  $('pulse').className='pulse'+(state.phase==='active'?' danger':'');
@@ -128,14 +145,14 @@ function updateUi(force){const w=wave();['tissue','energy','inflam','memory'].fo
  $('clock').textContent=String(Math.floor(state.clock/60)).padStart(2,'0')+':'+String(Math.floor(state.clock%60)).padStart(2,'0')+' / '+Math.min(state.chapter+1,campaign.length)+'. OLAY';
  $('pause').textContent=state.phase==='paused'?'DEVAM ET':'DURAKLAT';$('speed').textContent=state.speed+'× HIZ';
  $('science').textContent=w.fact;
- if($('episode-progress')){$('episode-progress').style.width=clamp(state.chapter/campaign.length*100,0,100)+'%';$('episode-progress-label').textContent=state.chapter+' / '+campaign.length+' tamamlandı';}
+ if($('episode-progress')){$('episode-progress').style.width=clamp(state.chapter/campaign.length*100,0,100)+'%';$('episode-progress-label').textContent=state.mode==='sandbox'?'SÜREKLİ GELİŞİM':state.chapter+' / '+campaign.length+' tamamlandı';}
  if($('focus-info'))$('focus-info').textContent='ODAK: '+(Math.round(state.focus.x/W*100))+'% / '+(Math.round(state.focus.y/H*100))+'%';
  if($('immune-readout')){$('immune-readout').textContent=wave().antigen===null?'Antijen sunumu bu olayda belirleyici değil.':'ANTİJEN SUNUMU '+Math.round(state.presentation)+'% · YANIT '+Math.round(state.activation||0)+'%';}
  if($('goal'))$('goal').textContent=w.goal;
  document.querySelectorAll('[data-action]').forEach(btn=>{const act=btn.dataset.action,remaining=Math.ceil((state.actionReady[act]||0)-state.clock);
  btn.disabled=state.phase!=='active'||state.energy<costs[act]||remaining>0||(act==='target'&&!w.antigen);
  const small=btn.querySelector('small');if(small)small.textContent=remaining>0?remaining+' sn bekle':'−'+costs[act]+' enerji';});
- renderUpgrades();drawLogs();}
+ renderUpgrades();drawLogs();renderHistory();}
 function pickTarget(a){const kind=wave().kind;let pick=null,best=Infinity;
  if(a.type==='fibro'||a.type==='treg'||a.type==='bcell'){return null;}
  if((a.type==='nk'||a.type==='tcell')&&kind==='virus'){for(const h of hosts){if(h.infect<=0||h.dead)continue;const d=distance(a,h);if(d<best){best=d;pick={obj:h,kind:'host',range:40}}}return pick;}
