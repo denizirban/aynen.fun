@@ -93,3 +93,18 @@ body{background:radial-gradient(ellipse at 45% -15%,#e8f1e9 0%,#f5f6f2 47%,#f5f6
 .history-panel .muted{color:#97a397}
 #history:empty{display:none}
 @media(max-width:760px){.history-panel svg{height:90px}}
+/* Five actions in a comfortable 3 + 2 touch layout instead of five cramped columns. */
+@media(max-width:760px){
+ .actions{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+ .action{grid-column:span 2;min-height:73px;padding:9px}
+ .action:nth-child(4),.action:nth-child(5){grid-column:span 3;min-height:63px;flex-direction:row;align-items:center}
+ .action:nth-child(5) small{margin-left:auto}
+ .action b{font-size:11px}
+ .action small{font-size:9px}
+ .action .glyph{font-size:20px}
+}
+@media(max-width:360px){
+ .action{padding:7px}
+ .action b{font-size:10px}
+ .action small{font-size:8px}
+}
