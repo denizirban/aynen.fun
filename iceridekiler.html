@@ -72,7 +72,7 @@ function addBug(type,x,y){if(bugs.length>=37)return;bugs.push({id:++id,type:type
 function seed(){cells=[];bugs=[];effects=[];for(var i=0;i<4+s.upgrades.macro;i++)addCell("macro");for(var j=0;j<s.upgrades.neutro;j++)addCell("neutro");for(var k=0;k<s.upgrades.dend;k++)addCell("dend");for(var l=0;l<s.upgrades.tcell;l++)addCell("tcell");for(var m=0;m<s.upgrades.bcell;m++)addCell("bcell");}
 function log(msg){s.events.unshift({at:Math.round(s.elapsed),text:msg});s.events=s.events.slice(0,9);renderLog();}
 function notify(msg){var el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove("show");},2300);}
-function save(){try{localStorage.setItem(store,JSON.stringify({s:s}));$("saved").textContent="KAYDEDİLDİ ✓";}catch(e){$("saved").textContent="KAYIT YOK";}}
+function save(){try{localStorage.setItem(store,JSON.stringify({s:s,cells:cells,bugs:bugs}));$("saved").textContent="KAYDEDİLDİ ✓";}catch(e){$("saved").textContent="KAYIT YOK";}}
 function begin(){s.phase="break";s.wave=0;seed();$("overlay").hidden=true;log("Doku devriyesi başladı.");renderAll();save();}
 function startWave(){if(s.phase!=="break"||s.wave>=3)return;var w=waves[s.wave];s.phase="running";s.uptime=0;s.cooldown=0;s.primed=s.wave===2?Math.min(.7,s.memory/100):0;s.interv=0;
 for(var i=0;i<w.count;i++)addBug(w.type,w.center[0],w.center[1]);
@@ -126,7 +126,7 @@ function moveUnit(c,dt,now){var d=defs[c.type],target=null,nearest=1e6;
  if(target&&nearest<d.r+12){target.hp-=d.attack*dt*(s.wave===2?1+s.memory/200:1);c.busy=.4;if(c.type==="neutro")s.inflam=clamp(s.inflam+dt*.95,0,100);if(c.type==="dend")s.primed=clamp(s.primed+dt*.15,0,1);}
  c.busy=Math.max(0,c.busy-dt);
 }
-function tick(dt){if(s.phase!=="running")return;s.elapsed+=dt;s.uptime+=dt;s.energy=clamp(s.energy+dt*.56,0,100);
+function tick(dt){if(s.phase==="idle"||s.phase==="break"){for(var a=0;a<cells.length;a++)moveUnit(cells[a],dt,s.elapsed);if(s.phase==="break"){s.energy=clamp(s.energy+dt*.55,0,100);s.inflam=clamp(s.inflam-dt*.55,0,100);s.tissue=clamp(s.tissue+dt*.06,0,100);s.elapsed+=dt;}return;}if(s.phase!=="running")return;s.elapsed+=dt;s.uptime+=dt;s.energy=clamp(s.energy+dt*.56,0,100);
  var n=bugs.length;
  for(var i=0;i<cells.length;i++)moveUnit(cells[i],dt,s.elapsed);
  for(var j=bugs.length-1;j>=0;j--){var b=bugs[j];b.angle+=dt*.75;b.x=clamp(b.x+Math.sin(s.elapsed*.7+b.id)*dt*7,20,W-20);b.y=clamp(b.y+Math.cos(s.elapsed*.9+b.id)*dt*8,20,H-20);if(b.hp<=0){bugs.splice(j,1);s.kill++;s.points+=Math.random()<.31?1:0;effects.push({x:b.x,y:b.y,t:0});}}
@@ -152,7 +152,7 @@ function renderWorld(t){var C=ctx;C.clearRect(0,0,W,H);var g=C.createLinearGradi
 }
 function drawBug(C,b,t){C.save();C.translate(b.x,b.y);C.rotate(b.angle);C.fillStyle=b.type==="virus"?"#bf7c81":"#ba8d65";C.strokeStyle=b.type==="virus"?"#9b5360":"#98735c";C.lineWidth=2;
  if(b.type==="virus"){for(var k=0;k<9;k++){var a=k*Math.PI*2/9;C.beginPath();C.moveTo(Math.cos(a)*8,Math.sin(a)*8);C.lineTo(Math.cos(a)*14,Math.sin(a)*14);C.stroke();C.beginPath();C.arc(Math.cos(a)*15,Math.sin(a)*15,2,0,7);C.fill();}C.beginPath();C.arc(0,0,9,0,7);C.fill();C.stroke();C.fillStyle="#f6cbcc";for(var n=0;n<3;n++){C.beginPath();C.arc(Math.cos(n*2.1)*4,Math.sin(n*2.1)*4,1.7,0,7);C.fill();}}
- else {C.beginPath();C.roundRect(-12,-5,24,10,5);C.fill();C.stroke();C.strokeStyle="#f2dfc7";C.lineWidth=1.5;for(var p=-5;p<8;p+=6){C.beginPath();C.moveTo(p,-4);C.lineTo(p+3,4);C.stroke();}}
+ else {C.beginPath();if(C.roundRect)C.roundRect(-12,-5,24,10,5);else C.rect(-12,-5,24,10);C.fill();C.stroke();C.strokeStyle="#f2dfc7";C.lineWidth=1.5;for(var p=-5;p<8;p+=6){C.beginPath();C.moveTo(p,-4);C.lineTo(p+3,4);C.stroke();}}
  C.restore();}
 function drawCell(C,c,t){var d=defs[c.type],r=d.r,wobble=Math.sin(t*.0017+c.angle)*1.9;C.save();C.translate(c.x,c.y);C.rotate(c.angle*.09);C.shadowColor="#627e7230";C.shadowBlur=12;
  C.beginPath();for(var i=0;i<=16;i++){var a=i*Math.PI*2/16,rr=r+wobble*Math.sin(a*3+c.angle)*.65+(c.type==="macro"?Math.sin(a*5+t*.001+c.id)*3.4:0);var x=Math.cos(a)*rr,y=Math.sin(a)*rr;if(i===0)C.moveTo(x,y);else C.lineTo(x,y);}C.closePath();C.fillStyle=d.color;C.fill();C.shadowBlur=0;C.lineWidth=2;C.strokeStyle=d.core;C.stroke();
@@ -165,19 +165,19 @@ function drawCell(C,c,t){var d=defs[c.type],r=d.r,wobble=Math.sin(t*.0017+c.angl
 function inspect(ev){var r=canvas.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width*W,y=(ev.clientY-r.top)/r.height*H;
  var pick=null,best=44;for(var i=0;i<cells.length;i++){var d=Math.hypot(cells[i].x-x,cells[i].y-y);if(d<best){best=d;pick=cells[i];}}
  if(pick){var d=defs[pick.type];$("selection").textContent=d.name+" / "+(pick.busy?"Aktif yanıt":"Devriyede");$("detail").innerHTML="<strong style='color:#1d2422;font-size:12px'>"+d.name+"</strong><p style='margin:5px 0 0'>"+d.role+"</p>";}else{$("selection").textContent=bugs.length?"Patojen hareketi izleniyor.":"Bölgede aktif tehdit yok.";}}
-function frame(time){if(!last)last=time;var dt=Math.min(.05,(time-last)/1000);last=time;var speed=Number($("speed").dataset.speed||1);if(s.phase==="running"&&document.visibilityState==="visible")tick(dt*speed);
+function frame(time){if(!last)last=time;var dt=Math.min(.05,(time-last)/1000);last=time;var speed=Number($("speed").dataset.speed||1);if(["running","break","idle"].includes(s.phase)&&document.visibilityState==="visible")tick(dt*speed);
  renderWorld(time);
- if(time-lastUi>210){lastUi=time;renderAll();}
+ if(time-lastUi>550){lastUi=time;renderAll();}
  if(time-lastSave>5000&&s.phase!=="idle"){lastSave=time;save();}
  requestAnimationFrame(frame);}
 document.querySelectorAll("[data-action]").forEach(function(b){b.addEventListener("click",function(){action(b.dataset.action);});});
 $("next").addEventListener("click",startWave);$("start").addEventListener("click",begin);canvas.addEventListener("click",inspect);$("reset").addEventListener("click",restart);
 $("speed").addEventListener("click",function(){var next=this.dataset.speed==="2"?1:2;this.dataset.speed=String(next);this.textContent=next+"× HIZ";});
-$("pause").addEventListener("click",function(){if(s.phase==="running"){pausedFrom="running";s.phase="paused";log("Sistem duraklatıldı.");}else if(s.phase==="paused"){s.phase=pausedFrom;log("Devriye devam ediyor.");}renderAll();});
+$("pause").addEventListener("click",function(){if(s.phase==="running"||s.phase==="break"){pausedFrom=s.phase;s.phase="paused";log("Sistem duraklatıldı.");}else if(s.phase==="paused"){s.phase=pausedFrom;log("Devriye devam ediyor.");}renderAll();});
 document.addEventListener("keydown",function(e){if(e.code==="Space"&&e.target===document.body){e.preventDefault();$("pause").click();}});
 document.addEventListener("visibilitychange",function(){save();});
 window.addEventListener("pagehide",save);
-if(s.phase!=="idle"&&s.phase!=="finished"){$("overlay").hidden=true;seed();if(s.phase==="running"||s.phase==="paused"){var w=waves[Math.min(s.wave,2)];for(var i=0;i<Math.max(4,Math.ceil(w.count*.7));i++)addBug(w.type,w.center[0],w.center[1]);s.phase="paused";pausedFrom="running";log("Kayıt yüklendi; devam etmek için oynat.");}}
+if(s.phase!=="idle"&&s.phase!=="finished"){$("overlay").hidden=true;if(saved&&Array.isArray(saved.cells)&&saved.cells.length<160&&Array.isArray(saved.bugs)&&saved.bugs.length<100){cells=saved.cells.filter(function(c){return defs[c.type]&&Number.isFinite(c.x)&&Number.isFinite(c.y);});bugs=saved.bugs.filter(function(b){return ["virus","bacteria"].includes(b.type)&&Number.isFinite(b.hp);});if(!cells.length)seed();}else{seed();if(s.phase==="running"||s.phase==="paused"){var w=waves[Math.min(s.wave,2)];for(var i=0;i<Math.max(4,Math.ceil(w.count*.7));i++)addBug(w.type,w.center[0],w.center[1]);}}if(s.phase==="running"||s.phase==="paused"){s.phase="paused";pausedFrom="running";log("Kayıt yüklendi; devam etmek için oynat.");}}else if(s.phase==="idle"){seed();}
 renderAll();requestAnimationFrame(frame);
 })();
 </script></body></html>
