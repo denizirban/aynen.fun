@@ -6,6 +6,7 @@ if(api){
  const canvas=document.getElementById('webgl-stage'),base=document.getElementById('world');
  try{
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.35;
@@ -21,6 +22,7 @@ if(api){
   light(0x60dbea,9500,270,-130,220);
   light(0xba81ff,7500,260,180,60);
   const cells=new Map(), microbes=new Map(), tissues=new Map();
+  let previousFrame=0,quality=1,slowFrames=0,fastFrames=0,active=true;
   const colors={
    macro:[0xffca6a,0xf39755],neutro:[0xffb2bb,0xee6784],dend:[0x9affdf,0x52c9b8],
    nk:[0xd8b4ff,0x9d76ef],tcell:[0x91c9ff,0x6b8df0],bcell:[0xe6ffaf,0x9de578],
@@ -31,9 +33,20 @@ if(api){
   const createJelly=(type,id)=>{
    const palette=colors[type]||colors.macro;
    const group=new THREE.Group();
-   const material=new THREE.MeshPhysicalMaterial({color:palette[0],roughness:.26,metalness:0,transmission:.28,thickness:1.7,clearcoat:.68,clearcoatRoughness:.17,emissive:palette[1],emissiveIntensity:.22,transparent:true,opacity:.91,depthWrite:true});
+   const material=new THREE.MeshPhysicalMaterial({color:palette[0],roughness:.24,metalness:0,transmission:.14,thickness:1.25,clearcoat:.76,clearcoatRoughness:.13,emissive:palette[1],emissiveIntensity:.21,transparent:true,opacity:.96,depthWrite:true});
+   const morph={time:0,activity:0};
+   material.onBeforeCompile=shader=>{
+    shader.uniforms.uCellTime={value:0};
+    shader.uniforms.uCellActivity={value:0};
+    morph.shader=shader;
+    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+      float cellRipples = sin(position.y*7.5+uCellTime*2.3)*sin(position.x*5.2-uCellTime*1.7);
+      float cellAction = sin(position.x*9.0+uCellTime*8.0)*sin(position.y*7.0-uCellTime*6.0);
+      transformed += normal* (0.035*cellRipples+uCellActivity*0.047*cellAction);`);
+    shader.vertexShader='uniform float uCellTime; uniform float uCellActivity;\n'+shader.vertexShader;
+   };
    const body=new THREE.Mesh(sphere,material);body.scale.set(1,1.12,.7);group.add(body);
-   const glow=new THREE.Mesh(sphere,new THREE.MeshBasicMaterial({color:palette[1],transparent:true,opacity:.09,depthWrite:false}));glow.scale.set(1.27,1.35,.86);group.add(glow);
+   const glow=new THREE.Mesh(sphere,new THREE.MeshBasicMaterial({color:palette[1],transparent:true,opacity:.085,depthWrite:false,blending:THREE.AdditiveBlending}));glow.scale.set(1.25,1.35,.81);group.add(glow);
    const nucleus=new THREE.Mesh(tiny,new THREE.MeshStandardMaterial({color:palette[1],emissive:palette[1],emissiveIntensity:.2,transparent:true,opacity:.58,roughness:.32}));nucleus.scale.set(.34,.37,.24);nucleus.position.set(.10,-.20,.43);group.add(nucleus);
    const eyeMat=new THREE.MeshBasicMaterial({color:0x2e252e});
    for(const px of [-.20,.20]){const eye=new THREE.Mesh(tiny,eyeMat);eye.scale.set(.056,.075,.045);eye.position.set(px,.11,.66);group.add(eye)}
@@ -48,7 +61,17 @@ if(api){
    } else if(type==='neutro'||type==='bcell'){
     for(const dx of [-.42,.42]){const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.085,.28,3,5),material);leg.position.set(dx,-.98,0);group.add(leg)}
    }
-   group.userData={type,seed:id*1.93,body,glow,nucleus,material};
+   // Tiny cytoplasmic inclusions float inside the transparent cell.
+   const organelleGeo=tiny;
+   const organelleMaterial=new THREE.MeshBasicMaterial({color:palette[1],transparent:true,opacity:.40,depthWrite:false});
+   const organelles=[];
+   for(let i=0;i<5;i++){
+     const p=new THREE.Mesh(organelleGeo,organelleMaterial);
+     p.scale.set(.06+(i%3)*.025,.045+(i%2)*.02,.05);
+     p.position.set(Math.sin(i*2.37)*.48,Math.cos(i*2.57)*.55,.37+(i%2)*.05);
+     group.add(p);organelles.push(p);
+   }
+   group.userData={type,seed:id*1.93,body,glow,nucleus,material,morph,organelles};
    scene.add(group);return group;
   };
   const microMat={
@@ -60,8 +83,8 @@ if(api){
   const infectedMat=cmat.clone();infectedMat.color.setHex(0xf0a4bc);infectedMat.emissive.setHex(0xff638f);infectedMat.opacity=.32;
   const bg=[];
   const dustMat=new THREE.PointsMaterial({size:1.65,color:0x987dca,transparent:true,opacity:.32,depthWrite:false});
-  const dustPos=new Float32Array(540*3);
-  for(let i=0;i<540;i++){dustPos[i*3]=(Math.random()-.5)*1250;dustPos[i*3+1]=(Math.random()-.5)*920;dustPos[i*3+2]=-70-Math.random()*380}
+  const dustPos=new Float32Array(260*3);
+  for(let i=0;i<260;i++){dustPos[i*3]=(Math.random()-.5)*1250;dustPos[i*3+1]=(Math.random()-.5)*920;dustPos[i*3+2]=-70-Math.random()*380}
   const dustGeo=new THREE.BufferGeometry();dustGeo.setAttribute('position',new THREE.BufferAttribute(dustPos,3));scene.add(new THREE.Points(dustGeo,dustMat));
   const zones=[
    {x:108,y:266,c:0x55c8ed,r:86},{x:450,y:268,c:0xea789b,r:175},
@@ -79,7 +102,7 @@ if(api){
    const rect=canvas.getBoundingClientRect(),w=Math.max(1,rect.width),h=Math.max(1,rect.height);
    if(w===lastW&&h===lastH)return;
    lastW=w;lastH=h;
-   const pixelRatio=Math.min(window.devicePixelRatio||1,w<700?1.35:1.65);
+   const pixelRatio=Math.min(window.devicePixelRatio||1,(w<700?1.45:1.7)*quality);
    renderer.setPixelRatio(pixelRatio);renderer.setSize(w,h,false);
   }
   function updateMesh(map,items,creator,scaleFor,transform,now){
@@ -96,9 +119,16 @@ if(api){
    }
   }
   function anim(now){
-   if(!document.body.contains(canvas))return;
+   if(!active||!document.body.contains(canvas))return;
    requestAnimationFrame(anim);
    if(document.hidden)return;
+   if(previousFrame){
+     const delta=now-previousFrame;
+     if(delta>31){slowFrames++;fastFrames=0;}else if(delta<19){fastFrames++;slowFrames=Math.max(0,slowFrames-1);}
+     if(slowFrames>55&&quality>.70){quality=Math.max(.70,quality-.13);lastW=0;slowFrames=0;}
+     if(fastFrames>320&&quality<1){quality=Math.min(1,quality+.1);lastW=0;fastFrames=0;}
+   }
+   previousFrame=now;
    resize();
    const d=api.read(),state=d.state;
    if(!d.agents||!state)return;
@@ -117,7 +147,18 @@ if(api){
     mesh.position.set(a.x-450,262.5-a.y+Math.sin(phase)*2.7,19+Math.sin(phase*.5)*2);
     mesh.scale.set(r*pulse,r*(1+Math.sin(phase*.65)*.035),r);
     mesh.rotation.z=Math.sin(phase*.62)*.07;
-    mesh.userData.material.emissiveIntensity=a.hit>0?.67:.22;
+    mesh.userData.material.emissiveIntensity=a.hit>0?.66:.22;
+    const user=mesh.userData;
+    if(user.morph.shader){
+      user.morph.shader.uniforms.uCellTime.value=phase;
+      user.morph.shader.uniforms.uCellActivity.value=a.hit>0?1:.12;
+    }
+    user.glow.material.opacity=a.hit>0?.19:.08;
+    user.nucleus.position.x=.10+Math.sin(phase*.8)*.035;
+    for(let i=0;i<user.organelles.length;i++){
+      const organelle=user.organelles[i];organelle.position.x+=Math.sin(phase*.9+i)*.002;
+      organelle.position.y+=Math.cos(phase*.75+i)*.002;
+    }
    },now);
    updateMesh(microbes,d.particles,a=>{
      const mat=microMat[a.type]||microMat.bacteria;
@@ -135,15 +176,16 @@ if(api){
      const m=mesh.material;if(h.infect>0){m.color.setHex(0xf0a4bc);m.emissive.setHex(0xff638f);m.opacity=.37;}
      else if(h.dead){m.opacity=.08;}else{m.color.setHex(0x8bdacf);m.emissive.setHex(0x3d9e8d);m.opacity=lastW<700?.105:.15;}
    },now);
-   for(const b of bg)b.material.opacity=state.phase==='active'?.060:.035;
+   for(const b of bg)b.material.opacity=state.phase==='active'?.055:.03;
    try{renderer.render(scene,camera)}catch(error){
     console.warn('[İçeridekiler] WebGL rendering failed, Canvas fallback restored.',error);
-    api.useWebGL(false);canvas.remove();renderer.dispose();return;
+    active=false;api.useWebGL(false);canvas.remove();renderer.dispose();return;
    }
   }
   api.useWebGL(true);
   document.getElementById('render-mode')?.replaceChildren(document.createTextNode('WEBGL 3D'));
-  window.addEventListener('pagehide',()=>{api.useWebGL(false);renderer.dispose()},{once:true});
+  window.addEventListener('pagehide',()=>{active=false;api.useWebGL(false);renderer.dispose()},{once:true});
+  canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();active=false;api.useWebGL(false);},{once:true});
   requestAnimationFrame(anim);
  }catch(err){console.warn('[İçeridekiler] WebGL unavailable; using Canvas fallback',err);canvas.remove();}
 }
