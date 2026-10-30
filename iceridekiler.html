@@ -3,11 +3,11 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#030303"><meta name="description" content="İçeridekiler — yaşayan bağışıklık evrenini yönet. Tam ekran biyolojik simülasyon.">
 <link rel="icon" href="/favicon.ico"><title>İçeridekiler — aynen.fun</title>
-<link rel="stylesheet" href="/iceridekiler-v3.css?v=7">
+<link rel="stylesheet" href="/iceridekiler-v3.css?v=8">
 </head>
 <body>
 <div class="game" id="stage">
-<canvas id="world" width="900" height="525" tabindex="0" aria-label="Yaşayan bağışıklık evreni. Sürükleyerek dokuyu gez, iki parmakla yakınlaştır. Bir hücreye dokunarak incele, boşluğa dokunarak müdahale bölgesi seç."></canvas>
+<canvas id="webgl-stage" aria-hidden="true"></canvas><canvas id="world" width="900" height="525" tabindex="0" aria-label="Yaşayan bağışıklık evreni. Sürükleyerek dokuyu gez, iki parmakla yakınlaştır. Bir hücreye dokunarak incele, boşluğa dokunarak müdahale bölgesi seç."></canvas>
 <div class="vignette" aria-hidden="true"></div>
 <header class="hud-top">
  <div class="brand"><a class="home" href="/" aria-label="aynen.fun ana sayfa">a<span>·</span></a><div><span class="brand-kicker mono">AYNEN.FUN / BİYOLOJİ 001</span><h1>içeridekiler<span class="dot">.</span></h1></div></div>
@@ -39,11 +39,11 @@
   <div class="episode" role="region" aria-label="Güncel olay">
     <div class="episode-head"><span id="chapter" class="mono">OLAY 01 / 06</span><span id="episode-progress-label" class="mono">0 / 6</span></div>
     <div class="episode-progress" id="campaign-progress"><i id="episode-progress"></i></div>
-    <h2 id="episode-title">Deri bariyeri açıldı</h2>
+    <div class="episode-title-row"><h2 id="episode-title">Deri bariyeri açıldı</h2><button id="episode-expand" class="episode-expand" type="button" aria-expanded="false" aria-label="Olay ayrıntılarını aç">⌄</button></div><div class="episode-body" id="episode-body">
     <p id="episode-desc">Küçük bir kesik. Bakteriler dokuya ulaşıyor.</p>
     <p class="goal" id="goal">Bakteri yükünü azalt; dokuyu koru.</p>
     <div class="action-advisor"><span id="advisor-icon">◉</span><span id="advisor">Önce olayı başlat.</span></div>
-    <button type="button" class="next" id="next" disabled>OLAYI BAŞLAT <span>↗</span></button>
+    </div><button type="button" class="next" id="next" disabled>OLAYI BAŞLAT <span>↗</span></button>
   </div>
   <div class="live-brief mono"><span id="population">8 HÜCRE / 0 PATOJEN</span><span id="focus-info">ODAK 50% / 50%</span></div>
 </div>
@@ -86,9 +86,9 @@
  </div>
  </div>
 <div class="mobile-menu"><button type="button" class="rail-btn" data-drawer="laboratory" title="Laboratuvar" aria-label="Laboratuvar">✳</button><button type="button" class="rail-btn" data-drawer="events" title="Olaylar" aria-label="Olaylar">≡</button><button type="button" class="rail-btn" data-drawer="history" title="Grafik" aria-label="Grafik">⌁</button><button type="button" class="rail-btn" data-drawer="inspect" title="İncele" aria-label="İncele">◎</button><button type="button" class="rail-btn" data-drawer="about" title="Bilgi" aria-label="Bilgi">?</button></div>
-<div class="bottom-system mono"><span>SIMULATION 01</span><span>OYUN MODELİ · KLİNİK ÖLÇÜM DEĞİL</span></div>
+<div class="bottom-system mono"><span id="render-mode">CANVAS / FALLBACK</span><span>OYUN MODELİ · KLİNİK ÖLÇÜM DEĞİL</span></div>
 <div class="scrim" id="overlay"><div class="welcome" id="overlay-content"><div class="intro-orb" aria-hidden="true"><span class="orb-eye one"></span><span class="orb-eye two"></span></div><span class="stamp mono">CANLI SİSTEM / 001</span><h2>Sen uyurken<br>onlar çalışıyor.</h2><p>İçinde yaşayan küçük bir savunma dünyası. Hücreleri yönet, altı biyolojik olayı atlat, dokunu koru.</p><div class="intro-steps"><span><b>01</b> Hücreyi incele</span><span><b>02</b> Sürükle / yakınlaş</span><span><b>03</b> Bölge seç ve yönet</span></div><button type="button" class="solid wide" id="start">SİSTEMİ BAŞLAT ↗</button><div class="smallprint">Gerçek biyolojiden esinlenen oyun modeli. Otomatik kayıt açık.</div></div></div>
 <div class="field-flash" id="field-flash" aria-hidden="true"></div><div class="toast" id="toast" role="status"></div>
 </div>
-<script src="/iceridekiler-v3.js?v=7" defer></script>
+<script src="/iceridekiler-v3.js?v=8" defer></script><script type="module" src="/iceridekiler-webgl.js?v=1"></script>
 </body></html>
