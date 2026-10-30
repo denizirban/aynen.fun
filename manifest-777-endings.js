@@ -71,10 +71,10 @@ function profileOf(s){
  const total=acts+rit+risk||1;
  if((s.hidden||0)>=7)return "obsessed-signs";
  if((s.lucky||0)>=2)return "lucky-chaos";
+ if(rit>=4||rit/total>=.55)return "ritual-heavy";
+ if(risk>=4||risk/total>=.50)return "risk-heavy";
+ if(acts>=4||acts/total>=.55)return "action-heavy";
  if(s.time<=12||s.vibe<=18)return "burnout";
- if(rit/total>=.50)return "ritual-heavy";
- if(acts/total>=.50)return "action-heavy";
- if(risk/total>=.43)return "risk-heavy";
  return "balanced";
 }
 const names={"obsessed-signs":"İşaretleri çok takip ettin","lucky-chaos":"Tesadüfler üst üste geldi","burnout":"Enerjini tükettin","ritual-heavy":"Niyete odaklandın","action-heavy":"Harekete geçtin","risk-heavy":"Hızlı kararlar verdin","balanced":"Akışta kaldın"};
