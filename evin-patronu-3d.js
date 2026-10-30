@@ -344,7 +344,7 @@
     var pos=stationPositions[key];
     if(!pos)return;
     selection=key;
-    selectionRing.visible=true;selectionRing.position.set(pos.x,0,pos.z);
+    selectionRing.visible=true;selectionRing.position.set(pos.x,pos.y+.13,pos.z);
   }
   function focus(key){
     setTarget(key);
