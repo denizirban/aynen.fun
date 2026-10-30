@@ -376,6 +376,32 @@
   }
   countertopStillLife();
 
+
+  // Small affordances: a simmering pot and working appliances respond to task state.
+  var steamParticles=[];
+  var steamMaterial=new THREE.MeshBasicMaterial({color:'#f6f3e8',transparent:true,opacity:.24,depthWrite:false});
+  for(var steamIndex=0;steamIndex<6;steamIndex++){
+    var steamMesh=addMesh(scene,new THREE.SphereGeometry(.09,10,8),steamMaterial,6.28,2.02,-3.72,false,false);
+    steamMesh.scale.set(.75,1.5,.75);
+    steamMesh.visible=false;
+    steamParticles.push(steamMesh);
+  }
+  var workstationGlow=new THREE.PointLight('#d8a66c',0,3);
+  workstationGlow.position.set(6.4,1.9,-3.55);
+  scene.add(workstationGlow);
+  function syncWorkingDetails(state,elapsed){
+    var cooking=state.currentSpot==='stove'||state.partnerSpot==='stove';
+    workstationGlow.intensity=cooking?.9:0;
+    steamParticles.forEach(function(p,i){
+      p.visible=cooking;
+      if(cooking){
+        var t=(elapsed*.33+i/steamParticles.length)%1;
+        p.position.set(6.28+Math.sin(i*3.9+t*6)*.11,1.94+t*.85,-3.73+Math.cos(i*1.7)*.09);
+        p.scale.set(.5+t*.95,.5+t*1.2,.5+t*.95);
+      }
+    });
+  }
+
   // Person meshes with curved forms, clothing, hair and expressive subtle motions.
   function makePerson(key,look,small){
     var root=new THREE.Group();scene.add(root);
@@ -535,7 +561,7 @@
   function animate(){
     if(!living)return;
     requestAnimationFrame(animate);
-    if(document.hidden){clock.getDelta();return}
+    if(document.hidden||!host.classList.contains('is-ready')){clock.getDelta();return}
     var dt=Math.min(clock.getDelta(),.07),elapsed=clock.elapsedTime;
     zoom+=(targetZoom-zoom)*Math.min(1,dt*4.5);
     lookAt.lerp(cameraTarget,Math.min(1,dt*3.2));
@@ -547,6 +573,7 @@
       oldSnapshot=snapshot();lastStateTime=elapsed;refresh(oldSnapshot);
     }
     updateActors(oldSnapshot||{},dt,elapsed);
+    syncWorkingDetails(oldSnapshot||{},elapsed);
     tailRoot.rotation.y=Math.sin(elapsed*5.2)*.42;
     if(selectionRing.visible){selectionRing.children[0].rotation.z=elapsed*.12;attention.material.opacity=.10+.07*Math.sin(elapsed*3)}
     if(host.classList.contains('is-ready'))renderer.render(scene,camera);
