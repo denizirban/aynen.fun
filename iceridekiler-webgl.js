@@ -241,15 +241,21 @@ if(api){
    },now);
    for(const [id,capture] of ingestion){
      const age=(now-capture.t)/1000;
-     if(age>.85){ingestion.delete(id);continue;}
+     if(age>.85){if(capture.ghost){scene.remove(capture.ghost);capture.ghost.geometry.dispose();}ingestion.delete(id);continue;}
      const host=d.agents.find(a=>a.id===capture.owner);
      if(!host)continue;
      const tip=age/.85;
-     const pmesh=microbes.get(id);
-     if(pmesh){
-       pmesh.position.set((capture.x+(host.x-capture.x)*tip)-450,262.5-(capture.y+(host.y-capture.y)*tip),33+5*Math.sin(tip*Math.PI));
-       pmesh.scale.multiplyScalar(Math.max(.05,1-tip*.72));
+     let pmesh=microbes.get(id);
+     if(!pmesh){
+       if(!capture.ghost){
+         capture.ghost=new THREE.Mesh(new THREE.SphereGeometry(1,9,7),microMat.bacteria);
+         scene.add(capture.ghost);
+       }
+       pmesh=capture.ghost;
      }
+     pmesh.position.set((capture.x+(host.x-capture.x)*tip)-450,262.5-(capture.y+(host.y-capture.y)*tip),33+5*Math.sin(tip*Math.PI));
+     const shrink=Math.max(.05,1-tip);
+     pmesh.scale.setScalar(6.4*shrink);
    }
    animateInteractions(now);
    for(const b of bg)b.material.opacity=state.phase==='active'?.055:.03;
