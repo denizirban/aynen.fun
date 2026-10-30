@@ -235,6 +235,33 @@ footer{font-size:7px}footer>span:first-child{min-width:0;text-overflow:ellipsis;
 .buy-select button{font-size:7px;padding:4px}
 }
 
+
+/* Verified reference-based real-world comparison */
+.buy-compare{font:clamp(10px,1.2vw,12px)/1.23 "Courier New",monospace;color:#333;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.buy-content{gap:4px}
+.buy-result{flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.buy-context{flex:none}
+.buy-disclaimer{display:flex;flex-wrap:wrap;gap:3px;font-size:9px}
+.buy-disclaimer a{color:#111;font-weight:700;text-underline-offset:2px;white-space:nowrap}
+.buy-disclaimer span{color:#888}
+.buy-select{flex:none;margin-top:auto}
+@media(max-width:600px){
+.buy-compare{font-size:10px;line-height:1.2}
+.buy-disclaimer{font-size:8px;line-height:1.18}
+.buy-content{gap:3px}
+.buy-result{font-size:clamp(14px,4.5vw,20px)}
+#pane-buy .sketch{width:86px}
+}
+@media(max-width:380px){
+#pane-buy .sketch{width:62px}
+.buy-compare{font-size:9px}
+.buy-disclaimer{font-size:7px}
+}
+@media(max-height:600px){
+.buy-content{gap:2px}
+.buy-compare{line-height:1.1}
+}
+
 </style>
 </head>
 <body>
@@ -256,7 +283,7 @@ footer{font-size:7px}footer>span:first-child{min-width:0;text-overflow:ellipsis;
 <nav class="disc-tabs" role="tablist" aria-label="Keşif türü">
 <button class="disc-tab active" type="button" data-pane="idea" id="tab-idea" role="tab" aria-controls="pane-idea" aria-selected="true">SIFIRIN FİKRİ</button>
 <button class="disc-tab" type="button" data-pane="between" id="tab-between" role="tab" aria-controls="pane-between" aria-selected="false">0–1 ARASI ∞</button>
-<button class="disc-tab" type="button" data-pane="buy" id="tab-buy" role="tab" aria-controls="pane-buy" aria-selected="false">NE ALINIR?</button>
+<button class="disc-tab" type="button" data-pane="buy" id="tab-buy" role="tab" aria-controls="pane-buy" aria-selected="false">GERÇEK ÖLÇEK</button>
 </nav>
 <div class="disc-body">
 <div class="disc-pane active" id="pane-idea" role="tabpanel" aria-labelledby="tab-idea">
@@ -274,10 +301,19 @@ footer{font-size:7px}footer>span:first-child{min-width:0;text-overflow:ellipsis;
 <div class="between-thought" id="between-thought">İki reel sayı arasında sonsuz reel sayı bulunur.</div>
 </section></div>
 <div class="disc-pane" id="pane-buy" role="tabpanel" aria-labelledby="tab-buy" hidden>
-<div class="sketch buy-sketch" aria-hidden="true"><svg id="buy-art" viewBox="0 0 168 126" xmlns="http://www.w3.org/2000/svg"></svg></div>
-<div class="buy-content"><div class="tiny" id="buy-label">SAYIYLA NE ALINIR?</div><h2 class="buy-result" id="buy-result">0 TL = boş sepet</h2><p class="buy-context" id="buy-context">Örnek alışveriş hesabı.</p>
-<div class="buy-select" role="group" aria-label="Nesneyi değiştir"><button data-thing="simit" class="chosen" type="button">SİMİT</button><button data-thing="bisiklet" type="button">BİSİKLET</button><button data-thing="araba" type="button">ARABA</button><button data-thing="ev" type="button">EV</button></div>
-<div class="buy-disclaimer">Oyun fiyatları varsayımsal ve sabit; güncel fiyat değil.</div></div>
+<div class="sketch buy-sketch" role="img" aria-label="Karşılaştırmanın çizimi"><svg id="buy-art" viewBox="0 0 168 126" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div class="buy-content">
+<div class="tiny" id="buy-label">GERÇEK DÜNYADA KARŞILIĞI</div>
+<h2 class="buy-result" id="buy-result" aria-live="polite">0 · denge</h2>
+<p class="buy-context" id="buy-context">Ölçeğin gerçek karşılıklarını keşfet.</p>
+<div class="buy-compare" id="buy-compare">Üç farklı alanda sıfırın iki yönü var.</div>
+<div class="buy-select" role="group" aria-label="Karşılaştırma türü">
+<button data-mode="para" class="chosen" type="button" aria-pressed="true">PARA</button>
+<button data-mode="zaman" type="button" aria-pressed="false">ZAMAN</button>
+<button data-mode="yukseklik" type="button" aria-pressed="false">YÜKSEKLİK</button>
+</div>
+<div class="buy-disclaimer"><a id="buy-source" href="https://www.csgb.gov.tr/poco-pages/asgari-ucret" target="_blank" rel="noopener noreferrer">ÇSGB · 2026 ↗</a><span id="buy-note"> Nominal referans; satın alma gücü değil.</span></div>
+</div>
 </div>
 </div></section>
 <div class="legacy" aria-hidden="true"><span id="fact-label"></span><span id="fact"></span><button id="zero-more" type="button" hidden>+</button></div>
@@ -488,7 +524,7 @@ var ideas=[
 ['Sıfırın tek mucidi yok.','TARİH','0','Boş basamağı belirtmekle sıfırı sayı olarak kullanmak farklı gelişmelerdir. Babil ve Maya geleneklerinde yer tutucular; Hint matematiğinde sıfırla işlem kuralları gelişti.','Brahmagupta · MS 628'],
 ['Hiçlik bir sayı olabilir mi?','ONTOLOJİ','∅','“Neden hiçlik yerine bir şey var?” sorusu felsefenin klasik problemlerindendir. Matematiksel 0 kesin tanımlıdır; felsefedeki mutlak hiçlik aynı kavram değildir.','0 sayısı ≠ mutlak hiçlik']
 ];
-var num=0,view='idea',touched=false,index=0,chosen='simit';
+var num=0,view='idea',touched=false,index=0,chosen='para';
 var E=function(x){return document.getElementById(x)};
 function renderIdea(){var q=ideas[num];E('idea-title').textContent=q[0];E('idea-tag').textContent=q[1];E('idea-symbol').textContent=q[2];E('idea-text').textContent=q[3];E('idea-formula').textContent=q[4];E('idea-step').textContent=String(num+1).padStart(2,'0')+' / '+ideas.length}
 E('idea-prev').addEventListener('click',function(){num=(num+ideas.length-1)%ideas.length;renderIdea()});
@@ -502,31 +538,66 @@ document.querySelectorAll('.disc-tab').forEach(function(b){
  b.addEventListener('click',function(){showPane(b.dataset.pane,true)});
  b.addEventListener('keydown',function(e){if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;e.preventDefault();var a=['idea','between','buy'],next=a[(a.indexOf(view)+(e.key==='ArrowRight'?1:2))%3];showPane(next,true);E('tab-'+next).focus()});
 });
-var items={
-simit:{price:20,title:'simit',unit:'20 TL',art:'<ellipse cx="84" cy="66" rx="48" ry="38" fill="#d6a96e" stroke="#111" stroke-width="3"/><ellipse cx="84" cy="66" rx="24" ry="17" fill="#f7f7f4" stroke="#111" stroke-width="3"/><g stroke="#f7e8c7" stroke-width="3.2" stroke-linecap="round"><path d="M51 49l6 6M70 35l4 9M99 36l-3 9M114 49l-6 6M123 70l-8-2M111 86l-7-7M82 95l2-9M53 82l8-5M42 66l8 2M68 90l5-8M99 92l4-8"/></g>'},
-bisiklet:{price:25000,title:'bisiklet',unit:'25.000 TL',art:'<g stroke="#111" stroke-width="3.7" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="41" cy="93" r="25"/><circle cx="128" cy="93" r="25"/><path d="M41 93l30-48 25 48H41l40-34 47 34-18-52M70 45H58M109 41h15M91 93l13 0"/></g>'},
-araba:{price:1000000,title:'otomobil',unit:'1.000.000 TL',art:'<path d="M23 78l12-24 24-14h48l25 25 14 10 4 21H18z" fill="#dbe5e9" stroke="#111" stroke-width="3"/><path d="M51 47L38 68h87l-18-21z" fill="#fff" stroke="#111" stroke-width="2.5"/><circle cx="48" cy="96" r="14" fill="#fff" stroke="#111" stroke-width="4"/><circle cx="120" cy="96" r="14" fill="#fff" stroke="#111" stroke-width="4"/>'},
-ev:{price:10000000,title:'ev',unit:'10.000.000 TL',art:'<path d="M29 58L84 17l55 41v60H29z" fill="#e5dfd4" stroke="#111" stroke-width="3"/><path d="M19 62l65-52 65 52" fill="none" stroke="#111" stroke-width="4"/><rect x="70" y="73" width="27" height="45" fill="#fff" stroke="#111" stroke-width="3"/><rect x="40" y="68" width="19" height="21" fill="#fff" stroke="#111" stroke-width="2.5"/><rect x="109" y="68" width="19" height="21" fill="#fff" stroke="#111" stroke-width="2.5"/>'}
+var references={
+ para:{source:'ÇSGB · 2026 ↗',url:'https://www.csgb.gov.tr/poco-pages/asgari-ucret',note:'Nominal kıyas; güncel alım gücü hesabı değil.'},
+ zaman:{source:'NASA · EVRENİN YAŞI ↗',url:'https://science.nasa.gov/exoplanets/what-is-the-universe/',note:'1 gün = 86.400 sn; 1 yıl ≈ 365,2425 gün.'},
+ yukseklik:{source:'NOAA · OKYANUS ↗',url:'https://oceanexplorer.noaa.gov/ocean-fact/ocean-depth/',note:'Everest: Nepal Mountain Academy · 8.848,86 m.'}
 };
-function count(k,p){
- var n=10n**BigInt(k),d=BigInt(p);
- if(n<d){var val=Number(n)/p;return val>=.0001?val.toLocaleString('tr-TR',{maximumFractionDigits:8}):val.toExponential(1).replace('.',',')}
- var q=(n/d).toString();if(q.length<=12)return Number(q).toLocaleString('tr-TR');
- var exponent=q.length-1,lead=q[0]+(q[1]!=='0'?','+q[1]:'');
- return lead+' × 10^'+exponent;
+var salary2026=28075.5,everest=8848.86,challenger=10935,universeAgeYears=13.8e9,secondsPerYear=365.2425*86400;
+var illustrations={
+para:'<rect x="19" y="25" width="130" height="78" rx="3" fill="#ecece7" stroke="#111" stroke-width="3"/><rect x="30" y="37" width="108" height="54" fill="#fff" stroke="#111" stroke-width="2"/><circle cx="84" cy="64" r="21" fill="#e4e4db" stroke="#111" stroke-width="2.4"/><path d="M75 55h18M75 63h18M84 47v34M75 70h18" stroke="#111" stroke-width="2.4" stroke-linecap="round"/><path d="M26 21h119" stroke="#111" stroke-width="2" stroke-dasharray="4 5"/>',
+zaman:'<circle cx="84" cy="65" r="47" fill="#f6f6f3" stroke="#111" stroke-width="3"/><circle cx="84" cy="65" r="3.5" fill="#111"/><path d="M84 65V34m0 31l24 17" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/><path d="M84 23v8M84 99v8M42 65h8m68 0h8" stroke="#111" stroke-width="3"/><path d="M25 20l9-7m100 7l-9-7" stroke="#111" stroke-width="3" stroke-linecap="round"/>',
+yukseklik:'<path d="M4 64h160" stroke="#111" stroke-width="2" stroke-dasharray="5 4"/><path d="M10 62l34-22 22 10 35-34 26 21 31 25z" fill="#ecebe5" stroke="#111" stroke-width="2.7" stroke-linejoin="round"/><path d="M2 66h164v56H2z" fill="#e5eff3"/><path d="M2 66c18 8 33-7 51 0s33-8 51 0 37-7 62 0" fill="none" stroke="#111" stroke-width="2"/><path d="M20 82l26 9 19-5 17 19 19-7 25 10 19-7" fill="none" stroke="#111" stroke-width="2.3"/><path d="M83 58v15" stroke="#111" stroke-width="2"/><circle cx="83" cy="66" r="3.5" fill="#111"/>'
+};
+function pretty(num,digits){
+ if(num===0)return '0';
+ var abs=Math.abs(num);
+ if(abs>=1e7||abs<1e-3){var parts=num.toExponential(2).split('e');return parts[0].replace('.',',')+' × 10^'+Number(parts[1]);}
+ return num.toLocaleString('tr-TR',{maximumSignificantDigits:digits||3});
+}
+function amountLabel(k){return k<=12?Math.pow(10,k).toLocaleString('tr-TR'):'10^'+k}
+function elapsed(seconds){
+ if(seconds<60)return pretty(seconds,3)+' saniye';
+ if(seconds<3600){var min=Math.floor(seconds/60),sec=Math.round(seconds%60);return min+' dk'+(sec?' '+sec+' sn':'');}
+ if(seconds<86400){var h=Math.floor(seconds/3600),min=Math.floor(seconds%3600/60);return h+' saat'+(min?' '+min+' dk':'');}
+ if(seconds<secondsPerYear)return pretty(seconds/86400)+' gün';
+ return pretty(seconds/secondsPerYear)+' yıl';
 }
 function renderBuy(){
- var x=items[chosen],k=Math.abs(index)-1,Ey=E('buy-label'),Er=E('buy-result'),Ec=E('buy-context');
- E('buy-art').innerHTML=x.art;
- if(index===0){Ey.textContent='SIFIR TL';Er.textContent='0 TL = boş sepet';Ec.textContent=x.title+' için varsayımsal fiyat: '+x.unit}
- else{
-  var neg=index<0;Ey.textContent=(neg?'BORÇ · ':'BÜTÇE · ')+(k<=9?(10**k).toLocaleString('tr-TR'):'10^'+k)+' TL';
-  Er.textContent=(neg?'− ':'')+count(k,x.price)+' '+x.title;
-  Ec.textContent=neg?'Borç karşılığı; satın alma gücü değil.':'Teorik karşılık; gerçek stok bu kadar olmayabilir.';
+ var neg=index<0,zero=index===0,k=Math.abs(index)-1,n=zero?0:Math.pow(10,k);
+ var label=E('buy-label'),result=E('buy-result'),context=E('buy-context'),compare=E('buy-compare'),source=E('buy-source'),note=E('buy-note');
+ var reference=references[chosen],signed=neg?'−':'+';
+ E('buy-art').innerHTML=illustrations[chosen];
+ E('buy-art').parentElement.setAttribute('aria-label',chosen==='para'?'Maaş karşılaştırması için para çizimi':chosen==='zaman'?'Zaman karşılaştırması için saat çizimi':'Deniz seviyesi, dağ ve okyanus kesiti');
+ source.href=reference.url;source.textContent=reference.source;note.textContent=' '+reference.note;
+ if(chosen==='para'){
+  label.textContent=zero?'DENGE · 0 TL':(neg?'BORÇ · ':'BİRİKİM · ')+signed+amountLabel(k)+' TL';
+  result.textContent=zero?'0 TL · denge':(neg?'− ':'+ ')+amountLabel(k)+' TL';
+  context.textContent=zero?'Ne birikim ne borç. Sıfır, ikisinin sınırı.':neg?'Bu tutarda borcun var. Satın alma gücü değil.':'Bu tutarda birikimin var. Borçla aynı yönde değil.';
+  compare.textContent=zero?'2026 net asgari ücret: 28.075,50 TL / ay.': '2026 net asgari ücretin '+pretty(n/salary2026)+' aylık tutarına eşit (nominal).';
+ }else if(chosen==='zaman'){
+  label.textContent=zero?'ŞİMDİ · 0 SANİYE':(neg?'GEÇMİŞ · −':'GELECEK · +')+amountLabel(k)+' SN';
+  result.textContent=zero?'Şimdi. Tam sıfır.':elapsed(n)+(neg?' önce':' sonra');
+  context.textContent=zero?'Sıfır saniye geçmişte de değil, gelecekte de değil.':neg?'Başlangıç noktasının geçmişine doğru gidiyorsun.':'Başlangıç noktasının geleceğine doğru gidiyorsun.';
+  if(zero)compare.textContent='Zamanın yönü, işareti değişince değişir.';
+  else if(neg&&n/secondsPerYear>universeAgeYears)compare.textContent='Evrenin ≈13,8 milyar yıllık yaşını aşar; gerçek bir geçmiş tarihi değil, matematiksel ölçek.';
+  else if(n>=secondsPerYear)compare.textContent='1 yıl ≈ '+pretty(secondsPerYear,6)+' saniye. '+(neg?'Geçmişe doğru nominal süre.':'Geleceğe dair tahmin değildir.');
+  else compare.textContent='1 gün = 86.400 saniye. Bir günün '+pretty(100*n/86400,3)+'% kadarı.';
+ }else{
+  var ref=neg?challenger:everest,refName=neg?'Challenger Deep':'Everest';
+  label.textContent=zero?'DENİZ SEVİYESİ · 0 M':(neg?'DENİZ ALTI · −':'DENİZ ÜSTÜ · +')+amountLabel(k)+' M';
+  result.textContent=zero?'Deniz seviyesi':(neg?'− ':'+ ')+amountLabel(k)+' metre';
+  context.textContent=zero?'0 metre: yukarı ve aşağıyı ayıran referans.':neg?'Deniz seviyesinin altındaki varsayımsal bir nokta.':'Deniz seviyesinin üzerindeki varsayımsal bir nokta.';
+  if(zero)compare.textContent='Everest: +8.848,86 m · Challenger Deep: yaklaşık −10.935 m.';
+  else if(n>ref)compare.textContent=refName+' referansının '+pretty(n/ref,3)+' katı. Dünya üzerinde bu büyüklükte '+(neg?'bilinen bir okyanus derinliği':'bir dağ yüksekliği')+' yok.';
+  else compare.textContent=refName+' ölçüsünün '+pretty(n/ref*100,3)+'% kadarı ('+pretty(ref,6)+' m referans).';
  }
 }
-document.querySelectorAll('[data-thing]').forEach(function(b){
- b.addEventListener('click',function(){chosen=b.dataset.thing;document.querySelectorAll('[data-thing]').forEach(function(bb){bb.classList.toggle('chosen',bb===b)});renderBuy()});
+document.querySelectorAll('[data-mode]').forEach(function(b){
+ b.addEventListener('click',function(){chosen=b.dataset.mode;
+  document.querySelectorAll('[data-mode]').forEach(function(bb){var is=bb===b;bb.classList.toggle('chosen',is);bb.setAttribute('aria-pressed',String(is));});
+  renderBuy();
+ });
 });
 window.aynenNumberChanged=function(next){index=next;renderBuy();if(!touched)showPane(index===0?'idea':'buy',false)};
 renderIdea();window.aynenNumberChanged(Number(E('scale').value));
