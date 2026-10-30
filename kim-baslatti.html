@@ -64,14 +64,14 @@ input[type=range]{width:100%;accent-color:#222723;cursor:pointer;touch-action:pa
 </head>
 <body>
 <div class="page">
-<nav><a href="/">← aynen.fun</a><span class="right">KÜÇÜK OLAYLAR / BÜYÜK SONUÇLAR</span></nav>
+<nav><a href="/">← aynen.fun</a><span class="right">ULTRA ZOR / HER YERDE KAOS</span></nav>
 <header class="head"><h1>Kim Başlattı?</h1><p>Herkes bir şey yaptı.<br>Birisi ilk yaptı.</p></header>
 <main class="shell" id="stage">
 <canvas id="world" aria-label="Minyatür meydandaki insanları seçerek olayı başlatanı bul" role="img"></canvas>
 <div class="hud"><span class="chip" id="level">OLAY 01 / 12</span><span class="chip status" id="state">KAYIT HAZIR</span></div>
 <div class="zoom"><button id="zoomIn" aria-label="Yakınlaştır">+</button><button id="zoomOut" aria-label="Uzaklaştır">−</button></div>
 <div class="mini-note" id="note">Yakınlaş. İzle. Geri sar. İnsanlara dokun.</div>
-<section class="cover" id="cover"><div class="cover-card"><div class="kicker">AYNEN.FUN / KÜÇÜK BİR DEDEKTİFLİK</div><h2>Bir şey oldu.<br>Kim başlattı?</h2><p>Küçük meydanda bir olay zinciri yaşanıyor. Sonuç herkesin gözü önünde. Ama ilk hareketi kim yaptı? Kaydı izle, geri sar ve kişiye dokun.</p><button class="primary" id="start">OLAYI İZLE →</button></div></section>
+<section class="cover" id="cover"><div class="cover-card"><div class="kicker">AYNEN.FUN / KÜÇÜK BİR DEDEKTİFLİK</div><h2>Bir şey oldu.<br>Kim başlattı?</h2><p>Her tarafta aynı anda olaylar çıkıyor. Çoğu dikkat dağıtmak için. Gerçek zincirin ilk hareketini yapan kişiyi bul.</p><button class="primary" id="start">OLAYI İZLE →</button></div></section>
 <section class="selection" id="selection" hidden><div class="who"><b id="selectedName"></b><span>İlk hareketi bu kişi mi yaptı?</span></div><button id="confirm">BU KİŞİ</button><button class="dismiss" id="dismiss" aria-label="İptal">×</button></section>
 <section class="result" id="result" hidden aria-live="polite"><div class="kicker" id="resultTag"></div><h2 id="resultTitle"></h2><p id="resultText"></p><div class="foot"><button class="primary" id="next">SONRAKİ OLAY →</button><button id="again">TEKRAR İZLE</button><button id="shareBtn">PAYLAŞ ↗</button><span class="meter" id="score"></span></div></section>
 </main>
@@ -162,7 +162,8 @@ function drawTable(c,x,y){ellipse(c,x,y+7,128,21,'#25292331');poly(c,[[x-97,y-49
 function drawDog(c,time){var phase=stories[level].steps.some(function(a){return a[1]===9&&time>=a[0]});var tx=416+(phase?clamp((time-3.2)*33,0,80):0),ty=411+(phase?Math.sin(time*5)*3:0);c.save();c.translate(tx,ty);ellipse(c,0,8,34,10,'#25221d36');ellipse(c,-4,-7,29,12,'#624d3f');ellipse(c,22,-15,13,11,'#554034');ellipse(c,33,-12,7,5,'#3b312c');ellipse(c,22,-25,6,10,'#44352f');line(c,[[-21,0],[-29,13]],'#574337',5);line(c,[[15,0],[20,12]],'#574337',5);line(c,[[-29,-9],[-42,-20]],'#614d40',5);c.restore()}
 function drawPerson(c,p,time){
  var steps=stories[level].steps,active=steps.find(function(s){return s[1]===p.id&&time>=s[0]&&time<s[0]+1.2});
- var movement=active?Math.sin((time-active[0])*8)*4:Math.sin(time*.8+p.id*2.3)*1.2;
+ var distraction=decoys.find(function(d){return d.who===p.id&&time>=(d.at+level*.41)%10&&time<((d.at+level*.41)%10)+1.2});
+ var movement=active?Math.sin((time-active[0])*8)*9:distraction?Math.sin(time*8+p.id)*6:Math.sin(time*.8+p.id*2.3)*1.8;
  var x=p.x+movement*.48,y=p.y+Math.sin(time*1.6+p.id)*.75;
  c.save();c.translate(x,y);var s= p.id===13?.88:1;c.scale(s,s);
  ellipse(c,3,3,18,7,'rgba(51,45,38,.25)');
@@ -182,6 +183,10 @@ function drawPerson(c,p,time){
  c.restore();
 }
 function bubble(c,x,y,text,alpha){c.save();c.globalAlpha=alpha;c.font='bold 12px Arial';var width=Math.min(185,c.measureText(text).width+20);var bx=clamp(x-width/2,8,W-width-8),by=clamp(y-105,24,H-28);c.fillStyle='#fdfbf2';c.strokeStyle='#5c5b55';c.lineWidth=1.2;c.beginPath();c.roundRect(bx,by,width,28,5);c.fill();c.stroke();poly(c,[[x-5,by+28],[x+7,by+28],[x,by+36]],'#fdfbf2');c.fillStyle='#333b33';c.fillText(text,bx+10,by+18);c.restore()}
+
+var decoys=[{who:1,at:.55,label:'klik!'},{who:11,at:1.02,label:'alo?'},{who:6,at:1.44,label:'hop!'},{who:12,at:2.08,label:'tak!'},{who:8,at:2.49,label:'pardon!'},{who:0,at:3.15,label:'ah!'},{who:5,at:3.82,label:'ne?'},{who:14,at:4.38,label:'çat!'},{who:3,at:4.93,label:'dikkat!'},{who:10,at:5.52,label:'şşşt!'},{who:7,at:6.12,label:'hey!'},{who:4,at:7.03,label:'of!'},{who:9,at:7.65,label:'hav!'},{who:13,at:8.50,label:'hı?'},{who:2,at:9.26,label:'tık!'}];
+function backgroundChaos(c,time){for(var i=0;i<12;i++){var px=90+(i*199)%860,py=174+(i*83)%385,start=((i*1.37+.35)%8.5),elapsed=time-start;if(elapsed<0||elapsed>2.3)continue;var v=elapsed/2.3;c.save();c.globalAlpha=Math.sin(v*Math.PI)*.72;if(i%3===0){ellipse(c,px+elapsed*19,py-11+Math.sin(elapsed*7)*5,5,3,'#e3b05b')}else if(i%3===1){for(var k=0;k<4;k++){var ox=Math.cos(i+k*2.2)*elapsed*14,oy=Math.sin(i+k*2.2)*elapsed*14;poly(c,[[px+ox,py+oy],[px+ox+7,py+oy-3],[px+ox+10,py+oy+5]],'#f1e9d6')}}else{c.strokeStyle='#6b6960';c.lineWidth=2;c.beginPath();c.moveTo(px-7,py);c.lineTo(px+5,py-5-elapsed*5);c.stroke()}c.restore()}}
+
 function draw(){
  if(!w||!h)return;
  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);rect(ctx,0,0,w,h,'#bab9ae');
@@ -192,11 +197,13 @@ function draw(){
  if(t>=times[0][0]&&cur.culprit===8)drawCart(ctx,166,184,true);
  if(t>=times[2][0]&&(cur.culprit===2||cur.culprit===8||cur.culprit===12))drawBike(ctx,763,300,true);
  drawDog(ctx,t);
+ backgroundChaos(ctx,t);
  if(t>=times[0][0]&&cur.culprit===0){var py=210-(t-times[0][0])*24;if(py>-70){ellipse(ctx,236,py,11,16,'#db8f92');line(ctx,[[236,py+16],[240,py+43]],'#776d65',1)}}
  if(t>=times[0][0]&&cur.culprit===6){var bx=586+(t-times[0][0])*28;ellipse(ctx,bx,501+Math.sin(t*3)*9,9,9,'#efe6d1')}
  if(t>=times[0][0]&&cur.culprit===2){var cx=470+clamp((t-times[0][0])*25,0,135);ellipse(ctx,cx,292,6,3,'#555e7b')}
  var ordered=people.slice().sort(function(a,b){return a.y-b.y});
  ordered.forEach(function(p){drawPerson(ctx,p,t)});
+ if(!finished){decoys.forEach(function(d){var phase=(d.at+level*.41)%10,elapsed=t-phase;if(elapsed>=0&&elapsed<1.65){var pp=people[d.who];bubble(ctx,pp.x,pp.y,d.label,Math.min(1,elapsed*5,(1.65-elapsed)*3)*.85)}})}
  if(!finished){
   times.forEach(function(s){
    var elapsed=t-s[0],p=people[s[1]];
@@ -220,7 +227,7 @@ function setTime(v){var old=t;t=clamp(v,0,DUR);if(t<old-.2)rewinds++;if(t>=DUR)p
 function play(){if(finished)return;if(t>=DUR)t=0;playing=!playing;stateLabel(playing?'KAYIT OYNATILIYOR':'KAYIT DURDU');updateControls()}
 function round(index){
  level=index%stories.length;t=0;playing=false;speed=1;selected=-1;wrong=0;rewinds=0;hinted=false;finished=false;camX=520;zoom=1;
- $('level').textContent='OLAY '+String(level+1).padStart(2,'0')+' / '+stories.length;
+ $('level').textContent='ULTRA ZOR · '+String(level+1).padStart(2,'0')+' / '+stories.length;
  $('selection').hidden=true;$('result').hidden=true;$('cover').hidden=true;$('instruction').textContent=stories[level].prompt;
  $('note').textContent='Kaydı izle. Geri sar. İlk hareketi yapan kişiyi seç.';
  stateLabel('KAYIT HAZIR');updateControls();draw();
@@ -231,7 +238,7 @@ function showResult(correct){
  var s=stories[level];$('selection').hidden=true;
  if(correct){
   finished=true;playing=false;solved=Math.max(solved,level+1);
-  var pts=clamp(100-rewinds*7-wrong*22-(hinted?15:0),20,100);best=Math.max(best,pts);
+  var pts=clamp(100-rewinds*9-wrong*28-(hinted?25:0),10,100);best=Math.max(best,pts);
   try{localStorage.setItem('kb_solved',String(solved));localStorage.setItem('kb_best',String(best))}catch(e){}
   $('resultTag').textContent='DOĞRU / OLAY '+(level+1);
   $('resultTitle').textContent='İlk hareketi '+people[s.culprit].name+' yaptı.';
@@ -241,7 +248,7 @@ function showResult(correct){
   stateLabel('OLAY ÇÖZÜLDÜ');
  }else{
   wrong++;
-  if(wrong<2){$('resultTag').textContent='YANLIŞ ŞÜPHELİ';$('resultTitle').textContent='O da olayın içindeydi.';$('resultText').textContent='Ama ilk hareketi o yapmadı. Biraz daha geriye bak.';$('score').textContent='1 HAK KALDI';$('next').textContent='TEKRAR DENE';}
+  if(wrong<1){$('resultTag').textContent='YANLIŞ ŞÜPHELİ';$('resultTitle').textContent='O da olayın içindeydi.';$('resultText').textContent='Ama ilk hareketi o yapmadı. Biraz daha geriye bak.';$('score').textContent='1 HAK KALDI';$('next').textContent='TEKRAR DENE';}
   else {finished=true;$('resultTag').textContent='DOSYA KAPANDI';$('resultTitle').textContent='Başlatan: '+people[s.culprit].name+'.';$('resultText').textContent=s.why;$('score').textContent='0 PUAN';$('next').textContent=level===stories.length-1?'YENİDEN BAŞLA →':'SONRAKİ OLAY →';stateLabel('CEVAP AÇIKLANDI');}
  }
  $('result').hidden=false;updateControls();draw();
