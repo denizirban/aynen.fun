@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2f4ef">
+<meta name="description" content="BIO ROBOT — Canlı hücrelerden ilham alan mikro robotunu tasarla, yüzdür ve geliştir. aynen.fun">
+<title>BIO ROBOT — aynen.fun</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f2f4ef;--white:#fcfdfb;--ink:#20312d;--muted:#73817a;--edge:#d9dfd9;--jade:#568e7a;--mint:#b5d6c4;--rose:#df9198;--blue:#8eb8c4;--gold:#d8b46e;--violet:#aa9dc2;--shadow:0 24px 70px rgba(36,63,55,.07)}
+*{box-sizing:border-box}
+html,body{min-height:100%;margin:0}
+body{font-family:'DM Sans',Arial,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+button,a{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}
+a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,canvas:focus-visible{outline:3px solid #69ab9a;outline-offset:3px}
+.mono{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.05em}
+.muted{color:var(--muted)}
+.app{max-width:1500px;margin:auto;padding:20px clamp(15px,3vw,52px) 42px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:5px 0 19px;border-bottom:1px solid var(--edge);gap:15px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;font-size:12px;letter-spacing:-.02em}.mark{width:32px;height:32px;border:1px solid #54786d;border-radius:10px;display:grid;place-items:center;background:#e3eee6}.mark svg{width:25px}
+.topright{display:flex;gap:17px;align-items:center}.topright button,.topright a{border:0;background:none;font-size:12px;font-weight:600;color:#5d6f66}.topright a:hover,.topright button:hover{color:var(--ink)}
+.hero{display:flex;justify-content:space-between;align-items:end;gap:25px;margin:31px 0 24px}
+.hero h1{margin:4px 0 5px;font-size:clamp(48px,6.1vw,89px);font-weight:600;letter-spacing:-.083em;line-height:.98}
+.hero h1 em{font-style:normal;color:#669d86}.hero p{margin:12px 0 0;font-size:14px;color:#65776e;line-height:1.55;max-width:550px}
+.hero-right{display:flex;align-items:center;gap:10px;padding-bottom:4px;text-align:right}.live-dot{width:6px;height:6px;border-radius:50%;background:#6e9f83;box-shadow:0 0 0 5px #dcebe0}.hero-right span{font-size:10px;line-height:1.7}
+.lab{border:1px solid var(--edge);background:var(--white);border-radius:19px;box-shadow:var(--shadow);overflow:hidden}
+.labbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 21px;border-bottom:1px solid var(--edge);flex-wrap:wrap}
+.labbar-left{display:flex;align-items:center;gap:13px}.eyebrow{font-size:10px;color:#667b71;letter-spacing:.12em}
+.phase{border:1px solid var(--edge);border-radius:99px;padding:7px 11px;background:#edf4ee;font-size:10px;color:#507e65;letter-spacing:.03em;font-weight:700}
+.missions{display:flex;align-items:center;gap:4px;background:#f0f3ee;padding:4px;border-radius:9px}
+.mission{background:none;border:0;border-radius:6px;padding:8px 12px;color:#65766e;font-size:11px;white-space:nowrap}.mission.active{background:white;color:#244e40;box-shadow:0 2px 8px #12291d10;font-weight:700}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 267px;min-height:460px}
+.world{position:relative;overflow:hidden;background:radial-gradient(circle at 45% 40%,#fbfdfb,#edf3ef 80%);min-height:438px}
+.world canvas{display:block;width:100%;height:100%;min-height:438px;touch-action:none;cursor:crosshair}
+.world:after{content:'';position:absolute;inset:12px;border:1px solid rgba(80,109,97,.065);border-radius:7px;pointer-events:none}
+.world-tag{position:absolute;left:23px;top:20px;pointer-events:none;display:flex;flex-direction:column;gap:6px}
+.world-tag strong{font-size:12px;font-weight:700}.world-tag span{font-size:10px;color:var(--muted)}
+.world-foot{position:absolute;bottom:20px;left:23px;right:22px;display:flex;align-items:end;justify-content:space-between;gap:12px;pointer-events:none}
+.world-foot .scale{font-size:10px;color:#829188}.scaleline{height:5px;border-top:1px solid #829188;border-left:1px solid #829188;border-right:1px solid #829188;width:48px;display:block;margin-bottom:5px}
+.telemetry{border-left:1px solid var(--edge);display:flex;flex-direction:column;background:#fbfcfa}
+.telemetry-head{padding:25px 22px 19px;border-bottom:1px solid var(--edge)}.telemetry-head .mono{color:var(--muted)}
+.telemetry h2{font-size:19px;margin:7px 0 4px;letter-spacing:-.055em;font-weight:600}
+.telemetry p{font-size:12px;line-height:1.55;color:#76847c;margin:0}
+.telemetry-body{padding:19px 21px;flex:1}
+.measure{margin-bottom:21px}.measure-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:11px}.measure-head b{font-family:'DM Mono',monospace;font-size:11px;font-weight:400}
+.track{height:4px;background:#e9eee9;border-radius:99px;overflow:hidden}.track i{display:block;height:100%;background:var(--jade);width:0%;transition:width .25s}
+.meter-mini{font-size:10px;color:#7c8c83;line-height:1.65;padding:9px 0 0;border-top:1px solid #ecf0eb}.meter-mini strong{font-weight:600;color:#3c594f}
+.tip{background:#f1f5ee;border:1px solid #e5ebe3;border-radius:11px;padding:13px 14px;margin-top:auto}
+.tip strong{font-size:10px;letter-spacing:.07em;color:#4e7763}.tip p{font-size:11px;color:#687c70;margin:7px 0 0;line-height:1.6}
+.footerbar{display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;border-top:1px solid var(--edge);padding:17px 20px}
+.cells{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.cellbtn{border:1px solid var(--edge);background:#fff;border-radius:10px;padding:8px 11px 8px 8px;display:flex;align-items:center;gap:9px;min-width:94px;transition:.15s;min-height:48px}
+.cellbtn:hover{border-color:#96b6a4}.cellbtn[aria-pressed=true]{border-color:#537d6c;background:#eaf2e9;box-shadow:0 0 0 2px #d0e5d8 inset}
+.cellbtn b{font-size:11px;font-weight:700;display:block;line-height:1.25}.cellbtn small{font-size:9px;display:block;color:#88968c;margin-top:3px}
+.cell-dot{display:grid;place-items:center;width:29px;height:29px;flex-shrink:0;border:1px solid #0002;border-radius:50%;box-shadow:inset -3px -4px 7px #0001,inset 3px 3px 5px #ffffff88}
+.cell-dot svg{width:20px;height:20px}.dot-core{background:#c9e0d0}.dot-muscle{background:#efb6b9}.dot-sensor{background:#add7de}.dot-energy{background:#eed8a0}
+.cellbtn.erase .cell-dot{background:#e9eae5}.cellbtn.erase{min-width:auto}
+.primary-actions{display:flex;gap:8px;align-items:center;justify-content:end;flex-wrap:wrap}
+.iconbtn,.ghost,.start{border-radius:8px;min-height:43px;padding:10px 14px;border:1px solid #d4ded6;background:transparent;color:#52685d;font-size:11px;font-weight:700}
+.iconbtn{font-size:19px;padding:6px 11px;min-width:39px}
+.ghost:hover,.iconbtn:hover{background:#ecf2ec}.start{background:#264d3d;color:white;border-color:#264d3d;padding:12px 24px;min-width:125px;display:flex;gap:10px;align-items:center;justify-content:center}
+.start:hover{background:#39664e}.start:disabled{background:#a8b6ac;border-color:#a8b6ac}
+.subbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 21px;border-top:1px solid var(--edge);background:#f8faf7;flex-wrap:wrap}
+.subbar-left,.subbar-right{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.subbar button{border:0;background:none;color:#61796b;font-size:11px;padding:5px 8px;border-radius:5px}.subbar button:hover,.subbar button.selected{background:#e4eee6;color:#315f49}
+.subbar .mono{font-size:9px;color:#87978d}.subbar .version{color:#4f775e}
+.result{position:absolute;z-index:5;top:50%;left:50%;transform:translate(-50%,-50%);width:min(370px,calc(100% - 28px));background:#fefffcf5;border:1px solid #cbdad0;border-radius:16px;box-shadow:0 22px 80px #314f3540;padding:24px;backdrop-filter:blur(15px);display:none}
+.result.show{display:block}.result-kicker{color:#557e68;font-size:10px}.result h2{font-size:31px;font-weight:600;letter-spacing:-.06em;margin:12px 0 6px}
+.result p{font-size:12px;color:#60766a;line-height:1.6;margin:0 0 14px}
+.scoreline{display:flex;gap:10px;margin:14px 0 19px}.scoreline div{flex:1;background:#eef3ee;border-radius:8px;padding:11px 9px}
+.scoreline b{display:block;font-size:20px;letter-spacing:-.04em}.scoreline small{display:block;font-size:9px;color:#789084;margin-top:3px}
+.result-actions{display:flex;gap:9px}.result-actions button{flex:1}.result-close{position:absolute;right:14px;top:12px;border:0;background:none;font-size:22px;color:#6a8274}
+.note{max-width:1500px;margin:0 auto;padding:15px clamp(15px,3vw,52px) 36px;display:flex;justify-content:space-between;align-items:start;gap:16px;line-height:1.6}
+.note p{margin:0;color:#809086;font-size:10px}.note a{text-decoration:underline;text-underline-offset:3px}
+.overlay{position:fixed;inset:0;z-index:40;background:#1e3328aa;display:none;align-items:center;justify-content:center;padding:18px}.overlay.show{display:flex}
+.sheet{width:min(500px,100%);max-height:90svh;overflow:auto;background:#fcfdfb;border-radius:18px;padding:27px;box-shadow:0 20px 90px #1a33284a}
+.sheet h2{font-size:26px;letter-spacing:-.05em;margin:8px 0 11px}.sheet p,.sheet li{font-size:13px;line-height:1.7;color:#627b6c}.sheet li{margin-bottom:6px}.sheet .close-help{float:right;border:0;background:#edf3ed;border-radius:6px;padding:8px 12px}
+.toast{position:fixed;z-index:99;bottom:25px;left:50%;transform:translateX(-50%);background:#294939;color:white;padding:10px 16px;font-size:12px;border-radius:7px;box-shadow:0 8px 30px #24433433;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
+@media(max-width:1050px){.main{grid-template-columns:minmax(0,1fr) 228px}.telemetry-head,.telemetry-body{padding-left:17px;padding-right:17px}.footerbar{grid-template-columns:1fr}.primary-actions{justify-content:space-between}.hero h1{font-size:60px}}
+@media(max-width:740px){.app{padding:13px 12px 20px}.topbar{padding:1px 3px 14px}.topright{gap:10px}.topright a,.topright button{font-size:11px}.hero{margin:21px 3px 18px}.hero h1{font-size:clamp(46px,12vw,70px)}.hero p{font-size:12px;margin-top:9px}.hero-right{display:none}.lab{border-radius:14px}.labbar{padding:12px 12px;align-items:start}.labbar-left{padding-top:7px}.missions{width:100%;justify-content:space-between;order:2}.mission{flex:1;padding:10px 5px;font-size:10px}.main{grid-template-columns:1fr}.world{min-height:340px}.world canvas{min-height:340px;height:340px}.telemetry{border-left:0;border-top:1px solid var(--edge)}.telemetry-head{padding:13px 15px;border-bottom:0}.telemetry h2{font-size:17px;margin:5px 0 2px}.telemetry p{font-size:11px}.telemetry-body{padding:0 15px 13px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.measure{margin-bottom:3px}.measure-head{display:block;font-size:9px;line-height:1.5}.measure-head b{display:block;font-size:10px}.meter-mini,.tip{display:none}.track{margin-top:6px}.footerbar{padding:12px;gap:11px}.cells{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.cellbtn,.cellbtn.erase{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:7px 2px;min-height:65px;text-align:center}.cellbtn small{display:none}.cell-dot{width:26px;height:26px}.cellbtn b{font-size:9px}.primary-actions{width:100%}.primary-actions .start{flex:1}.primary-actions .ghost{flex:1}.subbar{padding:9px 12px}.subbar-left{gap:2px}.note{padding:10px 18px 25px;display:block}.note p{font-size:10px}.note a{display:inline-block;margin-top:7px}}
+@media(max-width:365px){.topright{gap:5px}.brand{font-size:10px}.mission{font-size:9px}.cellbtn b{font-size:8px}.primary-actions .ghost{padding:10px}.world canvas{height:300px;min-height:300px}.world{min-height:300px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+<a class="brand" href="/" aria-label="aynen.fun ana sayfa"><span class="mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M8 17c2-10 15-10 17-2 3 10-8 14-14 10-6-3-4-9-1-13" stroke="#52886d" stroke-width="2"/><circle cx="12" cy="15" r="3" fill="#d08d91"/><circle cx="22" cy="19" r="3" fill="#78b0a0"/></svg></span>AYNEN.FUN</a>
+<div class="topright"><span class="mono muted">EXPERIMENT 001</span><button id="helpBtn" type="button">NASIL ÇALIŞIR?</button><a href="/">✕ KAPAT</a></div>
+</header>
+<section class="hero"><div><span class="mono muted">THE LIVING MACHINE LAB / 01</span><h1>BIO <em>ROBOT.</em></h1><p>Hücreleri yerleştir. Canlandır. Ne yapacağını gör.<br>Biçimi sen kuruyorsun, sonucu fizik belirliyor.</p></div><div class="hero-right"><i class="live-dot"></i><span class="mono muted">MICROSCOPIC WORLD<br>SIMULATED LIVE</span></div></section>
+<div class="lab">
+<div class="labbar"><div class="labbar-left"><span class="mono eyebrow">LAB / DESIGN 01</span><span id="phase" class="phase">● TASARIM</span></div><nav class="missions" aria-label="Görev seç"><button class="mission active" data-level="0">01 / Hareket et</button><button class="mission" data-level="1">02 / Engelden kaç</button><button class="mission" data-level="2">03 / Işığı bul</button></nav></div>
+<div class="main">
+<div class="world" id="world"><canvas id="field" tabindex="0" role="img" aria-label="Robot tasarım ızgarası. Hücre seçip boş konumlara dokunun."></canvas><div class="world-tag"><strong id="worldTitle">HÜCRE DÜZENİ</strong><span class="mono" id="worldSubtitle">DOKUNARAK YERLEŞTİR • SÜRÜKLEYEREK ÇİZ</span></div><div class="world-foot"><div><span class="scaleline"></span><span class="mono scale" id="scaleLabel">SIMULATED / NOT TO SCALE</span></div><span class="mono muted" id="worldState">READY TO BUILD</span></div>
+<div class="result" id="result" role="status" aria-live="polite"><button type="button" class="result-close" id="resultClose" aria-label="Sonuçları kapat">×</button><span class="mono result-kicker" id="resultKicker">DENEY SONUCU</span><h2 id="resultTitle">Deney tamamlandı.</h2><p id="resultDescription"></p><div class="scoreline"><div><b id="metricDist">0%</b><small>İLERLEME</small></div><div><b id="metricEnergy">0%</b><small>ENERJİ</small></div><div><b id="metricTime">0s</b><small>SÜRE</small></div></div><div class="result-actions"><button id="retryBtn" type="button" class="start">DÜZENLE ↗</button><button id="shareBtn" type="button" class="ghost">PAYLAŞ ↗</button></div></div>
+</div>
+<aside class="telemetry"><div class="telemetry-head"><span class="mono">LIVE ANALYSIS / 001</span><h2 id="robotName">Robot v1</h2><p id="missionDesc">Hedef çizgisine ulaş. Düz gidebilmek sandığından zor.</p></div><div class="telemetry-body"><div class="measure"><div class="measure-head"><span>Hücre</span><b id="countValue">4 / 24</b></div><div class="track"><i id="countBar"></i></div></div><div class="measure"><div class="measure-head"><span>İtki</span><b id="thrustValue">1.0</b></div><div class="track"><i id="thrustBar"></i></div></div><div class="measure"><div class="measure-head"><span>Denge</span><b id="balanceValue">100%</b></div><div class="track"><i id="balanceBar"></i></div></div><div class="measure"><div class="measure-head"><span>Enerji</span><b id="energyValue">100%</b></div><div class="track"><i id="energyBar"></i></div></div><div class="meter-mini"><strong id="compositionLabel">BİYOLOJİK TASARIM</strong><div id="composition">Gövde, hareket, algı ve enerji.</div></div><div class="tip"><strong id="tipTitle">LAB NOTU</strong><p id="tipText">Hücreleri birbirine bitişik yerleştir. Arkadaki kas hücreleri itki üretir; asimetri dönüşe neden olur.</p></div></div></aside>
+</div>
+<div class="footerbar"><div class="cells" role="toolbar" aria-label="Hücre araçları">
+<button class="cellbtn" data-cell="core" aria-pressed="false" title="Destek hücresi"><span class="cell-dot dot-core"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="6.5" stroke="#588873"/><circle cx="12" cy="12" r="2" fill="#588873"/></svg></span><span><b>Destek</b><small>gövde</small></span></button>
+<button class="cellbtn" data-cell="muscle" aria-pressed="true" title="İtki hücresi"><span class="cell-dot dot-muscle"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M8 6l8 12M16 6L8 18" stroke="#aa6677" stroke-width="2" stroke-linecap="round"/></svg></span><span><b>Kas</b><small>hareket</small></span></button>
+<button class="cellbtn" data-cell="sensor" aria-pressed="false" title="Duyu hücresi"><span class="cell-dot dot-sensor"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="#598b9d" stroke-width="2"/><path d="M12 1v5M12 18v5M1 12h5M18 12h5" stroke="#598b9d"/></svg></span><span><b>Duyu</b><small>algı</small></span></button>
+<button class="cellbtn" data-cell="energy" aria-pressed="false" title="Enerji hücresi"><span class="cell-dot dot-energy"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m13 3-6 10h5l-1 8 7-11h-6z" stroke="#9c8145" stroke-width="1.5" stroke-linejoin="round"/></svg></span><span><b>Enerji</b><small>dayanım</small></span></button>
+<button class="cellbtn erase" data-cell="erase" aria-pressed="false" title="Hücre sil"><span class="cell-dot"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 9 12 3l9 9-7 8H8L2 14z" stroke="#6b8276" stroke-width="1.7"/></svg></span><span><b>Sil</b><small>hücre</small></span></button>
+</div>
+<div class="primary-actions"><button id="undoBtn" class="iconbtn" type="button" title="Geri al" aria-label="Geri al">↶</button><button id="presetBtn" class="ghost" type="button">ÖRNEK TASARIM</button><button id="runBtn" class="start" type="button">CANLANDIR <span>↗</span></button></div></div>
+<div class="subbar"><div class="subbar-left"><button id="mirrorBtn" type="button" aria-pressed="false">◇ Simetri: Kapalı</button><button id="saveBtn" type="button">+ Sürüm kaydet</button><button id="restoreBtn" type="button">↶ Son kayıt</button></div><div class="subbar-right"><span class="mono version" id="savedLabel">İLK ROBOTUN</span><span class="mono">BIO ROBOT / AYNEN.FUN</span></div></div>
+</div>
+</div>
+<footer class="note"><p><strong>Bilim notu.</strong> Xenobot ve biyohibrit robot araştırmalarından ilham alan soyut bir oyun simülasyonudur. Buradaki hücre rolleri, enerji hesabı ve davranış modeli gerçek biyolojik hücrelerin birebir temsili değildir.</p><p><a href="https://wyss.harvard.edu/technology/xenobots/" target="_blank" rel="noopener noreferrer">Xenobot araştırmasını keşfet ↗</a></p></footer>
+<div class="overlay" id="helpOverlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="sheet"><button id="helpClose" type="button" class="close-help">KAPAT ×</button><span class="mono muted">FIELD GUIDE / 001</span><h2 id="helpTitle">Bir gövde. Dört hücre.</h2><p>Orta hücre robotun çekirdeği. Dört hücre türünü çevresine yerleştir; birbirine temas etmeyen hücreler kabul edilmez.</p><ol><li><b>Destek</b> gövdeyi büyütür ve hareketin dengesini etkiler.</li><li><b>Kas</b> ileri itki üretir. Merkezin üstündeki veya altındaki kaslar farklı dönüş momenti oluşturur.</li><li><b>Duyu</b> hedefi ve yakın engelleri algılar. Simülasyon sırasında rotayı düzeltmeye yardımcı olur.</li><li><b>Enerji</b> daha uzun süre hareket etmeyi sağlar. Fazla hücre enerji tüketimini artırır.</li></ol><p>Hücre seçip boş bir noktaya dokun. Basılı tutarak çizebilirsin. <b>Canlandır</b> dediğinde robot, akıntı ve sürüklenme altında hareket eder. Her tasarım farklı sonuç verir. 24 hücre sınırı vardır.</p><p><strong>Bilimsel ayrım:</strong> Bu hücre türleri oyun mekaniğidir. Gerçek xenobotlar ve biyohibrit robotlar farklı tekniklerle geliştirilir. Bu bir canlı hücre simülatörü veya deneysel sonuç tahmin aracı değildir.</p><button id="helpDone" type="button" class="start">ANLADIM ↗</button></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/bio-robot.js?v=1" defer></script>
+</body></html>
