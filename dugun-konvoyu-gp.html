@@ -16,8 +16,9 @@ button:focus-visible,a:focus-visible{outline:3px solid #ffdc6b;outline-offset:3p
 .top{height:27px;flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;font-weight:900;letter-spacing:.05em}
 .top a{color:#dce8ff;text-decoration:none}.top .right{display:flex;align-items:center;gap:8px}.top button{height:27px;background:#213555;color:#eaf5ff;border:1px solid #537399;padding:0 10px;border-radius:3px}
 .frame{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden;border:3px solid #070f27;box-shadow:0 0 0 2px #4e6fa5;background:#164cbd}
-canvas{display:block;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none}
-.frame:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,.055) 4px);pointer-events:none;opacity:.5}
+canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none}
+.frame:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0px,transparent 5px,rgba(0,0,0,.018) 6px);pointer-events:none;opacity:.18}
+@media(max-aspect-ratio:11/10){canvas{object-fit:contain}.frame{background:#18345b}}
 .banner{position:absolute;top:21%;left:50%;transform:translateX(-50%);background:#ffefb0;color:#992f38;padding:6px 12px;font-weight:900;font-size:clamp(9px,1.45vw,15px);white-space:nowrap;box-shadow:4px 4px 0 #d94b4b;pointer-events:none;display:none;text-align:center;z-index:3}.banner.show{display:block}
 .pixel-hud{position:absolute;z-index:2;top:0;left:0;right:0;padding:clamp(8px,1vw,13px) clamp(10px,2vw,24px) 7px;pointer-events:none;color:white;font-family:"DM Mono",ui-monospace,monospace;letter-spacing:.008em;background:linear-gradient(#173da4 0%,#1751c6 84%,rgba(23,81,198,0) 100%);text-shadow:0 1px 0 #18336d}
 .hud-main{display:grid;grid-template-columns:1.25fr .8fr .8fr 1fr 1.2fr;gap:clamp(5px,2vw,28px);align-items:start}
@@ -60,7 +61,7 @@ canvas{display:block;width:100%;height:100%;object-fit:cover;image-rendering:pix
 <div id="app">
 <header class="top"><a href="/" aria-label="aynen.fun ana sayfa">← AYNEN.FUN</a><span>DÜĞÜN KONVOYU GP <span style="color:#ffdb6c">★</span></span><div class="right"><button id="sound" type="button" aria-label="Sesi aç kapat">SES: AÇIK</button><button id="pause" type="button" aria-label="Oyunu duraklat">Ⅱ</button></div></header>
 <div class="frame" id="frame">
-<canvas id="game" width="480" height="270" aria-label="Düğün konvoyunda retro yarış; ok tuşları veya dokunmatik kontroller ile oynanır"></canvas>
+<canvas id="game" width="960" height="540" aria-label="Düğün konvoyunda retro yarış; ok tuşları veya dokunmatik kontroller ile oynanır"></canvas>
 <div class="pixel-hud" aria-label="Yarış göstergeleri"><div class="hud-main">
 <div class="metric"><span class="metric-label">PUAN</span><span class="metric-value" id="h-score">000000</span></div>
 <div class="metric time"><span class="metric-label">SÜRE</span><span class="metric-value" id="h-time">90</span></div>
@@ -94,7 +95,7 @@ canvas{display:block;width:100%;height:100%;object-fit:cover;image-rendering:pix
 (function(){
 "use strict";
 const W=480,H=270,canvas=document.getElementById("game"),c=canvas.getContext("2d",{alpha:false});
-c.imageSmoothingEnabled=false;
+c.imageSmoothingEnabled=false;c.setTransform(2,0,0,2,0,0);
 const overlay=document.getElementById("overlay"),menu=document.getElementById("menu"),banner=document.getElementById("banner"),soundBtn=document.getElementById("sound"),pauseBtn=document.getElementById("pause"),hornBtn=document.getElementById("horn");
 let mode="menu",muted=false,audio=null,last=0,seconds=0,objects=[],spawnTimer=0,nextId=1,noticeTimer=0,flash=0,runSeed=0;
 const input={left:false,right:false,brake:false,boost:false};
@@ -312,6 +313,33 @@ for(let i=0;i<17;i++){
 }
 
 
+
+function fineScene(){
+ c.save();c.setTransform(1,0,0,1,0,0);
+ const stop=530;
+ // Distant hills: buildings, tiny windows and balcony laundry in a true 960px scene.
+ for(let i=0;i<62;i++){
+   let x=i*17,y=184+((i*7)%11),h=(i*19)%27;
+   if(g.lap===1){
+    rect(x,y-h,11,h+18,["#f3ceb9","#e9b4b1","#decab4","#f3dfb8"][i%4]);
+    for(let k=0;k<3;k++){const yy=y-h+3+k*6;if(yy<221){rect(x+2,yy,3,4,"#658996");rect(x+7,yy,3,4,"#779ca0")}}
+    if(i%5===0){rect(x+1,y+8,8,3,"#f2e3c6");rect(x+2,y+9,5,2,"#ce607a")}
+   }else if(g.lap===2){
+    rect(x,y-h/2,13,h/2+15,["#d6b8ab","#e5ceba","#9eafad"][i%3]);
+    for(let k=0;k<2;k++)rect(x+2+k*5,y-h/2+3,3,4,"#6a8e9d");
+   }
+ }
+ // Additional pavement flecks at road edges, perspective-scaled texture.
+ for(let i=0;i<35;i++){
+  const z=((i/35+g.distance*.00165)%1),yy=roadY(z),half=roadHalf(yy),cx=roadCenter(yy),size=.5+5*(1-z)*(1-z);
+  for(let side of [-1,1]){
+   let x=(cx+side*(half+2.8+((i*3)%13)*(1-z)))*2;
+   rect(x,yy*2,Math.max(1,size*2),Math.max(1,size),i%3===0?"#d4d7b4":i%3===1?"#588d3b":"#b7b49b");
+  }
+ }
+ c.restore();
+}
+
 function bannerArch(){
 if(g.distance>210)return;
 const z=clamp(.38-g.distance/540,0,1),y=roadY(z),half=roadHalf(y)*1.16,cx=roadCenter(y),h=17+(1-z)*27;
@@ -324,46 +352,92 @@ rect(cx-half+16,y-h-2,half*2-32,3,"#3a9347");
 txt("GELİN ALMA KONVOYU",cx,y-h+10,Math.max(6,Math.floor(4+(1-z)*7)),"#a43146","center");
 }
 
+
+
+
+
+
 function carSprite(cx,y,w,type,variant,joined,player){
-w=Math.max(4,w);const h=w*.70,bodyY=y-h;
-const palette=player?"#e53e36":type==="lead"?"#fff1dd":type==="guest"?"#c9ccad":type==="escort"?["#b32a3e","#dcc79a","#394461"][variant%3]:type==="rival"?(variant%2?"#7a3780":"#d2a3c3"):(variant%2?"#e0a54b":"#75899d");
-const large=w>17;
-rect(cx-w*.49,bodyY+h*.69,w*.21,h*.34,"#151a27");rect(cx+w*.28,bodyY+h*.69,w*.21,h*.34,"#151a27");
-rect(cx-w*.46,bodyY+h*.35,w*.92,h*.53,"#17232e");
-rect(cx-w*.46,bodyY+h*.33,w*.92,h*.47,palette);
-rect(cx-w*.4,bodyY+h*.75,w*.8,h*.12,"#273240");
-poly([cx-w*.34,bodyY+h*.35,cx-w*.22,bodyY+h*.06,cx+w*.23,bodyY+h*.06,cx+w*.34,bodyY+h*.35],"#1c313b");
-rect(cx-w*.2,bodyY+h*.1,w*.4,h*.2,"#7ac8ce");
-rect(cx-w*.4,bodyY+h*.67,w*.17,h*.12,player?"#ffe16e":"#f5b46c");rect(cx+w*.23,bodyY+h*.67,w*.17,h*.12,player?"#ffe16e":"#f5b46c");
-rect(cx-w*.19,bodyY+h*.71,w*.38,h*.1,"#d5d9db");
-if(large)txt(player?"34 DGN":type==="lead"?"GELİN":"34",cx,bodyY+h*.79,Math.max(4,Math.floor(w*.1)),"#1b3b55","center");
-if(player||type==="escort"||type==="lead"||type==="rival"||joined){
- const bow=player?"#f7f3e7":type==="lead"?"#fa9ab9":type==="rival"?"#ffcae0":"#ffe1dc";
- // Bow with long white tulle streamers and a flower centre.
- poly([cx,bodyY+h*.57,cx-w*.19,bodyY+h*.42,cx-w*.2,bodyY+h*.72],bow);
- poly([cx,bodyY+h*.57,cx+w*.19,bodyY+h*.42,cx+w*.2,bodyY+h*.72],bow);
- rect(cx-w*.034,bodyY+h*.51,w*.068,h*.18,player?"#eacbc1":"#f45994");
- rect(cx-w*.25,bodyY+h*.84,w*.052,h*.21,"#fce6e9");rect(cx+w*.17,bodyY+h*.84,w*.052,h*.21,"#fce6e9");
- if(large){rect(cx-w*.39,bodyY+h*.49,w*.08,h*.19,"#f4bed1");rect(cx+w*.31,bodyY+h*.49,w*.08,h*.19,"#f4bed1")}
- if(type==="lead"){for(let k=0;k<5;k++){const dx=(k-2)*w*.08;rect(cx+dx,bodyY-h*.02+Math.abs(k-2)*w*.025,Math.max(1,w*.065),Math.max(1,w*.09),["#dd4c6b","#f6dfac","#db7198"][k%3])}}
- if(large&&type!=="rival"){
-  // Rear-window Turkish flags and a little passenger waving from the side.
-  rect(cx-w*.31,bodyY+h*.25,w*.14,h*.09,"#e72b42");rect(cx-w*.28,bodyY+h*.27,Math.max(1,w*.025),Math.max(1,w*.025),"#fff");
-  if(w>28){rect(cx+w*.45,bodyY+h*.31,w*.22,h*.07,"#deb08c");rect(cx+w*.59,bodyY+h*.17,w*.065,h*.15,"#deb08c")}
+ // Render vehicles at twice the road-pixel resolution. Distinct silhouettes, fine detailing.
+ c.save();c.setTransform(1,0,0,1,0,0);
+ cx*=2;y*=2;w=Math.max(7,w*2);
+ const h=w*.66,top=y-h,large=w>=34,extra=w>=54;
+ const pal=player?["#f44435","#a22e2a","#ff9073"]:type==="lead"?["#f8e8d4","#bfaa9c","#ffffff"]:type==="guest"?["#e7d3a2","#93846e","#ffebbb"]:type==="escort"?[
+ ["#9e2e39","#692836","#f86b6d"],["#b9a378","#76674b","#f3d7a6"],["#344b6a","#1d2e46","#6f89a8"],["#6c866c","#3c5d47","#9cbea2"]][variant%4]:type==="rival"?["#ac4b97","#632568","#de94cd"]:["#b7afa2","#647481","#e0c5a0"];
+ // Ground shadow, tires and exhaust.
+ rect(cx-w*.54,y-h*.19,w*1.08,h*.25,"#18242b");
+ rect(cx-w*.49,top+h*.62,w*.18,h*.39,"#171f28");
+ rect(cx+w*.31,top+h*.62,w*.18,h*.39,"#171f28");
+ rect(cx-w*.45,top+h*.78,w*.12,h*.05,"#697582");
+ rect(cx+w*.33,top+h*.78,w*.12,h*.05,"#697582");
+ // Vehicle body: long-tail sedan / tall wedding van / classic hatch.
+ const van=type==="obstacle"&&variant%2===0,roof=van?.03:.21;
+ poly([cx-w*.41,top+h*.41,cx-w*(van?.41:.32),top+h*roof,cx+w*(van?.40:.32),top+h*roof,cx+w*.43,top+h*.41,cx+w*.49,top+h*.52,cx+w*.49,top+h*.88,cx-w*.49,top+h*.88,cx-w*.49,top+h*.52],pal[1]);
+ poly([cx-w*.41,top+h*.46,cx+w*.41,top+h*.46,cx+w*.46,top+h*.8,cx-w*.46,top+h*.8],pal[0]);
+ rect(cx-w*.41,top+h*.44,w*.82,h*.055,pal[2]);
+ // Roof and tinted glass: reflection on left.
+ poly([cx-w*.28,top+h*.39,cx-w*.235,top+h*(roof+.07),cx+w*.23,top+h*(roof+.07),cx+w*.29,top+h*.39],"#19384a");
+ poly([cx-w*.22,top+h*.34,cx-w*.18,top+h*(roof+.115),cx-w*.025,top+h*(roof+.115),cx-w*.075,top+h*.34],"#75b6ca");
+ rect(cx+w*.10,top+h*(roof+.12),w*.085,h*.13,"#4b8298");
+ // Rear doors/trunk, tail lights, bumper.
+ rect(cx-w*.37,top+h*.55,w*.74,h*.2,pal[0]);
+ rect(cx-w*.45,top+h*.7,w*.15,h*.095,"#fa6e63");rect(cx+w*.30,top+h*.7,w*.15,h*.095,"#fa6e63");
+ rect(cx-w*.43,top+h*.7,w*.085,h*.06,"#ffe9b0");rect(cx+w*.345,top+h*.7,w*.085,h*.06,"#ffe9b0");
+ rect(cx-w*.30,top+h*.86,w*.6,h*.07,"#263e4b");
+ rect(cx-w*.14,top+h*.825,w*.28,h*.095,"#eef1e6");
+ if(large)txt(player?"34 GP":type==="lead"?"GELİN":"34",cx,top+h*.9,Math.max(7,w*.11),"#2c4663","center");
+ // All actual convoy cars carry very visible wedding bows, ribbons and flowers.
+ if(player||type==="escort"||type==="lead"||joined||type==="rival"){
+  const ribbon=type==="rival"?"#fd8fcf":type==="lead"?"#eb83a1":"#fff1dc";
+  poly([cx,top+h*.61,cx-w*.205,top+h*.5,cx-w*.20,top+h*.71],ribbon);
+  poly([cx,top+h*.61,cx+w*.205,top+h*.5,cx+w*.20,top+h*.71],ribbon);
+  rect(cx-w*.028,top+h*.565,w*.056,h*.11,"#e65878");
+  poly([cx-w*.04,top+h*.68,cx-w*.21,top+h*1.03,cx-w*.12,top+h*1.02,cx+w*.005,top+h*.69],"#ffe6ef");
+  poly([cx+w*.04,top+h*.68,cx+w*.23,top+h*1.03,cx+w*.12,top+h*1.02,cx-w*.005,top+h*.69],"#ffedf3");
+  if(large){
+   // Flower rosettes above rear windshield.
+   for(let i=-2;i<=2;i++){
+    const xx=cx+i*w*.092,yy=top+h*.47+Math.abs(i)*1.2;
+    rect(xx-2.5,yy-2.5,5,5,i%2===0?"#ff9ab5":"#fff3de");
+    rect(xx-.7,yy-.7,2,2,"#f8cf51");
+    rect(xx+2,yy-1,3,2,"#4c8b53");
+   }
+  }
+  if(extra){
+   // Turkish flag sticker on rear window.
+   rect(cx-w*.33,top+h*.26,w*.18,h*.12,"#e72b3f");
+   rect(cx-w*.285,top+h*.28,w*.045,h*.065,"#fff8dc");
+   rect(cx-w*.275,top+h*.279,w*.045,h*.065,"#e72b3f");
+  }
+  if(type==="lead"&&large){
+   for(let i=0;i<9;i++){let x=cx+(i-4)*w*.058;rect(x,top-h*.09+(i%3)*2,Math.max(2,w*.045),Math.max(3,w*.068),["#e94f81","#fdf1c6","#60965f"][i%3])}
+   if(extra)txt("EVLENİYORUZ",cx,top+h*.58,Math.max(7,w*.085),"#d24b68","center");
+  }
+  if(extra&&type!=="rival"){
+   // Wedding guests hang their hands and a scarf out of the side window.
+   rect(cx+w*.435,top+h*.32,w*.19,h*.062,"#efbc94");
+   rect(cx+w*.585,top+h*.19,w*.055,h*.18,"#efbc94");
+   rect(cx+w*.585,top+h*.19,w*.048,h*.035,"#ffe2b4");
+   poly([cx+w*.55,top+h*.29,cx+w*.68,top+h*.32,cx+w*.65,top+h*.5],"#f1e2bb");
+  }
+ }
+ if(type==="guest"&&!joined&&w>18){
+  rect(cx-w*.21,top-h*.35,w*.42,h*.25,"#fff6d7");
+  txt("+",cx,top-h*.13,Math.max(9,w*.2),"#b33f43","center");
+ }
+ if(joined&&w>20)txt("♥",cx,top-h*.17,Math.max(8,w*.16),"#fff2f6","center");
+ if(type==="rival"&&extra)txt("YANLIŞ DÜĞÜN",cx,top-h*.18,Math.max(8,w*.13),"#ffe0ef","center");
+ if(type==="obstacle"&&large){
+    rect(cx-w*.38,top+h*.22,w*.76,h*.15,"#d3a54e");
+    rect(cx-w*.29,top+h*.18,w*.58,h*.11,"#4e565b");
+    if(extra)txt(variant%2?"MİNİBÜS":"SERVİS",cx,top+h*.35,Math.max(8,w*.1),"#fff0b8","center");
  }
  if(player){
-  for(let i=0;i<3;i++){let dx=(i-1)*w*.29;rect(cx+dx-w*.06,y+4+i%2*2,w*.11,h*.1,"#b7d5df");rect(cx+dx-w*.045,y+4+i%2*2,w*.09,h*.048,"#db5158")}
+  // Ribboned bumper and empty tin cans clattering behind.
+  for(let i=-2;i<=2;i++){let xx=cx+i*w*.2;rect(xx-1,y+4,2,Math.max(4,6+i%2*3),"#eee9d8");rect(xx-5,y+10+i%2*4,10,5,i%2?"#e66e58":"#b9e3e3");rect(xx-3,y+12+i%2*4,4,2,"#fdf2dc")}
  }
+ c.restore();
 }
-if(type==="guest"&&!joined&&w>9){
- rect(cx-w*.28,bodyY-h*.33,w*.56,h*.29,"#fff6ce");
- txt(" + ",cx,bodyY-h*.1,Math.max(6,Math.floor(w*.29)),"#ae4b3e","center");
-}
-if(joined&&w>8)txt("♥",cx,bodyY-h*.29,Math.max(6,Math.floor(w*.26)),"#fff0f2","center");
-if(type==="rival"&&w>24)txt("YANLIŞ",cx,bodyY-h*.2,Math.max(5,Math.floor(w*.17)),"#fff1bd","center");
-if(type==="obstacle"&&large){rect(cx-w*.37,bodyY+h*.26,w*.74,h*.17,"#a87745");rect(cx-w*.27,bodyY+h*.05,w*.54,h*.21,"#5d6c72")}
-}
-
 
 function leadCar(){
  // Wedding car stays in the distance as the visual target, with the family convoy around it.
@@ -407,7 +481,7 @@ if(input.brake){rect(x-25+shake,236,11,5,"#ffdd68");rect(x+14+shake,236,11,5,"#f
 }
 
 function draw(){
-background();road();foliage();weddingRoadside();bannerArch();decorations();leadCar();vehicles();playerCar();
+background();road();foliage();fineScene();weddingRoadside();bannerArch();decorations();leadCar();vehicles();playerCar();
 if(mode==="menu"){rect(162,65,156,18,"#ffedab");txt("DÜĞÜN KONVOYU GP",240,78,10,"#ad3242","center")}
 if(flash>0){c.fillStyle="rgba(255,245,200,"+(flash*.65)+")";c.fillRect(0,40,W,H-40)}
 if(mode==="pause"){rect(0,0,480,270,"rgba(9,13,35,.28)")}
