@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#fafaf8">
-<meta name="description" content="Bir sıfır daha. Bir sıfır daha. Trilyondan googol'e, milyonda birden daha da küçüğe. Sayıların ölçeğini keşfet.">
+<meta name="description" content="Sıfırın iki tarafını keşfet. 0 ile 1 arasındaki sonsuzluğa gir; sayıların ölçeğiyle ve sıfırın hikâyesiyle oyna.">
 <link rel="icon" href="/favicon.ico">
 <title>Kaç Sıfır? — aynen.fun</title>
 <style>
@@ -74,44 +74,106 @@ footer{font-size:8px;margin-top:20px}
 @media(max-width:370px){.topright{font-size:8px}.skip button{font-size:8px}.fact{gap:8px}}
 @media(max-height:700px) and (min-width:651px){.hero{min-height:250px;padding:15px 0 4px}.power{font-size:clamp(85px,14vh,140px)}.name{font-size:clamp(26px,5vh,48px)}.page{padding-top:14px}.zeros-wrap{margin-top:13px}footer{margin-top:12px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* Zero-centered number line and interactive 0–1 explorer */
+.power.zero-case{letter-spacing:-.09em}
+.power.zero-case sup{display:none}
+.scale-labels{position:relative}
+.scale-labels .center-tick{position:absolute;left:50%;transform:translateX(-50%);font-weight:800;color:var(--ink);font-size:12px;top:-3px}
+.track-row{position:relative}
+.track-row::after{content:"";position:absolute;top:50%;left:50%;height:15px;width:1px;background:#111;transform:translate(-50%,-50%);pointer-events:none;opacity:.45}
+.slider{background:linear-gradient(to right,#d0d0cc 0%,#d0d0cc 50%,#151515 50%,#151515 100%)}
+.zero-more{align-self:flex-start;border:0;background:transparent;font:10px "Courier New",monospace;text-decoration:underline;text-underline-offset:3px;padding:2px 0 5px;color:#666}
+.zero-more[hidden]{display:none}
+.between{width:min(100%,790px);margin:17px auto 0;padding:15px 0 0;border-top:1px solid var(--line)}
+.between-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.between h2{margin:6px 0 0;font-size:clamp(17px,2vw,24px);font-weight:800;letter-spacing:-.055em;line-height:1.12}
+.between-intro{font-size:12px;color:#777;line-height:1.5;margin:7px 0 13px}
+.reset-between{flex:none;background:transparent;border:0;padding:4px 0;color:#666;text-decoration:underline;text-underline-offset:3px;font:10px "Courier New",monospace}
+.interval-labels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:9px;font:12px/1.5 "Courier New",monospace;font-variant-numeric:tabular-nums}
+.interval-labels span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.interval-labels span:nth-child(2){text-align:center;font-weight:700;color:#111}
+.interval-labels span:nth-child(3){text-align:right}
+.interval-track{height:16px;display:flex;align-items:center;position:relative}
+.interval-track:before{content:"";height:2px;background:#111;width:100%}
+.interval-dot{position:absolute;top:50%;left:50%;width:12px;height:12px;border:3px solid var(--bg);border-radius:50%;background:#111;transform:translate(-50%,-50%);box-shadow:0 0 0 1px #111}
+.interval-track:after{content:"";position:absolute;left:0;top:50%;width:5px;height:5px;transform:translateY(-50%);border-radius:50%;background:#111;box-shadow:calc(min(790px, 100vw - 36px) - 5px) 0 0 #111;pointer-events:none}
+.between-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.between-actions button{background:#fff;border:1px solid #d4d4d0;padding:12px 10px;font:700 11px "Courier New",monospace;min-height:42px}
+.between-actions button:hover{background:#111;border-color:#111;color:white}
+.interval-footer{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:10px;font:10px/1.5 "Courier New",monospace;color:#777}
+.interval-footer span:last-child{text-align:right;max-width:75%}
+.between-thought{font-size:11px;line-height:1.5;color:#777;margin-top:8px}
+@media(max-width:650px){
+.hero{min-height:230px;padding:14px 0 5px}
+.power{font-size:clamp(72px,22vw,125px)}
+.name{margin-top:13px}
+.zeros-wrap{margin-top:12px}
+.between{margin-top:14px;padding-top:12px}
+.between h2{font-size:19px}
+.between-intro{font-size:11px;margin:6px 0 10px}
+.interval-labels{font-size:10px}
+.between-actions button{font-size:10px}
+.interval-footer,.between-thought{font-size:9px}
+}
+@media(max-width:390px){.between-actions button{font-size:9px;padding:10px 6px}.topright{display:none}}
+
 </style>
 </head>
 <body>
 <div class="page" id="page">
 <header>
 <a class="back" href="/">aynen.fun <span>← OYUNLAR</span></a>
-<span class="topright">SAYILARIN SONU YOK. BU SAYFANIN VAR.</span>
+<span class="topright">SIFIRDAN SONSUZLUĞA. İKİ YÖNDE.</span>
 </header>
 <main class="hero" aria-label="Sayı ölçeği simülasyonu">
-<div class="eyebrow">BİR SAYININ NE KADAR BÜYÜYEBİLECEĞİNİ GÖR</div>
+<div class="eyebrow">HİÇBİRDEN SONSUZLUĞA BİR SAYI DOĞRUSU</div>
 <h1>Kaç Sıfır?</h1>
-<div class="power" id="power" aria-label="On üzeri on iki">10<sup id="exp">12</sup></div>
-<div class="name" id="name" aria-live="polite" aria-atomic="true">Trilyon</div>
-<div class="explanation" id="explanation">1'in ardından 12 sıfır.</div>
+<div class="power zero-case" id="power" aria-label="Sıfır">0<sup id="exp">0</sup></div>
+<div class="name" id="name" aria-live="polite" aria-atomic="true">Sıfır</div>
+<div class="explanation" id="explanation">Ne pozitif ne negatif. Ama sayı doğrusunun tam ortasında.</div>
 <div class="zeros-wrap">
-<div class="zeros-head"><span id="number-caption">SAYININ TAM YAZILIŞI</span><span id="zeros-count">12 SIFIR</span></div>
-<div class="zeros" id="zeros">1 000 000 000 000</div>
+<div class="zeros-head"><span id="number-caption">SAYININ TAM YAZILIŞI</span><span id="zeros-count">BAŞLANGIÇ NOKTASI</span></div>
+<div class="zeros" id="zeros">0</div>
 </div>
 </main>
 <div class="controls">
-<div class="scale-labels"><span>← DAHA KÜÇÜK</span><span>DAHA BÜYÜK →</span></div>
+<div class="scale-labels"><span>← NEGATİF</span><span class="center-tick" aria-hidden="true">0</span><span>POZİTİF →</span></div>
 <div class="track-row">
 <button class="step" type="button" id="smaller" aria-label="Sayıyı ona böl">÷10</button>
-<input class="slider" type="range" min="-100" max="100" value="12" step="1" id="scale" aria-label="Onun kuvveti; eksi yüz ile artı yüz arasında">
+<input class="slider" type="range" min="-101" max="101" value="0" step="1" id="scale" aria-label="Sayı doğrusu: negatif sayılardan sıfıra ve pozitif sayılara">
 <button class="step" type="button" id="bigger" aria-label="Sayıyı onla çarp">×10</button>
 </div>
 <div class="undertrack">
-<span class="multiplier" id="hint">HER ADIMDA 10 KAT DEĞİŞİR.</span>
+<span class="multiplier" id="hint">0’DAN SONRA HER ADIMDA 10 KAT.</span>
 <div class="skip"><button type="button" id="previous">← ÖNCEKİ İSİM</button><button type="button" id="next">SONRAKİ İSİM →</button></div>
 </div>
 </div>
 <div class="fact">
-<div class="fact-left"><div class="fact-label">BUNU BİLİYOR MUYDUN?</div><div class="fact-text" id="fact">1 trilyon, 1 milyarın 1000 katıdır.</div></div>
+<div class="fact-left"><div class="fact-label" id="fact-label">SIFIR HAKKINDA</div><div class="fact-text" id="fact">Sıfır, yokluğu temsil eder; yine de toplama işleminin etkisiz elemanıdır: x + 0 = x.</div><button id="zero-more" class="zero-more" type="button">BİR BİLGİ DAHA →</button></div>
 <button class="share" id="share" type="button">PAYLAŞ ↗</button>
 </div>
+
+<section class="between" aria-label="Sıfır ve bir arasındaki sonsuz sayı keşfi">
+  <div class="between-top">
+    <div><div class="eyebrow">SONSUZLUK, EN KÜÇÜK ARALIKTA BİLE</div><h2>0 ile 1 arasına gir.</h2></div>
+    <button class="reset-between" id="reset-between" type="button">BAŞA DÖN ↺</button>
+  </div>
+  <p class="between-intro">İki sayı arasını ikiye böl. Sonra bir yarısını seç. Kaç kez bölersen böl, arada yine bir sayı kalır.</p>
+  <div class="interval-labels" aria-label="Seçili sayı aralığı">
+    <span id="interval-left">0</span><span id="interval-mid">0,5</span><span id="interval-right">1</span>
+  </div>
+  <div class="interval-track" aria-hidden="true"><span class="interval-dot"></span></div>
+  <div class="between-actions">
+    <button type="button" id="between-left" aria-label="Sol yarıyı seç, aralığı ikiye böl">← SOL YARIYA GİR</button>
+    <button type="button" id="between-right" aria-label="Sağ yarıyı seç, aralığı ikiye böl">SAĞ YARIYA GİR →</button>
+  </div>
+  <div class="interval-footer"><span id="between-step">0. BÖLÜNME</span><span id="between-width">ARALIK: 1</span></div>
+  <div class="between-thought" id="between-thought">Buradaki sayılar yalnızca kesirlerden ibaret değil. √2/2 ve π/4 gibi irrasyonel sayılar da 0 ile 1 arasında.</div>
+</section>
 <footer>
-<span>10⁻¹² = TRİLYONDA BİR. −10¹² = NEGATİF TRİLYON. AYNI ŞEY DEĞİL.</span>
-<a href="https://www.bipm.org/en/measurement-units/si-prefixes/" target="_blank" rel="noopener noreferrer">BİRİM ÖNEKLERİ / BIPM ↗</a>
+<span>10⁰ = 1. SIFIR ≠ 10⁰. 0 İLE 1 ARASINDA SONSUZ REEL SAYI VAR.</span>
+<a href="https://mathshistory.st-andrews.ac.uk/HistTopics/Zero/" target="_blank" rel="noopener noreferrer">SIFIRIN TARİHİ / MACTUTOR ↗</a>
 </footer>
 </div>
 <script>
@@ -151,95 +213,154 @@ var facts={
 80:'10⁸⁰, gözlemlenebilir evrendeki atomların sayısı için sık kullanılan kaba bir büyüklük tahminidir.',
 100:'Googol = 10¹⁰⁰. Son sayı değildir; bir sıfır daha ekleyebilirsin.'
 };
-var e=12;
-var el={exp:document.getElementById('exp'),power:document.getElementById('power'),name:document.getElementById('name'),explanation:document.getElementById('explanation'),zeros:document.getElementById('zeros'),count:document.getElementById('zeros-count'),caption:document.getElementById('number-caption'),slider:document.getElementById('scale'),fact:document.getElementById('fact'),share:document.getElementById('share')};
-function special(k){return Object.prototype.hasOwnProperty.call(names,k)}
-function readName(k){
+
+var zeroFacts=[
+'Sıfır, hiçbir nesne olmayan bir grubu bile sayıyla ifade etmeyi sağlar. Yokluğun bir sayısı var.',
+'Sıfır ne pozitiftir ne negatiftir. Pozitif ve negatif sayıların arasındaki sınırdır.',
+'Bir sayı ile sıfırın toplamı yine o sayıdır: x + 0 = x. Bu yüzden toplamanın etkisiz elemanıdır.',
+'11 ile 101 farklı sayılardır. Ortadaki sıfır, basamak değerini değiştirdiği için önemlidir.',
+'Sıfıra bölme, alışıldık reel sayı aritmetiğinde tanımsızdır. 1 / 0 = sonsuz yazmak doğru değildir.',
+'Hint matematikçi Brahmagupta, MS 628 yılında sıfırla işlem yapma kurallarını sistematik biçimde kaleme aldı.',
+'Sıfırın kendisi bir reel sayıdır. Sonsuzluk (∞) ise sıradan bir reel sayı değildir.',
+'Sıfırdan büyük en küçük pozitif reel sayı yoktur: ne kadar küçük seçersen seç, onun yarısı da pozitiftir.'
+];
+var idx=0,zeroFactIndex=0,depth=0,left=0n;
+var el={exp:document.getElementById('exp'),power:document.getElementById('power'),name:document.getElementById('name'),explanation:document.getElementById('explanation'),zeros:document.getElementById('zeros'),count:document.getElementById('zeros-count'),caption:document.getElementById('number-caption'),slider:document.getElementById('scale'),fact:document.getElementById('fact'),factLabel:document.getElementById('fact-label'),zeroMore:document.getElementById('zero-more'),share:document.getElementById('share'),hint:document.getElementById('hint'),lo:document.getElementById('interval-left'),mid:document.getElementById('interval-mid'),hi:document.getElementById('interval-right'),depth:document.getElementById('between-step'),width:document.getElementById('between-width'),thought:document.getElementById('between-thought')};
+function has(o,k){return Object.prototype.hasOwnProperty.call(o,k)}
+function unsignedName(k){
  if(k===100)return 'Googol';
  if(k===0)return 'Bir';
- if(k>0){
-  if(special(k))return names[k];
-  var g=Math.floor(k/3)*3, n=k-g;
-  if(g===0)return names[k]||'On üzeri '+k;
-  return (n===1?'10 ':n===2?'100 ':'')+names[g];
+ if(has(names,k))return names[k];
+ var g=Math.floor(k/3)*3,n=k-g;
+ return (n===1?'10 ':n===2?'100 ':'')+(names[g]||'on üzeri '+g);
+}
+function writeFull(k,negative){
+ var value=('1'+'0'.repeat(k)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+ return negative?'−'+value:value;
+}
+function numericDescription(k,negative){
+ if(k===0)return negative?'Eksi bir. Sıfırın solundaki ilk tam sayı.':'Bir. Sıfırın sağındaki ilk tam sayı.';
+ return (negative?'Eksi işareti ve ':'')+'1’in ardından '+k+' sıfır.';
+}
+function factFor(k,negative){
+ if(negative){
+  if(k===0)return '−1, sıfırdan küçüktür. Ama −0 diye ayrı bir reel sayı yoktur: −0 = 0.';
+  if(k===2)return '−100 ile −10 arasında tam 89 tam sayı vardır. Reel sayı ise sonsuz sayıda vardır.';
+  return '−10^'+k+' sayısı negatiftir. 10^−'+k+' ise pozitiftir ve sıfıra yakındır. İkisi farklıdır.';
  }
- var abs=-k;
- if(small[abs])return small[abs];
- if(abs===4)return 'On binde bir';
- if(abs===5)return 'Yüz binde bir';
- if(abs<=30){
-  var ceil=Math.ceil(abs/3)*3, d=ceil-abs;
-  if(d===1 || d===2)return (d===1?'10 ':'100 ')+(small[ceil]||'') ;
- }
- return 'On üzeri eksi '+abs;
+ if(has(facts,k))return facts[k];
+ return '10 üzeri '+k+', 10 üzeri '+(k-1)+' sayısının tam 10 katıdır.';
 }
-function full(k){
- if(k===0)return '1';
- if(k>0){return ('1'+'0'.repeat(k)).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
- return '0,'+'0'.repeat(-k-1)+'1';
+function updateUrl(){
+ var u=new URL(location.href);
+ if(idx===0){u.searchParams.set('e','zero');u.searchParams.delete('sign')}
+ else{u.searchParams.set('e',String(Math.abs(idx)-1));if(idx<0)u.searchParams.set('sign','negative');else u.searchParams.delete('sign')}
+ if(depth>0){u.searchParams.set('d',String(depth));u.searchParams.set('a',String(left))}
+ else{u.searchParams.delete('d');u.searchParams.delete('a')}
+ history.replaceState(null,'',u.pathname+u.search+u.hash);
 }
-function explain(k){
- if(k===0)return 'Tam ortadayız. Bir tane.';
- if(k>0)return '1\'in ardından '+k+' sıfır.';
- return 'Virgülden sonra '+(-k-1)+' sıfır, ardından 1.';
-}
-function factFor(k){
- if(facts[k])return facts[k];
- if(k<0)return '10 üzeri '+k+' = 1 / 10 üzeri '+(-k)+'. Sayı pozitif kalır ama gittikçe sıfıra yaklaşır.';
- return '10 üzeri '+k+', 10 üzeri '+(k-1)+' sayısının tam 10 katıdır. Her yeni basamak yeni bir sıfır getirir.';
-}
-function setExp(n,animate){
- e=Math.max(-100,Math.min(100,Math.round(n)));
- el.exp.textContent=e<0?'−'+(-e):''+e;
- el.power.setAttribute('aria-label','On üzeri '+(e<0?'eksi '+(-e):e));
- el.name.textContent=readName(e);
- el.explanation.textContent=explain(e);
- el.zeros.textContent=full(e);
- el.zeros.classList.toggle('long',Math.abs(e)>30);
- el.count.textContent=e>0?e+' SIFIR':e===0?'0 SIFIR':(-e)+' ONDALIK BASAMAK';
- el.caption.textContent=e>=0?'SAYININ TAM YAZILIŞI':'SAYININ ONDALIK YAZILIŞI';
- el.slider.value=e;
- el.slider.style.setProperty('--progress',((e+100)/200*100).toFixed(2)+'%');
- el.fact.textContent=factFor(e);
- if(animate&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+function setIndex(n,animate){
+ idx=Math.max(-101,Math.min(101,Math.round(n)));
+ var negative=idx<0,zero=idx===0,k=Math.abs(idx)-1;
+ el.power.classList.toggle('zero-case',zero);
+ el.power.firstChild.nodeValue=zero?'0':negative?'−10':'10';
+ el.exp.textContent=zero?'':String(k);
+ el.power.setAttribute('aria-label',zero?'Sıfır':(negative?'Eksi ':'')+'on üzeri '+k);
+ el.name.textContent=zero?'Sıfır':(negative?'Eksi ':'')+unsignedName(k).toLocaleLowerCase('tr-TR');
+ el.explanation.textContent=zero?'Ne pozitif ne negatif. Ama sayı doğrusunun tam ortasında.':numericDescription(k,negative);
+ el.zeros.textContent=zero?'0':writeFull(k,negative);
+ el.zeros.classList.toggle('long',!zero&&k>30);
+ el.count.textContent=zero?'BAŞLANGIÇ NOKTASI':k+' SIFIR';
+ el.caption.textContent='SAYININ TAM YAZILIŞI';
+ el.slider.value=idx;
+ el.factLabel.textContent=zero?'SIFIR HAKKINDA':'BUNU BİLİYOR MUYDUN?';
+ el.fact.textContent=zero?zeroFacts[zeroFactIndex]:factFor(k,negative);
+ el.zeroMore.hidden=!zero;
+ el.hint.textContent=zero?'SIFIR: NE POZİTİF NE NEGATİF':Math.abs(idx)===1?'SIFIRDAN SONRA İLK ADIM':(negative?'SOLA':'SAĞA')+' HER ADIMDA 10 KAT';
+ if(animate&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches){
   var p=document.getElementById('page');p.classList.remove('motion');void p.offsetWidth;p.classList.add('motion');
  }
- var u=new URL(location.href);u.searchParams.set('e',e);history.replaceState(null,'',u.pathname+u.search);
+ updateUrl();
 }
 function jump(dir){
- var n=e;
- if(dir>0){
-  if(n<0)n=Math.min(0,n+3);else if(n<100)n=Math.min(100,Math.floor(n/3)*3+3);
- }else{
-  if(n>0)n=Math.max(0,Math.ceil(n/3)*3-3);else if(n>-100)n=Math.max(-100,Math.ceil(n/3)*3-3);
- }
- setExp(n,true);
+ var anchors=[0,1,2,3,4,7,10,13,16,19,22,25,28,31,34,37,40,43,46,49,52,55,58,61,64,67,70,73,76,79,82,85,88,91,94,97,100,101];
+ var stops=anchors.slice(1).map(function(i){return -i}).reverse().concat(anchors);
+ var target=idx;
+ if(dir>0){for(var i=0;i<stops.length;i++){if(stops[i]>idx){target=stops[i];break}}}
+ else{for(var j=stops.length-1;j>=0;j--){if(stops[j]<idx){target=stops[j];break}}}
+ setIndex(target,true);
 }
-document.getElementById('smaller').addEventListener('click',function(){setExp(e-1,true)});
-document.getElementById('bigger').addEventListener('click',function(){setExp(e+1,true)});
+function showRational(num,exp){
+ if(num===0n)return '0';
+ var den=1n<<BigInt(exp);
+ if(num===den)return '1';
+ if(exp<=14){
+   var v=Number(num)/Number(den);
+   return v.toLocaleString('tr-TR',{maximumFractionDigits:14});
+ }
+ if(exp<=34){
+  return (Number(num)/Number(den)).toLocaleString('tr-TR',{maximumSignificantDigits:10});
+ }
+ return num.toString()+'/2^'+exp;
+}
+function updateBetween(){
+ var den=1n<<BigInt(depth);
+ var middle=2n*left+1n;
+ el.lo.textContent=showRational(left,depth);
+ el.mid.textContent=showRational(middle,depth+1);
+ el.hi.textContent=showRational(left+1n,depth);
+ el.lo.title=left.toString()+'/'+den.toString();
+ el.mid.title=middle.toString()+'/'+(den*2n).toString();
+ el.hi.title=(left+1n).toString()+'/'+den.toString();
+ el.depth.textContent=depth+'. BÖLÜNME';
+ el.width.textContent=depth===0?'ARALIK: 1':'ARALIK GENİŞLİĞİ: 1 / 2^'+depth;
+ el.thought.textContent=depth===0?'Buradaki sayılar yalnızca kesirlerden ibaret değil. √2/2 ve π/4 gibi irrasyonel sayılar da 0 ile 1 arasında.':depth<6?'Bir kez daha ikiye bölersen yine yeni bir sayı bulursun. Hiçbir adım son adım değil.':depth<20?'Şimdi aralığın genişliği 1 / 2^'+depth+'. Hâlâ arada sonsuz reel sayı var.':'Bilgisayarın ondalık gösterimi sınırlı olabilir, matematiksel aralık değil. Bu sınırları tam kesir olarak saklıyoruz.';
+ updateUrl();
+}
+function split(side){
+ if(depth>=200){el.thought.textContent='200 kez ikiye böldün. Arada yine sonsuz reel sayı var. Yeniden başlamak için BAŞA DÖN’e bas.';return}
+ left=left*2n+(side==='right'?1n:0n);depth+=1;updateBetween();
+}
+document.getElementById('smaller').addEventListener('click',function(){setIndex(idx-1,true)});
+document.getElementById('bigger').addEventListener('click',function(){setIndex(idx+1,true)});
 document.getElementById('previous').addEventListener('click',function(){jump(-1)});
 document.getElementById('next').addEventListener('click',function(){jump(1)});
-el.slider.addEventListener('input',function(){setExp(Number(this.value),true)});
+document.getElementById('between-left').addEventListener('click',function(){split('left')});
+document.getElementById('between-right').addEventListener('click',function(){split('right')});
+document.getElementById('reset-between').addEventListener('click',function(){left=0n;depth=0;updateBetween()});
+el.zeroMore.addEventListener('click',function(){zeroFactIndex=(zeroFactIndex+1)%zeroFacts.length;el.fact.textContent=zeroFacts[zeroFactIndex]});
+el.slider.addEventListener('input',function(){setIndex(Number(this.value),true)});
 document.addEventListener('keydown',function(ev){
- if(ev.altKey||ev.ctrlKey||ev.metaKey||ev.target===el.slider)return;
- if(ev.key==='ArrowLeft'){ev.preventDefault();setExp(e-1,true)}
- if(ev.key==='ArrowRight'){ev.preventDefault();setExp(e+1,true)}
+ if(ev.altKey||ev.ctrlKey||ev.metaKey||ev.target===el.slider||/^(BUTTON|INPUT|TEXTAREA)$/.test(ev.target.tagName))return;
+ if(ev.key==='ArrowLeft'){ev.preventDefault();setIndex(idx-1,true)}
+ if(ev.key==='ArrowRight'){ev.preventDefault();setIndex(idx+1,true)}
 });
 var wheelLock=0;
 document.querySelector('.hero').addEventListener('wheel',function(ev){
  if(Math.abs(ev.deltaY)<5||Math.abs(ev.deltaY)<Math.abs(ev.deltaX))return;
  var now=Date.now();if(now-wheelLock<160)return;
- wheelLock=now;setExp(e+(ev.deltaY>0?1:-1),true);
+ wheelLock=now;setIndex(idx+(ev.deltaY>0?1:-1),true);
 },{passive:true});
 el.share.addEventListener('click',function(){
- var url=location.href;var message=readName(e)+' = 10^'+e+'. Kaç Sıfır? — aynen.fun';
+ var url=location.href;
+ var line=idx===0?'Sıfır':idx<0?'−10^'+(Math.abs(idx)-1):'10^'+(idx-1);
+ var message=depth?'0 ile 1 arasını '+depth+' kez ikiye böldüm. Hâlâ sonsuz sayı var.':'Kaç Sıfır? '+line+' — aynen.fun';
  if(navigator.share){navigator.share({title:'Kaç Sıfır? — aynen.fun',text:message,url:url}).catch(function(){})}
  else if(navigator.clipboard){navigator.clipboard.writeText(message+' '+url).then(function(){el.share.textContent='KOPYALANDI ✓';setTimeout(function(){el.share.textContent='PAYLAŞ ↗'},1700)}).catch(function(){window.prompt('Sonuç',message+' '+url)})}
  else window.prompt('Sonuç',message+' '+url);
 });
-var initial=new URLSearchParams(location.search).get('e');
-if(initial!==null&&/^[-+]?\d{1,3}$/.test(initial))e=Number(initial);
-setExp(e,false);
+var params=new URLSearchParams(location.search),e=params.get('e'),sign=params.get('sign');
+if(e==='zero')idx=0;
+else if(e!==null&&/^[-+]?\d{1,3}$/.test(e)){
+ var val=Number(e);
+ if(val>=0&&val<=100)idx=(sign==='negative'?-1:1)*(val+1);
+ else idx=0;
+}
+var d=Number(params.get('d')),a=params.get('a');
+if(Number.isInteger(d)&&d>=0&&d<=200&&a!==null&&/^\d{1,61}$/.test(a)){
+ try{var leftCandidate=BigInt(a);if(leftCandidate<(1n<<BigInt(d))){depth=d;left=leftCandidate}}catch(ex){}
+}
+setIndex(idx,false);updateBetween();
 })();
 </script>
 </body>
