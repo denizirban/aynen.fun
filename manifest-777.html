@@ -249,15 +249,10 @@ a{color:inherit;text-decoration:none}
 "use strict";
 const $=id=>document.getElementById(id);
 const W={
- money:{label:"Bol para",action:"Bir gelir fırsatını araştırdın.",note:"Para için hazırlanmış tek makbuz, kristal makbuzuydu."},
- love:{label:"Aşk",action:"Birine dürüstçe mesaj attın.",note:"Evren flört etmiyor. İnsanlar ediyor."},
- career:{label:"Terfi",action:"İşle ilgili somut bir adım attın.",note:"Terfi dosyası için CV değil aura teslim edildi."},
- home:{label:"Bir ev",action:"Gerçek bir ev ilanı ya da bütçe araştırdın.",note:"Vizyon panosundaki evin tapusu yok."},
- viral:{label:"Viral olmak",action:"Bir fikir ürettin veya paylaştın.",note:"Algoritma henüz burç yorumu kabul etmiyor."},
- peace:{label:"İç huzur",action:"Kendine gerçek bir mola planladın.",note:"Bildirimleri kapatmak 777 Hz'den daha sessiz çıktı."},
- custom:{label:"Kendi dileğin",action:"Dileğin için bir küçük adım düşündün.",note:"Evren özel siparişlere garanti vermiyor."}
+money:{label:"Bolluk"},love:{label:"Aşk"},career:{label:"Kariyer"},
+home:{label:"Yeni bir ev"},viral:{label:"Görünürlük"},
+peace:{label:"İç huzur"},custom:{label:"Kendi niyetin"}
 };
-
 const THEMES={
 money:[
 ["BOLLUK İŞARETİ","Hesabında 7,77 TL gördün.","Bu sayı bugün birkaç kez karşına çıktı. Maddi hedefini yeniden düşünüyorsun.","Gelir ve giderlerini gözden geçir.","Bolluk niyetini şimdiki zamanla tekrar et.","Yakında para geleceğine güvenerek planını öne al."],
@@ -370,13 +365,13 @@ function roll(){state.rng^=state.rng<<13;state.rng^=state.rng>>>17;state.rng^=st
 function randomOrder(items){let out=items.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(roll()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
 function themeName(){return THEMES[state.wish]?state.wish:"custom"}
 const FOLLOWUPS={
- money:{action:"Dün yaptığın araştırma bugünkü seçeneği daha net görmeni sağladı.",ritual:"Dün gördüğün işaretler zihnini meşgul ediyor.",risk:"Dünkü kestirmenin maliyeti hâlâ belirsiz."},
- love:{action:"Dünkü açık iletişim bazı belirsizlikleri azalttı.",ritual:"Beklentilerin yükseldi, yanıt henüz yok.",risk:"Dünkü hamlenin yanlış anlaşılma ihtimali oluştu."},
- career:{action:"Dünkü hazırlık bugün bir görüşmeye dönüşebilir.",ritual:"Dileğini not ettin, yapılacaklar listesi yerinde.",risk:"Dünkü hızlı hamle geri bildirim gerektirebilir."},
- home:{action:"Dünkü incelemeden yeni bilgi topladın.",ritual:"Hayalindeki ev güzel, bütçe hâlâ hesap istiyor.",risk:"Dünkü acele karar yeni masraflar doğurabilir."},
- viral:{action:"Dünkü denemen sayesinde yeni veri oluştu.",ritual:"İşaret aramak izlenme verisini değiştirmedi.",risk:"Dünkü deneyin tepkilerini kontrol etmelisin."},
- peace:{action:"Dünkü sınırın bugün biraz alan açtı.",ritual:"Dünkü niyetin iyiydi; zaman yine sınırlı.",risk:"Dünkü acele karar beklenmedik bir uğraş yaratabilir."},
- custom:{action:"Dünkü somut adımın bugün yeni bir seçenek yarattı.",ritual:"Motivasyonun arttı, belirsizlik devam ediyor.",risk:"Dünkü kestirmenin etkisini hâlâ ölçemiyorsun."}
+money:{action:"Dün aldığın bilgiler bugün daha net bir seçim yapmanı sağlıyor.",ritual:"Bolluk niyetini bugün de hatırlıyorsun.",risk:"Dünkü kararın maddi karşılığı henüz net değil."},
+love:{action:"Dünkü iletişim aranızdaki belirsizliği azaltmış olabilir.",ritual:"Niyetin net; yanıt hâlâ belirsiz.",risk:"Beklentin ile karşılaştığın durumun aynı olup olmadığını düşünüyorsun."},
+career:{action:"Dünkü hazırlığın bugün kendine daha çok güvenmeni sağlıyor.",ritual:"Yeni rolünü zihninde canlandırmaya devam ediyorsun.",risk:"Dünkü kararının nasıl karşılandığını henüz bilmiyorsun."},
+home:{action:"Dünkü araştırmada fark etmediğin bir ayrıntı daha belirginleşti.",ritual:"İstediğin yaşam alanını daha net hayal ediyorsun.",risk:"Dünkü kararın bütün koşulları henüz ortaya çıkmadı."},
+viral:{action:"Dünkü paylaşımın yeni bir geri bildirim bıraktı.",ritual:"Görünürlük niyetin zihninde yer tutuyor.",risk:"Dünkü seçimin etkisi henüz ölçülemedi."},
+peace:{action:"Dünkü tercihin bugün biraz daha fazla alan açmış olabilir.",ritual:"Kendinle kalmaya zaman ayırdın.",risk:"Dünkü kararının sende nasıl bir etki bıraktığını gözlemliyorsun."},
+custom:{action:"Dünkü küçük adım yeni bir olasılık yarattı.",ritual:"Niyetin aklında daha fazla yer kaplıyor.",risk:"Dünkü kararın sonucu henüz kesinleşmedi."}
 };
 function clockLabel(){return state.time<=22?"VAKİT DARALIYOR":state.time<=48?"ZAMAN AZALIYOR":"BAŞVURU AÇIK"}
 
@@ -473,25 +468,24 @@ function answer(i){
 
 function verdict(){
  const subject={
- money:["Evrenin muhasebesi yine sende.","Para hesaba değil, panoya geldi."],
- love:["Evren flört etmiyor. İnsanlar ediyor.","11:11'de biri çevrimiçi oldu. O kadar."],
- career:["Evren seni terfi ettirmedi. Sen uğraştın.","Unvanı daha erken yazmış olabilirsin."],
- home:["Vizyon panosundaki evin tapusu yok.","Kozmik emlak ofisi henüz açılmadı."],
- viral:["Algoritma evrene rapor vermiyor.","Yorumlara 777 yazmak dağıtım planı değildir."],
- peace:["Huzurun bildirimleri hâlâ açık.","Mola manifestosu yaparken molayı unuttun."],
- custom:["Evren dileğini okuyup ekibe yönlendirdi.","Özel başvurular için de bir plan gerekiyor."]
+ money:["Bolluğa alan açıyorsun.","Niyetin belirginleşti. Maddi karşılık henüz görünür değil."],
+ love:["Kalbinde yeni bir alana yer açtın.","Karşılaşmaların anlamını keşfediyorsun. Bağın yönü henüz belirsiz."],
+ career:["Kendini bir sonraki aşamaya hazırlıyorsun.","Yeni bir rolün ihtimali zihninde netleşti. Süreç devam ediyor."],
+ home:["Yeni yaşam alanın daha belirgin.","Hayal ettiğin mekânı netleştirdin. Henüz bütün koşullar oluşmadı."],
+ viral:["Görünür olmaya alan açıyorsun.","Niyetini sürdürdün. Görünür sonuçlar şimdilik sınırlı."],
+ peace:["İçsel alanını yeniden düzenliyorsun.","Sakinlik niyetin güçlü. Günlük ritmini değiştirmek zaman alıyor."],
+ custom:["Niyetini daha açık duyuyorsun.","Seçimlerinin karşılığı henüz şekilleniyor."]
  };
  const base=subject[themeName()];
- if(state.hidden>=7&&state.progress<48){state.endingTag="GİZLİ SON / KOZMİK ÇAĞRI MERKEZİ";return ["Evreni 7 kere aradın.","Müşteri temsilcisine bağlanamadın. Sistem bu sonucu büyük başarı olarak kaydetti."];}
- if(state.lucky>=2){state.endingTag="GİZLİ SON / ŞANS ESERİ";return ["Kestirmeler tuttu. Şimdilik.","İki riskli karar işe yaradı. Bu bir strateji olduğunu kanıtlamıyor."];}
- if(state.progress>=82){state.endingTag="SON / GERÇEKLİK KAZANDI";return [base[0],"Yedi gün, birkaç şans ve birçok küçük adım. Evren başarıyı üstlenmeye hazırlanıyor."];}
- if(state.progress>=54){state.endingTag="SON / BİRAZ İCRAAT";return ["İşaret de var. İcraat da.","İlerledin. Fakat bir sonraki dilek için ilk önce takvimi açabilirsin."];}
- if(state.risk>=4&&state.progress<50){state.endingTag="SON / KESTİRME ROTA";return ["Kestirme yolu uzadı.","Hızlı sonuç hedefi, beklenenden uzun bir hikâyeye dönüştü."];}
- if(state.ritual>=4){state.endingTag="SON / YÜKSEK FREKANS";return [base[1],"Motivasyon var. Hedefe giden adımları evrene ihale etmiş olabilirsin."];}
- if(state.time===0){state.endingTag="SON / SÜRE DOLDU";return ["Evrenin mesaisi bitti.","Gerçeklik departmanı kapanış saatlerine çok bağlı."];}
- state.endingTag="SON / DOSYA KAPANDI";return [base[0],"Yedi karar, çeşitli tesadüfler. Bir sonraki turda bambaşka bir kader dene."];
+ if(state.hidden>=7&&state.progress<48){state.endingTag="YOĞUN EŞZAMANLILIK";return ["İşaretler çoğaldı.","777 sayısıyla tekrar tekrar karşılaştın. Niyetin zihninde canlı; görünür değişim henüz sınırlı."];}
+ if(state.lucky>=2){state.endingTag="BEKLENMEDİK AÇILIM";return ["Beklenmedik kapılar açıldı.","Bazı kararlarının olumlu karşılıkları oldu. Bu gelişmelerin zamanlaması seni şaşırtmış olabilir."];}
+ if(state.progress>=82){state.endingTag="GÖRÜNÜR SONUÇ";return [base[0],"Niyetine eşlik eden somut gelişmeler yaşadın. Sürecin bundan sonra nasıl ilerleyeceği hâlâ açık."];}
+ if(state.progress>=54){state.endingTag="HAREKETE GEÇİŞ";return ["Niyetin harekete dönüştü.","Birden fazla adım attın. Bazı gelişmeler karşılık buldu; bazıları henüz tamamlanmadı."];}
+ if(state.risk>=4&&state.progress<50){state.endingTag="YENİDEN HİZALANMA";return ["Yönünü yeniden belirliyorsun.","Hızlı ilerlemek istediğin anlar oldu. Hangi seçimin sana iyi geldiğini yeniden değerlendirebilirsin."];}
+ if(state.ritual>=4){state.endingTag="NİYET GÜÇLENİYOR";return [base[1],"Olumlamalara ve işaretlere odaklandın. Somut gelişmelerin zamanlaması henüz belirsiz."];}
+ if(state.time===0){state.endingTag="DÖNGÜ TAMAMLANDI";return ["Bugünkü çalışma tamamlandı.","Zamanını hangi alanlara ayırdığın da bu sürecin bir parçasıydı."];}
+ state.endingTag="AÇIK OLASILIK";return [base[0],"Yedi gün boyunca farklı kararlar aldın. Bu sürecin her kısmı henüz görünür bir sonuç vermedi."];
 }
-
 let summary=null;
 function finish(){
  $("eventVisual").replaceChildren();state.ended=true;screens("endScreen");
