@@ -44,7 +44,7 @@ function event(msg){state.logs.unshift({time:Math.round(state.clock),text:msg});
 function save(){try{localStorage.setItem(KEY,JSON.stringify({state,agents,particles,hosts,debris,signals}));$('saved').textContent='KAYDEDİLDİ ✓'}catch(e){$('saved').textContent='KAYIT YOK'}}
 function resetWorld(){agents=[];particles=[];hosts=[];debris=[];signals=[];bursts=[];flares=[];for(let i=0;i<5;i++)addAgent('macro');addAgent('dend');addAgent('fibro');addAgent('treg');for(let k=0;k<22;k++){let x=80+(k%6)*148+rnd(-22,22),y=95+Math.floor(k/6)*109+rnd(-21,21);hosts.push({id:++maxId,x,y,infect:0,dead:false,heal:0});}}
 if(!hosts.length||!agents.length)resetWorld();
-function start(){if(state.phase!=='intro')return;state.phase='between';$('overlay').hidden=true;event('Doku devriyesi başladı.');rebuild();save();}
+function start(){if(state.phase!=='intro')return;state.phase='between';$('overlay').hidden=true;event('Doku devriyesi başladı.');updateUi(true);save();}
 function beginChapter(){if(state.phase!=='between'||state.chapter>=campaign.length)return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;
  const memo=state.memories[w.antigen]||0;state.activation=(w.antigen&&memo>0)?Math.min(55,memo):0;state.focus={x:w.x,y:w.y};particles=[];debris=[];signals=[];
  if(w.kind==='debris'){for(let i=0;i<w.count;i++)debris.push({id:++maxId,x:w.x+rnd(-115,115),y:w.y+rnd(-80,80),hp:3});}
@@ -54,7 +54,7 @@ function beginChapter(){if(state.phase!=='between'||state.chapter>=campaign.leng
  if(w.kind==='debris')state.inflam=clamp(state.inflam+9,0,100);
  else if(w.kind==='allergen')state.inflam=clamp(state.inflam+5,0,100);
  else state.inflam=clamp(state.inflam+12,0,100);
- event('OLAY '+(state.chapter+1)+': '+w.title);rebuild();save();}
+ event('OLAY '+(state.chapter+1)+': '+w.title);updateUi(true);save();}
 function finishChapter(){if(state.phase!=='active')return;const w=wave();state.phase='between';const gained=Math.max(5,Math.round(4+state.tissue/13+Math.max(0,45-state.inflam)/20));state.points+=gained;state.score+=Math.round(state.tissue)+gained*2;
  if(w.antigen){let gain=clamp(Math.round(16+state.activation*.22+state.presentation*.12),12,35);state.memories[w.antigen]=clamp((state.memories[w.antigen]||0)+gain,0,100);}
  const m=Object.values(state.memories);state.memory=Math.round(m.reduce((a,b)=>a+b,0)/m.length);
