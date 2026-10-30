@@ -246,6 +246,16 @@ body{background:#f8f8f7;color:#101010}
  .desktop-scene .game-name{font-size:clamp(10px,2.5vw,12px)!important}
  .desktop-scene .game-index{font-size:8px!important}
 }
+/* Phone viewport: 6 x 7 offset sticker positions; two central cells reserved for cat. */
+@media(max-width:760px){
+ html,body{height:100%!important;overflow:hidden!important}
+ .desktop-scene{height:100dvh!important;min-height:0!important;overflow:hidden!important}
+ .desktop-scene .game-tile{gap:1px!important;transform:rotate(var(--scatter-rotation,0deg))!important}
+ .desktop-scene .game-name{font-size:clamp(7px,1.86vw,9px)!important;line-height:1.08!important;min-height:2.16em!important;letter-spacing:-.025em!important}
+ .desktop-scene .game-index{font-size:7px!important}
+ .desktop-scene .landing-hub{z-index:1!important}
+ .desktop-scene .game-thumb{aspect-ratio:1.42!important}
+}
 @media(prefers-reduced-motion:reduce){.desktop-scene .game-tile{transition:none!important}}
 
 </style>
@@ -483,7 +493,38 @@ let requested=new URLSearchParams(location.search).get('game');if(requested==='p
   const W=scene.clientWidth, V=window.innerHeight||760;
   if(!W)return;
   const mobile=W<=760;
-  const H=mobile?Math.max(V*2.2,1900):V;
+  if(mobile){
+    const H=V,cols=6,rows=7;
+    const marginX=6,marginY=Math.max(10,Math.min(17,H*.017));
+    const cellW=(W-2*marginX)/cols,cellH=(H-2*marginY)/rows;
+    const coverW=Math.min(cellW*.79,cellH*.73,65);
+    const catWidth=Math.min(cellW*2.13,cellH*1.85,125);
+    scene.style.setProperty('--cat-top',(marginY+cellH*3.5)+'px');
+    scene.style.setProperty('--cat-size',catWidth+'px');
+    scene.style.setProperty('--scatter-scene-height',H+'px');
+    const slots=[];
+    for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){
+      // Central 2x2 clearing accommodates the cat and its silhouette.
+      if((row===2||row===3)&&(col===2||col===3))continue;
+      slots.push({col,row});
+    }
+    // Distribute newer and older games across the wall, rather than grouping.
+    const rng=random(87942);
+    for(let k=slots.length-1;k>0;k--){const j=Math.floor(rng()*(k+1));[slots[k],slots[j]]=[slots[j],slots[k]];}
+    tiles.forEach((tile,i)=>{
+      const {row,col}=slots[i];
+      const tweak=(random(i*71+19)()-.5);
+      const size=Math.round(coverW*(.92+(i%5)*.035));
+      const x=marginX+col*cellW+(cellW-size)/2+tweak*Math.min(3,cellW*.04);
+      const y=marginY+row*cellH+Math.max(0,(cellH-(size/1.42+21))/2)+tweak*Math.min(4,cellH*.045);
+      tile.style.setProperty('--scatter-size',size+'px');
+      tile.style.setProperty('--scatter-x',x.toFixed(1)+'px');
+      tile.style.setProperty('--scatter-y',y.toFixed(1)+'px');
+      tile.style.setProperty('--scatter-rotation',((random(i*113+7)()-.5)*7).toFixed(2)+'deg');
+    });
+    return;
+  }
+  const H=V;
   const insetX=mobile?14:clamp(W*.019,14,30),insetY=mobile?15:clamp(H*.021,11,20);
   const catWidth=mobile?clamp(W*.3,105,142):clamp(Math.min(W*.096,H*.237),90,168);
   const catY=mobile?Math.min(H*.31,550):H/2;
