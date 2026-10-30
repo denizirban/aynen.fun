@@ -64,7 +64,10 @@ function limitCamera(){
 }
 limitCamera();
 function start(){if(state.phase!=='intro')return;state.phase='between';$('overlay').hidden=true;event('Doku devriyesi başladı.');notice('İlk olayı başlat; canlılara dokunarak bilgi al.');updateUi(true);save();}
-function beginChapter(){if(state.phase!=='between'||(state.chapter>=campaign.length&&state.mode!=='sandbox'))return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;state.chapterMilestone=0;state.focusSet=false;
+function beginChapter(){
+ if(state.phase==='intro')start();
+ if(state.phase==='paused'&&state.returnPhase==='between')state.phase='between';
+ if(state.phase!=='between'||(state.chapter>=campaign.length&&state.mode!=='sandbox'))return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;state.chapterMilestone=0;state.focusSet=false;
  const memo=state.memories[w.antigen]||0;state.activation=(w.antigen&&memo>0)?Math.min(55,memo):0;state.focus={x:w.x,y:w.y};particles=[];debris=[];signals=[];agents.forEach(a=>{if(a.type==='dend'){a.carrying=false;a.carryingAntigen=null;a.readyAt=0;}});
  if(w.kind==='debris'){for(let i=0;i<w.count;i++)debris.push({id:++maxId,x:w.x+rnd(-115,115),y:w.y+rnd(-80,80),hp:3});}
  else for(let i=0;i<w.count;i++)addParticle(w.kind,w.x,w.y,w.antigen);
@@ -185,7 +188,9 @@ function updateUi(force){const w=wave();$('stage').dataset.phase=state.phase;['t
  $('points').textContent=state.points+' ARAŞTIRMA';$('chapter').textContent=state.mode==='sandbox'?'SERBEST YAŞAM · '+(state.chapter-5)+'. OLAY':'OLAY '+String(Math.min(state.chapter+1,campaign.length)).padStart(2,'0')+' / '+campaign.length.toString().padStart(2,'0');
  $('episode-title').textContent=state.chapter>=campaign.length&&state.mode!=='sandbox'?'Doku raporu hazır.':w.title;
  $('episode-desc').textContent=state.chapter>=campaign.length&&state.mode!=='sandbox'?'Tüm senaryolar tamamlandı.':w.desc;
- $('next').disabled=state.phase!=='between';$('next').textContent=state.chapter===0?'İLK OLAYI BAŞLAT →':'SONRAKİ OLAY →';
+ const canBegin=state.phase==='intro'||state.phase==='between'||(state.phase==='paused'&&state.returnPhase==='between');
+ $('next').disabled=!canBegin;
+ $('next').textContent=state.chapter===0?'İLK OLAYI BAŞLAT →':'SONRAKİ OLAY →';
  $('scene-label').textContent=state.phase==='active'?'BAĞIŞIKLIK / AKTİF YANIT':state.phase==='paused'?'SİSTEM / DURAKLATILDI':'DOKU / GÖZETİM';
  $('pulse').className='pulse'+(state.phase==='active'?' danger':'');
  $('population').textContent=agents.length+' HÜCRE / '+(particles.length+debris.length)+' PARÇACIK';
@@ -762,7 +767,9 @@ function setupMobileEpisode(){
 }
 function init(){resizeScene();window.addEventListener('resize',resizeScene,{passive:true});setupDrawer();setupSound();setupVisualOptions();setupCamera();setupMobileEpisode();
  if($('campaign-progress'))$('campaign-progress').hidden=false;
- $('start').onclick=start;$('next').onclick=beginChapter;$('reset').onclick=restart;
+ $('start').onclick=beginChapter;
+ $('next').onclick=beginChapter;
+ $('reset').onclick=restart;
  document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>skill(b.dataset.action)));
  $('speed').onclick=()=>{state.speed=state.speed===1?2:state.speed===2?3:1;updateUi(true);save()};
  $('pause').onclick=()=>{if(state.phase==='active'||state.phase==='between'){state.returnPhase=state.phase;state.phase='paused';event('Duraklatıldı.');}
