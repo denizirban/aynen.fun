@@ -213,7 +213,7 @@ var time=17*60, peace=75, energy=100, done=0, shared=0, missed=0, speed=1, pause
 var jobs=[], seq=1, selected=null, current=null, helper=null, childTask=null, selfQueue=[], partnerQueue=[], day=1, cash=420, partnerEnergy=88, kidEnergy=83, petEnergy=90, activePerson='self', last=performance.now(), tickBudget=0, eventAt=17*60+28, toastTimer=0, speechTimer=0, combo=0, lastSave=0, savedPreview=null;
 var SAVE_KEY='aynen:evin-patronu:v3';
 var points={stove:[1095,368],sink:[1220,510],table:[705,560],kid:[653,668],floor:[544,775],laundry:[1205,745],desk:[913,445],pet:[340,766]};
-var pos=[770,460], posTarget=[770,460];
+var pos=[770,460], posTarget=[770,460], partnerPos=[885,351], kidPos=[746,714];
 var templates=[
  {key:'dinner',name:'Akşam yemeğini hazırla',detail:'Herkesin aynı anda acıkma ihtimali %100.',icon:'🍝',spot:'stove',dur:34,due:19*60+10,weight:16},
  {key:'homework',name:'Ödeve yardım et',detail:'“Sadece bir sorum var.” (Matematik kitabı 47 sayfa.)',icon:'✏️',spot:'kid',dur:23,due:20*60,weight:14},
@@ -253,11 +253,11 @@ function render(){
 }
 function say(t){var e=$('#speech');e.textContent=t;e.classList.add('visible');clearTimeout(speechTimer);speechTimer=setTimeout(function(){e.classList.remove('visible')},3500)}
 function canKid(j){return ['pet','table','floor','kid'].includes(j.spot)}
-function saveGame(){if(!started)return;var snap={v:3,day:day,cash:cash,time:time,peace:peace,energy:energy,partnerEnergy:partnerEnergy,kidEnergy:kidEnergy,petEnergy:petEnergy,done:done,shared:shared,missed:missed,speed:speed,started:started,ended:ended,seq:seq,jobs:jobs,current:current&&current.id,helper:helper&&helper.id,childTask:childTask&&childTask.id,selfQueue:selfQueue,partnerQueue:partnerQueue,eventAt:eventAt,combo:combo,pos:pos,posTarget:posTarget,at:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(snap));lastSave=performance.now();$('#saveStatus').textContent='KAYDEDİLDİ ✓'}catch(e){$('#saveStatus').textContent='KAYIT YOK'}}
+function saveGame(){if(!started)return;var snap={v:3,day:day,cash:cash,time:time,peace:peace,energy:energy,partnerEnergy:partnerEnergy,kidEnergy:kidEnergy,petEnergy:petEnergy,done:done,shared:shared,missed:missed,speed:speed,started:started,ended:ended,seq:seq,jobs:jobs,current:current&&current.id,helper:helper&&helper.id,childTask:childTask&&childTask.id,selfQueue:selfQueue,partnerQueue:partnerQueue,eventAt:eventAt,combo:combo,pos:pos,posTarget:posTarget,partnerPos:partnerPos,kidPos:kidPos,at:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(snap));lastSave=performance.now();$('#saveStatus').textContent='KAYDEDİLDİ ✓'}catch(e){$('#saveStatus').textContent='KAYIT YOK'}}
 function getSave(){try{var s=JSON.parse(localStorage.getItem(SAVE_KEY));return s&&s.v===3&&Array.isArray(s.jobs)?s:null}catch(e){return null}}
 function loadSave(){
  var s=getSave();if(!s)return false;
- day=Math.max(1,s.day||1);cash=s.cash??420;time=s.time||17*60;peace=s.peace??75;energy=s.energy??100;partnerEnergy=s.partnerEnergy??88;kidEnergy=s.kidEnergy??83;petEnergy=s.petEnergy??90;done=s.done||0;shared=s.shared||0;missed=s.missed||0;speed=s.speed||1;jobs=s.jobs;seq=s.seq||1;eventAt=s.eventAt||time+35;combo=s.combo||0;pos=Array.isArray(s.pos)?s.pos:[770,460];posTarget=Array.isArray(s.posTarget)?s.posTarget:[770,460];selfQueue=s.selfQueue||[];partnerQueue=s.partnerQueue||[];
+ day=Math.max(1,s.day||1);cash=s.cash??420;time=s.time||17*60;peace=s.peace??75;energy=s.energy??100;partnerEnergy=s.partnerEnergy??88;kidEnergy=s.kidEnergy??83;petEnergy=s.petEnergy??90;done=s.done||0;shared=s.shared||0;missed=s.missed||0;speed=s.speed||1;jobs=s.jobs;seq=s.seq||1;eventAt=s.eventAt||time+35;combo=s.combo||0;pos=Array.isArray(s.pos)?s.pos:[770,460];posTarget=Array.isArray(s.posTarget)?s.posTarget:[770,460];partnerPos=Array.isArray(s.partnerPos)?s.partnerPos:[885,351];kidPos=Array.isArray(s.kidPos)?s.kidPos:[746,714];selfQueue=s.selfQueue||[];partnerQueue=s.partnerQueue||[];
  current=jobs.find(function(j){return j.id===s.current})||null;helper=jobs.find(function(j){return j.id===s.helper})||null;childTask=jobs.find(function(j){return j.id===s.childTask})||null;paused=false;ended=false;started=true;selected=null;$('#splash').classList.add('hidden');$('#ending').classList.add('hidden');$('#player').setAttribute('transform','translate('+pos[0]+' '+pos[1]+')');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',Number(b.dataset.speed)===speed)});$('#pause').textContent='Ⅱ';render();if(s.ended){finishDay();}else{message('Gün '+day+', '+format(time)+' — kaldığın yerden.');say('Bir şey isteyebilir miyim?')}return true
 }
 function showSavePreview(){var s=getSave();if(!s){$('#resume').hidden=true;$('#savedStats').hidden=true;$('#start').textContent='EVE GİR →';return}savedPreview=s;$('#resume').hidden=false;$('#savedStats').hidden=false;$('#savedStats').textContent='GÜN '+s.day+' · '+format(s.time)+' · EV HUZURU %'+Math.round(s.peace)+' · '+(s.jobs||[]).filter(function(j){return j.remaining>0}).length+' İŞ'+(s.ended?' · AKŞAM BİTTİ':'');$('#resume').textContent=s.ended?'SON AKŞAMIN RAPORU →':'↳ KALDIĞIM YERDEN DEVAM';$('#start').textContent='YENİ OYUN BAŞLAT';
@@ -326,10 +326,25 @@ function finishDay(){
 function reset(mode){
  if(mode==='fresh'){day=1;cash=420;partnerEnergy=88;kidEnergy=83;petEnergy=90;}
  if(mode==='next'){day+=1;cash+=120;partnerEnergy=clamp(partnerEnergy+25);kidEnergy=clamp(kidEnergy+30);petEnergy=clamp(petEnergy+25);}
- time=17*60;peace=mode==='next'?clamp(Math.max(45,peace+20)):75;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=time+24;combo=0;pos=[770,460];posTarget=[770,460];$('#player').setAttribute('transform','translate(770 460)');templates.forEach(function(t){add(t)});$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Gün '+day+' — Saat 17.00. Ev yine seni bekliyor.');say('Yemek ne zaman hazır?')
+ time=17*60;peace=mode==='next'?clamp(Math.max(45,peace+20)):75;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=time+24;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Gün '+day+' — Saat 17.00. Ev yine seni bekliyor.');say('Yemek ne zaman hazır?')
 }
 
-function frame(now){var dt=Math.min(140,now-last);last=now;if(!paused&&!ended&&started){pos[0]+=(posTarget[0]-pos[0])*Math.min(1,dt/220);pos[1]+=(posTarget[1]-pos[1])*Math.min(1,dt/220);$('#player').setAttribute('transform','translate('+pos[0].toFixed(1)+' '+pos[1].toFixed(1)+')');tickBudget+=dt;if(tickBudget>=175){advance(tickBudget);tickBudget=0}}requestAnimationFrame(frame)}
+function frame(now){
+ var dt=Math.min(140,now-last);last=now;
+ if(!paused&&!ended&&started){
+  var k=Math.min(1,dt/300);
+  pos[0]+=(posTarget[0]-pos[0])*k;pos[1]+=(posTarget[1]-pos[1])*k;
+  $('#player').setAttribute('transform','translate('+pos[0].toFixed(1)+' '+pos[1].toFixed(1)+')');
+  var workPoints={stove:[1035,395],sink:[1210,465],table:[610,480],kid:[710,625],floor:[480,730],laundry:[1150,675],desk:[870,355],pet:[360,745]};
+  var p=helper&&workPoints[helper.spot]||[885,351],c=childTask&&workPoints[childTask.spot]||[746,714];
+  partnerPos[0]+=(p[0]-partnerPos[0])*k*.7;partnerPos[1]+=(p[1]-partnerPos[1])*k*.7;
+  kidPos[0]+=(c[0]-kidPos[0])*k*.8;kidPos[1]+=(c[1]-kidPos[1])*k*.8;
+  $('#partnerActor').setAttribute('transform','translate('+partnerPos[0].toFixed(1)+' '+partnerPos[1].toFixed(1)+')');
+  $('#kidActor').setAttribute('transform','translate('+kidPos[0].toFixed(1)+' '+kidPos[1].toFixed(1)+')');
+  tickBudget+=dt;if(tickBudget>=175){advance(tickBudget);tickBudget=0}
+ }
+ requestAnimationFrame(frame)
+}
 $('#start').onclick=function(){reset('fresh')};$('#resume').onclick=loadSave;$('#again').onclick=function(){reset('next')};$('#newFromStart').onclick=function(){if(confirm('Kaydedilen ilerlemenin üzerine yeni oyun başlasın mı?'))reset('fresh')};$('#doIt').onclick=function(){work('self')};$('#delegate').onclick=function(){work('partner')};$('#askKid').onclick=function(){work('kid')};$('#closeAction').onclick=hideAction;$('#saveNow').onclick=function(){saveGame();message('Oyun kaydedildi.');};
 $('#taskList').addEventListener('click',function(e){var b=e.target.closest('[data-job]');if(b)choose(find(b.dataset.job))});
 document.querySelectorAll('[data-station]').forEach(function(el){function click(){var arr=jobs.filter(function(j){return j.remaining>0&&j.spot===el.dataset.station}).sort(function(a,b){return a.due-b.due});if(arr.length)choose(arr[0]);else message('Burada şimdilik iş yok. Şüpheli.')}
