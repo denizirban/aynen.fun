@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Nostaljik çim alanda sokak fenerini uzun sırıkla yakan eski zaman işçisi">
+<defs>
+ <linearGradient id="meadow" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f1eee2"/><stop offset=".66" stop-color="#e4edcb"/><stop offset="1" stop-color="#8bae79"/></linearGradient>
+ <linearGradient id="light" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff9c1"/><stop offset="1" stop-color="#ffcb4f"/></linearGradient>
+</defs>
+<path d="M28 59Q36 21 108 20H259Q300 34 300 91L294 157Q283 192 244 197L74 194Q31 189 24 149Z" fill="url(#meadow)"/>
+<ellipse cx="160" cy="181" rx="130" ry="18" fill="#62885e" opacity=".2"/>
+<path d="M42 178Q112 164 172 175T287 176" fill="none" stroke="#516b45" stroke-width="2"/>
+<path d="M71 168v-9l-4-3m4 5 6-6M97 176l-4-9m4 5 5-9M245 179l3-10m4 7 6-9M275 177l-2-8" stroke="#6b8e56" stroke-width="2" fill="none" stroke-linecap="round"/>
+<!-- period streetlamp -->
+<path d="M241 53V177" stroke="#26332b" stroke-width="6" stroke-linecap="round"/>
+<path d="M227 55H255L259 91L223 91Z" fill="#252e27" stroke="#283328" stroke-width="2"/>
+<path d="M232 60L249 60L252 86H229Z" fill="url(#light)" stroke="#886c38" stroke-width="1.5"/>
+<path d="M241 42v12M232 53L241 44 250 53" stroke="#26332b" stroke-width="3" fill="none" stroke-linejoin="round"/>
+<ellipse cx="240" cy="92" rx="42" ry="17" fill="#ffc843" opacity=".13"/>
+<!-- lamplighter character -->
+<ellipse cx="155" cy="183" rx="38" ry="7" fill="#556957" opacity=".22"/>
+<path d="M147 149L141 179L132 183M173 148L181 178L189 184" stroke="#2b3331" stroke-width="8" fill="none" stroke-linecap="round"/>
+<path d="M137 113Q151 104 172 110L186 148Q157 159 131 148Z" fill="#506f65" stroke="#263a35" stroke-width="2.8"/>
+<path d="M140 139L174 143" stroke="#f2d0a2" stroke-width="4"/>
+<path d="M143 114Q128 121 123 145L129 149L151 128M174 116Q190 127 203 127L215 108" stroke="#263a35" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M125 146L132 151M213 108L218 108" stroke="#d9a77b" stroke-width="7" stroke-linecap="round"/>
+<path d="M148 106L146 94Q146 79 162 80Q177 82 176 95L172 110Z" fill="#d4ab82" stroke="#322d25" stroke-width="2"/>
+<path d="M139 78L181 78L173 67H147Z" fill="#303934" stroke="#303934" stroke-width="2"/>
+<path d="M149 67V54Q160 50 174 55L172 69Z" fill="#303934"/>
+<path d="M151 90Q155 89 157 91M165 91h3" stroke="#3b332b" stroke-width="2" stroke-linecap="round"/>
+<path d="M163 101Q168 102 170 99" stroke="#714a31" stroke-width="1.8" fill="none"/>
+<!-- long pole and flame -->
+<path d="M208 124L245 72" stroke="#805d37" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M245 74Q233 64 244 55Q248 62 253 66Q257 77 247 80Z" fill="#f5a52d" stroke="#a95d22" stroke-width="1.2"/>
+<!-- small oddity: job card mini glyph -->
+<path d="M57 67Q51 49 68 44Q87 43 91 57Q95 73 79 82L73 90" fill="#fffdf3" stroke="#263830" stroke-width="2.4"/>
+<text x="74" y="74" font-size="26" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" fill="#27382e">?</text>
+<circle cx="73" cy="91" r="2.5" fill="#263830"/>
+<g fill="#f5ead3" stroke="#698c58" stroke-width="1"><path d="M52 176q4-13 8-1z"/><path d="M108 173q3-11 7 0z"/><path d="M267 176q4-13 8-1z"/></g>
+</svg>
