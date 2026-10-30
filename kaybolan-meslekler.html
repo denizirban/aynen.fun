@@ -150,4 +150,4 @@ function showEnd(){S.phase='end';const best=Math.max(S.score,Number(load('-best'
 async function share(){const txt='Bu da İş mi? — aynen.fun\n30 gerçek mesleğin içinden 10 tanesini denedim: '+S.score+'/10.\n'+(S.score===10?'İş tanımlarını ben yazmış olabilirim.':'Peki bir hallaç tam olarak ne iş yapar?')+'\nhttps://aynen.fun/kaybolan-meslekler.html';try{if(navigator.share){await navigator.share({title:'Bu da İş mi?',text:txt});return}if(navigator.clipboard){await navigator.clipboard.writeText(txt);$('share').textContent='KOPYALANDI ✓';return}}catch(e){}try{const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();$('share').textContent='KOPYALANDI ✓'}catch(e){window.prompt('Paylaş:',txt)}}
 window.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey||e.repeat||e.target.closest('button,a,input,textarea'))return;if(S.phase==='guess'&&/^[123]$/.test(e.key))answer(Number(e.key)-1);else if(S.phase==='reveal'&&e.key==='Enter')next()});
 showIntro();
-})();</script></body></html>
+})();</script></body></html><script src="/share-kit.js?v=1" defer></script>
