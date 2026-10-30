@@ -1,0 +1,394 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Yatarı Kaç? — Hukuk Şehri | aynen.fun</title><meta name="theme-color" content="#f6f3eb"><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f3eb;color:#151515;font-family:Arial,Helvetica,sans-serif;overflow:hidden}button{font:inherit;cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #ed7464;outline-offset:2px}
+.app{height:100dvh;display:grid;grid-template-rows:53px minmax(0,1fr) 38px;max-width:1500px;margin:auto;padding:0 16px}.bar,.foot{display:flex;justify-content:space-between;align-items:center;gap:10px}.brand{font-weight:900;letter-spacing:-.05em;font-size:20px}.brand span{color:#dc583e}.bar a,.foot a{color:inherit;text-decoration:none}.topnote,.foot{font:10px monospace;color:#575651}.stage{display:grid;grid-template-columns:minmax(0,1fr) 340px;border:1.5px solid #141414;min-height:0;background:#eef2e6}.world{position:relative;overflow:hidden;min-height:0;background:linear-gradient(#d9ecdb 0 57%,#d1dfc5 57% 61%,#e9d9bf 61%);isolation:isolate}.world:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(110deg,transparent 0 112px,#ffffff26 113px 114px);pointer-events:none}.scene{width:100%;height:100%;display:block;touch-action:manipulation}.building{cursor:pointer;transition:filter .2s}.building:hover,.building:focus{filter:drop-shadow(0px 0px 10px #fff);outline:none}.place-label{font:700 13px Arial;fill:#161616;paint-order:stroke;stroke:#f6f3eb;stroke-width:4px}.hintpill{position:absolute;top:14px;left:14px;background:#fff;border:1px solid #111;padding:10px 12px;font:11px monospace}.zoom{position:absolute;bottom:12px;left:13px;font:10px monospace;color:#343434;background:#fffc;padding:7px 10px}.panel{border-left:1.5px solid #111;background:#faf9f4;display:flex;flex-direction:column;min-height:0;padding:19px;gap:12px;overflow:auto}.eyebrow{font:10px monospace;color:#68655f;letter-spacing:.07em}.panel h1{font-size:clamp(31px,3vw,47px);line-height:.92;letter-spacing:-.075em;margin:0}.story{font-size:14px;line-height:1.47;margin:0}.switches{display:grid;gap:8px}.switch{border:1.5px solid #222;text-align:left;padding:12px;background:white;display:flex;gap:12px;align-items:center;font-size:12px;font-weight:700}.switch:before{content:"○";font-size:17px}.switch.selected{background:#dfff71}.switch.selected:before{content:"●"}.judgment{border:1px solid #111;background:#f4e3b7;padding:14px;margin-top:auto}.judgment strong{display:block;font-size:clamp(22px,2.2vw,31px);letter-spacing:-.055em;line-height:1.05}.judgment p{font-size:12px;line-height:1.42;margin:7px 0 0}.detail{border:1px solid #111;background:#fff}.detail summary{cursor:pointer;padding:12px;font:700 11px monospace;list-style:none}.detail p{padding:0 12px 10px;font-size:11px;line-height:1.45}.detail a{color:#111}.detail summary::-webkit-details-marker{display:none}.foot{font-size:10px}.cta{background:#111;border:0;color:white;font:700 10px monospace;padding:9px 12px;text-decoration:none}.river{animation:move 8s linear infinite}@keyframes move{to{transform:translateX(45px)}}.light{animation:flicker 2.4s ease-in-out infinite alternate}@keyframes flicker{to{opacity:.45}}.person{animation:bob 2.2s ease-in-out infinite alternate}@keyframes bob{to{transform:translateY(-5px)}}.pulse{animation:pulse 1.8s infinite alternate}@keyframes pulse{to{transform:scale(1.05);transform-origin:center}}
+@media(max-width:780px){.app{padding:0 8px;grid-template-rows:39px minmax(0,1fr) 22px}.bar .topnote{display:none}.brand{font-size:17px}.stage{display:grid;grid-template-columns:1fr;grid-template-rows:minmax(0,53fr) minmax(0,47fr)}.panel{border-left:0;border-top:1.5px solid #111;padding:12px 15px;gap:8px}.panel h1{font-size:clamp(24px,7vw,31px)}.story{font-size:11px;line-height:1.3}.switches{grid-template-columns:1fr 1fr;gap:6px}.switch{font-size:10px;padding:9px;min-height:36px;gap:5px}.judgment{padding:9px 11px}.judgment strong{font-size:21px}.judgment p{font-size:10px;line-height:1.28;margin:5px 0 0}.detail summary{padding:9px;font-size:10px}.detail p{font-size:10px}.hintpill{top:7px;left:7px;padding:7px 8px;font-size:9px}.zoom{font-size:9px;bottom:6px;left:7px;padding:4px}.foot{font-size:8px}.cta{padding:5px 6px;font-size:9px}}
+@media(max-width:780px) and (max-height:670px){.stage{grid-template-rows:minmax(0,48fr) minmax(0,52fr)}.panel{gap:6px;padding:9px 12px}.detail summary{padding:6px}.switch{padding:6px;min-height:32px}.judgment{padding:7px}}
+
+/* richer editorial city scene */
+.world{background:radial-gradient(ellipse at 72% 7%,#fff5c0 0 8%,transparent 29%),linear-gradient(180deg,#afdce0 0%,#e8ead5 52%,#cfdfbb 53%,#e6d5b5 80%)}
+.scene{filter:drop-shadow(0 10px 0 #00000010)}
+.building{transition:filter .2s,opacity .2s}.building:focus-visible{filter:drop-shadow(0 0 16px #e7ff77)}
+.hintpill{border-radius:10px;box-shadow:3px 4px 0 #16161618}
+.panel{background:#fffaf3}.switch{border-radius:11px;transition:background .15s,transform .15s}.switch:active{transform:scale(.985)}
+.switch.selected{background:#dfff71;box-shadow:3px 3px 0 #1e1e1e}
+.judgment{border-radius:14px;background:#ffe4d8;border-color:#e6a59e}
+.judgment strong{color:#ad342e}
+.infaz{border:1px solid #b7aa82;border-radius:13px;background:#fff3cf;padding:12px;display:grid;gap:7px}
+.infaz[hidden]{display:none!important}.infaz-number{font-size:22px;font-weight:900;letter-spacing:-.05em}
+.infaz-note,.infaz-sample{font-size:11px;line-height:1.35;margin:0;color:#4e4b43}
+.infaz-track{height:11px;background:#e3d9ba;border-radius:8px;overflow:hidden;border:1px solid #9f9478}
+.infaz-track span{width:50%;height:100%;display:block;background:linear-gradient(90deg,#e66b52,#eca15e)}
+.infaz-stages{display:flex;justify-content:space-between;font:8px monospace}
+.infaz-label{display:flex;justify-content:space-between;font:9px monospace;gap:8px}
+.infaz input{width:100%;accent-color:#111}
+@media(max-width:780px){.infaz{padding:8px;gap:5px}.infaz-number{font-size:18px}.infaz-note,.infaz-sample{font-size:9px}.infaz-stages{font-size:7px}.panel{scrollbar-width:thin}.judgment{padding:8px}}
+
+.city-pins{position:absolute;inset:0;pointer-events:none}
+.city-pins button{position:absolute;pointer-events:auto;border:1px solid #171717;border-radius:20px;background:#fffc;padding:7px 9px;box-shadow:2px 3px 0 #0002;font:700 10px Arial,sans-serif;transition:transform .2s,background .2s}
+.city-pins button.active{background:#dfff71;transform:translateY(-3px)}
+.city-pins button[data-goto="apartment"]{left:6%;top:18%}.city-pins button[data-goto="cafe"]{left:40%;top:35%}.city-pins button[data-goto="office"]{right:8%;top:17%}.city-pins button[data-goto="phone"]{left:5%;bottom:12%}.city-pins button[data-goto="street"]{left:37%;bottom:10%}.city-pins button[data-goto="court"]{right:8%;bottom:14%}
+.zoom{display:none}
+.random-event{align-self:flex-end;background:#fff;border:1px solid #111;padding:7px 9px;border-radius:20px;font:700 9px monospace}
+.infaz{display:block!important}.infaz[hidden]{display:none!important}.infaz summary{cursor:pointer;font:700 11px monospace;display:flex;align-items:center;justify-content:space-between;list-style:none}.infaz summary::-webkit-details-marker{display:none}.infaz summary span{font-size:18px}.infaz[open] summary span{transform:rotate(45deg)}.infaz-inner{display:grid;gap:7px;margin-top:10px}
+@media(max-width:780px){.city-pins button{padding:5px 6px;font-size:8px}.city-pins button[data-goto="cafe"]{left:39%;top:38%}.city-pins button[data-goto="street"]{left:35%;bottom:8%}.random-event{font-size:8px;padding:5px 8px}.infaz summary{font-size:10px}}
+
+/* Illustrated paper-cut direction: muted gouache palette, charcoal ink, organic silhouettes. */
+:root{--forest:#438c52;--mint:#7abb60;--bark:#cf967b;--ivory:#fff0cd;--ink:#23332a}
+body{background:#ffeccf;color:var(--ink)}
+.app{background:#ffeccf}
+.stage{border-color:#293d30;background:#c0d6ac}
+.world{background:linear-gradient(180deg,#fae2b7 0%,#f9e7c8 41%,#a6c78b 42%,#87b36e 100%)}
+.world:before{background-image:radial-gradient(#1d3d2322 .55px,transparent .75px);background-size:5px 5px;opacity:.19;z-index:2;pointer-events:none}
+.scene{filter:none}
+.panel{background:#f9e9ce;border-color:#293d30}
+.brand span{color:#b96343}
+.eyebrow{color:#54634b}
+.hintpill,.city-pins button{border-radius:24px;background:#fff1d2;border-color:#25382b;box-shadow:2px 3px 0 #263b2b30;color:#263b2b}
+.city-pins button.active{background:#e8a38a;transform:translateY(-3px)}
+.building:hover{filter:drop-shadow(0 2px 2px #163a2345)}
+.switch{background:#fff3dc;border-color:#334633;border-radius:15px;box-shadow:none}
+.switch.selected{background:#a5d17e;box-shadow:2px 3px 0 #3c6046}
+.judgment{background:#f6cfb1;border:1px solid #b77761;border-radius:18px}
+.judgment strong{color:#733b2d}
+.infaz{background:#fae8be;border-color:#b99876;border-radius:18px}
+.infaz-track{background:#d7c6a1}.infaz-track span{background:linear-gradient(90deg,#b96148,#e29b67)}
+.detail{background:#fbeed4;border-color:#a79477;border-radius:12px}
+.random-event{background:#fff0d2;border-radius:18px;border-color:#41533d}
+.cta{background:#263a2b}
+@media(max-width:780px){.stage{grid-template-rows:minmax(0,50fr) minmax(0,50fr)}.city-pins button{font-size:8px;padding:6px 7px}.panel{padding:11px 13px}.hintpill{max-width:64%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+
+/* FULL ART-DIRECTION CHANGE — immersive editorial forest, not toy town */
+.app{max-width:100%;padding:0;background:#f7e6c8;grid-template-rows:0 minmax(0,1fr) 0}
+.bar{position:fixed;z-index:15;left:13px;right:13px;top:max(11px,env(safe-area-inset-top));background:transparent;pointer-events:none}
+.bar>*{pointer-events:auto}
+.bar .brand{background:#111e17e9;color:#fff9e5;border-radius:18px;padding:13px 17px;font-family:Georgia,serif;font-size:25px;box-shadow:0 4px 0 #102b1a40}
+.bar .brand span{color:#f8dd90}
+.bar .topnote{display:none}
+.stage{display:block;border:0;position:relative;height:100%;background:#c4d49e}
+.world{position:absolute;inset:0;height:100%;background:#f6e1b1}
+.world:before{display:none}
+.scene{width:100%;height:100%;object-fit:cover;filter:none}
+.city-pins button{background:#fff0ceeb;border:1px solid #364e37;color:#273c2d;border-radius:22px;font:700 11px Arial,sans-serif;box-shadow:0 3px 0 #14271847;padding:11px 12px;backdrop-filter:blur(4px)}
+.city-pins button.active{background:#fad19a;outline:2px solid #384f37;outline-offset:2px}
+.city-pins button[data-goto="apartment"]{top:44%;left:12%}.city-pins button[data-goto="cafe"]{top:58%;left:29%}.city-pins button[data-goto="office"]{top:45%;right:10%}
+.city-pins button[data-goto="phone"]{bottom:27%;left:10%}.city-pins button[data-goto="street"]{bottom:18%;left:40%}.city-pins button[data-goto="court"]{bottom:27%;right:12%}
+.hintpill{top:95px;left:17px;font:10px monospace;max-width:60%;background:#fff1d6d9;border:0}
+.panel{position:absolute;right:clamp(15px,3vw,42px);bottom:clamp(15px,3vw,42px);width:min(360px,44vw);height:auto;max-height:calc(100% - 120px);background:#fff0d9ec;border:1px solid #4b5841;border-radius:22px;box-shadow:0 12px 0 #202c2140;padding:18px;gap:10px;backdrop-filter:blur(10px);z-index:9;overflow:auto}
+.panel h1{font-family:Georgia,serif;font-weight:700;letter-spacing:-.04em}
+.switch{border-radius:13px;background:#fff5e5d9;border:1px solid #66705b;padding:11px}
+.switch.selected{background:#c4da97;box-shadow:0 3px 0 #456149}
+.judgment{background:#f7d4ba;border-radius:16px;border:1px solid #b9886c}
+.judgment strong{color:#6b4633}
+.random-event{background:#283f2e;color:#fff5e5;border:0;padding:9px 13px;border-radius:18px}
+.foot{position:fixed;bottom:12px;left:14px;right:14px;z-index:16;pointer-events:none}
+.foot>*{pointer-events:auto}.foot span{display:none}.foot .cta{border-radius:14px;background:#203c29;padding:10px 13px}
+@media(max-width:780px){
+ .app{height:100dvh;grid-template-rows:minmax(0,1fr)}
+ .scene{height:100%}
+ .bar .brand{font-size:20px;padding:10px 12px}
+ .panel{left:9px;right:9px;bottom:max(9px,env(safe-area-inset-bottom));width:auto;max-height:48dvh;padding:12px 13px 15px;border-radius:19px;gap:7px;box-shadow:0 5px 0 #1c352c40}
+ .panel h1{font-size:24px}
+ .switches{grid-template-columns:1fr 1fr}
+ .switch{font-size:10px;min-height:37px;padding:8px 9px}
+ .judgment{margin-top:0;padding:9px}.judgment strong{font-size:19px}.judgment p{font-size:10px}
+ .city-pins button{font-size:8px;padding:7px 8px}
+ .city-pins button[data-goto="apartment"]{left:5%;top:29%}
+ .city-pins button[data-goto="cafe"]{left:35%;top:40%}
+ .city-pins button[data-goto="office"]{right:5%;top:31%}
+ .city-pins button[data-goto="phone"]{left:5%;bottom:55%}
+ .city-pins button[data-goto="street"]{left:35%;bottom:54%}
+ .city-pins button[data-goto="court"]{right:6%;bottom:54%}
+ .hintpill{top:56px;left:12px;padding:6px 9px;font-size:9px}
+ .foot{bottom:auto;top:12px;right:12px;left:auto}.foot .cta{font-size:9px;padding:9px}
+}
+
+/* Mobile compact bottom sheet: make action choices visible without scrolling. */
+.detail:not([open]){flex:none!important;min-height:0!important}
+.detail summary{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.detail summary span{font-size:17px}
+.detail[open] summary span{transform:rotate(45deg)}
+.law-body{padding:0 12px 12px}
+.law-body p{padding:0!important;margin:0!important;font-size:11px;line-height:1.5}
+.law-body a{display:inline-block;margin-top:5px;text-underline-offset:3px}
+@media(max-width:780px){
+ .panel{max-height:46dvh!important;gap:5px!important;padding:9px 11px 11px!important}
+ .panel h1{font-size:clamp(18px,5.5vw,23px)!important;line-height:1.04!important}
+ .panel .eyebrow{font-size:8px!important}
+ .panel .story{font-size:10px!important;line-height:1.25!important}
+ .panel .random-event{font-size:8px!important;padding:6px 9px!important}
+ .switches{display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px!important}
+ .switch{font-size:9px!important;line-height:1.2!important;padding:7px!important;min-height:33px!important;gap:5px!important}
+ .switch:before{font-size:12px!important}
+ .judgment{padding:8px 9px!important;border-radius:12px!important;margin:0!important}
+ .judgment strong{font-size:clamp(15px,4.6vw,20px)!important;line-height:1.05!important}
+ .judgment p{font-size:9px!important;line-height:1.3!important}
+ .detail summary,.infaz summary{padding:8px!important;font-size:9px!important;line-height:1.25!important}
+ .detail{min-height:0!important}
+ .law-body{padding:0 9px 9px}
+ .law-body p{font-size:10px!important;line-height:1.35!important}
+ .city-pins button[data-goto="cafe"]{top:39%;left:36%}
+}
+
+/* Interaction repair: collapsed panels truly collapse; choices remain reachable on mobile. */
+.infaz:not([open]) .infaz-inner{display:none!important}
+.infaz[hidden],details.infaz[hidden]{display:none!important}
+.detail:not([open]) .law-body{display:none!important}
+.detail .law-body{display:block!important;min-height:0!important}
+.detail[open] .law-body p{display:block!important;color:#293b2e!important}
+.panel{overscroll-behavior:contain;scrollbar-width:thin}
+.panel .switches{display:grid!important;flex:none!important;visibility:visible!important;opacity:1!important}
+.panel .switch{cursor:pointer;pointer-events:auto!important}
+@media(max-width:780px){
+ .panel{max-height:min(58dvh,530px)!important;bottom:max(8px,env(safe-area-inset-bottom))!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;padding:11px 12px 12px!important}
+ .panel .switches{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important}
+ .panel .switch{min-height:43px!important;font-size:10px!important;line-height:1.2!important}
+ .panel .story{font-size:10px!important}
+ .panel h1{font-size:20px!important}
+ .infaz:not([open]){padding:9px!important}
+ .detail:not([open]){min-height:0!important;padding:0!important}
+ .detail summary{min-height:33px!important}
+ .detail[open] .law-body{padding:8px 10px 12px!important}
+ .city-pins{z-index:3}
+ .city-pins button{pointer-events:auto!important;touch-action:manipulation}
+ .city-pins button[data-goto="phone"],.city-pins button[data-goto="court"],.city-pins button[data-goto="street"]{bottom:auto!important;top:43%!important}
+ .city-pins button[data-goto="cafe"]{top:33%!important}
+}
+
+.event-tools{display:flex;align-items:center;justify-content:flex-end;gap:7px}
+.event-tools button{border:1px solid #36513b;border-radius:15px;min-height:33px;padding:7px 10px;font:700 10px monospace;cursor:pointer}
+.archive-toggle{background:#f6e3c1;color:#253c2d}
+.archive[hidden]{display:none!important}
+.archive{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:0 0 auto}
+.archive button{border:1px solid #72836c;border-radius:10px;background:#fff5e6;text-align:left;color:#203629;padding:8px;font:600 10px/1.3 Arial,sans-serif}
+.archive button.current{background:#b4d68f;border-color:#2d583a}
+@media(max-width:780px){.event-tools button{font-size:9px;min-height:31px;padding:6px 8px}.archive button{font-size:10px;padding:7px}.panel{max-height:min(62dvh,560px)!important}}
+
+.law-reference{display:grid;gap:8px}
+.law-clause{padding:9px 10px;background:#fff7e8;border:1px solid #bea68b;border-radius:9px}
+.law-clause b{font-size:12px;line-height:1.3;color:#314a39}
+.law-clause p{margin:4px 0 0!important;padding:0!important;font:11px/1.4 Arial,sans-serif!important}
+.law-application{font:11px/1.4 Arial,sans-serif!important;margin:8px 0!important;color:#333!important}
+.law-related{font:700 9px monospace;color:#8a725c;padding-top:8px;border-top:1px solid #d3c1a7}
+.law-disclaimer{font:9px/1.4 Arial,sans-serif;color:#7e756a;margin-top:8px}
+@media(max-width:780px){.law-clause{padding:8px}.law-clause b{font-size:11px}.law-clause p,.law-application{font-size:10px!important}.law-reference{gap:5px}}
+</style></head><body><main class="app"><header class="bar"><a class="brand" href="/yatari-klasik.html">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><section class="stage">
+<div class="world"><div class="hintpill" id="hint">BİR YERE DOKUN ↓</div><svg class="scene" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Yemyeşil ağaçların arasında elle çizilmiş pastel bir Türkiye mahallesi. Binalara dokunarak olayları keşfet.">
+<defs>
+<filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".43" numOctaves="3" seed="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".115"/></feComponentTransfer></filter>
+<clipPath id="edge"><rect width="800" height="1000"/></clipPath>
+</defs>
+<g clip-path="url(#edge)">
+<rect width="800" height="1000" fill="#fae6b7"/>
+<path d="M0 0H800V480Q590 424 435 465T0 470Z" fill="#f6d9ab"/>
+<path d="M0 300Q160 227 280 297Q400 225 560 294Q700 220 800 270V1000H0Z" fill="#397c48"/>
+<path d="M0 424Q120 348 245 422Q380 336 520 407Q653 345 800 413V1000H0Z" fill="#4b9a57"/>
+<path d="M0 634Q160 560 345 642Q540 570 800 624V1000H0Z" fill="#79b65c"/>
+<!-- lane linking buildings -->
+<path d="M-30 827Q170 702 342 743T831 711L836 879Q615 798 450 852Q190 826 -20 970Z" fill="#d59a7d" stroke="#433d30" stroke-width="3"/>
+<path d="M-30 851Q185 739 343 779T820 744" fill="none" stroke="#f4bd95" stroke-width="5" stroke-dasharray="18 14"/>
+<!-- distant homes -->
+<path d="M236 553L291 501L354 557V710H236Z" fill="#e3ac88" stroke="#60483a" stroke-width="3"/><path d="M223 553L291 483L367 553Z" fill="#ad705d" stroke="#60483a" stroke-width="3"/>
+<rect x="253" y="589" width="30" height="43" fill="#37372e"/><rect x="306" y="589" width="29" height="43" fill="#37372e"/>
+<path d="M497 559L568 505L639 559V700H497Z" fill="#df9d84" stroke="#624839" stroke-width="3"/><path d="M481 560L566 481L657 561Z" fill="#a66c59" stroke="#624839" stroke-width="3"/>
+<rect x="525" y="585" width="38" height="45" fill="#443c35"/><rect x="579" y="585" width="38" height="45" fill="#443c35"/>
+<!-- central main courthouse pavilion / architectural focal point -->
+<path d="M296 520Q380 478 497 523L515 724H283Z" fill="#d9a084" stroke="#584337" stroke-width="4"/>
+<path d="M269 553L320 505H480L530 553Z" fill="#b37661" stroke="#584337" stroke-width="4"/>
+<path d="M282 623L315 588H491L519 624Z" fill="#d99c7c" stroke="#584337" stroke-width="4"/>
+<rect x="315" y="625" width="170" height="113" fill="#312f2b"/>
+<path d="M310 748L498 748L529 774L278 774Z" fill="#e4ac89" stroke="#584337" stroke-width="3"/>
+<path d="M301 781L507 781L524 797L284 797Z" fill="#d7a184" stroke="#584337" stroke-width="3"/>
+<path d="M291 804L515 804L536 822L270 822Z" fill="#d3a085" stroke="#584337" stroke-width="3"/>
+<path d="M305 628V742M491 628V742" stroke="#946c53" stroke-width="8"/>
+<rect x="329" y="543" width="31" height="36" fill="#413d33"/><rect x="381" y="543" width="31" height="36" fill="#413d33"/><rect x="434" y="543" width="31" height="36" fill="#413d33"/>
+<!-- midground organic trunks -->
+<path d="M63 1060Q38 780 88 548Q109 324 73 -44L138 -40Q157 296 131 542Q99 822 156 1060Z" fill="#dca083" stroke="#473f31" stroke-width="3"/>
+<path d="M120 495Q195 374 227 173L245 189Q216 421 141 544Z" fill="#dca083" stroke="#473f31" stroke-width="3"/>
+<path d="M112 351Q83 239 50 153L68 147Q127 229 147 311Z" fill="#dca083" stroke="#473f31" stroke-width="3"/>
+<path d="M650 1030Q684 793 673 567Q645 296 687 -48H750Q705 312 732 540Q734 769 724 1050Z" fill="#d89d81" stroke="#4c4335" stroke-width="3"/>
+<path d="M680 485Q612 350 574 180L595 174Q642 318 719 428Z" fill="#d89d81" stroke="#4c4335" stroke-width="3"/>
+<path d="M704 310Q765 215 792 102L812 107Q773 279 720 352Z" fill="#d89d81" stroke="#4c4335" stroke-width="3"/>
+<!-- tree canopies in exaggerated foliage layers -->
+<path d="M-55 -33Q-7 -93 88 -46Q141 -79 198 -24Q262 -22 270 49Q320 108 239 153Q252 230 178 248Q137 287 85 243Q11 286 -35 209Z" fill="#62b864" stroke="#3b6347" stroke-width="3"/>
+<path d="M-50 252Q-17 194 48 203Q94 170 136 213Q209 191 219 266Q257 331 195 378Q166 449 93 427Q34 466 -39 407Z" fill="#3f9659" stroke="#396448" stroke-width="3"/>
+<path d="M527 -56Q592 -100 643 -34Q721 -65 754 -13Q823 -7 849 75Q857 171 770 177Q741 244 656 212Q585 267 538 188Q468 182 479 91Z" fill="#57ae61" stroke="#36634b" stroke-width="3"/>
+<path d="M603 241Q642 188 700 233Q776 187 819 252Q880 297 840 366Q841 449 764 447Q734 494 670 451Q601 480 574 423Q521 375 574 319Z" fill="#439e5a" stroke="#3e6846" stroke-width="3"/>
+<path d="M-74 675Q-34 616 45 641Q102 613 143 664Q222 645 242 727Q283 789 210 830Q167 904 99 869Q10 919 -53 852Z" fill="#7aba58" stroke="#396849" stroke-width="3"/>
+<path d="M607 718Q652 646 736 678Q788 629 850 693L858 920Q775 953 718 917Q619 942 571 858Z" fill="#6aae52" stroke="#396849" stroke-width="3"/>
+<!-- foreground framing -->
+<path d="M-60 925Q65 856 158 923Q234 871 298 970L-15 1050Z" fill="#388f56" stroke="#31573d" stroke-width="3"/>
+<path d="M552 1000Q622 899 707 941Q766 890 857 950V1040Z" fill="#47975b" stroke="#31573d" stroke-width="3"/>
+<g stroke-width="3" stroke-linecap="round"><path d="M253 300V346M232 323H275M238 308L269 338M269 308L238 338" stroke="#fff1c8"/><path d="M526 413V449M508 431H544M513 417L539 444M539 417L513 444" stroke="#293e31"/><path d="M541 815V854M521 835H560M528 822L554 847M554 822L528 847" stroke="#fff1c8"/><path d="M220 630V654M208 642H232" stroke="#fff4d7"/></g>
+<!-- interactive objects with generous invisible hit areas -->
+<g class="building" data-place="apartment" role="button" tabindex="0" aria-label="Apartman"><rect x="198" y="504" width="170" height="210" rx="10" fill="transparent" stroke="none"/></g>
+<g class="building" data-place="cafe" role="button" tabindex="0" aria-label="Kafe"><rect x="250" y="610" width="118" height="133" fill="transparent"/></g>
+<g class="building" data-place="office" role="button" tabindex="0" aria-label="Ofis"><rect x="510" y="505" width="134" height="195" fill="transparent"/></g>
+<g class="building" data-place="phone" role="button" tabindex="0" aria-label="Telefon"><rect x="20" y="685" width="170" height="158" fill="transparent"/></g>
+<g class="building" data-place="street" role="button" tabindex="0" aria-label="Sokak"><rect x="210" y="800" width="340" height="160" fill="transparent"/></g>
+<g class="building" data-place="court" role="button" tabindex="0" aria-label="Adliye"><rect x="332" y="557" width="170" height="244" fill="transparent"/></g>
+<rect width="800" height="1000" filter="url(#grain)" opacity=".5" pointer-events="none"/>
+</g></svg><div class="city-pins" aria-label="Mekân seçimi"><button data-goto="apartment">⌂ APARTMAN</button><button data-goto="cafe">☕ KAFE</button><button data-goto="phone">▣ TELEFON</button><button data-goto="street">↗ SOKAK</button><button data-goto="office">▥ OFİS</button><button data-goto="court">⚖ ADLİYE</button></div><div class="zoom">DOKUN: APARTMAN · KAFE · TELEFON · SOKAK · OFİS · ADLİYE</div></div>
+<aside class="panel"><div class="event-tools"><button id="randomEvent" type="button" class="random-event">↻ SONRAKİ</button><button id="archiveToggle" type="button" class="archive-toggle" aria-expanded="false">OLAYLAR ▾</button></div><div id="archive" class="archive" hidden aria-label="Bu mekândaki olaylar"></div><div class="eyebrow" id="area">01 / APARTMAN</div><h1 id="title">Komşu yine müziği açtı.</h1><p class="story" id="story">Gece yarısı, bütün apartman duyuyor. Şimdi olayı değiştir.</p><div class="switches" id="switches"></div><div class="judgment" aria-live="polite"><div class="eyebrow">HUKUKİ DURUM</div><strong id="verdict">DURUMA BAĞLI.</strong><p id="explanation"></p></div><details class="infaz" id="infaz"><summary>İNFAZ BİLGİSİNİ KEŞFET <span>＋</span></summary><div class="infaz-inner"><div class="eyebrow">CEZA / İNFAZ ATLASI</div><div class="infaz-number" id="ceza">—</div><p class="infaz-note" id="infazNote"></p><div class="infaz-track" aria-hidden="true"><span id="infazFill"></span></div><div class="infaz-stages"><span>HÜKÜM</span><span>KOŞULLU SALIVERİLME</span></div><label class="infaz-label" for="demoPenalty">ÖRNEK KESİNLEŞMİŞ CEZA <output id="penaltyOut">4 yıl</output></label><input id="demoPenalty" type="range" min="1" max="20" step="1" value="4"><div class="infaz-sample" id="infazSample"></div></div></details><details class="detail" id="details"><summary>KANUN NE DİYOR? <span aria-hidden="true">＋</span></summary><div class="law-body"><div class="law-reference" id="lawReference"></div><p class="law-application" id="lawApplication"></p><div class="law-related">BU OLAYLA İLGİLİ DİĞER DAYANAKLAR</div><p id="law"></p><div class="law-disclaimer">Bu özet, kanun maddesinin tamamı değil; seçili olayın öğretici açıklamasıdır.</div></div></details></aside></section><footer class="foot"><span>Gerçek mevzuattan esinlenen varsayımsal durumlar. Otomatik suç veya tahliye kararı değildir.</span><a class="cta" href="/yatari-klasik.html">KLASİK OYUN ↗</a></footer></main>
+<script>
+const $=id=>document.getElementById(id);
+const cases={
+ apartment:{label:'APARTMAN',title:'Komşu yine müziği açtı.',story:'Gece yarısı, bütün apartman duyuyor. Şimdi olayı değiştir.',options:[
+ ['Normal sesle müzik','BU HALİYLE SUÇ DEĞİL.','Sırf müzik dinlemek suç değil; olayın rahatsızlık yaratıp yaratmadığı ve başka koşullar önemlidir.'],
+ ['Komşuları rahatsız eden yüksek ses','İDARİ YAPTIRIM OLABİLİR.','Başkalarının huzurunu bozacak şekilde gürültü yapılması, Kabahatler Kanunu m.36 kapsamında idari yaptırıma konu olabilir.'],
+ ['Sırf komşuyu rahatsız etmek için ısrarla gürültü','SUÇ İHTİMALİ DEĞERLENDİRİLİR.','Özel kast ve ısrar gibi koşullar varsa TCK m.123 açısından değerlendirme gerekebilir; tek başına desibel eşik değildir.']],law:'5326 sayılı Kabahatler Kanunu m.36; 5237 sayılı TCK m.123. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'},
+ cafe:{label:'KAFE',title:'Hesabı kim ödeyecek?',story:'Kafedeki hesap geldi. Tek bir hareketi değiştir.',options:[
+ ['Hesabı ödedi','YATARI YOK.','Alışveriş normal şekilde tamamlandı.'],
+ ['Parasını evde unutmuş, işletmeye bildirdi','OTOMATİK SUÇ DEĞİL.','Ödemeyi geciktirmek tek başına dolandırıcılık demek değildir. Alacak ilişkisi ayrıca değerlendirilebilir.'],
+ ['Baştan beri ödeme niyeti olmadan hileyle hizmet aldı','DOLANDIRICILIK DEĞERLENDİRİLEBİLİR.','Hileli davranış, zarar ve diğer unsurların bulunması halinde TCK m.157 veya koşullara göre m.158 gündeme gelebilir.']],law:'5237 sayılı Türk Ceza Kanunu m.157–158. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'},
+ phone:{label:'TELEFON',title:'Bir mesajdan ne olur?',story:'Telefon ekranındaki hareketi değiştir.',options:[
+ ['Bir kez normal mesaj gönderdi','YATARI YOK.','Olayda başka bir suç unsuru yoksa tek bir normal mesaj göndermek suç oluşturmaz.'],
+ ['İstemediğini bildiği kişiyi sırf huzurunu bozmak için ısrarla aradı','SUÇ OLUŞABİLİR.','TCK m.123 açısından ısrar ve huzur bozma amacı önemlidir.'],
+ ['Özel yazışmaları hukuka aykırı şekilde herkese yayımladı','SUÇ OLUŞABİLİR.','Haberleşmenin gizliliği ve içeriklerin ifşasıyla ilgili TCK m.132 hükümleri gündeme gelebilir.']],law:'5237 sayılı TCK m.123 ve m.132. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'},
+ street:{label:'SOKAK',title:'Park yeri kavgası.',story:'Sokaktaki tartışma nasıl ilerliyor?',options:[
+ ['Birbirlerine sözlü olarak yer tartışması yaptılar','TEK BAŞINA SUÇ DEĞİL.','Her tartışma suç değildir. Hakaret, tehdit veya başka unsurlar ayrıca değerlendirilir.'],
+ ['Bir kişi diğerini ciddi şekilde tehdit etti','SUÇ OLUŞABİLİR.','Tehdidin içeriği ve koşulları TCK m.106 kapsamında incelenebilir.'],
+ ['Bir kişi diğerine kasten vurdu','SUÇ OLUŞABİLİR.','Kasten yaralama suçunun şartları varsa TCK m.86 gündeme gelebilir.']],law:'5237 sayılı TCK m.86 ve m.106. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'},
+ office:{label:'OFİS',title:'İstifasını bıraktı.',story:'Çalışan ile işveren arasındaki son gün.',options:[
+ ['Usulüne uygun istifa etti','YATARI YOK.','İstifa etmek başlı başına suç değildir.'],
+ ['İhbar süresine uymadan ayrıldı','HAPİS DEĞİL.','Şartlarına göre ihbar tazminatı gibi iş hukuku sonuçları doğabilir.'],
+ ['İşvereni “seni öldürürüm” diyerek tehdit etti','SUÇ OLUŞABİLİR.','Tehdit içeriği TCK m.106 açısından değerlendirilebilir.']],law:'4857 sayılı İş Kanunu m.17; TCK m.106. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'},
+ court:{label:'ADLİYE',title:'“Tutuklandı, kaç yıl yatar?”',story:'Gazete manşetini bir adliye dosyasına koy.',options:[
+ ['Sadece ifadeye çağrıldı','YATAR HESABI YOK.','İfadeye çağrılmak kesinleşmiş mahkûmiyet değildir.'],
+ ['Tutuklandı, yargılama sürüyor','HENÜZ HESAPLANAMAZ.','Tutuklama koruma tedbiridir; ceza hükmü ve infaz birbirinden farklıdır.'],
+ ['Kesinleşmiş hapis cezası var','ŞİMDİ İNFAZ İNCELENEBİLİR.','İnfaz rejimi, kesinleşmiş ceza, suç tarihi ve diğer koşullar bilinirse hesaplamaya başlanabilir.']],law:'5271 sayılı CMK m.100–101; 5275 sayılı Kanun m.107. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}
+};
+
+// Separate episodes: choices within one scene must refer to the same event.
+const episodes={
+ apartment:[{title:'Site toplantısı krizi.',story:'Yönetici, toplantıya gelmeyenlere ceza kesileceğini söylüyor. Peki hangi hareket neyi değiştirir?',options:[
+ ['Toplantıya gitmedi','YATARI YOK.','Sırf kat malikleri toplantısına katılmamak suç değildir.'],
+ ['Toplantıya katıldı','YATARI YOK.','Toplantıya katılmak suç değildir.'],
+ ['Kararlara itiraz etmek istedi','HAPİS CEZASI DEĞİL.','Kat malikleri kurulunun kararlarına karşı kanuni koşullarda hukuki yollara başvurulabilir.']
+ ],law:'634 sayılı Kat Mülkiyeti Kanunu m.29–33. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ cafe:[{title:'Kafede hesap meselesi.',story:'Hesap geldi. Bahşiş bırakmak zorunda mısın?',options:[
+ ['Hesabı ödedi, bahşiş bırakmadı','YATARI YOK.','Bahşiş bırakmamak tek başına suç değildir.'],
+ ['Hesabı ödedi, bahşiş bıraktı','YATARI YOK.','Bu davranış suç oluşturmaz.'],
+ ['Hesabı ödemeyi unuttu, işletmeye haber verdi','OTOMATİK SUÇ DEĞİL.','Ödemenin gecikmesi tek başına dolandırıcılık sayılmaz.']
+ ],law:'5237 sayılı TCK m.157 ve genel borçlar hukuku hükümleri. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ phone:[{title:'Apartman WhatsApp grubu.',story:'Grup aralıksız bildirim gönderiyor. Mesajlaşmadaki davranışı değiştir.',options:[
+ ['Grubu sessize aldı','YATARI YOK.','Bir mesajlaşma grubunu sessize almak tek başına suç değildir.'],
+ ['Yöneticiye cevap vermedi','YATARI YOK.','Mesaja cevap vermemek tek başına suç değildir; başka hukuki yükümlülükler farklıdır.'],
+ ['Grup üyelerini ciddi şekilde tehdit etti','SUÇ OLUŞABİLİR.','İçeriğine göre TCK m.106 kapsamında tehdit gündeme gelebilir.']
+ ],law:'634 sayılı Kat Mülkiyeti Kanunu ve TCK m.106. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ street:[{title:'Yolda tartışma.',story:'İki sürücü park yüzünden tartışıyor. Sonraki hareketi değiştir.',options:[
+ ['Sözlü tartışıp ayrıldılar','TEK BAŞINA SUÇ DEĞİL.','Tehdit, hakaret veya başka suç unsuru yoksa sırf tartışma suç olmayabilir.'],
+ ['Sürücülerden biri tehdit etti','SUÇ OLUŞABİLİR.','TCK m.106 uygulanma koşulları olayın içeriğine bağlıdır.'],
+ ['Bir sürücü diğerinin gitmesini zorla engelledi','SUÇ OLUŞABİLİR.','Somut koşullarda TCK m.109 gündeme gelebilir.']
+ ],law:'5237 sayılı TCK m.106, 109. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ office:[{title:'Maaş gecikti.',story:'Çalışan maaşının geciktiğini fark etti. Ne yaptı?',options:[
+ ['Maaşını sordu','YATARI YOK.','Ücretini talep etmek suç değildir.'],
+ ['İşverene yazılı talepte bulundu','YATARI YOK.','Yasal hakları aramak suç değildir.'],
+ ['İşvereni ciddi biçimde tehdit etti','SUÇ OLUŞABİLİR.','Tehdidin içeriği ve koşulları TCK m.106 kapsamında değerlendirilir.']
+ ],law:'4857 sayılı İş Kanunu m.32, 34 ve TCK m.106. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ court:[{title:'Manşette gözaltı var.',story:'Gazete birinin gözaltına alındığını yazdı. Adli süreçte ne değişiyor?',options:[
+ ['Gözaltına alındı','YATAR HESABI YOK.','Gözaltı mahkûmiyet değildir.'],
+ ['Tutuklandı, yargılanıyor','HENÜZ HESAPLANAMAZ.','Tutuklama kesinleşmiş mahkûmiyet değildir.'],
+ ['Hapis hükmü kesinleşti','İNFAZ ŞARTLARI GEREKİR.','İnfaz rejimi ve ilgili koşullar değerlendirilmelidir.']
+ ],law:'5271 sayılı CMK m.91, 100–101 ve 5275 sayılı Kanun m.107. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}]
+};
+const expandedEpisodes={"apartment":[{"title":"Aidat yine zamlandı.","story":"Yönetim yeni aidatı duyurdu. Bir malik itiraz ediyor.","options":[["Aidatın hesabını sordu","YATARI YOK.","Aidat kalemlerini sorgulamak suç değildir."],["Kararın iptali için başvurdu","HAPİS DEĞİL.","Koşulları varsa kat malikleri kurulu kararına karşı yargı yoluna gidilebilir."],["Aidatı hiç ödemedi","BORÇ / İCRA MESELESİ.","Aidat borcunun ödenmemesi tek başına hapis suçu değildir; gecikme ve tahsil sonuçları olabilir."]],"law":"634 sayılı Kat Mülkiyeti Kanunu m.20, 33. <a href='https://mevzuat.adalet.gov.tr/mevzuat/103807' target='_blank' rel='noopener'>Kanun ↗</a>"},{"title":"Ortak alan tartışması.","story":"Apartman girişindeki ortak alan yüzünden komşular karşı karşıya.","options":[["Ortak alanın kullanılmasını sordu","YATARI YOK.","Ortak yerlerde kullanım hakları kat mülkiyeti hukukuna tabidir."],["Diğer maliklere danışmadan eşyasını bıraktı","HUKUKİ UYUŞMAZLIK OLABİLİR.","Ortak yer kullanımı yönetim planı ve kanun çerçevesinde değerlendirilir."],["Komşusunu öldürmekle tehdit etti","SUÇ OLUŞABİLİR.","Tehdidin içeriği TCK m.106 kapsamında değerlendirilir."]],"law":"634 sayılı Kanun m.16 ve TCK m.106. <a href='https://mevzuat.adalet.gov.tr/mevzuat/103807' target='_blank' rel='noopener'>Kanun ↗</a>"}],"cafe":[{"title":"Yemek soğuk geldi.","story":"Müşteri hesabı görünce itiraz ediyor.","options":[["Ürünle ilgili şikâyetini söyledi","YATARI YOK.","Hizmetten memnuniyetsizliği bildirmek suç değildir."],["Ücretin düzeltilmesini istedi","TÜKETİCİ UYUŞMAZLIĞI.","Ücret ve ayıplı hizmet iddiaları tüketici mevzuatı çerçevesinde değerlendirilebilir."],["Kasiyere fiziksel saldırıda bulundu","SUÇ OLUŞABİLİR.","Kasten yaralama hükümleri uygulanabilir."]],"law":"6502 sayılı Kanun ve TCK m.86. <a href='https://www.mevzuat.gov.tr' target='_blank' rel='noopener'>Kanun ↗</a>"},{"title":"Kafede unutulan telefon.","story":"Masanın üstünde sahibinin unuttuğu telefon duruyor.","options":[["Çalışana teslim etti","YATARI YOK.","Bulduğu eşyayı teslim etmek suç değildir."],["Sahibinin bulunmasını bekledi","YATARI YOK.","Anlatılan bekleme davranışı suç değildir."],["Sahiplenmek için aldı","SUÇ OLUŞABİLİR.","Kaybolmuş veya hata sonucu ele geçmiş eşya üzerinde tasarruf suçu gündeme gelebilir; koşullar önemlidir."]],"law":"5237 sayılı TCK m.160. <a href='https://mevzuat.adalet.gov.tr/mevzuat/103228' target='_blank' rel='noopener'>Kanun ↗</a>"}],"phone":[{"title":"Eski sevgili arıyor.","story":"Karşı taraf aranmak istemediğini açıkça söyledi.","options":[["Tek seferlik normal mesaj attı","TEK BAŞINA SUÇ DEĞİL.","Ek suç unsuru olmadan tek mesaj, sırf bu nedenle suç değildir."],["Sırf huzurunu bozmak için ısrarla aradı","SUÇ OLUŞABİLİR.","TCK m.123 bakımından ısrar ve özel amaç değerlendirilir."],["Nerede olduğunu öğrenmek için sürekli takip etti","SUÇ OLUŞABİLİR.","Koşulları varsa ısrarlı takip suçu gündeme gelebilir."]],"law":"TCK m.123 ve 123/A. <a href='https://mevzuat.adalet.gov.tr/mevzuat/103228' target='_blank' rel='noopener'>Kanun ↗</a>"},{"title":"Şifreyi biliyor.","story":"Arkadaşının telefonunun kilidini açabilecek durumda.","options":[["İzin istedi ve açtı","BU HALİYLE SUÇ DEĞİL.","Rızanın kapsamı ve başka bir ihlal olup olmadığı önemlidir."],["İzinsiz özel hesabına giriş yaptı","SUÇ OLUŞABİLİR.","TCK m.243 kapsamında bilişim sistemine girme değerlendirilebilir."],["Özel mesajları kamuya yaydı","SUÇ OLUŞABİLİR.","Somut duruma göre haberleşmenin gizliliği ve ifşa suçları gündeme gelebilir."]],"law":"TCK m.132 ve 243. <a href='https://mevzuat.adalet.gov.tr/mevzuat/103228' target='_blank' rel='noopener'>Kanun ↗</a>"}],"street":[{"title":"Park yeri benimdi.","story":"İki komşu boş park yeri yüzünden tartışıyor.","options":[["Park sırasını konuştu","YATARI YOK.","Sırf yer konusunda konuşmak suç değildir."],["Aracın önüne sandalye koydu","DURUMA BAĞLI.","Trafik ve ortak kullanım kurallarıyla ilgili farklı hukuki sonuçlar olabilir."],["Diğer sürücüyü kasten yaraladı","SUÇ OLUŞABİLİR.","TCK m.86 bakımından yaralamanın niteliği değerlendirilir."]],"law":"TCK m.86 ve ilgili trafik/ortak alan kuralları. <a href='https://mevzuat.adalet.gov.tr/mevzuat/103228' target='_blank' rel='noopener'>Kanun ↗</a>"},{"title":"Sokakta video çekti.","story":"Biri kamerasını açtı; çevrede başka insanlar da var.","options":[["Kendi videosunu çekti","TEK BAŞINA SUÇ DEĞİL.","Başkalarının haklarını ihlal etmeyen sıradan çekim suç değildir."],["Kişinin özel yaşamını gizlice kaydetti","SUÇ OLUŞABİLİR.","Özel hayatın gizliliği hükümleri gündeme gelebilir."],["Özel görüntüleri hukuka aykırı yayımladı","SUÇ OLUŞABİLİR.","TCK m.134 kapsamında değerlendirme gerekebilir."]],"law":"TCK m.134. <a href='https://mevzuat.adalet.gov.tr/mevzuat/103228' target='_blank' rel='noopener'>Kanun ↗</a>"}],"office":[{"title":"İstifa dilekçesi.","story":"Çalışan bugün işten ayrılmak istedi.","options":[["Usulüne uygun ayrıldı","YATARI YOK.","İstifa suç değildir."],["İhbar süresine uymadan ayrıldı","TAZMİNAT SÖZ KONUSU OLABİLİR.","Koşulları varsa bildirim süresine uymamanın iş hukuku sonucu doğabilir."],["İşverene tehdit mesajı attı","SUÇ OLUŞABİLİR.","İçeriğine göre TCK m.106 uygulanabilir."]],"law":"4857 sayılı İş Kanunu m.17 ve TCK m.106. <a href='https://www.mevzuat.gov.tr' target='_blank' rel='noopener'>Kanun ↗</a>"},{"title":"İş yeri WhatsApp grubu.","story":"Mesai bitmiş ama mesajlar devam ediyor.","options":[["Bildirimleri sessize aldı","YATARI YOK.","Bildirimleri sessize almak suç değildir."],["Fazla çalışma ücretini sordu","YATARI YOK.","Ücret alacağını sormak suç değildir."],["İş arkadaşını ölümle tehdit etti","SUÇ OLUŞABİLİR.","TCK m.106 kapsamında değerlendirme gerekebilir."]],"law":"4857 sayılı İş Kanunu ve TCK m.106. <a href='https://www.mevzuat.gov.tr' target='_blank' rel='noopener'>Kanun ↗</a>"}],"court":[{"title":"Avukata ilk soru.","story":"Bir kişi ifade davetiyesi aldı. Ailesi paniğe kapıldı.","options":[["İfade için çağrıldı","OTOMATİK TUTUKLAMA YOK.","Çağrı, kendi başına tutuklama kararı değildir."],["Savcı tarafından sorgulandı","HÜKÜM YOK.","Soruşturma aşaması mahkûmiyet anlamına gelmez."],["Hapis cezası kesinleşti","İNFAZ ŞARTLARI İNCELENİR.","Kesinleşmiş ceza yanında suç tarihi ve infaz rejimi gereklidir."]],"law":"5271 sayılı CMK ve 5275 sayılı Kanun. <a href='https://www.mevzuat.gov.tr' target='_blank' rel='noopener'>Kanun ↗</a>"},{"title":"Gazete manşeti.","story":"Bir gazeteci hakkında soruşturma başlatıldığı yazıyor.","options":[["Hakkında iddia var","YATAR HESABI YOK.","İddia, hüküm değildir."],["Gözaltına alındı","YATAR HESABI YOK.","Gözaltı ceza infazı değildir."],["Mahkemece beraat etti","HAPİS İNFAZI YOK.","Beraat ile hapis cezasının infazı söz konusu olmaz."]],"law":"5271 sayılı CMK; 5275 sayılı Kanun. <a href='https://www.mevzuat.gov.tr' target='_blank' rel='noopener'>Kanun ↗</a>"}]};
+Object.entries(expandedEpisodes).forEach(([place,items])=>episodes[place].push(...items));
+let chapter={};let choiceKey=(place)=>place+":"+String(chapter[place]||0);
+function currentCase(key){return chapter[key]?episodes[key][chapter[key]-1]:cases[key]}
+// Descriptive, statute-linked ranges for selected scenarios. Other options avoid fabricated numbers.
+const ranges={
+ 'İstemediğini bildiği kişiyi sırf huzurunu bozmak için ısrarla aradı':{label:'TCK 123 • 3 ay–1 yıl hapis',ratio:.5},
+ 'Başkalarının huzurunu bozmak için ısrarla gürültü':{label:'TCK 123 değerlendirmesi • 3 ay–1 yıl',ratio:.5},
+ 'Özel yazışmaları hukuka aykırı şekilde herkese yayımladı':{label:'TCK 132 • Suçun biçimine göre farklı ceza aralıkları',ratio:null},
+ 'Başkasının hesabına izinsiz giriş yaptı':{label:'TCK 243 • 1 yıla kadar hapis veya adli para cezası',ratio:null},
+ 'İş arkadaşının hesabına izinsiz girdi':{label:'TCK 243 • 1 yıla kadar hapis veya adli para cezası',ratio:null},
+ 'Birini öldürmekle tehdit eden mesaj attı':{label:'TCK 106 • Şartlarına göre hapis cezası',ratio:null},
+ 'Bir kişi diğerine kasten vurdu':{label:'TCK 86 • Yaralamanın niteliğine göre değişir',ratio:null},
+ 'Baştan beri ödeme niyeti olmadan hileyle hizmet aldı':{label:'TCK 157–158 • Suçun niteliğine göre değişir',ratio:null},
+ 'Aracın önünü kesip kişiyi zorla alıkoydu':{label:'TCK 109 • Fiilin özelliklerine göre değişir',ratio:null}
+};
+function renderInfaz(){
+ const c=currentCase(active),o=c.options[Math.min(Math.max(0,Number(selected[active])||0),c.options.length-1)],data=ranges[o[0]],yes=/SUÇ|DOLANDIRICILIK|İNFAZ/.test(o[1])&&!/DEĞİL|YOK|OTOMATİK/.test(o[1]);
+ $('infaz').hidden=!yes;
+ if(!yes)return;
+ $('ceza').textContent=data?.label||'Suç türüne göre ceza değişir';
+ $('infazNote').textContent='Kanuni ceza aralığı, verilen hüküm ve cezaevinde kalış süresi aynı şey değildir.';
+ const yrs=Number($('demoPenalty').value),fraction=data?.ratio??.5;
+ $('penaltyOut').textContent=yrs+' yıl';
+ $('infazFill').style.width=(fraction*100)+'%';
+ $('infazSample').textContent='YALNIZCA ÖRNEK: '+yrs+' yıl kesinleşmiş hapis ve genel 1/2 infaz oranı varsayılırsa koşullu salıverilme eşiği '+(yrs/2).toLocaleString('tr-TR')+' yıldır. Bu, cezaevinden çıkış tarihi değildir; suç tarihi, infaz rejimi, iyi hâl ve denetimli serbestlik ayrıca değerlendirilir.';
+}
+$('demoPenalty').addEventListener('input',renderInfaz);
+
+let active='apartment',selected={};try{selected=JSON.parse(localStorage.getItem('yatari-city-choices')||'{}')}catch(e){}
+
+// Curated clause descriptions: show what the cited provisions regulate, not just their numbers.
+const lawIndex={
+ 'TCK 86':['Kasten yaralama','Bir kişinin bedenine acı verme veya sağlığının ya da algılama yeteneğinin bozulmasına neden olma fiillerini düzenler.'],
+ 'TCK 106':['Tehdit','Kişinin kendisine veya yakınına yönelik belirli kötülüklerin gerçekleştirileceği tehdidine ilişkin suç hükmüdür.'],
+ 'TCK 109':['Kişiyi hürriyetinden yoksun kılma','Bir kimsenin hukuka aykırı biçimde bir yere gitme veya bir yerde kalma özgürlüğünden yoksun bırakılmasını düzenler.'],
+ 'TCK 123/A':['Israrlı takip','Israrlı fiziksel takip veya iletişim yoluyla temas aramanın ciddi huzursuzluk ya da güvenlik endişesi yaratmasını düzenler.'],
+ 'TCK 123':['Kişilerin huzur ve sükûnunu bozma','Sırf huzur bozma amacıyla ısrarlı telefon, gürültü veya benzeri hukuka aykırı davranışları düzenler.'],
+ 'TCK 132':['Haberleşmenin gizliliğini ihlal','Kişiler arasındaki haberleşmenin gizliliği ve haberleşme içeriklerinin hukuka aykırı ifşasına ilişkin suçları düzenler.'],
+ 'TCK 134':['Özel hayatın gizliliğini ihlal','Özel hayatın gizliliğinin ihlali ve özel hayata ilişkin görüntü ya da seslerin hukuka aykırı ifşasına ilişkin hükümler içerir.'],
+ 'TCK 157':['Dolandırıcılık','Hileli davranışlarla bir kimseyi aldatıp zararına olarak yarar sağlamaya ilişkin suç hükmüdür.'],
+ 'TCK 158':['Nitelikli dolandırıcılık','Dolandırıcılık suçunun kanunda sayılan nitelikli işleniş biçimlerini düzenler.'],
+ 'TCK 160':['Kaybolmuş veya hata sonucu ele geçmiş eşya','Kaybolmuş veya hata sonucu ele geçmiş eşya üzerinde malik gibi tasarrufta bulunma durumuna ilişkin hükmü düzenler.'],
+ 'TCK 243':['Bilişim sistemine girme','Bir bilişim sisteminin bütününe veya bir kısmına hukuka aykırı olarak girme veya sistemde kalma fiillerini düzenler.'],
+ '634 m.20':['Ortak giderlere katılma','Kat maliklerinin ortak gider ve avans payı ödeme yükümlülüklerini düzenler.'],
+ '634 m.29':['Kat malikleri kurulu toplantısı','Kat malikleri kurulunun ne zaman ve nasıl toplanacağını düzenler.'],
+ '634 m.30':['Toplantı ve karar yeter sayısı','Kat malikleri kurulunun toplantı ve karar yeter sayısını düzenler.'],
+ '634 m.33':['Hâkimin müdahalesi','Kat mülkiyeti uyuşmazlıklarında hâkim müdahalesi ve kurul kararlarına başvuru yollarıyla ilgilidir.'],
+ '4857 m.17':['Süreli fesih','Belirsiz süreli iş sözleşmelerinin bildirim süreleriyle feshine ve bildirim şartına uyulmamasının sonuçlarına ilişkindir.'],
+ '4857 m.32':['Ücret ve ücretin ödenmesi','İşçi ücretinin kapsamını ve ödenmesini düzenler.'],
+ 'CMK 91':['Gözaltı','Gözaltına alma şartlarını ve sürecini düzenler; gözaltı mahkûmiyet değildir.'],
+ 'CMK 100':['Tutuklama nedenleri','Tutuklama için kuvvetli suç şüphesi ve kanunda öngörülen diğer koşullarla ilgili düzenlemedir.'],
+ '5275 m.107':['Koşullu salıverilme','Kesinleşmiş hapis cezasının infazı sırasında koşullu salıverilme koşullarını ve farklı oranları düzenler.']
+};
+function lookupLaw(c,option){
+ const txt=(c.law||'')+' '+option[2],label=option[0]+' '+option[2];
+ const refs=[];
+ const probes=[
+  [/ısrarlı takip/i,'TCK 123/A'],[/huzur.*boz|ısrarlı.*ara|ısrarlı.*gürültü/i,'TCK 123'],
+  [/bilişim|hesabına izinsiz|şifresini/i,'TCK 243'],[/özel (?:mesaj|yazışma)|haberleşme/i,'TCK 132'],[/özel hayat|özel görüntü/i,'TCK 134'],
+  [/kasten yarala|fiziksel saldır|kasten vur/i,'TCK 86'],[/tehdit/i,'TCK 106'],
+  [/hürriyet|zorla alıkoy|gitmesini zorla/i,'TCK 109'],[/dolandırıcılık|hileli/i,'TCK 157'],
+  [/kaybolmuş|unutulan telefon|sahiplenmek için aldı/i,'TCK 160'],
+  [/aidat|ortak gider/i,'634 m.20'],[/site toplantı|kat malikleri toplantı/i,'634 m.29'],
+  [/toplantı.*karar|karar yeter/i,'634 m.30'],[/karar.*itiraz|kararın iptal/i,'634 m.33'],
+  [/ihbar süres|istifa/i,'4857 m.17'],[/maaş|ücret/i,'4857 m.32'],
+  [/gözaltı/i,'CMK 91'],[/tutuk/i,'CMK 100'],[/koşullu salıverilme|infaz rejimi/i,'5275 m.107']
+ ];
+ for(const [re,id] of probes)if(re.test(label)&&lawIndex[id])refs.push(id);
+ if(!refs.length){
+  const matches=[...txt.matchAll(/(?:TCK|CMK)\s*m\.?\s*(\d{2,3}(?:\/A)?)/gi)];
+  for(const m of matches){const id=(m[0].toUpperCase().includes('CMK')?'CMK ':'TCK ')+m[1];if(lawIndex[id])refs.push(id)}
+ }
+ if(!refs.length&&/Kat Mülkiyeti/i.test(txt))refs.push('634 m.29');
+ if(!refs.length&&/iş kanunu/i.test(txt))refs.push('4857 m.17');
+ return [...new Set(refs)].slice(0,3);
+}
+function renderLaw(c,option){
+ const ref=lookupLaw(c,option),node=$('lawReference');node.replaceChildren();
+ if(ref.length){ref.forEach(id=>{const block=document.createElement('div');block.className='law-clause';const name=document.createElement('b'),desc=document.createElement('p');name.textContent=id+' — '+lawIndex[id][0];desc.textContent=lawIndex[id][1];block.append(name,desc);node.appendChild(block)})}
+ else{const p=document.createElement('p');p.textContent='Bu olayda suç tanımı yanında özel hukuk, idare hukuku veya usul kuralları da gündeme gelebilir.';node.appendChild(p)}
+ $('lawApplication').textContent='BU OLAYDA: '+option[2];
+}
+function render(key){active=key;const c=currentCase(key),choice=Math.min(Math.max(0,Number(selected[choiceKey(key)])||0),c.options.length-1);
+ $('area').textContent=cases[key].label+' / OLAY '+((chapter[key]||0)+1)+' / '+(episodes[key].length+1);
+ buildArchive(key);
+ $('title').textContent=c.title;$('story').textContent=c.story;
+ $('switches').replaceChildren();
+ c.options.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.className='switch'+(i===choice?' selected':'');b.textContent=o[0];b.setAttribute('aria-pressed',String(i===choice));b.onclick=()=>{selected[choiceKey(key)]=i;try{localStorage.setItem('yatari-city-choices',JSON.stringify(selected))}catch(e){}render(key)};$('switches').appendChild(b)});
+ $('verdict').textContent=c.options[choice][1];$('explanation').textContent=c.options[choice][2];$('law').innerHTML=c.law;renderLaw(c,c.options[choice]);
+ renderInfaz();$('details').open=false;$('hint').textContent=cases[key].label+' / OLAYI KURCALA →';
+ document.querySelectorAll('.building').forEach(b=>b.style.opacity=b.dataset.place===key?'1':'.82');
+ document.querySelectorAll('.city-pins button').forEach(b=>b.classList.toggle('active',b.dataset.goto===key));
+}
+function buildArchive(key){const list=[cases[key],...episodes[key]];$('archive').replaceChildren();list.forEach((episode,i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+'  '+episode.title;b.className=i===(chapter[key]||0)?'current':'';b.onclick=()=>{chapter[key]=i;$('archive').hidden=true;$('archiveToggle').setAttribute('aria-expanded','false');render(key)};$('archive').appendChild(b)});}
+$('archiveToggle').onclick=()=>{const a=$('archive');a.hidden=!a.hidden;$('archiveToggle').setAttribute('aria-expanded',String(!a.hidden))};
+document.querySelectorAll('.city-pins button').forEach(el=>el.addEventListener('click',()=>{chapter[el.dataset.goto]??=0;$('archive').hidden=true;render(el.dataset.goto)}));
+$('randomEvent').onclick=()=>{chapter[active]=((chapter[active]||0)+1)%(episodes[active].length+1);render(active);};
+document.querySelectorAll('.building').forEach(el=>{el.addEventListener('click',()=>render(el.dataset.place));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();render(el.dataset.place)}})});
+render(active);
+</script></body></html>
