@@ -131,12 +131,15 @@ if(api){
      const mesh=new THREE.Mesh(hostGeo,cmat.clone());scene.add(mesh);return mesh;
    },scale,(mesh,h,time)=>{
      mesh.position.set(h.x-450,262.5-h.y,-22);
-     const v=1+Math.sin(time*.0008+h.id)*.035;mesh.scale.set(40*v,29*v,10);
+     const v=1+Math.sin(time*.0008+h.id)*.035;const k=lastW<700?.65:1;mesh.scale.set(40*v*k,29*v*k,9*k);
      const m=mesh.material;if(h.infect>0){m.color.setHex(0xf0a4bc);m.emissive.setHex(0xff638f);m.opacity=.37;}
-     else if(h.dead){m.opacity=.08;}else{m.color.setHex(0x8bdacf);m.emissive.setHex(0x3d9e8d);m.opacity=.18;}
+     else if(h.dead){m.opacity=.08;}else{m.color.setHex(0x8bdacf);m.emissive.setHex(0x3d9e8d);m.opacity=lastW<700?.105:.15;}
    },now);
    for(const b of bg)b.material.opacity=state.phase==='active'?.060:.035;
-   renderer.render(scene,camera);
+   try{renderer.render(scene,camera)}catch(error){
+    console.warn('[İçeridekiler] WebGL rendering failed, Canvas fallback restored.',error);
+    api.useWebGL(false);canvas.remove();renderer.dispose();return;
+   }
   }
   api.useWebGL(true);
   document.getElementById('render-mode')?.replaceChildren(document.createTextNode('WEBGL 3D'));
