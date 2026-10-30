@@ -27,7 +27,7 @@ const animReduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: 
 if(raw&&raw.state&&raw.state.version===2&&!raw.state.completed){
  state=Object.assign(DEFAULT(),raw.state);state.levels=Object.assign(DEFAULT().levels,raw.state.levels||{});state.memories=Object.assign(DEFAULT().memories,raw.state.memories||{});state.actionReady=raw.state.actionReady||{};
  state.logs=(raw.state.logs||[]).slice(0,25);state.history=(raw.state.history||[]).slice(0,12);
- agents=Array.isArray(raw.agents)?raw.agents.filter(a=>types[a.type]&&Number.isFinite(a.x)&&Number.isFinite(a.y)).slice(0,140):[];
+ agents=Array.isArray(raw.agents)?raw.agents.filter(a=>types[a.type]&&Number.isFinite(a.x)&&Number.isFinite(a.y)).slice(0,140):[];agents.forEach(a=>{if(a.permanent===undefined)a.permanent=['macro','dend','fibro','treg'].includes(a.type)});
  particles=Array.isArray(raw.particles)?raw.particles.filter(b=>Number.isFinite(b.x)&&Number.isFinite(b.y)).slice(0,100):[];
  hosts=Array.isArray(raw.hosts)?raw.hosts.filter(h=>Number.isFinite(h.x)).slice(0,40):[];
  debris=Array.isArray(raw.debris)?raw.debris.filter(h=>Number.isFinite(h.x)).slice(0,60):[];
@@ -43,13 +43,13 @@ function makeProceduralWave(level){
  return {id:'sandbox-'+level,title:titles[k],desc:example.desc,kind:k,antigen:antigens[k]||null,count:Math.min(26,12+Math.floor(level*.75)),x:290+(level*139)%330,y:160+(level*91)%180,base:95,goal:example.goal,fact:example.fact};
 }
 const wave=()=>state.mode==='sandbox'&&state.chapter>=campaign.length?(state.dynamicWave||makeProceduralWave(state.chapter)):campaign[Math.min(state.chapter,campaign.length-1)];
-function addAgent(type,x,y){if(!types[type]||agents.length>=100)return null;const fromVessel=type==='neutro'||type==='nk'||type==='tcell'||type==='bcell',a={id:++maxId,type,x:x??(fromVessel?rnd(38,115):rnd(90,810)),y:y??rnd(75,445),vx:rnd(-1,1),vy:rnd(-1,1),angle:rnd(0,TWO),age:0,hit:0,life:type==='neutro'?rnd(58,90):2000};agents.push(a);return a;}
+function addAgent(type,x,y){if(!types[type]||agents.length>=100)return null;const fromVessel=type==='neutro'||type==='nk'||type==='tcell'||type==='bcell',a={id:++maxId,type,x:x??(fromVessel?rnd(38,115):rnd(90,810)),y:y??rnd(75,445),vx:rnd(-1,1),vy:rnd(-1,1),angle:rnd(0,TWO),age:0,hit:0,permanent:false,life:type==='neutro'?rnd(58,90):2000};agents.push(a);return a;}
 function addParticle(type,x,y,antigen){if(particles.length>=80)return;particles.push({id:++maxId,type,x:clamp((x??450)+rnd(-60,60),25,W-25),y:clamp((y??260)+rnd(-50,50),22,H-22),hp:type==='allergen'?1:type==='debris'?1:6,age:0,angle:rnd(0,TWO),antigen:antigen||wave().antigen});}
 function addSignal(x,y,power,kind){signals.push({x,y,power,age:0,kind:kind||'alarm'});if(signals.length>28)signals.shift();}
 function pop(x,y,color){bursts.push({x,y,r:0,life:0,color:color||'#8fb99f'});if(bursts.length>45)bursts.shift();}
 function event(msg){state.logs.unshift({time:Math.round(state.clock),text:msg});state.logs=state.logs.slice(0,25);state.eventsMade++;drawLogs();}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({state,agents,particles,hosts,debris,signals}));$('saved').textContent='KAYDEDİLDİ ✓'}catch(e){$('saved').textContent='KAYIT YOK'}}
-function resetWorld(){agents=[];particles=[];hosts=[];debris=[];signals=[];bursts=[];flares=[];for(let i=0;i<5;i++)addAgent('macro');addAgent('dend');addAgent('fibro');addAgent('treg');for(let k=0;k<22;k++){let x=80+(k%6)*148+rnd(-22,22),y=95+Math.floor(k/6)*109+rnd(-21,21);hosts.push({id:++maxId,x,y,infect:0,dead:false,heal:0});}}
+function resetWorld(){agents=[];particles=[];hosts=[];debris=[];signals=[];bursts=[];flares=[];for(let i=0;i<5;i++)addAgent('macro').permanent=true;addAgent('dend').permanent=true;addAgent('fibro').permanent=true;addAgent('treg').permanent=true;for(let k=0;k<22;k++){let x=80+(k%6)*148+rnd(-22,22),y=95+Math.floor(k/6)*109+rnd(-21,21);hosts.push({id:++maxId,x,y,infect:0,dead:false,heal:0});}}
 if(!hosts.length||!agents.length)resetWorld();
 function start(){if(state.phase!=='intro')return;state.phase='between';$('overlay').hidden=true;event('Doku devriyesi başladı.');updateUi(true);save();}
 function beginChapter(){if(state.phase!=='between'||state.chapter>=campaign.length)return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;
@@ -65,7 +65,7 @@ function beginChapter(){if(state.phase!=='between'||state.chapter>=campaign.leng
 function finishChapter(){if(state.phase!=='active')return;const w=wave();state.phase='between';const gained=Math.max(5,Math.round(4+state.tissue/13+Math.max(0,45-state.inflam)/20));state.points+=gained;state.score+=Math.round(state.tissue)+gained*2;
  if(w.antigen){let gain=clamp(Math.round(16+state.activation*.22+state.presentation*.12),12,35);state.memories[w.antigen]=clamp((state.memories[w.antigen]||0)+gain,0,100);}
  const m=Object.values(state.memories);state.memory=Math.round(m.reduce((a,b)=>a+b,0)/m.length);
- state.history.push({title:w.title,tissue:Math.round(state.tissue),inflam:Math.round(state.inflam),memo:state.memory});state.history=state.history.slice(-40);
+ state.history.push({title:w.title,tissue:Math.round(state.tissue),inflam:Math.round(state.inflam),memo:state.memory});state.history=state.history.slice(-40);agents=agents.filter(a=>a.permanent);
  state.chapter++;state.inflam=Math.max(5,state.inflam-10);state.energy=Math.min(100,state.energy+24);
  event('Doku dengelendi. +'+gained+' araştırma puanı.');
  if(state.chapter>=campaign.length){if(state.mode==='sandbox'){state.dynamicWave=makeProceduralWave(state.chapter);state.points+=3;event('Yeni doku olayı ortaya çıktı. +3 araştırma.');}else{complete(true);return;}}updateUi(true);save();}
@@ -110,7 +110,7 @@ const upgrades=[
 function upgrade(type){const u=upgrades.find(v=>v[0]===type);if(!u||state.phase==='intro'||state.phase==='finished')return;
  if((type==='tcell'||type==='bcell')&&state.chapter<2){notice('Özgül bağışıklık 3. olayda açılır.');return;}
  const count=state.levels[type]||0,cost=u[3]+count*3;if(state.points<cost){notice('Araştırma puanı yetersiz.');return;}
- state.points-=cost;state.levels[type]=count+1;addAgent(type);event(u[1]+' laboratuvarı geliştirildi.');updateUi(true);save();}
+ state.points-=cost;state.levels[type]=count+1;const unit=addAgent(type);if(unit)unit.permanent=true;event(u[1]+' laboratuvarı geliştirildi.');updateUi(true);save();}
 let upgradeSnapshot='';
 function renderUpgrades(){const key=JSON.stringify([state.points,state.phase,state.chapter,state.levels]);if(key===upgradeSnapshot)return;upgradeSnapshot=key;
  const root=$('upgrades');root.innerHTML='';
