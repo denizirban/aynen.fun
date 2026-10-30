@@ -222,124 +222,58 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
 @media(min-width:761px){.desktop-scene .game-tile:nth-child(34){--orbit-x:92%;--orbit-y:11.3%;--orbit-size:.79}.desktop-scene .game-tile:nth-child(35){--orbit-x:92%;--orbit-y:23.1%;--orbit-size:.76}.desktop-scene .game-tile:nth-child(13){--orbit-x:92%;--orbit-y:35%;--orbit-size:.82}}
 
 
-/* EDITORIAL INDEX / 2026-10-30
-   Fluid, non-overlapping artist's gallery. Every game occupies a real grid cell.
-   Old percentage coordinates remain as metadata only; they no longer position tiles. */
+/* ORGANIC SCATTER LANDING — games are independent floating objects,
+   not columns, shelves, or a grid. JS finds non-overlapping positions. */
 html,body{height:auto!important;min-height:100%;overflow-x:hidden!important;overflow-y:auto!important}
-body{background:#f8f8f5;color:#111;scrollbar-color:#bdbdb7 transparent}
-.desktop-scene{position:relative!important;display:block!important;width:100%;min-height:100vh!important;height:auto!important;overflow:visible!important;padding:0 0 clamp(80px,8vw,150px)!important;background:#f8f8f5}
-.editorial-head{position:relative;width:min(100%,1770px);min-height:275px;margin:auto;padding:25px clamp(24px,4.5vw,80px) 19px;isolation:isolate}
-.hero-topline,.hero-bottomline{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:10px;line-height:1.4;letter-spacing:.06em;color:#61615d}
-.hero-topline{border-bottom:1px solid #d3d3ce;padding-bottom:12px}
-.hero-topline b{color:#111;font-weight:500}
-.hero-heading{position:relative;padding:31px 0 27px;z-index:2;max-width:76%}
-.hero-overline{display:block;color:#686861;font-size:10px;letter-spacing:.085em}
-.hero-heading h1{font-family:'Archivo Black','Space Grotesk',sans-serif;font-weight:900;font-size:clamp(65px,8.5vw,148px);line-height:.9;letter-spacing:-.105em;margin:13px 0 12px;white-space:nowrap}
-.hero-heading h1 span{color:#ff6329}
-.hero-heading p{font-size:clamp(12px,1.1vw,15px);margin:0;letter-spacing:-.03em}
-.hero-bottomline{padding-top:13px;border-top:1px solid #d3d3ce}
-.desktop-scene .landing-hub{position:absolute!important;left:auto!important;right:clamp(34px,9.3vw,160px)!important;top:64px!important;width:clamp(105px,12.5vw,181px)!important;margin:0!important;transform:rotate(9deg)!important;z-index:1;pointer-events:none}
-.editorial-head::after{content:"";position:absolute;width:clamp(105px,13.5vw,195px);aspect-ratio:1;border:1px solid #d7dfbd;border-radius:50%;right:clamp(29px,8.3vw,145px);top:66px;background:#e5f0c6;opacity:.75}
-.gallery-toolbar{display:flex;align-items:end;justify-content:space-between;gap:22px;width:min(calc(100% - 96px),1610px);margin:25px auto 44px;padding:0 0 12px;border-bottom:1px solid #171717}
-.gallery-caption{display:flex;align-items:baseline;gap:13px;white-space:nowrap}
-.gallery-caption>.mono{font-size:10px;color:#777;letter-spacing:.035em}
-.gallery-caption strong{font-size:clamp(17px,1.5vw,23px);font-weight:700;letter-spacing:-.055em}
-.gallery-caption strong span{font-family:'DM Mono',monospace;font-weight:400;color:#888;font-size:11px;vertical-align:top;margin-left:3px}
-.gallery-controls{display:flex;align-items:center;gap:8px}
-.gallery-controls button{font-size:11px;background:transparent;white-space:nowrap;border-radius:100px;border:1px solid #d4d4cf;min-height:33px;padding:6px 13px;transition:background .18s,color .18s,border-color .18s,transform .18s}
-.gallery-controls button:hover{border-color:#111;transform:translateY(-2px)}
-.gallery-filters{display:flex;align-items:center;gap:5px}
-.gallery-controls .gallery-filter.is-active{background:#111;color:#fff;border-color:#111}
-.gallery-controls .surprise-game{background:#daff63;border-color:#111;font-weight:600}
-.gallery-controls .surprise-game:hover{background:#ffb5d2}
-.search-wrap{display:flex;align-items:center;gap:7px;border:1px solid #d4d4cf;background:#fff;border-radius:100px;min-height:33px;padding:0 12px;min-width:155px}
-.search-wrap span{font-size:22px;line-height:1;color:#6c6c68;transform:translateY(-1px)}
-.search-wrap input{width:137px;min-width:0;padding:7px 0;border:0;outline:0;background:transparent;color:#111;font:500 11px 'Space Grotesk',sans-serif}
-.search-wrap:focus-within{outline:2px solid #111;outline-offset:2px}
-.gallery-empty{font-size:14px;color:#777;margin:60px auto;text-align:center}
-.gallery-empty[hidden]{display:none!important}
-.desktop-scene .orbit-cards{position:relative!important;display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr));column-gap:clamp(15px,2.5vw,50px);row-gap:clamp(55px,5.5vw,100px);width:min(calc(100% - 96px),1610px);height:auto!important;inset:auto!important;margin:0 auto!important;padding:3px 5px 28px!important;align-items:start}
-.desktop-scene .game-tile{position:relative!important;top:auto!important;left:auto!important;width:100%!important;max-width:208px!important;min-width:0!important;display:flex!important;flex-direction:column;align-items:stretch;justify-self:center!important;margin:0!important;gap:9px!important;z-index:2;transform:translateY(var(--art-offset,0px)) rotate(var(--angle,0deg))!important;transition:transform .25s cubic-bezier(.2,.85,.2,1),filter .25s!important}
-.desktop-scene .game-tile:hover,.desktop-scene .game-tile:focus-visible{z-index:10!important;transform:translateY(calc(var(--art-offset,0px) - 8px)) rotate(0deg) scale(1.075)!important;filter:drop-shadow(0 6px 6px rgba(0,0,0,.065))}
-.desktop-scene .game-tile:active{transform:translateY(var(--art-offset,0px)) scale(.97)!important}
-.desktop-scene .game-tile.is-filtered-out{display:none!important}
-.desktop-scene .game-thumb{width:100%;height:auto;aspect-ratio:1.42;overflow:visible;flex:none}
-.desktop-scene .tile-illustration{height:100%;width:100%;max-width:100%;object-fit:contain}
-.desktop-scene .game-name{display:block;max-width:100%;min-height:2.35em;text-align:center;font:600 clamp(11px,.88vw,13px)/1.22 'Space Grotesk',sans-serif;letter-spacing:-.033em;overflow-wrap:break-word}
-.desktop-scene .game-index{top:1px;left:0;font-size:9px;line-height:1.3;color:#777;letter-spacing:-.01em;font-family:'DM Mono',monospace}
-.desktop-scene .game-tile:nth-child(7n+1){--art-offset:12px}
-.desktop-scene .game-tile:nth-child(7n+2){--art-offset:-8px}
-.desktop-scene .game-tile:nth-child(7n+3){--art-offset:5px}
-.desktop-scene .game-tile:nth-child(7n+4){--art-offset:-11px}
-.desktop-scene .game-tile:nth-child(7n+5){--art-offset:13px}
-.desktop-scene .game-tile:nth-child(7n+6){--art-offset:-4px}
-.desktop-scene .game-tile:nth-child(7n+7){--art-offset:9px}
-@media(min-width:1151px) and (max-width:1499px){
- .desktop-scene .orbit-cards{grid-template-columns:repeat(6,minmax(0,1fr));column-gap:clamp(17px,2.5vw,36px)}
+body{background:#f8f8f7;color:#101010}
+.desktop-scene{position:relative!important;display:block!important;width:100%!important;height:var(--scatter-scene-height,1600px)!important;min-height:100svh!important;overflow:visible!important;padding:0!important;margin:0!important;background:#f8f8f7!important;isolation:isolate}
+.desktop-scene .orbit-cards{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;padding:0!important;margin:0!important}
+.desktop-scene .landing-hub{
+  position:absolute!important;z-index:1!important;top:var(--cat-top,42vh)!important;
+  left:50%!important;right:auto!important;width:clamp(138px,11vw,187px)!important;
+  height:auto!important;margin:0!important;transform:translate(-50%,-50%) rotate(-4deg)!important;
+  pointer-events:none!important;
 }
-@media(min-width:761px) and (max-width:1150px){
- .desktop-scene .orbit-cards{grid-template-columns:repeat(5,minmax(0,1fr));column-gap:22px;row-gap:65px}
- .gallery-toolbar{width:calc(100% - 58px)}
- .desktop-scene .orbit-cards{width:calc(100% - 58px)}
- .hero-heading h1{font-size:clamp(60px,9vw,100px)}
+.desktop-scene .hub-cat{display:block;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 10px 13px rgba(0,0,0,.075))}
+.desktop-scene .game-tile{
+  position:absolute!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  top:var(--scatter-y,60px)!important;left:var(--scatter-x,40px)!important;
+  width:var(--scatter-size,125px)!important;max-width:none!important;min-width:0!important;
+  padding:0!important;margin:0!important;gap:6px!important;
+  transform:rotate(var(--scatter-rotation,-2deg))!important;transform-origin:50% 50%!important;
+  transition:transform .24s cubic-bezier(.2,.8,.2,1),filter .24s!important;
+  text-decoration:none!important;background:transparent!important;border:0!important;
+  color:#111!important;z-index:2!important;cursor:pointer!important;
 }
+.desktop-scene .game-tile:hover,.desktop-scene .game-tile:focus-visible{
+  transform:translateY(-6px) rotate(0deg) scale(1.095)!important;
+  filter:drop-shadow(0 6px 8px rgba(0,0,0,.085))!important;z-index:8!important;
+}
+.desktop-scene .game-tile:active{transform:scale(.97)!important}
+.desktop-scene .game-thumb{position:relative!important;width:100%!important;height:auto!important;aspect-ratio:1.42!important;overflow:visible!important;display:block!important}
+.desktop-scene .tile-illustration{display:block;width:100%!important;height:100%!important;max-width:100%;object-fit:contain}
+.desktop-scene .game-name{
+  display:block!important;text-align:center!important;min-height:2.4em!important;
+  font:600 clamp(10px,.83vw,13px)/1.2 'Space Grotesk',sans-serif!important;
+  letter-spacing:-.025em!important;overflow-wrap:break-word!important;max-width:100%!important;
+}
+.desktop-scene .game-index{top:0!important;left:0!important;font-size:clamp(8px,.62vw,10px)!important;color:#999!important;font-family:'DM Mono',monospace!important}
 @media(max-width:760px){
- .editorial-head{min-height:242px;padding:17px 18px 15px}
- .hero-topline,.hero-bottomline{font-size:8px;letter-spacing:.02em}
- .hero-topline span:last-child{max-width:120px;text-align:right}
- .hero-heading{padding:37px 0 35px;max-width:75%}
- .hero-heading h1{font-size:clamp(56px,12.6vw,95px);margin:12px 0 10px}
- .hero-overline{font-size:8px}
- .hero-heading p{font-size:11px}
- .desktop-scene .landing-hub{width:clamp(76px,19vw,120px)!important;top:90px!important;right:23px!important}
- .editorial-head::after{width:clamp(82px,21vw,135px);right:16px;top:85px}
- .gallery-toolbar{width:calc(100% - 36px);margin:12px auto 33px;align-items:start;flex-direction:column;gap:14px}
- .gallery-caption strong{font-size:21px}
- .gallery-controls{width:100%;flex-wrap:wrap;gap:8px}
- .search-wrap{flex:1 1 150px}
- .search-wrap input{width:100%}
- .desktop-scene .orbit-cards{width:calc(100% - 32px);grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 16px;padding:0 2px 25px!important}
- .desktop-scene .game-name{font-size:clamp(10px,2.35vw,13px);min-height:2.4em}
- .desktop-scene .game-index{font-size:8px}
- .desktop-scene .game-tile{gap:5px!important;--art-offset:0px!important}
- .desktop-scene .game-tile:nth-child(3n+2){transform:translateY(-5px) rotate(var(--angle,0deg))!important}
- .desktop-scene .game-tile:nth-child(3n+2):hover{transform:translateY(-10px) rotate(0deg) scale(1.05)!important}
+ .desktop-scene .landing-hub{width:clamp(110px,30vw,148px)!important}
+ .desktop-scene .game-tile{gap:4px!important}
+ .desktop-scene .game-name{font-size:clamp(10px,2.65vw,12px)!important;line-height:1.19!important}
+ .desktop-scene .game-index{font-size:8px!important}
 }
-@media(max-width:520px){
- .hero-heading h1{font-size:clamp(51px,12.4vw,70px)}
- .hero-heading{max-width:73%;padding-top:34px}
- .hero-bottomline span:first-child{max-width:180px}
- .desktop-scene .orbit-cards{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:34px;column-gap:22px}
- .desktop-scene .game-name{font-size:12px}
- .gallery-controls .surprise-game{padding-inline:11px}
-}
-@media(prefers-reduced-motion:reduce){.desktop-scene .game-tile,.gallery-controls button{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.desktop-scene .game-tile,.desktop-scene .hub-cat{transition:none!important}}
 
 </style>
 </head>
 <body>
 <main class="desktop-scene" id="top">
-<header class="editorial-head" aria-label="aynen.fun">
-  <div class="hero-topline mono"><span><b>AYNEN / 001</b> &nbsp;—&nbsp; INTERACTIVE INDEX</span><span>BAĞIMSIZ OYUN KOLEKSİYONU &nbsp;·&nbsp; 2026</span></div>
-  <div class="hero-heading">
-    <span class="hero-overline mono">KÜÇÜK OYUNLAR, BÜYÜK BİR SEBEBİ YOK.</span>
-    <h1>aynen<span>.</span>fun</h1>
-    <p>Oyna. Çık. İstersen yine gel.</p>
-  </div>
-  <section class="landing-hub" aria-label="aynen.fun kedisi">
-<img class="hub-cat" src="./cat.webp" alt="aynen.fun kedisi" width="230" height="198" fetchpriority="high">
-  </section>
-  <div class="hero-bottomline mono"><span>CURATED CHAOS &nbsp; / &nbsp; NO ACCOUNT REQUIRED</span><span>↓ &nbsp; KAYDIR, SEÇ, OYNA</span></div>
-</header>
-<section class="gallery-toolbar" aria-label="Oyun arşivini keşfet">
-  <div class="gallery-caption"><span class="mono">01 / KOLEKSİYON</span><strong>Oyunlar <span id="games-total">35</span></strong></div>
-  <div class="gallery-controls">
-    <label class="search-wrap"><span aria-hidden="true">⌕</span><input id="game-search" type="search" placeholder="Oyun ara..." autocomplete="off" aria-label="Oyun ara"></label>
-    <div class="gallery-filters" role="group" aria-label="Oyunları filtrele"><button class="gallery-filter is-active" type="button" data-gallery-filter="all" aria-pressed="true">Hepsi</button><button class="gallery-filter" type="button" data-gallery-filter="new" aria-pressed="false">Yeni</button></div>
-    <button class="surprise-game" type="button" id="random-game" aria-label="Rastgele bir oyun aç">Rastgele <span aria-hidden="true">↗</span></button>
-  </div>
+<h1 class="sr-only">aynen.fun — oyunlar</h1>
+<section class="landing-hub" aria-label="Site maskotu">
+<img class="hub-cat" src="./cat.webp" alt="Kedi maskotu" width="230" height="198" fetchpriority="high">
 </section>
-<p class="gallery-empty" id="gallery-empty" hidden>Bu isimde oyun yok.</p>
 <div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye"><button class="game-tile" type="button" data-game="nothing" style="--x:4%;--y:58px;--angle:-2deg" aria-label="Hiçbir Şey Yapma oyununu aç">
 <span class="game-thumb"><span class="game-index" aria-hidden="true">01</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration"><path d="M35 23C25 41 20 79 44 88C71 101 126 93 132 75C138 57 125 29 120 18C94 5 55 13 35 23Z" fill="#ff6714" stroke="none" stroke-width="0" stroke-linejoin="round" stroke-linecap="round" /><ellipse cx="80" cy="30" rx="45" ry="15" fill="none" stroke="#101010" stroke-width="4.7"/><ellipse cx="80" cy="54" rx="45" ry="15" fill="none" stroke="#101010" stroke-width="4.7"/><ellipse cx="80" cy="77" rx="45" ry="15" fill="none" stroke="#101010" stroke-width="4.7"/></svg></span>
 <span class="game-name">Hiçbir Şey Yapma</span>
@@ -555,39 +489,95 @@ let requested=new URLSearchParams(location.search).get('game');if(requested==='p
 
 
 <script>
-/* Real grid layout and gallery controls; game URLs and existing handlers stay intact. */
+/* Scattered sticker wall. Stable seeded placements, not grid coordinates.
+   Measured tile bounds + reserved mascot zone prevent overlap and clipping. */
 (()=>{
-  const cards=Array.from(document.querySelectorAll('.orbit-cards > .game-tile'));
-  const search=document.getElementById('game-search');
-  const total=document.getElementById('games-total');
-  const empty=document.getElementById('gallery-empty');
-  const filters=Array.from(document.querySelectorAll('[data-gallery-filter]'));
-  const random=document.getElementById('random-game');
-  let mode='all';
-  if(total)total.textContent=String(cards.length).padStart(2,'0');
-  function update(){
-    const q=(search?.value||'').trim().toLocaleLowerCase('tr-TR');
-    let visible=0;
-    for(const card of cards){
-      const name=(card.querySelector('.game-name')?.textContent||'').toLocaleLowerCase('tr-TR');
-      const newest=(card.querySelector('.game-index')?.textContent||'').trim().toUpperCase()==='NEW';
-      const show=(mode==='all'||newest)&&(!q||name.includes(q));
-      card.classList.toggle('is-filtered-out',!show);
-      if(show)visible++;
-    }
-    if(empty)empty.hidden=visible!==0;
-  }
-  filters.forEach(button=>button.addEventListener('click',()=>{
-    mode=button.dataset.galleryFilter||'all';
-    filters.forEach(b=>{const active=b===button;b.classList.toggle('is-active',active);b.setAttribute('aria-pressed',String(active));});
-    update();
-  }));
-  search?.addEventListener('input',update);
-  random?.addEventListener('click',()=>{
-    const available=cards.filter(card=>!card.classList.contains('is-filtered-out'));
-    if(available.length)available[Math.floor(Math.random()*available.length)].click();
-  });
-  update();
+ const scene=document.querySelector('.desktop-scene');
+ const cat=scene?.querySelector('.landing-hub');
+ const tiles=Array.from(scene?.querySelectorAll('.orbit-cards > .game-tile')||[]);
+ if(!scene||!cat||!tiles.length)return;
+ const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
+ function randFactory(seed){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+ function intersects(a,b,padX,padY){return a.x<a.x+a.w&&a.x<b.x+b.w+padX&&a.x+a.w+padX>b.x&&a.y<b.y+b.h+padY&&a.y+a.h+padY>b.y;}
+ function layout(){
+   const W=scene.clientWidth;
+   if(!W)return;
+   const mobile=W<761, narrow=W<470;
+   const edge=mobile?Math.max(13,W*.045):Math.max(27,Math.min(60,W*.029));
+   const base=mobile?clamp(W*.295,94,127):clamp(W*.082,115,156);
+   const gapX=mobile?15:22, gapY=mobile?19:26;
+   const vh=window.innerHeight||800;
+   const catTop=mobile?clamp(vh*.44,230,380):clamp(vh*.47,305,505);
+   scene.style.setProperty('--cat-top',catTop+'px');
+   // Optical center stays free for the cat on both phone and desktop.
+   const catWidth=cat.offsetWidth||150;
+   const catHeight=cat.offsetHeight||130;
+   const catBox={x:W/2-catWidth/2-39,y:catTop-catHeight/2-50,w:catWidth+78,h:catHeight+100};
+   const dimensions=tiles.map((tile,i)=>{
+      const variation=[1.03,.88,1.11,.95,1.0,1.13,.9,1.04,.94,1.1,.89,1.02][i%12];
+      const size=Math.round(base*variation);
+      tile.style.setProperty('--scatter-size',size+'px');
+      const r=randFactory(701+i*107);
+      tile.style.setProperty('--scatter-rotation',((r()-.5)*(mobile?8:12)).toFixed(2)+'deg');
+      // offsetHeight includes multiline title; transform does not modify measurements.
+      return {w:size,h:Math.max(size*.72+39,tile.offsetHeight||size*.72+39)};
+   });
+   const usableW=W-2*edge;
+   const totalArea=dimensions.reduce((sum,d)=>sum+(d.w+gapX)*(d.h+gapY),0);
+   let H=Math.ceil(Math.max(vh*1.3,mobile?1150:1130,totalArea/(usableW*(narrow?.36:mobile?.40:.42))+100,catTop+450)/100)*100;
+   let locations=null;
+   for(let pass=0;pass<9;pass++){
+     const rng=randFactory(24681357+pass*201);
+     const boxes=[];
+     let valid=true;
+     for(let i=0;i<tiles.length;i++){
+       const {w,h}=dimensions[i];
+       const xMin=edge,xMax=Math.max(edge,W-edge-w);
+       const yMin=35,yMax=Math.max(35,H-h-45);
+       const targetY=clamp((i+.55)/tiles.length*(H-100),yMin,yMax);
+       let found=null;
+       // Progress down the page without rows or columns: every position is unique.
+       for(let trial=0;trial<800;trial++){
+         const range=H/tiles.length*(trial<420?6:13);
+         const x=xMin+rng()*(xMax-xMin);
+         const y=clamp(targetY+(rng()-.5)*range*2,yMin,yMax);
+         const box={x,y,w,h};
+         if(intersects(box,catBox,gapX+12,gapY+12))continue;
+         if(boxes.some(other=>intersects(box,other,gapX,gapY)))continue;
+         found=box;break;
+       }
+       if(!found){
+         // Full-plane search prevents pathological narrow viewport dead ends.
+         for(let trial=0;trial<1500;trial++){
+           const box={x:xMin+rng()*(xMax-xMin),y:yMin+rng()*(yMax-yMin),w,h};
+           if(intersects(box,catBox,gapX+12,gapY+12))continue;
+           if(boxes.some(other=>intersects(box,other,gapX,gapY)))continue;
+           found=box;break;
+         }
+       }
+       if(!found){valid=false;break;}
+       boxes.push(found);
+     }
+     if(valid){locations=boxes;break;}
+     H+=Math.max(320,Math.round(vh*.35));
+   }
+   if(!locations){
+     // Deterministic emergency fallback: one vertically spaced object per line.
+     const minStep=Math.max(...dimensions.map(d=>d.h))+gapY+15;
+     H=tiles.length*minStep+catTop+220;
+     locations=dimensions.map((d,i)=>({x:edge+(i%2)*Math.max(0,W-edge*2-d.w),y:catTop+260+i*minStep,w:d.w,h:d.h}));
+   }
+   tiles.forEach((tile,i)=>{
+     tile.style.setProperty('--scatter-x',Math.round(locations[i].x)+'px');
+     tile.style.setProperty('--scatter-y',Math.round(locations[i].y)+'px');
+   });
+   scene.style.setProperty('--scatter-scene-height',Math.ceil(H)+'px');
+ }
+ let pending=0;
+ function schedule(){if(pending)cancelAnimationFrame(pending);pending=requestAnimationFrame(()=>{pending=0;layout();});}
+ layout();
+ window.addEventListener('resize',schedule,{passive:true});
+ document.fonts?.ready?.then(schedule);
 })();
 </script>
 </body></html><script src="/share-kit.js?v=1" defer></script>
