@@ -491,7 +491,7 @@ function renderProgression(){
  $('#homeRank').textContent=ranks[Math.min(level-1,ranks.length-1)];
  $('#xpFill').style.width=Math.min(100,xp/xpNeeded()*100)+'%';
  $('#xpText').textContent=xp+' / '+xpNeeded()+' XP';
- $('#goalPreview').innerHTML=goals.map(function(g){var v=goalValue(g);return '<div class="goal-mini"><b>'+(g.claimed?'✓ ':'○ ')+g.label+'</b><small>'+(g.claimed?'BİTTİ':Math.min(v,g.target)+'/'+g.target)+'</small></div>'}).join('');
+ var newGoalHtml=goals.map(function(g){var v=goalValue(g);return '<div class="goal-mini"><b>'+(g.claimed?'✓ ':'○ ')+g.label+'</b><small>'+(g.claimed?'BİTTİ':Math.min(v,g.target)+'/'+g.target)+'</small></div>'}).join('');if(newGoalHtml!==previousGoalHtml){$('#goalPreview').innerHTML=newGoalHtml;previousGoalHtml=newGoalHtml}
  renderUpgrades()
 }
 function notebookHtml(){
@@ -506,7 +506,7 @@ function buyUpgrade(id){if(!started||ended)return;var u=upgradeCatalog.find(func
 function openCare(who){
  if(!['self','partner','kid','pet','elder'].includes(who))return;selected=null;selectedPerson=who;var names={self:'Biraz dinlen',partner:'Eşinle konuş',kid:'Çocukla ilgilen',pet:'Köpekle ilgilen',elder:'Bir çay sohbeti'};
  $('#actionTitle').textContent=names[who];$('#actionDesc').textContent='İlişkilere ve ihtiyaçlara vakit ayırmak da bir iş. Üstelik ertesi güne etkisi var.';$('#actionMeta').textContent='EV HALKI / KISA EYLEM';
- $('#doIt').textContent=who==='self'?'12 DK MOLA':'SOHBET ET';$('#delegate').textContent='BİRLİKTE ÇAY (₺8)';$('#doIt').disabled=(careCooldown[who]||0)>time;$('#delegate').disabled=cash<8||(careCooldown[who]||0)>time;$('#askKid').hidden=true;$('#action').classList.add('visible')
+ $('#doIt').textContent=who==='self'?'12 DK MOLA':'SOHBET ET';$('#delegate').textContent='BİRLİKTE ÇAY (₺8)';$('#doIt').disabled=(careCooldown[who]||0)>time;$('#delegate').disabled=cash<8||(careCooldown[who]||0)>time;$('#askKid').hidden=true;$('#action').classList.add('visible');placeAction(null)
 }
 function careAction(kind){
  var who=selectedPerson;if(!who)return;var cooldown=careCooldown[who]||0;if(cooldown>time){message('Önce biraz zaman geçsin.');return}
@@ -523,7 +523,7 @@ function careAction(kind){
  if(time>=22*60)finishDay();
 }
 
-var taskFilter='all',cameraScale=1.055,cameraX=0,cameraY=0,previousTaskHtml='',lastSceneMood='';
+var taskFilter='all',cameraScale=1.055,cameraX=0,cameraY=0,previousTaskHtml='',previousGoalHtml='',lastSceneMood='';
 function appliesFilter(j){
  if(taskFilter==='house')return ['stove','sink','table','floor','laundry'].includes(j.spot);
  if(taskFilter==='family')return ['kid','pet','desk'].includes(j.spot);
@@ -543,11 +543,11 @@ function updateSceneFeedback(){
 function render(){
  $('#time').textContent=format(time);$('#dayLabel').textContent='GÜN '+String(day).padStart(2,'0')+' / AKŞAM';$('#peace').textContent=Math.round(peace)+'%';$('#energy').textContent=Math.round(energy)+'%';$('#cash').textContent='₺'+Math.round(cash);
  $('#relationPartner').textContent=Math.round(friendship);$('#relationKid').textContent=Math.round(trust);$('#badgeCount').textContent=achievements.length+'/'+badgeCatalog.length;$('#selfMeter').style.width=energy+'%';$('#partnerMeter').style.width=partnerEnergy+'%';$('#kidMeter').style.width=kidEnergy+'%';$('#petMeter').style.width=petEnergy+'%';
- $('#selfQueue').textContent='SEN / '+[current].concat(selfQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||'Beklemede';
- $('#partnerQueue').textContent='EŞ / '+[helper].concat(partnerQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||'Beklemede';
+ $('#selfQueue').textContent='SEN / '+([current].concat(selfQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||'Beklemede');
+ $('#partnerQueue').textContent='EŞ / '+([helper].concat(partnerQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||'Beklemede');
  var live=jobs.filter(function(j){return j.remaining>0});$('#count').textContent=live.length+' / '+done+' bitti';
  live.sort(function(a,b){return a.due-b.due});
- var filtered=live.filter(appliesFilter);var visibleJobHtml=filtered.map(function(j){var late=time>j.due,active=(current&&current.id===j.id)||(helper&&helper.id===j.id)||(childTask&&childTask.id===j.id);var ownership=j.assigned==='partner'?'Eşin yapıyor / sırada · ':j.assigned==='self'?'Sen yapıyorsun / sırada · ':j.assigned==='kid'?'Çocuk yapıyor · ':'';return '<button class="job'+(late?' late':'')+(active?' active':'')+'" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+ownership+Math.ceil(j.remaining)+' dk iş</small></span><span class="remaining">'+(late?'GEÇ '+Math.ceil(time-j.due)+'dk':format(j.due)) + '</span></button>'}).join('')||'<p style="font-size:12px;padding:12px">Bu kategoride bekleyen iş yok.</p>';if(visibleJobHtml!==previousTaskHtml){$('#taskList').innerHTML=visibleJobHtml;previousTaskHtml=visibleJobHtml}
+ var filtered=live.filter(appliesFilter);var visibleJobHtml=filtered.map(function(j){var late=time>j.due,active=(current&&current.id===j.id)||(helper&&helper.id===j.id)||(childTask&&childTask.id===j.id);var ownership=j.assigned==='partner'?'Eşin yapıyor / sırada · ':j.assigned==='self'?'Sen yapıyorsun / sırada · ':j.assigned==='kid'?'Çocuk yapıyor · ':'';return '<button class="job'+(late?' late':'')+(active?' active':'')+'" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+ownership+Math.ceil(j.remaining)+' dk iş</small></span><span class="remaining">'+(late?'GEÇ '+Math.ceil(time-j.due)+'dk':format(j.due)) + '</span>'+(j.assigned?'<span class="job-progress"><i style="width:'+Math.min(100,100*(1-j.remaining/j.dur))+'%"></i></span>':'')+'</button>'}).join('')||'<p style="font-size:12px;padding:12px">Bu kategoride bekleyen iş yok.</p>';if(visibleJobHtml!==previousTaskHtml){$('#taskList').innerHTML=visibleJobHtml;previousTaskHtml=visibleJobHtml}
  updateSceneFeedback();document.querySelectorAll('[data-station]').forEach(function(el){var spot=el.getAttribute('data-station');var related=live.filter(function(j){return j.spot===spot});el.setAttribute('aria-disabled',related.length?'false':'true');el.classList.toggle('blink',related.some(function(j){return time>j.due-16&&!j.assigned}));});
  $('#game').classList.toggle('evening',time>=19*60&&time<21*60);$('#game').classList.toggle('night',time>=21*60);
  var j=current||helper||childTask;if(j){$('#progress').classList.add('on');$('#progressName').textContent=j.name;$('#progressWho').textContent=current?'Sen':helper?'Eşin':'Çocuk';$('#progressFill').style.width=Math.min(100,Math.round(100*(1-j.remaining/j.dur)))+'%'}else $('#progress').classList.remove('on');
@@ -566,9 +566,19 @@ function showSavePreview(){var s=getSave();if(!s){$('#resume').hidden=true;$('#s
 }
 
 function find(id){return jobs.find(function(j){return j.id===Number(id)&&j.remaining>0})}
-function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=null;$('#askKid').hidden=false;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+' ÖNCESİ / '+Math.ceil(j.remaining)+' DK';$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'SIRAYA EKLE':'BEN YAPAYIM';$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?'EŞE SIRALA':'EŞİME VER';$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j));$('#action').classList.add('visible');if(innerWidth<850)$('#tasks').classList.add('collapsed');}
+function placeAction(spot){
+ var box=$('#action');
+ box.style.left='';box.style.top='';box.style.right='';box.style.bottom='';
+ if(innerWidth<=850||!spot)return;
+ var el=document.querySelector('[data-station="'+spot+'"]');if(!el||!el.getBoundingClientRect)return;
+ var rect=el.getBoundingClientRect(),winHeight=window.innerHeight||900;
+ var x=Math.max(330,Math.min(innerWidth-336,rect.left-305));
+ var y=Math.max(92,Math.min(winHeight-330,rect.top-35));
+ box.style.left=Math.round(x)+'px';box.style.top=Math.round(y)+'px';box.style.right='auto';box.style.bottom='auto'
+}
+function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=null;$('#askKid').hidden=false;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+' ÖNCESİ / '+Math.ceil(j.remaining)+' DK';$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'SIRAYA EKLE':'BEN YAPAYIM';$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?'EŞE SIRALA':'EŞİME VER';$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j));$('#action').classList.add('visible');placeAction(j.spot);if(innerWidth<850)$('#tasks').classList.add('collapsed');}
 
-function hideAction(){$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false}
+function hideAction(){$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;placeAction(null)}
 function startSelf(){
  if(current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('Sen: '+current.name)}}
 function startPartner(){if(helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message('Eşin başladı: '+helper.name)}}
