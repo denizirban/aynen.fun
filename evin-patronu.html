@@ -259,6 +259,7 @@ var $=function(s){return document.querySelector(s)};
 var time=17*60, peace=75, energy=100, done=0, shared=0, missed=0, speed=1, paused=true, started=false, ended=false;
 var jobs=[], seq=1, selected=null, current=null, helper=null, childTask=null, selfQueue=[], partnerQueue=[], day=1, cash=420, partnerEnergy=88, kidEnergy=83, petEnergy=90, activePerson='self', last=performance.now(), tickBudget=0, eventAt=17*60+28, toastTimer=0, speechTimer=0, combo=0, lastSave=0, savedPreview=null;
 var SAVE_KEY='aynen:evin-patronu:v3';
+var xp=0,level=1,owned=[],achievements=[],goals=[],totalDone=0,assistedFinished=0,totalShared=0,wellDays=0,friendship=66,trust=64,careCooldown={},selectedPerson=null,noteTab='upgrades',wasPausedOnNote=false,rewardTimer=0;
 var points={stove:[1095,368],sink:[1220,510],table:[705,560],kid:[653,668],floor:[544,775],laundry:[1205,745],desk:[913,445],pet:[340,766]};
 var pos=[770,460], posTarget=[770,460], partnerPos=[885,351], kidPos=[746,714];
 var templates=[
@@ -285,6 +286,89 @@ function add(t,delay){var j=Object.assign({},t);j.id=seq++;j.due=t.due||time+del
 function format(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(Math.floor(m%60)).padStart(2,'0')}
 function clamp(v){return Math.max(0,Math.min(100,v))}
 function message(t){var el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show')},2400)}
+
+var upgradeCatalog=[
+ {id:'herbs',name:'Pencere Önü Bahçesi',icon:'🪴',level:1,price:110,desc:'Yemek yapınca ev huzuruna +3 puan. Pencere önüne gerçek bir bitki ekler.',tag:'Başlangıç'},
+ {id:'board',name:'Aile Görev Panosu',icon:'📋',level:1,price:130,desc:'Eşinin görev hızını %20 artırır. Mutfağın duvarına asılır.',tag:'İş bölümü'},
+ {id:'dishwasher',name:'Bulaşık Makinesi',icon:'🫧',level:2,price:190,desc:'Lavabodaki işlerde %45 hız kazanırsın.',tag:'Konfor'},
+ {id:'robot',name:'Robot Süpürge',icon:'🤖',level:2,price:230,desc:'Yerdeki işler %45 daha hızlı biter.',tag:'Teknoloji'},
+ {id:'pot',name:'Akıllı Tencere',icon:'🍲',level:3,price:265,desc:'Yemek işleri %35 hızlanır. Akşam yemeği daha az enerji ister.',tag:'Mutfak'},
+ {id:'coffee',name:'Kahve Köşesi',icon:'☕',level:3,price:195,desc:'Molalarda %50 daha fazla enerji kazan.',tag:'İhtiyaçlar'},
+ {id:'light',name:'İyi Aydınlatma',icon:'💡',level:4,price:310,desc:'Her yeni akşama +10 ek ev huzuruyla başla.',tag:'Atmosfer'}
+];
+var badgeCatalog=[
+ {id:'first',icon:'🗹',title:'Bir İş Bitti',desc:'İlk görevini tamamladın.'},
+ {id:'team',icon:'🤝',title:'Yalnız Değilsin',desc:'Üç iş aile üyeleri tarafından tamamlandı.'},
+ {id:'decor',icon:'🪴',title:'İlk Yatırım',desc:'Mutfağa bir şey aldın.'},
+ {id:'level3',icon:'✦',title:'Ev İdaresi 101',desc:'Seviye 3 oldun.'},
+ {id:'ten',icon:'🏠',title:'Bu Ev Yürür',desc:'Toplam 10 iş tamamlandı.'},
+ {id:'peace',icon:'☀',title:'Sakin Bir Akşam',desc:'Bir günü %70 üzeri huzurla bitirdin.'},
+ {id:'seven',icon:'📅',title:'Haftalık Mesai',desc:'Yedi gün tamamladın.'}
+];
+var ranks=['İlk akşam','İşi öğreniyor','İdare eder','Ev koordinatörü','Düzen kurucu','Ev mühendisi','Yüksek organizasyon','Sakin güç'];
+function xpNeeded(){return 55+level*45}
+function floatReward(t){var n=$('#rewardBubble');n.textContent=t;n.classList.add('on');clearTimeout(rewardTimer);rewardTimer=setTimeout(function(){n.classList.remove('on')},1500)}
+function grantXp(n){xp+=n;var raised=false;while(xp>=xpNeeded()&&level<20){xp-=xpNeeded();level++;cash+=35;raised=true}if(raised){floatReward('SEVİYE '+level+'! +₺35');say('Biraz daha profesyonel olduk.')} }
+function makeGoals(){
+ var presets=[
+  [{id:'done',target:3,label:'3 işi bitir',xp:28,money:35},{id:'shared',target:1,label:'1 işi ailece bitir',xp:30,money:40},{id:'dinner',target:1,label:'Akşam yemeğini yetiştir',xp:24,money:25}],
+  [{id:'done',target:5,label:'5 işi bitir',xp:40,money:50},{id:'shared',target:2,label:'2 işi paylaş',xp:36,money:45},{id:'peace',target:65,label:'20:00’de huzur %65+',xp:30,money:45}],
+  [{id:'done',target:6,label:'6 işi bitir',xp:45,money:55},{id:'dinner',target:1,label:'Yemeği hazır et',xp:32,money:30},{id:'clean',target:2,label:'2 temizlik işi bitir',xp:33,money:40}],
+  [{id:'done',target:7,label:'7 işi bitir',xp:50,money:55},{id:'shared',target:3,label:'3 işi birlikte bitir',xp:48,money:50},{id:'peace',target:70,label:'20:00’de huzur %70+',xp:40,money:50}]
+ ];return presets[(day-1)%presets.length].map(function(g){return Object.assign({claimed:false},g)})
+}
+function goalValue(g){
+ if(g.id==='done')return done;
+ if(g.id==='shared')return assistedFinished;
+ if(g.id==='dinner')return jobs.some(function(j){return j.key==='dinner'&&j.remaining<=0})?1:0;
+ if(g.id==='clean')return jobs.filter(function(j){return j.remaining<=0&&['sink','floor','table'].includes(j.spot)}).length;
+ if(g.id==='peace')return time>=20*60?Math.round(peace):0;
+ return 0
+}
+function evaluateGoals(){
+ goals.forEach(function(g){if(g.claimed||goalValue(g)<g.target)return;g.claimed=true;cash+=g.money;grantXp(g.xp);floatReward('HEDEF! +'+g.xp+' XP · ₺'+g.money);message('Günlük hedef tamamlandı: '+g.label)});
+}
+function evaluateBadges(){
+ var test={first:totalDone>=1,team:totalShared>=3,decor:owned.length>=1,level3:level>=3,ten:totalDone>=10,peace:wellDays>=1,seven:day>=7};
+ badgeCatalog.forEach(function(a){if(test[a.id]&&!achievements.includes(a.id)){achievements.push(a.id);grantXp(15);message('Yeni anı: '+a.title)}})
+}
+function renderUpgrades(){upgradeCatalog.forEach(function(u){var el=document.getElementById('decor-'+u.id);if(el)el.setAttribute('display',owned.includes(u.id)?'inline':'none')})}
+function renderProgression(){
+ $('#levelFlag').textContent='LVL '+String(level).padStart(2,'0');
+ $('#homeRank').textContent=ranks[Math.min(level-1,ranks.length-1)];
+ $('#xpFill').style.width=Math.min(100,xp/xpNeeded()*100)+'%';
+ $('#xpText').textContent=xp+' / '+xpNeeded()+' XP';
+ $('#goalPreview').innerHTML=goals.map(function(g){var v=goalValue(g);return '<div class="goal-mini"><b>'+(g.claimed?'✓ ':'○ ')+g.label+'</b><small>'+(g.claimed?'BİTTİ':Math.min(v,g.target)+'/'+g.target)+'</small></div>'}).join('');
+ renderUpgrades()
+}
+function notebookHtml(){
+ var title={upgrades:'Mutfağı geliştir',goals:'Bugünün hedefleri',memories:'Anı defteri'};$('#noteTitle').textContent=title[noteTab];$('#noteBudget').textContent='₺'+cash+' · Seviye '+level;
+ if(noteTab==='upgrades')$('#noteBody').innerHTML='<div class="upgrade-grid">'+upgradeCatalog.map(function(u){var has=owned.includes(u.id),locked=level<u.level,poor=cash<u.price,disabled=has||locked||poor;return '<article class="upgrade-card'+(has?' owned':'')+'"><div class="upgrade-top"><div class="upgrade-art">'+u.icon+'</div><div><b>'+u.name+'</b><small>'+u.tag+' · SEVİYE '+u.level+'</small></div></div><p>'+u.desc+'</p><button class="buy" data-buy="'+u.id+'"'+(disabled?' disabled':'')+'>'+(has?'✓ MUTFAKTA':locked?'SEVİYE '+u.level+' GEREKİYOR':poor?'₺'+u.price+' — BÜTÇE YETMİYOR':'SATIN AL · ₺'+u.price)+'</button></article>'}).join('')+'</div>';
+ if(noteTab==='goals')$('#noteBody').innerHTML='<p style="font-size:12px;color:#797469;margin:0 0 15px">Hedefleri tamamla. XP ve oyun içi bütçe kazan; ev gelişsin.</p>'+goals.map(function(g){var v=goalValue(g);return '<article class="note-goal"><header><strong>'+(g.claimed?'✓ ':'○ ')+g.label+'</strong><span>'+(g.claimed?'TAMAMLANDI':Math.min(v,g.target)+' / '+g.target)+'</span></header><p>Ödül: +'+g.xp+' XP · ₺'+g.money+'</p><div class="track"><i style="width:'+Math.min(100,v/g.target*100)+'%"></i></div></article>'}).join('');
+ if(noteTab==='memories')$('#noteBody').innerHTML='<p style="font-size:12px;color:#777;margin:0 0 14px">'+totalDone+' iş tamamlandı · '+totalShared+' ailece iş · '+(day-1)+' akşam geride kaldı.</p><div class="badge-grid">'+badgeCatalog.map(function(b){var has=achievements.includes(b.id);return '<div class="badge-tile'+(has?'':' locked')+'"><span class="emblem">'+(has?b.icon:'?')+'</span><div><b>'+b.title+'</b><p>'+b.desc+'</p></div></div>'}).join('')+'</div>';
+}
+function openNote(tab){if(!started)return;noteTab=tab||'upgrades';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
+function closeNote(){if($('#notebook').classList.contains('hidden'))return;$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
+function buyUpgrade(id){if(!started||ended)return;var u=upgradeCatalog.find(function(a){return a.id===id});if(!u||owned.includes(id)||level<u.level||cash<u.price)return;cash-=u.price;owned.push(id);grantXp(14);evaluateBadges();render();notebookHtml();saveGame();floatReward(u.icon+' '+u.name+' kuruldu');message('Mutfak geliştirildi: '+u.name)}
+function openCare(who){
+ if(!['self','partner','kid','pet','elder'].includes(who))return;selected=null;selectedPerson=who;var names={self:'Biraz dinlen',partner:'Eşinle konuş',kid:'Çocukla ilgilen',pet:'Köpekle ilgilen',elder:'Bir çay sohbeti'};
+ $('#actionTitle').textContent=names[who];$('#actionDesc').textContent='İlişkilere ve ihtiyaçlara vakit ayırmak da bir iş. Üstelik ertesi güne etkisi var.';$('#actionMeta').textContent='EV HALKI / KISA EYLEM';
+ $('#doIt').textContent=who==='self'?'12 DK MOLA':'SOHBET ET';$('#delegate').textContent='BİRLİKTE ÇAY (₺8)';$('#doIt').disabled=(careCooldown[who]||0)>time;$('#delegate').disabled=cash<8||(careCooldown[who]||0)>time;$('#askKid').hidden=true;$('#action').classList.add('visible')
+}
+function careAction(kind){
+ var who=selectedPerson;if(!who)return;var cooldown=careCooldown[who]||0;if(cooldown>time){message('Önce biraz zaman geçsin.');return}
+ var tea=kind==='partner';if(tea&&cash<8){message('Bütçe yetmiyor.');return}
+ if(tea)cash-=8;
+ var minutes=tea?10:12;time+=minutes;
+ if(who==='self')energy=clamp(energy+(tea?32:22)*(owned.includes('coffee')?1.5:1));
+ if(who==='partner'){friendship=clamp(friendship+(tea?13:9));partnerEnergy=clamp(partnerEnergy+7)}
+ if(who==='kid'){trust=clamp(trust+(tea?13:10));kidEnergy=clamp(kidEnergy+8)}
+ if(who==='pet')petEnergy=clamp(petEnergy+(tea?28:22));
+ if(who==='elder')peace=clamp(peace+3);
+ peace=clamp(peace+(tea?5:3));careCooldown[who]=time+75;
+ selectedPerson=null;hideAction();floatReward(tea?'Birlikte zaman':'Kısa mola');say('Şimdi biraz daha iyiyiz.');render();evaluateGoals();saveGame();
+ if(time>=22*60)finishDay();
+}
 function render(){
  $('#time').textContent=format(time);$('#dayLabel').textContent='GÜN '+String(day).padStart(2,'0')+' / AKŞAM';$('#peace').textContent=Math.round(peace)+'%';$('#energy').textContent=Math.round(energy)+'%';$('#cash').textContent='₺'+Math.round(cash);
  $('#selfMeter').style.width=energy+'%';$('#partnerMeter').style.width=partnerEnergy+'%';$('#kidMeter').style.width=kidEnergy+'%';$('#petMeter').style.width=petEnergy+'%';
@@ -296,28 +380,29 @@ function render(){
  document.querySelectorAll('[data-station]').forEach(function(el){var spot=el.getAttribute('data-station');var related=live.filter(function(j){return j.spot===spot});el.setAttribute('aria-disabled',related.length?'false':'true');el.classList.toggle('blink',related.some(function(j){return time>j.due-16&&!j.assigned}));});
  $('#game').classList.toggle('evening',time>=19*60&&time<21*60);$('#game').classList.toggle('night',time>=21*60);
  var j=current||helper||childTask;if(j){$('#progress').classList.add('on');$('#progressName').textContent=j.name;$('#progressWho').textContent=current?'Sen':helper?'Eşin':'Çocuk';$('#progressFill').style.width=Math.min(100,Math.round(100*(1-j.remaining/j.dur)))+'%'}else $('#progress').classList.remove('on');
- if(started&&performance.now()-lastSave>4000){saveGame();}
+ renderProgression();if(started&&performance.now()-lastSave>4000){saveGame();}
 }
 function say(t){var e=$('#speech');e.textContent=t;e.classList.add('visible');clearTimeout(speechTimer);speechTimer=setTimeout(function(){e.classList.remove('visible')},3500)}
 function canKid(j){return ['pet','table','floor','kid'].includes(j.spot)}
-function saveGame(){if(!started)return;var snap={v:3,day:day,cash:cash,time:time,peace:peace,energy:energy,partnerEnergy:partnerEnergy,kidEnergy:kidEnergy,petEnergy:petEnergy,done:done,shared:shared,missed:missed,speed:speed,started:started,ended:ended,seq:seq,jobs:jobs,current:current&&current.id,helper:helper&&helper.id,childTask:childTask&&childTask.id,selfQueue:selfQueue,partnerQueue:partnerQueue,eventAt:eventAt,combo:combo,pos:pos,posTarget:posTarget,partnerPos:partnerPos,kidPos:kidPos,at:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(snap));lastSave=performance.now();$('#saveStatus').textContent='KAYDEDİLDİ ✓'}catch(e){$('#saveStatus').textContent='KAYIT YOK'}}
+function saveGame(){if(!started)return;var snap={v:3,day:day,cash:cash,time:time,peace:peace,energy:energy,partnerEnergy:partnerEnergy,kidEnergy:kidEnergy,petEnergy:petEnergy,done:done,shared:shared,missed:missed,speed:speed,started:started,ended:ended,seq:seq,jobs:jobs,current:current&&current.id,helper:helper&&helper.id,childTask:childTask&&childTask.id,selfQueue:selfQueue,partnerQueue:partnerQueue,eventAt:eventAt,combo:combo,pos:pos,posTarget:posTarget,partnerPos:partnerPos,kidPos:kidPos,xp:xp,level:level,owned:owned,achievements:achievements,goals:goals,totalDone:totalDone,assistedFinished:assistedFinished,totalShared:totalShared,wellDays:wellDays,friendship:friendship,trust:trust,careCooldown:careCooldown,at:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(snap));lastSave=performance.now();$('#saveStatus').textContent='KAYDEDİLDİ ✓'}catch(e){$('#saveStatus').textContent='KAYIT YOK'}}
 function getSave(){try{var s=JSON.parse(localStorage.getItem(SAVE_KEY));return s&&s.v===3&&Array.isArray(s.jobs)?s:null}catch(e){return null}}
 function loadSave(){
  var s=getSave();if(!s)return false;
- day=Math.max(1,s.day||1);cash=s.cash??420;time=s.time||17*60;peace=s.peace??75;energy=s.energy??100;partnerEnergy=s.partnerEnergy??88;kidEnergy=s.kidEnergy??83;petEnergy=s.petEnergy??90;done=s.done||0;shared=s.shared||0;missed=s.missed||0;speed=s.speed||1;jobs=s.jobs;seq=s.seq||1;eventAt=s.eventAt||time+35;combo=s.combo||0;pos=Array.isArray(s.pos)?s.pos:[770,460];posTarget=Array.isArray(s.posTarget)?s.posTarget:[770,460];partnerPos=Array.isArray(s.partnerPos)?s.partnerPos:[885,351];kidPos=Array.isArray(s.kidPos)?s.kidPos:[746,714];selfQueue=s.selfQueue||[];partnerQueue=s.partnerQueue||[];
+ day=Math.max(1,s.day||1);cash=s.cash??420;time=s.time||17*60;xp=s.xp||0;level=s.level||1;owned=Array.isArray(s.owned)?s.owned:[];achievements=Array.isArray(s.achievements)?s.achievements:[];goals=Array.isArray(s.goals)?s.goals:makeGoals();totalDone=s.totalDone||0;assistedFinished=s.assistedFinished||0;totalShared=s.totalShared||0;wellDays=s.wellDays||0;friendship=s.friendship??66;trust=s.trust??64;careCooldown=s.careCooldown||{};peace=s.peace??75;energy=s.energy??100;partnerEnergy=s.partnerEnergy??88;kidEnergy=s.kidEnergy??83;petEnergy=s.petEnergy??90;done=s.done||0;shared=s.shared||0;missed=s.missed||0;speed=s.speed||1;jobs=s.jobs;seq=s.seq||1;eventAt=s.eventAt||time+35;combo=s.combo||0;pos=Array.isArray(s.pos)?s.pos:[770,460];posTarget=Array.isArray(s.posTarget)?s.posTarget:[770,460];partnerPos=Array.isArray(s.partnerPos)?s.partnerPos:[885,351];kidPos=Array.isArray(s.kidPos)?s.kidPos:[746,714];selfQueue=s.selfQueue||[];partnerQueue=s.partnerQueue||[];
  current=jobs.find(function(j){return j.id===s.current})||null;helper=jobs.find(function(j){return j.id===s.helper})||null;childTask=jobs.find(function(j){return j.id===s.childTask})||null;paused=false;ended=false;started=true;selected=null;$('#splash').classList.add('hidden');$('#ending').classList.add('hidden');$('#player').setAttribute('transform','translate('+pos[0]+' '+pos[1]+')');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',Number(b.dataset.speed)===speed)});$('#pause').textContent='Ⅱ';render();if(s.ended){finishDay();}else{message('Gün '+day+', '+format(time)+' — kaldığın yerden.');say('Bir şey isteyebilir miyim?')}return true
 }
 function showSavePreview(){var s=getSave();if(!s){$('#resume').hidden=true;$('#savedStats').hidden=true;$('#start').textContent='EVE GİR →';return}savedPreview=s;$('#resume').hidden=false;$('#savedStats').hidden=false;$('#savedStats').textContent='GÜN '+s.day+' · '+format(s.time)+' · EV HUZURU %'+Math.round(s.peace)+' · '+(s.jobs||[]).filter(function(j){return j.remaining>0}).length+' İŞ'+(s.ended?' · AKŞAM BİTTİ':'');$('#resume').textContent=s.ended?'SON AKŞAMIN RAPORU →':'↳ KALDIĞIM YERDEN DEVAM';$('#start').textContent='YENİ OYUN BAŞLAT';
 }
 
 function find(id){return jobs.find(function(j){return j.id===Number(id)&&j.remaining>0})}
-function choose(j){if(!j||!started||ended)return;selected=j.id;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+' ÖNCESİ / '+Math.ceil(j.remaining)+' DK';$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'SIRAYA EKLE':'BEN YAPAYIM';$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?'EŞE SIRALA':'EŞİME VER';$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j));$('#action').classList.add('visible');if(innerWidth<850)$('#tasks').classList.add('collapsed');}
+function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=null;$('#askKid').hidden=false;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+' ÖNCESİ / '+Math.ceil(j.remaining)+' DK';$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'SIRAYA EKLE':'BEN YAPAYIM';$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?'EŞE SIRALA':'EŞİME VER';$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j));$('#action').classList.add('visible');if(innerWidth<850)$('#tasks').classList.add('collapsed');}
 
-function hideAction(){$('#action').classList.remove('visible');selected=null}
+function hideAction(){$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false}
 function startSelf(){
  if(current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('Sen: '+current.name)}}
 function startPartner(){if(helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message('Eşin başladı: '+helper.name)}}
 function work(kind){
+ if(selectedPerson){careAction(kind);return}
  var j=find(selected);if(!j)return;
  if(j.assigned){message('Bu işe zaten biri bakıyor.');return}
  if(kind==='self'){
@@ -335,11 +420,11 @@ function work(kind){
  hideAction();render();saveGame()
 }
 function finish(j,kind){
- j.remaining=0;j.assigned=null;done++;combo++;peace=clamp(peace+(j.expired?1:Math.min(7,3+combo*.4)));
+ j.remaining=0;j.assigned=null;done++;totalDone++;combo++;if(kind!=='self'){assistedFinished++;totalShared++}peace=clamp(peace+(j.expired?1:Math.min(7,3+combo*.4)));
  if(kind==='self'){energy=clamp(energy-j.weight);current=null;posTarget=[770,460];}
  if(kind==='partner'){partnerEnergy=clamp(partnerEnergy-j.weight*.8);helper=null;}
  if(kind==='kid'){kidEnergy=clamp(kidEnergy-j.weight*.9);childTask=null;}
- if(j.key==='dinner'){cash=Math.max(0,cash-35)};if(j.key==='pet'){petEnergy=clamp(petEnergy+12)}
+ if(j.key==='dinner'){cash=Math.max(0,cash-35);if(owned.includes('herbs'))peace=clamp(peace+3)}if(j.key==='pet'){petEnergy=clamp(petEnergy+12)};grantXp(12+Math.min(8,Math.round(j.dur/5))+(j.expired?0:5));evaluateGoals();evaluateBadges();
  message((kind==='partner'?'Eşin bitirdi: ':kind==='kid'?'Çocuk bitirdi: ':'Bitti: ')+j.name);
  if(kind==='self')startSelf();if(kind==='partner')startPartner();render();saveGame();
 }
@@ -347,9 +432,9 @@ function finish(j,kind){
 function advance(dt){
  if(paused||ended||!started)return;
  var dm=dt/1000*1.75*speed;time+=dm;
- if(current){current.remaining-=dm*(energy<15?.72:1);if(current.remaining<=0)finish(current,'self')}
- if(helper){helper.remaining-=dm*.8;if(helper.remaining<=0)finish(helper,'partner')}
- if(childTask){childTask.remaining-=dm*.6;if(childTask.remaining<=0)finish(childTask,'kid')}
+ if(current){current.remaining-=dm*(energy<15?.72:1)*(current.spot==='sink'&&owned.includes('dishwasher')?1.82:1)*(current.spot==='floor'&&owned.includes('robot')?1.82:1)*(current.spot==='stove'&&owned.includes('pot')?1.54:1);if(current.remaining<=0)finish(current,'self')}
+ if(helper){helper.remaining-=dm*(.64+friendship/500)*(owned.includes('board')?1.2:1);if(helper.remaining<=0)finish(helper,'partner')}
+ if(childTask){childTask.remaining-=dm*(.46+trust/500);if(childTask.remaining<=0)finish(childTask,'kid')}
  energy=clamp(energy-dm*.015);partnerEnergy=clamp(partnerEnergy+dm*.017);kidEnergy=clamp(kidEnergy+dm*.018);petEnergy=clamp(petEnergy-dm*.025);
  if(petEnergy<20&&Math.random()<.02){peace=clamp(peace-2);say('Hav!')}
  jobs.forEach(function(j){if(j.remaining>0&&time>j.due&&!j.expired){j.expired=true;missed++;combo=0;peace=clamp(peace-7);message('Gecikti: '+j.name)}})
@@ -358,12 +443,12 @@ function advance(dt){
    if(available.length<10){var extra=surprise[Math.floor(Math.random()*surprise.length)];add(extra,45+Math.floor(Math.random()*40));var line=['Anneee!','Bir şey soracağım.','Mutfaktan ses geliyor.','Biri bir şey istiyor.'][Math.floor(Math.random()*4)];message(line);say(line)}
    eventAt=time+23+Math.random()*17
  }
- if(peace<=0||time>=22*60){finishDay();return}
+ evaluateGoals();if(peace<=0||time>=22*60){finishDay();return}
  render()
 }
 
 function finishDay(){
- ended=true;paused=true;hideAction();$('#progress').classList.remove('on');
+ ended=true;paused=true;hideAction();closeNote();$('#progress').classList.remove('on');evaluateGoals();if(peace>=70){wellDays++}evaluateBadges();
  var pending=jobs.filter(function(j){return j.remaining>0}).length;
  var title=peace<=0?'EVİN KONTROLÜ GİTTİ.':peace>=75&&pending<=3?'EV SENİ DİNLİYOR.':peace>=45?'EV AYAKTA.':'BİR ŞEYLER OLMUŞ.';
  $('#endTitle').textContent=title;
@@ -371,9 +456,9 @@ function finishDay(){
  $('#endDone').textContent=done;$('#endShared').textContent=shared;$('#endPeace').textContent=Math.round(peace)+'%';$('#ending').classList.remove('hidden');render();saveGame()
 }
 function reset(mode){
- if(mode==='fresh'){day=1;cash=420;partnerEnergy=88;kidEnergy=83;petEnergy=90;}
- if(mode==='next'){day+=1;cash+=120;partnerEnergy=clamp(partnerEnergy+25);kidEnergy=clamp(kidEnergy+30);petEnergy=clamp(petEnergy+25);}
- time=17*60;peace=mode==='next'?clamp(Math.max(45,peace+20)):75;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=time+24;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Gün '+day+' — Saat 17.00. Ev yine seni bekliyor.');say('Yemek ne zaman hazır?')
+ if(mode==='fresh'){day=1;cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;friendship=66;trust=64;}
+ if(mode==='next'){day+=1;cash+=110;partnerEnergy=clamp(partnerEnergy+25);kidEnergy=clamp(kidEnergy+30);petEnergy=clamp(petEnergy+25);}
+ time=17*60;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):75;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=time+24;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:'Misafir için çay hazırla',detail:'Bir çaylık daha sohbet.',icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:'Buzdolabını düzenle',detail:'Yarım limonlarla yüzleşme vakti.',icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Gün '+day+' — Saat 17.00. Ev yine seni bekliyor.');say('Yemek ne zaman hazır?')
 }
 
 function frame(now){
@@ -404,7 +489,7 @@ $('#tasksHead').onclick=fold;$('#tasksHead').onkeydown=function(e){if(e.key==='E
 if(innerWidth>850)$('#tasks').classList.remove('collapsed');
 $('#share').onclick=function(){var text='Evin Patronu: '+done+' iş bitirdim, '+shared+' işi devrettim. Ev huzuru %'+Math.round(peace)+'. Sen kaç dakika dayanırsın?';var url=location.href;if(navigator.share){navigator.share({title:'Evin Patronu — aynen.fun',text:text,url:url}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(text+' '+url).then(function(){message('Sonuç kopyalandı.')}).catch(function(){prompt('Paylaş:',text+' '+url)})}else prompt('Paylaş:',text+' '+url)};
 window.addEventListener('keydown',function(e){if(e.key==='Escape')hideAction();if(e.code==='Space'&&started&&document.activeElement===document.body){e.preventDefault();$('#pause').click()}});
-document.querySelectorAll('[data-person]').forEach(function(b){function pick(e){if(!started||ended)return;e.stopPropagation();var who=b.dataset.person;activePerson=who;document.querySelectorAll('.person-card').forEach(function(c){c.classList.toggle('selected',c.dataset.person===who)});var line={self:'Evdeki herkes senden bir şey bekliyor.',partner:helper?'Şu an bir iş yapıyorum.':'İşleri bölüşebiliriz.',kid:childTask?'Yapıyorum işte!':'Ödevim ne olacak?',pet:'Hav! Mama kabına bak.' ,elder:'Bir çay olsa fena olmaz.'}[who];say(line);message(line)}
+document.querySelectorAll('[data-person]').forEach(function(b){function pick(e){if(!started||ended)return;e.stopPropagation();var who=b.dataset.person;activePerson=who;document.querySelectorAll('.person-card').forEach(function(c){c.classList.toggle('selected',c.dataset.person===who)});var line={self:'Evdeki herkes senden bir şey bekliyor.',partner:helper?'Şu an bir iş yapıyorum.':'İşleri bölüşebiliriz.',kid:childTask?'Yapıyorum işte!':'Ödevim ne olacak?',pet:'Hav! Mama kabına bak.' ,elder:'Bir çay olsa fena olmaz.'}[who];say(line);message(line);openCare(who)}
  b.addEventListener('click',pick);if(b.namespaceURI==='http://www.w3.org/2000/svg')b.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(e)}})
 });
 $('#room').addEventListener('click',function(e){
@@ -414,7 +499,13 @@ $('#room').addEventListener('click',function(e){
 });
 window.addEventListener('pagehide',saveGame);
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'&&started&&!ended){paused=true;$('#pause').textContent='▶';saveGame()}});
-showSavePreview();templates.forEach(function(t){add(t)});render();requestAnimationFrame(frame)
+$('#openNotebook').onclick=function(){openNote('upgrades')};
+$('#goalMore').onclick=function(){openNote('goals')};
+$('#closeNotebook').onclick=closeNote;$('#noteShade').onclick=closeNote;
+document.querySelectorAll('[data-tab]').forEach(function(b){b.addEventListener('click',function(){noteTab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(function(k){k.classList.toggle('active',k===b)});notebookHtml()})});
+$('#noteBody').addEventListener('click',function(e){var b=e.target.closest('[data-buy]');if(b)buyUpgrade(b.dataset.buy)});
+window.addEventListener('keydown',function(e){if(e.key==='Escape')closeNote()});
+showSavePreview();goals=makeGoals();templates.forEach(function(t){add(t)});render();requestAnimationFrame(frame)
 })();
 </script>
 <script src="/share-kit.js?v=1" defer></script>
