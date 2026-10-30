@@ -222,49 +222,31 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
 @media(min-width:761px){.desktop-scene .game-tile:nth-child(34){--orbit-x:92%;--orbit-y:11.3%;--orbit-size:.79}.desktop-scene .game-tile:nth-child(35){--orbit-x:92%;--orbit-y:23.1%;--orbit-size:.76}.desktop-scene .game-tile:nth-child(13){--orbit-x:92%;--orbit-y:35%;--orbit-size:.82}}
 
 
-/* ORGANIC SCATTER LANDING — games are independent floating objects,
-   not columns, shelves, or a grid. JS finds non-overlapping positions. */
-html,body{height:auto!important;min-height:100%;overflow-x:hidden!important;overflow-y:auto!important}
+/* VIEWPORT-SCATTER / 2026. Cat in the center, every game in view. */
+html,body{margin:0!important;overflow-x:hidden!important}
 body{background:#f8f8f7;color:#101010}
-.desktop-scene{position:relative!important;display:block!important;width:100%!important;height:var(--scatter-scene-height,1600px)!important;min-height:100svh!important;overflow:visible!important;padding:0!important;margin:0!important;background:#f8f8f7!important;isolation:isolate}
+.desktop-scene{position:relative!important;display:block!important;width:100%!important;margin:0!important;padding:0!important;background:#f8f8f7!important;isolation:isolate}
 .desktop-scene .orbit-cards{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;padding:0!important;margin:0!important}
-.desktop-scene .landing-hub{
-  position:absolute!important;z-index:1!important;top:var(--cat-top,42vh)!important;
-  left:50%!important;right:auto!important;width:clamp(138px,11vw,187px)!important;
-  height:auto!important;margin:0!important;transform:translate(-50%,-50%) rotate(-4deg)!important;
-  pointer-events:none!important;
-}
-.desktop-scene .hub-cat{display:block;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 10px 13px rgba(0,0,0,.075))}
-.desktop-scene .game-tile{
-  position:absolute!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
-  top:var(--scatter-y,60px)!important;left:var(--scatter-x,40px)!important;
-  width:var(--scatter-size,125px)!important;max-width:none!important;min-width:0!important;
-  padding:0!important;margin:0!important;gap:6px!important;
-  transform:rotate(var(--scatter-rotation,-2deg))!important;transform-origin:50% 50%!important;
-  transition:transform .24s cubic-bezier(.2,.8,.2,1),filter .24s!important;
-  text-decoration:none!important;background:transparent!important;border:0!important;
-  color:#111!important;z-index:2!important;cursor:pointer!important;
-}
-.desktop-scene .game-tile:hover,.desktop-scene .game-tile:focus-visible{
-  transform:translateY(-6px) rotate(0deg) scale(1.095)!important;
-  filter:drop-shadow(0 6px 8px rgba(0,0,0,.085))!important;z-index:8!important;
-}
+.desktop-scene .landing-hub{position:absolute!important;z-index:1!important;top:var(--cat-top,50%)!important;left:50%!important;right:auto!important;width:var(--cat-size,150px)!important;height:auto!important;margin:0!important;transform:translate(-50%,-50%) rotate(-4deg)!important;pointer-events:none!important}
+.desktop-scene .hub-cat{display:block!important;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 8px 8px rgba(0,0,0,.065))}
+.desktop-scene .game-tile{position:absolute!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;top:var(--scatter-y,60px)!important;left:var(--scatter-x,30px)!important;width:var(--scatter-size,105px)!important;max-width:none!important;min-width:0!important;padding:0!important;margin:0!important;gap:4px!important;background:transparent!important;border:0!important;color:#111!important;text-decoration:none!important;cursor:pointer!important;z-index:2!important;transform:rotate(var(--scatter-rotation,0deg))!important;transform-origin:50% 50%!important;transition:transform .22s ease,filter .22s ease!important}
+.desktop-scene .game-tile:hover,.desktop-scene .game-tile:focus-visible{transform:translateY(-3px) rotate(0deg) scale(1.075)!important;filter:drop-shadow(0 5px 5px rgba(0,0,0,.095))!important;z-index:8!important}
 .desktop-scene .game-tile:active{transform:scale(.97)!important}
-.desktop-scene .game-thumb{position:relative!important;width:100%!important;height:auto!important;aspect-ratio:1.42!important;overflow:visible!important;display:block!important}
+.desktop-scene .game-thumb{position:relative!important;display:block!important;width:100%!important;height:auto!important;aspect-ratio:1.42!important;overflow:visible!important}
 .desktop-scene .tile-illustration{display:block;width:100%!important;height:100%!important;max-width:100%;object-fit:contain}
-.desktop-scene .game-name{
-  display:block!important;text-align:center!important;min-height:2.4em!important;
-  font:600 clamp(10px,.83vw,13px)/1.2 'Space Grotesk',sans-serif!important;
-  letter-spacing:-.025em!important;overflow-wrap:break-word!important;max-width:100%!important;
+.desktop-scene .game-name{display:block!important;text-align:center!important;min-height:2.2em!important;font:600 clamp(9px,min(.78vw,1.57vh),12px)/1.16 'Space Grotesk',sans-serif!important;letter-spacing:-.02em!important;overflow-wrap:break-word!important;max-width:100%!important}
+.desktop-scene .game-index{top:0!important;left:0!important;font-size:clamp(7px,.55vw,9px)!important;color:#999!important;font-family:'DM Mono',monospace!important}
+@media(min-width:761px){
+ html,body{height:100%!important;overflow:hidden!important}
+ .desktop-scene{height:100svh!important;min-height:0!important;overflow:hidden!important}
 }
-.desktop-scene .game-index{top:0!important;left:0!important;font-size:clamp(8px,.62vw,10px)!important;color:#999!important;font-family:'DM Mono',monospace!important}
 @media(max-width:760px){
- .desktop-scene .landing-hub{width:clamp(110px,30vw,148px)!important}
- .desktop-scene .game-tile{gap:4px!important}
- .desktop-scene .game-name{font-size:clamp(10px,2.65vw,12px)!important;line-height:1.19!important}
+ html,body{height:auto!important;overflow-x:hidden!important;overflow-y:auto!important}
+ .desktop-scene{height:var(--scatter-scene-height,1650px)!important;min-height:100svh!important;overflow:hidden!important}
+ .desktop-scene .game-name{font-size:clamp(10px,2.5vw,12px)!important}
  .desktop-scene .game-index{font-size:8px!important}
 }
-@media(prefers-reduced-motion:reduce){.desktop-scene .game-tile,.desktop-scene .hub-cat{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.desktop-scene .game-tile{transition:none!important}}
 
 </style>
 </head>
@@ -489,94 +471,89 @@ let requested=new URLSearchParams(location.search).get('game');if(requested==='p
 
 
 <script>
-/* Scattered sticker wall. Stable seeded placements, not grid coordinates.
-   Measured tile bounds + reserved mascot zone prevent overlap and clipping. */
+/* One-screen seeded scatter. Cards occupy measured boxes; mascot is a reserved central shape. */
 (()=>{
- const scene=document.querySelector('.desktop-scene');
- const cat=scene?.querySelector('.landing-hub');
+ const scene=document.querySelector('.desktop-scene'), cat=scene?.querySelector('.landing-hub');
  const tiles=Array.from(scene?.querySelectorAll('.orbit-cards > .game-tile')||[]);
- if(!scene||!cat||!tiles.length)return;
- const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
- function randFactory(seed){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
- function intersects(a,b,padX,padY){return a.x<a.x+a.w&&a.x<b.x+b.w+padX&&a.x+a.w+padX>b.x&&a.y<b.y+b.h+padY&&a.y+a.h+padY>b.y;}
+ if(!cat||!tiles.length)return;
+ const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+ function random(seed){return ()=>{seed|=0;seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^(seed>>>15),1|seed);t=(t+Math.imul(t^(t>>>7),61|t))^t;return ((t^(t>>>14))>>>0)/4294967296;};}
+ function overlap(a,b,g){return a.x<b.x+b.w+g && a.x+a.w+g>b.x && a.y<b.y+b.h+g && a.y+a.h+g>b.y;}
  function layout(){
-   const W=scene.clientWidth;
-   if(!W)return;
-   const mobile=W<761, narrow=W<470;
-   const edge=mobile?Math.max(13,W*.045):Math.max(27,Math.min(60,W*.029));
-   const base=mobile?clamp(W*.295,94,127):clamp(W*.082,115,156);
-   const gapX=mobile?15:22, gapY=mobile?19:26;
-   const vh=window.innerHeight||800;
-   const catTop=mobile?clamp(vh*.44,230,380):clamp(vh*.47,305,505);
-   scene.style.setProperty('--cat-top',catTop+'px');
-   // Optical center stays free for the cat on both phone and desktop.
-   const catWidth=cat.offsetWidth||150;
-   const catHeight=cat.offsetHeight||130;
-   const catBox={x:W/2-catWidth/2-39,y:catTop-catHeight/2-50,w:catWidth+78,h:catHeight+100};
-   const dimensions=tiles.map((tile,i)=>{
-      const variation=[1.03,.88,1.11,.95,1.0,1.13,.9,1.04,.94,1.1,.89,1.02][i%12];
-      const size=Math.round(base*variation);
-      tile.style.setProperty('--scatter-size',size+'px');
-      const r=randFactory(701+i*107);
-      tile.style.setProperty('--scatter-rotation',((r()-.5)*(mobile?8:12)).toFixed(2)+'deg');
-      // offsetHeight includes multiline title; transform does not modify measurements.
-      return {w:size,h:Math.max(size*.72+39,tile.offsetHeight||size*.72+39)};
+  const W=scene.clientWidth, V=window.innerHeight||760;
+  if(!W)return;
+  const mobile=W<=760;
+  const H=mobile?Math.max(V*1.7,1550):V;
+  const insetX=mobile?14:clamp(W*.019,14,30),insetY=mobile?15:clamp(H*.021,11,20);
+  const catWidth=mobile?clamp(W*.3,105,142):clamp(Math.min(W*.096,H*.237),90,168);
+  const catY=mobile?Math.min(H*.31,550):H/2;
+  scene.style.setProperty('--cat-top',catY+'px');
+  scene.style.setProperty('--cat-size',catWidth+'px');
+  if(mobile)scene.style.setProperty('--scatter-scene-height',Math.ceil(H)+'px');
+  const cw=catWidth,ch=cw*198/230;
+  const mascot={x:W/2-cw/2-22,y:catY-ch/2-21,w:cw+44,h:ch+42};
+  const base=mobile?clamp(W*.285,90,120):Math.min(149,W/9.1,H/6.55);
+  const variations=[1.07,.91,1.1,.95,1.01,1.08,.9,1.13,.89,1.04,.96,1.03];
+  let layoutBoxes=null;
+  for(let k=0;k<15 && !layoutBoxes;k++){
+   const scale=mobile?Math.max(.78,1-k*.037):Math.max(.39,1-k*.047);
+   const sizes=tiles.map((tile,i)=>{
+     const w=Math.round(base*variations[i%variations.length]*scale);
+     tile.style.setProperty('--scatter-size',w+'px');
+     const angle=(random(i*79+297)()-.5)*8;
+     tile.style.setProperty('--scatter-rotation',angle.toFixed(2)+'deg');
+     return {w,h:Math.ceil(tile.offsetHeight)+6};
    });
-   const usableW=W-2*edge;
-   const totalArea=dimensions.reduce((sum,d)=>sum+(d.w+gapX)*(d.h+gapY),0);
-   let H=Math.ceil(Math.max(vh*1.3,mobile?1150:1130,totalArea/(usableW*(narrow?.36:mobile?.40:.42))+100,catTop+450)/100)*100;
-   let locations=null;
-   for(let pass=0;pass<9;pass++){
-     const rng=randFactory(24681357+pass*201);
-     const boxes=[];
-     let valid=true;
-     for(let i=0;i<tiles.length;i++){
-       const {w,h}=dimensions[i];
-       const xMin=edge,xMax=Math.max(edge,W-edge-w);
-       const yMin=35,yMax=Math.max(35,H-h-45);
-       const targetY=clamp((i+.55)/tiles.length*(H-100),yMin,yMax);
-       let found=null;
-       // Progress down the page without rows or columns: every position is unique.
-       for(let trial=0;trial<800;trial++){
-         const range=H/tiles.length*(trial<420?6:13);
-         const x=xMin+rng()*(xMax-xMin);
-         const y=clamp(targetY+(rng()-.5)*range*2,yMin,yMax);
-         const box={x,y,w,h};
-         if(intersects(box,catBox,gapX+12,gapY+12))continue;
-         if(boxes.some(other=>intersects(box,other,gapX,gapY)))continue;
-         found=box;break;
-       }
-       if(!found){
-         // Full-plane search prevents pathological narrow viewport dead ends.
-         for(let trial=0;trial<1500;trial++){
-           const box={x:xMin+rng()*(xMax-xMin),y:yMin+rng()*(yMax-yMin),w,h};
-           if(intersects(box,catBox,gapX+12,gapY+12))continue;
-           if(boxes.some(other=>intersects(box,other,gapX,gapY)))continue;
-           found=box;break;
-         }
-       }
-       if(!found){valid=false;break;}
-       boxes.push(found);
+   const gap=mobile?9:Math.max(4,9*scale);
+   for(let retry=0;retry<9&&!layoutBoxes;retry++){
+    const rng=random(742109+retry*773+k*10103);
+    const boxes=[];
+    let okay=true;
+    for(let i=0;i<tiles.length;i++){
+     const {w,h}=sizes[i];
+     const maxX=W-insetX-w,maxY=H-insetY-h;
+     if(maxX<insetX||maxY<insetY){okay=false;break;}
+     let chosen=null,score=-1e20;
+     const quadrant=(i*7+Math.floor(i/4))%4;
+     for(let n=0;n<240;n++){
+       const biased=n<165;
+       const xf=biased?(quadrant%2)*.5+rng()*.5:rng();
+       const yf=biased?(quadrant<2?0:.5)+rng()*.5:rng();
+       const b={x:insetX+xf*(maxX-insetX),y:insetY+yf*(maxY-insetY),w,h};
+       if(overlap(b,mascot,gap+7)||boxes.some(other=>overlap(b,other,gap)))continue;
+       const mx=b.x+b.w/2,my=b.y+b.h/2;
+       let near=900;
+       for(const other of boxes)near=Math.min(near,Math.hypot(mx-(other.x+other.w/2),my-(other.y+other.h/2)));
+       const value=near*.6+rng()*13;
+       if(value>score){score=value;chosen=b;}
      }
-     if(valid){locations=boxes;break;}
-     H+=Math.max(320,Math.round(vh*.35));
+     if(!chosen){okay=false;break;}
+     boxes.push(chosen);
+    }
+    if(okay)layoutBoxes=boxes;
    }
-   if(!locations){
-     // Deterministic emergency fallback: one vertically spaced object per line.
-     const minStep=Math.max(...dimensions.map(d=>d.h))+gapY+15;
-     H=tiles.length*minStep+catTop+220;
-     locations=dimensions.map((d,i)=>({x:edge+(i%2)*Math.max(0,W-edge*2-d.w),y:catTop+260+i*minStep,w:d.w,h:d.h}));
-   }
-   tiles.forEach((tile,i)=>{
-     tile.style.setProperty('--scatter-x',Math.round(locations[i].x)+'px');
-     tile.style.setProperty('--scatter-y',Math.round(locations[i].y)+'px');
-   });
-   scene.style.setProperty('--scatter-scene-height',Math.ceil(H)+'px');
+  }
+  if(!layoutBoxes){
+    // Emergency fallback is restricted to truly tiny or unusual viewports.
+    const cols=mobile?2:Math.max(6,Math.floor(W/73));
+    const rows=Math.ceil(tiles.length/cols),cwCell=(W-2*insetX)/cols,chCell=(H-2*insetY)/rows;
+    const rng=random(8842);
+    layoutBoxes=tiles.map((tile,i)=>{
+      const w=Math.min(cwCell*.63,base*.48);
+      tile.style.setProperty('--scatter-size',w+'px');
+      return {x:insetX+i%cols*cwCell+(cwCell-w)*(.15+rng()*.4),y:insetY+Math.floor(i/cols)*chCell+chCell*.12,w,h:chCell*.7};
+    });
+  }
+  tiles.forEach((tile,i)=>{
+    tile.style.setProperty('--scatter-x',Math.round(layoutBoxes[i].x)+'px');
+    tile.style.setProperty('--scatter-y',Math.round(layoutBoxes[i].y)+'px');
+  });
  }
  let pending=0;
- function schedule(){if(pending)cancelAnimationFrame(pending);pending=requestAnimationFrame(()=>{pending=0;layout();});}
+ const schedule=()=>{if(pending)cancelAnimationFrame(pending);pending=requestAnimationFrame(()=>{pending=0;layout();});};
  layout();
  window.addEventListener('resize',schedule,{passive:true});
+ window.visualViewport?.addEventListener('resize',schedule,{passive:true});
  document.fonts?.ready?.then(schedule);
 })();
 </script>
