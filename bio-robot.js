@@ -20,6 +20,9 @@ const MISSIONS=[
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),hypot=Math.hypot;
 const rand=(seed)=>{let x=Math.sin(seed*127.1+seed*seed*.017)*43758.5453;return x-Math.floor(x)};
 let cells=starter(),undoStack=[],savedCells=null,version=1,completed=[],best=[],level=0,selected='muscle',mirror=false;
+const FIRST_KEY='aynen_bio_intro_completed_v4';
+let tutorialSeen=false,hasPlayed=false,nextTipDismissed=false;
+try{tutorialSeen=localStorage.getItem(FIRST_KEY)==='1'}catch(e){}
 let coachStep=0,hasPlaced=false,hasSelected=false;
 let mode='build',paused=false,model=null,results=null,drawerType='',audio=false,ambient=true,precision=true;
 let W=1200,H=720,dpr=1,unit=52,baseX=600,baseY=405,hover=null,pointerId=-1,painted='',last=0,t=0,toastTimer=null;
@@ -76,8 +79,10 @@ function update(){
  $('missionProgress').style.width=(model?Math.round(model.progress*100):0)+'%';
  $('missionStatus').textContent=mode==='build'?'TASARIM MODU':mode==='running'?(paused?'DURAKLADI':'ROBOT HAREKET EDİYOR'):'DENEY TAMAMLANDI';
  $('clock').textContent=model?timeFormat(model.time):'00:00';
- $('stageCaption').innerHTML='<i></i>'+(
-    mode==='build'?(selected==='erase'?'Silmek istediğin hücreye dokun':!hasSelected&&!hasPlaced?'Aşağıdan hücre seç → Ortadaki + noktasına dokun':'Ortadaki + noktalarına dokunarak hücre ekle') :
+ $('intro').classList.toggle('hidden',tutorialSeen||mode!=='build');
+ $('nextTip').classList.toggle('show',mode==='build'&&hasPlayed&&!nextTipDismissed);
+  $('stageCaption').innerHTML='<i></i>'+(
+    mode==='build'?(!tutorialSeen?'Önce hazır robotu çalıştır ve hareketini izle':selected==='erase'?'Silmek istediğin hücreye dokun':!hasSelected&&!hasPlaced?'Aşağıdan hücre seç → Ortadaki + noktasına dokun':'Parlayan + noktalarına hücre ekle') :
     mode==='running'?(paused?'Deney duraklatıldı':'Robotun hareketini izle — sonuç birazdan görünecek'):
     'Tekrar dene veya robotunu geliştir');
  $('runLabel').textContent=mode==='build'?'Test et':mode==='running'?(paused?'Devam et':'Duraklat'):'Robotu düzenle';
@@ -117,24 +122,31 @@ function mutate(x,y,quiet=false){
 function edit(x,y){
  let did=mutate(x,y,false);
  if(mirror&&y!==0) did=mutate(x,-y,true)||did;
- if(did){hasPlaced=true;update();sound('tap')}
+ if(did){hasPlaced=true;nextTipDismissed=true;update();sound('tap')}
 }
 function makePreset(){
  if(mode==='running')return;
- history();hasPlaced=true;let n=counts().muscle;
+ history();hasPlaced=true;nextTipDismissed=true;let n=counts().muscle;
  if(n<=1)cells=starter();
  else if(counts().sensor<2)cells=[{x:0,y:0,type:'core'},{x:-1,y:-1,type:'muscle'},{x:-1,y:1,type:'muscle'},{x:-2,y:0,type:'energy'},{x:1,y:-1,type:'sensor'},{x:1,y:1,type:'sensor'},{x:0,y:-1,type:'core'}];
  else cells=[{x:0,y:0,type:'core'},{x:-1,y:-1,type:'muscle'},{x:-1,y:1,type:'muscle'},{x:1,y:0,type:'sensor'},{x:0,y:1,type:'energy'}];
  enterBuild();update();notice('YENİ BİYO-TASARIM YÜKLENDİ');
 }
-function enterBuild(){mode='build';paused=false;model=null;results=null;$('resultScrim').classList.remove('open');update()}
+function enterBuild(){
+ mode='build';paused=false;model=null;results=null;
+ $('resultScrim').classList.remove('open');
+ if(hasPlayed&&!hasPlaced)nextTipDismissed=false;
+ update();
+}
 function setLevel(n){if(n<0||n>=MISSIONS.length)return;level=n;closeDrawer();enterBuild();update();notice('Görev '+(n+1)+': '+prettyMission(n))}
 function stepButton(){if(mode==='result'){enterBuild();return}if(mode==='build'){run();return}paused=!paused;update();sound('tap')}
 function startModel(){
  const s=getStats(),mission=MISSIONS[level];
  if(!s.q.muscle){notice('Önce bir kas hücresi eklemelisin.');sound('error');return}
  model={x:mission.start[0],y:mission.start[1],vx:0,vy:0,angle:0,omega:0,time:0,energy:s.capacity,energyMax:s.capacity,s,trail:[],progress:0,checkIndex:0,collisions:0,lastHit:-5,active:true,goodTime:0};
- mode='running';hasPlaced=true;paused=false;$('resultScrim').classList.remove('open');closeDrawer();update();sound('save');
+ mode='running';hasPlayed=true;tutorialSeen=true;
+ try{localStorage.setItem(FIRST_KEY,'1')}catch(e){}
+ paused=false;$('resultScrim').classList.remove('open');closeDrawer();update();sound('save');
 }
 function run(){startModel()}
 function currentTarget(){
@@ -150,7 +162,7 @@ function finish(success,reason){
  $('resultKicker').textContent=success?'DENEY BAŞARILI / GÖREV '+(level+1):'DENEY SONA ERDİ / GÖREV '+(level+1);
  $('resultTitle').textContent=success?'HEDEF BULUNDU.':reason==='energy'?'ENERJİ BİTTİ.':reason==='timeout'?'SÜRE DOLDU.':'DENEY DURDU.';
  let msg='';
- if(success)msg='Tasarımın çekirdeğe ulaştı. Daha az hücre veya daha az enerjiyle aynı yolu deneyebilirsin.';
+ if(success)msg='Robot hedefe ulaştı. Şimdi bir hücreyi değiştirip tekrar dene: Daha hızlı veya daha az enerjiyle gidebilir misin?';
  else if(reason==='energy')msg='Gövden yolculuğu bitirmeden enerjisini tüketti. Bir enerji hücresi eklemeyi veya yükü azaltmayı dene.';
  else if(s.s.balance<60)msg='Kasların dengesiz dağılımı robotu döndürdü. Bir kas hücresinin konumunu değiştir.';
  else if(level>0&&s.s.q.sensor===0)msg='Duyu hücresi olmadan yönünü düzeltmek zor. Ön tarafa bir duyu hücresi ekle.';
@@ -296,6 +308,28 @@ function drawLabRings(time,x,y,r){
  ctx.restore();
 }
 function baseOf(x,y){return {x:baseX+(x-y)*unit*.9,y:baseY+(x+y)*unit*.40}}
+function drawMissionPreview(time){
+ const mission=MISSIONS[level];
+ const sx=baseX+unit*2.18,sy=baseY-unit*1.5;
+ const ex=Math.min(W-60,baseX+unit*4.12),ey=baseY-unit*2.12;
+ // The destination remains visible before the experiment starts.
+ const r=Math.max(14,Math.min(23,unit*.38));
+ ctx.save();
+ ctx.setLineDash([3,8]);ctx.strokeStyle='#738cb880';ctx.lineWidth=1.7;
+ ctx.beginPath();ctx.moveTo(baseX+unit*.64,baseY-unit*.68);
+ ctx.bezierCurveTo(sx,baseY-unit*2.2,ex-unit*.62,ey+unit*.85,ex,ey);
+ ctx.stroke();ctx.setLineDash([]);
+ const g=ctx.createRadialGradient(ex,ey,1,ex,ey,r*3);
+ g.addColorStop(0,'#98bff366');g.addColorStop(1,'#98bff300');
+ ctx.fillStyle=g;ctx.beginPath();ctx.arc(ex,ey,r*3,0,TWO);ctx.fill();
+ circle(ex,ey,r,'#f8fcffd9','#5378ba',2);
+ circle(ex,ey,r*.56,'#6f96d6','#e8f1ff',1.5);
+ circle(ex,ey,4,'#f8fbff');
+ ctx.fillStyle='#53728d';ctx.font='700 11px "DM Sans",sans-serif';ctx.textAlign='center';
+ ctx.fillText('HEDEF',ex,ey-r-14);
+ if(W>800){ctx.font='600 11px "DM Sans",sans-serif';ctx.fillStyle='#698393';ctx.fillText('SENİN ROBOTUN',baseX,baseY+unit*2.58)}
+ ctx.restore();
+}
 function drawBuild(time){
  const x=baseX,y=baseY+unit*1.20;
  drawLabRings(time,x,y,unit*3);
@@ -345,9 +379,7 @@ function drawBuild(time){
   const p=baseOf(c.x,c.y),h=unit*(c.type==='muscle'?1.28:c.type==='sensor'?1.20:c.type==='energy'?1.08:1.22);
   drawBlock(p.x,p.y,unit*.83,h,c.type,time,i);
  });
- if(W>800){
-  ctx.save();ctx.textAlign='center';ctx.font='11px "DM Mono",monospace';ctx.fillStyle='#718b98';ctx.fillText('MODEL / '+String(cells.length).padStart(2,'0')+' HÜCRE',x,y+unit*2.15);ctx.restore();
- }
+ drawMissionPreview(time);
 }
 function drawTarget(x,y,r,time,label,passed=false){
  const c=passed?'#82b5ac':'#526fc3';
@@ -508,6 +540,20 @@ document.querySelectorAll('[data-cell]').forEach(el=>el.addEventListener('click'
 $('eraseBtn').addEventListener('click',()=>selectCell(selected==='erase'?'muscle':'erase'));
 $('undoBtn').addEventListener('click',undo);
 $('mirrorBtn').addEventListener('click',()=>{mirror=!mirror;update();notice(mirror?'SİMETRİ AÇIK':'SİMETRİ KAPALI')});
+$('introRun').addEventListener('click',()=>{
+ startModel();
+});
+$('introEdit').addEventListener('click',()=>{
+ tutorialSeen=true;
+ try{localStorage.setItem(FIRST_KEY,'1')}catch(e){}
+ nextTipDismissed=false;
+ hasPlayed=true;
+ update();
+});
+$('tipClose').addEventListener('click',()=>{
+ nextTipDismissed=true;
+ update();
+});
 $('runBtn').addEventListener('click',stepButton);
 $('fullscreenBtn').addEventListener('click',fullscreen);
 $('closeResult').addEventListener('click',()=>{$('resultScrim').classList.remove('open')});
