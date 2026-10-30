@@ -133,20 +133,20 @@ function makePreset(){
  enterBuild();update();notice('YENİ BİYO-TASARIM YÜKLENDİ');
 }
 function enterBuild(){
- mode='build';paused=false;model=null;results=null;
+ mode='build';paused=false;$('pauseActions').hidden=true;model=null;results=null;
  $('resultScrim').classList.remove('open');
  if(hasPlayed&&!hasPlaced)nextTipDismissed=false;
  update();
 }
 function setLevel(n){if(n<0||n>=MISSIONS.length)return;level=n;closeDrawer();enterBuild();update();notice('Görev '+(n+1)+': '+prettyMission(n))}
-function stepButton(){if(mode==='result'){enterBuild();return}if(mode==='build'){run();return}paused=!paused;update();sound('tap')}
+function stepButton(){if(mode==='result'){enterBuild();return}if(mode==='build'){run();return}paused=!paused;last=performance.now();$('pauseActions').hidden=!paused;update();sound('tap')}
 function startModel(){
  const s=getStats(),mission=MISSIONS[level];
  if(!s.q.muscle){notice('Önce bir kas hücresi eklemelisin.');sound('error');return}
  model={x:mission.start[0],y:mission.start[1],vx:0,vy:0,angle:0,omega:0,time:0,energy:s.capacity,energyMax:s.capacity,s,trail:[],progress:0,checkIndex:0,collisions:0,lastHit:-5,active:true,goodTime:0};
  mode='running';hasPlayed=true;tutorialSeen=true;
  try{localStorage.setItem(FIRST_KEY,'1')}catch(e){}
- paused=false;$('resultScrim').classList.remove('open');closeDrawer();update();sound('save');
+ paused=false;$('pauseActions').hidden=true;$('resultScrim').classList.remove('open');closeDrawer();update();sound('save');
 }
 function run(){startModel()}
 function currentTarget(){
@@ -155,7 +155,7 @@ function currentTarget(){
 function pixelD(ax,ay,bx,by){return Math.hypot((ax-bx)*W,(ay-by)*H)}
 function finish(success,reason){
  if(!model)return;
- mode='result';paused=false;const s=model;
+ mode='result';paused=false;$('pauseActions').hidden=true;const s=model;
  let progress=success?1:s.progress;
  results={success,reason,progress,energy:Math.max(0,Math.round(s.energy/s.energyMax*100)),time:s.time,collisions:s.collisions};
  if(success){if(!completed.includes(level))completed.push(level);let curr=best[level];if(!curr||s.time<curr.time)best[level]={time:s.time,energy:results.energy};try{localStorage.setItem(BEST,JSON.stringify({completed,best}))}catch(e){}sound('win')}else sound('error');
@@ -404,25 +404,38 @@ function drawObstacle(x,y,r,time,index){
 }
 function drawMiniRobot(x,y,angle,time){
  ctx.save();ctx.translate(x,y);ctx.rotate(angle);
- const u=Math.max(12,Math.min(W,H)*.030);
- ctx.fillStyle='#43678120';ctx.beginPath();ctx.ellipse(4,u*.75,u*2.8,u*.95,0,0,TWO);ctx.fill();
+ const u=Math.max(22,Math.min(W,H)*(W<800?.055:.048));
+ const ground=ctx.createRadialGradient(2,u*.7,3,2,u*.7,u*4);
+ ground.addColorStop(0,'#456c9e41');ground.addColorStop(1,'#456c9e00');
+ ctx.fillStyle=ground;ctx.beginPath();ctx.ellipse(2,u*.7,u*3.9,u*1.6,0,0,TWO);ctx.fill();
+ ctx.strokeStyle='#6d9eb77a';ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(0,u*.5,u*3.15,u*1.30,0,0,TWO);ctx.stroke();
  const mx=cells.reduce((v,c)=>v+c.x,0)/cells.length,my=cells.reduce((v,c)=>v+c.y,0)/cells.length;
  const ordered=cells.slice().sort((a,b)=>(a.x+a.y)-(b.x+b.y));
  for(let i=0;i<ordered.length;i++){
-  const c=ordered[i];drawBlock((c.x-mx)*u*.67,(c.y-my)*u*.43+u*.3,u*.66,u*.92,c.type,time,i);
+  const c=ordered[i];drawBlock((c.x-mx)*u*.82,(c.y-my)*u*.57+u*.36,u*.81,u*1.30,c.type,time,i);
  }
- ctx.strokeStyle='#628fc38c';ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(0,0,u*1.9,0,TWO);ctx.stroke();
+ ctx.strokeStyle='#628fc38c';ctx.lineWidth=1.6;ctx.beginPath();ctx.ellipse(0,u*.3,u*2.55,u*.88,0,0,TWO);ctx.stroke();
  ctx.restore();
 }
 function drawArena(time){
  const m=MISSIONS[level],s=model;
  ctx.save();
- ctx.strokeStyle='#9bb4c34d';ctx.lineWidth=1;
+ ctx.strokeStyle='#9bb4c32a';ctx.lineWidth=1;
  for(let k=0;k<9;k++){
   let y=H*(.21+k*.072);
   ctx.beginPath();ctx.moveTo(W*.05,y);ctx.lineTo(W*.94,y);ctx.stroke();
  }
- // Readable destination and route.
+ // Receding translucent glass arena with depth and water reflections.
+ const cy=H*.59,arc=Math.min(W,H)*.36;
+ ctx.save();
+ const surface=ctx.createRadialGradient(W*.5,cy,arc*.07,W*.5,cy,arc*2.4);
+ surface.addColorStop(0,'#a6d6e332');surface.addColorStop(.65,'#a4cbd118');surface.addColorStop(1,'#c9e7ec00');
+ ctx.fillStyle=surface;ctx.beginPath();ctx.ellipse(W*.5,cy,W*.47,H*.23,0,0,TWO);ctx.fill();
+ ctx.strokeStyle='#8cafbb70';ctx.lineWidth=1.3;ctx.beginPath();ctx.ellipse(W*.5,cy,W*.47,H*.23,0,0,TWO);ctx.stroke();
+ ctx.strokeStyle='#ffffffbb';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(W*.5,cy+7,W*.43,H*.19,0,0,TWO);ctx.stroke();
+ for(let q=0;q<6;q++){const lx=W*(.17+q*.135);ctx.beginPath();ctx.moveTo(lx,H*.46);ctx.lineTo(lx+Math.sin(time*.0004+q)*6,H*.78);ctx.strokeStyle='#9ebac33c';ctx.stroke()}
+ ctx.restore();
+  // Readable destination and route.
  const startX=m.start[0]*W,startY=m.start[1]*H;
  circle(startX,startY,Math.min(W,H)*.025,'#e1edee','#9db8c3',1);
  ctx.font='600 11px "DM Sans",sans-serif';ctx.fillStyle='#73909e';ctx.textAlign='center';ctx.fillText('BAŞLANGIÇ',startX,startY-25);
@@ -558,6 +571,8 @@ $('tipClose').addEventListener('click',()=>{
  update();
 });
 $('runBtn').addEventListener('click',stepButton);
+$('resumeBtn').addEventListener('click',()=>{if(mode==='running'&&paused)stepButton()});
+$('pauseEditBtn').addEventListener('click',enterBuild);
 $('fullscreenBtn').addEventListener('click',fullscreen);
 $('closeResult').addEventListener('click',()=>{$('resultScrim').classList.remove('open')});
 $('retryBtn').addEventListener('click',()=>run());
@@ -573,7 +588,8 @@ document.addEventListener('keydown',e=>{
  if(e.key.toLowerCase()==='r'){stepButton();return}
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo()}
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='running'){paused=true;update()}last=performance.now()});
+document.addEventListener('visibilitychange',()=>{last=performance.now()});
+window.addEventListener('pageshow',()=>{last=performance.now()});
 load();try{const q=new URLSearchParams(location.search),lv=Number(q.get('level'));if(lv>=1&&lv<=4)level=lv-1}catch(e){}
 resize();window.addEventListener('resize',resize,{passive:true});update();
 if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)ambient=false;
