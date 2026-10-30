@@ -366,25 +366,59 @@ function stamp(message){
  const g=$("glitch");g.textContent=message;g.classList.add("show");clearTimeout(stampTimer);stampTimer=setTimeout(()=>g.classList.remove("show"),1100);
 }
 function updateMeters(){
- $("vibe").textContent=state.vibe;$("signs").textContent=state.signs;$("progress").textContent=state.progress;
- $("vibeTrack").style.width=state.vibe+"%";$("signsTrack").style.width=clamp(state.signs*9,0,100)+"%";$("progressTrack").style.width=state.progress+"%";
+ $("vibe").textContent=state.vibe;
+ $("signs").textContent=state.signs;
+ $("progress").textContent=state.progress;
+ $("vibeTrack").style.width=state.vibe+"%";
+ $("signsTrack").style.width=clamp(state.signs*11,0,100)+"%";
+ $("progressTrack").style.width=state.progress+"%";
+ $("time").textContent=state.time===undefined?90:state.time;
+ $("timeTrack").style.width=(state.time===undefined?90:state.time)+"%";
  $("energyRing").style.strokeDasharray=String(14+Math.round(state.vibe*.36))+" 12";
  $("mailNotice").style.opacity=state.progress>15?"1":".2";
- $("connection").textContent=state.progress>65?"İŞLEM TESADÜFEN İLERLEDİ":state.vibe>70?"AŞIRI TİTREŞİM":"KISMEN MEVCUT";
+ $("connection").textContent=state.progress>65?"İŞLEM İLERLİYOR":state.vibe>70?"YÜKSEK TİTREŞİM":"KISMEN MEVCUT";
+ $("screenText").textContent=state.progress>72?"DOSYA İLERLİYOR":state.time<=20?"SÜRE DARALIYOR":state.progress>28?"EVRAK İŞLENİYOR":"TALEP: BEKLEMEDE";
+ $("queueCount").textContent=String(777+state.signs*4+state.hidden).padStart(4,"0");
+ $("formCount").textContent=String(state.actions+(state.deskActions||0)).padStart(2,"0");
+ $("sceneWish").textContent=(state.label||"BEKLENİYOR").toLocaleUpperCase("tr").slice(0,18);
+ const p=$("paperPile");
+ if(p){p.replaceChildren();for(let i=0;i<Math.min(12,1+state.ritual+state.actions);i++){let e=document.createElementNS("http://www.w3.org/2000/svg","rect");e.setAttribute("x",463+i*.7);e.setAttribute("y",347-i*3.1);e.setAttribute("width",41);e.setAttribute("height",13);e.setAttribute("rx","2");e.setAttribute("fill",i%2?"#ddd0b9":"#f0e6d9");e.setAttribute("stroke","#948677");p.append(e)}}
+ $("deskAction").disabled=state.ended||state.time<10||state.deskDay===state.day;
 }
+
+function dateKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function hashSeed(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function roll(){state.rng^=state.rng<<13;state.rng^=state.rng>>>17;state.rng^=state.rng<<5;return (state.rng>>>0)/4294967296}
+function randomOrder(items){let out=items.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(roll()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
+function themeName(){return THEMES[state.wish]?state.wish:"career"}
+function clockLabel(){return state.time<=22?"VAKİT DARALIYOR":state.time<=48?"ZAMAN AZALIYOR":"BAŞVURU AÇIK"}
+
 function selectWish(){
- let selected=null;const input=$("ownWish");
- function choose(id){selected=id;input.value="";$("start").disabled=false;document.querySelectorAll("[data-wish]").forEach(b=>b.classList.toggle("active",b.dataset.wish===id));}
- document.querySelectorAll("[data-wish]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.wish)));
- input.addEventListener("input",()=>{selected=null;document.querySelectorAll("[data-wish]").forEach(b=>b.classList.remove("active"));$("start").disabled=!input.value.trim();});
- $("start").onclick=()=>{
- const custom=input.value.trim();if(!selected&&!custom)return;
- state.wish=selected||"custom";state.label=selected?W[selected].label:custom.slice(0,65);
- state.day=0;state.vibe=7;state.signs=0;state.progress=0;state.ritual=0;state.actions=0;state.hidden=0;state.history=[];state.ended=false;
- $("ticketNo").textContent="777-"+String(Math.floor(100+Math.random()*899));
- $("universe").dataset.mood="idle";status("BAŞVURU ALINDI. EVREN İNCELİYOR.");
- stamp("TALEP ALINDI");particles(8);screens("playScreen");renderRound();
+ let selected=null,daily=false;
+ const input=$("ownWish"),start=$("start");
+ function choose(id){selected=id;input.value="";start.disabled=false;document.querySelectorAll("[data-wish]").forEach(b=>b.classList.toggle("active",b.dataset.wish===id))}
+ document.querySelectorAll("[data-wish]").forEach(b=>b.addEventListener("click",()=>{if(!daily)choose(b.dataset.wish)}));
+ input.addEventListener("input",()=>{if(daily)return;selected=null;document.querySelectorAll("[data-wish]").forEach(b=>b.classList.remove("active"));start.disabled=!input.value.trim()});
+ function setMode(d){daily=d;state.daily=d;input.disabled=d;document.querySelectorAll("[data-wish]").forEach(b=>b.disabled=d);
+  $("freeMode").classList.toggle("selected",!d);$("dailyMode").classList.toggle("selected",d);
+  $("modeDescription").textContent=d?"Herkese aynı dilek, aynı başlangıç. Sonuçlar kararlarına bağlı.":"Dileğini seç. Yedi gün boyunca küçük bir hayat simülasyonu.";
+  if(d){const names=Object.keys(THEMES);choose(names[hashSeed(dateKey())%names.length]);start.firstChild.textContent="GÜNÜN KADERİNE GİR ";}
+  else{selected=null;input.value="";start.disabled=true;start.firstChild.textContent="EVRENE GÖNDER ";document.querySelectorAll("[data-wish]").forEach(b=>b.classList.remove("active"))}
+ }
+ $("freeMode").onclick=()=>setMode(false);$("dailyMode").onclick=()=>setMode(true);
+ start.onclick=()=>{
+  const custom=input.value.trim();if(!selected&&!custom)return;
+  state.wish=selected||"custom";state.label=selected?W[selected].label:custom.slice(0,65);
+  state.day=0;state.vibe=49;state.signs=0;state.progress=0;state.time=90;state.ritual=0;state.actions=0;state.hidden=0;state.risk=0;state.lucky=0;state.deskActions=0;state.deskDay=-1;state.lastMsg="";state.history=[];state.ended=false;
+  state.daily=daily;state.date=dateKey();
+  state.rng=daily?hashSeed("manifest777:"+state.date):hashSeed(String(Date.now())+":"+String(Math.random()));
+  state.order=randomOrder([0,1,2,3,4,5,6]);
+  $("ticketNo").textContent="777-"+String(Math.floor(100+roll()*899));
+  $("universe").dataset.mood="idle";status("BAŞVURU ALINDI. GERÇEKLİK DEPARTMANI İNCELEMEDE.");
+  stamp("DOSYA AÇILDI");particles(8);$("deskAction").hidden=false;screens("playScreen");renderRound();
  };
+ const requested=new URLSearchParams(location.search).get("daily");
+ if(requested===dateKey())setMode(true);else setMode(false);
 }
 
 const visuals=[
@@ -397,37 +431,68 @@ const visuals=[
  ["ONAY?","SON İMZA BEKLENİYOR","email"]
 ];
 function showSceneEvent(day){
- const v=visuals[day];const box=$("eventVisual");box.replaceChildren();
- if(!v)return;const signal=document.createElement("div");signal.className="signal "+v[2];
- signal.textContent=v[0];const small=document.createElement("small");small.textContent=v[1];signal.append(small);box.append(signal);
+ const box=$("eventVisual");box.replaceChildren();
+ const row=THEMES[themeName()][state.order[day]];
+ if(!row)return;
+ const signal=document.createElement("div");signal.className="signal "+["seven","cash","email","retro","plate","feather","seven"][day];
+ const topic=document.createTextNode(["11:11","✧","777","?", "↗","!","07:07"][day]);
+ signal.append(topic);
+ const small=document.createElement("small");small.textContent=row[0];signal.append(small);box.append(signal);
 }
 
 function renderRound(){
- if(state.day>=7){finish();return;}
- const r=R[state.day];showSceneEvent(state.day);
- $("roundLabel").textContent="KOZMİK GÜN "+String(state.day+1).padStart(2,"0")+" / 07";
- $("eventTag").textContent=r.tag;$("eventTitle").textContent=r.title;$("eventDesc").textContent=r.desc;
+ if(state.day>=7||state.time<=0){finish();return}
+ const row=THEMES[themeName()][state.order[state.day]];showSceneEvent(state.day);
+ const prior=state.lastMsg;
+ $("roundLabel").textContent=(state.daily?"GÜNÜN KADERİ · ":"KOZMİK GÜN ")+String(state.day+1).padStart(2,"0")+" / 07";
+ $("eventTag").textContent=row[0];$("eventTitle").textContent=row[1];
+ $("eventDesc").textContent=row[2]+(state.actions>=3&&state.day>=3?" Artık bazı kararların karşılığını görmeye başladın.":"");
+ $("eventEcho").hidden=!prior;
+ if(prior)$("eventEcho").textContent="ÖNCEKİ KARARIN → "+prior;
  const bar=$("roundProgress");bar.replaceChildren();
- for(let i=0;i<7;i++){let el=document.createElement("i");if(i<=state.day)el.className="on";bar.append(el);}
+ for(let i=0;i<7;i++){let el=document.createElement("i");if(i<=state.day)el.className="on";bar.append(el)}
+ const choices=[{text:row[3],kind:"action"},{text:row[4],kind:"ritual"},{text:row[5],kind:"risk"}];
+ state.available=randomOrder(choices);
  $("answers").replaceChildren();
- r.opts.forEach((item,i)=>{
-  const b=document.createElement("button");b.className="answer";const lbl=document.createElement("span");lbl.textContent=item[0];const a=document.createElement("span");a.textContent="↗";b.append(lbl,a);b.addEventListener("click",()=>answer(i));$("answers").append(b);
+ state.available.forEach((o,i)=>{
+  const b=document.createElement("button");b.className="answer";
+  const label=document.createElement("span");label.textContent=o.text;
+  const arrow=document.createElement("span");arrow.textContent="↗";b.append(label,arrow);b.addEventListener("click",()=>answer(i));$("answers").append(b);
  });
  $("universe").dataset.mood="idle";
- status("İŞARET "+(state.day+1)+"/7 · KARAR BEKLENİYOR");updateMeters();
+ status("KARAR BEKLENİYOR · "+clockLabel());
+ updateMeters();
 }
+
 function answer(i){
- if(state.ended||state.day>=R.length)return;
- const o=R[state.day].opts[i];
- state.vibe=clamp(state.vibe+o[1],0,100);
- state.signs+=o[2];
- state.progress=clamp(state.progress+o[3],0,100);
- if(o[5]==="action")state.actions++;else state.ritual++;
- state.history.push({day:state.day,choice:o[0],kind:o[5]});
- // No per-answer reaction page: advance straight to the next question.
+ if(state.ended||state.day>=7)return;
+ const o=state.available[i];if(!o)return;
+ let result,delta=0;
+ if(o.kind==="action"){
+  state.actions++;state.time=clamp(state.time-12,0,100);state.vibe=clamp(state.vibe-7,0,100);
+  const chance=.53+state.vibe/300+state.time/600;
+  if(roll()<chance){delta=12+Math.floor(roll()*10);result="Somut adım işe yaradı. Gerçek ilerleme: +"+delta+".";}
+  else{delta=3+Math.floor(roll()*6);result="Sonuç hemen gelmedi. Ama bir şey öğrendin. +"+delta+" ilerleme.";}
+  state.progress=clamp(state.progress+delta,0,100);$("universe").dataset.mood="action";particles(4);
+ }else if(o.kind==="ritual"){
+  state.ritual++;state.signs++;state.time=clamp(state.time-6,0,100);state.vibe=clamp(state.vibe+16,0,100);
+  result="Moral yükseldi. Hedef hâlâ kendi kendine ilerlemiyor.";
+  if(roll()<.16){state.progress=clamp(state.progress+4,0,100);result="İşaret sana bir fikir verdi. +4 ilerleme.";}
+  $("universe").dataset.mood="ritual";particles(6);
+ }else{
+  state.risk++;state.signs++;state.time=clamp(state.time-11,0,100);state.vibe=clamp(state.vibe-5,0,100);
+  const z=roll();
+  if(z<.29){delta=24+Math.floor(roll()*9);state.lucky++;result="Kestirme şaşırtıcı şekilde işe yaradı. +"+delta+" ilerleme.";}
+  else if(z<.61){delta=2;result="Beklenmedik bir şey olmadı. +2 ilerleme.";}
+  else{delta=-9;state.time=clamp(state.time-8,0,100);result="Kestirme yeni sorun çıkardı. 9 ilerleme kaybettin.";}
+  state.progress=clamp(state.progress+delta,0,100);$("universe").dataset.mood="neutral";particles(4);
+ }
+ state.lastMsg=result;
+ state.history.push({day:state.day+1,kind:o.kind,choice:o.text,result});
  state.day++;
- renderRound();
+ if(state.day>=7||state.time<=0)finish();else renderRound();
 }
+
 function verdict(){
  if(state.progress>=75)return ["Evren yerine sen çalışmışsın.","Kozmik titreşim ayrı, iş bitirmek ayrı. Yanlışlıkla ikincisini başardın."];
  if(state.progress>=43)return ["İşaret var. Biraz da icraat.","Bir elinde kristal, diğer elinde yapılacaklar listesi. Sistem kararsız."];
