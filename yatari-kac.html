@@ -34,11 +34,73 @@
  .result.show:has(.comparison:not([hidden])) .smallnote#legal{display:none}
  .result.show:has(.comparison:not([hidden])) .resultHeading{display:none}
 }
+
+/* Result-first mobile experience: natural flow, no clipped text or overlapping sections. */
+.legal-drawer{border:1px solid #aaa;background:#f7f7f2;min-width:0}
+.legal-drawer summary{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;font:600 11px 'DM Mono',monospace;cursor:pointer;list-style:none;user-select:none}
+.legal-drawer summary::-webkit-details-marker{display:none}
+.legal-drawer summary span{font-size:19px;transition:transform .2s}
+.legal-drawer[open] summary span{transform:rotate(180deg)}
+.legal-drawer-content{border-top:1px solid #ddd;padding:10px 13px}
+.legal-drawer-content .smallnote{margin:0 0 9px!important;display:block!important}
+.legal-drawer-content .sources{overflow-wrap:anywhere}
+.result .compare-toggle{width:100%;text-align:center;min-height:40px}
+.result .next{width:100%;min-height:44px}
+@media(max-width:760px){
+ html,body{height:auto!important;overflow-y:auto!important}
+ .app{height:auto!important;min-height:100svh!important;display:flex!important;flex-direction:column!important;gap:9px;padding:14px 13px max(14px,env(safe-area-inset-bottom))!important}
+ .app header{min-height:28px;flex-shrink:0}
+ .frame{display:flex!important;flex-direction:column!important;min-height:0!important;height:auto!important;overflow:visible!important;margin:0!important;flex:1 0 auto}
+ .left{display:block!important;min-height:0!important;height:auto!important;flex:none!important;padding:20px 21px 17px!important;border-right:0!important;border-bottom:1.5px solid #111!important}
+ .left .title{font-size:clamp(45px,12.2vw,64px)!important;margin:7px 0 8px!important}
+ .left .sub{display:block!important;font-size:11px!important;margin:9px 0!important}
+ .casebox{margin:0!important;padding-top:18px!important}
+ .crime{font-size:clamp(24px,6.7vw,34px)!important}
+ .facts{font-size:11px!important;line-height:1.45!important;margin:9px 0 12px!important}
+ .sentence{font-size:37px!important}
+ .right{display:block!important;min-height:0!important;height:auto!important}
+ .right-top{display:block!important;min-height:0!important;height:auto!important;padding:20px 21px!important}
+ .right-bottom{padding:13px 21px!important;min-height:44px}
+ .result.show{display:flex!important;height:auto!important;max-height:none!important;overflow:visible!important;justify-content:flex-start!important;gap:12px!important}
+ .result .result-big{display:block!important;font-size:clamp(52px,15vw,68px)!important}
+ .result .result-line{display:block!important;font-size:13px!important;line-height:1.5!important}
+ .result .compare{display:block!important;padding:13px!important}
+ .result .compare .eyebrow{font-size:9px!important;letter-spacing:0!important}
+ .result .track{height:20px!important}
+ .result .legend{gap:8px!important;font-size:9px!important}
+ .result .legal-drawer{display:block!important}
+ .legal-drawer summary{padding:12px 14px}
+ .legal-drawer-content .smallnote{font-size:11px!important;line-height:1.5!important}
+ .legal-drawer-content .sources{font-size:10px!important;line-height:1.5!important;display:block!important}
+ .result.show:has(.comparison:not([hidden])) .result-big{display:block!important}
+ .result.show:has(.comparison:not([hidden])) .compare{display:block!important}
+ .result.show:has(.comparison:not([hidden])) .result-line{display:block!important}
+ .comparison{padding:13px!important}
+ .comparison-row{grid-template-columns:88px 1fr 62px!important;gap:8px!important;margin-top:9px!important;font-size:11px!important}
+ .comparison-row b{font-size:11px!important}
+ .timeline-screen{padding:10px!important;margin-top:12px!important}
+ .timeline-heading{font-size:10px!important;margin-bottom:9px!important}
+ .timeline-characters{font-size:18px!important}
+ .timeline-actions button{min-height:35px;font-size:11px!important}
+ .comparison .smallnote{font-size:10px!important;line-height:1.45!important}
+ .foot{padding:4px 0!important;flex-shrink:0}
+ .result-mode .left{padding:14px 21px 13px!important}
+ .result-mode .left>div:first-child{display:none!important}
+ .result-mode .casebox{padding:0!important}
+ .result-mode .facts{font-size:10px!important;line-height:1.4!important;margin:7px 0!important}
+ .result-mode .sentence{font-size:29px!important}
+ .result-mode .crime{font-size:25px!important}
+ .result-mode .right-top{padding:15px 21px!important}
+}
+@media(max-width:760px) and (max-height:700px){
+ .result-mode .facts{font-size:10px!important}
+ .result-mode .result-big{font-size:46px!important}
+}
 </style></head><body><main class="app">
 <header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 08</span></header>
 <section class="frame"><div class="left"><div><div class="eyebrow">TÜRKİYE / CEZA &amp; İNFAZ</div><h1 class="title">Yatarı<br><span>kaç?</span></h1><p class="sub">Verilen hapis cezası ile infaz süresi aynı şey değil. Sence kaç yıl?</p></div><div class="casebox"><div class="case-label"><span class="number" id="caseNo">01</span> DOSYA / VARSAYIMSAL SENARYO</div><h2 class="crime" id="crime">Genel infaz rejimi</h2><p class="facts" id="facts"></p><div class="sentence" id="sentence">6 yıl <small>hapis cezası</small></div></div></div>
 <div class="right"><div class="right-top"><div id="guess"><div class="eyebrow">TAHMİNİNİ YAP</div><div class="prompt">Cezaevinde yaklaşık<br>kaç yıl kalır?</div><div class="dial"><button class="step" id="minus" type="button" aria-label="Bir yıl azalt">−</button><div class="value" id="value">3</div><button class="step" id="plus" type="button" aria-label="Bir yıl artır">+</button></div><div class="unit">YIL / HİPOTETİK CEZAEVİ SÜRESİ</div><input class="slider" id="slider" type="range" min="0" max="30" value="3" step=".5" aria-label="Yıl tahmini"><button class="answer" type="button" id="reveal">KARARI GÖR →</button></div>
-<div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">VARSAYIMSAL CEZAEVİ SÜRESİ</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><div class="compare"><div class="eyebrow">CEZA → CEZAEVİ → DENETİMLİ SERBESTLİK → KOŞULLU SALIVERİLME</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><div class="timeline-screen"><div class="timeline-heading"><span class="mono">İNFAZ ZAMAN ÇİZGİSİ</span><span class="mono" id="timelineClock">0.0 YIL</span></div>
+<div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">VARSAYIMSAL CEZAEVİ SÜRESİ</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><div class="compare"><div class="eyebrow">CEZANIN AŞAMALARI</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div><details class="legal-drawer" id="legalDrawer"><summary>HUKUKİ AYRINTILAR <span aria-hidden="true">⌄</span></summary><div class="legal-drawer-content"><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div></div></details><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><div class="timeline-screen"><div class="timeline-heading"><span class="mono">İNFAZ ZAMAN ÇİZGİSİ</span><span class="mono" id="timelineClock">0.0 YIL</span></div>
 <input id="timelineScrub" class="timeline-scrub" type="range" min="0" max="100" value="0" aria-label="İnfaz zaman çizelgesini ileri geri oynat">
 <div id="timelineCharacters" class="timeline-characters" aria-hidden="true"><span>●</span><span>●</span></div>
 <div class="timeline-actions"><button id="timelinePlay" type="button">▶ OYNAT</button><span class="mono">SÜREYİ İLERLET / KARŞILAŞTIR</span></div></div>
@@ -78,7 +140,7 @@ function draw(){
  $('sentence').innerHTML=c.years+' yıl <small>hapis cezası</small>';
  $('slider').max=max;$('slider').step='.5';
  guess=Math.min(max,Math.round(c.years*.5*2)/2);setGuess(guess);
- $('guess').style.display='block';$('result').classList.remove('show');$('comparison').hidden=true;$('compareToggle').setAttribute('aria-expanded','false');$('compareToggle').textContent='AYNI CEZAYI KARŞILAŞTIR ↗';
+ $('guess').style.display='block';$('result').classList.remove('show');document.body.classList.remove('result-mode');$('legalDrawer').open=false;$('comparison').hidden=true;$('compareToggle').setAttribute('aria-expanded','false');$('compareToggle').textContent='AYNI CEZAYI KARŞILAŞTIR ↗';
  $('state').textContent='DOĞRU TAHMİN: '+score+' / '+cases.length;
  $('dots').innerHTML=cases.map((_,i)=>'<i class="'+(i<index?'done':'')+'"></i>').join('');
  solved=false;
@@ -100,7 +162,7 @@ $('reveal').onclick=()=>{
  $('end').style.width=((c.years-x.threshold)/c.years*100)+'%';
  $('legal').textContent='*Kesin yatar süresi değil. '+c.law+' 5275 m.105/A kapsamında denetimli serbestlik ancak şartlar ve infaz hâkimi kararıyla mümkündür. 4 Haziran 2025 ve sonrasındaki suçlar için m.105/A/1 uyarınca en az 5 gün ve ilgili kurumda geçirilmesi gereken sürenin en az 1/10’u şartı dikkate alınır (geçiş hükümleri saklıdır). Açık cezaevi koşulları, geçici hükümler, mahsup ve başka cezalar ayrıca etkilidir.';
  $('next').textContent=index===cases.length-1?'YENİDEN OYNA ↺':'SONRAKİ DOSYA →';
- $('guess').style.display='none';$('result').classList.add('show');
+ $('guess').style.display='none';$('result').classList.add('show');document.body.classList.add('result-mode');$('legalDrawer').open=false;
  $('comparisonBars').innerHTML=[{name:'Genel 1/2',ratio:.5},{name:'İstisna 2/3',ratio:2/3}].map((r)=>'<div class="comparison-row"><span>'+r.name+'</span><span class="comparison-bar"><i style="width:'+(r.ratio*100)+'%"></i></span><b>'+format(c.years*r.ratio)+' yıl</b></div>').join('');
  $('state').textContent='DOĞRU TAHMİN: '+score+' / '+cases.length;
 };
