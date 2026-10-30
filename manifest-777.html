@@ -287,6 +287,64 @@ const W={
  peace:{label:"İç huzur",action:"Kendine gerçek bir mola planladın.",note:"Bildirimleri kapatmak 777 Hz'den daha sessiz çıktı."},
  custom:{label:"Kendi dileğin",action:"Dileğin için bir küçük adım düşündün.",note:"Evren özel siparişlere garanti vermiyor."}
 };
+
+const THEMES={
+ money:[
+ ["KÜÇÜK BAKİYE","Hesabın 7,77 TL gösteriyor.","Sayı ilginç. Özellikle kuruş kısmı.","Aboneliklerini ve bütçeni kontrol et.","Bu rakamın anlamını araştır.","Bir gecede zenginlik vaat eden linke gir."],
+ ["ESKİ MÜŞTERİ","Eski bir müşteri profilini ziyaret etmiş.","Belki bir fırsat. Belki de yanlışlıkla bastı.","Kısa bir teklif gönder.","Bu ziyareti işaret kabul et.","Hemen yüksek tutarlı fatura kes."],
+ ["BAŞKA BİR GELİR","Hafta sonu küçük bir iş teklifi geldi.","İşi yapmak için vaktin de lazım.","Şartları ve ödemeyi yazılı sor.","Kendini zaten zengin hisset.","Koşulları okumadan kabul et."],
+ ["SON KONTENJAN","Bir kurs iki günde zenginlik vaat ediyor.","Geri sayım her girişte yeniden başlıyor.","Ücretsiz alternatiflerle karşılaştır.","Bir bolluk panosu hazırla.","Fırsat kaçmasın diye hemen satın al."],
+ ["ZAM SOHBETİ","Bir tanıdığın zam istediğini söyledi.","Senin işinle benzer koşullarda olabilir.","Ücret talebini somutlaştır.","777 kez bolluk olumlaması yap.","Patrona tek kelimelik 'ZAM' yaz."],
+ ["SATILIK","Kullanmadığın bir eşya hâlâ dolapta.","Fotoğraflarda daha değerli görünüyor.","Satış ilanı hazırla.","Eşyayı bolluk köşesine koy.","Gerçek değerinin beş katına ilan aç."],
+ ["SON GÜN","Yeni gelir için bir başvurunun son günü.","Dosyayı göndermek için hâlâ biraz zamanın var.","Kontrol edip başvurunu tamamla.","Saat 11:11'i bekle.","Eksik dosyayla şansını dene."]
+ ],
+ love:[
+ ["GÖRÜLDÜ","Mesajın iki saattir yanıtsız.","Telefon çalışıyor. Karşı tarafın zihnini bilmiyorsun.","Uygunsa açık ve sakin bir mesaj yaz.","11:11'de niyet cümlesi kur.","Aynı kişiye üç platformdan yaz."],
+ ["KAFE","Hoşlandığın kişi seninle aynı kafede.","Aynı mekânda olmak bir ihtimal.","Doğal bir sohbet başlat.","Masaların numaralarını karşılaştır.","Yedi kere yanından geç."],
+ ["ESKİ BEĞENİ","Eski birinden aniden beğeni geldi.","Kimin ne istediği hâlâ bilinmiyor.","Ne istediğini kendine netleştir.","Bunu kadersel dönüş kabul et.","İmalı bir hikâye paylaş."],
+ ["BULUŞMA","İki farklı gün için teklif geldi.","Birini seçmek biraz plan gerektiriyor.","Uygun olduğun günü belirle.","Uğurlu günü hesapla.","Hiç cevap vermeyip merak uyandır."],
+ ["ORTAK ARKADAŞ","Bir arkadaşın seni biriyle tanıştırabilir.","İstemekle zorunda olmak farklı şeyler.","İlgileniyorsan tanışmaya açık ol.","İsim uyumuna bak.","Kişinin her hesabını incele."],
+ ["BELİRSİZLİK","Karşı taraf henüz ne istediğini bilmiyor.","Senin isteklerin de önemli.","Dürüstçe sor ve sınırını koy.","Mum yakıp sonucu evrene bırak.","Bir anda ortadan kaybol."],
+ ["SON MESAJ","Beklenmedik bir sohbet başladı.","Güzel olabilir. Kesin olması gerekmiyor.","Gerçekten istiyorsan cevap ver.","Bunu kozmik sınav say.","Hazır mesajı üç kişiye birden gönder."]
+ ],
+ career:[
+ ["PROFİL","Eski iş arkadaşın profilini ziyaret etmiş.","Bu bir işaretten fazlası olabilir; belki de değildir.","Doğal bir mesajla bağlantı kur.","11:11 ekran görüntüsü al.","Terfiyi aldığını ilan et."],
+ ["MÜDÜR TAKVİMİ","Yöneticin görüşme saati açtı.","Beş dakikalık bir görüşme bile hazırlık ister.","Başarılarını kanıtlarla hazırla.","Yeni unvanını 33 kez yaz.","Masasına vizyon panosu bırak."],
+ ["AÇIK POZİSYON","Yeni bir rol açıldı.","Seni ilgilendiren ilan uzun zamandır beklediğin gibi.","Koşulları okuyup başvur.","Olmuş gibi davranıp bekle.","İlanı okumadan üst yönetime yaz."],
+ ["SUNUM","Projeni anlatmak için beş dakikan var.","Dikkat süresi evrenden de kısa.","Önemli sonuçları iki slayta indir.","Kozmik frekans aç.","Hazırlıksız doğaçlama yap."],
+ ["MÜLAKAT","Bir görüşme daveti geldi.","Ne soracaklarını tam olarak bilmiyorsun.","Örneklerini ve sorularını hazırla.","Mülakat sorularını manifest et.","Bütün yanıtları rastgele seç."],
+ ["GERİ BİLDİRİM","İşin hakkında karma bir değerlendirme var.","Her cümlesi değerli olmak zorunda değil.","İşe yarayan kısmını sor.","Negatif enerjiyi sil.","Herkese tek seferde uzun cevap yaz."],
+ ["SON İMZA","Başvuru dosyası bugün kapanıyor.","Gönderilmezse evrenin suçu olmayacak.","Kontrol edip dosyayı gönder.","Teslim için uğurlu anı bekle.","Sadece konu satırını gönder."]
+ ],
+ home:[
+ ["İLAN","Harika görünen bir ev ilanı buldun.","Fotoğraflar çok geniş açıyla çekilmiş.","Bütçe ve konumu araştır.","Evi panona ekle.","Görmeden kapora gönder."],
+ ["EMLAKÇI","İndirim yalnızca bugün geçerliymiş.","Süre baskısı her şeyi daha çekici gösterir.","Şartları yazılı iste.","Kapı numarasını uğurlu say.","Sözleşmeyi okumadan kabul et."],
+ ["BANKA","Kredi hesaplayıcısı beklediğinden farklı çıktı.","Toplam maliyet sana bir şey söylüyor.","Geri ödemeyi tekrar hesapla.","Bolluk olumlaması yap.","Bütçeni iki katına çıkar."],
+ ["EV GEZMESİ","Mutfak fotoğraftakinden küçük.","Fotoğraflar bazen yaratıcı çalışıyor.","Gerçek ölçüleri kontrol et.","Enerjisini hissetmeye çalış.","Sadece görüntüye göre karar ver."],
+ ["KOMŞULAR","Bina akşamları çok gürültülü olabilir.","Ev kadar çevresi de kalıcı.","Farklı saatte yeniden ziyaret et.","Mekânın enerjisini arındır.","Balkondan herkesle tartış."],
+ ["EKSİK BELGE","Başvuruda bir belge unutulmuş.","Bir sayfa bütün dosyayı durduruyor.","Belgeyi tamamla.","Yeni adresini 777 kez yaz.","Sistemi sürekli yenile."],
+ ["SON KONTROL","Son inceleme için kısa bir vaktin var.","Küçük ayrıntılar büyük masraf olabilir.","Kritik ayrıntıları gözden geçir.","777 numaralı daire ara.","Gözlerin kapalı seçim yap."]
+ ],
+ viral:[
+ ["İLK VİDEO","Video 47 görüntülenme aldı.","Bir görüntülenme de senin olabilir.","İlk üç saniyeyi düzelt.","47 sayısını işaret say.","Sahte yorum satın al."],
+ ["TREND","Herkes aynı sesi kullanıyor.","Aynı şeye benzemek bazen kolaydır.","Özgün bir yorum bul.","Evrenin seçtiği sesi bekle.","Birebir kopyala."],
+ ["İLK YORUM","Tanımadığın biri yorum yazdı.","Bir kelime. Çok fazla anlam yüklenebilir.","Geri bildirimi değerlendir.","Kaderden mesaj kabul et.","Yorumla kavgaya gir."],
+ ["ANALİTİK","İzleyiciler dördüncü saniyede gidiyor.","Bu bir veri, kişisel hakaret değil.","Videonun açılışını iyileştir.","Algoritmanın burcuna bak.","Yedi farklı başlık ekle."],
+ ["MARKA MESAJI","Bir marka iş birliği için yazdı.","Herkes gerçekten marka olmayabilir.","Şartları ve hesabı kontrol et.","Teklifi evrenin ödülü say.","Hemen hesap bilgilerini paylaş."],
+ ["YENİ FİKİR","Küçük ama farklı bir fikir buldun.","En azından sana ait.","Bir prototip üret ve paylaş.","Olmuş gibi manifest et.","Popüler fikri birebir al."],
+ ["SON PAYLAŞIM","Video yayınlanmaya hazır.","Mükemmel saat diye bir garantin yok.","Kontrol edip paylaş.","11:11'i bekle.","Sadece BÜYÜK HARF kullan."]
+ ],
+ peace:[
+ ["BİLDİRİMLER","Telefon on dakikada yirmi kez titredi.","Yalnızca bir kısmı gerçekten önemli.","Gereksiz bildirimleri kapat.","777 Hz listesi aç.","Yeni telefon satın al."],
+ ["TAKVİM","Bütün hafta dolu görünüyor.","Boş zaman da planlanabilir.","Gerçek bir mola ayır.","İyi enerji niyeti kur.","Her davete evet de."],
+ ["GRUP","Grup sohbetinde elli yeni mesaj var.","Hepsi cevap beklemiyor.","Uygun olduğunda döneceğini yaz.","Sessizlik manifestosu hazırla.","Grubu açıklama yapmadan terk et."],
+ ["UYKU","Gece yarısına kadar kaydırdın.","Geriye uyuyacağın saat kaldı.","Telefonu bırak ve dinlen.","777 kere say.","Yeni uyku cihazları araştır."],
+ ["YÜRÜYÜŞ","Dışarı çıkmak için on dakikan var.","Büyük plan gerekmiyor.","Kısa yürüyüşe çık.","Fotoğrafını panoya koy.","Pahalı inziva paketi al."],
+ ["SINIR","Arkadaşın senden acil bir iyilik istiyor.","Yardım edebilirsin ama sonsuza kadar değil.","Sınırlarını nazikçe anlat.","Kozmik dengeye bırak.","Bütün haftanı iptal et."],
+ ["SON BİR ŞEY","Dinlenirken işten bildirim geldi.","Bu gerçek bir acil durum mu?","Önceliğini değerlendir.","Evrene işaret sor.","Okumadan uzun cevap gönder."]
+ ]
+};
+
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const state={wish:null,label:"",day:0,vibe:7,signs:0,progress:0,ritual:0,actions:0,hidden:0,history:[],ended:false};
 let stampTimer=0,numberTimer=0;
