@@ -210,7 +210,7 @@ body{background:#ffeccf;color:var(--ink)}
 <g class="building" data-place="court" role="button" tabindex="0" aria-label="Adliye"><rect x="332" y="557" width="170" height="244" fill="transparent"/></g>
 <rect width="800" height="1000" filter="url(#grain)" opacity=".5" pointer-events="none"/>
 </g></svg><div class="city-pins" aria-label="Mekân seçimi"><button data-goto="apartment">⌂ APARTMAN</button><button data-goto="cafe">☕ KAFE</button><button data-goto="phone">▣ TELEFON</button><button data-goto="street">↗ SOKAK</button><button data-goto="office">▥ OFİS</button><button data-goto="court">⚖ ADLİYE</button></div><div class="zoom">DOKUN: APARTMAN · KAFE · TELEFON · SOKAK · OFİS · ADLİYE</div></div>
-<aside class="panel"><button id="randomEvent" type="button" class="random-event">↻ BAŞKA MEKÂN</button><div class="eyebrow" id="area">01 / APARTMAN</div><h1 id="title">Komşu yine müziği açtı.</h1><p class="story" id="story">Gece yarısı, bütün apartman duyuyor. Şimdi olayı değiştir.</p><div class="switches" id="switches"></div><div class="judgment" aria-live="polite"><div class="eyebrow">HUKUKİ DURUM</div><strong id="verdict">DURUMA BAĞLI.</strong><p id="explanation"></p></div><details class="infaz" id="infaz"><summary>İNFAZ BİLGİSİNİ KEŞFET <span>＋</span></summary><div class="infaz-inner"><div class="eyebrow">CEZA / İNFAZ ATLASI</div><div class="infaz-number" id="ceza">—</div><p class="infaz-note" id="infazNote"></p><div class="infaz-track" aria-hidden="true"><span id="infazFill"></span></div><div class="infaz-stages"><span>HÜKÜM</span><span>KOŞULLU SALIVERİLME</span></div><label class="infaz-label" for="demoPenalty">ÖRNEK KESİNLEŞMİŞ CEZA <output id="penaltyOut">4 yıl</output></label><input id="demoPenalty" type="range" min="1" max="20" step="1" value="4"><div class="infaz-sample" id="infazSample"></div></div></details><details class="detail" id="details"><summary>KANUN NE DİYOR? <span aria-hidden="true">＋</span></summary><div class="law-body"><p id="law"></p></div></details></aside></section><footer class="foot"><span>Gerçek mevzuattan esinlenen varsayımsal durumlar. Otomatik suç veya tahliye kararı değildir.</span><a class="cta" href="/yatari-kac.html">KLASİK OYUN ↗</a></footer></main>
+<aside class="panel"><button id="randomEvent" type="button" class="random-event">↻ BAŞKA OLAY</button><div class="eyebrow" id="area">01 / APARTMAN</div><h1 id="title">Komşu yine müziği açtı.</h1><p class="story" id="story">Gece yarısı, bütün apartman duyuyor. Şimdi olayı değiştir.</p><div class="switches" id="switches"></div><div class="judgment" aria-live="polite"><div class="eyebrow">HUKUKİ DURUM</div><strong id="verdict">DURUMA BAĞLI.</strong><p id="explanation"></p></div><details class="infaz" id="infaz"><summary>İNFAZ BİLGİSİNİ KEŞFET <span>＋</span></summary><div class="infaz-inner"><div class="eyebrow">CEZA / İNFAZ ATLASI</div><div class="infaz-number" id="ceza">—</div><p class="infaz-note" id="infazNote"></p><div class="infaz-track" aria-hidden="true"><span id="infazFill"></span></div><div class="infaz-stages"><span>HÜKÜM</span><span>KOŞULLU SALIVERİLME</span></div><label class="infaz-label" for="demoPenalty">ÖRNEK KESİNLEŞMİŞ CEZA <output id="penaltyOut">4 yıl</output></label><input id="demoPenalty" type="range" min="1" max="20" step="1" value="4"><div class="infaz-sample" id="infazSample"></div></div></details><details class="detail" id="details"><summary>KANUN NE DİYOR? <span aria-hidden="true">＋</span></summary><div class="law-body"><p id="law"></p></div></details></aside></section><footer class="foot"><span>Gerçek mevzuattan esinlenen varsayımsal durumlar. Otomatik suç veya tahliye kararı değildir.</span><a class="cta" href="/yatari-kac.html">KLASİK OYUN ↗</a></footer></main>
 <script>
 const $=id=>document.getElementById(id);
 const cases={
@@ -240,28 +240,41 @@ const cases={
  ['Kesinleşmiş hapis cezası var','ŞİMDİ İNFAZ İNCELENEBİLİR.','İnfaz rejimi, kesinleşmiş ceza, suç tarihi ve diğer koşullar bilinirse hesaplamaya başlanabilir.']],law:'5271 sayılı CMK m.100–101; 5275 sayılı Kanun m.107. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}
 };
 
-const more={
- apartment:[
- ['Site toplantısına gitmedi','YATARI YOK.','Toplantıya katılmamak tek başına suç değildir.'],
- ['Gece gürültü yapan komşuyla yalnızca tartıştı','BU HALİYLE SUÇ DEĞİL.','Başka tehdit, hakaret veya saldırı yoksa sırf tartışma suç değildir.']],
- cafe:[
- ['Bahşiş bırakmadı','YATARI YOK.','Bahşiş bırakmamak tek başına suç değildir.'],
- ['Kasiyerin telefonunu izinsiz aldı','SUÇ OLUŞABİLİR.','Malın rıza dışında alınması hırsızlık yönünden incelenebilir.']],
- phone:[
- ['Apartman grubunu sessize aldı','YATARI YOK.','WhatsApp grubunu sessize almak suç değildir.'],
- ['Başkasının hesabına izinsiz giriş yaptı','SUÇ OLUŞABİLİR.','TCK m.243 kapsamında bilişim sistemine hukuka aykırı giriş değerlendirilebilir.'],
- ['Birini öldürmekle tehdit eden mesaj attı','SUÇ OLUŞABİLİR.','TCK m.106 kapsamında tehdit suçu gündeme gelebilir.']],
- street:[
- ['Yayaya yol verdi','YATARI YOK.','Bu hareket anlatıldığı haliyle suç oluşturmaz.'],
- ['Aracın önünü kesip kişiyi zorla alıkoydu','SUÇ OLUŞABİLİR.','TCK m.109 kapsamında kişiyi hürriyetinden yoksun kılma koşulları değerlendirilebilir.']],
- office:[
- ['Maaşın geç ödenmesini sordu','YATARI YOK.','Ücretini sormak suç değildir; ücret uyuşmazlıkları ayrı hukuki alandır.'],
- ['İş arkadaşının hesabına izinsiz girdi','SUÇ OLUŞABİLİR.','Bilişim sistemine hukuka aykırı erişim TCK m.243 kapsamında değerlendirilebilir.']],
- court:[
- ['Gazetede birinin gözaltına alındığını okudu','YATAR HESABI YOK.','Gözaltı, mahkûmiyet veya kesinleşmiş ceza değildir.'],
- ['Hapis cezası kesinleşti ama suç tarihi bilinmiyor','İNFAZ ŞARTLARI EKSİK.','Suç tarihi ve özel infaz rejimi olmadan gerçek tahliye tarihi hesaplanamaz.']]
+// Separate episodes: choices within one scene must refer to the same event.
+const episodes={
+ apartment:[{title:'Site toplantısı krizi.',story:'Yönetici, toplantıya gelmeyenlere ceza kesileceğini söylüyor. Peki hangi hareket neyi değiştirir?',options:[
+ ['Toplantıya gitmedi','YATARI YOK.','Sırf kat malikleri toplantısına katılmamak suç değildir.'],
+ ['Toplantıya katıldı','YATARI YOK.','Toplantıya katılmak suç değildir.'],
+ ['Kararlara itiraz etmek istedi','HAPİS CEZASI DEĞİL.','Kat malikleri kurulunun kararlarına karşı kanuni koşullarda hukuki yollara başvurulabilir.']
+ ],law:'634 sayılı Kat Mülkiyeti Kanunu m.29–33. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ cafe:[{title:'Kafede hesap meselesi.',story:'Hesap geldi. Bahşiş bırakmak zorunda mısın?',options:[
+ ['Hesabı ödedi, bahşiş bırakmadı','YATARI YOK.','Bahşiş bırakmamak tek başına suç değildir.'],
+ ['Hesabı ödedi, bahşiş bıraktı','YATARI YOK.','Bu davranış suç oluşturmaz.'],
+ ['Hesabı ödemeyi unuttu, işletmeye haber verdi','OTOMATİK SUÇ DEĞİL.','Ödemenin gecikmesi tek başına dolandırıcılık sayılmaz.']
+ ],law:'5237 sayılı TCK m.157 ve genel borçlar hukuku hükümleri. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ phone:[{title:'Apartman WhatsApp grubu.',story:'Grup aralıksız bildirim gönderiyor. Mesajlaşmadaki davranışı değiştir.',options:[
+ ['Grubu sessize aldı','YATARI YOK.','Bir mesajlaşma grubunu sessize almak tek başına suç değildir.'],
+ ['Yöneticiye cevap vermedi','YATARI YOK.','Mesaja cevap vermemek tek başına suç değildir; başka hukuki yükümlülükler farklıdır.'],
+ ['Grup üyelerini ciddi şekilde tehdit etti','SUÇ OLUŞABİLİR.','İçeriğine göre TCK m.106 kapsamında tehdit gündeme gelebilir.']
+ ],law:'634 sayılı Kat Mülkiyeti Kanunu ve TCK m.106. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ street:[{title:'Yolda tartışma.',story:'İki sürücü park yüzünden tartışıyor. Sonraki hareketi değiştir.',options:[
+ ['Sözlü tartışıp ayrıldılar','TEK BAŞINA SUÇ DEĞİL.','Tehdit, hakaret veya başka suç unsuru yoksa sırf tartışma suç olmayabilir.'],
+ ['Sürücülerden biri tehdit etti','SUÇ OLUŞABİLİR.','TCK m.106 uygulanma koşulları olayın içeriğine bağlıdır.'],
+ ['Bir sürücü diğerinin gitmesini zorla engelledi','SUÇ OLUŞABİLİR.','Somut koşullarda TCK m.109 gündeme gelebilir.']
+ ],law:'5237 sayılı TCK m.106, 109. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ office:[{title:'Maaş gecikti.',story:'Çalışan maaşının geciktiğini fark etti. Ne yaptı?',options:[
+ ['Maaşını sordu','YATARI YOK.','Ücretini talep etmek suç değildir.'],
+ ['İşverene yazılı talepte bulundu','YATARI YOK.','Yasal hakları aramak suç değildir.'],
+ ['İşvereni ciddi biçimde tehdit etti','SUÇ OLUŞABİLİR.','Tehdidin içeriği ve koşulları TCK m.106 kapsamında değerlendirilir.']
+ ],law:'4857 sayılı İş Kanunu m.32, 34 ve TCK m.106. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}],
+ court:[{title:'Manşette gözaltı var.',story:'Gazete birinin gözaltına alındığını yazdı. Adli süreçte ne değişiyor?',options:[
+ ['Gözaltına alındı','YATAR HESABI YOK.','Gözaltı mahkûmiyet değildir.'],
+ ['Tutuklandı, yargılanıyor','HENÜZ HESAPLANAMAZ.','Tutuklama kesinleşmiş mahkûmiyet değildir.'],
+ ['Hapis hükmü kesinleşti','İNFAZ ŞARTLARI GEREKİR.','İnfaz rejimi ve ilgili koşullar değerlendirilmelidir.']
+ ],law:'5271 sayılı CMK m.91, 100–101 ve 5275 sayılı Kanun m.107. <a href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî mevzuat ↗</a>'}]
 };
-Object.entries(more).forEach(([k,list])=>cases[k].options.push(...list));
+let chapter={};
+function currentCase(key){return chapter[key]?episodes[key][chapter[key]-1]:cases[key]}
 // Descriptive, statute-linked ranges for selected scenarios. Other options avoid fabricated numbers.
 const ranges={
  'İstemediğini bildiği kişiyi sırf huzurunu bozmak için ısrarla aradı':{label:'TCK 123 • 3 ay–1 yıl hapis',ratio:.5},
@@ -275,7 +288,7 @@ const ranges={
  'Aracın önünü kesip kişiyi zorla alıkoydu':{label:'TCK 109 • Fiilin özelliklerine göre değişir',ratio:null}
 };
 function renderInfaz(){
- const c=cases[active],o=c.options[Math.min(Math.max(0,Number(selected[active])||0),c.options.length-1)],data=ranges[o[0]],yes=/SUÇ|DOLANDIRICILIK|İNFAZ/.test(o[1])&&!/DEĞİL|YOK|OTOMATİK/.test(o[1]);
+ const c=currentCase(active),o=c.options[Math.min(Math.max(0,Number(selected[active])||0),c.options.length-1)],data=ranges[o[0]],yes=/SUÇ|DOLANDIRICILIK|İNFAZ/.test(o[1])&&!/DEĞİL|YOK|OTOMATİK/.test(o[1]);
  $('infaz').hidden=!yes;
  if(!yes)return;
  $('ceza').textContent=data?.label||'Suç türüne göre ceza değişir';
@@ -289,8 +302,8 @@ $('demoPenalty').addEventListener('input',renderInfaz);
 
 let active='apartment',selected={};try{selected=JSON.parse(localStorage.getItem('yatari-city-choices')||'{}')}catch(e){}
 
-function render(key){active=key;const c=cases[key],choice=Math.min(Math.max(0,Number(selected[key])||0),c.options.length-1);
- $('area').textContent=c.label+' / BİR HAREKETİ DEĞİŞTİR';
+function render(key){active=key;const c=currentCase(key),choice=Math.min(Math.max(0,Number(selected[key])||0),c.options.length-1);
+ $('area').textContent=cases[key].label+' / BİR HAREKETİ DEĞİŞTİR';
  $('title').textContent=c.title;$('story').textContent=c.story;
  $('switches').replaceChildren();
  c.options.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.className='switch'+(i===choice?' selected':'');b.textContent=o[0];b.setAttribute('aria-pressed',String(i===choice));b.onclick=()=>{selected[key]=i;try{localStorage.setItem('yatari-city-choices',JSON.stringify(selected))}catch(e){}render(key)};$('switches').appendChild(b)});
@@ -300,7 +313,7 @@ function render(key){active=key;const c=cases[key],choice=Math.min(Math.max(0,Nu
  document.querySelectorAll('.city-pins button').forEach(b=>b.classList.toggle('active',b.dataset.goto===key));
 }
 document.querySelectorAll('.city-pins button').forEach(el=>el.addEventListener('click',()=>render(el.dataset.goto)));
-$('randomEvent').onclick=()=>{const keys=Object.keys(cases).filter(k=>k!==active);render(keys[Math.floor(Math.random()*keys.length)]);};
+$('randomEvent').onclick=()=>{chapter[active]=((chapter[active]||0)+1)%(episodes[active].length+1);selected[active]=0;render(active);};
 document.querySelectorAll('.building').forEach(el=>{el.addEventListener('click',()=>render(el.dataset.place));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();render(el.dataset.place)}})});
 render(active);
 </script></body></html>
