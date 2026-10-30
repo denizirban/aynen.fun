@@ -13,11 +13,36 @@
 .result .smallnote{font-size:clamp(9px,.83vw,11px);line-height:1.4}
 @media(max-width:760px){.result .result-line{font-size:11px;line-height:1.3}.result .smallnote{font-size:9px;line-height:1.28}.result .sources{font-size:8px}.result.show{gap:6px!important}}
 @media(max-height:750px) and (max-width:760px){.result .smallnote{font-size:8px;line-height:1.18}.result .result-big{font-size:37px}.result.show{gap:4px!important}}
-.comparison[hidden]{display:none}.comparison{border:1px solid #111;background:white;padding:9px}.comparison-row{display:grid;grid-template-columns:92px 1fr 57px;gap:6px;align-items:center;font-size:10px;margin-top:8px}.comparison-row b{font-size:10px;text-align:right}.comparison-bar{height:12px;background:#eee}.comparison-bar i{display:block;height:100%;background:#111}.comparison-row:nth-child(3) i{background:#f67b4b}.compare-toggle{border:1px solid #111;background:white;padding:10px;font-size:10px;font-weight:700;min-height:35px}.compare-toggle[aria-expanded=true]{background:#ddff68}.result.show:has(.comparison:not([hidden])) .compare,.result.show:has(.comparison:not([hidden])) .legal{display:none}@media(max-width:760px){.result.show:has(.comparison:not([hidden])) .result-line{display:none}.comparison{padding:6px}.comparison-row{grid-template-columns:74px 1fr 50px;font-size:9px;margin-top:5px}.compare-toggle{font-size:9px;padding:7px;min-height:32px}}</style></head><body><main class="app">
+.comparison[hidden]{display:none}.comparison{border:1px solid #111;background:white;padding:9px}.comparison-row{display:grid;grid-template-columns:92px 1fr 57px;gap:6px;align-items:center;font-size:10px;margin-top:8px}.comparison-row b{font-size:10px;text-align:right}.comparison-bar{height:12px;background:#eee}.comparison-bar i{display:block;height:100%;background:#111}.comparison-row:nth-child(3) i{background:#f67b4b}.compare-toggle{border:1px solid #111;background:white;padding:10px;font-size:10px;font-weight:700;min-height:35px}.compare-toggle[aria-expanded=true]{background:#ddff68}.result.show:has(.comparison:not([hidden])) .compare,.result.show:has(.comparison:not([hidden])) .legal{display:none}@media(max-width:760px){.result.show:has(.comparison:not([hidden])) .result-line{display:none}.comparison{padding:6px}.comparison-row{grid-template-columns:74px 1fr 50px;font-size:9px;margin-top:5px}.compare-toggle{font-size:9px;padding:7px;min-height:32px}}
+.timeline-screen{background:#f4f3ee;border-top:1px solid #ccc;margin-top:9px;padding:10px 8px 5px}
+.timeline-heading{display:flex;justify-content:space-between;font-size:10px;margin-bottom:8px}
+.timeline-scrub{width:100%;accent-color:#111;cursor:pointer}
+.timeline-characters{display:flex;justify-content:space-between;padding:0 20px;font-size:20px;line-height:1}
+.timeline-characters span:first-child{color:#151515}.timeline-characters span:last-child{color:#f0734d}
+.timeline-characters span.released{opacity:.25;transform:scale(.7);transition:transform .2s}
+.timeline-actions{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-top:5px}
+.timeline-actions button{border:1px solid #111;padding:7px 13px;background:#ddff68;font:700 10px 'DM Mono',monospace}
+.timeline-actions .mono{font-size:8px;color:#777}
+.result.show:has(.comparison:not([hidden])){justify-content:flex-start;overflow:auto;scrollbar-width:thin}
+@media(max-width:760px){
+ .timeline-screen{margin-top:4px;padding:5px}
+ .timeline-heading{font-size:8px;margin-bottom:3px}
+ .timeline-characters{font-size:14px}
+ .timeline-actions{margin-top:2px}
+ .timeline-actions button{padding:5px;font-size:9px}
+ .result.show:has(.comparison:not([hidden])) .result-big{display:none}
+ .result.show:has(.comparison:not([hidden])) .smallnote#legal{display:none}
+ .result.show:has(.comparison:not([hidden])) .resultHeading{display:none}
+}
+</style></head><body><main class="app">
 <header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 08</span></header>
 <section class="frame"><div class="left"><div><div class="eyebrow">TÜRKİYE / CEZA &amp; İNFAZ</div><h1 class="title">Yatarı<br><span>kaç?</span></h1><p class="sub">Verilen hapis cezası ile infaz süresi aynı şey değil. Sence kaç yıl?</p></div><div class="casebox"><div class="case-label"><span class="number" id="caseNo">01</span> DOSYA / VARSAYIMSAL SENARYO</div><h2 class="crime" id="crime">Genel infaz rejimi</h2><p class="facts" id="facts"></p><div class="sentence" id="sentence">6 yıl <small>hapis cezası</small></div></div></div>
 <div class="right"><div class="right-top"><div id="guess"><div class="eyebrow">TAHMİNİNİ YAP</div><div class="prompt">Cezaevinde yaklaşık<br>kaç yıl kalır?</div><div class="dial"><button class="step" id="minus" type="button" aria-label="Bir yıl azalt">−</button><div class="value" id="value">3</div><button class="step" id="plus" type="button" aria-label="Bir yıl artır">+</button></div><div class="unit">YIL / HİPOTETİK CEZAEVİ SÜRESİ</div><input class="slider" id="slider" type="range" min="0" max="30" value="3" step=".5" aria-label="Yıl tahmini"><button class="answer" type="button" id="reveal">KARARI GÖR →</button></div>
-<div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">VARSAYIMSAL CEZAEVİ SÜRESİ</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><div class="compare"><div class="eyebrow">CEZA → CEZAEVİ → DENETİMLİ SERBESTLİK → KOŞULLU SALIVERİLME</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><p class="smallnote">Bu süreler koşullu salıverilme eşikleridir, tahliye tarihleri değildir.</p></div><button type="button" class="compare-toggle" id="compareToggle" aria-expanded="false">AYNI CEZAYI KARŞILAŞTIR ↗</button><button type="button" class="next" id="next">SONRAKİ DOSYA →</button></div></div><div class="right-bottom"><strong id="state">08 DOSYA / TAHMİN ET</strong><div class="progress" id="dots"></div></div></div></section>
+<div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">VARSAYIMSAL CEZAEVİ SÜRESİ</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><div class="compare"><div class="eyebrow">CEZA → CEZAEVİ → DENETİMLİ SERBESTLİK → KOŞULLU SALIVERİLME</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><div class="timeline-screen"><div class="timeline-heading"><span class="mono">İNFAZ ZAMAN ÇİZGİSİ</span><span class="mono" id="timelineClock">0.0 YIL</span></div>
+<input id="timelineScrub" class="timeline-scrub" type="range" min="0" max="100" value="0" aria-label="İnfaz zaman çizelgesini ileri geri oynat">
+<div id="timelineCharacters" class="timeline-characters" aria-hidden="true"><span>●</span><span>●</span></div>
+<div class="timeline-actions"><button id="timelinePlay" type="button">▶ OYNAT</button><span class="mono">SÜREYİ İLERLET / KARŞILAŞTIR</span></div></div>
+<p class="smallnote">İki örnek de aynı toplam ceza içindir. Çizelge koşullu salıverilme eşiklerini gösterir; gerçek cezaevinden çıkış tarihi değildir.</p></div><button type="button" class="compare-toggle" id="compareToggle" aria-expanded="false">AYNI CEZAYI KARŞILAŞTIR ↗</button><button type="button" class="next" id="next">SONRAKİ DOSYA →</button></div></div><div class="right-bottom"><strong id="state">08 DOSYA / TAHMİN ET</strong><div class="progress" id="dots"></div></div></div></section>
 <footer class="foot"><span class="disclaimer">Yalnızca varsayımsal eğitim senaryosu. Gerçek infaz/tahliye hesabı değildir.</span><span class="mono"><a href="/" aria-label="Ana sayfa">← ÇIKIŞ</a></span></footer>
 </main><script>
 const cases=[
@@ -45,6 +70,7 @@ const legalExample=c=>{
  return {threshold,ds:threshold-illustrative,illustrative,minimumDays};
 };
 function draw(){
+ if(typeof stopPlayback==='function')stopPlayback();
  const c=cases[index],max=Math.max(c.years,2);
  $('counter').textContent=String(index+1).padStart(2,'0')+' / '+String(cases.length).padStart(2,'0');
  $('caseNo').textContent=String(index+1).padStart(2,'0');$('crime').textContent=c.title;
@@ -72,13 +98,41 @@ $('reveal').onclick=()=>{
  $('inside').style.width=(x.illustrative/c.years*100)+'%';
  $('outside').style.width=(x.ds/c.years*100)+'%';
  $('end').style.width=((c.years-x.threshold)/c.years*100)+'%';
- $('legal').textContent='*Kesin yatar süresi değil. '+c.law+' 5275 m.105/A kapsamında denetimli serbestlik ancak şartlar ve infaz hâkimi kararıyla mümkündür. 4 Haziran 2025 ve sonrası suçlarda kurumda en az 5 gün ve ilgili sürenin en az 1/10’u şartı dikkate alınır (Geçici m.11). Açık cezaevi koşulları, geçici hükümler, mahsup ve başka cezalar ayrıca etkilidir.';
+ $('legal').textContent='*Kesin yatar süresi değil. '+c.law+' 5275 m.105/A kapsamında denetimli serbestlik ancak şartlar ve infaz hâkimi kararıyla mümkündür. 4 Haziran 2025 ve sonrasındaki suçlar için m.105/A/1 uyarınca en az 5 gün ve ilgili kurumda geçirilmesi gereken sürenin en az 1/10’u şartı dikkate alınır (geçiş hükümleri saklıdır). Açık cezaevi koşulları, geçici hükümler, mahsup ve başka cezalar ayrıca etkilidir.';
  $('next').textContent=index===cases.length-1?'YENİDEN OYNA ↺':'SONRAKİ DOSYA →';
  $('guess').style.display='none';$('result').classList.add('show');
  $('comparisonBars').innerHTML=[{name:'Genel 1/2',ratio:.5},{name:'İstisna 2/3',ratio:2/3}].map((r)=>'<div class="comparison-row"><span>'+r.name+'</span><span class="comparison-bar"><i style="width:'+(r.ratio*100)+'%"></i></span><b>'+format(c.years*r.ratio)+' yıl</b></div>').join('');
  $('state').textContent='DOĞRU TAHMİN: '+score+' / '+cases.length;
 };
-$('compareToggle').onclick=()=>{if(!solved)return;const box=$('comparison');box.hidden=!box.hidden;$('compareToggle').setAttribute('aria-expanded',String(!box.hidden));$('compareToggle').textContent=box.hidden?'AYNI CEZAYI KARŞILAŞTIR ↗':'KARŞILAŞTIRMAYI KAPAT ×';};
+let playback=null;
+function stopPlayback(){if(playback){clearInterval(playback);playback=null;}$('timelinePlay').textContent='▶ OYNAT';}
+function renderTimeline(percent){
+ const years=cases[index].years,elapsed=years*percent/100;
+ $('timelineClock').textContent=format(Math.round(elapsed*10)/10)+' YIL';
+ const icons=$('timelineCharacters').children;
+ icons[0].classList.toggle('released',elapsed>=years*.5);
+ icons[1].classList.toggle('released',elapsed>=years*2/3);
+ const bars=$('comparisonBars').querySelectorAll('.comparison-bar i');
+ bars.forEach((bar,i)=>{const limit=i===0?.5:2/3;bar.style.background='linear-gradient(to right,#111 '+Math.min(100,elapsed/(years*limit)*100)+'%,#f0734d '+Math.min(100,elapsed/(years*limit)*100)+'%)';});
+}
+$('timelineScrub').oninput=e=>{stopPlayback();renderTimeline(+e.target.value);};
+$('timelinePlay').onclick=()=>{
+ if(playback){stopPlayback();return;}
+ if(+$('timelineScrub').value>=100)$('timelineScrub').value=0;
+ $('timelinePlay').textContent='Ⅱ DURDUR';
+ playback=setInterval(()=>{
+   const next=Math.min(100,+$('timelineScrub').value+1.1);
+   $('timelineScrub').value=next;renderTimeline(next);
+   if(next>=100)stopPlayback();
+ },38);
+};
+$('compareToggle').onclick=()=>{
+ if(!solved)return;
+ const box=$('comparison');box.hidden=!box.hidden;
+ $('compareToggle').setAttribute('aria-expanded',String(!box.hidden));
+ $('compareToggle').textContent=box.hidden?'AYNI CEZAYI KARŞILAŞTIR ↗':'KARŞILAŞTIRMAYI KAPAT ×';
+ if(box.hidden)stopPlayback();else{ $('timelineScrub').value=0;renderTimeline(0); }
+};
 $('next').onclick=()=>{if(index===cases.length-1){index=0;score=0}else index++;draw()};
 draw();
 </script><script src="/share-kit.js?v=1" defer></script></body></html>
