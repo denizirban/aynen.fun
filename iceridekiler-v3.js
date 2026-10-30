@@ -263,7 +263,13 @@ function stepAgents(dt){
   event('Dendritik hücre antijen bilgisini lenf düğümüne taşıdı.');
   aim=null;
  }
- if(!aim&&state.phase==='active'&&type!=='fibro'&&type!=='treg'&&type!=='bcell')aim=chemoDirection(a);
+ if(!aim&&state.phase==='active'&&type!=='fibro'&&type!=='treg'&&type!=='bcell'){
+  if(state.clock>=(a.chemoNext||0)){
+   a.chemoAim=chemoDirection(a);
+   a.chemoNext=state.clock+.27+(a.id%7)*.03;
+  }
+  aim=a.chemoAim||null;
+ }
  // Recruitment gradients bring newly summoned cells to the chosen region, while
  // close-range phagocytosis and cytotoxicity still take precedence.
  if(state.phase==='active'&&['neutro','macro','dend','nk','tcell'].includes(type)){
