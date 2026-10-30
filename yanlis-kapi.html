@@ -190,7 +190,7 @@ for(const s of [-1,1]){mesh(new THREE.CylinderGeometry(.13,.17,1.9,8),green,s*.7
 function worldBase(bg,ground,grid=false){ambient(bg,.012);mesh(new THREE.PlaneGeometry(170,170,18,18),material(ground,.86),0,-.09,-25).rotation.x=-Math.PI/2;if(grid)gridFloor(54,80,-.079,"#fff",3);}
 function float(o,amp=.5,phase=0,speed=1){animates.push({type:"float",obj:o,base:o.position.y,amp,phase,speed});return o;}
 function spin(o,speed=.4){animates.push({type:"spin",obj:o,speed,base:o.rotation.y});return o;}
-function secret(o,id,name){o.userData={kind:"secret",idx:id,name};interactives.push(o);float(o,.26,id*2,1.3);glow(worlds[id].a,2.8,o.position.x,o.position.y,o.position.z,9);}
+function secret(o,id,name){const tag={kind:"secret",idx:id,name};o.userData=tag;o.traverse(child=>{if(child.isMesh){child.userData=tag;interactives.push(child);}});float(o,.26,id*2,1.3);const at=new Vector3();o.getWorldPosition(at);glow(worlds[id].a,2.8,at.x,at.y,at.z,9);}
 function buildGravity(){
 worldBase("#393258","#9181c8",true);glow("#c9a9ff",7,-7,6,-4,35);
 for(let i=0;i<15;i++){let x=(hash(i+7)*2-1)*16,z=-15+hash(i+10)*29,y=1+hash(i+3)*10;let o=box(.8+hash(i)*2.1,.5+hash(i+4)*1.5,.8+hash(i+2)*2.2,i%3?"#d2caef":"#48405d",x,y,z,.55);o.rotation.set(hash(i)*2,hash(i+1)*2,hash(i+2));float(o,.25+hash(i+1)*.6,i);}
@@ -230,7 +230,7 @@ const key=new THREE.Group();root.add(key);key.position.set(-3,3.2,-5);
 const handle=mesh(new THREE.TorusGeometry(.62,.16,9,28),material("#ffe993",.16,.8),0,1,0,key);
 mesh(new THREE.BoxGeometry(.25,1.9,.24),material("#ffe993",.16,.8),0,-.13,0,key);
 mesh(new THREE.BoxGeometry(.7,.22,.24),material("#ffe993",.16,.8),.24,-1,0,key);
-secret(handle,3,"Dev anahtar");interactives.push(handle);
+secret(key,3,"Dev anahtar");
 particles(55,"#ffefb0",45,15,55,.075);
 }
 function buildPrism(){
