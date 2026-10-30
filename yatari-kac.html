@@ -170,7 +170,7 @@
 <footer class="foot"><span class="disclaimer">Yalnızca varsayımsal eğitim senaryosu. Gerçek infaz/tahliye hesabı değildir.</span><span class="mono"><a href="/" aria-label="Ana sayfa">← ÇIKIŞ</a></span></footer>
 </main><script>
 const cases=[
-{title:"Yatarı yok!",years:1.5,ratio:0,special:"hagb",description:"18 ay hapis hükmü hakkında hükmün açıklanmasının geri bırakılmasına (HAGB) karar verilmiş. HAGB kararı kesinleşmiş; denetim süresinde ihlal veya yeni kasıtlı suç yok varsayılıyor.",law:"5271 sayılı CMK m.231/5–11 — HAGB koşulları sürerken hapis hükmü infaza konulmaz. İhlal halinde hüküm açıklanabilir."},
+{title:"Site toplantısına gitmedi",years:0,ratio:0,special:"noCrime",description:"Site WhatsApp grubunda mesaj: ‘Kat malikleri toplantısına gelmeyenlere ceza var!’ Ev sahibi toplantıya gitmemiş. Başka bir eylem veya borç ihlali yok.",law:"634 sayılı Kat Mülkiyeti Kanunu m.29–30 toplantıyı ve karar yeter sayısını düzenler. Sırf toplantıya katılmamak nedeniyle hapis cezası ya da kanunda öngörülmüş otomatik para cezası yoktur. Katılmayan malik de geçerli kararlardan etkilenebilir."},
 {title:"Genel infaz rejimi",years:6,ratio:.5,description:"İstisna kapsamına girmeyen bir suçtan 6 yıl kesinleşmiş süreli hapis cezası. Tek mahkûmiyet, yetişkin, iyi hâl.",law:"5275 m.107/2 — süreli hapislerde genel kural 1/2."},
 {title:"Kasten öldürme",years:24,ratio:2/3,description:"TCK m.81 kapsamında 24 yıl süreli hapis cezası. Yetişkin ve iyi hâlli; başka mahkûmiyet yok.",law:"5275 m.107/2-a — kasten öldürmede 2/3 istisnası."},
 {title:"Genel infaz rejimi",years:10,ratio:.5,description:"Özel infaz oranı bulunmayan bir suçtan 10 yıl süreli hapis. Yetişkin, tek mahkûmiyet ve iyi hâl.",law:"5275 m.107/2 — genel kural 1/2."},
@@ -196,10 +196,10 @@ const format=n=>Number.isInteger(n)?n.toLocaleString('tr-TR'):n.toLocaleString('
 // This is not a personal release-date calculator: eligibility for open prison
 // and the implementation of judicial discretion cannot be inferred here.
 const legalExample=c=>{
- const threshold=c.special==='hagb'?0:c.years*c.ratio;
+ const threshold=c.special==='noCrime'?0:c.years*c.ratio;
  const ds=Math.min(1,threshold); // illustrative 105/A maximum, not automatic
  const minimumDays=Math.max(5,threshold*365/10); // 7550 mandatory floor
- const illustrative=c.special==='hagb'?0:Math.max(threshold-ds,minimumDays/365);
+ const illustrative=c.special==='noCrime'?0:Math.max(threshold-ds,minimumDays/365);
  return {threshold,ds:threshold-illustrative,illustrative,minimumDays};
 };
 function draw(){
@@ -207,10 +207,10 @@ function draw(){
  const c=cases[index],max=Math.max(c.years,2);
  $('counter').textContent=String(index+1).padStart(2,'0')+' / '+String(cases.length).padStart(2,'0');
  $('caseNo').textContent=String(index+1).padStart(2,'0');$('crime').textContent=c.title;
- $('facts').textContent=c.description+' Suç tarihi: 2026 (varsayım).';
- $('sentence').innerHTML=c.years+' yıl <small>hapis cezası</small>';
- $('slider').max=max;$('slider').step='.5';
- guess=Math.min(max,Math.round(c.years*.5*2)/2);setGuess(guess);
+ $('facts').textContent=c.description+(c.special==='noCrime'?'':' Suç tarihi: 2026 (varsayım).');
+ $('sentence').innerHTML=c.special==='noCrime'?'TOPLANTIYA GİTMEDİ <small>iddia: cezası var</small>':c.years+' yıl <small>hapis cezası</small>';
+ $('slider').max=c.special==='noCrime'?5:max;$('slider').step='.5';
+ guess=c.special==='noCrime'?1:Math.min(max,Math.round(c.years*.5*2)/2);setGuess(guess);
  $('compareToggle').hidden=false;
  $('guess').style.display='block';$('result').classList.remove('show');document.body.classList.remove('result-mode');$('legalDrawer').open=false;$('comparison').hidden=true;$('compareToggle').setAttribute('aria-expanded','false');$('compareToggle').textContent='AYNI CEZAYI KARŞILAŞTIR ↗';
  $('state').textContent='DOĞRU TAHMİN: '+score+' / '+cases.length;
@@ -218,7 +218,7 @@ function draw(){
  solved=false;
 }
 function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
-function setGuess(v){guess=clamp(v,0,cases[index].years);$('slider').value=guess;$('value').textContent=format(guess);}
+function setGuess(v){guess=clamp(v,0,cases[index].special==='noCrime'?5:cases[index].years);$('slider').value=guess;$('value').textContent=format(guess);}
 $('minus').onclick=()=>setGuess(guess-.5);$('plus').onclick=()=>setGuess(guess+.5);
 $('slider').oninput=e=>setGuess(Number(e.target.value));
 $('reveal').onclick=()=>{
@@ -233,14 +233,14 @@ $('reveal').onclick=()=>{
  $('outside').style.width=(x.ds/c.years*100)+'%';
  $('end').style.width=((c.years-x.threshold)/c.years*100)+'%';
  $('legal').textContent='*Kesin yatar süresi değil. '+c.law+' 5275 m.105/A kapsamında denetimli serbestlik ancak şartlar ve infaz hâkimi kararıyla mümkündür. 4 Haziran 2025 ve sonrasındaki suçlar için m.105/A/1 uyarınca en az 5 gün ve ilgili kurumda geçirilmesi gereken sürenin en az 1/10’u şartı dikkate alınır (geçiş hükümleri saklıdır). Açık cezaevi koşulları, geçici hükümler, mahsup ve başka cezalar ayrıca etkilidir.';
- if(c.special==='hagb'){
+ if(c.special==='noCrime'){
   $('resultBig').innerHTML='0 <span>gün*</span>';
-  $('resultLine').innerHTML='<strong>YATARI YOK.</strong> Bu varsayımda mahkeme HAGB kararı verdiği için hapis hükmü hemen infaz edilmiyor. Ancak denetim süresi ve koşullar devam ediyor.';
+  $('resultLine').innerHTML='<strong>YATARI YOK.</strong> Çünkü site toplantısına gitmemek, tek başına hapis cezası gerektiren bir suç değil. Gruba yazılan “ceza var” mesajı bir ceza hükmü oluşturmuyor.';
   $('inside').style.width='0%';$('outside').style.width='0%';$('end').style.width='100%';
-  $('legal').textContent=c.law+' *Buradaki sıfır, yalnızca verilen HAGB kararının koşullarına uyulması durumundaki infazı ifade eder. Ceza ortadan kalkmış ya da herkes için otomatik olarak sıfırlanmış değildir.';
-  $('feedback').textContent=diff<.01?'TAM İSABET':'İŞTE SÜRPRİZ: HAGB';
+  $('legal').textContent=c.law+' Toplantıya gitmemek ile aidat veya kurul kararlarından doğan yükümlülükleri ihlal etmek farklı hukuki meselelerdir.';
+  $('feedback').textContent=diff<.01?'TAM İSABET':'WHATSAPP GRUBU ABARTMIŞ';
  }
- $('compareToggle').hidden=c.special==='hagb';
+ $('compareToggle').hidden=c.special==='noCrime';
  $('next').textContent=index===cases.length-1?'YENİDEN OYNA ↺':'SONRAKİ DOSYA →';
  $('guess').style.display='none';$('result').classList.add('show');document.body.classList.add('result-mode');$('legalDrawer').open=false;
  $('comparisonBars').innerHTML=[{name:'Genel 1/2',ratio:.5},{name:'İstisna 2/3',ratio:2/3}].map((r)=>'<div class="comparison-row"><span>'+r.name+'</span><span class="comparison-bar"><i style="width:'+(r.ratio*100)+'%"></i></span><b>'+format(c.years*r.ratio)+' yıl</b></div>').join('');
