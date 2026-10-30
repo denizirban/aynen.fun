@@ -490,10 +490,20 @@
   // Render sync is read-only: game logic and save files remain the authoritative source.
   var lastStateTime=0,clock=new THREE.Clock(),oldSnapshot=null,previousAvatar='';
   function updateActors(state,dt,elapsed){
+    var workerPositions={
+      stove:[5.0,0,-3.6],sink:[5.0,0,-.9],table:[.35,0,2.35],
+      desk:[3.1,0,-2.4],kid:[-1.2,0,2.55],floor:[-4.1,0,3.1],
+      laundry:[5.2,0,2.2],pet:[-4.8,0,3.8]
+    };
+    function safeWorkPosition(spot,person){
+      var p=workerPositions[spot];if(!p)return null;
+      var side=person==='partner'?.58:person==='kid'?-.55:0;
+      return new THREE.Vector3(p[0]+side,0,p[2]+(person==='partner'?.12:0));
+    }
     var targets={
-      self:state.currentSpot?stationPositions[state.currentSpot]:new THREE.Vector3(3.4,0,1.8),
-      partner:state.partnerSpot?stationPositions[state.partnerSpot]:new THREE.Vector3(2.2,0,-2.45),
-      kid:state.kidSpot?stationPositions[state.kidSpot]:new THREE.Vector3(-1.1,0,2.35)
+      self:safeWorkPosition(state.currentSpot,'self')||new THREE.Vector3(3.4,0,1.8),
+      partner:safeWorkPosition(state.partnerSpot,'partner')||new THREE.Vector3(2.2,0,-2.45),
+      kid:safeWorkPosition(state.kidSpot,'kid')||new THREE.Vector3(-1.1,0,2.35)
     };
     for(var k in actors){
       var data=actors[k],root=data.root;
@@ -503,7 +513,7 @@
       var moving=root.position.distanceToSquared(goal)>.07;
       var bob=moving?Math.sin(elapsed*11)*.036:Math.sin(elapsed*1.5+k.length)*.012;
       data.body.position.y=bob;
-      var working=key==='self'&&state.currentSpot||key==='partner'&&state.partnerSpot||key==='kid'&&state.kidSpot;
+      var working=k==='self'&&state.currentSpot||k==='partner'&&state.partnerSpot||k==='kid'&&state.kidSpot;
       var motion=working?Math.sin(elapsed*5+k.length)*.35:Math.sin(elapsed*1.3+k.length)*.035;
       data.leftArm.rotation.x+=((working?-.48:0)+motion-data.leftArm.rotation.x)*Math.min(1,dt*7);
       data.rightArm.rotation.x+=((working?-.48:0)-motion-data.rightArm.rotation.x)*Math.min(1,dt*7);
