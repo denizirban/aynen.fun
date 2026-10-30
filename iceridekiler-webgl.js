@@ -50,12 +50,16 @@ if(api){
    material.onBeforeCompile=shader=>{
     shader.uniforms.uCellTime={value:0};
     shader.uniforms.uCellActivity={value:0};
+    shader.uniforms.uTarget={value:new THREE.Vector2(1,0)};
+    shader.uniforms.uEngage={value:0};
     morph.shader=shader;
     shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       float cellRipples = sin(position.y*7.5+uCellTime*2.3)*sin(position.x*5.2-uCellTime*1.7);
       float cellAction = sin(position.x*9.0+uCellTime*8.0)*sin(position.y*7.0-uCellTime*6.0);
-      transformed += normal* (0.035*cellRipples+uCellActivity*0.047*cellAction);`);
-    shader.vertexShader='uniform float uCellTime; uniform float uCellActivity;\n'+shader.vertexShader;
+      float facing=max(0.0,dot(normalize(position.xy+vec2(.00001)),normalize(uTarget+vec2(.00001))));
+      float grip=pow(facing,5.0)*max(0.0,position.z+.25);
+      transformed+=normal*(0.035*cellRipples+uCellActivity*0.047*cellAction+uEngage*.16*grip);`);
+    shader.vertexShader='uniform float uCellTime; uniform float uCellActivity; uniform vec2 uTarget; uniform float uEngage;\n'+shader.vertexShader;
    };
    const body=new THREE.Mesh(sphere,material);body.scale.set(1,1.12,.7);group.add(body);
    const glow=new THREE.Mesh(sphere,new THREE.MeshBasicMaterial({color:palette[1],transparent:true,opacity:.085,depthWrite:false,blending:THREE.AdditiveBlending}));glow.scale.set(1.25,1.35,.81);group.add(glow);
@@ -199,6 +203,8 @@ if(api){
       const dd=food?Math.hypot(food.x-a.x,food.y-a.y):Infinity;
       const engage=dd<48?Math.max(0,1-dd/48):0;
       const direction=food?Math.atan2(a.y-food.y,food.x-a.x):0;
+      mesh.userData.engage=engage;
+      mesh.userData.targetAngle=direction;
       mesh.userData.arms.forEach((arm,i)=>{
         const theta=direction+(i-1)*.43;
         const len=1+engage*(i===1?.88:.54);
@@ -211,6 +217,8 @@ if(api){
     if(user.morph.shader){
       user.morph.shader.uniforms.uCellTime.value=phase;
       user.morph.shader.uniforms.uCellActivity.value=a.hit>0?1:.12;
+      user.morph.shader.uniforms.uEngage.value=a.type==='macro'?(user.engage||0):0;
+      user.morph.shader.uniforms.uTarget.value.set(Math.cos(user.targetAngle||0),Math.sin(user.targetAngle||0));
     }
     user.glow.material.opacity=a.hit>0?.19:.08;
     user.nucleus.position.x=.10+Math.sin(phase*.8)*.035;
