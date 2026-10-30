@@ -235,6 +235,8 @@ function updateHud(){
  $('score').textContent=score.toLocaleString('tr-TR');$('lives').textContent='♥'.repeat(Math.max(0,lives))+'♡'.repeat(3-Math.max(0,lives));
 }
 function building(x,i,par){
+ // Normalize indexes for off-screen buildings at negative world positions.
+ i=((i%2520)+2520)%2520;
  const cols=['#b85a4a','#d5a38a','#c99f61','#8babad','#d1b4a6','#b98274'];
  const color=cols[i%cols.length],bw=210+Math.floor(rnd(i+3)*110),top=108+(i%4)*21;
  ctx.save();ctx.translate(x,0);
