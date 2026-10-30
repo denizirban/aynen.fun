@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ead9ae">
+<meta name="description" content="Bir Öğrenci Uzat — Dolmuşta para öne, para üstü arkaya. Aynen.fun">
+<title>Bir Öğrenci Uzat — aynen.fun</title>
+<style>
+:root{--paper:#f9f7f2;--ink:#26231d;--muted:#777268;--line:#d9d1c4;--amber:#f8c65e;--forest:#61765b}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--paper);font-family:Arial,Helvetica,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+button,a{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}a{color:inherit;text-decoration:none}
+button:focus-visible,a:focus-visible{outline:3px solid #f0ab3d;outline-offset:4px}
+[hidden]{display:none!important}
+main{max-width:1100px;height:100dvh;min-height:550px;margin:auto;padding:14px 16px calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:9px}
+.topline{display:flex;align-items:center;justify-content:space-between;font:10px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.09em}
+.topline a{text-decoration:underline;text-underline-offset:3px}
+.hero{display:flex;align-items:end;justify-content:space-between;gap:14px}
+.hero h1{font-size:clamp(34px,5.6vw,66px);line-height:.95;letter-spacing:-.077em;margin:0;font-weight:800}
+.hero p{font-size:12px;line-height:1.45;color:var(--muted);max-width:230px;margin:0;text-align:right}
+.scoreline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.stat{background:#fff;border:1px solid var(--line);padding:8px 12px;display:flex;align-items:baseline;gap:8px;justify-content:space-between;min-width:0}
+.stat small{font:9px ui-monospace,Menlo,monospace;color:#817d74;white-space:nowrap}
+.stat b{font-size:clamp(16px,2.4vw,26px);font-weight:750;letter-spacing:-.04em;white-space:nowrap}
+.stat b.low{color:#b04d31}
+.scene{flex:1;min-height:260px;position:relative;overflow:hidden;border:1.5px solid #333028;background:#bd9b68;isolation:isolate;touch-action:manipulation}
+.scene-illustration{width:100%;height:100%;display:block;position:absolute;inset:0;object-fit:cover}
+.sunbeams{position:absolute;inset:0;pointer-events:none;background:linear-gradient(117deg,rgba(255,215,115,.20),transparent 38%),linear-gradient(14deg,rgba(116,70,29,.35),transparent 48%);mix-blend-mode:screen}
+.scene:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 15px 32px #42301f3d,inset 0 -35px 90px #38271746}
+.scene-header{position:absolute;top:12px;left:12px;right:12px;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;pointer-events:none}
+.scene-header span{display:inline-block;background:#ede1c6df;color:#372c22;padding:7px 10px;border:1px solid #a9885488;font:10px/1.25 ui-monospace,Menlo,monospace;letter-spacing:.05em}
+.scene-header .light{background:#e9eee5de;border-color:#adc4a8;color:#445342}
+.stop-note{position:absolute;z-index:2;top:65px;right:14px;background:#fbf2d8ef;border:1px solid #b19a6e;color:#5c4c2b;padding:6px 9px;font:10px ui-monospace,monospace;transition:opacity .2s;pointer-events:none}
+.hand{position:absolute;z-index:4;width:clamp(58px,7vw,73px);height:clamp(58px,7vw,73px);border:1.5px solid rgba(255,253,239,.68);background:rgba(45,53,43,.38);color:#faf6eb;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;transform:translate(-50%,-50%) translateX(var(--sway,0px));transition:background .14s,border-color .14s,box-shadow .14s,opacity .14s;box-shadow:0 4px 16px #33221844;touch-action:manipulation;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.hand svg{height:30px;width:30px;display:block;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.hand span{font:8px ui-monospace,Menlo,monospace;letter-spacing:.03em;white-space:nowrap;pointer-events:none}
+.hand.target{background:#fff6d9f5;color:#53381b;border:2.5px solid #efaa2a;box-shadow:0 0 0 6px #ffe2a45c,0 8px 26px #55361e66;animation:pulse 1.3s ease-in-out infinite;z-index:6}
+.hand.target:before{content:"";position:absolute;inset:-12px;border:1px dashed #f6d18c;border-radius:50%;pointer-events:none}
+.hand.used{opacity:.47}
+.hand.disabled{opacity:.55}
+.hand:disabled{cursor:default}
+.hand:hover:not(:disabled){border-color:#fff7d0}
+@keyframes pulse{50%{box-shadow:0 0 0 12px #ffe2a427,0 8px 24px #55361e66}}
+.ticket-fly{position:absolute;z-index:8;left:var(--money-x,50%);top:var(--money-y,90%);transform:translate(-50%,-50%) rotate(var(--money-angle,-8deg));transition:left .18s cubic-bezier(.22,.8,.28,1),top .18s cubic-bezier(.22,.8,.28,1),transform .18s;pointer-events:none;background:#c4d4ad;border:2px solid #405b41;color:#344b35;border-radius:2px;min-width:53px;text-align:center;font:800 16px Arial;padding:6px 8px;box-shadow:2px 4px 1px #33291e55}
+.ticket-fly:after{content:"";display:block;position:absolute;inset:3px;border:1px solid #53674855}
+.ticket-fly.returning{background:#f8d79c;color:#694721;border-color:#956735;transform:translate(-50%,-50%) rotate(7deg)}
+.scene-message{position:absolute;bottom:13px;left:50%;transform:translateX(-50%);z-index:7;max-width:90%;text-align:center;pointer-events:none;background:#f8f0d6ed;padding:8px 12px;border:1px solid #a98955;color:#393127;font:bold 11px ui-monospace,monospace;letter-spacing:.02em;box-shadow:2px 3px 0 #5c3b2230}
+.toast{position:absolute;z-index:9;top:20%;left:50%;transform:translate(-50%,-10px);opacity:0;transition:opacity .12s,transform .12s;pointer-events:none;padding:9px 12px;text-align:center;max-width:85%;background:#fffaf0;border:1.5px solid #382b23;color:#352820;box-shadow:5px 5px 0 #352820b3;font-weight:800;font-size:clamp(13px,2vw,19px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.orderbar{display:flex;gap:9px;align-items:stretch;background:#fff;border:1px solid #d7ccba;padding:9px 13px;min-height:72px}
+.receipt{display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:165px}
+.receipt small,.guide small{font:9px ui-monospace,monospace;color:#81766a;letter-spacing:.05em}
+.receipt b{font-size:clamp(17px,2vw,23px);line-height:1.1;letter-spacing:-.055em}
+.receipt span{font:10px ui-monospace,monospace;color:#665d50}
+.guide{flex:1;display:flex;flex-direction:column;justify-content:center;gap:5px;border-left:1px solid #e4ddd1;padding-left:14px;min-width:0}
+.guide b{font-size:clamp(12px,1.5vw,15px)}
+.guide .progress{height:4px;background:#e8e2d7;max-width:230px}
+.guide .progress i{display:block;height:100%;width:0;background:#d99e40;transition:width .13s}
+.controls{display:flex;align-items:stretch;gap:8px}
+.controls button{background:#fff;border:1px solid var(--ink);color:var(--ink);min-height:54px;padding:10px 14px;font-weight:800;font-size:12px}
+.controls #next{flex:1;background:#24231f;color:#fff;font-size:14px}
+.controls #next:disabled{background:#eeeeea;color:#888;border-color:#ccc}
+.controls #sound{min-width:100px}
+.bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#8d877e;font:9px ui-monospace,monospace;min-height:17px}
+.bottom button{border:0;background:transparent;color:inherit;text-decoration:underline;padding:1px;cursor:pointer}
+.modal{position:absolute;z-index:15;inset:0;background:#2c251bd1;display:flex;justify-content:center;align-items:center;padding:16px}
+.card{width:min(100%,460px);max-height:100%;overflow-y:auto;background:#fbf8ef;color:#26231c;border:1.5px solid #302c26;padding:25px;box-shadow:9px 10px 0 #17120b8a}
+.card small{font:10px ui-monospace,monospace;letter-spacing:.075em;color:#847b6d}
+.card h2{font-size:clamp(32px,5vw,48px);letter-spacing:-.068em;line-height:1.02;margin:14px 0}
+.card p{font-size:13px;line-height:1.55;color:#695e4f;margin:0 0 17px}
+.card .buttons{display:flex;gap:7px;flex-wrap:wrap}
+.card button{flex:1;padding:13px 16px;min-height:48px;color:#fff;background:#2f3028;border:1px solid #2f3028;font-weight:800;font-size:13px}
+.card button.alt{background:#fbf8ef;color:#302e28}
+.report{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:17px}
+.report div{background:#e9e4d7;padding:10px}
+.report b{font-size:27px;letter-spacing:-.06em;display:block}
+.report span{font:9px ui-monospace,monospace;color:#736e61}
+@media(max-width:640px){
+ main{height:100dvh;min-height:0;padding:9px 9px calc(7px + env(safe-area-inset-bottom));gap:6px}
+ .topline{font-size:9px}
+ .hero{gap:9px}
+ .hero h1{font-size:clamp(30px,8.3vw,48px)}
+ .hero p{font-size:10px;max-width:115px}
+ .scoreline{gap:4px}
+ .stat{flex-direction:column;gap:2px;padding:6px 7px}
+ .stat small{font-size:8px}
+ .stat b{font-size:20px}
+ .scene{min-height:215px}
+ .scene-header{left:7px;right:7px;top:7px}
+ .scene-header span{font-size:8px;padding:5px 7px}
+ .stop-note{top:38px;right:7px;font-size:8px}
+ .hand{width:56px;height:56px}
+ .hand svg{width:26px;height:26px}
+ .hand span{font-size:7px}
+ .ticket-fly{font-size:14px;padding:5px 7px;min-width:45px}
+ .scene-message{font-size:9px;padding:6px 9px;bottom:8px}
+ .orderbar{padding:7px 9px;min-height:64px}
+ .receipt{min-width:129px}
+ .receipt b{font-size:17px}
+ .receipt small,.guide small{font-size:8px}
+ .receipt span{font-size:9px}
+ .guide{padding-left:9px;gap:3px}
+ .guide b{font-size:12px}
+ .controls button{min-height:50px;padding:7px 11px}
+ .controls #sound{min-width:81px}
+ .bottom{font-size:8px}
+ .card{padding:19px}
+}
+@media(max-height:630px){
+ .hero h1{font-size:32px}
+ .scene{min-height:180px}
+ .orderbar{min-height:56px}
+ .controls button{min-height:46px}
+ .scene-message{bottom:6px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<div class="topline"><a href="/">← aynen.fun</a><span>DOLMUŞ / SON DURAK: BELLİ DEĞİL</span></div>
+<div class="hero"><h1>Bir Öğrenci Uzat.</h1><p>Para öne.<br>Para üstü arkaya.<br>Dolmuş devam ediyor.</p></div>
+<div class="scoreline">
+<div class="stat"><small>KİŞİ</small><b id="count">0</b></div>
+<div class="stat"><small>PUAN</small><b id="score">0</b></div>
+<div class="stat"><small>SERİ</small><b id="combo">×1</b></div>
+<div class="stat"><small>SÜRE</small><b id="time">60 sn</b></div>
+</div>
+<section class="scene" id="scene" aria-label="Gün batımında dolmuş içindeki yolculara sırayla para uzatma oyunu">
+<svg class="scene-illustration" viewBox="0 0 1000 650" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Altın renkli gün ışığında eski dolmuşun içinden şoföre doğru bakış">
+<defs>
+<linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e2bd77"/><stop offset=".52" stop-color="#bb8e54"/><stop offset="1" stop-color="#614c35"/></linearGradient>
+<linearGradient id="ceiling" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#533e2c"/><stop offset=".65" stop-color="#b38e5e"/><stop offset="1" stop-color="#bda26f"/></linearGradient>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#90bbb8"/><stop offset=".51" stop-color="#f3c789"/><stop offset="1" stop-color="#d48a45"/></linearGradient>
+<linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c5dfcb" stop-opacity=".5"/><stop offset=".5" stop-color="#eac98e" stop-opacity=".13"/><stop offset="1" stop-color="#ffe9a4" stop-opacity=".5"/></linearGradient>
+<linearGradient id="aisle" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a78d62"/><stop offset=".6" stop-color="#554839"/><stop offset="1" stop-color="#292d2b"/></linearGradient>
+<linearGradient id="light" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3b0" stop-opacity=".9"/><stop offset="1" stop-color="#f5b354" stop-opacity="0"/></linearGradient>
+<linearGradient id="seat" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#333d33"/><stop offset=".4" stop-color="#4b5542"/><stop offset="1" stop-color="#202a26"/></linearGradient>
+<filter id="outsideBlur"><feGaussianBlur stdDeviation="7"/></filter>
+<clipPath id="leftWindow"><path d="M0 158 L214 176 255 410 0 483Z"/></clipPath>
+<clipPath id="rightWindow"><path d="M787 179L1000 159V495L742 421Z"/></clipPath>
+</defs>
+<rect width="1000" height="650" fill="url(#wall)"/>
+<path d="M0 0H1000V140Q500 194 0 140Z" fill="url(#ceiling)"/>
+<path d="M0 0L290 0 329 650H0Z" fill="#b18d5d"/>
+<path d="M1000 0H732L698 650H1000Z" fill="#bd9360"/>
+<!-- side windows and passing light -->
+<g clip-path="url(#leftWindow)">
+<rect width="280" height="520" fill="url(#sky)"/>
+<g filter="url(#outsideBlur)" opacity=".82"><rect x="-20" y="325" width="290" height="30" fill="#70948e"/><rect x="-15" y="369" width="280" height="22" fill="#776a4c"/><rect x="5" y="265" width="45" height="140" fill="#71958d"/><rect x="86" y="296" width="67" height="100" fill="#98a997"/><path d="M0 428L250 350" stroke="#b3764b" stroke-width="24"/></g>
+<path d="M0 160L260 405L240 470L0 290Z" fill="#ffdb8d" opacity=".45"/>
+</g>
+<g clip-path="url(#rightWindow)">
+<rect x="736" y="130" width="264" height="370" fill="url(#sky)"/>
+<g filter="url(#outsideBlur)"><path d="M740 375L1040 344" stroke="#668f83" stroke-width="40"/><path d="M740 433L1000 392" stroke="#ca9359" stroke-width="55"/><rect x="839" y="244" width="29" height="151" fill="#68857b"/><rect x="936" y="267" width="54" height="115" fill="#8fa291"/></g>
+<path d="M780 180L1000 395V458L761 250Z" fill="#ffe49e" opacity=".42"/>
+</g>
+<path d="M0 157L214 176 255 410 0 483" fill="none" stroke="#6a4c30" stroke-width="15"/>
+<path d="M787 179L1000 159V495L742 421Z" fill="none" stroke="#6e4a2c" stroke-width="15"/>
+<path d="M225 133L780 133 746 415 253 415Z" fill="#433b2d" stroke="#b59a68" stroke-width="17"/>
+<path d="M265 168L740 168 705 372 300 372Z" fill="url(#sky)"/>
+<g filter="url(#outsideBlur)" opacity=".95"><path d="M250 300H770" stroke="#e6d6a2" stroke-width="26"/><path d="M285 343H723" stroke="#b68c5f" stroke-width="23"/><rect x="390" y="205" width="44" height="149" fill="#8ea9a0"/><rect x="565" y="224" width="85" height="115" fill="#d9a76b"/><rect x="284" y="264" width="105" height="94" fill="#829d97"/></g>
+<rect x="265" y="168" width="475" height="204" fill="url(#glass)"/>
+<path d="M483 159L480 394" stroke="#6f5c43" stroke-width="8"/>
+<path d="M253 385L745 385 705 434 295 434Z" fill="#b08d5c" stroke="#604e38" stroke-width="8"/>
+<path d="M295 434L705 434 846 650H152Z" fill="url(#aisle)"/>
+<path d="M395 442L345 650M602 442L653 650" stroke="#b3a084" stroke-opacity=".32" stroke-width="4"/>
+<!-- driver's side and steering wheel -->
+<path d="M660 364Q657 311 697 310 745 318 751 367L757 457H639Z" fill="#323e38" stroke="#222b28" stroke-width="5"/>
+<circle cx="704" cy="303" r="27" fill="#8e694d" stroke="#554734" stroke-width="4"/>
+<path d="M675 288Q681 256 710 264 736 266 732 290Q714 273 700 280Z" fill="#242c2a"/>
+<circle cx="656" cy="405" r="41" fill="none" stroke="#222827" stroke-width="10"/>
+<path d="M615 402H697M658 363L657 442" stroke="#222827" stroke-width="6"/>
+<path d="M675 375L663 404" stroke="#92775a" stroke-width="15" stroke-linecap="round"/>
+<!-- dashboard cash area -->
+<path d="M330 387L665 395 674 441 316 438Z" fill="#8d7854" stroke="#443a2e" stroke-width="6"/>
+<rect x="479" y="397" width="126" height="23" rx="3" fill="#414b37" stroke="#a2a981" stroke-width="2"/>
+<text x="543" y="412" fill="#d7d5a8" font-family="monospace" text-anchor="middle" font-size="13">NAKİT • DEVAM</text>
+<!-- side seats: perspective stepped -->
+<path d="M0 457Q88 416 203 440L341 650H0Z" fill="url(#seat)" stroke="#282b25" stroke-width="9"/>
+<path d="M1000 460Q908 419 791 440L663 650H1000Z" fill="url(#seat)" stroke="#282b25" stroke-width="9"/>
+<path d="M0 539Q102 490 252 548L290 650H0Z" fill="#3c493b" stroke="#212923" stroke-width="8"/>
+<path d="M1000 535Q891 490 752 545L700 650H1000Z" fill="#374536" stroke="#202922" stroke-width="8"/>
+<!-- silhouette passengers, warm highlights -->
+<path d="M183 536Q191 475 240 460Q295 475 312 559L327 650H143Z" fill="#4d4b37" stroke="#302e28" stroke-width="5"/>
+<ellipse cx="249" cy="449" rx="36" ry="44" fill="#966c4b" stroke="#574331" stroke-width="3"/>
+<path d="M211 441Q208 398 244 396 278 395 285 439Q249 418 211 441" fill="#392e26"/>
+<path d="M815 525Q787 465 744 459 702 468 690 553L674 650H860Z" fill="#434a3d" stroke="#292d28" stroke-width="5"/>
+<ellipse cx="745" cy="447" rx="36" ry="43" fill="#a57a59" stroke="#574434" stroke-width="3"/>
+<path d="M706 436Q714 398 747 399 780 404 784 441L754 424Z" fill="#292d29"/>
+<path d="M87 620Q105 540 165 540 230 544 260 650H45Z" fill="#64745e" stroke="#29342d" stroke-width="5"/>
+<path d="M915 612Q886 540 828 539 763 548 737 650H963Z" fill="#68705a" stroke="#28342d" stroke-width="5"/>
+<!-- bars, ceiling rail, grips inspired by reference -->
+<path d="M130 112Q500 126 877 112" stroke="#4d4838" stroke-width="12" fill="none"/>
+<path d="M130 112Q500 126 877 112" stroke="#cdb283" stroke-width="5" fill="none"/>
+<path d="M95 110L60 595M906 111L942 599" stroke="#c6a46d" stroke-width="10"/>
+<path d="M95 110L60 595M906 111L942 599" stroke="#554735" stroke-width="2"/>
+<g fill="none" stroke="#466d49" stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
+<path d="M163 87V145Q140 165 151 194Q165 210 187 198Q197 189 194 175L173 142V87"/>
+<path d="M351 107V157Q328 176 341 200Q354 214 375 204L386 189 364 154V106"/>
+<path d="M650 107V158Q633 176 643 195Q657 211 676 200L681 186 663 157V107"/>
+<path d="M848 87V143Q828 162 835 191Q850 207 870 197L880 180 857 145V88"/>
+</g>
+<g fill="none" stroke="#adc49a" stroke-opacity=".35" stroke-width="3"><path d="M166 92V143M352 111V154M651 112V153M849 91V144"/></g>
+<!-- sun washes -->
+<path d="M13 163L377 415 674 650H232Z" fill="url(#light)" opacity=".34"/>
+<path d="M1000 193L731 410 456 650H900Z" fill="#ffda87" opacity=".18"/>
+<path d="M0 0H1000V28H0Z" fill="#534431" opacity=".3"/>
+<!-- light grain via fine line textures -->
+<g stroke="#f4dda0" opacity=".07" stroke-width="2"><path d="M2 201H999M3 211H997M3 364H997M3 375H997M3 522H997"/></g>
+</svg>
+<div class="sunbeams" aria-hidden="true"></div>
+<div class="scene-header"><span>HAT 34 · AKŞAM SEFERİ</span><span class="light" id="direction">ÜCRET → ŞOFÖRE</span></div>
+<div class="stop-note" id="situation">DURAK: MARKET ÖNÜ</div>
+<div class="ticket-fly" id="banknote" hidden>₺50</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="scene-message" id="sceneMessage">Işıklı ele dokun. Para öne gitsin.</div>
+<div class="modal" id="modal">
+<div class="card">
+<small id="modalKicker">DOLMUŞ İÇİ EĞİTİM / 00:00</small>
+<h2 id="modalTitle">Bir öğrenci uzatır mısınız?</h2>
+<p id="modalText">Işıklı ellere sırayla dokun. Parayı şoföre götür, para üstünü arkaya ulaştır. Hızlandıkça seri yap, yanlış ele dokunursan zaman kaybedersin.</p>
+<div class="report" id="report" hidden>
+<div><b id="resultPeople">0</b><span>PARASI ULAŞAN YOLCU</span></div>
+<div><b id="resultScore">0</b><span>PUAN</span></div>
+<div><b id="resultBest">0</b><span>KİŞİSEL REKOR</span></div>
+<div><b id="resultMistakes">0</b><span>YANLIŞ EL</span></div>
+</div>
+<div class="buttons"><button type="button" id="start">BİR ÖĞRENCİ UZAT →</button><button type="button" class="alt" id="share" hidden>SONUCU PAYLAŞ</button></div>
+</div>
+</div>
+</section>
+<div class="orderbar">
+<div class="receipt"><small>ARKADAN GELEN</small><b id="request">1 ÖĞRENCİ</b><span id="payment">₺50 uzatıldı · ₺30 üstü</span></div>
+<div class="guide"><small id="stepLabel">NE YAPMALI?</small><b id="guideText">Sarı ışıklı ele dokun</b><div class="progress"><i id="progress"></i></div></div>
+</div>
+<div class="controls"><button type="button" id="next" disabled>ÖNCE OYUNU BAŞLAT</button><button type="button" id="sound" aria-pressed="false">SES KAPALI</button></div>
+<div class="bottom"><span>KURGUSAL ÜCRETLER · GERÇEK DOLMUŞ TARİFESİ DEĞİL</span><button type="button" id="restart">YENİDEN BAŞLA ↺</button></div>
+</main>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)},scene=$('scene');
+var handCoords=[
+ {x:25,y:79,label:'ARKA SOL'},
+ {x:75,y:77,label:'ARKA SAĞ'},
+ {x:32,y:62,label:'ORTA SOL'},
+ {x:69,y:57,label:'ORTA SAĞ'},
+ {x:44,y:43,label:'ÖN KOLTUK'},
+ {x:59,y:29,label:'ŞOFÖR'}
+];
+var handSvg='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 26V15a3 3 0 0 1 6 0v9-14a3 3 0 0 1 6 0v13-11a3 3 0 0 1 6 0v11-7a3 3 0 0 1 6 0v14l-5 11H19l-9-13c-2-3 2-6 5-3l4 5"/></svg>';
+var handButtons=[];
+var routes=[[0,2,4,5],[1,3,4,5],[0,3,4,5],[1,2,4,5],[0,2,5],[1,3,5]];
+var orders=[
+ {name:'1 ÖĞRENCİ',fee:20,paid:50},
+ {name:'1 TAM',fee:35,paid:50},
+ {name:'2 ÖĞRENCİ',fee:40,paid:100},
+ {name:'1 TAM + 1 ÖĞRENCİ',fee:55,paid:100},
+ {name:'2 TAM',fee:70,paid:100},
+ {name:'3 ÖĞRENCİ',fee:60,paid:100},
+ {name:'1 ÖĞRENCİ',fee:20,paid:20},
+ {name:'1 TAM',fee:35,paid:100},
+ {name:'2 ÖĞRENCİ + 1 TAM',fee:75,paid:100}
+];
+var stops=['MARKET ÖNÜ','DOLMUŞ DURAĞI','OKUL YOLU','KAVŞAK','SAHİL','SON DURAK'];
+var s={
+ mode:'intro',count:0,score:0,streak:0,bestStreak:0,mistakes:0,remaining:60,total:60,route:[],sequence:[],step:0,returning:false,order:null,lock:0,sway:0,elapsed:0,toastTimeout:0,sound:false,audio:null,last:0,orderStart:0,events:0,passDone:false
+};
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function best(){try{return Number(localStorage.getItem('aynen-ogrenci-best')||0)}catch(e){return 0}}
+function high(silent){try{if(s.score>best())localStorage.setItem('aynen-ogrenci-best',String(s.score))}catch(e){}}
+function rand(i){return Math.floor(Math.random()*i)}
+function set(id,value){$(id).textContent=value}
+function toast(text){
+ set('toast',text);$('toast').classList.add('show');
+ clearTimeout(s.toastTimeout);s.toastTimeout=setTimeout(function(){$('toast').classList.remove('show')},1100);
+}
+function beep(freq,duration,volume){
+ if(!s.sound)return;
+ try{
+  var C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+  if(!s.audio)s.audio=new C();if(s.audio.state==='suspended')s.audio.resume();
+  var t=s.audio.currentTime,osc=s.audio.createOscillator(),g=s.audio.createGain();
+  osc.type='sine';osc.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(volume||.035,t);g.gain.exponentialRampToValueAtTime(.001,t+duration);
+  osc.connect(g);g.connect(s.audio.destination);osc.start(t);osc.stop(t+duration);
+ }catch(e){}
+}
+function populateHands(){
+ for(var i=0;i<handCoords.length;i++){
+  var v=handCoords[i],b=document.createElement('button');
+  b.type='button';b.className='hand disabled';b.style.left=v.x+'%';b.style.top=v.y+'%';
+  b.setAttribute('aria-label',v.label);b.innerHTML=handSvg+'<span>'+v.label+'</span>';
+  (function(id){b.addEventListener('click',function(){tap(id)})})(i);
+  handButtons.push(b);scene.appendChild(b);
+ }
+}
+function hud(){
+ set('count',String(s.count));
+ set('score',String(s.score));
+ set('combo','×'+Math.min(5,1+Math.floor(s.streak/3)));
+ set('time',Math.max(0,Math.ceil(s.remaining))+' sn');
+ $('time').classList.toggle('low',s.remaining<12);
+}
+function currentTarget(){return s.sequence[s.step]}
+function refreshHands(){
+ var target=currentTarget();
+ for(var i=0;i<handButtons.length;i++){
+  var b=handButtons[i],next=s.mode==='playing'&&!s.lock&&i===target;
+  b.classList.toggle('target',next);
+  b.classList.toggle('disabled',!next);
+  b.classList.toggle('used',s.sequence.indexOf(i)!==-1&&s.sequence.indexOf(i)<s.step);
+  b.disabled=s.mode!=='playing'||s.lock>0;
+  b.style.setProperty('--sway',(Math.sin(s.elapsed*1.8+i*.7)*s.sway).toFixed(1)+'px');
+ }
+}
+function positionMoney(x,y,label){
+ var n=$('banknote');n.hidden=false;
+ n.style.setProperty('--money-x',x+'%');n.style.setProperty('--money-y',y+'%');
+ n.textContent=label;
+ n.classList.toggle('returning',s.returning);
+}
+function prepareOrder(){
+ if(s.mode!=='playing')return;
+ s.step=0;s.returning=false;s.lock=0;s.orderStart=s.elapsed;s.passDone=false;
+ var index=s.count % orders.length;
+ s.order=orders[(index+Math.floor(s.count/5))%orders.length];
+ s.route=routes[(s.count+Math.floor(s.count/3))%routes.length].slice();
+ s.sequence=s.route.slice();
+ set('request',s.order.name);
+ set('payment','₺'+s.order.paid+' uzatıldı · ₺'+(s.order.paid-s.order.fee)+' üstü');
+ set('stepLabel','01 / ÜCRETİ GÖNDER');
+ set('guideText','Sarı ışıklı ele dokun');
+ set('direction','ÜCRET → ŞOFÖRE');
+ set('sceneMessage','PARAYI ÖNE GÖNDER');
+ set('situation','DURAK: '+stops[Math.min(stops.length-1,Math.floor(s.count/2))]);
+ $('progress').style.width='0%';
+ set('next','ELLERE DOKUNARAK UZAT →');
+ $('next').disabled=true;
+ positionMoney(50,91,'₺'+s.order.paid);
+ refreshHands();
+}
+function handoff(id){
+ s.lock=.17;
+ var coords=handCoords[id];positionMoney(coords.x,coords.y,s.returning?'₺'+(s.order.paid-s.order.fee):'₺'+s.order.paid);
+ s.step++;
+ var pct=clamp(100*s.step/s.sequence.length,0,100);
+ $('progress').style.width=pct+'%';
+ beep(s.returning?420+s.step*38:480+s.step*60,.06,.021);
+ if(s.step===s.sequence.length){
+  if(!s.returning && s.order.paid>s.order.fee){
+   s.lock=.35;
+   set('sceneMessage','PARA ÜSTÜ GERİ GELİYOR');
+   set('guideText','Şimdi arkaya uzat');
+   set('stepLabel','02 / PARA ÜSTÜNÜ GÖNDER');
+   set('direction','← PARA ÜSTÜ');
+   toast('₺'+(s.order.paid-s.order.fee)+' PARA ÜSTÜ!');
+   s.returning=true;
+   s.sequence=s.route.slice(0,-1).reverse();
+   s.step=0;
+   setTimeout(function(){
+    if(s.mode!=='playing'||s.lock===0)return;
+    positionMoney(handCoords[5].x,handCoords[5].y,'₺'+(s.order.paid-s.order.fee));
+    s.lock=0;refreshHands();
+   },360);
+  }else{
+   s.passDone=true;
+   completeOrder();
+  }
+ }else{
+  refreshHands();
+ }
+}
+function tap(id){
+ if(s.mode!=='playing'||s.lock>0)return;
+ if(id===currentTarget()){
+  handoff(id);
+ }else{
+  s.mistakes++;s.streak=0;s.remaining=Math.max(0,s.remaining-1.5);
+  toast(['YANLIŞ EL.','ONA DEĞİL.','BİR ÖĞRENCİ DEDİK.','ELDEN ELE, RASTGELE DEĞİL.'][s.mistakes%4]);
+  beep(155,.17,.07);hud();
+  if(s.remaining<=0)end();
+ }
+}
+function completeOrder(){
+ var speed=Math.max(0,11-(s.elapsed-s.orderStart));
+ s.count++;s.streak++;s.bestStreak=Math.max(s.bestStreak,s.streak);
+ var multiplier=Math.min(5,1+Math.floor(s.streak/3));
+ var added=Math.round((60+speed*6)*multiplier);
+ s.score+=added;
+ s.remaining=Math.min(75,s.remaining+1.6);
+ hud();set('sceneMessage','+'+added+' PUAN · '+s.streak+' SERİ');
+ toast(s.count%3===0?'PARA ÜSTÜ DE SAHİBİNİ BULDU.':'+'+added+' PUAN');
+ beep(720+s.streak*25,.1,.035);
+ if(s.count%5===0){s.remaining=Math.min(75,s.remaining+3);toast('DOLMUŞ DEVAM EDİYOR. +3 SANİYE')}
+ s.lock=.5;
+ var completed=s.count;
+ setTimeout(function(){if(s.mode==='playing'&&s.count===completed)prepareOrder()},520);
+}
+function start(){
+ Object.assign(s,{mode:'playing',count:0,score:0,streak:0,bestStreak:0,mistakes:0,remaining:60,route:[],sequence:[],step:0,returning:false,order:null,lock:0,sway:0,elapsed:0,events:0,passDone:false});
+ $('modal').hidden=true;
+ $('report').hidden=true;$('share').hidden=true;
+ $('start').textContent='TEKRAR OYNA →';
+ hud();prepareOrder();beep(500,.1,.04);
+}
+function end(){
+ if(s.mode!=='playing')return;
+ s.mode='end';high();
+ hud();refreshHands();$('banknote').hidden=true;
+ $('modal').hidden=false;
+ set('modalKicker','AYNEN.FUN / DOLMUŞ RAPORU');
+ set('modalTitle',s.count>=12?'Şoför seni işe alsın.':s.count>=7?'Para üstü profesörü.':'Bir öğrenci uzatır mısın?');
+ set('modalText',s.count+' yolcunun parasını ulaştırdın. '+s.mistakes+' kere yanlış ele verdin. Dolmuş hâlâ gidiyor.');
+ set('resultPeople',String(s.count));
+ set('resultScore',String(s.score));
+ set('resultBest',String(best()));
+ set('resultMistakes',String(s.mistakes));
+ $('report').hidden=false;$('share').hidden=false;
+ set('sceneMessage','SEFER BİTTİ');
+ window.AynenShareResult={title:'Bir Öğrenci Uzat — aynen.fun',text:s.count+' yolcunun parasını uzattım, '+s.score+' puan topladım, '+s.mistakes+' kere yanlış ele verdim. Dolmuş daha gelmedi.',url:'https://aynen.fun/bir-ogrenci-uzat.html'};
+ beep(290,.25,.06);
+}
+function frame(time){
+ if(!s.last)s.last=time;
+ var dt=clamp((time-s.last)/1000,0,.05);s.last=time;
+ if(s.mode==='playing'){
+  s.remaining-=dt;s.elapsed+=dt;
+  s.sway=s.count<3?2:s.count<6?4:s.count<10?7:9;
+  if(s.remaining<=0){s.remaining=0;end()}
+  else{
+   if(s.lock>0){s.lock=Math.max(0,s.lock-dt)}
+   if(s.events<1&&s.count>=4){s.events=1;toast('VİRAJA GİRDİK.')}
+   if(s.events<2&&s.count>=9){s.events=2;toast('ŞOFÖR: PARA ÜSTÜ KİMİN?')}
+   refreshHands();hud();
+  }
+ }
+ requestAnimationFrame(frame);
+}
+$('start').addEventListener('click',start);
+$('restart').addEventListener('click',start);
+$('sound').addEventListener('click',function(){
+ s.sound=!s.sound;set('sound',s.sound?'SES AÇIK':'SES KAPALI');
+ $('sound').setAttribute('aria-pressed',String(s.sound));if(s.sound)beep(530,.1,.04);
+});
+window.addEventListener('blur',function(){s.last=0});
+document.addEventListener('visibilitychange',function(){s.last=0});
+populateHands();hud();refreshHands();
+requestAnimationFrame(frame);
+})();
+</script>
+<script src="/share-kit.js?v=1" defer></script>
+</body>
+</html>
