@@ -11,7 +11,7 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const statusName={gecmis:"GEÇMİŞ",aktif:"GÜNCEL",plan:"PLANLANAN",donemsel:"DÖNEMSEL"};
 const colors={"Ev":"#a5d4d5","Giyim":"#dbb9ab","Gündelik":"#d5c7b5","Ulaşım":"#a7bdcf","Toplum":"#debaac","Yiyecek":"#e3c589","Hayvan":"#aad1ad","Seyahat":"#a2cfe1","Çevre":"#b2cd96","Teknoloji":"#c2b6de"};
 const shapes={"Ev":"▤","Giyim":"◒","Gündelik":"◈","Ulaşım":"◉","Toplum":"◌","Yiyecek":"◐","Hayvan":"♧","Seyahat":"✈","Çevre":"◎","Teknoloji":"⌘"};
-let selected="GB",unknownCountry=null,filter="hepsi",query="",view="globe",modalRecord=null,previousFocus=null;
+let selected="GB",unknownCountry=null,filter="hepsi",query="",view="globe",expandedId=null;
 let graphZoom=null,graphSVG=null,graphFit=null;
 const globe={playing:true,dragging:false,lastX:0,lastY:0,downX:0,downY:0,moved:false,rotation:[2,-54,0],projection:null,path:null,features:null,ctx:null,canvas:$("globe"),width:0,height:0,radius:0,hit:null,lastFrame:0,previousFrame:0};
 function filterRecord(r){return filter==="hepsi"||r.status===filter||(filter==="aktif"&&r.status==="donemsel");}
@@ -19,16 +19,31 @@ function findMatches(){
  const q=normalize(query.trim());
  return records.filter(r=>filterRecord(r)&&(!q||normalize([r.title,r.period,r.teaser,r.story,r.group,r.motifs.join(" "),countryByCode[r.country]?.name].join(" ")).includes(q)));
 }
-function recordsForPanel(){const matches=findMatches();return query.trim()?matches:matches.filter(r=>r.country===selected).sort((a,b)=>a.year-b.year);}
+function recordsForPanel(){const matches=findMatches();return query.trim()?matches:matches.filter(r=>r.country===selected).sort((a,b)=>(a.status==="gecmis")-(b.status==="gecmis")||b.year-a.year);}
 function renderList(){
  const list=$("recordList"),found=recordsForPanel(),selectedMeta=countryByCode[selected];
  const searching=!!query.trim();
  if(searching){$("countryCode").textContent="GLOBAL / ARAMA";$("countryTitle").textContent="Arama sonuçları";$("countryDescription").textContent='"'+query.trim()+'" için kaynaklı kayıtlar.';}
- else if(unknownCountry){$("countryCode").textContent="DÜNYA / KAYIT YOK";$("countryTitle").textContent=unknownCountry.name;$("countryDescription").textContent="Bu ülke için henüz doğrulanmış sıra dışı vergi dosyası indekslenmedi. Dizinde bulunan 22 ülkeyi keşfedebilirsin.";}
- else{$("countryCode").textContent=(selected||"—")+" / ÜLKE DOSYASI";$("countryTitle").textContent=selectedMeta?.name||"Dünya";$("countryDescription").textContent="Geçmişten günümüze "+(selectedMeta?.name||"bu ülke")+" ile ilişkilendirilen sıra dışı vergiler. Her kayda tıklayarak ayrıntıları ve bağlantıları aç.";}
+ else if(unknownCountry){$("countryCode").textContent="DÜNYA / KAYIT YOK";$("countryTitle").textContent=unknownCountry.name;$("countryDescription").textContent="Bu ülke için henüz doğrulanmış sıra dışı vergi dosyası indekslenmedi. Aşağıdaki ülke dizininden başka bir ülke seçebilirsin.";}
+ else{$("countryCode").textContent=(selected||"—")+" / ÜLKE DOSYASI";$("countryTitle").textContent=selectedMeta?.name||"Dünya";$("countryDescription").textContent="Tarih boyunca vergilendirilen ilginç şeyler. Bir kaydın yanındaki + işaretine dokun; bilgiler burada açılsın.";}
  $("countLabel").textContent=found.length+" DOSYA";
  if(!found.length){list.innerHTML='<div class="empty">'+(searching?"Bu aramayla eşleşen kayıt bulunamadı.":"Bu seçimde henüz kayıt yok. Başka bir ülke veya dönem deneyebilirsin.")+'</div>';return;}
- list.innerHTML=found.map((r,i)=>'<button type="button" class="record" data-id="'+esc(r.id)+'" aria-label="'+esc(r.title)+' detayını aç"><span class="rec-num">'+String(i+1).padStart(2,"0")+'</span><span><strong>'+esc(r.title)+'</strong><small>'+esc(countryByCode[r.country]?.name||"")+" · "+esc(r.period)+" · "+esc(statusName[r.status])+'</small></span><span class="arrow">↗</span></button>').join("");
+ const html=found.map((r,i)=>{
+  const open=expandedId===r.id, id="tax-detail-"+r.id;
+  const related=open?relatedRecords(r).slice(0,5):[];
+  const metadata='<div class="expanded-meta"><span>'+esc(r.period)+'</span><span>'+esc(statusName[r.status]||r.status)+'</span><span>'+esc(r.type||"Vergi / mali uygulama")+'</span><span>'+esc(r.group)+'</span></div>';
+  const relatedHTML=related.length?'<div class="inline-related"><div class="inline-related-title">İLGİLİ DOSYALAR · '+related.length+'</div><div class="inline-related-grid">'+related.map(x=>'<button type="button" class="related-mini" data-related="'+esc(x.id)+'">'+esc(x.title)+'<small>'+esc(countryByCode[x.country]?.name||x.country)+' · '+esc(x.period)+'</small></button>').join("")+'</div></div>':"";
+  return '<article class="record-shell'+(open?' is-expanded':'')+'" data-row="'+esc(r.id)+'">'+
+   '<button type="button" class="record" data-id="'+esc(r.id)+'" aria-expanded="'+String(open)+'" aria-controls="'+esc(id)+'" aria-label="'+esc(r.title)+' ayrıntılarını '+(open?'kapat':'aç')+'">'+
+   '<span class="rec-num">'+String(i+1).padStart(2,"0")+'</span><span><strong>'+esc(r.title)+'</strong><small>'+esc(countryByCode[r.country]?.name||r.country)+' · '+esc(r.period)+' · '+esc(statusName[r.status])+'</small></span><span class="record-plus" aria-hidden="true">'+(open?'−':'+')+'</span></button>'+
+   (open?'<div class="record-expand" id="'+esc(id)+'">'+
+   '<div class="inline-eyebrow">ARŞİV NOTU / '+esc(r.id.toUpperCase())+'</div>'+
+   '<p class="inline-teaser">'+esc(r.teaser)+'</p><p class="inline-story">'+esc(r.story)+'</p>'+metadata+
+   '<div class="inline-tools"><a href="'+esc(r.url)+'" target="_blank" rel="noopener noreferrer" class="inline-source">KAYNAĞI GÖR ↗ <small>'+esc(r.source)+'</small></a><button type="button" class="inline-copy" data-copy="'+esc(r.id)+'">BAĞLANTIYI KOPYALA</button></div>'+relatedHTML+
+   '</div>':'')+
+   '</article>';
+ }).join("");
+ list.innerHTML=html;
 }
 function renderFilters(){document.querySelectorAll(".filter").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.filter===filter)));}
 function renderCountries(){
@@ -193,32 +208,27 @@ function connectionScore(a,b){
 function relatedRecords(rec){
  return records.filter(x=>x.id!==rec.id).map(x=>({record:x,weight:connectionScore(rec,x)+(x.country!==rec.country?.55:0)})).filter(x=>x.weight>=1).sort((a,b)=>b.weight-a.weight||a.record.year-b.record.year).slice(0,6).map(x=>x.record);
 }
-function openTax(id){
+function openTax(id,options={}){
  const r=byId[id];if(!r)return;
- previousFocus=document.activeElement;
- modalRecord=r;
- $("modalNumber").textContent="YARATICI BAKANLIK / "+r.id.toUpperCase();
- $("modalKicker").textContent=(countryByCode[r.country]?.name||"Dünya").toUpperCase()+" · "+r.period.toUpperCase()+" · "+statusName[r.status];
- $("modalTitle").textContent=r.title;
- $("modalLede").textContent=r.teaser;
- $("modalStory").textContent=r.story;
- $("modalArtWord").textContent=shapes[r.group]||"◈";
- $("modalArtIndex").textContent=r.group.toUpperCase()+" / "+r.id.toUpperCase();
- const palette=colors[r.group]||"#c9d6da";
- $("modalIllustration").style.background="linear-gradient(135deg,#f3f5ee,"+palette+" 70%,#b1c6d1)";
- $("modalMeta").innerHTML=[["ÜLKE",countryByCode[r.country]?.name||r.country],["TARİH / DÖNEM",r.period],["DURUM",statusName[r.status]],["KATEGORİ",r.group],["BAĞLANTI ETİKETLERİ",r.motifs.join(" · ")],["KAYNAK",r.source]].map(([k,v])=>'<div class="data-pair"><small>'+esc(k)+'</small><b>'+esc(v)+'</b></div>').join("");
- $("modalSource").href=r.url;
- $("modalRelated").innerHTML=relatedRecords(r).map(x=>'<button type="button" data-id="'+esc(x.id)+'">'+esc(x.title)+'<small>'+esc(countryByCode[x.country]?.name||"")+" · "+esc(x.period)+'</small></button>').join("")||'<p>Henüz ortak tema üzerinden bağlantı bulunamadı.</p>';
- $("modal").classList.add("open");$("modal").setAttribute("aria-hidden","false");document.body.style.overflow="hidden";$("modal").scrollTop=0;
- try{history.replaceState(null,"",location.pathname+location.search+"#vergi="+encodeURIComponent(r.id));}catch(_){}
- $("modalClose").focus();
+ const fromGraph=view==="graph";
+ if(fromGraph)showView("globe");
+ if(query.trim()||selected!==r.country||unknownCountry||!filterRecord(r)){
+  selected=r.country;unknownCountry=null;filter="hepsi";query="";$("search").value="";$("clearSearch").hidden=true;renderFilters();renderCountries();
+  if(globe.projection){const c=countryByCode[r.country];globe.rotation=[-c.lon,-c.lat,0];globe.projection.rotate(globe.rotation);drawGlobe();}
+ }
+ const willClose=expandedId===id&&!options.forceOpen&&!fromGraph;
+ expandedId=willClose?null:id;
+ renderList();
+ try{history.replaceState(null,"",location.pathname+location.search+(expandedId?"#vergi="+encodeURIComponent(expandedId):""));}catch(_){}
+ if(expandedId&&(options.scroll||fromGraph)){
+  const row=document.querySelector('[data-row="'+id+'"]');
+  if(row)requestAnimationFrame(()=>row.scrollIntoView({behavior:reducedMotion()?"auto":"smooth",block:"center"}));
+ }
 }
 function closeTax(){
- if(!$("modal").classList.contains("open"))return;
- $("modal").classList.remove("open");$("modal").setAttribute("aria-hidden","true");document.body.style.overflow="";
- modalRecord=null;
+ if(!expandedId)return;
+ expandedId=null;renderList();
  try{history.replaceState(null,"",location.pathname+location.search);}catch(_){}
- if(previousFocus?.isConnected)previousFocus.focus();
 }
 function edgeGraphData(list){
  const nodes=list.map((r,i)=>({...r,x:560+(i%9-4)*110+(Math.sin(i*7)*26),y:355+(Math.floor(i/9)-2)*130+(Math.cos(i*4)*25)}));
@@ -270,25 +280,30 @@ function bindEvents(){
  $("viewGlobe").onclick=()=>showView("globe");$("viewGraph").onclick=()=>showView("graph");
  $("search").addEventListener("input",e=>applySearch(e.target.value));$("clearSearch").onclick=()=>{$("search").value="";applySearch("");$("search").focus();};
  document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{filter=b.dataset.filter;renderFilters();renderList();if(view==="graph")drawGraph();});
- $("recordList").addEventListener("click",e=>{const b=e.target.closest("[data-id]");if(b)openTax(b.dataset.id);});
+ $("recordList").addEventListener("click",async e=>{
+  const related=e.target.closest("[data-related]");if(related){openTax(related.dataset.related,{forceOpen:true,scroll:true});return;}
+  const copy=e.target.closest("[data-copy]");if(copy){
+   const id=copy.dataset.copy,url=location.origin+location.pathname+"#vergi="+encodeURIComponent(id);
+   try{await navigator.clipboard.writeText(url);copy.textContent="KOPYALANDI ✓";}
+   catch(_){window.prompt("Bağlantıyı kopyala:",url);}
+   return;
+  }
+  const button=e.target.closest(".record[data-id]");if(button)openTax(button.dataset.id);
+ });
  $("countries").addEventListener("click",e=>{const b=e.target.closest("[data-country]");if(b){selectCountry(b.dataset.country,{scroll:true});if(view==="graph")showView("globe");}});
- $("modalRelated").addEventListener("click",e=>{const b=e.target.closest("[data-id]");if(b)openTax(b.dataset.id);});
- $("modalClose").onclick=closeTax;
- $("modalNext").onclick=()=>{if(modalRecord)openTax(records[(records.findIndex(r=>r.id===modalRecord.id)+1)%records.length].id);};
- $("modalShare").onclick=async()=>{if(!modalRecord)return;const url=location.origin+location.pathname+"#vergi="+encodeURIComponent(modalRecord.id);try{await navigator.clipboard.writeText(url);$("modalShare").textContent="KOPYALANDI ✓";setTimeout(()=>$("modalShare").textContent="BAĞLANTIYI KOPYALA",1500);}catch(_){window.prompt("Bağlantıyı kopyala:",url);}};
  $("graphFallback").addEventListener("click",e=>{const b=e.target.closest("[data-id]");if(b)openTax(b.dataset.id);});
  $("graphPlus").onclick=()=>{if(graphSVG&&graphZoom)graphSVG.transition().duration(220).call(graphZoom.scaleBy,1.35);};
  $("graphMinus").onclick=()=>{if(graphSVG&&graphZoom)graphSVG.transition().duration(220).call(graphZoom.scaleBy,.72);};
  $("graphReset").onclick=()=>{if(graphSVG&&graphZoom&&graphFit)graphSVG.transition().duration(240).call(graphZoom.transform,graphFit);};
  window.addEventListener("keydown",e=>{if(e.key==="Escape")closeTax();});
  window.addEventListener("resize",()=>{resizeGlobe();if(view==="graph")drawGraph();});
- window.addEventListener("hashchange",()=>{const id=decodeURIComponent(location.hash.replace(/^#vergi=/,""));if(byId[id])openTax(id);else if(modalRecord)closeTax();});
+ window.addEventListener("hashchange",()=>{const id=decodeURIComponent(location.hash.replace(/^#vergi=/,""));if(byId[id])openTax(id,{forceOpen:true,scroll:true});else if(expandedId)closeTax();});
 }
 function boot(){
  $("statRecords").textContent=records.length;
  $("statCountries").textContent=countries.length;
  bindEvents();renderCountries();renderFilters();renderList();makeGlobe();
- const id=decodeURIComponent(location.hash.replace(/^#vergi=/,""));if(byId[id])openTax(id);
+ const id=decodeURIComponent(location.hash.replace(/^#vergi=/,""));if(byId[id])openTax(id,{forceOpen:true,scroll:true});
 }
 boot();
 })();
