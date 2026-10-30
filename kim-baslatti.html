@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f5f2">
+<meta name="description" content="Kim Başlattı? Küçük bir meydanda büyük bir olay. İlk hareketi yapanı bul. aynen.fun">
+<link rel="icon" href="/favicon.ico">
+<title>Kim Başlattı? — aynen.fun</title>
+<style>
+:root{--ink:#1f2220;--paper:#f7f7f4;--muted:#787b76;--line:#deded8;--blue:#285bd7;--rose:#e8a3a0}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:3px}button:disabled{opacity:.4;cursor:not-allowed}a{color:inherit;text-decoration:none}
+[hidden]{display:none!important}
+.page{width:min(1260px,100%);height:100dvh;min-height:600px;margin:auto;padding:16px 24px 17px;display:flex;flex-direction:column;gap:11px}
+nav{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:.01em}nav a{border-bottom:1px solid currentColor;padding-bottom:2px}nav .right{color:#8a8c86;font:10px ui-monospace,Menlo,monospace}
+.head{display:flex;justify-content:space-between;gap:20px;align-items:end}
+h1{font-size:clamp(35px,5vw,66px);line-height:1;margin:0;letter-spacing:-.079em;font-weight:850}
+.head p{font:12px/1.55 ui-monospace,Menlo,monospace;color:#787b76;margin:0 0 3px;text-align:right}
+.shell{flex:1;min-height:0;border:1px solid #3c403d;background:#d4d1c8;position:relative;overflow:hidden;isolation:isolate}
+#world{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#world:active{cursor:grabbing}
+.hud{position:absolute;left:14px;top:13px;display:flex;align-items:center;gap:7px;pointer-events:none}
+.chip{padding:7px 9px;background:#f9f8f2e8;border:1px solid #ffffffb0;box-shadow:0 2px 8px #00000013;font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.03em}
+.hud .status{font-weight:500}
+.zoom{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:4px}
+.zoom button{background:#fafaf5e8;border:1px solid #9b9d93;width:33px;height:33px;font-size:20px;font-weight:400}
+.mini-note{position:absolute;bottom:12px;left:12px;max-width:calc(100% - 24px);background:#f9f9f5d9;padding:7px 10px;font:10px/1.35 ui-monospace,Menlo,monospace;color:#656a64;pointer-events:none}
+.cover{position:absolute;inset:0;background:#f7f6f0cc;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:grid;place-items:center;padding:20px;z-index:9}
+.cover-card{width:min(440px,100%);background:#fcfbf8;padding:30px;border:1px solid #282d28;box-shadow:8px 8px 0 #2329231d}
+.kicker{font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.1em;color:var(--blue);margin-bottom:15px}
+.cover h2{font-size:clamp(27px,5vw,48px);letter-spacing:-.075em;line-height:1.03;margin:0 0 14px}
+.cover p{font-size:14px;line-height:1.55;color:#666b65;margin:0 0 22px;max-width:330px}
+.primary{background:#1e2220;color:white;border:1px solid #1e2220;font-weight:750;padding:12px 17px;min-height:43px}
+.primary:hover{background:#3f4640}
+.controls{background:#fff;border:1px solid var(--line);padding:12px 15px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px}
+.controls .buttons{display:flex;gap:5px}
+.controls button{background:#f7f7f4;border:1px solid #dadbd5;font-size:12px;font-weight:700;min-width:38px;height:38px;padding:0 10px}
+.controls .buttons button:first-child{min-width:78px;background:#212522;color:#fff;border-color:#212522}
+.controls .timeline{min-width:0;display:flex;align-items:center;gap:10px}
+.time{font:10px ui-monospace,Menlo,monospace;color:#797d77;white-space:nowrap}
+input[type=range]{width:100%;accent-color:#222723;cursor:pointer;touch-action:pan-x}
+.instruction{display:flex;justify-content:space-between;gap:14px;align-items:center;font-size:12px;min-height:21px}
+.instruction strong{font-weight:700}.instruction small{font:10px ui-monospace,Menlo,monospace;color:#949893}
+.selection{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:min(400px,calc(100% - 24px));background:#fffefa;border:1px solid #252925;box-shadow:4px 5px 0 #171a1733;padding:13px 14px;display:flex;align-items:center;gap:9px;z-index:5}
+.selection .who{flex:1;min-width:0}
+.selection .who b{display:block;font-size:14px}.selection .who span{font:10px ui-monospace,Menlo,monospace;color:#797d77}
+.selection button{min-height:36px;background:#222723;color:#fff;border:0;padding:8px 13px;font-size:12px;font-weight:700}
+.selection .dismiss{min-width:31px;background:#eeeee9;color:#252525;padding:0}
+.result{position:absolute;z-index:8;bottom:15px;left:50%;transform:translateX(-50%);width:min(475px,calc(100% - 24px));background:#fefdf9;border:1px solid #222923;box-shadow:6px 7px 0 #262d2438;padding:18px 20px}
+.result .kicker{margin-bottom:9px}
+.result h2{font-size:clamp(21px,3.3vw,32px);letter-spacing:-.055em;line-height:1.1;margin:0 0 10px}
+.result p{font-size:12px;line-height:1.65;color:#666c65;margin:0 0 12px}
+.result .foot{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.result .foot button{border:1px solid #262b26;padding:10px 12px;background:#fff;font-weight:700;font-size:12px;min-height:39px}
+.result .foot .primary{background:#1e2220;color:#fff;margin-right:auto}
+.result .meter{font:700 10px ui-monospace,Menlo,monospace;color:#265ecf;margin-left:auto}
+.footer{display:flex;justify-content:space-between;color:#8f928b;font:10px ui-monospace,Menlo,monospace}
+@media(max-width:710px){.page{min-height:0;height:100dvh;padding:10px 10px 12px;gap:8px}.head{align-items:start;flex-direction:column;gap:5px}.head p{text-align:left;font-size:10px}h1{font-size:42px}.shell{min-height:270px}.hud{top:9px;left:9px;gap:4px}.chip{font-size:9px;padding:6px}.hud .status{max-width:168px}.controls{grid-template-columns:1fr;gap:6px;padding:9px}.controls .buttons{justify-content:space-between;order:2}.controls .timeline{order:1;min-height:27px}.controls button{height:34px}.instruction{font-size:11px}.instruction small{display:none}.cover-card{padding:24px}.result{bottom:10px;padding:14px}.result h2{font-size:25px}.result p{font-size:11px}.footer{font-size:9px}}
+@media(max-width:380px){h1{font-size:38px}.controls button{padding:0 7px;min-width:32px}.controls .buttons button:first-child{min-width:60px}.result .foot button{padding:8px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="page">
+<nav><a href="/">← aynen.fun</a><span class="right">KÜÇÜK OLAYLAR / BÜYÜK SONUÇLAR</span></nav>
+<header class="head"><h1>Kim Başlattı?</h1><p>Herkes bir şey yaptı.<br>Birisi ilk yaptı.</p></header>
+<main class="shell" id="stage">
+<canvas id="world" aria-label="Minyatür meydandaki insanları seçerek olayı başlatanı bul" role="img"></canvas>
+<div class="hud"><span class="chip" id="level">OLAY 01 / 12</span><span class="chip status" id="state">KAYIT HAZIR</span></div>
+<div class="zoom"><button id="zoomIn" aria-label="Yakınlaştır">+</button><button id="zoomOut" aria-label="Uzaklaştır">−</button></div>
+<div class="mini-note" id="note">Yakınlaş. İzle. Geri sar. İnsanlara dokun.</div>
+<section class="cover" id="cover"><div class="cover-card"><div class="kicker">AYNEN.FUN / KÜÇÜK BİR DEDEKTİFLİK</div><h2>Bir şey oldu.<br>Kim başlattı?</h2><p>Küçük meydanda bir olay zinciri yaşanıyor. Sonuç herkesin gözü önünde. Ama ilk hareketi kim yaptı? Kaydı izle, geri sar ve kişiye dokun.</p><button class="primary" id="start">OLAYI İZLE →</button></div></section>
+<section class="selection" id="selection" hidden><div class="who"><b id="selectedName"></b><span>İlk hareketi bu kişi mi yaptı?</span></div><button id="confirm">BU KİŞİ</button><button class="dismiss" id="dismiss" aria-label="İptal">×</button></section>
+<section class="result" id="result" hidden aria-live="polite"><div class="kicker" id="resultTag"></div><h2 id="resultTitle"></h2><p id="resultText"></p><div class="foot"><button class="primary" id="next">SONRAKİ OLAY →</button><button id="again">TEKRAR İZLE</button><button id="shareBtn">PAYLAŞ ↗</button><span class="meter" id="score"></span></div></section>
+</main>
+<div class="controls"><div class="buttons"><button id="play">▶ OYNAT</button><button id="back">−3 SN</button><button id="speed">0.5×</button></div><div class="timeline"><span class="time" id="now">00.0</span><input id="seek" aria-label="Kaydı geri veya ileri sar" type="range" min="0" max="12" step=".05" value="0"><span class="time">12.0</span></div><div class="buttons"><button id="reset" title="Baştan izle">↻</button><button id="hint" title="İpucu">İPUCU</button></div></div>
+<div class="instruction"><strong id="instruction">İlk hareketi yapanı bul.</strong><small id="record">0 DOĞRU · EN İYİ 0</small></div>
+<footer class="footer"><span>AYNEN.FUN / HER ŞEYİN BİR BAŞLANGICI VAR.</span><span>DRAG = GEZ · TIK = SEÇ</span></footer>
+</div>
+<script>
+(function(){
+'use strict';
+var W=1040,H=660,DUR=12,canvas=document.getElementById('world'),stage=document.getElementById('stage');
+var ctx=canvas.getContext('2d'),bg=document.createElement('canvas');bg.width=W;bg.height=H;
+var bc=bg.getContext('2d');
+var $=function(id){return document.getElementById(id)};
+var people=[
+{id:0,name:'Sarı montlu',x:246,y:261,top:'#cfb44a',pants:'#484b4a',hair:'#49301d',skin:'#dcae86'},
+{id:1,name:'Fotoğrafçı',x:140,y:335,top:'#61786b',pants:'#343738',hair:'#402d27',skin:'#ddb18e'},
+{id:2,name:'Yeşil tişörtlü',x:477,y:263,top:'#5e8174',pants:'#3f3e3e',hair:'#49372d',skin:'#e5b590'},
+{id:3,name:'Bisikletli',x:769,y:330,top:'#e0ac63',pants:'#596366',hair:'#322922',skin:'#d9a17c'},
+{id:4,name:'Kahveli',x:427,y:467,top:'#c6c9be',pants:'#55534d',hair:'#6a4934',skin:'#e2b48c'},
+{id:5,name:'Pembe gömlekli',x:660,y:364,top:'#d8a4a5',pants:'#605951',hair:'#4b3028',skin:'#cf9c79'},
+{id:6,name:'Şapkalı',x:588,y:522,top:'#8b9783',pants:'#2e3030',hair:'#66523f',skin:'#d2a482'},
+{id:7,name:'Siyah tişörtlü',x:875,y:465,top:'#353f3b',pants:'#32312e',hair:'#28221e',skin:'#b68163'},
+{id:8,name:'Pazar çantalı',x:263,y:483,top:'#efdfcb',pants:'#596065',hair:'#443c36',skin:'#c99973'},
+{id:9,name:'Köpek gezdiren',x:121,y:484,top:'#777f76',pants:'#4b4442',hair:'#3a302c',skin:'#d3a487'},
+{id:10,name:'Grafitici',x:671,y:232,top:'#455f54',pants:'#30383a',hair:'#32261d',skin:'#d8a387'},
+{id:11,name:'Telefonla konuşan',x:914,y:341,top:'#8c7f6a',pants:'#373e40',hair:'#241d1a',skin:'#d2a080'},
+{id:12,name:'Mavi gömlekli',x:339,y:366,top:'#76939c',pants:'#3a4244',hair:'#392a23',skin:'#c99879'},
+{id:13,name:'Banktaki',x:362,y:554,top:'#dad6c7',pants:'#585e5e',hair:'#5a4538',skin:'#deb18e'},
+{id:14,name:'Beyaz tişörtlü',x:936,y:547,top:'#e8e8df',pants:'#454a4f',hair:'#382d27',skin:'#cf9875'}
+];
+var stories=[
+{culprit:2,prompt:'Bisiklet devrildi. Bisikletin suçu yok.',why:'Yeşil tişörtlü kutuyu ayağıyla itti. Köpek kutunun peşinden koştu; kahve döküldü ve bisiklet devrildi.',steps:[[1.15,2,'tak!'],[3.30,9,'hav!'],[5.40,4,'ah!'],[8.15,3,'güm!']]},
+{culprit:5,prompt:'Üç kişi dönüp baktı. Kimse neye baktığını bilmiyor.',why:'Pembe gömlekli yerdeki bozuk parayı almak için eğildi. Fotoğrafçı onun baktığı yöne döndü, diğerleri de ona baktı.',steps:[[1.55,5,'bir şey mi düştü?'],[3.30,1,'ne var?'],[5.80,12,'nereye bakıyoruz?'],[8.25,7,'...']]},
+{culprit:7,prompt:'Köpek aniden koştu. Sonra işler karıştı.',why:'Siyah tişörtlü sertçe alkışladı. Köpek irkildi; tasma çekildi, çanta düştü, insanlar etrafa saçıldı.',steps:[[1.40,7,'şak!'],[3.10,9,'hav!'],[5.70,8,'pardon!'],[8.25,0,'ne oluyor?']]},
+{culprit:0,prompt:'Bir şey havalandı. Herkesin planı değişti.',why:'Sarı montlu elindeki balonu bıraktı. Grafitici başını kaldırdı, fotoğrafçı kadrajı değiştirdi; birileri birbirine çarptı.',steps:[[1.65,0,'pof!'],[3.25,10,'yukarıda ne var?'],[5.70,1,'bir saniye'],[8.00,12,'dikkat!']]},
+{culprit:8,prompt:'Alışveriş arabası hareket etti. Yokuş yoktu.',why:'Pazar çantalı, arabanın kilitli tekerini çözdü. Araba ilerledi, bisikletli kaçındı ve kahve yere döküldü.',steps:[[1.30,8,'klik!'],[3.25,3,'çekil!'],[5.70,4,'eyvah'],[8.20,11,'kim yaptı bunu?']]},
+{culprit:10,prompt:'Fotoğrafın ortasında herkes öksürüyor.',why:'Grafitici sprey kutusunu salladı. Sesle önce telefonla konuşan irkildi, ardından fotoğrafçı deklanşöre erken bastı.',steps:[[1.65,10,'şırr!'],[3.30,11,'öks!'],[5.70,1,'klik!'],[8.30,5,'gözüm!']]},
+{culprit:1,prompt:'Köpek kadraja girdi. Birileri koşmaya başladı.',why:'Fotoğrafçı flaşı patlattı. Köpek ışığa döndü; gezdireni tasmasına asıldı, kahve kazası kaçınılmaz oldu.',steps:[[1.15,1,'flaş!'],[3.20,9,'hav!'],[5.70,4,'sıcak!'],[8.30,6,'dur dur!']]},
+{culprit:12,prompt:'Kahve masada duruyordu. Sonra durmadı.',why:'Mavi gömlekli masaya çantasını sert bıraktı. Bardak devrildi, kahveli ayağa kalktı, bisikletli dengesini kaybetti.',steps:[[1.50,12,'tak!'],[3.40,4,'kahvem!'],[5.60,3,'pardon!'],[8.30,5,'çekil!']]},
+{culprit:14,prompt:'Herkes aynı anda durdu. Bir tek bir kişi yürüdü.',why:'Beyaz tişörtlü yere bir taş bıraktı. Bisikletlinin tekeri taşa çarptı, arkasındakiler durmak zorunda kaldı.',steps:[[1.20,14,'tık'],[3.20,3,'tak!'],[5.50,11,'önüme bak!'],[8.40,7,'bekleyin!']]},
+{culprit:6,prompt:'Bir top masaların arasından geçti.',why:'Şapkalı topa hafifçe vurdu. Top bankın altına girdi, köpek kovaladı; birisi elindeki her şeyi düşürdü.',steps:[[1.40,6,'hop!'],[3.30,9,'hav!'],[5.85,13,'ne?'],[8.10,8,'yetiş!']]},
+{culprit:9,prompt:'Köpek sakin görünüyordu. Sonra herkes hareket etti.',why:'Köpek gezdiren tasmanın klipsini açtı. Köpek koştu, fotoğrafçı geri adım attı; bisikletli yolunu değiştirdi.',steps:[[1.35,9,'klik!'],[3.10,1,'hop!'],[5.55,3,'dikkat!'],[8.10,5,'eyvah!']]},
+{culprit:11,prompt:'Dört kişi aynı anda telefonunu kontrol etti.',why:'Telefonla konuşan yüksek sesle “Buldum!” dedi. Şapkalı döndü, sarı montlu telefona uzandı, sıra sıra herkes aynı şeyi yaptı.',steps:[[1.20,11,'buldum!'],[3.35,6,'ne buldu?'],[5.70,0,'bir bakayım'],[8.25,2,'ne olmuş?']]}
+];
+var level=0,t=0,playing=false,speed=1,selected=-1,wrong=0,rewinds=0,hinted=false,finished=false,last=0,camX=520,zoom=1,w=1,h=1,scale=1,dpr=1,drag=null;
+var solved=0,best=0;
+try{solved=Number(localStorage.getItem('kb_solved')||0);best=Number(localStorage.getItem('kb_best')||0)}catch(e){}
+function clamp(v,a,b){return Math.min(b,Math.max(a,v))}
+function rand(i){var a=Math.sin(i*119.31+82.19)*43758.5453;return a-Math.floor(a)}
+function poly(c,pts,fill,stroke,lw){c.beginPath();c.moveTo(pts[0][0],pts[0][1]);for(var i=1;i<pts.length;i++)c.lineTo(pts[i][0],pts[i][1]);c.closePath();if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw||1;c.stroke()}}
+function line(c,pts,color,lw){c.beginPath();c.moveTo(pts[0][0],pts[0][1]);for(var i=1;i<pts.length;i++)c.lineTo(pts[i][0],pts[i][1]);c.strokeStyle=color;c.lineWidth=lw;c.stroke()}
+function ellipse(c,x,y,rx,ry,col){c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fillStyle=col;c.fill()}
+function rect(c,x,y,ww,hh,col){c.fillStyle=col;c.fillRect(x,y,ww,hh)}
+function buildBackground(){
+var c=bc,gr=c.createLinearGradient(0,0,W,H);gr.addColorStop(0,'#b9b9ab');gr.addColorStop(.35,'#e1dfd5');gr.addColorStop(1,'#c9c9bf');rect(c,0,0,W,H,gr);
+poly(c,[[0,0],[530,0],[460,160],[0,220]],'#a19e92');
+poly(c,[[0,165],[832,30],[844,505],[0,615]],'#e5e3da');
+for(var y=87;y<640;y+=33){for(var x=-50;x<1050;x+=42){
+ var shift=(Math.floor(y/33)%2)*21,xx=x+shift; if(xx>838&&y<550)continue;
+ c.strokeStyle='rgba(121,120,107,.10)';c.lineWidth=1;c.strokeRect(xx,y,41,32);
+ if(rand(x*31+y*4)>.86)rect(c,xx+3,y+4,35,25,'rgba(153,150,137,.075)');
+}}
+poly(c,[[819,-5],[1040,0],[1040,565],[849,524]],'#c98576');poly(c,[[834,-3],[859,0],[866,523],[849,524]],'#a9665d');
+for(var i=0;i<250;i++){var tx=rand(i+1)*W,ty=rand(i+763)*H;if(tx>845&&ty<545)continue;ellipse(c,tx,ty,rand(i+4)*2+.35,rand(i+5)*1+.3,'rgba(83,79,71,.12)')}
+poly(c,[[330,0],[514,0],[463,119],[272,118]],'#797970');
+for(var j=0;j<5;j++){poly(c,[[287+j*7,118-j*19],[460+j*7,118-j*19],[463+j*7,128-j*19],[285+j*7,128-j*19]],j%2?'#c0bcb1':'#c7c4b8','#8b887e',1)}
+line(c,[[461,0],[461,137]],'#71736a',7);
+for(i=0;i<3;i++)line(c,[[478+i*6,10],[478+i*6,124]],'#b1b1a7',2);
+for(i=0;i<12;i++){var a=i*2*Math.PI/12;ellipse(c,520+Math.cos(a)*82,162+Math.sin(a)*34,3,2,'#b5b1a5')}
+ellipse(c,520,162,69,26,'#b0ada2');ellipse(c,520,162,60,21,'#e0ddd2');ellipse(c,520,162,54,17,'#c9c7bc');
+poly(c,[[0,503],[662,568],[669,621],[0,566]],'#77766d','#55544d',1);
+for(i=0;i<9;i++){var bx=i*80-34;line(c,[[bx,516+i*7],[bx+33,558+i*7]],'#54534d',2)}
+poly(c,[[0,568],[669,624],[669,641],[0,583]],'#555750');
+poly(c,[[0,582],[680,637],[654,660],[0,660]],'#c4b09a');
+for(i=0;i<440;i++){tx=rand(i+940)*W;ty=rand(i+1200)*H;if(ty<550||tx>670)continue;ellipse(c,tx,ty,1.1,1.1,'#7d725d59')}
+poly(c,[[875,268],[1001,301],[1001,433],[875,400]],'#d3a39c','#ba746c',1);
+for(i=0;i<6;i++){line(c,[[890+i*12,283+i*3],[897+i*12,329+i*3]],i%2?'#788778':'#9f554c',2)}
+line(c,[[915,291],[949,336],[976,301]],'#687363',3);
+drawCart(c,166,184,false);drawBike(c,763,300,false);drawTable(c,223,601);
+poly(c,[[545,420],[635,410],[705,459],[623,471]],'#a4a49b');ellipse(c,602,454,35,11,'#c9c8bc');
+for(i=0;i<6;i++){var rx=590+rand(i+713)*90,ry=416+rand(i+740)*70;poly(c,[[rx,ry],[rx+8,ry-3],[rx+15,ry+7],[rx+2,ry+11]],['#7b7a9b','#cabc85','#5c6c5b'][i%3])}
+for(i=0;i<8;i++){tx=rand(i+993)*W;ty=rand(i+1993)*H;if(tx>810&&ty<555)continue;line(c,[[tx,ty],[tx+10,ty+4]],'#98968a',1)}
+}
+function drawCart(c,x,y,moved){c.save();c.translate(x+(moved?24:0),y);ellipse(c,0,9,58,12,'#4e4b4340');poly(c,[[-45,-51],[38,-51],[24,-10],[-28,-10]],'#8f918e45','#555950',2);for(var j=0;j<6;j++)line(c,[[-43+j*14,-49],[-26+j*9,-12]],'#777d77',1.1);line(c,[[-53,-63],[-43,-51],[-28,-5]],'#555a55',3);line(c,[[38,-51],[54,-56]],'#555a55',4);ellipse(c,-26,0,7,7,'#333532');ellipse(c,27,0,7,7,'#333532');poly(c,[[-28,-48],[-5,-48],[-9,-28],[-30,-29]],'#c2a36f');rect(c,5,-47,16,22,'#636f79');c.restore()}
+function drawBike(c,x,y,fall){c.save();c.translate(x,y);if(fall)c.rotate(.27);ellipse(c,0,5,70,12,'#322c2633');c.strokeStyle='#353939';c.lineWidth=4;for(var i=-1;i<=1;i+=2){c.beginPath();c.ellipse(i*44,0,27,18,-.22,0,Math.PI*2);c.stroke()}line(c,[[-43,0],[-3,-27],[28,0],[-43,0],[0,0],[-3,-27]],'#d4a331',5);line(c,[[28,0],[44,-35],[54,-36]],'#bcbab4',4);line(c,[[-3,-28],[-8,-40]],'#38302d',4);line(c,[[-18,-41],[3,-41]],'#514035',6);line(c,[[42,-35],[57,-39],[64,-27]],'#40433c',4);ellipse(c,0,0,7,7,'#666b67');c.restore()}
+function drawTable(c,x,y){ellipse(c,x,y+7,128,21,'#25292331');poly(c,[[x-97,y-49],[x+62,y-23],[x+87,y+14],[x-77,y-11]],'#ad8457','#7d5d3f',2);for(var i=0;i<7;i++)line(c,[[x-93+i*23,y-47+i*3],[x-76+i*23,y-9+i*3]],'#75573a',2);line(c,[[x-68,y-10],[x-77,y+32]],'#654c36',8);line(c,[[x+53,y+13],[x+66,y+51]],'#654c36',8);rect(c,x-18,y-20,25,17,'#343e43');rect(c,x-13,y-15,17,9,'#a3b1aa');ellipse(c,x+49,y-15,6,6,'#365d7b')}
+function drawDog(c,time){var phase=stories[level].steps.some(function(a){return a[1]===9&&time>=a[0]});var tx=416+(phase?clamp((time-3.2)*33,0,80):0),ty=411+(phase?Math.sin(time*5)*3:0);c.save();c.translate(tx,ty);ellipse(c,0,8,34,10,'#25221d36');ellipse(c,-4,-7,29,12,'#624d3f');ellipse(c,22,-15,13,11,'#554034');ellipse(c,33,-12,7,5,'#3b312c');ellipse(c,22,-25,6,10,'#44352f');line(c,[[-21,0],[-29,13]],'#574337',5);line(c,[[15,0],[20,12]],'#574337',5);line(c,[[-29,-9],[-42,-20]],'#614d40',5);c.restore()}
+function drawPerson(c,p,time){
+ var steps=stories[level].steps,active=steps.find(function(s){return s[1]===p.id&&time>=s[0]&&time<s[0]+1.2});
+ var movement=active?Math.sin((time-active[0])*8)*4:Math.sin(time*.8+p.id*2.3)*1.2;
+ var x=p.x+movement*.48,y=p.y+Math.sin(time*1.6+p.id)*.75;
+ c.save();c.translate(x,y);var s= p.id===13?.88:1;c.scale(s,s);
+ ellipse(c,3,3,18,7,'rgba(51,45,38,.25)');
+ line(c,[[-6,-20],[-7,0]],p.pants,6);line(c,[[6,-20],[8,0]],p.pants,6);
+ ellipse(c,-7,1,7,3,'#4a4a46');ellipse(c,9,1,7,3,'#4a4a46');
+ poly(c,[[-11,-57],[8,-56],[14,-27],[-12,-27]],p.top,'#00000024',.5);
+ poly(c,[[-10,-57],[2,-56],[-2,-31],[-13,-28]],'#ffffff25');
+ line(c,[[-12,-50],[-20,-34+(active?-7:0)]],p.skin,6);line(c,[[11,-52],[22,-36+(active?-12:0)]],p.skin,6);
+ ellipse(c,-19,-34+(active?-7:0),4,4,p.skin);ellipse(c,22,-36+(active?-12:0),4,4,p.skin);
+ ellipse(c,0,-69,12,14,p.skin);ellipse(c,-2,-77,11,6,p.hair);
+ ellipse(c,-6,-68,1.4,1.5,'#3f322e');ellipse(c,4,-67,1.4,1.5,'#3f322e');
+ if(p.id===6||p.id===10){ellipse(c,0,-81,17,6,p.id===6?'#8e7e59':'#5c5a67');rect(c,-9,-85,20,8,p.id===6?'#9c8964':'#60586a')}
+ if(p.id===1){rect(c,13,-54,16,10,'#2e3231');ellipse(c,23,-49,6,6,'#626a67')}
+ if(p.id===11){rect(c,17,-56,5,15,'#23292d')}
+ if(selected===p.id&&!finished){c.strokeStyle='#255cd0';c.lineWidth=3;c.beginPath();c.ellipse(0,-35,31,52,0,0,Math.PI*2);c.stroke()}
+ if(finished&&stories[level].culprit===p.id){c.strokeStyle='#285bd7';c.lineWidth=3;c.setLineDash([6,3]);c.beginPath();c.ellipse(0,-34,33,54,0,0,Math.PI*2);c.stroke();c.setLineDash([])}
+ c.restore();
+}
+function bubble(c,x,y,text,alpha){c.save();c.globalAlpha=alpha;c.font='bold 12px Arial';var width=Math.min(185,c.measureText(text).width+20);var bx=clamp(x-width/2,8,W-width-8),by=clamp(y-105,24,H-28);c.fillStyle='#fdfbf2';c.strokeStyle='#5c5b55';c.lineWidth=1.2;c.beginPath();c.roundRect(bx,by,width,28,5);c.fill();c.stroke();poly(c,[[x-5,by+28],[x+7,by+28],[x,by+36]],'#fdfbf2');c.fillStyle='#333b33';c.fillText(text,bx+10,by+18);c.restore()}
+function draw(){
+ if(!w||!h)return;
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);rect(ctx,0,0,w,h,'#bab9ae');
+ scale=Math.max(w/W,h/H)*zoom;
+ ctx.save();ctx.translate(w/2,h/2);ctx.scale(scale,scale);ctx.translate(-camX,-H/2);
+ ctx.drawImage(bg,0,0);
+ var cur=stories[level],times=cur.steps;
+ if(t>=times[0][0]&&cur.culprit===8)drawCart(ctx,166,184,true);
+ if(t>=times[2][0]&&(cur.culprit===2||cur.culprit===8||cur.culprit===12))drawBike(ctx,763,300,true);
+ drawDog(ctx,t);
+ if(t>=times[0][0]&&cur.culprit===0){var py=210-(t-times[0][0])*24;if(py>-70){ellipse(ctx,236,py,11,16,'#db8f92');line(ctx,[[236,py+16],[240,py+43]],'#776d65',1)}}
+ if(t>=times[0][0]&&cur.culprit===6){var bx=586+(t-times[0][0])*28;ellipse(ctx,bx,501+Math.sin(t*3)*9,9,9,'#efe6d1')}
+ if(t>=times[0][0]&&cur.culprit===2){var cx=470+clamp((t-times[0][0])*25,0,135);ellipse(ctx,cx,292,6,3,'#555e7b')}
+ var ordered=people.slice().sort(function(a,b){return a.y-b.y});
+ ordered.forEach(function(p){drawPerson(ctx,p,t)});
+ if(!finished){
+  times.forEach(function(s){
+   var elapsed=t-s[0],p=people[s[1]];
+   if(elapsed>=0&&elapsed<2.2){var alpha=clamp(elapsed*4,0,1)*clamp((2.2-elapsed)*2,0,1);
+    ctx.save();ctx.globalAlpha=alpha*.8;ctx.strokeStyle='#f7efcb';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(p.x,p.y-36,24+elapsed*11,30+elapsed*10,0,0,Math.PI*2);ctx.stroke();ctx.restore();
+    bubble(ctx,p.x,p.y,s[2],alpha);
+   }
+  });
+ }
+ ctx.restore();
+}
+function resize(){var r=canvas.getBoundingClientRect();w=r.width;h=r.height;dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);draw()}
+function stateLabel(str){$('state').textContent=str}
+function updateControls(){
+ $('now').textContent=t.toFixed(1).padStart(4,'0');$('seek').value=t.toFixed(2);
+ $('play').textContent=playing?'Ⅱ DURDUR':'▶ OYNAT';
+ $('speed').textContent=speed===1?'0.5×':'1×';
+ $('record').textContent=solved+' DOĞRU · EN İYİ '+best;
+}
+function setTime(v){var old=t;t=clamp(v,0,DUR);if(t<old-.2)rewinds++;if(t>=DUR)playing=false;updateControls();draw()}
+function play(){if(finished)return;if(t>=DUR)t=0;playing=!playing;stateLabel(playing?'KAYIT OYNATILIYOR':'KAYIT DURDU');updateControls()}
+function round(index){
+ level=index%stories.length;t=0;playing=false;speed=1;selected=-1;wrong=0;rewinds=0;hinted=false;finished=false;camX=520;zoom=1;
+ $('level').textContent='OLAY '+String(level+1).padStart(2,'0')+' / '+stories.length;
+ $('selection').hidden=true;$('result').hidden=true;$('cover').hidden=true;$('instruction').textContent=stories[level].prompt;
+ $('note').textContent='Kaydı izle. Geri sar. İlk hareketi yapan kişiyi seç.';
+ stateLabel('KAYIT HAZIR');updateControls();draw();
+}
+function start(){round(0);playing=true;stateLabel('KAYIT OYNATILIYOR');updateControls()}
+function selectPerson(id){if(finished||!$('cover').hidden)return;playing=false;selected=id;$('selectedName').textContent=people[id].name;$('selection').hidden=false;stateLabel('ŞÜPHELİ SEÇİLDİ');updateControls();draw()}
+function showResult(correct){
+ var s=stories[level];$('selection').hidden=true;
+ if(correct){
+  finished=true;playing=false;solved=Math.max(solved,level+1);
+  var pts=clamp(100-rewinds*7-wrong*22-(hinted?15:0),20,100);best=Math.max(best,pts);
+  try{localStorage.setItem('kb_solved',String(solved));localStorage.setItem('kb_best',String(best))}catch(e){}
+  $('resultTag').textContent='DOĞRU / OLAY '+(level+1);
+  $('resultTitle').textContent='İlk hareketi '+people[s.culprit].name+' yaptı.';
+  $('resultText').textContent=s.why;
+  $('score').textContent=pts+' PUAN';$('next').textContent=level===stories.length-1?'YENİDEN BAŞLA →':'SONRAKİ OLAY →';
+  window.AynenShareResult={title:'Kim Başlattı? — aynen.fun',text:(level+1)+'. olayı çözdüm. '+pts+' puan. Sen ilk hareketi bulabilir misin?',url:location.origin+'/kim-baslatti.html'};
+  stateLabel('OLAY ÇÖZÜLDÜ');
+ }else{
+  wrong++;
+  if(wrong<2){$('resultTag').textContent='YANLIŞ ŞÜPHELİ';$('resultTitle').textContent='O da olayın içindeydi.';$('resultText').textContent='Ama ilk hareketi o yapmadı. Biraz daha geriye bak.';$('score').textContent='1 HAK KALDI';$('next').textContent='TEKRAR DENE';}
+  else {finished=true;$('resultTag').textContent='DOSYA KAPANDI';$('resultTitle').textContent='Başlatan: '+people[s.culprit].name+'.';$('resultText').textContent=s.why;$('score').textContent='0 PUAN';$('next').textContent=level===stories.length-1?'YENİDEN BAŞLA →':'SONRAKİ OLAY →';stateLabel('CEVAP AÇIKLANDI');}
+ }
+ $('result').hidden=false;updateControls();draw();
+}
+function confirm(){if(selected<0)return;showResult(selected===stories[level].culprit)}
+function next(){if(!finished){$('result').hidden=true;setTime(0);playing=true;stateLabel('KAYIT OYNATILIYOR');return}round(level+1);playing=true;stateLabel('KAYIT OYNATILIYOR')}
+function localPos(e){var r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+function hit(p){var wx=(p.x-w/2)/scale+camX,wy=(p.y-h/2)/scale+H/2;var min=10000,hit=-1;people.forEach(function(c){var dx=wx-c.x,dy=wy-(c.y-40),d=dx*dx+dy*dy;if(d<min){min=d;hit=c.id}});return min<45*45?hit:-1}
+canvas.addEventListener('pointerdown',function(e){if(!$('cover').hidden||!$('result').hidden)return;var p=localPos(e);drag={x:p.x,y:p.y,origin:camX,moved:false,id:e.pointerId};canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',function(e){if(!drag||drag.id!==e.pointerId)return;var p=localPos(e),dx=p.x-drag.x;if(Math.abs(dx)>7||Math.abs(p.y-drag.y)>7)drag.moved=true;if(drag.moved){var half=w/(2*scale);camX=clamp(drag.origin-dx/scale,Math.min(half,W/2),Math.max(W-half,W/2));draw()}});
+canvas.addEventListener('pointerup',function(e){if(!drag||drag.id!==e.pointerId)return;var moved=drag.moved;drag=null;if(!moved){var id=hit(localPos(e));if(id>=0)selectPerson(id)}});
+canvas.addEventListener('pointercancel',function(){drag=null});
+canvas.addEventListener('wheel',function(e){e.preventDefault();zoom=clamp(zoom+(e.deltaY<0?.1:-.1),1,2.1);draw()},{passive:false});
+$('zoomIn').onclick=function(){zoom=clamp(zoom+.2,1,2.1);draw()};
+$('zoomOut').onclick=function(){zoom=clamp(zoom-.2,1,2.1);camX=clamp(camX,Math.min(w/(2*scale),520),Math.max(W-w/(2*scale),520));draw()};
+$('start').onclick=start;$('confirm').onclick=confirm;
+$('dismiss').onclick=function(){$('selection').hidden=true;selected=-1;stateLabel('ŞÜPHELİYİ BUL');draw()};
+$('play').onclick=play;
+$('back').onclick=function(){playing=false;setTime(t-3);stateLabel('GERİ SARILDI')};
+$('speed').onclick=function(){speed=speed===1?.5:1;updateControls()};
+$('seek').addEventListener('input',function(){playing=false;setTime(Number(this.value));stateLabel('KAYIT İNCELENİYOR')});
+$('reset').onclick=function(){playing=false;setTime(0);stateLabel('BAŞA SARILDI')};
+$('hint').onclick=function(){
+ if(finished)return;hinted=true;var p=people[stories[level].culprit],side=p.x<355?'sol',p.x>685?'sağ':'orta';
+ $('note').textContent='İPUCU: İlk hareket meydanın '+side+' tarafında gerçekleşti. İlk 2 saniyeyi izle.';
+ stateLabel('İPUCU AÇILDI');
+};
+$('again').onclick=function(){$('result').hidden=true;selected=-1;finished=false;playing=true;setTime(0);stateLabel('YENİDEN İZLENİYOR');draw()};
+$('next').onclick=next;
+document.addEventListener('keydown',function(e){if(e.target.matches('input'))return;if(e.code==='Space'){e.preventDefault();play()}if(e.key==='ArrowLeft'){playing=false;setTime(t-1)}if(e.key==='ArrowRight'){playing=false;setTime(t+1)}if(e.key==='Escape'&&!$('selection').hidden){$('selection').hidden=true;selected=-1;draw()}});
+function frame(stamp){var dt=Math.min((stamp-last)/1000,.08);last=stamp;if(playing&&!finished&&$('cover').hidden){t=Math.min(DUR,t+dt*speed);if(t>=DUR){playing=false;stateLabel('KAYIT BİTTİ · GERİ SAR')}updateControls()}draw();requestAnimationFrame(frame)}
+buildBackground();resize();if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe(stage);else window.addEventListener('resize',resize);
+requestAnimationFrame(function(stamp){last=stamp;requestAnimationFrame(frame)});
+updateControls();
+})();
+</script>
+<script src="/share-kit.js?v=1" defer></script>
+</body>
+</html>
