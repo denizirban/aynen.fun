@@ -494,25 +494,48 @@ function answer(i){
 }
 
 function verdict(){
- if(state.progress>=75)return ["Evren yerine sen çalışmışsın.","Kozmik titreşim ayrı, iş bitirmek ayrı. Yanlışlıkla ikincisini başardın."];
- if(state.progress>=43)return ["İşaret var. Biraz da icraat.","Bir elinde kristal, diğer elinde yapılacaklar listesi. Sistem kararsız."];
- if(state.vibe>=75)return ["Titreşimin yüksek. İlerlemen uçak modunda.","Enerji tavan yaptı. Hedefin gelmesi için hâlâ adres lazım."];
- if(state.signs>=10)return ["İşaretleri topladın. Sonuç gelmedi.","Evrenin spam klasörüne tam 7 işaret kaydedildi."];
- return ["Evren okudu. Cevap yazmadı.","Talep alınmıştır. Henüz gerçek bir adım tespit edilemedi."];
+ const subject={
+ money:["Evrenin muhasebesi yine sende.","Para hesaba değil, panoya geldi."],
+ love:["Evren flört etmiyor. İnsanlar ediyor.","11:11'de biri çevrimiçi oldu. O kadar."],
+ career:["Evren seni terfi ettirmedi. Sen uğraştın.","Unvanı daha erken yazmış olabilirsin."],
+ home:["Vizyon panosundaki evin tapusu yok.","Kozmik emlak ofisi henüz açılmadı."],
+ viral:["Algoritma evrene rapor vermiyor.","Yorumlara 777 yazmak dağıtım planı değildir."],
+ peace:["Huzurun bildirimleri hâlâ açık.","Mola manifestosu yaparken molayı unuttun."]
+ };
+ const base=subject[themeName()];
+ if(state.hidden>=7&&state.progress<48){state.endingTag="GİZLİ SON / KOZMİK ÇAĞRI MERKEZİ";return ["Evreni 7 kere aradın.","Müşteri temsilcisine bağlanamadın. Sistem bu sonucu büyük başarı olarak kaydetti."];}
+ if(state.lucky>=2){state.endingTag="GİZLİ SON / ŞANS ESERİ";return ["Kestirmeler tuttu. Şimdilik.","İki riskli karar işe yaradı. Bu bir strateji olduğunu kanıtlamıyor."];}
+ if(state.progress>=82){state.endingTag="SON / GERÇEKLİK KAZANDI";return [base[0],"Yedi gün, birkaç şans ve birçok küçük adım. Evren başarıyı üstlenmeye hazırlanıyor."];}
+ if(state.progress>=54){state.endingTag="SON / BİRAZ İCRAAT";return ["İşaret de var. İcraat da.","İlerledin. Fakat bir sonraki dilek için ilk önce takvimi açabilirsin."];}
+ if(state.risk>=4&&state.progress<50){state.endingTag="SON / KESTİRME ROTA";return ["Kestirme yolu uzadı.","Hızlı sonuç hedefi, beklenenden uzun bir hikâyeye dönüştü."];}
+ if(state.ritual>=4){state.endingTag="SON / YÜKSEK FREKANS";return [base[1],"Motivasyon var. Hedefe giden adımları evrene ihale etmiş olabilirsin."];}
+ if(state.time===0){state.endingTag="SON / SÜRE DOLDU";return ["Evrenin mesaisi bitti.","Gerçeklik departmanı kapanış saatlerine çok bağlı."];}
+ state.endingTag="SON / DOSYA KAPANDI";return [base[0],"Yedi karar, çeşitli tesadüfler. Bir sonraki turda bambaşka bir kader dene."];
 }
+
 let summary=null;
 function finish(){
- $("eventVisual").replaceChildren();state.ended=true;screens("endScreen");$("universe").dataset.mood=state.progress>50?"action":"ritual";
+ $("eventVisual").replaceChildren();state.ended=true;screens("endScreen");
+ $("universe").dataset.mood=state.progress>50?"action":"ritual";
  const v=verdict();summary=v;
  $("resultTitle").textContent=v[0];$("resultQuote").textContent=v[1];
+ $("resultArchetype").textContent=state.endingTag;
  $("rvibe").textContent="%"+state.vibe;$("rsigns").textContent=state.signs;$("rprogress").textContent="%"+state.progress;
- $("receiptWish").textContent="DİLEK: "+state.label+" · 7 KOZMİK İŞARET İNCELENDİ";
- status("SONUÇ: EVREN SORUMLULUĞU REDDETTİ.");
- particles(18);stamp("DOSYA KAPANDI");
+ $("receiptWish").textContent="DİLEK: "+state.label+" · "+state.day+" GÜN · "+state.actions+" SOMUT ADIM · "+state.risk+" KESTİRME";
+ $("deskAction").hidden=true;
+ const score=clamp(Math.round(state.progress*.78+state.vibe*.12+state.time*.10),0,100);
+ $("resultScore").textContent="KOZMİK ETKİ: "+score+" / 100";
+ try{let key="manifest777_best_"+(state.daily?"daily":"free"),old=Number(localStorage.getItem(key)||0);if(score>old)localStorage.setItem(key,String(score));$("bestResult").textContent="EN İYİ SKOR: "+Math.max(old,score)}catch(e){$("bestResult").textContent=""}
+ const dest="https://aynen.fun/manifest-777.html"+(state.daily?"?daily="+encodeURIComponent(state.date):"");
+ window.AynenShareResult={title:"Manifest 777 — aynen.fun",text:"Benim kaderim: "+v[0]+" · "+state.progress+"% ilerleme · "+state.signs+" işaret · "+score+"/100. Seninki ne çıkacak?",url:dest};
+ status("DOSYA KAPANDI · EVREN SONUCU ÜSTLENMEDİ.");
+ particles(15);stamp("DOSYA KAPANDI");updateMeters();
 }
+
 function shareText(){
- return "MANIFEST 777 — "+summary[0]+"\nDilek: "+state.label+"\nTitreşim: %"+state.vibe+" · İşaret: "+state.signs+" · Gerçek ilerleme: %"+state.progress+"\n"+summary[1]+"\nhttps://aynen.fun/manifest-777.html";
+ return "MANIFEST 777 — "+summary[0]+"\nDilek: "+state.label+"\nMotivasyon: %"+state.vibe+" · İşaret: "+state.signs+" · Gerçek ilerleme: %"+state.progress+"\n"+summary[1]+"\nhttps://aynen.fun/manifest-777.html"+(state.daily?"?daily="+encodeURIComponent(state.date):"");
 }
+
 $("share").onclick=async()=>{
  const txt=shareText();
  try{if(navigator.share){await navigator.share({title:"Manifest 777",text:txt,url:"https://aynen.fun/manifest-777.html"});return;}
@@ -540,13 +563,26 @@ $("save").onclick=()=>{
  function download(blob){if(!blob)return;let url=URL.createObjectURL(blob);let a=document.createElement("a");a.href=url;a.download="manifest-777-sonuc.png";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);}
  if(can.toBlob)can.toBlob(download,"image/png");else{let a=document.createElement("a");a.href=can.toDataURL("image/png");a.download="manifest-777-sonuc.png";a.click();}
 };
-$("again").onclick=()=>{$("eventVisual").replaceChildren();screens("chooseScreen");$("universe").dataset.mood="idle";status("YENİ BİR DİLEK DOSYASI AÇILABİLİR.");};
-$("orbitButton").onclick=()=>{
- state.hidden++;particles(7);stamp(state.hidden%7===0?"TALEBİNİZ ERTELENDİ":"777 GÖRÜLDÜ");
- status(state.hidden%7===0?"777'YE 7 KERE BASTINIZ. EVREN YİNE DE E-POSTA ATMADI.":"KOZMİK SAYI TESPİT EDİLDİ. HUKUKEN GEÇERSİZ.");
- if(state.ended||!state.wish)return;
- state.vibe=clamp(state.vibe+1,0,100);updateMeters();
+$("again").onclick=()=>{$("eventVisual").replaceChildren();$("deskAction").hidden=true;$("freeMode").click();screens("chooseScreen");$("universe").dataset.mood="idle";status("YENİ BİR DİLEK DOSYASI AÇILABİLİR.");};
+$("deskAction").onclick=()=>{
+ if(state.ended||!state.wish||state.day>=7||state.time<10||state.deskDay===state.day)return;
+ state.deskDay=state.day;state.deskActions++;state.time=clamp(state.time-9,0,100);
+ state.vibe=clamp(state.vibe-2,0,100);state.progress=clamp(state.progress+4,0,100);
+ status("BİR GERÇEK EVRAK İŞLENDİ · +4 İLERLEME · -9 ZAMAN");stamp("EVRAK TAMAMLANDI");
+ particles(3);updateMeters();if(state.time<=0)finish();
 };
+$("office").addEventListener("click",()=>{if(!$("deskAction").hidden)$("deskAction").click()});
+$("orb").addEventListener("click",()=>{$("orbitButton").click()});
+
+$("orbitButton").onclick=()=>{
+ if(state.ended)return;
+ state.hidden++;particles(5);
+ stamp(state.hidden%7===0?"HAT DOLU · 777":"KOZMİK SİNYAL");
+ status(state.hidden%7===0?"777 NUMARASINI 7 KEZ ARADIN. OPERATÖR YOK.":"İŞARET TESPİT EDİLDİ. HUKUKEN GEÇERSİZ.");
+ if(!state.wish)return;
+ state.signs++;state.vibe=clamp(state.vibe+1,0,100);updateMeters();
+};
+
 seededStars();selectWish();updateMeters();
 })();
 </script>
