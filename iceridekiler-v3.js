@@ -63,7 +63,7 @@ function limitCamera(){
 limitCamera();
 function start(){if(state.phase!=='intro')return;state.phase='between';$('overlay').hidden=true;event('Doku devriyesi başladı.');notice('İlk olayı başlat; canlılara dokunarak bilgi al.');updateUi(true);save();}
 function beginChapter(){if(state.phase!=='between'||(state.chapter>=campaign.length&&state.mode!=='sandbox'))return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;state.chapterMilestone=0;state.focusSet=false;
- const memo=state.memories[w.antigen]||0;state.activation=(w.antigen&&memo>0)?Math.min(55,memo):0;state.focus={x:w.x,y:w.y};particles=[];debris=[];signals=[];
+ const memo=state.memories[w.antigen]||0;state.activation=(w.antigen&&memo>0)?Math.min(55,memo):0;state.focus={x:w.x,y:w.y};particles=[];debris=[];signals=[];agents.forEach(a=>{if(a.type==='dend'){a.carrying=false;a.carryingAntigen=null;a.readyAt=0;}});
  if(w.kind==='debris'){for(let i=0;i<w.count;i++)debris.push({id:++maxId,x:w.x+rnd(-115,115),y:w.y+rnd(-80,80),hp:3});}
  else for(let i=0;i<w.count;i++)addParticle(w.kind,w.x,w.y,w.antigen);
  if(w.kind==='virus'){for(let j=0;j<2;j++){const h=hosts.slice().sort((a,b)=>Math.hypot(a.x-w.x,a.y-w.y)-Math.hypot(b.x-w.x,b.y-w.y))[j];if(h){h.infect=3;}}}
@@ -217,8 +217,8 @@ function chemoStrength(x,y,kind){
  for(const sig of signals){
   const life=clamp(1-sig.age/13,0,1);
   if(life<=0)continue;
-  if(sig.kind==='alarm')add(sig.x,sig.y,2.3*life,170);
-  else if(sig.kind==='rally')add(sig.x,sig.y,2.7*life,148);
+  if(sig.kind==='alarm')add(sig.x,sig.y,2.3*life*clamp((sig.power||20)/20,.4,2),170);
+  else if(sig.kind==='rally')add(sig.x,sig.y,2.7*life*clamp((sig.power||20)/20,.4,2),148);
  }
  return value;
 }
@@ -272,7 +272,11 @@ function stepAgents(dt){
  }
  if(!aim&&state.phase==='active'&&['neutro','macro','dend'].includes(type)&&w.kind!=='allergen'&&!transport){
   const sig=signals.filter(v=>v.kind==='alarm').sort((p,q)=>distance(a,p)-distance(a,q))[0];if(sig)aim=sig;else aim=state.focus;}
- if(!aim&&type==='fibro'&&state.tissue<92)aim=state.focus;
+ if(!aim&&type==='fibro'&&state.tissue<98){
+  let damaged=null,min=Infinity;
+  for(const h of hosts)if(h.dead){const dd=distance(a,h);if(dd<min){min=dd;damaged=h;}}
+  aim=damaged||state.focus;
+ }
  if(!aim&&type==='treg'&&state.inflam>28)aim=state.focus;
  follow(a,aim,dt);
  if(target&&distance(a,target.obj)<target.range){
@@ -287,7 +291,7 @@ function stepAgents(dt){
   if(target.kind==='host'){target.obj.infect-=types[type].dps*dt*trained*(type==='tcell'?1+.25*state.activation/100:1);a.hit=.3;state.inflam+=dt*.13;if(target.obj.infect<=0){target.obj.infect=0;target.obj.dead=true;target.obj.heal=11;state.tissue-=.38;if(debris.length<55)debris.push({id:++maxId,x:target.obj.x,y:target.obj.y,hp:1.5});pop(target.obj.x,target.obj.y,'#9fc4d2')}}
  }
  if(type==='dend'&&w.antigen&&state.phase==='active'&&state.chapterTime>3&&!transport){state.presentation=clamp(state.presentation+dt*.075*trained,0,100);}
- if(type==='fibro'&&state.phase==='active'&&w.kind==='debris'){state.tissue=Math.min(100,state.tissue+dt*.4*trained)}
+ if(type==='fibro'&&state.phase==='active'&&(w.kind==='debris'||hosts.some(h=>h.dead&&distance(a,h)<90))){state.tissue=Math.min(100,state.tissue+dt*.28*trained)}
  if(type==='treg'&&state.phase==='active'&&state.inflam>9){state.inflam=Math.max(6,state.inflam-dt*.22*trained)}
  }}
 function stepThreat(dt){
