@@ -278,20 +278,76 @@ function resume(){
 $('pause').addEventListener('click',()=>paused?resume():stop());
 $('resume').addEventListener('click',resume);
 $('exit').addEventListener('click',()=>{run=false;paused=false;gameOver=false;release();$('pauseOverlay').hidden=true;$('pause').hidden=true;$('results').hidden=true;$('start').textContent='KAYKAYA BİN →';$('panelTitle').innerHTML='Kaldırım<br>bul.';$('panelText').textContent="İstanbul'da kaykay sürmek istiyorsun. Dümdüz gitmek teoride mümkün.";$('overlay').hidden=false});
+
+function missionPanel(){
+ if(!run||missionIndex>=missions.length){$('mission').hidden=true;return}
+ const m=missions[missionIndex];
+ if(m.kind==='meters')missionProgress=Math.max(0,Math.floor(distance/10)-missionStartMeters);
+ $('mission').hidden=false;$('mission').classList.toggle('done',missionDoneTimer>0);
+ $('mission').textContent='GÖREV '+(missionIndex+1)+'/'+missions.length+' · '+m.text+' · '+Math.min(m.goal,missionProgress)+'/'+m.goal;
+}
+function missionEvent(kind,n=1){
+ if(missionIndex>=missions.length)return;
+ const m=missions[missionIndex];
+ if(kind===m.kind&&kind!=='meters')missionProgress+=n;
+ if(m.kind==='meters')missionProgress=Math.max(0,Math.floor(distance/10)-missionStartMeters);
+ if(missionProgress>=m.goal){
+  const bonus=200+missionIndex*50;score+=bonus;
+  toast('GÖREV TAMAM +'+bonus);
+  missionIndex++;missionProgress=0;missionStartMeters=Math.floor(distance/10);missionDoneTimer=.6;
+  sfx('point');
+ }
+ missionPanel();
+}
+function streakLabel(){
+ const multi=Math.min(5,1+Math.floor(streak/5));
+ $('combo').hidden=streak<4;
+ $('combo').textContent='AKIŞ ×'+multi+' · '+streak+' ENGEL';
+}
+function moodLabel(meters){
+ if(meters<40)return 'Daha yeni çıkmıştın.';
+ if(meters<150)return 'Bir kaldırım gördün. Sonra bitti.';
+ if(meters<350)return 'Şehirle aranız iyi gidiyordu.';
+ if(meters<700)return 'Kaldırımın izini sürdün.';
+ return 'İstanbul asfaltına isim yazdırdın.';
+}
+function challengeUrl(){
+ const m=Math.floor(distance/10);
+ const qs=new URLSearchParams({challenge:String(seed>>>0),beat:String(m)});
+ return 'https://aynen.fun/kaldirim.html?'+qs.toString();
+}
+function shareMessage(){
+ const m=Math.floor(distance/10);
+ return 'KALDIRIM. · '+m+' m · '+score.toLocaleString('tr-TR')+' puan\n'+(crashReason||'Kaldırım hâlâ yok.')+'\nBeni geçebilir misin?';
+}
+$('dailyStart').addEventListener('click',()=>{
+ mode=mode==='daily'?'endless':'daily';targetMeters=0;
+ setupMode();reset();
+});
+
 function reset(){
- run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';
+ setupMode();
+ run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';metTarget=false;missionIndex=0;missionProgress=0;missionStartMeters=0;missionDoneTimer=0;nearMax=0;tricks=0;cleared=0;maxCombo=0;
  Object.assign(player,{y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0});
- $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;$('share').textContent='SONUCU PAYLAŞ ↗';
+ $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;$('share').textContent='ARKADAŞINA MEYDAN OKU ↗';$('combo').hidden=true;
+ missionPanel();
  $('controlLabel').textContent='ZIPLA';$('charge').classList.remove('on');$('control').classList.remove('pressed');$('tip').classList.remove('on');last=performance.now();updateHud();toast('BASILI TUT → BIRAKINCA ZIPLA');
 }
 function finish(){
  if(gameOver)return;
  gameOver=true;run=false;paused=false;player.charging=false;$('control').classList.remove('pressed');$('charge').classList.remove('on');$('pause').hidden=true;
  const meters=Math.floor(distance/10);
- if(meters>best){best=meters;try{localStorage.setItem('aynen-kaldirim-best',String(best))}catch(e){}}
- $('panelTitle').innerHTML=meters>160?'Kaldırım<br>yine bitti.':'Bir daha<br>denersin.';
- $('panelText').textContent='İstanbul’da '+meters+' metre kaykay sürdün. Kaldırım hâlâ bulunamadı.';
+ if(meters>best){best=meters;writeBest(meters)}
+ const isRecord=meters>startedBest,beatFriend=mode==='duel'&&targetMeters>0&&meters>targetMeters;
+ $('panelTitle').innerHTML=isRecord&&meters>50?'Yeni<br>rekor.':meters>160?'Kaldırım<br>yine bitti.':'Bir daha<br>denersin.';
+ $('panelText').textContent=moodLabel(meters)+' '+(mode==='daily'?'Günün rotası: '+dailyStamp+'.':mode==='duel'?'Arkadaş rotası.':'İstanbul asfaltında.')
  $('resultReason').textContent=crashReason||'Yol biraz kalabalıktı.';
+ $('resultAchievement').hidden=false;
+ $('resultAchievement').textContent=(beatFriend?'ARKADAŞINI GEÇTİN. · ':mode==='duel'?'MEYDAN OKUMA · '+targetMeters+' m hedef · ':mode==='daily'?'GÜNÜN ROTASI · ':isRecord?'YENİ REKOR · ':'')+
+ 'En uzun seri '+maxCombo+' · '+tricks+' numara · '+nearCount+' ramak kala';
+ $('collection').hidden=false;
+ $('collection').textContent='SOKAK ÇIKARTMALARI · '+unlocked.length+'/'+allStickers.length+' · '+(unlocked.length?unlocked.map(i=>allStickers[i]).join(' / '):'İlkini kazanmak için bir engeli geç.');
+ $('mission').hidden=true;$('combo').hidden=true;
  $('start').textContent='BİR DAHA DENE ↻';
  $('results').hidden=false;$('resultM').textContent=meters+' m';$('resultS').textContent=score.toLocaleString('tr-TR');$('resultB').textContent=best+' m';
  $('overlay').hidden=false;
@@ -337,26 +393,59 @@ window.addEventListener('keydown',e=>{
 window.addEventListener('keyup',e=>{if(['Space','ArrowUp','KeyW'].includes(e.code)){e.preventDefault();release()}});
 window.addEventListener('blur',()=>{if(run&&!paused)stop(true);last=performance.now()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&run&&!paused)stop(true);last=performance.now()});
-$('share').addEventListener('click',async()=>{
- const meters=Math.floor(distance/10);
- const t='İstanbul’da '+meters+' m kaykay sürdüm. '+(crashReason||'Kaldırım hâlâ yok.')+' #aynenfun';
- const url='https://aynen.fun/kaldirim.html';
- try{if(navigator.share){await navigator.share({title:'Kaldırım — aynen.fun',text:t,url});return}if(navigator.clipboard){await navigator.clipboard.writeText(t+'\n'+url);$('share').textContent='KOPYALANDI ✓';return}}catch(e){if(e.name==='AbortError')return}
- window.prompt('Paylaş:',t+' '+url);
-});
 
+$('share').addEventListener('click',async()=>{
+ const txt=shareMessage(),url=challengeUrl();
+ try{
+  if(navigator.share){await navigator.share({title:'Kaldırım — beni geç',text:txt,url});return}
+  if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(txt+'\n'+url);$('share').textContent='MEYDAN OKUMA KOPYALANDI ✓';return}
+ }catch(e){if(e.name==='AbortError')return}
+ window.prompt('Arkadaşına gönder:',txt+'\n'+url);
+});
+function makeResultCard(){
+ const out=document.createElement('canvas');out.width=1080;out.height=1350;
+ const c=out.getContext('2d');
+ c.fillStyle='#f5e7d2';c.fillRect(0,0,1080,1350);
+ c.fillStyle='#c76558';c.fillRect(0,0,1080,24);
+ c.fillStyle='#262321';c.font='bold 112px Arial';c.fillText('KALDIRIM.',63,160);
+ c.font='bold 25px monospace';c.fillText('AYNEN.FUN / İSTANBUL SOKAK OYUNLARI',68,214);
+ c.save();c.beginPath();c.rect(60,263,960,610);c.clip();
+ // Use the exact final frame: a visual memory of the run, not generic share art.
+ c.drawImage(canvas,0,0,canvas.width,canvas.height,60,263,960,610);
+ c.restore();
+ c.fillStyle='#282421';c.fillRect(60,903,960,2);
+ c.font='bold 158px Arial';c.fillText(Math.floor(distance/10)+' m',65,1096);
+ c.font='bold 29px monospace';c.fillText('PUAN '+score.toLocaleString('tr-TR')+'   /   REKOR '+best+' m',67,1157);
+ c.font='bold 27px Arial';c.fillText(mode==='daily'?'GÜNÜN ROTASI '+dailyStamp:'MEYDAN OKUMA · SEN KAÇ METRE GİDERSİN?',67,1217);
+ c.font='bold 31px monospace';c.fillText('AYNEN.FUN/KALDIRIM.HTML',67,1305);
+ return out;
+}
+$('shareCard').addEventListener('click',async()=>{
+ try{
+  const out=makeResultCard(),blob=await new Promise(resolve=>out.toBlob(resolve,'image/png'));
+  if(!blob)throw Error('PNG oluşturulamadı');
+  const filename='kaldirim-'+Math.floor(distance/10)+'m.png';
+  if(typeof File!=='undefined'&&navigator.canShare&&navigator.share){
+   const file=new File([blob],filename,{type:'image/png'});
+   if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Kaldırım',text:shareMessage()});return}
+  }
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.download=filename;a.href=url;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+  $('shareCard').textContent='KART HAZIR ✓';
+ }catch(e){if(e.name==='AbortError')return;$('shareCard').textContent='TEKRAR DENE'}
+});
 
 function spawn(){
  const stage=Math.floor(distance/2800);
  const pool=hazards.filter(h=>stage>1||!['taksi','barikat'].includes(h.type));
- let h=pool[Math.floor(Math.random()*pool.length)];
- for(let i=0;i<5&&h.type===previous;i++)h=pool[Math.floor(Math.random()*pool.length)];
+ let h=pool[Math.floor(randGame()*pool.length)];
+ for(let i=0;i<5&&h.type===previous;i++)h=pool[Math.floor(randGame()*pool.length)];
  previous=h.type;
  obstacles.push({...h,x:W+80,passed:false,hit:false,near:false});
  const baseGap=W<590?370:430;
  const ease=clamp(1-elapsed/32,0,1);
  // Keep the minimum approach time readable at higher speeds.
- spawnLeft=Math.max(baseGap*.75,(baseGap+Math.random()*170+ease*170)*(speed/340));
+ spawnLeft=Math.max(baseGap*.75,(baseGap+randGame()*170+ease*170)*(speed/340));
 }
 function update(dt){
  if(!run||paused)return;
@@ -367,6 +456,9 @@ function update(dt){
  if(spawnLeft<=0)spawn();
  const z=Math.min(names.length-1,Math.floor(distance/3900));
  if(z!==zone){zone=z;$('status').textContent=names[z]+' · KALDIRIM DURUMU BELİRSİZ';if(z>0)toast(names[z]+'. KALDIRIM HALA YOK.')}
+ if(missionDoneTimer>0)missionDoneTimer-=dt;
+ if(mode==='duel'&&!metTarget&&targetMeters&&Math.floor(distance/10)>targetMeters){metTarget=true;toast('ARKADAŞINI GEÇTİN.');sfx('point')}
+ if(missionIndex<missions.length&&missions[missionIndex].kind==='meters')missionEvent('meters');
  if(player.charging){
   player.charge=Math.min(.65,player.charge+dt);
   $('chargeFill').style.width=(100*player.charge/.65)+'%';
@@ -382,7 +474,7 @@ function update(dt){
    makeParticle(player.x,GROUND,'#e8dbc8',8);sfx('land');
    if(airborneTrick){
      const bonus=180+Math.min(220,streak*20);score+=bonus;streak++;
-     toast('TEMİZ İNİŞ +'+bonus);
+     tricks++;missionEvent('trick');toast('TEMİZ İNİŞ +'+bonus);
    }
    player.trick=false;player.spin=0;
    if(player.buffer>0){const power=player.bufferPower;player.buffer=0;jump(power)}
@@ -396,7 +488,7 @@ function update(dt){
   const air=-player.y;
   if(overlap&&air>h.height-4&&air<h.height+43)h.near=true;
   if(!h.hit&&invuln===0&&overlap&&air<Math.max(9,h.height-17)){
-   h.hit=true;invuln=1.5;shake=10;lives--;streak=0;crashReason=h.note;
+   h.hit=true;invuln=1.5;shake=10;lives--;streak=0;crashReason=h.note;streakLabel();
    player.vy=Math.min(player.vy,-245);player.onGround=false;
    makeParticle(player.x+28,GROUND+player.y-20,'#d7594b',12);sfx('hit');
    if(lives<=0){updateHud();finish();return}
@@ -406,9 +498,12 @@ function update(dt){
    h.passed=true;
    if(!h.hit){
     const close=h.near?85:0;
-    const bonus=60+Math.min(175,streak*15)+close;score+=bonus;streak++;if(h.near){nearCount++;if(nearCount%3===0)toast('RAMAK KALDI +85')}
+    const multiplier=Math.min(5,1+Math.floor(streak/5));
+    const bonus=(60+Math.min(175,streak*15)+close)*multiplier;
+    score+=bonus;streak++;cleared++;maxCombo=Math.max(maxCombo,streak);
+    if(h.near){nearCount++;missionEvent('near');if(nearCount%3===0)toast('RAMAK KALDI +85')}
     else if(streak%7===0)toast(streak+' ENGEL. DEVAM.');
-    sfx('point');
+    addSticker(h.type);missionEvent('pass');streakLabel();sfx('point');
    }
   }
  }
@@ -417,7 +512,7 @@ function update(dt){
  effects=effects.filter(e=>e.life>0);
  shake=Math.max(0,shake-50*dt);
  if(textTimer>0){textTimer-=dt;if(textTimer<=0)$('tip').classList.remove('on')}
- hudTick-=dt;if(hudTick<=0){updateHud();hudTick=.09}
+ hudTick-=dt;if(hudTick<=0){updateHud();missionPanel();hudTick=.09}
 }
 function updateHud(){
  $('distance').textContent=Math.floor(distance/10);
