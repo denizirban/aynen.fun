@@ -370,6 +370,7 @@ function paintAgent(u,t){
  }
  c.closePath();c.fillStyle=grad;c.fill();
  c.shadowBlur=0;
+ c.save();c.globalCompositeOperation='screen';c.lineWidth=.85;c.strokeStyle='rgba(103,166,249,.18)';c.translate(-1.35,0);c.stroke();c.translate(2.5,0);c.strokeStyle='rgba(253,102,116,.14)';c.stroke();c.restore();
  // Internal translucency, softly glowing organelle
  c.globalAlpha=.23;c.fillStyle='#ffd5c8';c.beginPath();c.ellipse(R*.15,R*.32,R*.5,R*.42,.13,0,TWO);c.fill();c.globalAlpha=1;
  // Eyelike details give each cell a charming character without turning it into an animal.
