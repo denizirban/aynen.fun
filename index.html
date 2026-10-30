@@ -213,6 +213,29 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
  .desktop-scene{height:510px;min-height:510px}
 }
 
+
+/* Exact mini version of the game's dark specimen-card bird atlas.
+   Photos come from the same Wikipedia pageimages source as turkiyenin-kuslari.html. */
+.game-tile .bird-atlas-cover{position:relative;isolation:isolate;overflow:hidden;border-radius:3px;background:#0b0e0d;color:#171b18;transform:scale(.96)}
+.game-tile:hover .bird-atlas-cover,.game-tile:focus-visible .bird-atlas-cover{transform:scale(1.04)}
+.bird-atlas-track{position:absolute;inset:0;display:block}
+.bird-atlas-card{position:absolute;top:10%;width:34%;height:76%;background:#dedbd1;box-shadow:0 4px 6px #0008;display:flex;flex-direction:column;border:1px solid #3d3a33;overflow:hidden;transform-origin:center bottom}
+.bird-atlas-card-1{left:3.5%;top:14%;height:71%;transform:rotate(-8deg);z-index:1}
+.bird-atlas-card-2{left:34%;top:7%;height:80%;transform:rotate(3deg);z-index:3}
+.bird-atlas-card-3{right:3%;top:13%;height:74%;transform:rotate(-4deg);z-index:2}
+.bird-atlas-head{height:15%;background:#e3dfd2;border-bottom:1px solid #cac5bb;display:flex;align-items:center;justify-content:space-between;padding:0 4px;font:600 clamp(3px,.33vw,5px)/1 'DM Mono',monospace;letter-spacing:0}
+.bird-atlas-image{position:relative;display:grid;place-items:center;overflow:hidden;height:66%;background:var(--bird-color)}
+.bird-atlas-image:after{content:"";position:absolute;inset:0;background:linear-gradient(130deg,#ffedcd52,transparent 75%);pointer-events:none;z-index:3}
+.bird-atlas-image .bird-atlas-silhouette{position:absolute;inset:2%;width:96%;height:96%;display:block}
+.bird-atlas-photo{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s;z-index:2;filter:contrast(1.04) saturate(1.04)}
+.bird-atlas-photo.loaded{opacity:1}
+.bird-atlas-bottom{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 3px;overflow:hidden;white-space:nowrap}
+.bird-atlas-bottom strong{font:700 clamp(4px,.45vw,7px)/1.1 'Space Grotesk',Arial,sans-serif;letter-spacing:-.02em}
+.bird-atlas-bottom small{font:400 clamp(3px,.28vw,4.5px)/1 'DM Mono',monospace;letter-spacing:-.04em;margin-top:2px;color:#70706b}
+.bird-atlas-caption{position:absolute;bottom:2%;left:0;right:0;display:block;color:#eae9dd;font:500 clamp(4px,.42vw,6px)/1 'DM Mono',monospace;letter-spacing:.11em;text-align:center}
+@media(max-width:760px){.bird-atlas-head{font-size:4px}.bird-atlas-bottom strong{font-size:5px}.bird-atlas-bottom small{font-size:3.4px}.bird-atlas-caption{font-size:4.5px}}
+@media(prefers-reduced-motion:reduce){.bird-atlas-photo{transition:none}}
+
 </style>
 </head>
 <body>
@@ -300,7 +323,7 @@ body{background:#f8f8f7;color:#101010;overflow-x:hidden}
 <text x="133" y="34" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#111">12</text>
 <circle cx="26" cy="94" r="4" fill="#111"/><circle cx="134" cy="94" r="4" fill="#111"/>
 </svg></span><span class="game-name">Kaç Sıfır?</span></a>
-<a class="game-tile" href="/turkiyenin-kuslari.html" style="--x:34%;--y:1090px;--angle:2deg" aria-label="Türkiye'nin Kuşları oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span><img class="tile-illustration editorial-cover" src="/cover-turkiyenin-kuslari.svg?v=2" alt="" loading="lazy" width="320" height="220" style="width:100%;height:100%;object-fit:contain"/></span><span class="game-name">Türkiye'nin Kuşları</span></a>
+<a class="game-tile" href="/turkiyenin-kuslari.html" style="--x:34%;--y:1090px;--angle:2deg" aria-label="Türkiye'nin Kuşları oyununu aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span><span class="tile-illustration bird-atlas-cover" role="img" aria-label="Türkiye'nin Kuşları oyunundan arıkuşu, ibibik ve yalıçapkını tür kartları"><span class="bird-atlas-track"><span class="bird-atlas-card bird-atlas-card-1" style="--bird-color:#c2a56e;" aria-hidden="true"><span class="bird-atlas-head"><span>TR / AVES</span><span>01</span></span><span class="bird-atlas-image"><svg viewBox="0 0 140 145" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="bird-atlas-silhouette"><path d="M28 94c-16-7-23-25-17-37 13 11 24 15 35 12 9-21 37-29 58-12 9 7 13 14 17 22l17 2-17 9c-7 23-33 41-61 29l-22 18 6-27z" fill="#2c302a" opacity=".77"/><path d="M48 76c25-15 43-3 45 15-17 6-37 3-45-15Z" fill="#f5eed2" opacity=".55"/><circle cx="108" cy="69" r="3" fill="#f8f0d5"/><path d="M53 112l-2 20m15-19-1 20" stroke="#2c302a" stroke-width="2"/><path d="M20 134h92" stroke="#463f30" opacity=".3"/></svg><img class="bird-atlas-photo" data-bird-wiki="European bee-eater" alt="" loading="lazy" decoding="async"/></span><span class="bird-atlas-bottom"><strong>Arıkuşu</strong><small>Merops apiaster</small></span></span><span class="bird-atlas-card bird-atlas-card-2" style="--bird-color:#ce9965;" aria-hidden="true"><span class="bird-atlas-head"><span>TR / AVES</span><span>02</span></span><span class="bird-atlas-image"><svg viewBox="0 0 140 145" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="bird-atlas-silhouette"><path d="M28 94c-16-7-23-25-17-37 13 11 24 15 35 12 9-21 37-29 58-12 9 7 13 14 17 22l17 2-17 9c-7 23-33 41-61 29l-22 18 6-27z" fill="#2c302a" opacity=".77"/><path d="M48 76c25-15 43-3 45 15-17 6-37 3-45-15Z" fill="#f5eed2" opacity=".55"/><circle cx="108" cy="69" r="3" fill="#f8f0d5"/><path d="M53 112l-2 20m15-19-1 20" stroke="#2c302a" stroke-width="2"/><path d="M20 134h92" stroke="#463f30" opacity=".3"/></svg><img class="bird-atlas-photo" data-bird-wiki="Eurasian hoopoe" alt="" loading="lazy" decoding="async"/></span><span class="bird-atlas-bottom"><strong>İbibik</strong><small>Upupa epops</small></span></span><span class="bird-atlas-card bird-atlas-card-3" style="--bird-color:#4d8993;" aria-hidden="true"><span class="bird-atlas-head"><span>TR / AVES</span><span>03</span></span><span class="bird-atlas-image"><svg viewBox="0 0 140 145" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="bird-atlas-silhouette"><path d="M28 94c-16-7-23-25-17-37 13 11 24 15 35 12 9-21 37-29 58-12 9 7 13 14 17 22l17 2-17 9c-7 23-33 41-61 29l-22 18 6-27z" fill="#2c302a" opacity=".77"/><path d="M48 76c25-15 43-3 45 15-17 6-37 3-45-15Z" fill="#f5eed2" opacity=".55"/><circle cx="108" cy="69" r="3" fill="#f8f0d5"/><path d="M53 112l-2 20m15-19-1 20" stroke="#2c302a" stroke-width="2"/><path d="M20 134h92" stroke="#463f30" opacity=".3"/></svg><img class="bird-atlas-photo" data-bird-wiki="Common kingfisher" alt="" loading="lazy" decoding="async"/></span><span class="bird-atlas-bottom"><strong>Yalıçapkını</strong><small>Alcedo atthis</small></span></span></span><span class="bird-atlas-caption">KUŞ SESLERİ / ATLAS</span></span></span><span class="game-name">Türkiye'nin Kuşları</span></a>
 
 <a class="game-tile is-color" href="/evin-patronu.html" style="--x:7%;--y:853px;--angle:-1.5deg;--orbit-x:7.5%;--orbit-y:66.6%;--orbit-size:1.01" aria-label="Evin Patronu mutfak simülasyonunu aç">
 <span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" class="tile-illustration" aria-hidden="true"><path d="M12 14H148V104H12Z" fill="#edeae2"/><path d="M12 64L148 60V104H12Z" fill="#d5d4c9"/><path d="M12 64H148V104H12Z" fill="#ebe9e5"/><path d="M12 66H147M12 85H147M30 64V103M66 64V103M102 64V103M138 64V103" stroke="#252525" stroke-width="2"/><path d="M12 64H30V85H12ZM48 64H66V85H48ZM84 64H102V85H84ZM120 64H138V85H120ZM30 85H48V104H30ZM66 85H84V104H66ZM102 85H120V104H102ZM138 85H148V104H138Z" fill="#282827"/><path d="M20 22H75V52H20Z" fill="#78a36d" stroke="#222" stroke-width="4"/><path d="M47 22V52M20 37H75" stroke="#fff" stroke-width="3"/><path d="M96 20H137V56H96Z" fill="#ddd6c9" stroke="#222" stroke-width="3"/><path d="M37 58L108 50L139 70L62 81Z" fill="#ad764b" stroke="#211913" stroke-width="3"/><path d="M64 78V100M131 70V91" stroke="#724a32" stroke-width="6"/><circle cx="55" cy="44" r="10" fill="#6f4935" stroke="#222" stroke-width="2"/><path d="M43 55Q53 46 69 57L72 71L48 73Z" fill="#e77850" stroke="#222" stroke-width="2"/><circle cx="108" cy="42" r="8" fill="#be8c72" stroke="#222" stroke-width="2"/><path d="M100 53L118 50L124 67L106 70Z" fill="#d9e6bd" stroke="#222" stroke-width="2"/><circle cx="88" cy="60" r="10" fill="#f7efe4" stroke="#333" stroke-width="2"/><circle cx="88" cy="60" r="5" fill="#cc6e54"/></svg></span>
@@ -347,6 +370,43 @@ let requested=new URLSearchParams(location.search).get('game');if(requested==='p
    frame=0;
   });
  },{passive:true});
+})();
+</script>
+
+<script>
+/* Same photo feed and species titles as Türkiye'nin Kuşları game, with its original silhouettes as offline fallbacks. */
+(function(){
+ var pictures=[...document.querySelectorAll('.bird-atlas-cover img[data-bird-wiki]')];
+ if(!pictures.length)return;
+ var began=false;
+ function fetchBirds(){
+  if(began)return;
+  began=true;
+  var names=pictures.map(function(img){return img.getAttribute('data-bird-wiki')});
+  var url='https://en.wikipedia.org/w/api.php?'+new URLSearchParams({
+   action:'query',format:'json',formatversion:'2',origin:'*',prop:'pageimages',
+   piprop:'thumbnail',pithumbsize:'520',titles:names.join('|'),redirects:'1'
+  }).toString();
+  fetch(url).then(function(res){if(!res.ok)throw Error('Bird photos not available');return res.json()}).then(function(data){
+   var found=Object.create(null);
+   (data.query&&data.query.pages||[]).forEach(function(p){if(p.thumbnail&&p.thumbnail.source)found[p.title.toLowerCase()]=p.thumbnail.source});
+   (data.query&&data.query.redirects||[]).forEach(function(r){if(found[r.to.toLowerCase()])found[r.from.toLowerCase()]=found[r.to.toLowerCase()]});
+   pictures.forEach(function(img){
+    var source=found[img.getAttribute('data-bird-wiki').toLowerCase()];
+    if(!source)return;
+    img.onload=function(){img.classList.add('loaded')};
+    img.onerror=function(){img.removeAttribute('src');img.classList.remove('loaded')};
+    img.src=source;
+   });
+  }).catch(function(){/* Keep original in-game SVG silhouette when offline. */});
+ }
+ var cover=document.querySelector('.bird-atlas-cover');
+ if('IntersectionObserver' in window){
+  var observer=new IntersectionObserver(function(items){
+   if(items.some(function(item){return item.isIntersecting})){observer.disconnect();fetchBirds()}
+  },{rootMargin:'250px'});
+  observer.observe(cover);
+ }else fetchBirds();
 })();
 </script>
 </body></html><script src="/share-kit.js?v=1" defer></script>
