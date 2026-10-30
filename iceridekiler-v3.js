@@ -413,7 +413,7 @@ function setupDrawer(){
  document.querySelectorAll('[data-drawer]').forEach(btn=>btn.addEventListener('click',()=>open(btn.dataset.drawer)));
  close.addEventListener('click',hide);
  document.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
- window.openBiologyPanel=name=>open(name);
+ window.openBiologyPanel=name=>{if(active!==name)open(name);};
 }
 let audioEnabled=false,audioContext=null;
 function softSound(freq=340){
