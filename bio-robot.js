@@ -77,7 +77,7 @@ function update(){
  $('missionStatus').textContent=mode==='build'?'TASARIM MODU':mode==='running'?(paused?'DURAKLADI':'ROBOT HAREKET EDİYOR'):'DENEY TAMAMLANDI';
  $('clock').textContent=model?timeFormat(model.time):'00:00';
  $('stageCaption').innerHTML='<i></i>'+(
-    mode==='build'?'Parlayan + noktalarına dokunarak '+(selected==='erase'?'hücre sil':'hücre ekle') :
+    mode==='build'?(selected==='erase'?'Silmek istediğin hücreye dokun':!hasSelected&&!hasPlaced?'Aşağıdan hücre seç → Ortadaki + noktasına dokun':'Ortadaki + noktalarına dokunarak hücre ekle') :
     mode==='running'?(paused?'Deney duraklatıldı':'Robotun hareketini izle — sonuç birazdan görünecek'):
     'Tekrar dene veya robotunu geliştir');
  $('runLabel').textContent=mode==='build'?'Test et':mode==='running'?(paused?'Devam et':'Duraklat'):'Robotu düzenle';
@@ -86,9 +86,9 @@ function update(){
  $('runBtn').disabled=mode==='build'&&!st.q.muscle;
  coachStep=mode==='running'||mode==='result'?3:hasPlaced?2:hasSelected?1:0;
  const ct=[
- ['1 / 3 · HÜCRE SEÇ','Önce bir hücre seç','Aşağıdaki renkli hücrelere dokun. Her biri robotuna başka bir özellik verir.'],
- ['2 / 3 · HÜCRE EKLE','Şimdi robotuna ekle','Ortadaki robotun etrafındaki + noktalarına dokun. Hücre oraya bağlanacak.'],
- ['3 / 3 · TEST ET','Bakalım hareket edecek mi?','Sağ alttaki Test et düğmesine bas. Robotun nasıl gittiğini izle.'],
+ ['1 / 3 · KEŞFET','Robotun hazır','Aşağıdan bir hücre seçip ortadaki + noktalarına ekleyebilirsin. İstersen hemen Test et.'],
+ ['2 / 3 · HÜCRE EKLE','Robotuna hücre ekle','Ortadaki + işaretli boş yuvalardan birine dokun. Seçtiğin hücre oraya bağlanacak.'],
+ ['3 / 3 · TEST ET','Şimdi hareketi izle','Test et düğmesine bas. Robot, hücrelerin konumuna göre kendi yolunu bulmaya çalışacak.'],
  ['DENEY BAŞLADI','Robotun hareket ediyor','Enerji ve ilerleme göstergeleri sağ üstte. Sonuçta robotunu geliştirebilirsin.']
  ][coachStep];
  $('coachCounter').textContent=ct[0];$('coachTitle').textContent=ct[1];$('coachText').textContent=ct[2];
@@ -317,6 +317,20 @@ function drawBuild(time){
   line(p.x-rr*.32,p.y-2,p.x+rr*.32,p.y-2,hovering?'#fff':'#587e9e',2);
   line(p.x,p.y-rr*.32-2,p.x,p.y+rr*.32-2,hovering?'#fff':'#587e9e',2);
   ctx.restore();
+ }
+ // First-play affordance: one clear target and a readable label.
+ if(!hasPlaced){
+  const target=canPlace(2,0)?{x:2,y:0}:Array.from({length:81},(_,i)=>({x:(i%9)-4,y:Math.floor(i/9)-4})).find(q=>canPlace(q.x,q.y));
+  if(target){
+   const p=baseOf(target.x,target.y);
+   ctx.save();
+   const offset=unit*.54;
+   ctx.strokeStyle='#436dace0';ctx.lineWidth=1.5;
+   ctx.beginPath();ctx.moveTo(p.x+7,p.y-offset*.40);ctx.lineTo(p.x+offset*.85,p.y-offset*1.35);ctx.stroke();
+   ctx.textAlign='left';ctx.font='600 11px "DM Sans",sans-serif';ctx.fillStyle='#355da0';
+   ctx.fillText('BURAYA EKLE +',p.x+offset*.93,p.y-offset*1.39);
+   ctx.restore();
+  }
  }
  for(let i=0;i<cells.length;i++){
   const c=cells[i],a=baseOf(c.x,c.y);
