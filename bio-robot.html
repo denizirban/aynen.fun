@@ -137,6 +137,9 @@
 }
 @media(max-width:380px) and (max-height:720px){.onboard{top:210px}.onboard-trust{display:none}.onboard-goal{display:none}}
 
+
+.next-mission{display:block;width:100%;margin-top:15px;padding:12px;border-radius:10px;border:1px solid #d2e0ed;background:#edf5fc;color:#3b5caa;font-weight:700;font-size:12px}
+.next-mission:hover{background:#e3eefe}.next-mission[hidden]{display:none}
 </style>
 </head><body>
 <div id="game">
@@ -219,7 +222,7 @@
 <div class="dialog"><button class="xbtn" id="closeResult" type="button" aria-label="Kapat" style="position:absolute;right:16px;top:14px">×</button>
 <span class="dialog-kicker mono" id="resultKicker">DENEY SONUCU</span><h2 id="resultTitle">Deney tamamlandı.</h2><p id="resultText"></p>
 <div class="results"><div><strong id="resultProgress">0%</strong><span>İLERLEME</span></div><div><strong id="resultEnergy">0%</strong><span>KALAN ENERJİ</span></div><div><strong id="resultTime">0s</strong><span>SÜRE</span></div></div>
-<div class="dialog-buttons"><button id="retryBtn" type="button">Tekrar dene</button><button class="strong" id="editBtn" type="button">Robotu geliştir →</button><button id="shareBtn" type="button">Paylaş ↗</button></div>
+<div class="dialog-buttons"><button id="retryBtn" type="button">Tekrar dene</button><button class="strong" id="editBtn" type="button">Robotu geliştir →</button><button id="shareBtn" type="button">Paylaş ↗</button></div><button type="button" id="nextMissionBtn" class="next-mission" hidden>Sonraki göreve geç →</button>
 </div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </div>
