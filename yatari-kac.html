@@ -235,17 +235,22 @@
 #dailyNext{width:100%;border:0;background:#111;color:white;font-weight:700;padding:13px;margin-top:11px}
 @media(max-width:760px){.mode-switch{margin-bottom:9px}.mode-switch button{font-size:9px;padding:9px 4px}.daily-question{font-size:21px;margin:7px 0 10px}.daily-options{gap:7px}.daily-options button{font-size:12px;padding:11px}.daily-verdict{font-size:20px}.daily-answer p{font-size:10px}.daily-answer{margin-top:8px}#dailyNext{padding:10px;margin-top:8px}}
 </style></head><body><main class="app">
-<header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 17</span></header>
+<header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 22</span></header>
 <section class="frame"><div class="left"><div><div class="eyebrow">TÜRKİYE / CEZA &amp; İNFAZ</div><h1 class="title">Yatarı<br><span>kaç?</span></h1><p class="sub">Verilen hapis cezası ile infaz süresi aynı şey değil. Sence kaç yıl?</p></div><div class="casebox"><div class="case-label"><span class="number" id="caseNo">01</span> DOSYA / VARSAYIMSAL SENARYO</div><h2 class="crime" id="crime">Genel infaz rejimi</h2><p class="facts" id="facts"></p><div class="sentence" id="sentence">6 yıl <small>hapis cezası</small></div></div></div>
-<div class="right"><div class="right-top"><div class="mode-switch" role="group" aria-label="Oyun türü"><button id="modeCases" type="button" class="active">YATARI KAÇ?</button><button id="modeDaily" type="button">GÜNDELİK HUKUK</button></div><div class="daily-play" id="dailyPlay" hidden><div class="eyebrow">BU OLAYDA HUKUK NE DİYOR?</div><div class="daily-question">Sence ne olur?</div><div class="daily-options" id="dailyOptions"></div><div class="daily-answer" id="dailyAnswer" hidden><div class="daily-verdict" id="dailyVerdict"></div><p id="dailyExplanation"></p><a id="dailySource" target="_blank" rel="noopener noreferrer">KANUN MADDESİ ↗</a></div><button id="dailyNext" type="button" hidden>SONRAKİ OLAY →</button></div><div id="guess"><div class="eyebrow">TAHMİNİNİ YAP</div><div class="prompt">Cezaevinde yaklaşık<br>kaç yıl kalır?</div><div class="dial"><button class="step" id="minus" type="button" aria-label="Bir yıl azalt">−</button><div class="value" id="value">3</div><button class="step" id="plus" type="button" aria-label="Bir yıl artır">+</button></div><div class="unit">YIL / HİPOTETİK CEZAEVİ SÜRESİ</div><input class="slider" id="slider" type="range" min="0" max="30" value="3" step=".5" aria-label="Yıl tahmini"><button class="answer" type="button" id="reveal">KARARI GÖR →</button></div>
+<div class="right"><div class="right-top"><div id="guess"><div class="eyebrow">TAHMİNİNİ YAP</div><div class="prompt">Cezaevinde yaklaşık<br>kaç yıl kalır?</div><div class="dial"><button class="step" id="minus" type="button" aria-label="Bir yıl azalt">−</button><div class="value" id="value">3</div><button class="step" id="plus" type="button" aria-label="Bir yıl artır">+</button></div><div class="unit">YIL / HİPOTETİK CEZAEVİ SÜRESİ</div><input class="slider" id="slider" type="range" min="0" max="30" value="3" step=".5" aria-label="Yıl tahmini"><button class="answer" type="button" id="reveal">KARARI GÖR →</button></div>
 <div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">VARSAYIMSAL CEZAEVİ SÜRESİ</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><div class="compare"><div class="eyebrow">CEZANIN AŞAMALARI</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div><details class="legal-drawer" id="legalDrawer"><summary>HUKUKİ AYRINTILAR <span aria-hidden="true">⌄</span></summary><div class="legal-drawer-content"><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div></div></details><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><div class="timeline-screen"><div class="timeline-heading"><span class="mono">İNFAZ ZAMAN ÇİZGİSİ</span><span class="mono" id="timelineClock">0.0 YIL</span></div>
 <input id="timelineScrub" class="timeline-scrub" type="range" min="0" max="100" value="0" aria-label="İnfaz zaman çizelgesini ileri geri oynat">
 <div id="timelineCharacters" class="timeline-characters" aria-hidden="true"><span>●</span><span>●</span></div>
 <div class="timeline-actions"><button id="timelinePlay" type="button">▶ OYNAT</button><span class="mono">SÜREYİ İLERLET / KARŞILAŞTIR</span></div></div>
-<p class="smallnote">İki örnek de aynı toplam ceza içindir. Çizelge koşullu salıverilme eşiklerini gösterir; gerçek cezaevinden çıkış tarihi değildir.</p></div><button type="button" class="compare-toggle" id="compareToggle" aria-expanded="false">AYNI CEZAYI KARŞILAŞTIR ↗</button><button type="button" class="next" id="next">SONRAKİ DOSYA →</button><button type="button" class="surprise-file" id="surpriseFile">RASTGELE DOSYA ↗</button></div></div><div class="right-bottom"><strong id="state">17 DOSYA / TAHMİN ET</strong><div class="progress" id="dots"></div></div></div></section>
+<p class="smallnote">İki örnek de aynı toplam ceza içindir. Çizelge koşullu salıverilme eşiklerini gösterir; gerçek cezaevinden çıkış tarihi değildir.</p></div><button type="button" class="compare-toggle" id="compareToggle" aria-expanded="false">AYNI CEZAYI KARŞILAŞTIR ↗</button><button type="button" class="next" id="next">SONRAKİ DOSYA →</button><button type="button" class="surprise-file" id="surpriseFile">RASTGELE DOSYA ↗</button></div></div><div class="right-bottom"><strong id="state">22 DOSYA / TAHMİN ET</strong><div class="progress" id="dots"></div></div></div></section>
 <footer class="foot"><span class="disclaimer">Yalnızca varsayımsal eğitim senaryosu. Gerçek infaz/tahliye hesabı değildir.</span><span class="mono"><a href="/" aria-label="Ana sayfa">← ÇIKIŞ</a></span></footer>
 </main><script>
 const cases=[
+{"title":"Kirayı geciktirdi","years":0,"ratio":0,"special":"noCrime","description":"Kiracı kirasını zamanında yatırmadı. Ev sahibine tehdit, sahte belge veya dolandırıcılık gibi başka bir eylem yok.","law":"Türk Borçlar Kanunu m.315: kira bedelinin ödenmemesi için ihtar ve fesih koşulları düzenlenir. Tek başına kira borcunu geciktirmek hapis cezası doğurmaz."},
+{"title":"İşten istifa etti","years":0,"ratio":0,"special":"noCrime","description":"Bir çalışan, ihbar süresine uymadan işten ayrıldı. İşverene zarar vermek için başka bir suç işlemedi.","law":"4857 sayılı İş Kanunu m.17: bildirim sürelerine uyulmaması tazminat sonuçları doğurabilir; bu nedenle kendiliğinden hapis cezası verilmez."},
+{"title":"Komşusuna selam vermedi","years":0,"ratio":0,"special":"noCrime","description":"Apartmanda karşılaştığı komşusunu görmezden geldi. Hakaret, tehdit veya taciz yok.","law":"5237 sayılı Türk Ceza Kanunu: Sırf birine selam vermemek suç olarak tanımlanmamıştır. Hakaret ve tehdit ayrı davranışlardır."},
+{"title":"Mesaja cevap vermedi","years":0,"ratio":0,"special":"noCrime","description":"Ev sahibi, site yöneticisinin WhatsApp mesajını gördü ama cevap vermedi. Başka bir yükümlülük ihlali yok.","law":"634 sayılı Kat Mülkiyeti Kanunu: Yöneticiye WhatsApp mesajı üzerinden cevap vermemek tek başına suç olarak düzenlenmemiştir; kanuni yükümlülükler ayrıca değerlendirilir."},
+{"title":"Online siparişi iade etti","years":0,"ratio":0,"special":"noCrime","description":"Alıcı, cayma hakkı kapsamındaki standart bir ürünü süresi içinde satıcıya iade etti. Aldatma veya hile yok.","law":"6502 sayılı Kanun m.48 ve Mesafeli Sözleşmeler Yönetmeliği: Koşulları sağlanan cayma hakkının kullanılması suç değildir; istisnalar bulunur."},
 {title:"Site toplantısına gitmedi",years:0,ratio:0,special:"noCrime",description:"Site WhatsApp grubunda mesaj: ‘Kat malikleri toplantısına gelmeyenlere ceza var!’ Ev sahibi toplantıya gitmemiş. Başka bir eylem veya borç ihlali yok.",law:"634 sayılı Kat Mülkiyeti Kanunu m.29–30 toplantıyı ve karar yeter sayısını düzenler. Sırf toplantıya katılmamak nedeniyle hapis cezası ya da kanunda öngörülmüş otomatik para cezası yoktur. Katılmayan malik de geçerli kararlardan etkilenebilir."},
 {title:"Genel infaz rejimi",years:6,ratio:.5,description:"İstisna kapsamına girmeyen bir suçtan 6 yıl kesinleşmiş süreli hapis cezası. Tek mahkûmiyet, yetişkin, iyi hâl.",law:"5275 m.107/2 — süreli hapislerde genel kural 1/2."},
 {title:"Kasten öldürme",years:24,ratio:2/3,description:"TCK m.81 kapsamında 24 yıl süreli hapis cezası. Yetişkin ve iyi hâlli; başka mahkûmiyet yok.",law:"5275 m.107/2-a — kasten öldürmede 2/3 istisnası."},
@@ -265,18 +270,6 @@ const cases=[
 {"title":"Kasten öldürme","years":18,"ratio":0.6666666666666666,"description":"TCK m.81 kapsamındaki süreli hapis için 18 yıllık kesinleşmiş ceza varsayımı.","law":"5275 m.107/2-a — TCK m.81 için 2/3."}
 ];
 let index=0,guess=3,score=0,solved=false;let visited=new Set();
-let dailyMode=false,dailyIndex=0,dailyScore=0,dailyLocked=false;
-const dailyCases=[
- {title:"Site toplantısına gitmedi",story:"Yönetici WhatsApp'tan ‘Toplantıya gelmeyene ceza var’ dedi. Ev sahibi gelmedi; başka ihlal yok.",type:0,verdict:"YATARI YOK.",explanation:"Sırf kat malikleri toplantısına katılmamak suç değil. Geçerli kurul kararlarının sonuçları ise ayrıca bağlayıcı olabilir.",law:"634 sayılı Kat Mülkiyeti Kanunu m.29–30",url:"https://www.mevzuat.gov.tr/mevzuatmetin/1.5.634.pdf"},
- {title:"Gece gürültü yaptı",story:"Komşu gece yarısı yüksek sesli müzik açıp bütün katı rahatsız etti. Başka bir eylem yok.",type:1,verdict:"İDARİ YAPTIRIM OLABİLİR.",explanation:"Başkalarının huzur ve sükûnunu bozacak gürültü Kabahatler Kanunu m.36 kapsamında idari para cezasına yol açabilir. Israrlı, özel amaçlı taciz varsa farklı suç hükümleri ayrıca gündeme gelebilir.",law:"5326 sayılı Kabahatler Kanunu m.36",url:"https://mevzuat.mturkoglu.av.tr/belge/5326/madde/36"},
- {title:"Eski sevgiliyi sürekli aradı",story:"Bir kişi sırf karşı tarafın huzurunu bozmak için, istemediği halde günlerce ısrarla arıyor.",type:2,verdict:"SUÇ OLUŞABİLİR.",explanation:"Sırf huzur ve sükûnu bozma maksadıyla ısrarla telefon etmek TCK m.123 kapsamına girebilir. Şikâyet ve somut olayın unsurları önemlidir.",law:"5237 sayılı TCK m.123",url:"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
- {title:"Arkadaşının hesabına girdi",story:"Arkadaşının rızası olmadan hesabının şifresini kullanıp özel hesabına giriş yaptı.",type:2,verdict:"SUÇ OLUŞABİLİR.",explanation:"Hukuka aykırı olarak bilişim sistemine girmek TCK m.243 kapsamında değerlendirilebilir. Suçun tüm unsurları ayrıca incelenir.",law:"5237 sayılı TCK m.243",url:"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
- {title:"Özel mesajları yayımladı",story:"İki kişi arasındaki özel yazışmaları izinsiz şekilde herkese açık bir hesaptan yayımladı.",type:2,verdict:"SUÇ OLUŞABİLİR.",explanation:"Haberleşme içeriklerinin hukuka aykırı ifşası TCK m.132 kapsamında suç oluşturabilir.",law:"5237 sayılı TCK m.132",url:"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
- {title:"Komşuya bir kez telefon etti",story:"Komşusuna gündüz vakti yanlış numara nedeniyle bir kez telefon etti. Konuşma hemen bitti.",type:0,verdict:"BU ANLATIMLA SUÇ DEĞİL.",explanation:"Tek seferlik yanlış arama, sırf huzur bozma amacıyla ısrarlı arama unsurunu karşılamaz. TCK m.123 için özel amaç ve ısrar önemlidir.",law:"5237 sayılı TCK m.123",url:"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
- {title:"Gece kapıya gelip takip etti",story:"Ayrıldığı kişinin istemediğini bilmesine rağmen günlerce evinin önünde bekleyerek ciddi güvenlik endişesi yaratıyor.",type:2,verdict:"SUÇ OLUŞABİLİR.",explanation:"Belirtilen koşullarda ısrarlı takip, TCK m.123/A kapsamına girebilir.",law:"5237 sayılı TCK m.123/A",url:"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
- {title:"Apartman grubunu sessize aldı",story:"Kat malikleri WhatsApp grubunu sessize aldı. Mesajları okumuyor; başka yükümlülük ihlali yok.",type:0,verdict:"YATARI YOK.",explanation:"Bir mesajlaşma grubunu sessize almak tek başına hapis cezası gerektiren bir suç değildir. Site yönetimine ilişkin yükümlülükler ayrı konudur.",law:"634 sayılı Kat Mülkiyeti Kanunu m.29–30",url:"https://www.mevzuat.gov.tr/mevzuatmetin/1.5.634.pdf"}
-];
-
 const $=id=>document.getElementById(id);
 const format=n=>Number.isInteger(n)?n.toLocaleString('tr-TR'):n.toLocaleString('tr-TR',{maximumFractionDigits:1});
 // All scenarios assume an offense committed after 4 June 2025, one final
@@ -291,13 +284,12 @@ const legalExample=c=>{
  return {threshold,ds:threshold-illustrative,illustrative,minimumDays};
 };
 function draw(){
- if(dailyMode){renderDaily();return;}
  if(typeof stopPlayback==='function')stopPlayback();
  const c=cases[index],max=Math.max(c.years,2);
  $('counter').textContent=String(index+1).padStart(2,'0')+' / '+String(cases.length).padStart(2,'0');
  $('caseNo').textContent=String(index+1).padStart(2,'0');$('crime').textContent=c.title;
- $('facts').textContent=c.special==='noCrime'?'Site WhatsApp grubunda “Toplantıya gelmeyene ceza var” yazıldı. Ev sahibi gitmedi. Başka ihlal yok.':c.description+' Suç tarihi: 2026 (varsayım).';
- $('sentence').innerHTML=c.special==='noCrime'?'CEZA VAR MI? <small>Site toplantısına katılmadı</small>':c.years+' yıl <small>hapis cezası</small>';
+ $('facts').textContent=c.description+(c.special==='noCrime'?'':' Suç tarihi: 2026 (varsayım).');
+ $('sentence').innerHTML=c.special==='noCrime'?'CEZA VAR MI? <small>Gündelik hayat dosyası</small>':c.years+' yıl <small>hapis cezası</small>';
  $('slider').max=c.special==='noCrime'?5:max;$('slider').step='.5';
  guess=c.special==='noCrime'?1:Math.min(max,Math.round(c.years*.5*2)/2);setGuess(guess);
  $('compareToggle').hidden=false;
@@ -324,10 +316,10 @@ $('reveal').onclick=()=>{
  $('legal').textContent='*Kesin yatar süresi değil. '+c.law+' 5275 m.105/A kapsamında denetimli serbestlik ancak şartlar ve infaz hâkimi kararıyla mümkündür. 4 Haziran 2025 ve sonrasındaki suçlar için m.105/A/1 uyarınca en az 5 gün ve ilgili kurumda geçirilmesi gereken sürenin en az 1/10’u şartı dikkate alınır (geçiş hükümleri saklıdır). Açık cezaevi koşulları, geçici hükümler, mahsup ve başka cezalar ayrıca etkilidir.';
  if(c.special==='noCrime'){
   $('resultBig').innerHTML='0 <span>gün*</span>';
-  $('resultLine').innerHTML='<strong>YATARI YOK.</strong> Çünkü site toplantısına gitmemek, tek başına hapis cezası gerektiren bir suç değil. Gruba yazılan “ceza var” mesajı bir ceza hükmü oluşturmuyor.';
+  $('resultLine').innerHTML='<strong>YATARI YOK.</strong> Bu olay, anlatıldığı haliyle hapis cezası gerektiren bir suç değil. Yine de sözleşmeden, yönetim kararından veya başka kanundan kaynaklanan hukuki sonuçlar olabilir.';
   $('inside').style.width='0%';$('outside').style.width='0%';$('end').style.width='100%';
-  $('legal').textContent=c.law+' Toplantıya gitmemek ile aidat veya kurul kararlarından doğan yükümlülükleri ihlal etmek farklı hukuki meselelerdir.';
-  $('feedback').textContent=diff<.01?'TAM İSABET':'WHATSAPP GRUBU ABARTMIŞ';
+  $('legal').textContent=c.law+' Yalnızca olayda belirtilen varsayımlar değerlendirilmiştir.';
+  $('feedback').textContent=diff<.01?'TAM İSABET':'CEZA DİYE DUYDUN, SUÇ DEĞİL';
  }
  $('compareToggle').hidden=c.special==='noCrime';
  $('next').textContent=index===cases.length-1?'YENİDEN OYNA ↺':'SONRAKİ DOSYA →';
@@ -369,33 +361,5 @@ $('surpriseFile').onclick=()=>{const remaining=cases.map((_,i)=>i).filter(i=>i!=
 
 
 
-const dailyLabels=['SUÇ DEĞİL','KABAHAT / İDARİ YAPTIRIM','SUÇ OLUŞABİLİR'];
-function renderDaily(){
- const c=dailyCases[dailyIndex];dailyLocked=false;
- document.body.classList.remove('result-mode');
- $('modeCases').classList.remove('active');$('modeDaily').classList.add('active');
- $('guess').hidden=true;$('guess').style.display='none';$('result').classList.remove('show');$('result').style.display='none';
- $('dailyPlay').hidden=false;$('dailyAnswer').hidden=true;$('dailyNext').hidden=true;
- $('crime').textContent=c.title;$('facts').textContent=c.story;$('sentence').innerHTML='<span style="font-size:.65em">SENCE CEZASI VAR MI?</span>';
- $('caseNo').textContent=String(dailyIndex+1).padStart(2,'0');
- $('counter').textContent=String(dailyIndex+1).padStart(2,'0')+' / '+String(dailyCases.length).padStart(2,'0');
- $('state').textContent='DOĞRU TAHMİN: '+dailyScore+' / '+dailyCases.length;
- $('dots').innerHTML='<span class="progress-count">'+(dailyIndex+1)+' / '+dailyCases.length+'</span><span class="progress-meter"><i style="width:'+((dailyIndex+1)/dailyCases.length*100)+'%"></i></span>';
- $('dailyOptions').innerHTML='';
- dailyLabels.forEach((label,i)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.onclick=()=>answerDaily(i);$('dailyOptions').appendChild(btn)});
-}
-function answerDaily(choice){
- if(dailyLocked)return;dailyLocked=true;const c=dailyCases[dailyIndex];
- if(choice===c.type)dailyScore++;
- Array.from($('dailyOptions').children).forEach((b,i)=>{b.disabled=true;b.classList.add(i===c.type?'correct':i===choice?'wrong':'')});
- $('dailyVerdict').textContent=c.verdict;$('dailyExplanation').textContent=c.explanation;
- $('dailySource').textContent=c.law+' ↗';$('dailySource').href=c.url;
- $('dailyAnswer').hidden=false;$('dailyNext').hidden=false;
- $('dailyNext').textContent=dailyIndex===dailyCases.length-1?'YENİDEN OYNA ↺':'SONRAKİ OLAY →';
- $('state').textContent='DOĞRU TAHMİN: '+dailyScore+' / '+dailyCases.length;
-}
-$('modeDaily').onclick=()=>{stopPlayback();dailyMode=true;renderDaily();};
-$('modeCases').onclick=()=>{dailyMode=false;$('dailyPlay').hidden=true;$('modeDaily').classList.remove('active');$('modeCases').classList.add('active');$('result').style.display='';draw();};
-$('dailyNext').onclick=()=>{if(dailyIndex===dailyCases.length-1){dailyIndex=0;dailyScore=0}else dailyIndex++;renderDaily();};
 draw();
 </script><script src="/share-kit.js?v=1" defer></script></body></html>
