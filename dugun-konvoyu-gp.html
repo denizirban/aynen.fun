@@ -49,7 +49,7 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 .pad button.special{min-width:115px;background:#2d5480;color:#ffedbc;border-color:#92b5dc;font-size:12px}
 .pad button.special.active{background:#fff0a0;color:#563e21;border-color:#fdd071}
 .hud-ready.ready{color:#ffed77;text-shadow:0 0 10px #fbb85c}
-.hud-stage{font-weight:500}
+.hud-stage{font-weight:500}.hud-goal{color:#fff0a7;font-size:inherit}.hud-goal.done{color:#92ffbc}
 #combo-float{position:absolute;bottom:23%;left:50%;z-index:2;transform:translate(-50%,0);pointer-events:none;min-width:100px;text-align:center;font-family:"DM Mono",monospace;font-size:clamp(14px,1.6vw,22px);color:#fff3cb;text-shadow:1px 2px #652f4a;opacity:0;transition:opacity .17s}
 #combo-float.on{opacity:1}
 .frame{background:#163367}
@@ -77,7 +77,7 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 <div class="metric lap"><span class="metric-label">ETAP</span><span class="metric-value" id="h-lap">1/3</span></div>
 <div class="metric speed"><span class="metric-label">HIZ</span><span class="metric-value" id="h-speed">130 km</span></div>
 <div class="metric convoy"><span class="metric-label">KONVOY</span><span class="metric-value" id="h-convoy">04 ♥♥♥</span></div>
-</div><div class="hud-sub"><span class="hud-stage" id="h-stage">GELİN ALMA · MAHALLE</span><span class="chaos-wrap">KAOS <span class="chaos-track"><i id="h-chaos"></i></span></span><span class="hud-ready" id="h-horn">KORNA HAZIR</span></div></div>
+</div><div class="hud-sub"><span class="hud-stage" id="h-stage">GELİN ALMA · MAHALLE</span><span class="hud-goal" id="h-goal">HEDEF 7 ARAÇ</span><span class="chaos-wrap">KAOS <span class="chaos-track"><i id="h-chaos"></i></span></span><span class="hud-ready" id="h-horn">KORNA HAZIR</span></div></div>
 <div class="banner" id="banner" role="status" aria-live="polite"></div><div id="combo-float" aria-live="off"></div>
 <div class="overlay" id="overlay">
 <section class="card" id="menu">
@@ -109,7 +109,7 @@ const overlay=document.getElementById("overlay"),menu=document.getElementById("m
 let mode="menu",muted=false,audio=null,last=0,seconds=0,objects=[],spawnTimer=0,nextId=1,noticeTimer=0,flash=0,runSeed=0;
 const input={left:false,right:false,brake:false,boost:false};
 const dortluBtn=document.getElementById("dortlu"),comboFloat=document.getElementById("combo-float");
-let lastLap=1,comboFloatTime=0,particles=[],pulse=0,rumble=0,helpShown=false;
+let lastLap=1,comboFloatTime=0,particles=[],pulse=0,rumble=0,helpShown=false,goalUnlocked=[false,false,false];
 let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const rand=(a,b)=>a+Math.random()*(b-a);
@@ -122,7 +122,7 @@ function announce(msg,forSeconds){banner.textContent=msg;banner.classList.add("s
 function setMenu(html){overlay.hidden=false;menu.innerHTML=html}
 function start(){
 g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
-lastLap=1;comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[{id:nextId++,z:.54,lane:-.72,originalLane:-.72,type:"escort",variant:2,joined:true,passed:false,wobble:0,speed:.72},{id:nextId++,z:.69,lane:.72,originalLane:.72,type:"escort",variant:1,joined:true,passed:false,wobble:0,speed:.74},{id:nextId++,z:.86,lane:0,originalLane:0,type:"escort",variant:0,joined:true,passed:false,wobble:0,speed:.74}];seconds=0;spawnTimer=.5;runSeed=Math.random()*10000;flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",2);
+lastLap=1;goalUnlocked=[false,false,false];comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=Math.random()*10000;flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",2);
 }
 function bestScore(){try{return Number(localStorage.getItem("dugun-gp-best")||0)}catch(e){return 0}}
 function saveBest(){try{if(g.score>bestScore())localStorage.setItem("dugun-gp-best",String(g.score))}catch(e){}}
@@ -200,6 +200,12 @@ function update(dt){
   fanfare();makeConfetti(.48,0,28);
  }
  g.chaos=clamp(g.chaos+dt*(.30+g.lap*.12),0,100);
+ const goals=[7,10,14];
+ if(!goalUnlocked[g.lap-1]&&g.convoy>=goals[g.lap-1]){
+    goalUnlocked[g.lap-1]=true;g.score+=750;g.time+=4;g.chaos=Math.max(0,g.chaos-8);
+    announce(["AKRABALAR TOPLANDI! +750","KONVOY TAM KADRO! +750","SÜLALENİN HEPSİ BURADA! +750"][g.lap-1],2.1);
+    makeConfetti(.34,0,38);fanfare();
+ }
  if(g.comboClock>0){g.comboClock-=dt;if(g.comboClock<=0)g.combo=0;}
  if(g.distance>=2280){g.score+=Math.floor(g.time)*25+g.hearts*220+g.convoy*70;finish(true);return}
  if(g.time<=0){finish(false);return}
@@ -238,11 +244,12 @@ function update(dt){
  dortluBtn.textContent=g.dortluOn>0?"⚡ AÇIK":g.dortluCD>0?"DÖRTLÜ "+Math.ceil(g.dortluCD):"⚡ DÖRTLÜ";
  updateHud();
 }
-const scoreEl=document.getElementById("h-score"),timeEl=document.getElementById("h-time"),lapEl=document.getElementById("h-lap"),speedEl=document.getElementById("h-speed"),convoyEl=document.getElementById("h-convoy"),stageEl=document.getElementById("h-stage"),chaosEl=document.getElementById("h-chaos"),hornEl=document.getElementById("h-horn");
+const goalEl=document.getElementById("h-goal"),scoreEl=document.getElementById("h-score"),timeEl=document.getElementById("h-time"),lapEl=document.getElementById("h-lap"),speedEl=document.getElementById("h-speed"),convoyEl=document.getElementById("h-convoy"),stageEl=document.getElementById("h-stage"),chaosEl=document.getElementById("h-chaos"),hornEl=document.getElementById("h-horn");
 function updateHud(){
 scoreEl.textContent=String(g.score).padStart(6,"0");timeEl.textContent=Math.max(0,Math.ceil(g.time));lapEl.textContent=g.lap+"/3";
 speedEl.textContent=Math.round(g.speed)+" km";convoyEl.textContent=String(g.convoy).padStart(2,"0")+"  "+"♥".repeat(g.hearts);
 stageEl.textContent=["GELİN ALMA · MAHALLE","E-5 · KONVOY TRAFİĞİ","DÜĞÜN SALONU · SON ÇIKIŞ"][g.lap-1];
+goalEl.textContent=goalUnlocked[g.lap-1]?"HEDEF TAMAM ✓":"HEDEF "+[7,10,14][g.lap-1]+" ARAÇ";goalEl.classList.toggle("done",goalUnlocked[g.lap-1]);
 chaosEl.style.width=g.chaos+"%";const target=objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.76&&o.z>.14&&Math.abs(o.lane-g.lane)<.7);
 hornEl.textContent=g.hornCD>0?"KORNA DOLUYOR":target?"YAKINDA ARAÇ! KORNA":"KORNA HAZIR";
 hornEl.classList.toggle("ready",target&&g.hornCD===0);
@@ -296,19 +303,28 @@ rect(0,114,W,156,stage===2?"#57952a":"#4e9a31");
 for(let y=115;y<270;y+=12)rect(0,y,W,2,(Math.floor(y/12)%2)?"#4f972b":"#6eaf3c");
 }
 function road(){
-for(let y=93;y<270;y+=2){
-const t=(y-93)/177,cx=roadCenter(y),half=roadHalf(y),w=Math.max(2,t*8),wig=Math.floor(g.distance*.025+(1-t)*15);
-const grass=((wig%3+3)%3===0)?"#4fa226":"#368a1e";
-rect(0,y,480,2,grass);
-rect(cx-half-8*t,y,half*2+16*t,2,"#c7c8b5");
-rect(cx-half-6*t,y,half*2+12*t,2,wig%2?"#e9eeec":"#e54341");
-rect(cx-half,y,half*2,2,"#353d44");
-rect(cx-half+4*t,y,Math.max(1,1+t*1.4),2,"#f4f0d2");
-rect(cx+half-6*t,y,Math.max(1,1+t*1.4),2,"#f4f0d2");
-if(wig%3!==0){const lineW=Math.max(1,t*2.8);rect(cx-half/3,y,lineW,2,"#d6dcd4");rect(cx+half/3,y,lineW,2,"#d6dcd4")}
+for(let y=93;y<270;y+=1.5){
+ const t=(y-93)/177,cx=roadCenter(y),half=roadHalf(y);
+ const depth=1/(t+.11);
+ const wig=Math.floor(g.distance*.105+depth*5.1);
+ const stripe=Math.floor(g.distance*.18+depth*8.0);
+ const grass=(wig%3===0)?"#519e2a":"#42942c";
+ rect(0,y,W,2,grass);
+ rect(cx-half-8*t,y,half*2+16*t,2,"#d9d5bf");
+ rect(cx-half-6*t,y,half*2+12*t,2,(stripe%2===0)?"#fff4e1":"#e43e47");
+ rect(cx-half,y,half*2,2,y%7<2?"#39434c":"#333d45");
+ rect(cx-half+3*t,y,Math.max(1,1+t*1.4),2,"#fff6de");
+ rect(cx+half-5*t,y,Math.max(1,1+t*1.4),2,"#fff6de");
+ if((wig%4+4)%4!==0){
+   rect(cx-half/3,y,Math.max(1,t*3.5),2,"#f4f2e7");
+   rect(cx+half/3,y,Math.max(1,t*3.5),2,"#f4f2e7");
+ }
+ if(t>.6&&((stripe%7+7)%7)===0){
+   const fleck=Math.sin(y*31.1+g.distance*.15)*31;
+   rect(cx+fleck*t,y,Math.max(1,t*2),1,"#667174");
+ }
 }
 }
-
 function foliage(){
 for(let i=0;i<30;i++){
  const z=((i/30+g.distance*.00019)%1);
@@ -506,6 +522,35 @@ function leadCar(){
  if(mode==="playing"&&Math.sin(seconds*4)>-.25){txt("♥",x+19,y-29,9,"#ffe1e7","center");txt("♪",x-18,y-16,8,"#fff2b8","center")}
 }
 
+
+function followerConvoy(){
+ // The recruited cars remain visible in a moving, ribbon-decorated procession.
+ const count=Math.min(6,Math.max(0,g.convoy-1));
+ for(let i=count-1;i>=0;i--){
+   const slot=i%3,z=.23+Math.floor(i/3)*.18+(slot%2)*.085;
+   const lane=slot===0?-.73:slot===1?.73:0;
+   const y=roadY(z)+Math.sin(seconds*1.3+i)*.8;
+   const half=roadHalf(y),x=roadCenter(y)+lane*half*.85;
+   const width=5+46*Math.pow(1-z,1.5);
+   carSprite(x,y,width,"escort",i%4,true,false);
+ }
+}
+function effects(){
+ // Subpixel confetti uses the 960px raster for sharper small accents.
+ c.save();c.setTransform(1,0,0,1,0,0);
+ for(const p of particles){rect(p.x*2,p.y*2,Math.max(2,3*p.life),Math.max(2,4*p.life),p.color)}
+ if(pulse>0){
+  const x=(240+g.lane*116+Math.sin(g.distance*.0033)*32)*2,y=475;
+  c.strokeStyle="rgba(255,248,184,"+(pulse/.42*.8)+")";c.lineWidth=3;
+  c.beginPath();c.ellipse(x,y,(.42-pulse)*250+30,(.42-pulse)*75+9,0,0,Math.PI*2);c.stroke();
+ }
+ if(g.dortluOn>0){
+  const x=(240+g.lane*116+Math.sin(g.distance*.0033)*32)*2;
+  if(Math.floor(seconds*7)%2===0){rect(x-61,459,13,7,"#ffb627");rect(x+48,459,13,7,"#ffb627")}
+ }
+ if(input.boost&&g.speed>145){for(let i=0;i<9;i++){const xx=100+i*93%760,yy=390+(i*19+seconds*320)%130;rect(xx,yy,2,9,"#ffffff38")}}
+ c.restore();
+}
 function vehicles(){
 const sorted=objects.slice().sort((a,b)=>b.z-a.z);
 for(const o of sorted){
@@ -539,12 +584,12 @@ if(input.brake){rect(x-25+shake,236,11,5,"#ffdd68");rect(x+14+shake,236,11,5,"#f
 }
 
 function draw(){
-background();road();foliage();fineScene();weddingRoadside();bannerArch();decorations();leadCar();vehicles();playerCar();
+background();road();foliage();fineScene();weddingRoadside();bannerArch();decorations();leadCar();followerConvoy();vehicles();playerCar();effects();
 if(mode==="menu"){rect(162,65,156,18,"#ffedab");txt("DÜĞÜN KONVOYU GP",240,78,10,"#ad3242","center")}
 if(flash>0){c.fillStyle="rgba(255,245,200,"+(flash*.65)+")";c.fillRect(0,40,W,H-40)}
 if(mode==="pause"){rect(0,0,480,270,"rgba(9,13,35,.28)")}
 }
-function frame(now){const dt=Math.min((now-(last||now))/1000,.05);last=now;if(mode==="playing")update(dt);draw();requestAnimationFrame(frame)}
+function frame(now){const dt=Math.min((now-(last||now))/1000,.05);last=now;if(mode==="playing")update(dt);c.setTransform(2,0,0,2,0,0);draw();requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
 function hold(id,key){
 const el=document.getElementById(id);
