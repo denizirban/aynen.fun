@@ -217,7 +217,27 @@ const hazards=[
 {type:'barikat',width:108,height:76,label:'ÇALIŞMA',note:'Çalışma var. Ne çalışması, belli değil.'},
 {type:'marti',width:69,height:61,label:'MARTI',note:'Martı simidi aldı.'},{type:'motor',width:122,height:77,label:'MOTOR',note:'Motor kaldırıma park etmiş.'},
 {type:'kasa',width:94,height:70,label:'MEYVE KASASI',note:'Manav kasaları biraz taştı.'},
-{type:'saksi',width:70,height:90,label:'SAKSI',note:'Çiçekçi dükkânı bütün sokağa yayıldı.'}
+{type:'saksi',width:70,height:90,label:'SAKSI',note:'Çiçekçi dükkânı bütün sokağa yayıldı.'},
+{type:'damacana',width:64,height:80,tier:1,label:'DAMACANA',note:'Damacana gelmiş. Yol kendisinin.'},
+{type:'sandalye',width:75,height:82,tier:1,label:'SANDALYE',note:'Sandalye dışarı alınmış.'},
+{type:'hali',width:106,height:52,tier:2,label:'HALI',note:'Halı havalanacaktı. Yere inmiş.'},
+{type:'tasinma',width:105,height:88,tier:2,label:'TAŞINMA',note:'Taşınma var. Bütün bina taşınıyor.'},
+{type:'kurye',width:98,height:87,tier:2,label:'KURYE',note:'Kurye çantasını bırakıp gitmiş.'},
+{type:'pazararabasi',width:95,height:86,tier:2,label:'PAZAR ARABASI',note:'Pazar arabası yol vermez.'},
+{type:'file',width:68,height:60,tier:2,label:'PAZAR FİLESİ',note:'File kaldırıma bırakılmış.'},
+{type:'meyve',width:88,height:67,tier:2,label:'MEYVE KASASI',note:'Meyveler de trafiğe katılmış.'},
+{type:'tente',width:117,height:88,tier:3,label:'SEYYAR TENTE',note:'Sokakta yeni bir dükkân açılmış.'},
+{type:'kablo',width:117,height:27,tier:2,label:'KABLO',note:'Kablo nereden geliyor bilinmiyor.'},
+{type:'fayans',width:93,height:53,tier:2,label:'FAYANS',note:'Kaldırım yenileniyor. Şimdilik yığılmış.'},
+{type:'boya',width:79,height:65,tier:2,label:'BOYA KOVASI',note:'Boya henüz kurumamış.'},
+{type:'zincir',width:111,height:50,tier:2,label:'ZİNCİR',note:'Giriş kapatıldı. Çıkış yok.'},
+{type:'masa',width:100,height:84,tier:2,label:'ÇAY MASASI',note:'Masa yoldan önemli.'},
+{type:'doner',width:75,height:86,tier:3,label:'DÖNER TEZGAHI',note:'Döner tezgâhı dışarı taşmış.'},
+{type:'cay',width:82,height:73,tier:2,label:'ÇAY TEPSİSİ',note:'Çaylar burada bekliyor.'},
+{type:'tabela',width:82,height:84,tier:2,label:'DÜKKÂN TABELASI',note:'İçeri buyurun. Yer kalmadı.'},
+{type:'bisiklet',width:112,height:72,tier:2,label:'BİSİKLET',note:'Bisikleti buraya kilitlemişler.'},
+{type:'konteyner',width:118,height:93,tier:3,label:'ÇÖP KONTEYNERİ',note:'Çöp konteyneri kaldırımda.'},
+{type:'camasirlik',width:115,height:86,tier:3,label:'KURUTMALIK',note:'Çamaşırlar sokakta kuruyor.'}
 ];
 let previous='',cityStateIndex=-1,cityPhase=-1,cityEventTime=0,incidentCount=0,visualTick=0,hudTick=0,mode='endless',seed=0,randomState=1,dailyStamp='',targetMeters=0,startedBest=0,missionIndex=0,missionProgress=0,missionStartMeters=0,missionDoneTimer=0,spawnCount=0,nearMax=0,tricks=0,cleared=0,maxCombo=0,unlocked=[],metTarget=false,passedRecord=false;
 const allStickers=['DUBA USTASI','MARTI NÖBETİ','TAKSİ DİKKAT','KAZI BİTMEZ','SİMİT HATTI'];
@@ -569,20 +589,20 @@ function update(dt){
  }
  invuln=Math.max(0,invuln-dt);
  for(const h of obstacles){
-  h.x-=dx;
+  h.x-=dx;if(h.shiver)h.shiver=Math.max(0,h.shiver-dt*2.5);
   const left=h.x-h.width*.5+7,right=h.x+h.width*.5-7;
   const overlap=right>player.x-20&&left<player.x+21;
   const air=-player.y;
   if(overlap&&air>h.height-4&&air<h.height+43)h.near=true;
   if(!h.hit&&invuln===0&&overlap&&air<Math.max(9,h.height-17)){
-   h.hit=true;invuln=1.5;shake=10;lives--;streak=0;crashReason=h.note;streakLabel();
+   h.hit=true;h.shiver=1;invuln=1.5;shake=10;lives--;streak=0;crashReason=h.note;streakLabel();
    player.vy=Math.min(player.vy,-245);player.onGround=false;
    makeParticle(player.x+28,GROUND+player.y-20,'#d7594b',12);sfx('hit');
    if(lives<=0){updateHud();finish();return}
    toast(h.note);
   }
   if(!h.passed&&right<player.x-22){
-   h.passed=true;
+   h.passed=true;h.shiver=.48;
    if(!h.hit){
     if(!player.onGround)player.airClears++;
     const close=h.near?85:0;
@@ -824,6 +844,101 @@ function foreground(){
  }
 }
 
+
+/* More small recognisable objects than new rules: every obstacle is a low, readable silhouette. */
+function drawUrbanObstacle(h){
+ const t=h.type;
+ const clay=(x,y,w,hh,c)=>R(x,y,w,hh,3,c,'#56463d',2.5);
+ const stick=(x,y,X,Y,c='#624b3e',th=4)=>line(x,y,X,Y,c,th);
+ const wheel=(x,y,r=11)=>{circle(x,y,r,'#343532','#191e1c',3);circle(x,y,Math.max(3,r*.35),'#b7aca0')};
+ if(t==='damacana'){
+  clay(-26,-65,52,61,'#70a7b0');R(-18,-78,36,14,5,'#84b8bf','#526f74',3);
+  R(-11,-83,22,8,2,'#34667d');R(-20,-42,40,12,3,'#e7e7d1');
+  line(-14,-58,-16,-21,'#d4e8d78a',4);
+ }else if(t==='sandalye'){
+  clay(-35,-82,65,15,'#bf624b');clay(-30,-48,62,14,'#cd775b');
+  stick(-25,-35,-30,0,'#985044',7);stick(25,-35,30,0,'#985044',7);
+  stick(-26,-74,-26,-38,'#a15b45',6);stick(27,-70,27,-34,'#a15b45',6);
+ }else if(t==='hali'){
+  poly([[-50,-17],[-40,-43],[29,-45],[50,-27],[53,-10],[-47,-8]],'#b24e62','#704d50',3);
+  for(let i=0;i<5;i++)stick(-29+i*13,-41,-23+i*13,-9,i%2?'#d4ac7a':'#f0c69b',3);
+  circle(35,-25,10,'#ae7770','#7d4e56',3);
+ }else if(t==='tasinma'){
+  clay(-47,-34,52,33,'#c9a076');clay(-4,-48,47,47,'#bb885f');clay(-32,-88,55,54,'#d6b08a');
+  R(-10,-85,13,51,0,'#ecce9c');stick(-30,-75,12,-75,'#9a704f',3);txt('BU TARAF',-4,-54,9,'#78563e');
+ }else if(t==='kurye'){
+  clay(-39,-82,78,71,'#db9b50');R(-44,-84,88,14,6,'#f2b868','#76503d',3);
+  R(-26,-56,52,27,4,'#e9c595');txt('KURYE',0,-38,13,'#523c31');R(-32,-12,64,11,3,'#75584d');
+ }else if(t==='pazararabasi'){
+  poly([[-28,-77],[34,-77],[19,-8],[-18,-8]],'#ba667c','#5d4352',3);
+  stick(-32,-75,-39,-86,'#604b47',4);stick(-39,-86,-22,-88,'#604b47',4);
+  for(let i=0;i<3;i++)stick(-23,-58+i*17,26,-58+i*17,'#f0d0ca',3);
+  wheel(-19,1,11);wheel(20,1,11);
+ }else if(t==='file'){
+  poly([[-29,-40],[-18,-58],[17,-56],[31,-6],[-30,-5]],'#7bb0a0','#427065',3);
+  for(let i=0;i<5;i++)stick(-25+i*12,-40,-24+i*12,-8,'#c5e1cc',1.5);
+  stick(-15,-56,0,-68,'#537e76',4);stick(0,-68,16,-56,'#537e76',4);
+  circle(-11,-39,10,'#da9d47');circle(11,-33,10,'#c75e4b');
+ }else if(t==='meyve'){
+  for(let i=0;i<2;i++)clay(-40+i*5,-29-i*28,78,27,'#b88d58');
+  for(let i=0;i<4;i++)circle(-28+i*18,-56-(i%2)*4,11,['#b74f38','#d6ab42','#87a452'][i%3]);
+  for(let i=0;i<4;i++)stick(-35+i*21,-50,-35+i*21,-34,'#8f6b42',2);
+ }else if(t==='tente'){
+  stick(-40,-70,-43,0,'#635147',5);stick(45,-70,42,0,'#635147',5);
+  poly([[-54,-76],[-43,-91],[43,-91],[58,-76]],'#4b805f','#403c37',3);
+  for(let i=0;i<5;i++)poly([[-51+i*22,-77],[-30+i*22,-77],[-30+i*22,-70],[-51+i*22,-70]],i%2?'#f2dfc0':'#bd5e4e');
+  clay(-39,-40,80,37,'#b18355');txt('PAZAR',0,-16,13,'#fff4d5');
+ }else if(t==='kablo'){
+  for(let i=0;i<3;i++){ctx.beginPath();ctx.ellipse(-24+i*26,-8,25,12,0,0,PI);ctx.lineWidth=6;ctx.strokeStyle='#353637';ctx.stroke()}
+  R(38,-11,24,13,2,'#3b3c3e');R(-49,-13,16,13,2,'#db6c40');
+ }else if(t==='fayans'){
+  for(let i=0;i<4;i++)clay(-39+i*6,-8-i*11,76,11,i%2?'#c5b6a0':'#e8dfc9');
+  R(-43,-47,76,6,2,'#b08a67');
+ }else if(t==='boya'){
+  for(const [x,c] of [[-23,'#e4b466'],[17,'#bad6ae']]){
+   clay(x-23,-47,42,44,c);R(x-25,-54,46,11,3,'#ddd2c3');
+   ctx.beginPath();ctx.arc(x-2,-53,15,Math.PI,PI*2);ctx.strokeStyle='#716c68';ctx.lineWidth=3;ctx.stroke();
+  }
+  poly([[-29,-3],[-12,-14],[2,-5],[28,-10],[30,-1]],'#ddd0af');
+ }else if(t==='zincir'){
+  for(let x of [-44,43]){clay(x-8,-51,15,51,'#6c6f70');circle(x,-51,10,'#d6c5a4')}
+  ctx.beginPath();ctx.moveTo(-41,-43);ctx.bezierCurveTo(-24,-13,13,-12,40,-43);
+  ctx.strokeStyle='#55585a';ctx.lineWidth=7;ctx.stroke();ctx.strokeStyle='#a4a7a1';ctx.lineWidth=2;ctx.stroke();
+ }else if(t==='masa'){
+  clay(-44,-67,88,14,'#bd7154');stick(-31,-54,-37,0,'#825c4b',6);stick(30,-54,36,0,'#825c4b',6);
+  R(-25,-83,48,17,4,'#ebe7d7');R(-21,-82,12,12,2,'#b86142');R(10,-82,12,12,2,'#b86142');
+  stick(-6,-66,-6,-75,'#e4d5c2',2);
+ }else if(t==='doner'){
+  clay(-35,-15,72,16,'#5c6667');stick(-28,-15,-28,-83,'#4a4a46',5);stick(29,-15,29,-83,'#4a4a46',5);
+  poly([[0,-84],[19,-64],[11,-27],[-15,-32],[-21,-62]],'#a96d48','#6c463b',3);
+  stick(0,-82,0,-21,'#c8a388',3);R(30,-74,8,58,2,'#d36a49');
+  txt('DÖNER',0,-91,10,'#49372e');
+ }else if(t==='cay'){
+  clay(-37,-20,74,13,'#b6b3a9');stick(-24,-9,-24,0,'#786958',4);stick(25,-9,25,0,'#786958',4);
+  for(let i=0;i<3;i++){let x=-25+i*25;poly([[x-7,-39],[x+7,-39],[x+5,-21],[x-5,-21]],'#b56542','#f2e3d4',2);R(x-9,-22,19,3,2,'#ddd4c1')}
+  R(-35,-43,71,6,3,'#dfd5bb');
+ }else if(t==='tabela'){
+  poly([[-34,-82],[29,-82],[45,-6],[-43,-6]],'#eccb7b','#65523e',4);
+  stick(-30,-73,35,-73,'#b78155',3);txt('AÇIK',0,-56,19,'#6f433b');txt('GİRİŞ',0,-32,15,'#6f433b');
+  R(-44,-6,89,7,3,'#a76d49');
+ }else if(t==='bisiklet'){
+  wheel(-36,-16,22);wheel(38,-16,22);
+  stick(-36,-16,-1,-59,'#aa6050',5);stick(-1,-59,38,-16,'#aa6050',5);stick(-36,-16,20,-46,'#aa6050',5);
+  stick(20,-46,-1,-59,'#aa6050',4);stick(20,-46,32,-70,'#514840',4);
+  stick(26,-70,47,-70,'#373b3b',5);stick(-9,-64,5,-64,'#4c4540',5);
+ }else if(t==='konteyner'){
+  clay(-52,-77,105,69,'#63837c');R(-58,-87,117,15,4,'#4a615d','#334841',3);
+  R(-35,-67,70,34,3,'#8ea9a0');txt('ATIK',0,-44,14,'#f5e8cf');
+  wheel(-37,-3,8);wheel(37,-3,8);R(-38,-19,75,5,2,'#446b63');
+ }else if(t==='camasirlik'){
+  stick(-46,-83,-37,0,'#6d706e',5);stick(46,-83,37,0,'#6d706e',5);
+  stick(-46,-83,46,-83,'#797977',5);stick(-42,-70,42,-70,'#949793',3);
+  poly([[-39,-76],[-10,-76],[-7,-38],[-40,-38]],'#f5ede0','#c0b5aa',2);
+  poly([[0,-75],[35,-75],[40,-31],[-4,-31]],'#a7b7ce','#74787d',2);
+  R(-27,-78,8,5,1,'#d5ab6b');R(17,-78,8,5,1,'#d5ab6b');
+ }
+}
+
 function obstacleDraw(h){
  const x=h.x,y=GROUND,typ=h.type;
  const approach=h.x-player.x;
@@ -837,6 +952,7 @@ function obstacleDraw(h){
  }
 
  ctx.save();ctx.translate(x,y);
+ if(h.shiver)ctx.rotate(Math.sin(elapsed*38)*h.shiver*.035);
  ellipse(0,9,h.width*.56,10,'#28272755');
  if(typ==='duba'){
   poly([[-24,0],[23,0],[9,-65],[-8,-65]],'#e28b46','#623b2b',3);R(-28,-7,57,13,3,'#e57a33','#754d37',2);
@@ -892,6 +1008,8 @@ function obstacleDraw(h){
   ellipse(0,-23,26,16,'#eee9db');circle(14,-40,12,'#eee9db');poly([[21,-42],[46,-37],[22,-32]],'#edae44');
   poly([[-24,-24],[-62,-59],[-23,-44]],'#d5d5cf');circle(17,-42,2,'#333');
   line(-3,-10,-6,0,'#bc8e38',3);line(8,-10,6,0,'#bc8e38',3);
+ }else{
+  drawUrbanObstacle(h);
  }
 
  // A faint soft top-left highlight makes every obstacle a little more tactile.
