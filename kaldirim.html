@@ -110,6 +110,29 @@ canvas{width:100%;height:100%;display:block}
 }
 @media(max-width:500px) and (max-height:640px){#status{top:65px;left:44%}.title{display:none}.intro-skater{display:none}.panel{padding:12px}}
 
+
+/* Viral arcade pass: visible goals, almost no new chrome. */
+#target,#mission,#combo{position:absolute;z-index:3;background:#f8edd2e8;color:#33291e;border:1px solid #826c50;box-shadow:2px 2px 0 #5c4b3f;padding:5px 9px;font:700 10px/1.3 'Courier New',monospace;pointer-events:none}
+#target[hidden],#mission[hidden],#combo[hidden],#challengeInfo[hidden],#resultAchievement[hidden],#collection[hidden]{display:none}
+#target{top:103px;left:clamp(12px,2.3vw,30px);max-width:260px}
+#mission{bottom:114px;left:clamp(12px,2.3vw,30px);max-width:235px;background:#f2dfbdde}
+#mission.done{background:#c5dfb4e8}
+#combo{top:160px;left:50%;transform:translateX(-50%);font-size:13px;color:#904638;background:#ffe0a0dd}
+#challengeInfo{margin:0 0 12px;padding:10px 12px;background:#f1dfbf;border-left:4px solid #aa6049;font:700 12px/1.5 'Courier New',monospace}
+#dailyStart{margin-top:9px;background:#f5ebdb;color:#353027;box-shadow:none}
+#dailyStart:hover{background:#ead3b1}
+#resultAchievement{border:1px dashed #a27b5b;background:#f4dfbd;padding:10px;margin:0 0 12px;font-size:12px;line-height:1.5;font-weight:800}
+#collection{margin-top:10px;border-top:1px solid #cbbb9e;padding-top:9px;color:#625445;font:10px/1.6 'Courier New',monospace}
+#shareCard{background:#e8d9c4;font-size:12px}
+#results:not([hidden])~.sub{display:none}
+@media(max-width:650px){
+#target{top:127px;left:10px;font-size:8px;max-width:170px;padding:4px 6px}
+#mission{bottom:114px;left:10px;font-size:8px;max-width:145px;padding:5px}
+#combo{top:152px;font-size:11px;padding:4px 7px}
+#challengeInfo{font-size:10px;padding:7px}
+#results .stats{margin:8px 0 10px}
+#results .share{padding:9px;margin-top:5px}
+}
 </style>
 </head>
 <body>
@@ -122,6 +145,9 @@ canvas{width:100%;height:100%;display:block}
 <div class="metrics"><div class="metric"><small>METRE</small><b id="distance">0</b></div><div class="metric"><small>PUAN</small><b id="score">0</b></div><div class="metric"><small>CAN</small><b id="lives">♥♥♥</b></div></div>
 </div>
 <div id="status" aria-live="polite">MODA · KALDIRIM DURUMU BELİRSİZ</div>
+<div id="target" hidden aria-live="polite"></div>
+<div id="mission" hidden aria-live="polite"></div>
+<div id="combo" hidden aria-live="polite"></div>
 <div id="tip" aria-live="polite"></div>
 <div class="utility"><button type="button" id="sound" aria-label="Sesi aç veya kapat" aria-pressed="false">SES: KAPALI</button><button type="button" id="pause" aria-label="Oyunu duraklat" hidden>DURAKLAT</button></div>
 <div id="hint">BASILI TUT → BIRAK: ZIPLA<br>HAVADA DOKUN → NUMARA<br>HER YERDEN KONTROL ET</div>
@@ -133,9 +159,15 @@ canvas{width:100%;height:100%;display:block}
 <h1 id="panelTitle">Kaldırım<br>bul.</h1>
 <p id="panelText">İstanbul'da kaykay sürmek istiyorsun. Yolda duba var, kaldırımda scooter var. Dümdüz gitmek teoride mümkün.</p>
 <div class="intro-skater" aria-hidden="true"><svg viewBox="0 0 420 132" preserveAspectRatio="xMidYMid slice"><rect y="98" width="420" height="34" fill="#827a79"/><path d="M0 97H420" stroke="#e6d4bd" stroke-width="5"/><g transform="translate(104 6)"><ellipse cx="52" cy="108" rx="71" ry="10" fill="#343330" opacity=".25"/><path d="M8 102Q55 108 113 101" fill="none" stroke="#272525" stroke-width="9" stroke-linecap="round"/><circle cx="26" cy="110" r="7" fill="#20201f"/><circle cx="92" cy="109" r="7" fill="#20201f"/><path d="M38 57L52 85L38 98M60 55L72 81L88 97" fill="none" stroke="#203849" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 25L68 22L76 61L35 64Z" fill="#c94e54" stroke="#382a28" stroke-width="3"/><path d="M34 30L65 30M32 41L71 41M36 52L74 52" stroke="#fff0d8" stroke-width="5"/><path d="M33 28L11 60M69 32L91 56" stroke="#cf9279" stroke-width="10" stroke-linecap="round"/><ellipse cx="51" cy="7" rx="22" ry="23" fill="#d7a48a" stroke="#382a28" stroke-width="2"/><path d="M27 0Q48 -24 75 -2L75 6L27 6Z" fill="#f4ebd7" stroke="#382a28" stroke-width="3"/><path d="M67 -3L86 3L70 7" fill="#d94f51"/></g><text x="244" y="76" font-family="Arial" font-weight="900" font-size="18" fill="#20201f">BİR YERDEN</text><text x="244" y="96" font-family="Arial" font-weight="900" font-size="24" fill="#20201f">BAŞLAYALIM.</text></svg></div>
+<div id="challengeInfo" hidden></div>
 <button class="primary" id="start">KAYKAYA BİN →</button>
-<div id="results" hidden><div id="resultReason"></div><div class="stats"><div><b id="resultM">0 m</b><small>MESAFE</small></div><div><b id="resultS">0</b><small>PUAN</small></div><div><b id="resultB">0 m</b><small>REKOR</small></div></div><button class="share" id="share">SONUCU PAYLAŞ ↗</button></div>
-<span class="sub">TEK DOKUNUŞ · MOBİL + KLAVYE · REKOR KAYDEDİLİR</span>
+<button class="share" id="dailyStart" type="button">GÜNÜN ROTASI · HERKES AYNI ENGELLER</button>
+<div id="results" hidden><div id="resultReason"></div>
+<div id="resultAchievement" hidden></div>
+<div class="stats"><div><b id="resultM">0 m</b><small>MESAFE</small></div><div><b id="resultS">0</b><small>PUAN</small></div><div><b id="resultB">0 m</b><small>REKOR</small></div></div><button class="share" id="share" type="button">ARKADAŞINA MEYDAN OKU ↗</button>
+<button class="share" id="shareCard" type="button">SONUÇ KARTINI KAYDET</button>
+<div id="collection" hidden></div></div>
+<span class="sub">BAS · BIRAK · ZIPLA / HAVADA DOKUN: NUMARA</span>
 </div></div>
 <div class="overlay" id="pauseOverlay" hidden><div class="panel"><div class="eyebrow">İSTANBUL / KISA MOLA</div><h2>Bir<br>soluklan.</h2><p>Şehir aynı yerde. Kaldığın yerden devam et.</p><button class="primary" type="button" id="resume">DEVAM ET →</button><button class="share" type="button" id="exit">BAŞA DÖN</button></div></div>
 </div>
@@ -162,8 +194,42 @@ const hazards=[
 {type:'kasa',width:94,height:70,label:'MEYVE KASASI',note:'Manav kasaları biraz taştı.'},
 {type:'saksi',width:70,height:90,label:'SAKSI',note:'Çiçekçi dükkânı bütün sokağa yayıldı.'}
 ];
-let previous='',hudTick=0;
-try{best=+(localStorage.getItem('aynen-kaldirim-best')||0)}catch(e){}
+let previous='',hudTick=0,mode='endless',seed=0,randomState=1,dailyStamp='',targetMeters=0,startedBest=0,missionIndex=0,missionProgress=0,missionDoneTimer=0,nearMax=0,tricks=0,cleared=0,maxCombo=0,unlocked=[],metTarget=false;
+const allStickers=['DUBA USTASI','MARTI NÖBETİ','TAKSİ DİKKAT','KAZI BİTMEZ','SİMİT HATTI'];
+const stickerMap={duba:0,marti:1,taksi:2,cukur:3,simit:4};
+const missions=[{text:'3 engel geç',kind:'pass',goal:3},{text:'2 numara yap',kind:'trick',goal:2},{text:'200 m ilerle',kind:'meters',goal:200},{text:'2 ramak kala geçiş',kind:'near',goal:2},{text:'6 engel geç',kind:'pass',goal:6},{text:'400 m ilerle',kind:'meters',goal:400}];
+
+const urlArgs=new URLSearchParams(location.search);
+const querySeed=urlArgs.get('challenge');
+const queryBeat=Number(urlArgs.get('beat'));
+if(querySeed&&/^\d{1,10}$/.test(querySeed)){mode='duel';seed=(Number(querySeed)>>>0)||1;targetMeters=Number.isFinite(queryBeat)?clamp(Math.floor(queryBeat),1,999999):0;}
+function utcStamp(){return new Date().toISOString().slice(0,10)}
+function hashSeed(s){let h=2166136261;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),16777619)}return h>>>0}
+function randGame(){randomState=(Math.imul(randomState,1664525)+1013904223)>>>0;return randomState/4294967296}
+function recordKey(){return mode==='daily'?'aynen-kaldirim-daily-'+dailyStamp:mode==='duel'?'aynen-kaldirim-duel-'+seed:'aynen-kaldirim-best'}
+function readBest(){try{return Number(localStorage.getItem(recordKey()))||0}catch(e){return 0}}
+function writeBest(m){try{localStorage.setItem(recordKey(),String(m))}catch(e){}}
+function readStickers(){try{const a=JSON.parse(localStorage.getItem('aynen-kaldirim-stickers')||'[]');return Array.isArray(a)?a.filter(x=>Number.isInteger(x)&&x>=0&&x<allStickers.length):[]}catch(e){return []}}
+function addSticker(type){
+ const i=stickerMap[type];if(i===undefined||unlocked.includes(i))return;
+ unlocked.push(i);try{localStorage.setItem('aynen-kaldirim-stickers',JSON.stringify(unlocked))}catch(e){}
+ toast('SOKAK ÇIKARTMASI: '+allStickers[i]);
+}
+function setupMode(){
+ dailyStamp=utcStamp();
+ if(mode==='daily')seed=hashSeed('KALDIRIM-v1-'+dailyStamp);
+ else if(mode==='endless')seed=(Math.floor(Math.random()*4294967295)>>>0)||1;
+ randomState=seed||1;
+ best=readBest();startedBest=best;unlocked=readStickers();
+ $('challengeInfo').hidden=mode==='endless';
+ if(mode==='duel')$('challengeInfo').textContent='ARKADAŞ MEYDAN OKUMASI · HEDEF '+targetMeters+' m';
+ if(mode==='daily')$('challengeInfo').textContent='GÜNÜN ROTASI · '+dailyStamp+' · HER OYUNDA AYNI ENGEL SIRASI';
+ $('dailyStart').textContent=mode==='daily'?'SERBEST SÜRÜŞE DÖN':'GÜNÜN ROTASINI OYNA';
+ $('target').hidden=mode==='endless';
+ $('target').textContent=mode==='daily'?'GÜNÜN ROTASI · '+dailyStamp:'ARKADAŞININ HEDEFİ · '+targetMeters+' m';
+}
+setupMode();
+
 function clamp(n,a,b){return Math.min(b,Math.max(a,n))}
 function rnd(n){const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v)}
 function R(x,y,w,h,r,fill,stroke,lw=1){
