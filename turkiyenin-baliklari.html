@@ -47,17 +47,78 @@ h1{font-size:clamp(52px,7.8vw,114px);line-height:.91;letter-spacing:-.092em;font
 @media(max-width:760px){.top{height:56px}.top-center{display:none}.hero{display:flex;flex-direction:column;padding:25px 0 25px;gap:21px}h1{font-size:clamp(52px,14vw,81px);margin:14px 0}.hero-art{min-height:200px;height:215px}.hero-copy{font-size:12px}.hero-counter{margin-top:16px}.controls{padding:22px 0 17px}.months{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:3px 1px 8px;scrollbar-width:none}.months::-webkit-scrollbar{display:none}.month{flex:0 0 62px;scroll-snap-align:start;min-height:50px}.seas{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}.sea{min-height:68px;padding:10px}.sea:first-child{grid-column:span 2;min-height:54px}.sea strong{font-size:14px}.sea svg{width:62px;height:35px}.browse-head{display:block;padding-top:23px}.tools{justify-content:flex-start;margin-top:14px}.search{width:100%;flex:1 1 100%}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.fish-visual{min-height:120px;aspect-ratio:1.25}.fish-body{padding:10px}.fish-body h3{font-size:16px}.fish-seas{margin-top:5px;font-size:8px}.latin{font-size:8px}.fish-status{font-size:8px;top:6px;right:6px}.summary{font-size:9px}.collection{display:block;padding:17px}.collection-right{text-align:left;margin-top:12px;min-width:0}.footer{grid-template-columns:1fr}.modal{align-items:flex-end;padding:0}.detail{max-height:94dvh;border-radius:13px 13px 0 0}.detail-layout{display:block}.detail-pic{height:220px}.detail-text{padding:20px 22px 26px}.detail-text h2{font-size:43px}.detail-top{padding:12px 17px}}
 @media(max-width:370px){.shell{padding:0 12px}.fish-visual{min-height:105px}.sea strong{font-size:13px}.month{flex-basis:59px}.toolbtn{padding:0 9px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Screen-fit layout + real-photo cards, v2 */
+html,body{height:100%;overflow:hidden}body{background:#f6f7f4}
+.shell{height:100dvh;max-width:1680px;padding:0 clamp(12px,2.2vw,40px);display:flex;flex-direction:column;overflow:hidden}
+.top{height:44px;flex:0 0 44px}.top-center,.top-right{font-size:9px}
+.hero{flex:0 0 105px;min-height:0;padding:8px 0;display:grid;grid-template-columns:1fr 28%;align-items:center;gap:16px}
+.eyebrow{font-size:9px}.hero h1{font-size:clamp(33px,4.5vw,67px);line-height:1.05;letter-spacing:-.075em;margin:5px 0 2px;white-space:nowrap}.hero h1 em{color:#367784}.hero-copy{font-size:11px;line-height:1.2}
+.hero-art{height:87px;min-height:0;border-radius:4px;background:#a9c9c6;position:relative;overflow:hidden}
+.hero-art:after{display:none}.hero-art img{height:100%;width:100%;object-fit:cover;opacity:0;transition:opacity .3s;display:block}.hero-art img.ready{opacity:1}
+.hero-photolabel{position:absolute;bottom:8px;left:9px;padding:5px 7px;background:#f8faf2dc;color:#27535d;font:9px 'DM Mono',monospace}
+.controls{padding:9px 0 9px;flex:0 0 auto;border-bottom:1px solid var(--line)}
+.section-meta{margin:0 0 5px}.section-label,.section-detail{font-size:9px}.months{gap:4px}
+.month{min-height:35px;height:35px;padding:3px 0;font-size:11px;border-radius:3px}.month small{display:none}.month.active{transform:none;background:#183b46}
+.sea-meta{margin-top:8px!important}.seas{margin:0;gap:5px}
+.sea{min-height:37px;height:37px;padding:7px 10px;border-radius:3px}.sea strong{font-size:12px}.sea small{display:none}.sea svg{width:50px;right:-5px;opacity:.17}
+#catalogue{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.browse-head{flex:0 0 auto;margin:0;padding:11px 0 7px;align-items:center;gap:12px}
+.browse-head h2{font-size:clamp(19px,2vw,25px);margin:2px 0 0}.browse-head p{display:none}
+.tools{flex-wrap:nowrap;gap:5px}.search{width:clamp(120px,16vw,215px);min-height:33px;font-size:11px}.toolbtn{min-height:33px;font-size:9px;padding:0 9px}
+.summary{flex:0 0 23px;min-height:23px;padding:4px 0 6px;font-size:9px}
+.grid{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#a5baba transparent;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-content:start;gap:9px;padding:1px 4px 10px 1px}
+.fish-card{border-radius:4px;border-color:#d9e0db}
+.fish-visual{min-height:0;aspect-ratio:auto;height:clamp(105px,15vh,170px);background:linear-gradient(125deg,#dbe9e6,#b9d0cc)!important;overflow:hidden}
+.fish-visual:after{display:none}.fish-visual svg{display:none}
+.fish-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;opacity:0;filter:saturate(.9);transition:opacity .25s,transform .25s}.fish-photo.loaded{opacity:1}
+.fish-card:hover .fish-photo{transform:scale(1.045)}
+.fish-photo-hint{position:absolute;inset:0;display:grid;place-items:center;color:#577a7e;font:9px 'DM Mono',monospace;letter-spacing:.04em;z-index:0;text-align:center;padding:12px}.fish-photo.loaded + .fish-photo-hint{display:none}
+.fish-number{background:#fbfdf7d9;padding:4px 5px;border-radius:2px;top:7px;left:7px;font-size:8px}
+.fish-status{top:7px;right:7px;background:#fbfdf2e8;padding:4px 5px;border-radius:2px;font-size:8px}
+.fish-body{padding:9px 10px 10px}.fish-body h3{font-size:16px;margin:0 0 2px}.latin{font-size:9px;min-height:0}
+.fish-seas{font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:6px;line-height:1.4}
+.season-dots{padding-top:7px}.season-dots i{height:3px}.card-bottom{margin-top:6px;font-size:8px}
+.more-wrap{display:none!important}.calendar-wrap{flex:1;min-height:0;overflow:auto}.calendar td,.calendar th{padding:9px 6px}
+.collection{flex:0 0 42px;min-height:0;margin:8px 0 0;padding:5px 12px;display:flex;align-items:center}
+.collection h2{font-size:13px}.collection p{display:none}.collection-right{display:flex;gap:10px;align-items:center;min-width:115px}.collection-right strong{font-size:15px;white-space:nowrap}.progress{margin:0;min-width:75px;width:75px}
+.source-disclosure{flex:0 0 auto;max-height:45vh;overflow-y:auto;border-top:1px solid #d2ddd8}
+.source-disclosure summary{cursor:pointer;list-style:none;text-align:right;padding:5px 1px 6px;font:9px 'DM Mono',monospace;color:#789090}
+.source-disclosure summary:after{content:" ↗"}.source-disclosure summary::-webkit-details-marker{display:none}
+.source-disclosure .footer{padding:12px 0 18px;font-size:9px}
+.detail-layout{grid-template-columns:45% 55%}.detail-pic{min-height:400px;overflow:hidden;background:#d8e7e2;display:block}
+.detail-pic svg{display:none}.detail-photo{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .2s}.detail-photo.loaded{opacity:1}
+.detail-pic small{bottom:10px;left:10px;right:10px;z-index:3;background:#fafaf3ec;padding:7px 8px;font-size:9px;color:#315b61;line-height:1.5}
+.detail-pic small a{color:inherit}.detail-text{padding:22px}.detail-text p{margin:12px 0}.fact{margin:12px 0}.detail-months{margin:7px 0 13px}
+@media(max-width:1150px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:760px){
+ html,body{overflow:hidden}.shell{padding:0 12px;height:100dvh}
+ .top{height:42px;flex-basis:42px}.top-center{display:none}
+ .hero{display:block;flex:0 0 75px;padding:8px 0 6px}.hero h1{font-size:clamp(32px,8vw,47px);margin:4px 0 2px;white-space:normal;line-height:1}.hero-copy{font-size:10px;margin:1px 0}.hero-art{display:none}
+ .controls{padding:6px 0 7px}.section-meta{margin-bottom:4px}.section-label,.section-detail{font-size:8px}
+ .months{display:flex;overflow-x:auto;scrollbar-width:none;gap:5px;padding:1px 0 3px;scroll-snap-type:x proximity}
+ .months::-webkit-scrollbar,.seas::-webkit-scrollbar{display:none}.month{flex:0 0 57px;min-height:35px;height:35px;font-size:10px;scroll-snap-align:center}
+ .sea-meta{margin-top:5px!important}.seas{display:flex;overflow-x:auto;scrollbar-width:none;gap:5px;margin:0;padding:1px 0 2px}
+ .sea{flex:0 0 auto;min-height:31px;height:31px;padding:6px 12px}.sea strong{font-size:11px}.sea svg{display:none}
+ .browse-head{display:block;padding:8px 0 5px}.browse-head h2{font-size:21px}.browse-head .section-label{display:none}
+ .tools{margin-top:7px;flex-wrap:wrap;gap:5px}.search{width:100%;flex:1 1 100%;min-height:33px;font-size:12px}
+ .toolbtn{min-height:28px;flex:1 1 auto;font-size:8px;padding:0 8px}.summary{flex-basis:22px;min-height:22px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding-right:2px}.fish-visual{height:clamp(112px,18vh,180px)}.fish-body{padding:7px 8px 8px}
+ .fish-body h3{font-size:16px}.fish-number,.fish-status{font-size:8px}.fish-seas{font-size:8px}
+ .collection{flex:0 0 35px;height:35px;margin:5px 0 0;padding:5px 8px}.collection h2{font-size:11px}.collection-right{gap:6px;min-width:100px}.collection-right strong{font-size:12px}.progress{width:40px;min-width:40px}
+ .source-disclosure summary{font-size:8px;padding:4px 0 5px}
+ .modal{align-items:flex-end;padding:0}.detail{max-height:93dvh;border-radius:13px 13px 0 0}.detail-layout{display:block}.detail-pic{min-height:0;height:clamp(190px,27dvh,275px)}
+ .detail-text{padding:17px 19px 22px}.detail-text h2{font-size:40px;margin:7px 0}.detail-text p{font-size:11px;margin:9px 0}.fact{padding:10px 12px;font-size:11px;margin:9px 0}.detail-months{margin:5px 0 10px}
+}
+@media(max-height:650px){.hero{flex-basis:62px}.hero h1{font-size:clamp(30px,5vh,40px)}.hero-copy{display:none}.hero-art{height:50px}.fish-visual{height:105px}.collection{flex-basis:31px}}
 </style></head><body>
 <div class="shell">
 <header class="top"><a class="back" href="/">← aynen.fun</a><div class="top-center">DENİZ ATLASI / TÜRKİYE</div><div class="top-right"><span class="dot-live"></span><span>12 AY · 4 DENİZ</span></div></header>
-<section class="hero">
-<div><div class="eyebrow">KIYIDAN AÇIK DENİZE / 01</div><h1>Türkiye'nin<br><em>Balıkları.</em></h1><p class="hero-copy">Hangi ay hangi balık lezzetli? Hangi denizde ne yaşar? Ayı ve denizi seç, Türkiye'nin balıklarını tek tek keşfet.</p><div class="hero-counter"><div><strong id="hero-count">32</strong><small>Deniz balığı</small></div><div class="counter-divider"></div><div><strong>04</strong><small>Deniz</small></div><div class="counter-divider"></div><div><strong>12</strong><small>Ay</small></div></div></div>
-<div class="hero-art" aria-hidden="true"><div class="art-tag">SAHA NOTLARI — NO. 001</div><svg class="hero-big" viewBox="0 0 500 370"><g transform="translate(30 5)"><path d="M125 175L35 97Q51 175 35 242Z" fill="#274f60" stroke="#244352" stroke-width="5"/><path d="M120 174Q238 75 390 138Q454 168 397 213Q257 297 120 174Z" fill="#dee5c6" stroke="#294b54" stroke-width="5"/><path d="M175 136L225 70L264 122" fill="#779a9d" stroke="#294b54" stroke-width="5"/><path d="M235 245L290 278L316 228" fill="#7eacb0" stroke="#294b54" stroke-width="4"/><path d="M118 174Q240 190 411 169" fill="none" stroke="#759d9d" stroke-width="7"/><path d="M140 154Q265 117 390 149M152 211Q259 239 390 198" fill="none" stroke="#ffffff80" stroke-width="4"/><path d="M225 137L270 178L222 208" fill="#8fb5b2" stroke="#37636c" stroke-width="3"/><path d="M352 152Q341 173 354 196" fill="none" stroke="#37636c" stroke-width="3"/><circle cx="377" cy="160" r="8" fill="#17313c"/><circle cx="379" cy="158" r="2" fill="#fff"/><path d="M413 174l21 0" stroke="#294b54" stroke-width="3"/><path d="M155 176Q135 200 120 194" stroke="#fff9" stroke-width="3" fill="none"/></g></svg><span class="bubble b1"></span><span class="bubble b2"></span><span class="bubble b3"></span><div class="art-bottom">TÜR / DENİZ / MEVSİM</div></div>
-</section>
+<section class="hero"><div class="hero-title"><div class="eyebrow">AYNEN.FUN / DENİZ ATLASI</div><h1>Türkiye'nin <em>Balıkları.</em></h1><p class="hero-copy">Ayını, denizini seç. Balıkları keşfet.</p></div><div class="hero-art" aria-hidden="true"><img id="hero-photo" alt=""><span class="hero-photolabel" id="hero-label">32 TÜR · 4 DENİZ</span></div></section>
 <section class="controls" aria-label="Atlas filtreleri">
 <div class="section-meta"><div class="section-label">01 — AY SEÇ</div><div class="section-detail" id="month-label">EKİM / SONBAHAR</div></div>
 <div class="months" id="months" role="group" aria-label="Ay seçimi"></div>
-<div class="section-meta" style="margin-top:22px"><div class="section-label">02 — DENİZ SEÇ</div><div class="section-detail" id="sea-label">TÜM DENİZLER</div></div>
+<div class="section-meta sea-meta"><div class="section-label">02 — DENİZ SEÇ</div><div class="section-detail" id="sea-label">TÜM DENİZLER</div></div>
 <div class="seas" id="seas" role="group" aria-label="Deniz seçimi"></div>
 </section>
 <section id="catalogue" aria-label="Balık kataloğu">
@@ -66,7 +127,7 @@ h1{font-size:clamp(52px,7.8vw,114px);line-height:.91;letter-spacing:-.092em;font
 <div class="grid" id="grid"></div><div class="calendar-wrap" id="calendar-wrap"></div><div class="more-wrap"><button type="button" id="more" class="more">DAHA FAZLA BALIK GÖSTER ↓</button></div>
 </section>
 <section class="collection"><div><h2>Kaçını tanıyorsun?</h2><p>Her balığın kartına girip “Koleksiyonuma ekle”ye bas. Keşiflerin bu tarayıcıda saklanır. Hepsini görmeden bitmiş sayılmaz.</p></div><div class="collection-right"><strong id="seen-count">0 / 32</strong><div class="progress" role="progressbar" aria-label="Keşfedilen balıklar" aria-valuemin="0" aria-valuemax="32" aria-valuenow="0" id="seen-progress"><i id="seen-bar"></i></div></div></section>
-<footer class="footer"><div><strong>MEVSİM ≠ AVLANMA İZNİ.</strong> Buradaki aylar geleneksel lezzet ve yaygın bulunabilirlik dönemlerinin yaklaşık rehberidir; yıllara, su sıcaklığına ve bölgeye göre değişebilir. Deniz eşleşmeleri türün görülebildiği alanları belirtir, o gün tutulacağını garanti etmez. Çiftlik balıkları yıl boyunca bulunabilir.</div><div><strong>KAYNAKLAR / OKUMA</strong><div><a target="_blank" rel="noopener noreferrer" href="https://ordu.tarimorman.gov.tr/BelgelerArsiv/G%C4%B1da%20Dergisi/say%C4%B123.pdf">Tarım ve Orman Bakanlığı — mevsimsel balık rehberi</a></div><div><a target="_blank" rel="noopener noreferrer" href="https://mus.tarimorman.gov.tr/Sayfalar/Detay.aspx?Liste=Duyuru&OgeId=316">2024–2028 ticari su ürünleri avcılığı tebliği</a></div><div>Tür ve mevsim bilgileri genel keşif amaçlıdır. Yasal av yasakları ve asgari boylar için güncel mevzuatı kontrol edin. Balık çizimleri stilizedir, tür teşhisi için kullanılmaz.</div></div></footer>
+<details class="source-disclosure"><summary>Kaynaklar ve mevsim notları</summary><footer class="footer"><div><strong>MEVSİM ≠ AVLANMA İZNİ.</strong> Buradaki aylar geleneksel lezzet ve yaygın bulunabilirlik dönemlerinin yaklaşık rehberidir; yıllara, su sıcaklığına ve bölgeye göre değişebilir. Deniz eşleşmeleri türün görülebildiği alanları belirtir, o gün tutulacağını garanti etmez. Çiftlik balıkları yıl boyunca bulunabilir.</div><div><strong>KAYNAKLAR / OKUMA</strong><div><a target="_blank" rel="noopener noreferrer" href="https://ordu.tarimorman.gov.tr/BelgelerArsiv/G%C4%B1da%20Dergisi/say%C4%B123.pdf">Tarım ve Orman Bakanlığı — mevsimsel balık rehberi</a></div><div><a target="_blank" rel="noopener noreferrer" href="https://mus.tarimorman.gov.tr/Sayfalar/Detay.aspx?Liste=Duyuru&OgeId=316">2024–2028 ticari su ürünleri avcılığı tebliği</a></div><div>Tür ve mevsim bilgileri genel keşif amaçlıdır. Yasal av yasakları ve asgari boylar için güncel mevzuatı kontrol edin. Fotoğrafların kaynak ve lisans bağlantıları balık detaylarındadır. Fotoğraflar türlerin görüntüleridir; bulunduğu yerde çekildiklerini göstermez.</div></div></footer></details>
 </div>
 <div class="modal" id="modal" role="presentation"><div class="detail" id="detail" role="dialog" aria-modal="true" aria-labelledby="detail-name" tabindex="-1"></div></div>
 <script>
@@ -114,7 +175,7 @@ var FISH=ROWS.map(function(r,i){return {id:i,name:r[0],latin:r[1],seas:r[2],mont
 var seasonName=function(m){return m>=3&&m<=5?'İLKBAHAR':m>=6&&m<=8?'YAZ':m>=9&&m<=11?'SONBAHAR':'KIŞ';};
 var qp=new URLSearchParams(location.search), today=new Date(), month=Number(qp.get('ay'))||today.getMonth()+1; if(month<1||month>12)month=today.getMonth()+1;
 var sea=(qp.get('deniz')||'*').toUpperCase();if(!SEA[sea])sea='*';
-var activeId=null, showAll=qp.get('tum')==='1', mode='grid', limit=12, search='', lastFocused=null;
+var activeId=null, showAll=qp.get('tum')==='1', mode='grid', limit=100, search='', lastFocused=null;
 var seen=[];try{seen=JSON.parse(localStorage.getItem('aynen-baliks-seen')||'[]');if(!Array.isArray(seen))seen=[];}catch(e){seen=[];}
 var el=function(id){return document.getElementById(id);};
 function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -187,10 +248,10 @@ function share(){
  else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(message).then(function(){var b=el('share');if(b)b.textContent='✓ KOPYALANDI';}).catch(function(){window.prompt('Bağlantıyı kopyala',url.toString());});}
  else window.prompt('Bağlantıyı kopyala',url.toString());
 }
-el('months').addEventListener('click',function(e){var b=e.target.closest('[data-month]');if(!b)return;month=Number(b.dataset.month);limit=12;rerender();});
-el('seas').addEventListener('click',function(e){var b=e.target.closest('[data-sea]');if(!b)return;sea=b.dataset.sea;limit=12;rerender();});
-el('search').addEventListener('input',function(e){search=e.target.value.trim();limit=12;renderGrid();});
-el('all-toggle').onclick=function(){showAll=!showAll;limit=12;rerender();};
+el('months').addEventListener('click',function(e){var b=e.target.closest('[data-month]');if(!b)return;month=Number(b.dataset.month);limit=100;rerender();});
+el('seas').addEventListener('click',function(e){var b=e.target.closest('[data-sea]');if(!b)return;sea=b.dataset.sea;limit=100;rerender();});
+el('search').addEventListener('input',function(e){search=e.target.value.trim();limit=100;renderGrid();});
+el('all-toggle').onclick=function(){showAll=!showAll;limit=100;rerender();};
 el('mode-toggle').onclick=function(){mode=mode==='calendar'?'grid':'calendar';renderGrid();};
 el('more').onclick=function(){limit+=12;renderGrid();};
 el('random').onclick=randomFish;
@@ -201,6 +262,94 @@ el('modal').addEventListener('click',function(e){if(e.target===el('modal')||e.ta
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&activeId!==null)closeDetail();});
 rerender();
 var requested=Number(qp.get('balik'));if(requested>=1&&requested<=FISH.length)openDetail(requested-1);
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var names=[["Hamsi","Engraulis encrasicolus"],["Palamut","Sarda sarda"],["Lüfer","Pomatomus saltatrix"],["İstavrit","Trachurus mediterraneus"],["Uskumru","Scomber scombrus"],["Sardalya","Sardina pilchardus"],["Çipura","Sparus aurata"],["Levrek","Dicentrarchus labrax"],["Kalkan","Scophthalmus maximus"],["Mezgit","Merlangius merlangus"],["Barbunya","Mullus barbatus"],["Tekir","Mullus surmuletus"],["Kefal","Mugil cephalus"],["Mercan","Pagellus erythrinus"],["Karagöz","Diplodus vulgaris"],["Sinarit","Dentex dentex"],["Akya","Lichia amia"],["Zargana","Belone belone"],["Kırlangıç","Chelidonichthys lucerna"],["İskorpit","Scorpaena porcus"],["İzmarit","Spicara smaris"],["Kolyoz","Scomber colias"],["Dülger","Zeus faber"],["Dil balığı","Solea solea"],["Tirsi","Alosa fallax"],["Kupes","Boops boops"],["Sarpa","Sarpa salpa"],["Mırmır","Lithognathus mormyrus"],["Eşkina","Sciaena umbra"],["Çaça","Sprattus sprattus"],["Fangri","Pagrus pagrus"],["Pisi","Platichthys flesus"]];
+var photoCache=new Map(),finished=false,scheduled=false;
+var labels=new Map(names.map(function(v){return [v[1],v[0]];}));
+function clean(t){return String(t||'').trim().toLowerCase();}
+function identifyLatin(node){var x=node.querySelector('.latin');return x?x.textContent.trim():'';}
+function credit(p){return p&&p.credit?p.credit:'Wikimedia Commons';}
+function makeImage(latin,detail){
+ var img=document.createElement('img');img.className=detail?'detail-photo':'fish-photo';img.loading=detail?'eager':'lazy';
+ img.decoding='async';img.alt=(labels.get(latin)||latin)+' — tür fotoğrafı';
+ var p=photoCache.get(latin);if(p){img.onload=function(){img.classList.add('loaded')};img.onerror=function(){img.classList.remove('loaded');img.nextElementSibling&&(img.nextElementSibling.textContent='Fotoğraf yüklenemedi');};img.src=p.src;if(img.complete&&img.naturalWidth)img.classList.add('loaded');}
+ return img;
+}
+function hydrate(){
+ var cards=document.querySelectorAll('.fish-card');
+ cards.forEach(function(card){
+  var latin=identifyLatin(card),visual=card.querySelector('.fish-visual'),svg=visual&&visual.querySelector('svg');
+  if(!visual||!latin)return;
+  if(svg){svg.remove();var img=makeImage(latin,false),hint=document.createElement('div');hint.className='fish-photo-hint';hint.textContent=finished?'FOTOĞRAF YOK':'FOTOĞRAF YÜKLENİYOR';visual.append(img,hint);}
+  else {var img=visual.querySelector('.fish-photo'),p=photoCache.get(latin);
+   if(img&&p&&!img.getAttribute('src')){img.onload=function(){img.classList.add('loaded')};img.onerror=function(){img.nextElementSibling&&(img.nextElementSibling.textContent='Fotoğraf yüklenemedi');};img.src=p.src;}
+   else if(img&&!p&&finished){var hint=visual.querySelector('.fish-photo-hint');if(hint)hint.textContent='FOTOĞRAF BULUNAMADI';}
+  }
+ });
+ var panel=document.querySelector('.modal.open .detail-pic'),dialog=document.querySelector('.modal.open .detail');
+ if(panel&&dialog){
+  var latin=identifyLatin(dialog),p=photoCache.get(latin),svg=panel.querySelector('svg');
+  if(svg){svg.remove();var img=makeImage(latin,true),creditline=panel.querySelector('small');panel.prepend(img);
+   if(creditline)creditline.textContent='FOTOĞRAF YÜKLENİYOR';}
+  var img=panel.querySelector('.detail-photo'),creditline=panel.querySelector('small');
+  if(img&&p){if(!img.getAttribute('src')){img.onload=function(){img.classList.add('loaded')};img.src=p.src;}
+   if(creditline&&!creditline.querySelector('a')){var a=document.createElement('a');a.href=p.page;a.target='_blank';a.rel='noopener noreferrer';a.textContent='FOTOĞRAF: '+credit(p)+' · KAYNAK / LİSANS ↗';creditline.replaceChildren(a);}}
+  else if(creditline&&finished&&!p)creditline.textContent='BU TÜR İÇİN DOĞRULANMIŞ FOTOĞRAF BULUNAMADI';
+ }
+ var hero=document.getElementById('hero-photo');
+ if(hero){var featured=Array.from(cards).map(function(c){return identifyLatin(c)}).find(function(l){return photoCache.has(l)})||Array.from(photoCache.keys())[0];var p=photoCache.get(featured);
+  if(p&&hero.getAttribute('src')!==p.src){hero.onload=function(){hero.classList.add('ready')};hero.src=p.src;hero.alt=(labels.get(featured)||featured)+' tür fotoğrafı';var l=document.getElementById('hero-label');if(l)l.textContent=(labels.get(featured)||featured).toLocaleUpperCase('tr')+' · FOTOĞRAF';}
+ }
+}
+function queue(){if(scheduled)return;scheduled=true;requestAnimationFrame(function(){scheduled=false;hydrate();});}
+var observer=new MutationObserver(queue);['grid','detail','calendar-wrap'].forEach(function(id){var n=document.getElementById(id);if(n)observer.observe(n,{childList:true,subtree:true});});
+function setPhoto(latin,p){if(!p||!p.src||photoCache.has(latin))return;photoCache.set(latin,p);queue();}
+async function wiki(){
+ var parts=[];for(var i=0;i<names.length;i+=12)parts.push(names.slice(i,i+12));
+ await Promise.all(parts.map(async function(part){
+  var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},9000);
+  try{
+   var params=new URLSearchParams({action:'query',format:'json',formatversion:'2',origin:'*',redirects:'1',prop:'pageimages',piprop:'thumbnail|name',pithumbsize:'720',pilicense:'free',titles:part.map(function(v){return v[1]}).join('|')});
+   var res=await fetch('https://en.wikipedia.org/w/api.php?'+params.toString(),{signal:controller.signal});
+   if(!res.ok)throw new Error('wiki');
+   var query=(await res.json()).query||{},byTitle=new Map(),aliases=new Map();
+   (query.pages||[]).forEach(function(p){byTitle.set(clean(p.title),p);});
+   (query.normalized||[]).concat(query.redirects||[]).forEach(function(a){aliases.set(clean(a.from),clean(a.to));});
+   function target(l){var c=clean(l);for(var j=0;j<6&&aliases.has(c);j++)c=aliases.get(c);return byTitle.get(c);}
+   part.forEach(function(v){var p=target(v[1]);if(!p||!p.thumbnail||!p.thumbnail.source)return;
+    var file=p.pageimage||'';
+    if(/\.svg$/i.test(file)||/diagram|drawing|illustration|map|stamp|logo|icon/i.test(file))return;
+    var source=file?'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(file.replace(/ /g,'_')):'https://en.wikipedia.org/wiki/'+encodeURIComponent(p.title.replace(/ /g,'_'));
+    setPhoto(v[1],{src:p.thumbnail.source,page:source,credit:'Wikimedia Commons'});
+   });
+  }catch(e){}finally{clearTimeout(timer);}
+ }));
+}
+async function inat(){
+ var remaining=names.filter(function(v){return !photoCache.has(v[1])});var cursor=0;
+ async function worker(){
+  while(cursor<remaining.length){
+   var species=remaining[cursor++],latin=species[1],controller=new AbortController(),timer=setTimeout(function(){controller.abort()},8500);
+   try{
+    var u='https://api.inaturalist.org/v1/taxa/autocomplete?q='+encodeURIComponent(latin)+'&per_page=5';
+    var response=await fetch(u,{signal:controller.signal});if(!response.ok)continue;
+    var data=await response.json(),taxon=(data.results||[]).find(function(x){return clean(x.name)===clean(latin)});
+    if(!taxon||!taxon.default_photo)continue;
+    var p=taxon.default_photo,license=clean(p.license_code);
+    if(!['cc0','cc-by','cc-by-sa','pd'].includes(license))continue;
+    setPhoto(latin,{src:p.medium_url||p.large_url||p.url,page:'https://www.inaturalist.org/taxa/'+taxon.id,credit:(p.attribution||'iNaturalist')+' ('+license.toUpperCase()+')'});
+   }catch(e){}finally{clearTimeout(timer);}
+  }
+ }
+ await Promise.all([worker(),worker(),worker(),worker()]);
+}
+hydrate();wiki().then(inat).finally(function(){finished=true;queue();});
+var months=document.getElementById('months'),active=months&&months.querySelector('.month.active');if(active&&window.matchMedia('(max-width:760px)').matches){active.scrollIntoView({block:'nearest',inline:'center'});}
+months&&months.addEventListener('click',function(e){var b=e.target.closest('.month');if(b&&window.matchMedia('(max-width:760px)').matches)setTimeout(function(){b.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});},0);});
 })();
 </script>
 <script src="/share-kit.js?v=1" defer></script>
