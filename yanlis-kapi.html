@@ -57,7 +57,7 @@ button.chip:hover{background:rgba(255,255,255,.18)}
 .finalStats{display:flex;justify-content:center;gap:22px;margin:21px auto 30px;font:11px var(--mono);color:#d5d0e4}
 .finalInner button{border:1px solid #fff9;background:white;color:#111;padding:15px 22px;border-radius:30px;font:600 12px var(--mono);margin:4px}
 .finalInner button.subtle{background:transparent;color:#fff}
-@media(max-width:700px){#mission{top:auto;bottom:calc(103px + env(safe-area-inset-bottom));right:16px;font-size:9px;max-width:140px;line-height:1.5}#mission strong{font-size:10px}.finalStats{gap:12px;flex-wrap:wrap}.finalInner button{font-size:11px;padding:13px 15px}}
+@media(max-width:700px){#mission{top:calc(150px + env(safe-area-inset-top));bottom:auto;right:16px;font-size:9px;max-width:145px;line-height:1.5}#mission strong{font-size:10px}.finalStats{gap:12px;flex-wrap:wrap}.finalInner button{font-size:11px;padding:13px 15px}}
 @media(prefers-reduced-motion:reduce){.finalRing:after{animation:none}}
 #start{position:fixed;z-index:9;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,rgba(9,12,19,.78),rgba(11,12,14,.37) 55%,rgba(9,9,13,.25));transition:opacity .75s,visibility .75s}
 #start.hide{opacity:0;visibility:hidden;pointer-events:none}
@@ -164,7 +164,9 @@ mesh(new THREE.BoxGeometry(.28,5.8,.55),frame,1.87,2.9,0,group);
 mesh(new THREE.BoxGeometry(4.02,.33,.62),frame,0,5.76,0,group);
 mesh(new THREE.BoxGeometry(3.76,.19,.36),dark,0,.07,0,group);
 mesh(new THREE.BoxGeometry(3.55,5.4,.1),new THREE.MeshBasicMaterial({color:theme.b,side:THREE.DoubleSide}),0,2.85,-.2,group);
+const portalGlow=mesh(new THREE.PlaneGeometry(5.05,6.65),new THREE.MeshBasicMaterial({color:theme.a,transparent:true,opacity:.095,side:THREE.DoubleSide,depthWrite:false}),0,2.92,-.4,group);
 const p=mesh(new THREE.PlaneGeometry(3.54,5.35),portalMat(theme.a,theme.b),0,2.85,-.13,group);
+for(let edge of [-1,1])mesh(new THREE.BoxGeometry(.038,5.44,.09),new THREE.MeshBasicMaterial({color:theme.a}),edge*1.68,2.86,.07,group);
 p.userData={kind:"door",idx};
 interactives.push(p);
 mesh(new THREE.BoxGeometry(4.5,.08,.7),material(theme.a,.28,.7),0,5.98,0,group);
@@ -173,12 +175,30 @@ textPlane(label,x,6.47,z+.15,3.58,.64);
 animates.push({type:"portal",obj:p});
 return p;
 }
+
+function artTexture(kind){
+const c=document.createElement("canvas");c.width=512;c.height=768;const ctx=c.getContext("2d"),w=c.width,h=c.height;
+const pal=kind==="gold"?["#d1a758","#fff2b9","#7f6135","#ecd9a8"]:kind==="desert"?["#b78b75","#edbf9a","#645b71","#d7a99c"]:kind==="blue"?["#b6d6e3","#d6e8ea","#618dac","#f9d4c1"]:["#c4c4cb","#ddd2db","#9f93a7","#eac7bd"];
+let bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,pal[0]);bg.addColorStop(.48,pal[1]);bg.addColorStop(1,pal[2]);ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+for(let i=0;i<85;i++){const x=hash(i+2)*w,y=hash(i+11)*h,ww=(20+hash(i+21)*410),hh=(13+hash(i+34)*320);
+ctx.save();ctx.translate(x,y);ctx.rotate((hash(i+50)-.5)*2.8);ctx.globalAlpha=kind==="gold"?.14+.28*hash(i+22):.025+.13*hash(i+22);
+ctx.fillStyle=pal[i%4];ctx.beginPath();ctx.moveTo(-ww/2,-hh/2);ctx.bezierCurveTo(-ww*.3,-hh*.8,ww*.23,hh*.5,ww/2,-hh/2);ctx.lineTo(ww/2,hh/2);ctx.bezierCurveTo(ww*.12,hh*.35,-ww*.42,hh*.8,-ww/2,hh/2);ctx.closePath();ctx.fill();ctx.restore();}
+ctx.globalAlpha=.21;
+for(let i=0;i<28;i++){ctx.beginPath();let y=i*(h/27);ctx.strokeStyle=i%2?"#ffffff":"#2e3048";ctx.lineWidth=.3+hash(i+24)*2.2;ctx.moveTo(0,y);for(let x=0;x<=w;x+=26){let dx=kind==="gold"?Math.sin(x*.034+i*1.9)*17:Math.sin(x*.014+i)*13;ctx.lineTo(x,y+dx);}ctx.stroke();}
+ctx.globalAlpha=.035;for(let i=0;i<1500;i++){ctx.fillStyle=hash(i*9)>.5?"white":"black";ctx.fillRect(hash(i+88)*w,hash(i+99)*h,1.2,1.2);}
+const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),4);return tex;
+}
+function artPanel(x,y,z,kind,rot,w=9,h=7.8){
+const mat=new THREE.MeshBasicMaterial({map:artTexture(kind),transparent:true,opacity:.85,side:THREE.DoubleSide,depthWrite:false});
+const p=mesh(new THREE.PlaneGeometry(w,h),mat,x,y,z);p.rotation.y=rot;return p;
+}
+
 function hazeCloud(x,y,z,color,r=1.5){const m=new THREE.MeshBasicMaterial({color,transparent:true,opacity:.14,depthWrite:false});for(let i=0;i<5;i++){const p=mesh(new THREE.SphereGeometry(r*(.5+hash(i+x)*.5),16,10),m,x+i*.48-1,y+hash(i)*.28,z+hash(i+4),root);animates.push({type:"float",obj:p,base:y+hash(i)*.28,phase:i+x,amp:.14});}}
 function particles(num,color,wide=28,high=11,depth=40,r=.055){const pts=[];for(let i=0;i<num;i++){pts.push({x:(hash(i+4)*2-1)*wide/2,y:.2+hash(i+16)*high,z:(hash(i+77)*2-1)*depth/2,phase:hash(i+322)*10});}const g=new THREE.SphereGeometry(r,7,5);const m=new THREE.MeshBasicMaterial({color,transparent:true,opacity:.54});for(const pt of pts){const o=mesh(g,m,pt.x,pt.y,pt.z);animates.push({type:"float",obj:o,base:pt.y,phase:pt.phase,amp:.14+.3*hash(pt.phase)});}}
 function clear(){interactives.length=0;animates.length=0;microState={};hoverHit=null;$("action").classList.remove("on");root.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(m.map)m.map.dispose();m.dispose();});}});while(root.children.length)root.remove(root.children[0]);}
 function setCamera(){camera.position.set(0,2.1,small?8:7.5);yaw=0;pitch=-.035;camera.rotation.set(pitch,yaw,0);}
 function hall(){
-mode=-1;clear();ambient("#b0b4b9",.012);
+mode=-1;clear();ambient("#b0b4b9",.012);adjustAmbience();
 scene.background=new Color("#a4adb6");
 mesh(new THREE.PlaneGeometry(22,54),material("#e8dac4",.75),0,-.04,-2).rotation.x=-Math.PI/2;
 mesh(new THREE.PlaneGeometry(22,54),material("#e2e1dc",.85),0,10.2,-2).rotation.x=Math.PI/2;
@@ -190,6 +210,12 @@ gridFloor(21.5,46,-.025,"#6b6662",2.1);
 for(let x=-10.5;x<11;x+=2.1)line([[x,10.1,-24],[x,10.1,23]],"#33383c",.5);
 for(let z=-24;z<24;z+=2.1)line([[-10.5,10.1,z],[10.5,10.1,z]],"#33383c",.5);
 for(let z of [8,2,-4,-9.9]){line([[-10.65,.05,z],[-10.65,10.18,z],[10.65,10.18,z],[10.65,.05,z]],"#1d252d",.65);}
+for(let side of [-1,1]){
+artPanel(side*10.69,5.13,7.1,side===-1?"blue":"gold",side===-1?Math.PI/2:-Math.PI/2,8.2,8.45);
+artPanel(side*10.69,5.13,-5.9,side===-1?"desert":"cloud",side===-1?Math.PI/2:-Math.PI/2,8.1,8.45);
+}
+const ceiling=artPanel(0,9.96,-2.8,"cloud",0,19,25);ceiling.rotation.set(Math.PI/2,0,0);
+
 box(21.5,10.3,.3,"#9c9ca3",0,5,-15.1);
 for(let side of [-1,1]){
 const foil=mesh(new THREE.IcosahedronGeometry(2.8,1),material("#b1a17b",.35,.9),side*9,9.9,side===1?3:-7);
@@ -318,7 +344,7 @@ $("microText").textContent="Bu oda kendi başlangıcını içinde saklıyor.";
 
 const builders=[buildGravity,buildOcean,buildDesert,buildScale,buildPrism,buildFinal];
 function populate(id){
-mode=id;clear();builders[id]();
+mode=id;clear();builders[id]();adjustAmbience();
 if(id<5){door(0,-14.9,-2,"SONRAKİ KAPI",{a:worlds[id].a,b:worlds[(id+1)%5].b},.95);door(9,-11.4,-3,"KORİDOR",{a:"#bdc0c7",b:"#303a49"},.7);}
 setCamera();$("back").classList.add("on");$("worldNum").textContent=id===5?"DÜNYA ∞ / OLMAMALIYDI":"DÜNYA "+String(id+1).padStart(2,"0")+" / 05";$("worldTitle").textContent=worlds[id].name;$("microText").textContent=id===5?"Kapıların arasında gerçekten bir çıkış var mı?":worlds[id].subtitle+" Gizli nesneyi bul.";
 update();}
@@ -337,10 +363,26 @@ else{tone(730,.16);toast(name+" · Daha önce keşfettin.");}
 const v=interactives.find(o=>o.userData.kind==="secret"&&o.userData.idx===id);if(v){v.scale.multiplyScalar(1.13);setTimeout(()=>v.scale.multiplyScalar(1/1.13),320);}
 }
 function activate(hit){if(!hit||transitioning)return;const d=hit.object.userData;if(d.kind==="door")go(d.idx);if(d.kind==="secret")discover(d.idx,d.name);if(d.kind==="event")interactEvent(d);}
-let audioCtx=null,soundEnabled=false;
+let audioCtx=null,soundEnabled=false,drone=null;
+function startAmbience(){
+if(!audioCtx||drone)return;
+const master=audioCtx.createGain();master.gain.value=0;
+const low=audioCtx.createBiquadFilter();low.type="lowpass";low.frequency.value=380;low.Q.value=.35;
+const a=audioCtx.createOscillator(),b=audioCtx.createOscillator();
+a.type="sine";b.type="triangle";a.frequency.value=56;b.frequency.value=82;
+const ag=audioCtx.createGain(),bg=audioCtx.createGain();ag.gain.value=.7;bg.gain.value=.18;
+a.connect(ag);b.connect(bg);ag.connect(low);bg.connect(low);low.connect(master);master.connect(audioCtx.destination);
+a.start();b.start();drone={a,b,master};
+}
+function adjustAmbience(){
+if(!soundEnabled||!audioCtx)return;startAmbience();const at=audioCtx.currentTime;
+const notes=[55,49,62,67,58,42],hz=notes[mode<0?0:mode]||55;
+drone.a.frequency.setTargetAtTime(hz,at,.7);drone.b.frequency.setTargetAtTime(hz*1.502,at,.7);
+drone.master.gain.setTargetAtTime(mode===5?.025:.014,at,.5);
+}
 function ensureAudio(){if(!audioCtx){const C=window.AudioContext||window.webkitAudioContext;if(C)audioCtx=new C();}if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();}
 function tone(freq,duration=.2){if(!soundEnabled)return;ensureAudio();if(!audioCtx)return;const now=audioCtx.currentTime;for(let i=0;i<2;i++){const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type="sine";osc.frequency.setValueAtTime(freq/(i+1),now);osc.frequency.exponentialRampToValueAtTime(freq/(i+1)*.73,now+duration);gain.gain.setValueAtTime(0.0001,now);gain.gain.exponentialRampToValueAtTime(.035/(i+1),now+.025);gain.gain.exponentialRampToValueAtTime(.0001,now+duration+.15);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+duration+.18);}}
-$("sound").onclick=()=>{soundEnabled=!soundEnabled;ensureAudio();$("sound").textContent=soundEnabled?"SES AÇIK":"SES KAPALI";tone(660,.13);};
+$("sound").onclick=()=>{soundEnabled=!soundEnabled;ensureAudio();$("sound").textContent=soundEnabled?"SES AÇIK":"SES KAPALI";if(soundEnabled){adjustAmbience();tone(660,.13);}else if(drone&&audioCtx){drone.master.gain.setTargetAtTime(0,audioCtx.currentTime,.14);}};
 $("begin").onclick=()=>{active=true;$("start").classList.add("hide");tone(520,.2);};
 $("back").onclick=()=>transition(()=>hall());
 $("again").onclick=()=>{$("finalScreen").classList.remove("open");active=true;transition(()=>{hall();toast("Kapılar başa döndü. Hiçbiri aynı değil.");});};
