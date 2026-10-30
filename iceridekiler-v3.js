@@ -20,7 +20,7 @@ const campaign=[
 {id:'return-virus',title:'Bir kez daha',desc:'İlk viral karşılaşma hatırlanıyor mu?',kind:'virus',antigen:'virus-V',count:17,x:295,y:220,base:110,goal:'Hafıza yanıtını kullanarak enfekte hücreleri kontrol et.',fact:'Hafıza B ve T hücreleri sonraki uygun antijen karşılaşmalarında daha hızlı yanıt verebilir.'}
 ];
 const costs={patrol:21,alarm:24,target:27,calm:18,repair:22};
-const DEFAULT=()=>({version:2,phase:'intro',returnPhase:'between',chapter:0,clock:0,chapterTime:0,tissue:94,energy:82,inflam:7,memory:0,signals:0,presentation:0,antibody:0,points:9,score:0,kills:0,peak:7,focus:{x:450,y:260},logs:[],history:[],levels:{macro:1,neutro:0,dend:0,nk:0,tcell:0,bcell:0,treg:0,fibro:0},memories:{'bakteri-A':0,'virus-V':0},actionReady:{},unlocks:{},streak:0,completed:false,eventsMade:0,speed:1,mode:'campaign',dynamicWave:null,fx:true,focusSet:false,peakThreat:0,chapterMilestone:0});
+const DEFAULT=()=>({version:2,phase:'intro',returnPhase:'between',chapter:0,clock:0,chapterTime:0,tissue:94,energy:82,inflam:7,memory:0,signals:0,presentation:0,antibody:0,points:9,score:0,kills:0,peak:7,focus:{x:450,y:260},logs:[],history:[],levels:{macro:1,neutro:0,dend:0,nk:0,tcell:0,bcell:0,treg:0,fibro:0},memories:{'bakteri-A':0,'virus-V':0},actionReady:{},unlocks:{},streak:0,completed:false,eventsMade:0,speed:1,mode:'campaign',dynamicWave:null,fx:true,focusSet:false,peakThreat:0,chapterMilestone:0,roundSpent:0,roundActions:0,lastReport:null});
 let raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
 let state=DEFAULT(), agents=[],particles=[],hosts=[],bursts=[],signals=[],debris=[],flares=[],selected=null,frameTime=0,saveTime=0,uiTime=0,renderTs=0,maxId=0;
 const animReduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -74,7 +74,7 @@ function beginChapter(){
    state.phase='between';
  }
  if(state.phase==='active'){notice('Olay zaten başladı.');return;}
- if(state.phase!=='between'||(state.chapter>=campaign.length&&state.mode!=='sandbox'))return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;state.chapterMilestone=0;state.focusSet=false;
+ if(state.phase!=='between'||(state.chapter>=campaign.length&&state.mode!=='sandbox'))return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;state.chapterMilestone=0;state.focusSet=false;state.roundSpent=0;state.roundActions=0;state.peak=state.inflam;
  const memo=state.memories[w.antigen]||0;state.activation=(w.antigen&&memo>0)?Math.min(55,memo):0;state.focus={x:w.x,y:w.y};particles=[];debris=[];signals=[];agents.forEach(a=>{if(a.type==='dend'){a.carrying=false;a.carryingAntigen=null;a.readyAt=0;}});
  if(w.kind==='debris'){for(let i=0;i<w.count;i++)debris.push({id:++maxId,x:w.x+rnd(-115,115),y:w.y+rnd(-80,80),hp:3});}
  else for(let i=0;i<w.count;i++)addParticle(w.kind,w.x,w.y,w.antigen);
@@ -87,6 +87,9 @@ function beginChapter(){
 function finishChapter(){if(state.phase!=='active')return;const w=wave();state.phase='between';const gained=Math.max(5,Math.round(4+state.tissue/13+Math.max(0,45-state.inflam)/20));state.points+=gained;state.score+=Math.round(state.tissue)+gained*2;
  if(w.antigen){let gain=clamp(Math.round(4+state.activation*.16+state.presentation*.09),4,30);state.memories[w.antigen]=clamp((state.memories[w.antigen]||0)+gain,0,100);}
  const m=Object.values(state.memories);state.memory=Math.round(m.reduce((a,b)=>a+b,0)/m.length);
+ const health=Math.round(state.tissue),high=Math.round(state.peak),spent=state.roundSpent||0,actions=state.roundActions||0;
+ const grade=health>=85&&high<55?'Denge korundu':health>=65?'Savunma başarılı, doku yoruldu':'Doku toparlanmalı';
+ state.lastReport={grade,health,high,spent,actions,kind:w.kind,title:w.title};
  state.history.push({title:w.title,tissue:Math.round(state.tissue),inflam:Math.round(state.inflam),memo:state.memory});state.history=state.history.slice(-40);agents=agents.filter(a=>a.permanent);
  state.chapter++;state.inflam=Math.max(5,state.inflam-10);state.energy=Math.min(100,state.energy+24);
  event('Olay temizlendi. +'+gained+' araştırma puanı.');notice('Olay tamamlandı · +'+gained+' araştırma');
@@ -117,7 +120,7 @@ function skill(kind){
  if(state.energy<cost){notice('Enerji yeterli değil.');return}
  if(state.clock<(state.actionReady[kind]||0)){notice('Bu müdahale henüz hazır değil.');return}
  if(kind==='target'&&wave().antigen===null){notice('Bu olayda antijene özgü saldırı gerekli değil.');return}
- state.energy-=cost;state.actionReady[kind]=state.clock+6;state.focusSet=true;
+ state.energy-=cost;state.roundSpent=(state.roundSpent||0)+cost;state.roundActions=(state.roundActions||0)+1;state.actionReady[kind]=state.clock+6;state.focusSet=true;
  const pos=state.focus;
  if(kind==='patrol'){addAgent('macro',pos.x+rnd(-42,42),pos.y+rnd(-42,42));addSignal(pos.x,pos.y,14,'rally');state.inflam+=2;event('Makrofaj desteği odak bölgesine ulaştı.')}
  if(kind==='alarm'){for(let i=0;i<3;i++)addAgent('neutro',rnd(35,90),rnd(80,455));addSignal(pos.x,pos.y,28,'rally');state.inflam+=18;event('Nötrofiller seçilen bölgeye yönlendirildi; inflamasyon arttı.')}
@@ -191,7 +194,9 @@ function refreshThreat(){
  }
  advice.textContent=msg;icon.textContent=symbol;
 }
-function updateUi(force){const w=wave();$('stage').dataset.phase=state.phase;['tissue','energy','inflam','memory'].forEach(n=>{$(n+'-n').textContent=Math.round(state[n]);$(n+'-bar').style.width=clamp(state[n],0,100)+'%'});
+function updateUi(force){const w=wave();
+ const report=$('episode-report');if(report){const show=!!state.lastReport&&(state.phase==='between');report.hidden=!show;if(show){$('report-grade').textContent=state.lastReport.grade;$('report-tissue').textContent='DOKU '+state.lastReport.health;$('report-spent').textContent='ENERJİ −'+state.lastReport.spent;$('report-peak').textContent='ZİRVE '+state.lastReport.high;$('report-message').textContent=state.lastReport.actions===0?'Bu olayı müdahale etmeden tamamladın. Farklı stratejiler de deneyebilirsin.':state.lastReport.spent>100?'Çok kaynak kullandın. Bir sonraki olayda daha az müdahaleyle dengeyi korumayı dene.':'Hücre laboratuvarını geliştirip sonraki olaya geçebilirsin.';}}
+$('stage').dataset.phase=state.phase;['tissue','energy','inflam','memory'].forEach(n=>{$(n+'-n').textContent=Math.round(state[n]);$(n+'-bar').style.width=clamp(state[n],0,100)+'%'});
  $('points').textContent=state.points+' ARAŞTIRMA';$('chapter').textContent=state.mode==='sandbox'?'SERBEST YAŞAM · '+(state.chapter-5)+'. OLAY':'OLAY '+String(Math.min(state.chapter+1,campaign.length)).padStart(2,'0')+' / '+campaign.length.toString().padStart(2,'0');
  $('episode-title').textContent=state.chapter>=campaign.length&&state.mode!=='sandbox'?'Doku raporu hazır.':w.title;
  $('episode-desc').textContent=state.chapter>=campaign.length&&state.mode!=='sandbox'?'Tüm senaryolar tamamlandı.':w.desc;
