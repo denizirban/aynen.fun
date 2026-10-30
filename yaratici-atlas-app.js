@@ -27,7 +27,14 @@ function renderList(){
  else if(unknownCountry){$("countryCode").textContent="DÜNYA / KAYIT YOK";$("countryTitle").textContent=unknownCountry.name;$("countryDescription").textContent="Bu ülke için henüz doğrulanmış sıra dışı vergi dosyası indekslenmedi. Aşağıdaki ülke dizininden başka bir ülke seçebilirsin.";}
  else{$("countryCode").textContent=(selected||"—")+" / ÜLKE DOSYASI";$("countryTitle").textContent=selectedMeta?.name||"Dünya";$("countryDescription").textContent="Tarih boyunca vergilendirilen ilginç şeyler. Bir kaydın yanındaki + işaretine dokun; bilgiler burada açılsın.";}
  $("countLabel").textContent=found.length+" DOSYA";
- if(!found.length){list.innerHTML='<div class="empty">'+(searching?"Bu aramayla eşleşen kayıt bulunamadı.":"Bu seçimde henüz kayıt yok. Başka bir ülke veya dönem deneyebilirsin.")+'</div>';return;}
+ if(!found.length){
+  if(unknownCountry){
+   const pos=unknownCountry.center;
+   const nearby=countries.map(c=>({c,d:pos?Math.acos(Math.max(-1,Math.min(1,Math.sin(pos[1]*Math.PI/180)*Math.sin(c.lat*Math.PI/180)+Math.cos(pos[1]*Math.PI/180)*Math.cos(c.lat*Math.PI/180)*Math.cos((pos[0]-c.lon)*Math.PI/180)))):Math.PI})).sort((a,b)=>a.d-b.d).slice(0,6).map(x=>x.c);
+   list.innerHTML='<div class="empty"><strong>Bu ülkenin dosyası henüz hazırlanmadı.</strong><p>Doğrulanmamış bir vergi uydurmamak için boş bırakıldı. Yakındaki arşivleri keşfet:</p><div class="nearby-choices">'+nearby.map(c=>'<button type="button" class="nearby-country" data-nearby="'+esc(c.code)+'">'+esc(c.name)+' <small>'+c.count+' kayıt ↗</small></button>').join("")+'</div></div>';
+  }else list.innerHTML='<div class="empty">'+(searching?"Bu aramayla eşleşen kayıt bulunamadı.":"Bu dönemde kayıt yok. Diğer filtreleri deneyebilirsin.")+'</div>';
+  return;
+ }
  const html=found.map((r,i)=>{
   const open=expandedId===r.id, id="tax-detail-"+r.id;
   const related=open?relatedRecords(r).slice(0,5):[];
@@ -64,7 +71,7 @@ function selectCountry(code,opts={}){
 function selectUnknown(feature){
  const c=isoCountry[String(feature.id).padStart(3,"0")];
  if(c){selectCountry(c.code);return;}
- unknownCountry={name:feature.properties?.name||"Seçilen ülke"};selected="";
+ unknownCountry={name:feature.properties?.name||"Seçilen ülke",center:window.d3?d3.geoCentroid(feature):null};selected="";
  query="";$("search").value="";$("clearSearch").hidden=true;
  globe.playing=false;toggleRotationText();renderCountries();renderList();drawGlobe();
 }
@@ -250,8 +257,8 @@ function drawGraph(){
  const root=svg.append("g");
  const {nodes,edges}=edgeGraphData(list);
  if(!nodes.length){root.append("text").attr("x",width/2).attr("y",height/2).attr("text-anchor","middle").attr("fill","#777").text("Eşleşen kayıt yok.");return;}
- const simulation=d3.forceSimulation(nodes).force("link",d3.forceLink(edges).id(d=>d.id).distance(165).strength(.55)).force("charge",d3.forceManyBody().strength(-700)).force("collide",d3.forceCollide(93).iterations(2)).force("center",d3.forceCenter(0,0)).force("x",d3.forceX().strength(.026)).force("y",d3.forceY().strength(.036)).stop();
- for(let i=0;i<210;i++)simulation.tick();
+ const simulation=d3.forceSimulation(nodes).force("link",d3.forceLink(edges).id(d=>d.id).distance(165).strength(.55)).force("charge",d3.forceManyBody().strength(-700)).force("collide",d3.forceCollide(93).iterations(1)).force("center",d3.forceCenter(0,0)).force("x",d3.forceX().strength(.026)).force("y",d3.forceY().strength(.036)).stop();
+ for(let i=0;i<Math.min(175,Math.max(85,190-nodes.length*.55));i++)simulation.tick();
  const linkLayer=root.append("g");
  const links=linkLayer.selectAll("line").data(edges).join("line").attr("class","connection").attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);
  const card=root.append("g").selectAll("g").data(nodes).join("g").attr("class","node-card").attr("tabindex",0).attr("role","button").attr("aria-label",d=>d.title+" detayına git").attr("transform",d=>"translate("+(d.x-64)+","+(d.y-51)+")");
@@ -281,6 +288,7 @@ function bindEvents(){
  $("search").addEventListener("input",e=>applySearch(e.target.value));$("clearSearch").onclick=()=>{$("search").value="";applySearch("");$("search").focus();};
  document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{filter=b.dataset.filter;renderFilters();renderList();if(view==="graph")drawGraph();});
  $("recordList").addEventListener("click",async e=>{
+  const nearby=e.target.closest("[data-nearby]");if(nearby){selectCountry(nearby.dataset.nearby,{scroll:window.innerWidth<700});return;}
   const related=e.target.closest("[data-related]");if(related){openTax(related.dataset.related,{forceOpen:true,scroll:true});return;}
   const copy=e.target.closest("[data-copy]");if(copy){
    const id=copy.dataset.copy,url=location.origin+location.pathname+"#vergi="+encodeURIComponent(id);
