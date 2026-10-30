@@ -157,7 +157,7 @@ function pickTarget(a){const kind=wave().kind;let pick=null,best=Infinity;
  if(a.type==='fibro'||a.type==='treg'||a.type==='bcell'){return null;}
  if((a.type==='nk'||a.type==='tcell')&&kind==='virus'){for(const h of hosts){if(h.infect<=0||h.dead)continue;const d=distance(a,h);if(d<best){best=d;pick={obj:h,kind:'host',range:40}}}return pick;}
  if(kind==='bacteria'&&['macro','neutro','dend'].includes(a.type)){for(const b of particles){if(b.type!=='bacteria')continue;const d=distance(a,b);if(d<best){best=d;pick={obj:b,kind:'bug',range:39}}}}
- if(kind==='debris'&&['macro','neutro','dend'].includes(a.type)){for(const b of debris){const d=distance(a,b);if(d<best){best=d;pick={obj:b,kind:'debris',range:39}}}}
+ if((kind==='debris'||kind==='virus')&&['macro','neutro','dend'].includes(a.type)){for(const b of debris){const d=distance(a,b);if(d<best){best=d;pick={obj:b,kind:'debris',range:39}}}}
  return pick;}
 function follow(a,aim,dt){const d=types[a.type];let x=0,y=0;
  if(aim){const dx=aim.x-a.x,dy=aim.y-a.y,length=Math.max(1,Math.hypot(dx,dy));x=dx/length;y=dy/length;}
