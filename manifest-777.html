@@ -342,6 +342,16 @@ const THEMES={
  ["YÜRÜYÜŞ","Dışarı çıkmak için on dakikan var.","Büyük plan gerekmiyor.","Kısa yürüyüşe çık.","Fotoğrafını panoya koy.","Pahalı inziva paketi al."],
  ["SINIR","Arkadaşın senden acil bir iyilik istiyor.","Yardım edebilirsin ama sonsuza kadar değil.","Sınırlarını nazikçe anlat.","Kozmik dengeye bırak.","Bütün haftanı iptal et."],
  ["SON BİR ŞEY","Dinlenirken işten bildirim geldi.","Bu gerçek bir acil durum mu?","Önceliğini değerlendir.","Evrene işaret sor.","Okumadan uzun cevap gönder."]
+ ],
+
+ custom:[
+ ["GÜNÜN İŞARETİ","Saatin 11:11 olduğunu gördün.","Dileğinle ilgili somut bir fırsat hâlâ belirsiz.","Dileğin için ilk küçük işi belirle.","Bu anı güçlü bir işaret kabul et.","Hiç plan yapmadan büyük bir hamle dene."],
+ ["BİR MESAJ","Birinden beklenmedik haber geldi.","İçeriği belirsiz; yorumlaması kolay.","Mesajı okuyup durumunu değerlendir.","Gizli bir anlam aramaya başla.","Hemen büyük bir karar ver."],
+ ["KÜÇÜK ENGEL","Planın ortasında bir şey eksik çıktı.","Geri dönmek de bir seçenek.","Eksik kısmı tamamla.","Sonucun zaten geldiğini hayal et.","Eksikleri görmezden gel."],
+ ["SEÇENEK","Karşına iki farklı yol çıktı.","İkisinin de avantajı var.","Somut sonuçları karşılaştır.","Uğurlu sayılara bak.","Hiç düşünmeden birini seç."],
+ ["KISA SÜRE","Bir fırsat yakında kapanacak.","Yetişmek için bir miktar zaman gerekiyor.","Mümkünse hazırlığını yap.","İdeal anı bekle.","Hazırlıksız şansını dene."],
+ ["YENİ FİKİR","Birden farklı bir fikir geldi.","Her fikir işe yaramaz, ama denenebilir.","Küçük bir deneme yap.","Evrene teşekkür et.","Bütün planını bir anda değiştir."],
+ ["SON DOSYA","Dileğin hâlâ sana bakıyor.","Gerçekten ne istediğini düşün.","Bir sonraki gerçek adımı tamamla.","Son bir kez manifest et.","Büyük bir kestirme dene."]
  ]
 };
 
@@ -390,7 +400,16 @@ function dateKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMon
 function hashSeed(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
 function roll(){state.rng^=state.rng<<13;state.rng^=state.rng>>>17;state.rng^=state.rng<<5;return (state.rng>>>0)/4294967296}
 function randomOrder(items){let out=items.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(roll()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
-function themeName(){return THEMES[state.wish]?state.wish:"career"}
+function themeName(){return THEMES[state.wish]?state.wish:"custom"}
+const FOLLOWUPS={
+ money:{action:"Dün yaptığın araştırma bugünkü seçeneği daha net görmeni sağladı.",ritual:"Dün gördüğün işaretler zihnini meşgul ediyor.",risk:"Dünkü kestirmenin maliyeti hâlâ belirsiz."},
+ love:{action:"Dünkü açık iletişim bazı belirsizlikleri azalttı.",ritual:"Beklentilerin yükseldi, yanıt henüz yok.",risk:"Dünkü hamlenin yanlış anlaşılma ihtimali oluştu."},
+ career:{action:"Dünkü hazırlık bugün bir görüşmeye dönüşebilir.",ritual:"Dileğini not ettin, yapılacaklar listesi yerinde.",risk:"Dünkü hızlı hamle geri bildirim gerektirebilir."},
+ home:{action:"Dünkü incelemeden yeni bilgi topladın.",ritual:"Hayalindeki ev güzel, bütçe hâlâ hesap istiyor.",risk:"Dünkü acele karar yeni masraflar doğurabilir."},
+ viral:{action:"Dünkü denemen sayesinde yeni veri oluştu.",ritual:"İşaret aramak izlenme verisini değiştirmedi.",risk:"Dünkü deneyin tepkilerini kontrol etmelisin."},
+ peace:{action:"Dünkü sınırın bugün biraz alan açtı.",ritual:"Dünkü niyetin iyiydi; zaman yine sınırlı.",risk:"Dünkü acele karar beklenmedik bir uğraş yaratabilir."},
+ custom:{action:"Dünkü somut adımın bugün yeni bir seçenek yarattı.",ritual:"Motivasyonun arttı, belirsizlik devam ediyor.",risk:"Dünkü kestirmenin etkisini hâlâ ölçemiyorsun."}
+};
 function clockLabel(){return state.time<=22?"VAKİT DARALIYOR":state.time<=48?"ZAMAN AZALIYOR":"BAŞVURU AÇIK"}
 
 function selectWish(){
@@ -409,7 +428,7 @@ function selectWish(){
  start.onclick=()=>{
   const custom=input.value.trim();if(!selected&&!custom)return;
   state.wish=selected||"custom";state.label=selected?W[selected].label:custom.slice(0,65);
-  state.day=0;state.vibe=49;state.signs=0;state.progress=0;state.time=90;state.ritual=0;state.actions=0;state.hidden=0;state.risk=0;state.lucky=0;state.deskActions=0;state.deskDay=-1;state.lastMsg="";state.history=[];state.ended=false;
+  state.day=0;state.vibe=49;state.signs=0;state.progress=0;state.time=90;state.ritual=0;state.actions=0;state.hidden=0;state.risk=0;state.lucky=0;state.deskActions=0;state.deskDay=-1;state.lastMsg="";state.lastKind=null;state.history=[];state.ended=false;
   state.daily=daily;state.date=dateKey();
   state.rng=daily?hashSeed("manifest777:"+state.date):hashSeed(String(Date.now())+":"+String(Math.random()));
   state.order=randomOrder([0,1,2,3,4,5,6]);
@@ -446,7 +465,7 @@ function renderRound(){
  const prior=state.lastMsg;
  $("roundLabel").textContent=(state.daily?"GÜNÜN KADERİ · ":"KOZMİK GÜN ")+String(state.day+1).padStart(2,"0")+" / 07";
  $("eventTag").textContent=row[0];$("eventTitle").textContent=row[1];
- $("eventDesc").textContent=row[2]+(state.actions>=3&&state.day>=3?" Artık bazı kararların karşılığını görmeye başladın.":"");
+ $("eventDesc").textContent=row[2]+(state.lastKind&&state.day%2===0?" "+FOLLOWUPS[themeName()][state.lastKind]:"");
  $("eventEcho").hidden=!prior;
  if(prior)$("eventEcho").textContent="ÖNCEKİ KARARIN → "+prior;
  const bar=$("roundProgress");bar.replaceChildren();
@@ -487,7 +506,7 @@ function answer(i){
   else{delta=-9;state.time=clamp(state.time-8,0,100);result="Kestirme yeni sorun çıkardı. 9 ilerleme kaybettin.";}
   state.progress=clamp(state.progress+delta,0,100);$("universe").dataset.mood="neutral";particles(4);
  }
- state.lastMsg=result;
+ state.lastMsg=result;state.lastKind=o.kind;
  state.history.push({day:state.day+1,kind:o.kind,choice:o.text,result});
  state.day++;
  if(state.day>=7||state.time<=0)finish();else renderRound();
@@ -500,7 +519,8 @@ function verdict(){
  career:["Evren seni terfi ettirmedi. Sen uğraştın.","Unvanı daha erken yazmış olabilirsin."],
  home:["Vizyon panosundaki evin tapusu yok.","Kozmik emlak ofisi henüz açılmadı."],
  viral:["Algoritma evrene rapor vermiyor.","Yorumlara 777 yazmak dağıtım planı değildir."],
- peace:["Huzurun bildirimleri hâlâ açık.","Mola manifestosu yaparken molayı unuttun."]
+ peace:["Huzurun bildirimleri hâlâ açık.","Mola manifestosu yaparken molayı unuttun."],
+ custom:["Evren dileğini okuyup ekibe yönlendirdi.","Özel başvurular için de bir plan gerekiyor."]
  };
  const base=subject[themeName()];
  if(state.hidden>=7&&state.progress<48){state.endingTag="GİZLİ SON / KOZMİK ÇAĞRI MERKEZİ";return ["Evreni 7 kere aradın.","Müşteri temsilcisine bağlanamadın. Sistem bu sonucu büyük başarı olarak kaydetti."];}
