@@ -59,8 +59,7 @@ main{max-width:1100px;height:100dvh;min-height:550px;margin:auto;padding:14px 16
 .guide .progress i{display:block;height:100%;width:0;background:#d99e40;transition:width .13s}
 .controls{display:flex;align-items:stretch;gap:8px}
 .controls button{background:#fff;border:1px solid var(--ink);color:var(--ink);min-height:54px;padding:10px 14px;font-weight:800;font-size:12px}
-.controls #next{flex:1;background:#24231f;color:#fff;font-size:14px}
-.controls #next:disabled{background:#eeeeea;color:#888;border-color:#ccc}
+.controls #next{flex:1;background:#29332c;color:#f8edda;display:flex;align-items:center;justify-content:center;font:700 12px ui-monospace,Menlo,monospace;letter-spacing:.065em;padding:9px}
 .controls #sound{min-width:100px}
 .bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#8d877e;font:9px ui-monospace,monospace;min-height:17px}
 .bottom button{border:0;background:transparent;color:inherit;text-decoration:underline;padding:1px;cursor:pointer}
@@ -235,7 +234,7 @@ main{max-width:1100px;height:100dvh;min-height:550px;margin:auto;padding:14px 16
 <div class="receipt"><small>ARKADAN GELEN</small><b id="request">1 ÖĞRENCİ</b><span id="payment">₺50 uzatıldı · ₺30 üstü</span></div>
 <div class="guide"><small id="stepLabel">NE YAPMALI?</small><b id="guideText">Sarı ışıklı ele dokun</b><div class="progress"><i id="progress"></i></div></div>
 </div>
-<div class="controls"><button type="button" id="next" disabled>ÖNCE OYUNU BAŞLAT</button><button type="button" id="sound" aria-pressed="false">SES KAPALI</button></div>
+<div class="controls"><div id="next" aria-live="polite">IŞIKLI ELE DOKUN →</div><button type="button" id="sound" aria-pressed="false">SES KAPALI</button></div>
 <div class="bottom"><span>KURGUSAL ÜCRETLER · GERÇEK DOLMUŞ TARİFESİ DEĞİL</span><button type="button" id="restart">YENİDEN BAŞLA ↺</button></div>
 </main>
 <script>
@@ -266,7 +265,7 @@ var orders=[
 ];
 var stops=['MARKET ÖNÜ','DOLMUŞ DURAĞI','OKUL YOLU','KAVŞAK','SAHİL','SON DURAK'];
 var s={
- mode:'intro',count:0,score:0,streak:0,bestStreak:0,mistakes:0,remaining:60,total:60,route:[],sequence:[],step:0,returning:false,order:null,lock:0,sway:0,elapsed:0,toastTimeout:0,sound:false,audio:null,last:0,orderStart:0,events:0,passDone:false
+ mode:'intro',count:0,score:0,streak:0,bestStreak:0,mistakes:0,remaining:60,total:60,route:[],sequence:[],step:0,returning:false,order:null,lock:0,sway:0,elapsed:0,toastTimeout:0,sound:false,audio:null,last:0,orderStart:0,events:0,passDone:false,roundId:0
 };
 function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
 function best(){try{return Number(localStorage.getItem('aynen-ogrenci-best')||0)}catch(e){return 0}}
@@ -323,7 +322,7 @@ function positionMoney(x,y,label){
 }
 function prepareOrder(){
  if(s.mode!=='playing')return;
- s.step=0;s.returning=false;s.lock=0;s.orderStart=s.elapsed;s.passDone=false;
+ s.roundId++;s.step=0;s.returning=false;s.lock=0;s.orderStart=s.elapsed;s.passDone=false;
  var index=s.count % orders.length;
  s.order=orders[(index+Math.floor(s.count/5))%orders.length];
  s.route=routes[(s.count+Math.floor(s.count/3))%routes.length].slice();
@@ -336,8 +335,7 @@ function prepareOrder(){
  set('sceneMessage','PARAYI ÖNE GÖNDER');
  set('situation','DURAK: '+stops[Math.min(stops.length-1,Math.floor(s.count/2))]);
  $('progress').style.width='0%';
- set('next','ELLERE DOKUNARAK UZAT →');
- $('next').disabled=true;
+ set('next','IŞIKLI ELE DOKUN →');
  positionMoney(50,91,'₺'+s.order.paid);
  refreshHands();
 }
@@ -359,11 +357,12 @@ function handoff(id){
    s.returning=true;
    s.sequence=s.route.slice(0,-1).reverse();
    s.step=0;
+   var epoch=s.roundId;
    setTimeout(function(){
-    if(s.mode!=='playing'||s.lock===0)return;
+    if(s.mode!=='playing'||s.roundId!==epoch)return;
     positionMoney(handCoords[5].x,handCoords[5].y,'₺'+(s.order.paid-s.order.fee));
     s.lock=0;refreshHands();
-   },360);
+   },340);
   }else{
    s.passDone=true;
    completeOrder();
@@ -395,11 +394,11 @@ function completeOrder(){
  beep(720+s.streak*25,.1,.035);
  if(s.count%5===0){s.remaining=Math.min(75,s.remaining+3);toast('DOLMUŞ DEVAM EDİYOR. +3 SANİYE')}
  s.lock=.5;
- var completed=s.count;
- setTimeout(function(){if(s.mode==='playing'&&s.count===completed)prepareOrder()},520);
+ var completed=s.count,epoch=s.roundId;
+ setTimeout(function(){if(s.mode==='playing'&&s.count===completed&&s.roundId===epoch)prepareOrder()},520);
 }
 function start(){
- Object.assign(s,{mode:'playing',count:0,score:0,streak:0,bestStreak:0,mistakes:0,remaining:60,route:[],sequence:[],step:0,returning:false,order:null,lock:0,sway:0,elapsed:0,events:0,passDone:false});
+ Object.assign(s,{mode:'playing',count:0,score:0,streak:0,bestStreak:0,mistakes:0,remaining:60,route:[],sequence:[],step:0,returning:false,order:null,lock:0,sway:0,elapsed:0,events:0,passDone:false,roundId:s.roundId+1});
  $('modal').hidden=true;
  $('report').hidden=true;$('share').hidden=true;
  $('start').textContent='TEKRAR OYNA →';
