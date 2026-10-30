@@ -109,8 +109,8 @@
     // small potted plants on sill
     plant(-6.6,1.96,-4.83,.65);plant(-2.3,1.96,-4.85,.52);
   }
-  function plant(x,y,z,scale){
-    var g=new THREE.Group();g.position.set(x,y,z);g.scale.setScalar(scale);scene.add(g);
+  function plant(x,y,z,scale,parent){
+    var g=new THREE.Group();g.position.set(x,y,z);g.scale.setScalar(scale);(parent||scene).add(g);
     cylinder(g,.24,.16,.44,mat('terracotta','#b76c4e'),0,.22,0);
     cylinder(g,.21,.21,.04,mat('earth','#53452f'),0,.47,0);
     for(var i=0;i<7;i++){
@@ -279,7 +279,7 @@
   // Kitchen work upgrades are physically shown as you buy them.
   var upgrades={};
   function addUpgrade(name,fn){var g=new THREE.Group();scene.add(g);fn(g);g.visible=false;upgrades[name]=g}
-  addUpgrade('herbs',function(g){plant(5.9,1.66,-.5,.8)});
+  addUpgrade('herbs',function(g){plant(5.9,1.66,-.5,.8,g)});
   addUpgrade('board',function(g){box(g,1.3,1.25,.08,mat('board','#b2a985'),4.9,4.0,-5.4);box(g,.7,.47,.12,ivory,4.87,4.02,-5.32)});
   addUpgrade('dishwasher',function(g){box(g,.10,1.1,1.55,stainless,5.74,.77,.95);box(g,.10,.04,1.12,black,5.65,1.16,.95)});
   addUpgrade('robot',function(g){var o=cylinder(g,.38,.38,.15,mat('robot','#e8e7df',.4),5.3,.1,3.2);torus(g,.28,.03,mat('roborring','#829c91'),5.3,.2,3.2)});
@@ -316,16 +316,17 @@
     cylinder(body,.09,.09,.14,skin,0,1.66,0);
     ball(body,.25,.30,.24,skin,0,1.97,0);
     var hairstyle=ball(body,.265,.16,.25,hair,0,2.22,-.02);
-    if(look.hairLong){
-      ball(body,.115,.34,.18,hair,-.21,1.96,-.055);
-      ball(body,.115,.34,.18,hair,.21,1.96,-.055);
-    }
+    var sideHair=[
+      ball(body,.115,.34,.18,hair,-.21,1.96,-.055),
+      ball(body,.115,.34,.18,hair,.21,1.96,-.055)
+    ];
+    sideHair.forEach(function(o){o.visible=!!look.hairLong});
     // Eyes visible from open front of the miniature.
     for(var ex of [-.085,.085])ball(body,.022,.025,.02,black,ex,2.02,.236);
     capsule(body,[-.075,1.88,.238],[.072,1.88,.238],.012,mat('mouth','#8a5c4e'));
     root.userData.person=key;
     root.traverse(function(o){if(o.isMesh){o.userData.owner=root;pickables.push(o)}});
-    actors[key]={root,body,initial:look.pos.slice(),position:new THREE.Vector3(...look.pos)};
+    actors[key]={root,body,sideHair,initial:look.pos.slice(),position:new THREE.Vector3(...look.pos)};
     root.position.set(...look.pos);
     return root
   }
@@ -430,6 +431,10 @@
   }
   function refresh(state){
     for(var id in upgrades)upgrades[id].visible=(state.owned||[]).includes(id);
+    ['self','partner'].forEach(function(key){
+      var model=actors[key],kind=key==='self'?state.avatarSelf:state.avatarPartner;
+      if(model&&model.sideHair)model.sideHair.forEach(function(o){o.visible=kind==='f'});
+    });
     var lamp=state.time>=21*60;
     sun.intensity=lamp?1.65:state.time>=19*60?2.45:3.4;
     fill.intensity=lamp?1.2:.82;
@@ -442,8 +447,6 @@
     var dt=Math.min(clock.getDelta(),.07),elapsed=clock.elapsedTime;
     zoom+=(targetZoom-zoom)*Math.min(1,dt*4.5);
     lookAt.lerp(cameraTarget,Math.min(1,dt*3.2));
-    var aspect=Math.max(.1,host.clientWidth)/Math.max(1,host.clientHeight);
-    var nominal=aspect<.8?17:aspect<1.15?15:13.5;
     camera.zoom=zoom;
     camera.updateProjectionMatrix();
     camera.position.copy(lookAt).addScaledVector(orbitDir,24);
@@ -455,9 +458,21 @@
     if(selectionRing.visible){selectionRing.children[0].rotation.z=elapsed*.12;attention.material.opacity=.10+.07*Math.sin(elapsed*3)}
     renderer.render(scene,camera);
   }
-  window.Evin3D={focus:focus,reset:resetCamera,zoom:adjustZoom,select:setTarget,isReady:true,destroy:function(){living=false;ro.disconnect();renderer.dispose();host.replaceChildren()}};
-  host.classList.add('is-ready');
+  window.Evin3D={
+    focus:focus,reset:resetCamera,zoom:adjustZoom,select:setTarget,isReady:true,
+    setEnabled:function(on){
+      this.isReady=Boolean(on);
+      host.classList.toggle('is-ready',Boolean(on));
+      document.getElementById('game').classList.toggle('scene-3d-ready',Boolean(on));
+      var button=document.getElementById('visualMode');
+      if(button){button.textContent=on?'3D':'2D';button.setAttribute('aria-label',on?'3D sahnesi açık, 2D görünümüne geç':'2D sahnesi açık, 3D görünümüne geç');}
+      try{localStorage.setItem('evin-patronu:scene-mode',on?'3d':'2d')}catch(e){}
+    },
+    destroy:function(){living=false;ro.disconnect();renderer.dispose();host.replaceChildren()}
+  };
   host.dataset.status='ready';
-  document.getElementById('game').classList.add('scene-3d-ready');
+  var enable3D=true;
+  try{enable3D=localStorage.getItem('evin-patronu:scene-mode')!=='2d'}catch(e){}
+  window.Evin3D.setEnabled(enable3D);
   animate();
 })().catch(function(err){console.error('Evin Patronu 3D scene failed',err);var host=document.getElementById('kitchen3d');if(host){host.classList.remove('is-ready');host.dataset.status='fallback';}});
