@@ -1,57 +1,238 @@
 <!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fafaf8"><meta name="description" content="Ofsaytımsı. Pozisyonu sen çiz, kararını ver. Türk futbolunun en tarafsız oyunu."><title>Ofsaytımsı — aynen.fun</title><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
-:root{--ink:#242823;--muted:#889287;--line:#dfe5db;--paper:#fafaf8;--pitch:#e4ecdf;--dark:#385b3b}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #719b76;outline-offset:3px}button:disabled{cursor:default;opacity:.42}.page{max-width:1020px;margin:auto;padding:19px 24px 24px;min-height:100svh;display:flex;flex-direction:column}.nav{display:flex;align-items:center;justify-content:space-between;font:500 11px 'DM Mono',monospace}.nav a{color:inherit;text-decoration:none}.nav span{color:#95a095}.intro{margin:32px 0 22px}.intro h1{font-size:clamp(49px,8vw,87px);line-height:.98;letter-spacing:-.095em;margin:0}.intro p{color:#828d80;margin:12px 0 0;font-size:13px}.shell{border:1px solid var(--line);background:white;border-radius:12px;overflow:hidden}.scorebar{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px 20px;border-bottom:1px solid var(--line)}.scorebar .k{font:500 10px 'DM Mono',monospace;color:#879387}.scorebar strong{font-size:23px;letter-spacing:-.05em}.club{display:flex;align-items:center;gap:8px}.club i{display:inline-block;width:10px;height:22px;border-radius:2px;background:linear-gradient(90deg,#ffd33d 50%,#ad2533 50%)}.club.fb i{background:linear-gradient(90deg,#f6d835 50%,#182c60 50%)}.center{font:500 10px 'DM Mono',monospace;color:#879387;text-align:center}.pitch-wrap{padding:13px 18px 0}.pitch{display:block;width:100%;max-height:415px;aspect-ratio:900/420;touch-action:none;user-select:none;cursor:crosshair;border-radius:7px;background:var(--pitch)}.pitch text{pointer-events:none;font-family:'DM Mono',monospace}.hint{display:flex;justify-content:space-between;gap:10px;padding:10px 19px;color:#8b988a;font:400 10px 'DM Mono',monospace}.controls{border-top:1px solid var(--line);padding:20px;display:grid;grid-template-columns:1fr auto;align-items:end;gap:15px}.question{font-size:clamp(18px,2.9vw,29px);font-weight:650;letter-spacing:-.04em;line-height:1.18}.micro{font:400 10px/1.5 'DM Mono',monospace;color:#8b978b;margin-top:8px}.decisions{display:flex;gap:8px}.decisions button,.bottom-actions button,.sidebtn{padding:13px 16px;border:1px solid #d9e1d6;background:white;color:#334d38;border-radius:6px;font:500 11px 'DM Mono',monospace;white-space:nowrap}.decisions button:first-child{background:#28472e;color:#fff;border-color:#28472e}.verdict{display:none;padding:16px 20px 20px;border-top:1px solid var(--line)}.verdict.on{display:block}.verdict b{font-size:clamp(21px,3vw,30px);letter-spacing:-.045em}.verdict p{font-size:13px;color:#758374;line-height:1.5;margin:7px 0 13px}.verdict button{border:0;background:#2c4731;color:white;border-radius:5px;padding:11px 16px;font:500 11px 'DM Mono',monospace}.below{display:flex;justify-content:space-between;gap:10px;padding:12px 4px;color:#94a092;font:400 10px/1.6 'DM Mono',monospace}.stage-screen{padding:34px 25px;text-align:center}.stage-screen h2{font-size:clamp(34px,6vw,58px);letter-spacing:-.07em;margin:10px 0}.stage-screen p{font-size:13px;line-height:1.65;color:#758473;max-width:440px;margin:0 auto 25px}.choose{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.choose button{font:500 12px 'DM Mono',monospace;background:white;border:1px solid var(--line);border-radius:7px;padding:15px 21px;min-width:150px}.choose button:hover{background:#eef4e9}.bottom-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.footer{margin-top:auto;padding-top:24px;font:400 10px 'DM Mono',monospace;color:#a3aca2}@media(max-width:620px){.page{padding:14px 12px 20px}.intro{margin:28px 0 17px}.intro h1{font-size:clamp(48px,13vw,68px)}.intro p{font-size:12px}.scorebar{padding:12px 13px}.scorebar strong{font-size:20px}.pitch-wrap{padding:8px 8px 0}.pitch{aspect-ratio:900/510;max-height:none}.hint{padding:8px 11px;font-size:9px}.controls{padding:16px 13px;grid-template-columns:1fr}.decisions button{flex:1;padding:14px 7px}.below{font-size:9px}.verdict{padding:14px}.scorebar .k{font-size:9px}}@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}</style></head><body><div class="page"><nav class="nav"><a href="/">← aynen.fun</a><span>FUTBOL / HAKEM AKADEMİSİ</span></nav><header class="intro"><h1>Ofsaytımsı.</h1><p>Pozisyonu sen belirle. Tartışmayı biz hallederiz.</p></header><main id="app" class="shell"></main><div class="below"><span>Oyun kurgusaldır. Kural bölümü gerçek ofsayt prensiplerine dayanır.</span><span>AYNEN.FUN</span></div><footer class="footer">KARARINIZ İNCELENMEKTEDİR. / SONSUZA KADAR</footer></div>
-<script>(()=>{'use strict';
-const app=document.getElementById('app');let team='GS',round=0,correct=0,selectedX=65,answered=false,scenario=null,dragging=false;
-const N=8, cases=[
-{def:68,attack:74,ball:29,tip:'Topun oynandığı an.',quip:'VAR odasından birinin akrabası aradı.'},
-{def:76,attack:60,ball:32,tip:'Savunma çizgisine bak.',quip:'Pozisyonun 11 farklı açıdan fotoğrafı paylaşıldı.'},
-{def:53,attack:49,ball:31,tip:'Kendi yarı sahanı unutma.',quip:'Yarı saha çizgisi açıklama yayınladı.'},
-{def:62,attack:67,ball:38,tip:'Omuz mu? Ayak mı? Tartışma hazır.',quip:'Bir spor programı bu pozisyona üç saat ayırdı.'},
-{def:73,attack:78,ball:46,tip:'Çizgiler paralel. Muhtemelen.',quip:'Çizginin kalınlığına itiraz edildi.'},
-{def:61,attack:59,ball:35,tip:'Futbolcu kendi takım arkadaşından pas alıyor.',quip:'İki kulüp de kamuoyunu aydınlattı.'},
-{def:82,attack:86,ball:87,tip:'Topun çizgisi de önemli: top daha ilerideyse ofsayt yok.',quip:'Psikolojik üstünlük güncellendi.'},
-{def:69,attack:74,ball:44,keeperForward:true,tip:'Kaleci kalesinden çıktı. Sondan ikinci rakip kim?',quip:'Son pozisyon. Ülke seni bekliyor.',quip:'Maç bitti. Program yeni başladı.'}
-];
-function intro(){app.innerHTML='<section class="stage-screen"><div class="micro">TARAFSIZLIK TESTİ / 00</div><h2>Hangi taraf?</h2><p>Bir derbi, sekiz pozisyon, bir hakem. Önce futbolcuyu sürükle. Sonra düdüğü çal. İtiraz etmek serbest.</p><div class="choose"><button data-team="GS">🟡🔴 GALATASARAY</button><button data-team="FB">🟡🔵 FENERBAHÇE</button></div></section>';app.querySelectorAll('[data-team]').forEach(b=>b.onclick=()=>{team=b.dataset.team;round=0;correct=0;next()})}
-function X(v){return 35+v*8.3}
-function opponents(){
- // Offside is evaluated against the second-last opponent, regardless of role.
- const line=scenario.def;
- return scenario.keeperForward?[
- {x:line+16,y:145,role:'SAVUNMACI'},
- {x:line,y:240,role:'KALECİ'},
- {x:line-16,y:310,role:'SAVUNMACI'}
- ]:[
- {x:Math.min(97,line+19),y:210,role:'KALECİ'},
- {x:line,y:145,role:'SAVUNMACI'},
- {x:Math.max(5,line-16),y:305,role:'SAVUNMACI'}
- ];
-}
-function offsideLine(){return opponents().map(p=>p.x).sort((a,b)=>b-a)[1]}
-function model(){return {off:selectedX>50&&selectedX>Math.max(offsideLine(),scenario.ball)}}
-function pitch(){
- const dx=X(offsideLine()),ax=X(selectedX),bx=X(scenario.ball);
- const players=opponents().map(p=>{
- const px=X(p.x);const goalkeeper=p.role==='KALECİ';
- return '<g><circle cx="'+px+'" cy="'+p.y+'" r="17" fill="'+(goalkeeper?'#e9a75d':'#d9e2d3')+'" stroke="#5a7063" stroke-width="2.5"/><text x="'+px+'" y="'+(p.y+4)+'" font-size="10" fill="#263829" text-anchor="middle" font-weight="700">'+(goalkeeper?'K':'S')+'</text></g>';
- }).join('');
- return `<svg class="pitch" id="pitch" viewBox="0 0 900 420" role="img" aria-label="Ofsayt incelemesi. Sarı K kaleci, S savunmacı. Hücumcuyu sürükle.">
- <rect width="900" height="420" fill="#e5eee2"/>
- <g stroke="#f8faf6" stroke-width="2" fill="none"><rect x="18" y="17" width="864" height="386" rx="2"/><path d="M450 17V403"/><circle cx="450" cy="210" r="62"/><rect x="18" y="113" width="115" height="193"/><rect x="767" y="113" width="115" height="193"/><rect x="18" y="153" width="52" height="113"/><rect x="830" y="153" width="52" height="113"/></g>
- <rect x="${dx}" y="17" width="${882-dx}" height="386" fill="#c0d4bd" opacity=".23"/>
- <line x1="${dx}" y1="17" x2="${dx}" y2="403" stroke="#47694a" stroke-width="2" stroke-dasharray="7 7"/>
- ${players}
- <g fill="${team==='GS'?'#ad2d39':'#17316b'}" stroke="#fff" stroke-width="3"><circle cx="${bx}" cy="236" r="17"/><circle id="attacker" cx="${ax}" cy="160" r="20"/></g>
- <circle cx="${bx+15}" cy="256" r="8" fill="white" stroke="#252525" stroke-width="2"/>
- <g fill="#37463d" font-size="11"><text x="${bx-17}" y="280">PAS</text><text id="playerLabel" x="${ax-29}" y="123">SÜRÜKLE ↔</text><text x="${Math.min(dx+6,738)}" y="34">OFSAYT ÇİZGİSİ</text></g>
- <path d="M${bx+18} 233L${ax-10} 175" stroke="#7d9980" stroke-width="1.8" stroke-dasharray="5 6" fill="none"/>
- <text x="44" y="38" fill="#8ba089" font-size="11">HÜCUM →</text>
- </svg>`;
-}
-function next(){answered=false;scenario=cases[round];selectedX=scenario.attack;paint()}
-function paint(){let opponent=team==='GS'?'FB':'GS',left=team==='GS'?'GS':'FB',right=team==='GS'?'FB':'GS';app.innerHTML=`<div class="scorebar"><div class="club"><i></i><div><div class="k">${left}</div><strong>0</strong></div></div><div class="center">DERBİ / POZİSYON ${round+1}/${N}<br><br>90+${String(round+1).padStart(2,'0')}</div><div class="club fb"><div><div class="k">${right}</div><strong>0</strong></div><i></i></div></div><div class="pitch-wrap">${pitch()}</div><div class="hint"><span>● PAS ANI · K: KALECİ · S: SAVUNMACI</span><span>HÜCUM SAĞA →</span></div><section class="controls"><div><div class="question">Ofsayt mı?</div><div class="micro">${scenario.tip} · Oyuncuyu sürükleyebilirsin.</div></div><div class="decisions"><button id="off">OFSAYT</button><button id="on">DEVAM</button></div></section><div id="verdict" class="verdict" aria-live="polite"></div>`;const svg=document.getElementById('pitch');svg.addEventListener('pointerdown',e=>{if(answered)return;dragging=true;svg.setPointerCapture(e.pointerId);move(e)});svg.addEventListener('pointermove',e=>{if(dragging)move(e)});svg.addEventListener('pointerup',()=>dragging=false);svg.addEventListener('pointercancel',()=>dragging=false);document.getElementById('off').onclick=()=>judge(true);document.getElementById('on').onclick=()=>judge(false)}
-function move(e){const s=document.getElementById('pitch'),r=s.getBoundingClientRect();const min=Math.max(0,Math.min(100,((e.clientX-r.left)/r.width*900-35)/8.3));selectedX=Math.round(min);const attacker=document.getElementById('attacker'),lbl=document.getElementById('playerLabel');attacker.setAttribute('cx',X(selectedX));lbl.setAttribute('x',X(selectedX)-29);const path=s.querySelector('path[stroke="#7d9980"]');if(path)path.setAttribute('d','M'+(X(scenario.ball)+18)+' 233L'+(X(selectedX)-10)+' 175')}
-function judge(choice){if(answered)return;answered=true;const {off}=model(),hit=choice===off;if(hit)correct++;const box=document.getElementById('verdict');box.classList.add('on');document.getElementById('off').disabled=document.getElementById('on').disabled=true;let reason=!off?'Oyuncu, rakip yarı sahada topun ve sondan ikinci rakibin ikisinden de ileride değil.':'Oyuncu rakip yarı sahada, toptan ve sondan ikinci rakipten ileride. Pası alarak aktif oyuna katıldığı bu senaryoda ofsayt.';const absurd=round>=3?'<br><span class="micro">STÜDYO: '+scenario.quip+'</span>':'';box.innerHTML='<b>'+(hit?'DOĞRU KARAR.':'TARTIŞMALI KARAR.')+'</b><p>Gerçek kural: <strong>'+(off?'OFSAYT':'DEVAM')+'</strong>. '+reason+absurd+'</p><button id="continue">'+(round===N-1?'MAÇI BİTİR':'SONRAKİ POZİSYON →')+'</button>';document.getElementById('continue').onclick=()=>{round++;round===N?finish():next()}}
-function finish(){const phrase=correct===N?'VAR odası sana iş başvurusu attı.':correct>=5?'Kararların iyi. Yine de kimse memnun değil.':'Tebrikler, yorumcu olmaya hazırsın.';app.innerHTML='<section class="stage-screen"><div class="micro">MAÇ SONU / RESMÎ OLMAYAN RAPOR</div><h2>'+correct+' / '+N+' doğru.</h2><p>'+phrase+'<br>İki kulüp de açıklama hazırlıyor.</p><div class="bottom-actions"><button id="again">BİR DAHA</button><button id="share">PAYLAŞ ↗</button></div></section>';document.getElementById('again').onclick=intro;document.getElementById('share').onclick=async()=>{const text='Ofsaytımsı: '+correct+'/8 doğru karar. Maç bitti, tartışma bitmedi. https://aynen.fun/ofsaytimsi.html';try{if(navigator.share)await navigator.share({text,url:'https://aynen.fun/ofsaytimsi.html'});else{await navigator.clipboard.writeText(text);document.getElementById('share').textContent='KOPYALANDI ✓'}}catch(_){}}}
-intro();
+:root{--ink:#242823;--muted:#889287;--line:#dfe5db;--paper:#fafaf8;--pitch:#e4ecdf;--dark:#385b3b}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Space Grotesk',Arial,sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #719b76;outline-offset:3px}button:disabled{cursor:default;opacity:.42}.page{max-width:1020px;margin:auto;padding:19px 24px 24px;min-height:100svh;display:flex;flex-direction:column}.nav{display:flex;align-items:center;justify-content:space-between;font:500 11px 'DM Mono',monospace}.nav a{color:inherit;text-decoration:none}.nav span{color:#95a095}.intro{margin:32px 0 22px}.intro h1{font-size:clamp(49px,8vw,87px);line-height:.98;letter-spacing:-.095em;margin:0}.intro p{color:#828d80;margin:12px 0 0;font-size:13px}.shell{border:1px solid var(--line);background:white;border-radius:12px;overflow:hidden}.scorebar{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px 20px;border-bottom:1px solid var(--line)}.scorebar .k{font:500 10px 'DM Mono',monospace;color:#879387}.scorebar strong{font-size:23px;letter-spacing:-.05em}.club{display:flex;align-items:center;gap:8px}.club i{display:inline-block;width:10px;height:22px;border-radius:2px;background:linear-gradient(90deg,#ffd33d 50%,#ad2533 50%)}.club.fb i{background:linear-gradient(90deg,#f6d835 50%,#182c60 50%)}.center{font:500 10px 'DM Mono',monospace;color:#879387;text-align:center}.pitch-wrap{padding:13px 18px 0}.pitch{display:block;width:100%;max-height:415px;aspect-ratio:900/420;touch-action:none;user-select:none;cursor:crosshair;border-radius:7px;background:var(--pitch)}.pitch text{pointer-events:none;font-family:'DM Mono',monospace}.hint{display:flex;justify-content:space-between;gap:10px;padding:10px 19px;color:#8b988a;font:400 10px 'DM Mono',monospace}.controls{border-top:1px solid var(--line);padding:20px;display:grid;grid-template-columns:1fr auto;align-items:end;gap:15px}.question{font-size:clamp(18px,2.9vw,29px);font-weight:650;letter-spacing:-.04em;line-height:1.18}.micro{font:400 10px/1.5 'DM Mono',monospace;color:#8b978b;margin-top:8px}.decisions{display:flex;gap:8px}.decisions button,.bottom-actions button,.sidebtn{padding:13px 16px;border:1px solid #d9e1d6;background:white;color:#334d38;border-radius:6px;font:500 11px 'DM Mono',monospace;white-space:nowrap}.decisions button:first-child{background:#28472e;color:#fff;border-color:#28472e}.verdict{display:none;padding:16px 20px 20px;border-top:1px solid var(--line)}.verdict.on{display:block}.verdict b{font-size:clamp(21px,3vw,30px);letter-spacing:-.045em}.verdict p{font-size:13px;color:#758374;line-height:1.5;margin:7px 0 13px}.verdict button{border:0;background:#2c4731;color:white;border-radius:5px;padding:11px 16px;font:500 11px 'DM Mono',monospace}.below{display:flex;justify-content:space-between;gap:10px;padding:12px 4px;color:#94a092;font:400 10px/1.6 'DM Mono',monospace}.stage-screen{padding:34px 25px;text-align:center}.stage-screen h2{font-size:clamp(34px,6vw,58px);letter-spacing:-.07em;margin:10px 0}.stage-screen p{font-size:13px;line-height:1.65;color:#758473;max-width:440px;margin:0 auto 25px}.choose{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.choose button{font:500 12px 'DM Mono',monospace;background:white;border:1px solid var(--line);border-radius:7px;padding:15px 21px;min-width:150px}.choose button:hover{background:#eef4e9}.bottom-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.footer{margin-top:auto;padding-top:24px;font:400 10px 'DM Mono',monospace;color:#a3aca2}@media(max-width:620px){.page{padding:14px 12px 20px}.intro{margin:28px 0 17px}.intro h1{font-size:clamp(48px,13vw,68px)}.intro p{font-size:12px}.scorebar{padding:12px 13px}.scorebar strong{font-size:20px}.pitch-wrap{padding:8px 8px 0}.pitch{aspect-ratio:900/510;max-height:none}.hint{padding:8px 11px;font-size:9px}.controls{padding:16px 13px;grid-template-columns:1fr}.decisions button{flex:1;padding:14px 7px}.below{font-size:9px}.verdict{padding:14px}.scorebar .k{font-size:9px}}@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* Match setup and decisions */
+.setup-screen{padding:26px 22px 29px}
+.setup-screen h2{font-size:clamp(31px,5.5vw,52px);margin:7px 0 5px}
+.setup-screen p{margin:0 auto 12px;max-width:510px}
+.team-section{max-width:805px;margin:20px auto 0;text-align:left}
+.team-label{font:500 10px 'DM Mono',monospace;color:#7d8c7b;letter-spacing:.045em;display:flex;justify-content:space-between;gap:8px}
+.team-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:9px}
+.team-choice{display:flex;align-items:center;gap:9px;min-width:0;min-height:47px;padding:10px 11px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font:500 11px/1.25 'DM Mono',monospace;text-align:left}
+.team-choice:hover{background:#f3f6f1}
+.team-choice[aria-pressed="true"]{background:#eaf2e8;border-color:#466c4b;box-shadow:inset 0 0 0 1px #466c4b}
+.team-choice .team-mark{width:12px;height:21px;border:1px solid #c3cfc2;border-radius:2px;display:inline-block;flex:none}
+.start-row{margin-top:25px}
+.main-start{border:0;border-radius:6px;background:#294c31;color:white;padding:14px 27px;font:500 12px 'DM Mono',monospace}
+.main-start:hover{background:#1b3822}
+.scorebar .club{min-width:0;flex:1}
+.scorebar .club .k{overflow-wrap:anywhere}
+.scorebar .club.right{justify-content:flex-end;text-align:right}
+.scorebar .club i{flex:none}
+.scorebar .center{flex:0 0 auto;line-height:1.65}
+.scorebar .center .progress{font-size:11px;color:#4a6650}
+.attack-note{display:flex;align-items:center;gap:8px;margin-top:7px;color:#405b46;font:500 11px 'DM Mono',monospace}
+.attack-note .attack-dot{height:9px;width:9px;border-radius:50%;display:inline-block}
+.verdict .impact{display:inline-block;font:500 10px 'DM Mono',monospace;color:#4a6650;padding:6px 9px;border:1px solid #dae4d7;border-radius:4px;margin-bottom:8px}
+.verdict .rule-note{font-size:12px;line-height:1.6;color:#677767}
+.verdict .rule-note strong{color:#2a4330}
+.verdict .decision-bad{color:#a3633b}
+.result-score{font-size:clamp(39px,7vw,70px);font-weight:700;letter-spacing:-.075em;line-height:1.12;margin:13px 0 2px}
+.result-score small{font-size:.42em;letter-spacing:-.04em;vertical-align:middle;color:#96a193}
+.result-names{font:500 11px 'DM Mono',monospace;color:#778777;margin-bottom:18px}
+.result-compare{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-width:490px;margin:15px auto 22px;text-align:left}
+.result-compare>div{border:1px solid var(--line);border-radius:6px;padding:12px}
+.result-compare .micro{margin:0}
+.result-compare strong{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.result-caption{margin:5px auto 18px!important}
+@media(max-width:620px){
+.setup-screen{padding:23px 13px}
+.team-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.team-choice{min-height:42px;padding:8px 10px}
+.team-section{margin-top:16px}
+.scorebar{gap:5px}
+.scorebar .club{gap:5px}
+.scorebar .club .k{font-size:9px}
+.scorebar .club i{width:8px;height:19px}
+.scorebar .center{font-size:9px}
+.scorebar strong{font-size:21px}
+.attack-note{font-size:10px}
+.result-compare{gap:7px}
+.result-compare>div{padding:10px}
+}</style></head><body><div class="page"><nav class="nav"><a href="/">← aynen.fun</a><span>FUTBOL / HAKEM AKADEMİSİ</span></nav><header class="intro"><h1>Ofsaytımsı.</h1><p>Pozisyonu sen belirle. Tartışmayı biz hallederiz.</p></header><main id="app" class="shell"></main><div class="below"><span>Oyun kurgusaldır. Kural bölümü gerçek ofsayt prensiplerine dayanır.</span><span>AYNEN.FUN</span></div><footer class="footer">KARARINIZ İNCELENMEKTEDİR. / SONSUZA KADAR</footer></div>
+<script>(function game() {
+  'use strict';
+  const app=document.getElementById('app');
+  const clubs=[
+    {id:'GS',name:'Galatasaray',kit:'linear-gradient(90deg,#f4cd37 50%,#ad293a 50%)',ink:'#a6293b'},
+    {id:'FB',name:'Fenerbahçe',kit:'linear-gradient(90deg,#f3d52f 50%,#202e62 50%)',ink:'#1b397a'},
+    {id:'BJK',name:'Beşiktaş',kit:'linear-gradient(90deg,#111 50%,#fff 50%)',ink:'#242424'},
+    {id:'TS',name:'Trabzonspor',kit:'linear-gradient(90deg,#7c273c 50%,#67a9ca 50%)',ink:'#77334e'},
+    {id:'BS',name:'Bursaspor',kit:'linear-gradient(90deg,#26754b 50%,#fff 50%)',ink:'#27684b'},
+    {id:'GZ',name:'Göztepe',kit:'linear-gradient(90deg,#c82f3b 50%,#f2cb45 50%)',ink:'#b82d3c'},
+    {id:'KON',name:'Konyaspor',kit:'linear-gradient(90deg,#287c50 50%,#fff 50%)',ink:'#25744a'}
+  ];
+  const times=['08','19','31','45+2','58','70','83','90+4'];
+  const attackOrder=[0,1,1,0,1,0,0,1];
+  const cases=[
+    {def:68,attack:74,ball:29,tip:'Topun oynandığı an önemli.',quip:'Stüdyoda üç farklı çizgi çizildi.'},
+    {def:76,attack:60,ball:32,tip:'Sondan ikinci rakibe bak.',quip:'Pozisyonun 11 farklı açıdan fotoğrafı paylaşıldı.'},
+    {def:53,attack:49,ball:31,tip:'Kendi yarı sahanda ofsayt olmaz.',quip:'Yarı saha çizgisi açıklama yayınladı.'},
+    {def:62,attack:67,ball:38,tip:'Hücumcuyu sağa veya sola sürükle.',quip:'Bir spor programı bu pozisyona üç saat ayırdı.'},
+    {def:73,attack:78,ball:46,tip:'Ofsayt çizgisini kontrol et.',quip:'Çizginin kalınlığına itiraz edildi.'},
+    {def:61,attack:59,ball:35,tip:'Pas anındaki konumuna bak.',quip:'İki kulüp de kamuoyunu aydınlattı.'},
+    {def:82,attack:86,ball:87,tip:'Top da ofsayt sınırını belirler.',quip:'Psikolojik üstünlük güncellendi.'},
+    {def:69,attack:74,ball:44,keeperForward:true,tip:'Kaleci ilerideyse sondan ikinci rakip kim?',quip:'Son pozisyon. Tartışma yeni başladı.'}
+  ];
+  const N=cases.length;
+  let home='GS',away='FB',round=0,correct=0,wrong=0,score=[0,0],fair=[0,0],selectedX=65,answered=false,scenario=null,dragging=false;
+  const findClub=(id)=>clubs.find(c=>c.id===id);
+  const side=(i)=>findClub(i===0?home:away);
+  const attackingSide=()=>attackOrder[round];
+  const X=(v)=>35+v*8.3;
+  function pickClub(which,id){
+    if(which==='home'){
+      if(id===away){away=home;}home=id;
+    }else{
+      if(id===home){home=away;}away=id;
+    }
+    intro();
+  }
+  function clubButton(club,which){
+    const active=(which==='home'?home:away)===club.id;
+    return `<button type="button" class="team-choice" data-${which}="${club.id}" aria-pressed="${active}"><i class="team-mark" style="background:${club.kit}" aria-hidden="true"></i><span>${club.name}</span></button>`;
+  }
+  function intro(){
+    app.innerHTML=`<section class="stage-screen setup-screen">
+      <div class="micro">FUTBOL / 8 POZİSYON / TEK HAKEM</div>
+      <h2>Maçı sen yönet.</h2>
+      <p>İki takım seç. Pozisyonları incele, ofsayt kararını ver. Düdüğün golü de skoru da değiştirecek.</p>
+      <div class="team-section"><div class="team-label"><span>01 / SENİN TAKIMIN</span><span>${findClub(home).name.toUpperCase()}</span></div>
+      <div class="team-grid">${clubs.map(c=>clubButton(c,'home')).join('')}</div></div>
+      <div class="team-section"><div class="team-label"><span>02 / RAKİBİN</span><span>${findClub(away).name.toUpperCase()}</span></div>
+      <div class="team-grid">${clubs.map(c=>clubButton(c,'away')).join('')}</div></div>
+      <div class="start-row"><button class="main-start" id="kickoff">MAÇI BAŞLAT →</button><div class="micro">AYNI TAKIMI SEÇERSEN TAKIMLAR YER DEĞİŞTİRİR.</div></div>
+    </section>`;
+    app.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>pickClub('home',b.dataset.home));
+    app.querySelectorAll('[data-away]').forEach(b=>b.onclick=()=>pickClub('away',b.dataset.away));
+    document.getElementById('kickoff').onclick=start;
+  }
+  function start(){
+    round=0;correct=0;wrong=0;score=[0,0];fair=[0,0];
+    next();
+  }
+  function opponents(){
+    const line=scenario.def;
+    return scenario.keeperForward?[
+      {x:line+16,y:145,role:'SAVUNMACI'},
+      {x:line,y:240,role:'KALECİ'},
+      {x:line-16,y:310,role:'SAVUNMACI'}
+    ]:[
+      {x:Math.min(97,line+19),y:210,role:'KALECİ'},
+      {x:line,y:145,role:'SAVUNMACI'},
+      {x:Math.max(5,line-16),y:305,role:'SAVUNMACI'}
+    ];
+  }
+  function offsideLine(){return opponents().map(p=>p.x).sort((a,b)=>b-a)[1];}
+  function isOffside(){return selectedX>50&&selectedX>Math.max(offsideLine(),scenario.ball);}
+  function pitch(){
+    const dx=X(offsideLine()),ax=X(selectedX),bx=X(scenario.ball);
+    const atk=side(attackingSide()),def=side(1-attackingSide());
+    const players=opponents().map(p=>{
+      const px=X(p.x),goalkeeper=p.role==='KALECİ';
+      return `<g><circle cx="${px}" cy="${p.y}" r="17" fill="${goalkeeper?'#dca260':def.ink}" stroke="#ffffff" stroke-width="2.5"/><text x="${px}" y="${p.y+4}" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">${goalkeeper?'K':'S'}</text></g>`;
+    }).join('');
+    return `<svg class="pitch" id="pitch" viewBox="0 0 900 420" role="img" tabindex="0" aria-label="Ofsayt pozisyonu. Hücumcuyu sürükle veya sol sağ ok tuşuyla hareket ettir.">
+      <rect width="900" height="420" fill="#e5eee2"/>
+      <g stroke="#f8faf6" stroke-width="2" fill="none"><rect x="18" y="17" width="864" height="386" rx="2"/><path d="M450 17V403"/><circle cx="450" cy="210" r="62"/><rect x="18" y="113" width="115" height="193"/><rect x="767" y="113" width="115" height="193"/><rect x="18" y="153" width="52" height="113"/><rect x="830" y="153" width="52" height="113"/></g>
+      <rect x="${dx}" y="17" width="${882-dx}" height="386" fill="#c0d4bd" opacity=".23"/>
+      <line x1="${dx}" y1="17" x2="${dx}" y2="403" stroke="#47694a" stroke-width="2" stroke-dasharray="7 7"/>
+      ${players}
+      <g fill="${atk.ink}" stroke="#fff" stroke-width="3"><circle cx="${bx}" cy="236" r="17"/><circle id="attacker" cx="${ax}" cy="160" r="20"/></g>
+      <circle cx="${bx+15}" cy="256" r="8" fill="white" stroke="#252525" stroke-width="2"/>
+      <g fill="#37463d" font-size="11"><text x="${bx-17}" y="280">PAS</text><text id="playerLabel" x="${ax-29}" y="123">SÜRÜKLE ↔</text><text x="${Math.min(dx+6,738)}" y="34">OFSAYT ÇİZGİSİ</text></g>
+      <path id="passLine" d="M${bx+18} 233L${ax-10} 175" stroke="#7d9980" stroke-width="1.8" stroke-dasharray="5 6" fill="none"/>
+      <text x="44" y="38" fill="#8ba089" font-size="11">HÜCUM →</text>
+    </svg>`;
+  }
+  function next(){
+    answered=false;dragging=false;scenario=cases[round];selectedX=scenario.attack;paint();
+  }
+  function scoreClub(i){
+    const c=side(i);
+    return `<div class="club ${i===1?'right':''}">${i===1?`<div><div class="k">${c.name.toUpperCase()}</div><strong id="score-${i}">${score[i]}</strong></div><i style="background:${c.kit}" aria-hidden="true"></i>`:`<i style="background:${c.kit}" aria-hidden="true"></i><div><div class="k">${c.name.toUpperCase()}</div><strong id="score-${i}">${score[i]}</strong></div>`}</div>`;
+  }
+  function paint(){
+    const at=side(attackingSide());
+    app.innerHTML=`<div class="scorebar">${scoreClub(0)}
+      <div class="center"><span class="progress">${times[round]}'</span><br>POZİSYON ${round+1}/${N}<br>${correct} DOĞRU KARAR</div>
+      ${scoreClub(1)}</div>
+      <div class="pitch-wrap">${pitch()}</div>
+      <div class="hint"><span>● PAS ANI · K: KALECİ · S: SAVUNMACI</span><span>HÜCUM SAĞA →</span></div>
+      <section class="controls"><div><div class="question">Ofsayt mı?</div>
+        <div class="attack-note"><i class="attack-dot" style="background:${at.ink}"></i>${at.name.toUpperCase()} ATAKTA · GOL POZİSYONU</div>
+        <div class="micro">${scenario.tip} · Oyuncuyu sürükle.</div></div>
+        <div class="decisions"><button id="off">OFSAYT</button><button id="on">DEVAM</button></div>
+      </section><div id="verdict" class="verdict" aria-live="polite"></div>`;
+    const svg=document.getElementById('pitch');
+    svg.addEventListener('pointerdown',e=>{if(answered)return;dragging=true;svg.setPointerCapture(e.pointerId);move(e);});
+    svg.addEventListener('pointermove',e=>{if(dragging)move(e);});
+    svg.addEventListener('pointerup',()=>{dragging=false;});
+    svg.addEventListener('pointercancel',()=>{dragging=false;});
+    svg.addEventListener('keydown',e=>{if(answered)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();selectedX=Math.max(0,Math.min(100,selectedX+(e.key==='ArrowRight'?1:-1)));updateAttacker();}});
+    document.getElementById('off').onclick=()=>judge(true);
+    document.getElementById('on').onclick=()=>judge(false);
+  }
+  function updateAttacker(){
+    const s=document.getElementById('pitch'),attacker=document.getElementById('attacker'),lbl=document.getElementById('playerLabel');
+    attacker.setAttribute('cx',X(selectedX));lbl.setAttribute('x',X(selectedX)-29);
+    document.getElementById('passLine').setAttribute('d',`M${X(scenario.ball)+18} 233L${X(selectedX)-10} 175`);
+  }
+  function move(e){
+    const s=document.getElementById('pitch'),r=s.getBoundingClientRect();
+    const x=((e.clientX-r.left)/r.width*900-35)/8.3;
+    selectedX=Math.max(0,Math.min(100,Math.round(x)));updateAttacker();
+  }
+  function judge(whistle){
+    if(answered)return;
+    answered=true;dragging=false;
+    const actualOffside=isOffside(),isCorrect=whistle===actualOffside,idx=attackingSide(),team=side(idx);
+    if(isCorrect)correct++;else wrong++;
+    if(!whistle)score[idx]++;
+    if(!actualOffside)fair[idx]++;
+    document.getElementById('score-0').textContent=score[0];
+    document.getElementById('score-1').textContent=score[1];
+    document.getElementById('off').disabled=document.getElementById('on').disabled=true;
+    const reason=actualOffside?
+      'Pas anında hücumcu rakip yarı sahada, hem toptan hem sondan ikinci rakipten ileride. Bu pozisyonda pası alıyor.':
+      'Pas anında hücumcu, ofsayt için gereken üç konum koşulunu aynı anda karşılamıyor.';
+    const action=whistle?'GOL İPTAL.':'GOL!';
+    const result=whistle?`${team.name} için gol sayılmadı.`:`${team.name} skora bir gol ekledi.`;
+    const box=document.getElementById('verdict');box.classList.add('on');
+    box.innerHTML=`<div class="impact">${isCorrect?'KURALA UYGUN KARAR':'HATALI HAKEM KARARI'} · ${score[0]}–${score[1]}</div>
+      <div><b>${action}</b></div><p>${result} ${isCorrect?'Kararın doğru.':'Kararın maçın gidişatını değiştirmiş olabilir.'}</p>
+      <div class="rule-note">KURALA GÖRE: <strong>${actualOffside?'OFSAYT':'DEVAM'}</strong>. ${reason}</div>
+      <div class="micro" style="margin:10px 0 12px">STÜDYO: ${scenario.quip}</div>
+      <button id="continue">${round===N-1?'MAÇI BİTİR':'SONRAKİ POZİSYON →'}</button>`;
+    document.getElementById('continue').onclick=()=>{round++;round===N?finish():next();};
+  }
+  function finish(){
+    const diff=score[0]-score[1],outcome=diff>0?'KAZANDIN.':diff<0?'KAYBETTİN.':'BERABERE.';
+    const fairDiff=fair[0]-fair[1];
+    const fairOutcome=fairDiff>0?'Takımın kazanıyordu.':fairDiff<0?'Rakibin kazanıyordu.':'Maç berabere bitiyordu.';
+    const altered=score[0]!==fair[0]||score[1]!==fair[1];
+    app.innerHTML=`<section class="stage-screen result-screen">
+      <div class="micro">MAÇ BİTTİ / RESMÎ OLMAYAN TUTANAK</div>
+      <h2>${outcome}</h2>
+      <div class="result-score">${score[0]} <small>–</small> ${score[1]}</div>
+      <div class="result-names">${side(0).name.toUpperCase()} / ${side(1).name.toUpperCase()}</div>
+      <div class="result-compare">
+        <div><div class="micro">SENİN KARARLARINLA</div><strong>${score[0]} – ${score[1]}</strong><div class="micro">${correct}/${N} DOĞRU KARAR</div></div>
+        <div><div class="micro">KURALA GÖRE</div><strong>${fair[0]} – ${fair[1]}</strong><div class="micro">${wrong} TARTIŞMALI KARAR</div></div>
+      </div>
+      <p class="result-caption">${altered?`Kurallar uygulansaydı: ${fairOutcome} Skorun farklı. İtirazlar başladı.`:'İki skor da aynı. Yine de maç sonrası programı uzatıldı.'}</p>
+      <div class="bottom-actions"><button id="again">RÖVANŞ</button><button id="teams">TAKIMLARI DEĞİŞTİR</button><button id="share">PAYLAŞ ↗</button></div>
+    </section>`;
+    document.getElementById('again').onclick=start;
+    document.getElementById('teams').onclick=intro;
+    document.getElementById('share').onclick=async()=>{
+      const url='https://aynen.fun/ofsaytimsi.html';
+      const msg=`Ofsaytımsı: ${side(0).name} ${score[0]}–${score[1]} ${side(1).name}. Kurala göre ${fair[0]}–${fair[1]}. ${correct}/8 doğru hakem kararı. ${url}`;
+      try{
+        if(navigator.share)await navigator.share({title:'Ofsaytımsı',text:msg,url});
+        else if(navigator.clipboard){await navigator.clipboard.writeText(msg);document.getElementById('share').textContent='KOPYALANDI ✓';}
+        else window.prompt('Sonucu kopyala:',msg);
+      }catch(_){}
+    };
+  }
+  intro();
 })();</script></body></html><script src="/share-kit.js?v=1" defer></script>
