@@ -135,6 +135,107 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 .end-progress{font:10px 'DM Mono',monospace;color:#486350;line-height:1.5;border:1px solid #d2dec7;background:#edf3e7;border-radius:8px;padding:10px;margin:15px 0}
 @media(max-width:950px){#action{bottom:166px}#game:has(#action.visible) #progress{bottom:377px}}
 @media(max-width:650px){#relations{margin-top:3px;padding-top:5px;font-size:7px}#relations span:last-child{display:none}#action{bottom:125px}#game:has(#action.visible) #progress{bottom:328px}}
+
+/* VISUAL REFRESH / cozy, legible, compact life-sim HUD */
+:root{--ui-surface:rgba(253,251,246,.955);--ui-border:rgba(80,75,65,.24);--ui-shade:0 16px 50px rgba(32,31,25,.14),0 2px 8px rgba(27,25,20,.07);--ui-green:#335740;--ui-cream:#faf7ee}
+#game{background:linear-gradient(130deg,#ced8c7 0%,#efeadc 47%,#d9d3c7 100%)}
+#room{--cam-zoom:1.055;--cam-x:0px;--cam-y:0px;object-fit:cover;transform:translate3d(var(--cam-x),var(--cam-y),0) scale(var(--cam-zoom));transform-origin:center center;transition:transform .34s cubic-bezier(.21,.72,.24,1);filter:saturate(.96) contrast(1.035);will-change:transform}
+.stage-vignette{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at 45% 40%,transparent 38%,rgba(45,38,23,.22) 100%);mix-blend-mode:multiply;opacity:.34}
+#sceneShade{background:linear-gradient(108deg,rgba(255,251,238,.10),transparent 52%,rgba(34,36,28,.08))}#game.evening #sceneShade{background:linear-gradient(180deg,rgba(231,169,107,.14),rgba(63,42,52,.24))}#game.night #sceneShade{background:linear-gradient(180deg,rgba(71,68,109,.17),rgba(39,36,74,.38))}
+#top .brand,#top .clock,#top .stats,#tasks,#family,#goalCard,#levelWidget,#action,#progress,#queuePanel{background:var(--ui-surface);border:1px solid var(--ui-border);box-shadow:var(--ui-shade);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+#top .brand{top:15px;left:16px;height:54px;border-radius:14px;gap:9px;padding:7px 12px}
+#top .brand b{font-size:18px;font-weight:700;letter-spacing:-.065em}
+#top .brand small{font-size:8px;letter-spacing:.035em;opacity:.75}
+#top .brand .back{width:33px;height:33px;border-radius:9px;border:0;background:#dce8d6;color:#304f38}
+#top .clock{top:15px;left:231px;height:54px;border-radius:14px;gap:9px;padding:6px 9px 6px 13px}
+#top .clock strong{font-size:23px;font-weight:500;letter-spacing:-.065em}
+#top .clock small{font-size:8px;letter-spacing:.03em}
+#top .clock .mini{border:0;border-radius:7px;background:#eceae3;min-height:31px;min-width:29px}
+#top .clock .mini.on{color:#fff;background:#314e3b}
+#top .clock .controls{gap:3px}
+#top .stats{top:15px;right:16px;border-radius:14px;padding:4px}
+#top .stat{min-width:95px;padding:5px 11px;min-height:44px}
+#top .stat label{font-size:9px;letter-spacing:.05em}
+#top .stat strong{font-size:17px;font-weight:700;letter-spacing:-.04em;color:#29382d}
+#top .stat:nth-child(1) strong{color:#527b59}
+#tasks{top:84px;left:16px;width:305px;max-height:calc(100dvh - 210px);border-radius:15px;padding:14px 13px 10px;overflow:hidden}
+#tasks .tasks-head{padding:0 2px 10px;border-bottom:0;gap:10px}
+#tasks .tasks-head b{font-size:16px;font-weight:700;letter-spacing:-.045em}
+#tasks .tasks-head b span{font:11px 'DM Mono',monospace;border:1px solid #dad6cc;background:#f0f0e8;padding:3px 5px;border-radius:7px;margin-left:4px}
+#tasks .tasks-head>span{font-size:10px;color:#807b70}
+#tasks .task-list{max-height:min(49dvh,415px);padding:3px 0 0}
+#tasks.collapsed{width:305px}
+#tasks.collapsed .task-filters,#tasks.collapsed .task-list,#tasks.collapsed .todo-foot{display:none}
+.task-filters{display:flex;gap:5px;padding:0 1px 10px;border-bottom:1px solid #e2ded4}
+.task-filters button{flex:1;border:1px solid transparent;background:#efeee8;color:#756f67;border-radius:17px;padding:8px 4px;font:10px 'DM Mono',monospace}
+.task-filters button.active{background:#334f3b;color:#fff}
+.job{gap:9px;border-radius:10px;border-bottom:1px solid #eae7de;padding:10px 7px;min-height:57px;position:relative}
+.job .emoji{width:31px;height:31px;display:grid;place-items:center;flex:0 0 31px;border:1px solid #ebe4d9;background:#f1ede4;border-radius:9px;font-size:17px}
+.job b{font-size:12px;font-weight:600}
+.job small{font:9px 'DM Mono',monospace;color:#827b70}
+.job .remaining{border:none;background:#eaece4;color:#49614d;border-radius:7px;padding:5px 6px}
+.job.late .remaining{background:#f6e0d9;color:#ae5848}
+.job.active{background:#e8eee1}
+.job:hover{background:#e9eee2}
+.job-progress{position:absolute;left:49px;right:12px;bottom:2px;height:2px;border-radius:4px;background:rgba(102,130,99,.15);overflow:hidden}.job-progress>i{display:block;height:100%;background:#5c8963}
+.todo-foot{font-size:10px;border-top:1px solid #eae5db;margin-top:4px;padding:9px 1px 1px;display:flex;align-items:center;gap:7px}
+.todo-dot,.queue-signal,.scene-dot{display:inline-block;width:7px;height:7px;min-width:7px;border-radius:50%;background:#74a87d;box-shadow:0 0 0 3px #e5efe1}
+#goalCard{top:83px;right:16px;width:276px;border-radius:15px;padding:13px 13px 11px}
+.goal-head{font-size:9px}
+.goal-mini{font-size:11px;padding:7px 0}
+#goalMore{font-size:9px;margin-top:1px}
+#levelWidget{left:16px;bottom:16px;top:auto;width:315px;padding:12px;border-radius:14px}
+#levelFlag{background:#dbe7d4;color:#2c5537;font-weight:600}
+#homeRank{font-size:13px}
+#openNotebook{background:#385c43;color:#fff;font:10px 'DM Mono',monospace;padding:8px 9px;border-radius:7px}
+.xp-track{margin:12px 0 7px;height:8px}
+#family{bottom:16px;right:16px;width:315px;border-radius:15px}
+#family .family-head b{font-size:15px;letter-spacing:-.045em}
+#family .family-head small{font-size:8px}
+.person-card{gap:5px;transition:background .15s,transform .15s}
+.person-card:hover{background:#ecf1e8;transform:translateY(-2px)}
+.person-card.selected{background:#e8efe3;box-shadow:inset 0 0 0 1px #91b297}
+.person-card .avatar{width:57px;border-radius:11px;overflow:hidden;aspect-ratio:1;background:#e4d8c7}
+.person-card .avatar svg{display:block;width:100%;height:100%}
+.person-card b{font-size:11px}
+.person-card .meter{height:6px}
+#relations{font-size:9px}
+#queuePanel{bottom:18px;left:50%;width:min(276px,22vw);padding:11px 12px;border-radius:12px}
+#queuePanel b{font-size:11px}
+#queuePanel .queue-line{font-size:9px;padding:3px 0}
+#action{right:16px;bottom:178px;border-radius:14px;padding:16px}
+#progress{right:16px;bottom:179px;border-radius:12px}
+#game:has(#action.visible) #progress{bottom:391px}
+.scene-caption{position:absolute;top:79px;left:50%;transform:translateX(-50%);z-index:4;pointer-events:none;color:#3f473d;background:#f8f6ebc7;border:1px solid #f9f7ecac;padding:8px 11px;border-radius:20px;font:9px 'DM Mono',monospace;display:flex;gap:8px;align-items:center;white-space:nowrap}
+.scene-sep{opacity:.4}
+#cameraTools{position:absolute;bottom:115px;left:50%;transform:translateX(-50%);z-index:12;display:flex;gap:2px;padding:3px;background:#f9f7efde;border:1px solid #e5ded2;border-radius:11px;box-shadow:0 8px 25px #0002;backdrop-filter:blur(15px)}
+#cameraTools button{border:0;background:transparent;width:29px;height:28px;border-radius:7px;font-size:16px;color:#455346}
+#cameraTools button:hover{background:#e4e9dc}
+.hotspot{outline:0;transform-origin:center;transition:opacity .2s}
+.hotspot .halo{stroke:#ffffff;stroke-width:3;stroke-dasharray:none;fill:#284a3ba9;filter:drop-shadow(0 3px 8px #0006)}
+.hotspot .sym{font-size:20px}
+.hotspot .spot-label{font:600 10px 'Space Grotesk',sans-serif;fill:#fff;stroke:#28382b;stroke-width:5}
+.hotspot:hover .halo,.hotspot:focus-visible .halo{fill:#5b8b6f;stroke:#fff;stroke-width:5}
+.hotspot.working .halo{stroke:#a8dbad;fill:#264835}
+.hotspot.blink .halo{animation:alarm 1s infinite alternate;stroke:#d98c54}
+#steam{transition:opacity .4s}
+#steam.on{opacity:.9}
+#steam.on path{animation:steamRise 1.6s ease-in-out infinite alternate;transform-origin:1200px 285px}
+@keyframes steamRise{to{transform:translateY(-11px);opacity:.28}}
+#action h2{font-size:20px}
+#action .action-buttons button{background:#efeee7}
+#action .action-buttons button.primary{background:#d9e8ce}
+#action .action-buttons button:hover:enabled{filter:brightness(.96)}
+#splash,#ending{background:rgba(15,20,16,.47);backdrop-filter:blur(9px)}
+.paper{border:1px solid #fff9;background:#fbf9f1;border-radius:20px;box-shadow:0 28px 85px #121c1863}
+.paper h1{font-size:clamp(40px,5vw,62px);line-height:1;letter-spacing:-.08em}
+.paper button{border-radius:10px}
+#toast{background:#28362e;border-radius:11px;box-shadow:0 12px 35px #0003}
+@media(max-width:1120px){#top .brand{width:173px}.brand b{font-size:15px!important}#top .clock{left:194px}.stats .stat{min-width:72px;padding:5px 7px}#top .stat strong{font-size:14px}#tasks{width:268px}#tasks.collapsed{width:268px}#goalCard{width:245px}#levelWidget{width:268px}#family{width:268px}#queuePanel{display:none}}
+@media(max-width:850px){#top .brand{top:9px;left:8px;width:auto;height:43px;padding:5px 8px}#top .brand b{font-size:13px!important}#top .brand small{display:none}#top .clock{left:177px;top:9px;height:43px;padding:5px 7px}#top .clock strong{font-size:15px}#top .clock small{font-size:8px}#top .clock .mini{min-width:23px;min-height:25px;padding:2px 3px}#top .stats{top:58px;right:8px}#top .stat{min-height:34px;min-width:66px;padding:5px 8px}#top .stat label{font-size:7px}#top .stat strong{font-size:12px}#tasks{top:110px;left:8px;width:240px;max-height:calc(100dvh - 205px)}#tasks.collapsed{width:240px}#goalCard{top:110px;right:8px;width:216px}#levelWidget{left:8px;bottom:8px;width:250px}#family{right:8px;bottom:8px;width:247px}#cameraTools{bottom:89px}#action{right:8px;bottom:163px}#progress{right:8px;bottom:163px}#game:has(#action.visible) #progress{bottom:365px}.scene-caption{top:9px;left:50%;transform:translateX(-50%);font-size:8px}}
+@media(max-width:650px){#room{transform:translate3d(calc(var(--cam-x) - 8vw),var(--cam-y),0) scale(var(--cam-zoom));width:100%;height:100%;transform-origin:center}#top .brand{top:8px;left:7px;height:42px}#top .brand .back{width:27px;height:27px}#top .brand b{font-size:12px!important}#top .clock{top:8px;left:auto;right:7px;height:42px;padding:3px 5px;gap:3px}#top .clock strong{font-size:15px}#top .clock small{display:none}#top .clock .mini{min-width:24px;font-size:10px}#top .clock #saveNow{display:none}#top .stats{top:57px;right:7px;gap:0}#top .stat{min-width:55px;padding:4px 5px}#top .stat strong{font-size:11px}#tasks{top:auto;bottom:8px;left:7px;width:calc(100vw - 14px);max-height:55dvh;z-index:21}#tasks.collapsed{width:calc(49vw - 7px);max-width:210px}#tasks .task-list{max-height:38dvh}#tasks .tasks-head b{font-size:12px}#tasks .tasks-head b span{font-size:9px}#tasks .tasks-head>span{font-size:8px}#tasks .task-filters button{font-size:9px;padding:7px 2px}#family{bottom:8px;right:7px;width:calc(51vw - 7px);padding:7px}#family .family-head{margin-bottom:4px}#family .family-head b{font-size:11px}#family .family-head small{display:none}.person-card .avatar{width:34px;border-radius:7px}.person-card b{font-size:8px}#relations{font-size:7px}#levelWidget{top:104px;bottom:auto;left:7px;width:50vw;max-width:225px;padding:8px}#levelWidget .lvl-top{gap:4px}#levelFlag{font-size:8px;padding:4px}#homeRank{font-size:10px}#openNotebook{font-size:8px;padding:6px 5px}#goalCard{top:104px;right:7px;width:43vw;padding:8px}.goal-head{font-size:8px}.goal-head span{display:none}.goal-mini{font-size:9px;padding:5px 0}.goal-mini:nth-child(n+2){display:none}#goalMore{font-size:8px}#cameraTools{bottom:91px;left:50%;opacity:.9}#cameraTools button{width:27px;height:25px}.scene-caption{display:none}#action{left:8px;right:8px;bottom:108px;width:auto;z-index:25}#progress{right:7px;bottom:111px}#game:has(#action.visible) #progress{bottom:309px}#toast{top:94px}#rewardBubble{top:30%;left:20%}}
+@media(max-width:370px){#top .brand b{font-size:11px!important}#top .clock{gap:1px}.mini{min-width:21px!important}#family .person-card .avatar{width:29px}}
+@media(prefers-reduced-motion:reduce){#room{transition:none}#steam.on path{animation:none}}
 </style>
 </head>
 <body>
@@ -148,6 +249,11 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 <linearGradient id="wood" x1="0" x2=".8" y1="0" y2="1"><stop stop-color="#b8794a"/><stop offset=".6" stop-color="#995b35"/><stop offset="1" stop-color="#744224"/></linearGradient>
 <linearGradient id="glass" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#91b266"/><stop offset=".65" stop-color="#547a3f"/><stop offset="1" stop-color="#8b9e54"/></linearGradient>
 <filter id="shadow"><feGaussianBlur stdDeviation="14"/></filter>
+<linearGradient id="newSun" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff9d9" stop-opacity=".62"/><stop offset=".7" stop-color="#fff9d9" stop-opacity="0"/></linearGradient>
+<linearGradient id="windowReflect" x1="0" y1="0" x2=".75" y2="1"><stop stop-color="#f3fff0" stop-opacity=".26"/><stop offset=".7" stop-color="#f3fff0" stop-opacity=".02"/></linearGradient>
+<linearGradient id="woodPolish" x1="0" y1="0" x2="1" y2=".8"><stop stop-color="#f4bd82" stop-opacity=".3"/><stop offset=".5" stop-color="#f8c486" stop-opacity=".04"/><stop offset="1" stop-color="#3a2316" stop-opacity=".22"/></linearGradient>
+<radialGradient id="lampGlow"><stop stop-color="#fff1c4" stop-opacity=".5"/><stop offset="1" stop-color="#fff1c4" stop-opacity="0"/></radialGradient>
+<filter id="softShadows"><feGaussianBlur stdDeviation="7"/></filter>
 </defs>
 <rect width="1400" height="900" fill="#eeeae2"/>
 <path d="M0 0H1400V398L1120 440L0 325Z" fill="url(#wall)"/>
@@ -163,6 +269,9 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 <path d="M345 77V299" stroke="#fafafa" stroke-width="14"/><path d="M75 295H620" stroke="#fff" stroke-width="17"/>
 <path d="M75 316H640L612 337H50Z" fill="#dfddd4"/>
 <rect x="527" y="275" width="36" height="45" rx="6" fill="#55a149"/><path d="M546 280Q532 238 543 212M548 272Q572 239 562 210" fill="none" stroke="#397b49" stroke-width="6"/>
+<!-- sun through window; warm reflections across furniture -->
+<path d="M74 86L616 86L792 645L400 554Z" fill="url(#newSun)" pointer-events="none" opacity=".26"/>
+<path d="M350 274L400 274L785 900H665Z" fill="#fff3c8" opacity=".13" pointer-events="none"/>
 <!-- minimalist wall art -->
 <path d="M862 55H1067V285H862Z" fill="#f8f7f3" stroke="#1c1c1c" stroke-width="8"/>
 <circle cx="937" cy="118" r="42" fill="#262625"/><circle cx="1006" cy="108" r="39" fill="#262625"/><path d="M879 185L930 154L986 208L1048 154V269H879Z" fill="#262625"/><path d="M883 225L937 165L998 265M939 165L945 274M992 152L1017 274" fill="none" stroke="#f8f7f3" stroke-width="16"/>
@@ -228,6 +337,42 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 <g id="decor-pot" display="none"><ellipse cx="1270" cy="316" rx="36" ry="16" fill="#bd7059" stroke="#403832" stroke-width="4"/><path d="M1235 315V333Q1270 351 1305 332V315" fill="#b66d58" stroke="#36332f" stroke-width="4"/></g>
 <g id="decor-coffee" display="none"><rect x="751" y="274" width="72" height="34" rx="5" fill="#ebe8e1" stroke="#55534f" stroke-width="4"/><rect x="765" y="285" width="20" height="16" fill="#a99a7d"/><path d="M794 286H815L810 298H796Z" fill="#333"/></g>
 <g id="decor-light" display="none"><path d="M1106 40V184" stroke="#5f5851" stroke-width="5"/><path d="M1068 181H1144L1125 217H1087Z" fill="#f9e6ad" stroke="#514b46" stroke-width="4"/><ellipse cx="1106" cy="217" rx="45" ry="10" fill="#ffe7a3" opacity=".65"/></g>
+
+<!-- kitchen detail layer -->
+<g id="sceneDetails" pointer-events="none">
+<!-- pendant lamp -->
+<path d="M695 0L695 117" stroke="#4b4a42" stroke-width="5"/>
+<ellipse cx="695" cy="122" rx="57" ry="6" fill="#26372e"/>
+<path d="M653 126Q664 143 638 179Q695 195 753 179Q730 138 738 126Z" fill="#557362" stroke="#314b40" stroke-width="3"/>
+<path d="M640 178Q696 193 752 178" fill="none" stroke="#b9c4aa" stroke-width="5" opacity=".7"/>
+<ellipse cx="696" cy="194" rx="80" ry="33" fill="url(#lampGlow)" opacity=".6"/>
+<!-- bottle group -->
+<path d="M761 289v-27h-6v-19h17v19h-6v27" fill="#477b4d" stroke="#395e42" stroke-width="2"/>
+<path d="M774 292v-20h-5v-24h15v24h-4v20" fill="#a8804d" stroke="#806143" stroke-width="2"/>
+<path d="M792 298v-32h-6v-11h17v11h-6v32" fill="#cfb27b" stroke="#846e49" stroke-width="2"/>
+<!-- cup and handles on table -->
+<ellipse cx="585" cy="537" rx="17" ry="7" fill="#e9dfd0" stroke="#797268" stroke-width="2"/>
+<path d="M568 536v17q16 9 34-1v-16" fill="#d8ae6e" stroke="#7e6346" stroke-width="2"/>
+<path d="M600 540q18-5 13 7q-3 7-13 6" fill="none" stroke="#876c4c" stroke-width="4"/>
+<!-- fruit bowl -->
+<ellipse cx="729" cy="531" rx="32" ry="13" fill="#f5eee0" stroke="#aaa295" stroke-width="3"/>
+<circle cx="709" cy="525" r="9" fill="#e6b349"/><circle cx="724" cy="521" r="10" fill="#d68a48"/><circle cx="739" cy="525" r="10" fill="#bf6250"/>
+<path d="M722 514L726 508" stroke="#52753b" stroke-width="2"/>
+<!-- paper for homework -->
+<path d="M710 594L778 574L814 594L744 614Z" fill="#eee7dc" stroke="#bcb4a5" stroke-width="2"/>
+<path d="M725 593L764 583M733 599L785 588" stroke="#8698aa" stroke-width="2"/>
+<!-- fridge magnets -->
+<circle cx="1351" cy="463" r="5" fill="#bd735b"/><rect x="1288" y="482" width="37" height="37" fill="#fbf6e8" stroke="#b9b4ac" stroke-width="2" transform="rotate(-6 1305 500)"/>
+<path d="M1295 505l12-13 11 8" stroke="#73a083" stroke-width="3" fill="none"/><circle cx="1340" cy="560" r="6" fill="#88a381"/>
+<!-- herb leaves on sill -->
+<path d="M484 294V261" stroke="#63835f" stroke-width="3"/>
+<path d="M484 280Q459 257 461 248Q488 250 484 280M486 271Q513 248 515 245Q510 279 486 271" fill="#709866"/>
+<rect x="468" y="287" width="32" height="23" rx="3" fill="#a97d55"/>
+<!-- floor rugs, softly irregular -->
+<path d="M271 852Q299 792 414 776Q510 784 561 860L555 894H267Z" fill="#8f9973" opacity=".56"/>
+<!-- kitchen steam only when cooking -->
+<g id="steam" opacity="0"><path d="M1199 295Q1181 281 1197 263Q1210 247 1197 236" fill="none" stroke="#f6f4ea" stroke-width="6" stroke-linecap="round"/><path d="M1216 297Q1196 279 1211 259Q1224 243 1217 230" fill="none" stroke="#f6f4ea" stroke-width="5" stroke-linecap="round"/></g>
+</g>
 <!-- clickable stations -->
 <g class="hotspot" data-station="stove" role="button" tabindex="0" aria-label="Ocak"><circle class="halo" cx="1193" cy="280" r="24"/><text class="sym" x="1193" y="283">🍳</text><text class="spot-label" x="1193" y="248">OCAK</text></g>
 <g class="hotspot" data-station="sink" role="button" tabindex="0" aria-label="Lavabo"><circle class="halo" cx="1328" cy="422" r="24"/><text class="sym" x="1328" y="426">🫧</text><text class="spot-label" x="1328" y="388">LAVABO</text></g>
@@ -239,20 +384,20 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 <g class="hotspot" data-station="pet" role="button" tabindex="0" aria-label="Köpeğin maması"><circle class="halo" cx="318" cy="726" r="24"/><text class="sym" x="318" y="730">🐾</text><text class="spot-label" x="318" y="693">MAMA</text></g>
 <rect width="1400" height="900" fill="url(#grain)" pointer-events="none"/>
 </svg>
-<div id="sceneShade"></div>
+<div id="sceneShade"></div><div class="stage-vignette" aria-hidden="true"></div><div class="scene-caption"><span class="scene-dot"></span><span>EV / MUTFAK</span><span class="scene-sep">·</span><span id="sceneMood">GÜNDÜZ</span></div><div id="cameraTools" aria-label="Kamera kontrolleri"><button type="button" id="cameraOut" aria-label="Uzaklaştır">−</button><button type="button" id="cameraReset" aria-label="Kamerayı sıfırla">⌖</button><button type="button" id="cameraIn" aria-label="Yakınlaştır">+</button></div>
 <header id="top">
-<div class="brand"><a class="back" href="/" aria-label="aynen.fun ana sayfa">←</a><div><b>EVİN PATRONU</b><small>AYNEN.FUN / BİR AKŞAM</small></div></div>
+<div class="brand"><a class="back" href="/" aria-label="aynen.fun ana sayfa">←</a><div><b>EVİN PATRONU</b><small>YAŞAYAN MUTFAK SİMÜLASYONU</small></div></div>
 <div class="clock"><div><small id="dayLabel">GÜN 01 / AKŞAM</small><strong id="time">17:00</strong></div><div class="controls"><button class="mini" id="pause" aria-label="Duraklat">Ⅱ</button><button class="mini" id="saveNow" aria-label="Kaydet" title="Kaydet">⌑</button><button class="mini on" data-speed="1">1×</button><button class="mini" data-speed="2">2×</button><button class="mini" data-speed="3">3×</button></div></div>
 <div class="stats"><div class="stat"><label>EVİN HUZURU</label><strong id="peace">75%</strong></div><div class="stat"><label>ENERJİN</label><strong id="energy">100%</strong></div><div class="stat"><label>BÜTÇE</label><strong id="cash">₺420</strong></div></div>
 </header>
 <div id="hint">Odada bir nesneye veya görev listesine dokun.</div>
-<section id="tasks" class="collapsed" aria-label="Yapılacak işler"><div class="tasks-head" id="tasksHead" role="button" tabindex="0" aria-label="Görev listesini aç veya kapat"><b>YAPILACAKLAR <span id="count">0</span></b><span id="fold">LİSTEYİ AÇ +</span></div><div class="task-list" id="taskList"></div><div class="todo-foot">Birini seç. Kendin yap ya da bir aile üyesine devret.</div></section>
+<section id="tasks" class="collapsed" aria-label="Yapılacak işler"><div class="tasks-head" id="tasksHead" role="button" tabindex="0" aria-label="Görev listesini aç veya kapat"><b>YAPILACAKLAR <span id="count">0</span></b><span id="fold">LİSTEYİ AÇ +</span></div><div id="taskFilters" class="task-filters" role="group" aria-label="Görev filtresi"><button type="button" class="active" data-task-filter="all" aria-pressed="true">TÜMÜ</button><button type="button" data-task-filter="house" aria-pressed="false">EV</button><button type="button" data-task-filter="family" aria-pressed="false">AİLE</button><button type="button" data-task-filter="urgent" aria-pressed="false">ACİL</button></div><div class="task-list" id="taskList"></div><div class="todo-foot"><span class="todo-dot"></span><span>Görev seç, sıraya ekle veya ailene devret.</span></div></section>
 <div id="progress"><strong id="progressName">Çalışılıyor...</strong><small id="progressWho">Sen</small><div class="bar"><i id="progressFill"></i></div></div>
 <div id="action"><button class="close-action" id="closeAction" aria-label="Kapat">×</button><div class="eyebrow" id="actionMeta">YAPILACAK İŞ</div><h2 id="actionTitle"></h2><p id="actionDesc"></p><div class="action-buttons"><button class="primary" id="doIt">BEN YAPAYIM</button><button id="delegate">EŞİME VER</button><button id="askKid">ÇOCUĞA VER</button></div></div>
-<aside id="family" aria-label="Aile üyeleri"><div class="family-head"><b>EV HALKI</b><small id="saveStatus">OTOMATİK KAYIT</small></div><div class="portraits"><button class="person-card selected" data-person="self" aria-label="Senin karakterin"><span class="avatar">🧑🏻</span><b>Sen</b><span class="meter"><i id="selfMeter"></i></span></button><button class="person-card" data-person="partner" aria-label="Eşinin karakteri"><span class="avatar">👩🏻</span><b>Eş</b><span class="meter"><i id="partnerMeter"></i></span></button><button class="person-card" data-person="kid" aria-label="Çocuğun karakteri"><span class="avatar">👧🏽</span><b>Çocuk</b><span class="meter"><i id="kidMeter"></i></span></button><button class="person-card" data-person="pet" aria-label="Köpeğin"><span class="avatar">🐶</span><b>Köpek</b><span class="meter"><i id="petMeter"></i></span></button></div><div id="relations"><span>İLİŞKİ <b id="relationPartner">66</b></span><span>GÜVEN <b id="relationKid">64</b></span><span>ANILAR <b id="badgeCount">0/7</b></span></div></aside>
-<div id="queuePanel" aria-live="polite"><b>SIRADAKİ İŞLER</b><div class="queue-line" id="selfQueue">SEN / Beklemede</div><div class="queue-line" id="partnerQueue">EŞ / Beklemede</div></div>
+<aside id="family" aria-label="Aile üyeleri"><div class="family-head"><b>EV HALKI</b><small id="saveStatus">OTOMATİK KAYIT</small></div><div class="portraits"><button class="person-card selected" data-person="self" aria-label="Senin karakterin"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#e4d6c6"/><path d="M5 75Q6 53 23 50L50 50Q68 54 69 75" fill="#dc7654"/><path d="M22 50L31 58L43 58L50 50" fill="#f2eddf"/><rect x="31" y="44" width="12" height="15" rx="5" fill="#c8906b"/><ellipse cx="37" cy="30" rx="19" ry="23" fill="#c9906e"/><path d="M18 26Q18 7 35 7Q58 3 58 28L49 22L43 16L30 22L20 25Z" fill="#3a2c28"/><path d="M26 33h8m7 0h8" stroke="#29292a" stroke-width="3" stroke-linecap="round"/><path d="M34 34h7" stroke="#29292a" stroke-width="2"/><path d="M31 45Q38 48 44 44" fill="none" stroke="#985b46" stroke-width="2" stroke-linecap="round"/></svg></span><b>Sen</b><span class="meter"><i id="selfMeter"></i></span></button><button class="person-card" data-person="partner" aria-label="Eşinin karakteri"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#dfdcce"/><path d="M7 75Q9 55 22 51L50 51Q64 55 67 75" fill="#aaa0b5"/><path d="M13 35Q11 4 37 4Q64 4 60 37L57 55L14 52Z" fill="#312b29"/><ellipse cx="37" cy="32" rx="18" ry="23" fill="#b87f61"/><path d="M18 31Q17 15 29 13Q40 28 55 24L53 17Q47 5 30 9Z" fill="#302b27"/><path d="M27 34h6m9 0h6" stroke="#3a322e" stroke-width="2.5" stroke-linecap="round"/><path d="M31 45Q37 48 44 44" fill="none" stroke="#804f3e" stroke-width="1.8"/><path d="M21 52L34 62L43 61L53 51" fill="none" stroke="#e5d9c8" stroke-width="3"/></svg></span><b>Eş</b><span class="meter"><i id="partnerMeter"></i></span></button><button class="person-card" data-person="kid" aria-label="Çocuğun karakteri"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#efdbc7"/><path d="M4 75Q6 52 24 51H49Q66 56 68 75" fill="#dc894c"/><g fill="#352b29"><circle cx="19" cy="23" r="13"/><circle cx="31" cy="12" r="14"/><circle cx="45" cy="15" r="15"/><circle cx="56" cy="29" r="12"/></g><ellipse cx="37" cy="36" rx="19" ry="22" fill="#a8684b"/><path d="M21 30Q35 22 53 29" fill="none" stroke="#2c2523" stroke-width="8" stroke-linecap="round"/><circle cx="30" cy="37" r="2.6" fill="#221d1b"/><circle cx="44" cy="37" r="2.6" fill="#221d1b"/><path d="M31 47Q37 53 44 47" stroke="#6d352b" stroke-width="2.3" fill="none" stroke-linecap="round"/></svg></span><b>Çocuk</b><span class="meter"><i id="kidMeter"></i></span></button><button class="person-card" data-person="pet" aria-label="Köpeğin"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#e6d9c6"/><path d="M11 68Q12 40 35 40Q60 40 61 69" fill="#383734"/><path d="M21 18Q3 15 12 50L24 47M52 18Q69 16 62 50L51 46" fill="#282927"/><ellipse cx="36" cy="33" rx="24" ry="25" fill="#42403b"/><path d="M21 40Q18 59 36 59Q55 59 51 40Q44 44 36 43Q29 44 21 40" fill="#a57852"/><circle cx="28" cy="33" r="3.4" fill="#1a1b1a"/><circle cx="45" cy="33" r="3.4" fill="#1a1b1a"/><ellipse cx="36" cy="45" rx="6" ry="4" fill="#171717"/><path d="M36 49Q31 55 27 50M36 49Q41 55 46 50" stroke="#2b2927" stroke-width="1.8" fill="none"/></svg></span><b>Köpek</b><span class="meter"><i id="petMeter"></i></span></button></div><div id="relations"><span>İLİŞKİ <b id="relationPartner">66</b></span><span>GÜVEN <b id="relationKid">64</b></span><span>ANILAR <b id="badgeCount">0/7</b></span></div></aside>
+<div id="queuePanel" aria-live="polite"><b><span class="queue-signal"></span> AKTİF İŞLER</b><div class="queue-line" id="selfQueue">SEN / Beklemede</div><div class="queue-line" id="partnerQueue">EŞ / Beklemede</div></div>
 <div id="speech" role="status"></div>
-<section id="levelWidget" aria-label="Ev gelişimi"><div class="lvl-top"><span id="levelFlag">LVL 01</span><strong id="homeRank">İlk akşam</strong><button id="openNotebook">GELİŞTİR ↗</button></div><div class="xp-track"><i id="xpFill"></i></div><div class="xp-caption"><span id="xpText">0/90 XP</span><span>SONRAKİ SEVİYE</span></div></section>
+<section id="levelWidget" aria-label="Ev gelişimi"><div class="lvl-top"><span id="levelFlag">01 / SEVİYE</span><strong id="homeRank">İlk akşam</strong><button id="openNotebook">EVİ GELİŞTİR ↗</button></div><div class="xp-track"><i id="xpFill"></i></div><div class="xp-caption"><span id="xpText">0/90 XP</span><span>SONRAKİ SEVİYE</span></div></section>
 <section id="goalCard" aria-label="Günün hedefleri"><div class="goal-head">BUGÜNÜN HEDEFLERİ <span>22:00'YE KADAR</span></div><div id="goalPreview"></div><button id="goalMore">TÜMÜNÜ GÖR ↗</button></section>
 <div id="rewardBubble" aria-live="polite"></div>
 <section id="notebook" class="hidden" role="dialog" aria-modal="true" aria-label="Ev gelişim defteri"><div id="noteShade" class="note-shade"></div><div class="note-sheet"><div class="note-heading"><div><small>EVİN PATRONU / GELİŞİM DEFTERİ</small><h2 id="noteTitle">Evi geliştir</h2></div><button id="closeNotebook" aria-label="Kapat">×</button></div><div class="note-tabs"><button class="active" data-tab="upgrades">EVİ GELİŞTİR</button><button data-tab="goals">HEDEFLER</button><button data-tab="memories">ANILAR</button></div><div id="noteBody"></div><div class="note-footer"><b id="noteBudget">₺160</b><span>Gerçek para yok. Zaman baskılı satın alma yok.</span></div></div></section>
@@ -377,6 +522,24 @@ function careAction(kind){
  selectedPerson=null;hideAction();floatReward(tea?'Birlikte zaman':'Kısa mola');say('Şimdi biraz daha iyiyiz.');render();evaluateGoals();saveGame();
  if(time>=22*60)finishDay();
 }
+
+var taskFilter='all',cameraScale=1.055,cameraX=0,cameraY=0,previousTaskHtml='',lastSceneMood='';
+function appliesFilter(j){
+ if(taskFilter==='house')return ['stove','sink','table','floor','laundry'].includes(j.spot);
+ if(taskFilter==='family')return ['kid','pet','desk'].includes(j.spot);
+ if(taskFilter==='urgent')return j.due-time<=55;
+ return true
+}
+function setFilter(v){taskFilter=v;previousTaskHtml='';document.querySelectorAll('[data-task-filter]').forEach(function(b){var active=b.dataset.taskFilter===v;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});render()}
+function setCamera(z){cameraScale=Math.max(.9,Math.min(1.6,z));$('#room').style.setProperty('--cam-zoom',cameraScale.toFixed(3))}
+function updateSceneFeedback(){
+ var busy=[current,helper,childTask].filter(Boolean);
+ var steam=busy.some(function(j){return j.spot==='stove'});
+ $('#steam').classList.toggle('on',steam);
+ document.querySelectorAll('[data-station]').forEach(function(el){el.classList.toggle('working',busy.some(function(j){return j.spot===el.dataset.station}))});
+ var mood=time>=21*60?'GECE':time>=19*60?'AKŞAM':'GÜNDÜZ';
+ if(mood!==lastSceneMood){lastSceneMood=mood;$('#sceneMood').textContent=mood}
+}
 function render(){
  $('#time').textContent=format(time);$('#dayLabel').textContent='GÜN '+String(day).padStart(2,'0')+' / AKŞAM';$('#peace').textContent=Math.round(peace)+'%';$('#energy').textContent=Math.round(energy)+'%';$('#cash').textContent='₺'+Math.round(cash);
  $('#relationPartner').textContent=Math.round(friendship);$('#relationKid').textContent=Math.round(trust);$('#badgeCount').textContent=achievements.length+'/'+badgeCatalog.length;$('#selfMeter').style.width=energy+'%';$('#partnerMeter').style.width=partnerEnergy+'%';$('#kidMeter').style.width=kidEnergy+'%';$('#petMeter').style.width=petEnergy+'%';
@@ -384,8 +547,8 @@ function render(){
  $('#partnerQueue').textContent='EŞ / '+[helper].concat(partnerQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||'Beklemede';
  var live=jobs.filter(function(j){return j.remaining>0});$('#count').textContent=live.length+' / '+done+' bitti';
  live.sort(function(a,b){return a.due-b.due});
- $('#taskList').innerHTML=live.map(function(j){var late=time>j.due,active=(current&&current.id===j.id)||(helper&&helper.id===j.id)||(childTask&&childTask.id===j.id);var ownership=j.assigned==='partner'?'Eşin yapıyor / sırada · ':j.assigned==='self'?'Sen yapıyorsun / sırada · ':j.assigned==='kid'?'Çocuk yapıyor · ':'';return '<button class="job'+(late?' late':'')+(active?' active':'')+'" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+ownership+Math.ceil(j.remaining)+' dk iş</small></span><span class="remaining">'+(late?'GEÇ '+Math.ceil(time-j.due)+'dk':format(j.due))+'</span></button>'}).join('')||'<p style="font-size:12px;padding:12px">Mutfak sakin. Şimdilik.</p>';
- document.querySelectorAll('[data-station]').forEach(function(el){var spot=el.getAttribute('data-station');var related=live.filter(function(j){return j.spot===spot});el.setAttribute('aria-disabled',related.length?'false':'true');el.classList.toggle('blink',related.some(function(j){return time>j.due-16&&!j.assigned}));});
+ var filtered=live.filter(appliesFilter);var visibleJobHtml=filtered.map(function(j){var late=time>j.due,active=(current&&current.id===j.id)||(helper&&helper.id===j.id)||(childTask&&childTask.id===j.id);var ownership=j.assigned==='partner'?'Eşin yapıyor / sırada · ':j.assigned==='self'?'Sen yapıyorsun / sırada · ':j.assigned==='kid'?'Çocuk yapıyor · ':'';return '<button class="job'+(late?' late':'')+(active?' active':'')+'" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+ownership+Math.ceil(j.remaining)+' dk iş</small></span><span class="remaining">'+(late?'GEÇ '+Math.ceil(time-j.due)+'dk':format(j.due)) + '</span></button>'}).join('')||'<p style="font-size:12px;padding:12px">Bu kategoride bekleyen iş yok.</p>';if(visibleJobHtml!==previousTaskHtml){$('#taskList').innerHTML=visibleJobHtml;previousTaskHtml=visibleJobHtml}
+ updateSceneFeedback();document.querySelectorAll('[data-station]').forEach(function(el){var spot=el.getAttribute('data-station');var related=live.filter(function(j){return j.spot===spot});el.setAttribute('aria-disabled',related.length?'false':'true');el.classList.toggle('blink',related.some(function(j){return time>j.due-16&&!j.assigned}));});
  $('#game').classList.toggle('evening',time>=19*60&&time<21*60);$('#game').classList.toggle('night',time>=21*60);
  var j=current||helper||childTask;if(j){$('#progress').classList.add('on');$('#progressName').textContent=j.name;$('#progressWho').textContent=current?'Sen':helper?'Eşin':'Çocuk';$('#progressFill').style.width=Math.min(100,Math.round(100*(1-j.remaining/j.dur)))+'%'}else $('#progress').classList.remove('on');
  renderProgression();if(started&&performance.now()-lastSave>4000){saveGame();}
@@ -507,6 +670,11 @@ $('#room').addEventListener('click',function(e){
 });
 window.addEventListener('pagehide',saveGame);
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'&&started&&!ended){paused=true;$('#pause').textContent='▶';saveGame()}});
+document.querySelectorAll('[data-task-filter]').forEach(function(b){b.addEventListener('click',function(){setFilter(b.dataset.taskFilter)})});
+$('#cameraIn').onclick=function(){setCamera(cameraScale+.14)};
+$('#cameraOut').onclick=function(){setCamera(cameraScale-.14)};
+$('#cameraReset').onclick=function(){setCamera(1.055);cameraX=0;cameraY=0;$('#room').style.setProperty('--cam-x','0px');$('#room').style.setProperty('--cam-y','0px')};
+$('#room').addEventListener('wheel',function(e){if(!started||ended)return;e.preventDefault();setCamera(cameraScale+(e.deltaY<0?.075:-.075))},{passive:false});
 $('#openNotebook').onclick=function(){openNote('upgrades')};
 $('#goalMore').onclick=function(){openNote('goals')};
 $('#closeNotebook').onclick=closeNote;$('#noteShade').onclick=closeNote;
