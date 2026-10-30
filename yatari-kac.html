@@ -96,6 +96,39 @@
  .result-mode .facts{font-size:10px!important}
  .result-mode .result-big{font-size:46px!important}
 }
+
+/* Mobile typography refinement: compact, readable, no jumbo headings. */
+@media(max-width:760px){
+ .app .topmark{font-size:9px!important}
+ .app .back{font-size:10px!important}
+ .left .title{font-size:clamp(34px,9vw,46px)!important;line-height:.95!important;letter-spacing:-.065em!important}
+ .left .sub{font-size:10px!important}
+ .case-label{font-size:9px!important}
+ .left .crime{font-size:clamp(19px,5.1vw,25px)!important;line-height:1.16!important}
+ .left .facts{font-size:10px!important;line-height:1.38!important}
+ .left .sentence{font-size:29px!important}
+ .left .sentence small{font-size:10px!important}
+ .right .prompt{font-size:clamp(19px,5.3vw,26px)!important;line-height:1.14!important}
+ .right .value{font-size:clamp(39px,11vw,53px)!important}
+ .right .unit{font-size:9px!important}
+ .right .result-big{font-size:clamp(39px,11vw,51px)!important;line-height:1!important}
+ .right .result-big span{font-size:17px!important}
+ .right .result-line{font-size:11px!important;line-height:1.42!important}
+ .right .compare .eyebrow{font-size:8px!important}
+ .right .legend{font-size:8px!important;gap:7px!important}
+ .right .feedback{font-size:9px!important}
+ .right .eyebrow{font-size:9px!important}
+ .right .legal-drawer summary{font-size:10px!important}
+ .right .legal-drawer-content .smallnote{font-size:10px!important}
+ .right .comparison-row{font-size:9px!important}
+ .right .comparison-row b{font-size:9px!important}
+ .right-bottom strong{font-size:10px!important}
+ .foot{font-size:9px!important}
+ .result-mode .left .crime{font-size:20px!important}
+ .result-mode .left .facts{font-size:9px!important}
+ .result-mode .left .sentence{font-size:24px!important}
+ .result-mode .right .result-big{font-size:clamp(38px,10vw,47px)!important}
+}
 </style></head><body><main class="app">
 <header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 08</span></header>
 <section class="frame"><div class="left"><div><div class="eyebrow">TÜRKİYE / CEZA &amp; İNFAZ</div><h1 class="title">Yatarı<br><span>kaç?</span></h1><p class="sub">Verilen hapis cezası ile infaz süresi aynı şey değil. Sence kaç yıl?</p></div><div class="casebox"><div class="case-label"><span class="number" id="caseNo">01</span> DOSYA / VARSAYIMSAL SENARYO</div><h2 class="crime" id="crime">Genel infaz rejimi</h2><p class="facts" id="facts"></p><div class="sentence" id="sentence">6 yıl <small>hapis cezası</small></div></div></div>
