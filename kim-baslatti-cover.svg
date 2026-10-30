@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="İzometrik meydan ve şüpheliler">
+<defs><linearGradient id="floor" x2=".8" y2="1"><stop stop-color="#f4f1e9"/><stop offset="1" stop-color="#d1d1c5"/></linearGradient><linearGradient id="wall" x2="1" y2="1"><stop stop-color="#f2a09a"/><stop offset="1" stop-color="#b66b66"/></linearGradient></defs>
+<path d="M12 59 216 13 305 62 291 184 108 214 12 159Z" fill="url(#floor)" stroke="#a4a59a" stroke-width="2"/>
+<path d="M219 15 304 59 304 159 219 123Z" fill="url(#wall)"/>
+<path d="M24 79 215 34M18 102 216 58M16 128 217 82M30 154 217 108M62 181 265 144M97 205 285 167" stroke="#a4a59a" stroke-opacity=".33" stroke-width="1"/>
+<path d="M42 58 105 45 106 93 39 110Z" fill="#91948b" fill-opacity=".45"/>
+<path d="M231 59 252 69 259 82 237 73M261 89l17 8-10 15-15-6" stroke="#826d70" stroke-width="2" fill="none"/>
+<ellipse cx="98" cy="140" rx="20" ry="7" fill="#4a4e4660"/>
+<ellipse cx="160" cy="163" rx="19" ry="7" fill="#4a4e4660"/>
+<ellipse cx="226" cy="132" rx="18" ry="6" fill="#4a4e4660"/>
+<g stroke="#343b36" stroke-width="2.5">
+<path d="M91 113 88 139M101 113 108 139" fill="none"/>
+<path d="M88 89 103 89 107 119 86 119Z" fill="#5e8377"/>
+<path d="M91 92 79 109M102 95 111 108" fill="none"/>
+<circle cx="95" cy="78" r="12" fill="#dca881"/><path d="M85 77q8-18 21-4l-5 4" fill="#4c3c31"/>
+<path d="M155 134 151 163M165 134 169 162" fill="none"/>
+<path d="M153 108 170 108 176 141 151 140Z" fill="#e5be70"/>
+<path d="M153 110 143 131M171 112 181 124" fill="none"/>
+<circle cx="161" cy="96" r="12" fill="#d4a382"/><path d="M151 93q9-20 22-4" fill="#39312b"/>
+<path d="M222 107 216 132M231 107 234 132" fill="none"/>
+<path d="M218 83 232 84 235 114 214 114Z" fill="#d4a5a3"/>
+<path d="M218 88 208 103M232 89 244 104" fill="none"/>
+<circle cx="225" cy="71" r="12" fill="#dca881"/><path d="M214 71q7-17 21-7" fill="#42342e"/>
+</g>
+<path d="M117 160q21-16 31-1" stroke="#285bd7" stroke-width="3" fill="none" stroke-dasharray="3 5"/>
+<path d="M120 158l-6 8 10 1" stroke="#285bd7" stroke-width="3" stroke-linecap="round" fill="none"/>
+<circle cx="100" cy="57" r="17" fill="#fffefb" stroke="#285bd7" stroke-width="3"/><text x="100" y="65" font-family="Arial" font-size="24" text-anchor="middle" fill="#285bd7" font-weight="bold">?</text>
+<circle cx="273" cy="44" r="19" fill="#fffefb" stroke="#252a26" stroke-width="3"/><path d="m286 58 20 17" stroke="#252a26" stroke-width="7" stroke-linecap="round"/>
+</svg>
