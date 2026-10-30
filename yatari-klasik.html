@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f3ee"><title>Yatarı Kaç? — aynen.fun</title>
+<meta name="description" content="Verilen hapis cezası gerçekte kaç yıl infaz edilir? Türk infaz hukukunu keşfet.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#181818;--paper:#f5f3ee;--lime:#ddff68;--pink:#f9b3ba;--muted:#6a6966}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:'Space Grotesk',Arial,sans-serif;color:var(--ink);background:var(--paper)}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fa718a;outline-offset:4px}.mono{font-family:'DM Mono',monospace}.app{height:100svh;min-height:540px;display:grid;grid-template-rows:auto 1fr auto;max-width:1320px;margin:auto;padding:clamp(12px,2.2vw,26px)}header,.foot{display:flex;justify-content:space-between;align-items:center;gap:10px}.topmark{font:500 10px 'DM Mono',monospace;letter-spacing:.05em}.back{display:inline-flex;align-items:center;gap:8px;color:#111;text-decoration:none;font-size:12px}.meta{color:#686861;font-size:10px}.frame{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch;border:1.5px solid #161616;min-height:0;margin:15px 0;overflow:hidden;background:#f9f8f3}.left{padding:clamp(22px,3.6vw,57px);border-right:1.5px solid #161616;display:flex;flex-direction:column;justify-content:space-between;min-height:0}.right{display:flex;flex-direction:column;min-height:0;background:#eaece2}.eyebrow{font:500 10px 'DM Mono',monospace;letter-spacing:.09em}.title{margin:10px 0 12px;font-size:clamp(48px,6.3vw,96px);line-height:.88;letter-spacing:-.095em;font-weight:700}.title span{color:#ec5e39}.sub{margin:15px 0 0;font-size:clamp(12px,1vw,15px);line-height:1.5;max-width:390px}.casebox{margin-top:auto;padding-top:28px}.case-label{display:flex;align-items:center;gap:10px;font:500 10px 'DM Mono',monospace;color:var(--muted);margin-bottom:12px}.number{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:1px solid #111;border-radius:50%;color:#111}.crime{font-weight:700;letter-spacing:-.065em;font-size:clamp(25px,3.4vw,45px);line-height:1.08;margin:0}.facts{line-height:1.55;font-size:12px;color:#555;max-width:490px;margin:14px 0}.sentence{font-size:clamp(28px,4.6vw,67px);font-weight:700;letter-spacing:-.075em}.sentence small{font-size:12px;letter-spacing:0;font-weight:500}.right-top{padding:clamp(20px,3vw,45px);flex:1;display:flex;flex-direction:column;align-items:stretch;justify-content:center;min-height:0}.prompt{font-size:clamp(21px,3vw,43px);font-weight:700;letter-spacing:-.055em;line-height:1.12;margin:13px 0 23px}.dial{display:grid;grid-template-columns:58px 1fr 58px;align-items:center;gap:10px}.step{height:53px;border:1.5px solid #111;border-radius:50%;background:#fff;font-size:26px;display:grid;place-items:center}.value{text-align:center;font-size:clamp(48px,7vw,94px);font-weight:700;letter-spacing:-.095em;line-height:1}.unit{text-align:center;font:10px 'DM Mono',monospace;color:#5d5d57;margin:9px 0 21px}.slider{appearance:none;width:100%;background:#101010;height:2px;accent-color:#111;cursor:pointer}.slider::-webkit-slider-thumb{appearance:none;width:22px;height:22px;border-radius:100%;background:#111;border:5px solid var(--lime);box-shadow:0 0 0 1px #111}.answer{background:#111;color:#fff;border:1px solid #111;padding:15px;min-height:50px;font-size:13px;font-weight:700;margin-top:28px}.answer:hover{background:#333}.right-bottom{background:var(--lime);padding:14px clamp(20px,3vw,45px);border-top:1.5px solid #111;display:flex;justify-content:space-between;align-items:center;gap:9px}.right-bottom strong{font-size:11px}.progress{display:flex;gap:5px}.progress i{width:13px;height:5px;background:#1113;border:1px solid #1115}.progress i.done{background:#111}.foot{font-size:10px;color:#666}.foot a{color:inherit}.result{display:none}.result.show{display:flex;flex-direction:column;gap:13px;height:100%;justify-content:center}.result-big{font-size:clamp(44px,6.3vw,89px);line-height:1;letter-spacing:-.08em;font-weight:700}.result-big span{font-size:clamp(17px,2.2vw,26px)}.result-line{font-size:14px;line-height:1.5}.compare{background:#fff;border:1px solid #111;padding:11px}.track{display:flex;height:23px;background:#e5e4db;border:1px solid #111;overflow:hidden;margin:9px 0 4px}.track .inside{background:#161616}.track .outside{background:#ff9c70}.track .end{background:#d8e8bd}.legend{display:flex;flex-wrap:wrap;gap:9px;font:9px 'DM Mono',monospace}.legend span:before{content:"";display:inline-block;width:8px;height:8px;background:var(--c);margin-right:4px}.sources{font:10px/1.55 'DM Mono',monospace;color:#5b5b55}.sources a{color:#151515}.next{background:#111;color:white;border:0;min-height:44px;font-weight:700;font-size:12px}.smallnote{font-size:11px;color:#555;line-height:1.45;margin:0}.feedback{padding:7px 10px;border:1px solid #111;background:#fff;align-self:flex-start;font:11px 'DM Mono',monospace}.feedback.good{background:#ddff68}.foot .disclaimer{max-width:690px}
+@media(max-width:760px){.app{height:100svh;min-height:0;padding:10px 12px 8px}.frame{grid-template-columns:1fr;grid-template-rows:minmax(0,.88fr) minmax(0,1.12fr);margin:8px 0}.left{border-right:0;border-bottom:1px solid #111;padding:13px 18px}.right-top{padding:13px 18px}.title{font-size:clamp(41px,11vw,61px);margin:5px 0}.sub{margin-top:5px;font-size:11px}.casebox{padding-top:8px}.case-label{margin-bottom:6px;font-size:9px}.crime{font-size:clamp(20px,5.2vw,29px)}.facts{margin:7px 0;font-size:10px;line-height:1.32}.sentence{font-size:33px}.sentence small{font-size:10px}.prompt{font-size:clamp(19px,5vw,29px);margin:6px 0 14px}.dial{grid-template-columns:44px 1fr 44px}.step{height:43px;font-size:23px}.value{font-size:56px}.unit{margin:4px 0 10px}.answer{margin-top:17px;min-height:41px;padding:9px}.right-bottom{padding:9px 18px}.foot{font-size:8px;line-height:1.25}.foot .disclaimer{max-width:65%}.result{gap:7px!important}.result-big{font-size:42px}.result-line{font-size:11px}.compare{padding:7px}.track{height:15px;margin:5px 0}.sources{font-size:8px}.smallnote{font-size:9px}.next{min-height:36px}.feedback{font-size:9px;padding:5px}.meta{font-size:9px}}
+@media(max-height:680px) and (max-width:760px){.title{font-size:36px}.sub{display:none}.right-top{padding:9px 16px}.left{padding:10px 16px}.facts{font-size:9px}.result-big{font-size:34px}.right-bottom{padding:6px 16px}.prompt{font-size:21px;margin:3px 0 9px}.value{font-size:45px}.answer{margin-top:10px}}
+
+/* Single-screen infaz explainer: reveal card stays readable without adding another page. */
+.result .result-line{font-size:clamp(11px,1vw,14px)}
+.result .smallnote{font-size:clamp(9px,.83vw,11px);line-height:1.4}
+@media(max-width:760px){.result .result-line{font-size:11px;line-height:1.3}.result .smallnote{font-size:9px;line-height:1.28}.result .sources{font-size:8px}.result.show{gap:6px!important}}
+@media(max-height:750px) and (max-width:760px){.result .smallnote{font-size:8px;line-height:1.18}.result .result-big{font-size:37px}.result.show{gap:4px!important}}
+.comparison[hidden]{display:none}.comparison{border:1px solid #111;background:white;padding:9px}.comparison-row{display:grid;grid-template-columns:92px 1fr 57px;gap:6px;align-items:center;font-size:10px;margin-top:8px}.comparison-row b{font-size:10px;text-align:right}.comparison-bar{height:12px;background:#eee}.comparison-bar i{display:block;height:100%;background:#111}.comparison-row:nth-child(3) i{background:#f67b4b}.compare-toggle{border:1px solid #111;background:white;padding:10px;font-size:10px;font-weight:700;min-height:35px}.compare-toggle[aria-expanded=true]{background:#ddff68}.result.show:has(.comparison:not([hidden])) .compare,.result.show:has(.comparison:not([hidden])) .legal{display:none}@media(max-width:760px){.result.show:has(.comparison:not([hidden])) .result-line{display:none}.comparison{padding:6px}.comparison-row{grid-template-columns:74px 1fr 50px;font-size:9px;margin-top:5px}.compare-toggle{font-size:9px;padding:7px;min-height:32px}}
+.timeline-screen{background:#f4f3ee;border-top:1px solid #ccc;margin-top:9px;padding:10px 8px 5px}
+.timeline-heading{display:flex;justify-content:space-between;font-size:10px;margin-bottom:8px}
+.timeline-scrub{width:100%;accent-color:#111;cursor:pointer}
+.timeline-characters{display:flex;justify-content:space-between;padding:0 20px;font-size:20px;line-height:1}
+.timeline-characters span:first-child{color:#151515}.timeline-characters span:last-child{color:#f0734d}
+.timeline-characters span.released{opacity:.25;transform:scale(.7);transition:transform .2s}
+.timeline-actions{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-top:5px}
+.timeline-actions button{border:1px solid #111;padding:7px 13px;background:#ddff68;font:700 10px 'DM Mono',monospace}
+.timeline-actions .mono{font-size:8px;color:#777}
+.result.show:has(.comparison:not([hidden])){justify-content:flex-start;overflow:auto;scrollbar-width:thin}
+@media(max-width:760px){
+ .timeline-screen{margin-top:4px;padding:5px}
+ .timeline-heading{font-size:8px;margin-bottom:3px}
+ .timeline-characters{font-size:14px}
+ .timeline-actions{margin-top:2px}
+ .timeline-actions button{padding:5px;font-size:9px}
+ .result.show:has(.comparison:not([hidden])) .result-big{display:none}
+ .result.show:has(.comparison:not([hidden])) .smallnote#legal{display:none}
+ .result.show:has(.comparison:not([hidden])) .resultHeading{display:none}
+}
+
+/* Result-first mobile experience: natural flow, no clipped text or overlapping sections. */
+.legal-drawer{border:1px solid #aaa;background:#f7f7f2;min-width:0}
+.legal-drawer summary{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;font:600 11px 'DM Mono',monospace;cursor:pointer;list-style:none;user-select:none}
+.legal-drawer summary::-webkit-details-marker{display:none}
+.legal-drawer summary span{font-size:19px;transition:transform .2s}
+.legal-drawer[open] summary span{transform:rotate(180deg)}
+.legal-drawer-content{border-top:1px solid #ddd;padding:10px 13px}
+.legal-drawer-content .smallnote{margin:0 0 9px!important;display:block!important}
+.legal-drawer-content .sources{overflow-wrap:anywhere}
+.result .compare-toggle{width:100%;text-align:center;min-height:40px}
+.result .next{width:100%;min-height:44px}
+@media(max-width:760px){
+ html,body{height:auto!important;overflow-y:auto!important}
+ .app{height:auto!important;min-height:100svh!important;display:flex!important;flex-direction:column!important;gap:9px;padding:14px 13px max(14px,env(safe-area-inset-bottom))!important}
+ .app header{min-height:28px;flex-shrink:0}
+ .frame{display:flex!important;flex-direction:column!important;min-height:0!important;height:auto!important;overflow:visible!important;margin:0!important;flex:1 0 auto}
+ .left{display:block!important;min-height:0!important;height:auto!important;flex:none!important;padding:20px 21px 17px!important;border-right:0!important;border-bottom:1.5px solid #111!important}
+ .left .title{font-size:clamp(45px,12.2vw,64px)!important;margin:7px 0 8px!important}
+ .left .sub{display:block!important;font-size:11px!important;margin:9px 0!important}
+ .casebox{margin:0!important;padding-top:18px!important}
+ .crime{font-size:clamp(24px,6.7vw,34px)!important}
+ .facts{font-size:11px!important;line-height:1.45!important;margin:9px 0 12px!important}
+ .sentence{font-size:37px!important}
+ .right{display:block!important;min-height:0!important;height:auto!important}
+ .right-top{display:block!important;min-height:0!important;height:auto!important;padding:20px 21px!important}
+ .right-bottom{padding:13px 21px!important;min-height:44px}
+ .result.show{display:flex!important;height:auto!important;max-height:none!important;overflow:visible!important;justify-content:flex-start!important;gap:12px!important}
+ .result .result-big{display:block!important;font-size:clamp(52px,15vw,68px)!important}
+ .result .result-line{display:block!important;font-size:13px!important;line-height:1.5!important}
+ .result .compare{display:block!important;padding:13px!important}
+ .result .compare .eyebrow{font-size:9px!important;letter-spacing:0!important}
+ .result .track{height:20px!important}
+ .result .legend{gap:8px!important;font-size:9px!important}
+ .result .legal-drawer{display:block!important}
+ .legal-drawer summary{padding:12px 14px}
+ .legal-drawer-content .smallnote{font-size:11px!important;line-height:1.5!important}
+ .legal-drawer-content .sources{font-size:10px!important;line-height:1.5!important;display:block!important}
+ .result.show:has(.comparison:not([hidden])) .result-big{display:block!important}
+ .result.show:has(.comparison:not([hidden])) .compare{display:block!important}
+ .result.show:has(.comparison:not([hidden])) .result-line{display:block!important}
+ .comparison{padding:13px!important}
+ .comparison-row{grid-template-columns:88px 1fr 62px!important;gap:8px!important;margin-top:9px!important;font-size:11px!important}
+ .comparison-row b{font-size:11px!important}
+ .timeline-screen{padding:10px!important;margin-top:12px!important}
+ .timeline-heading{font-size:10px!important;margin-bottom:9px!important}
+ .timeline-characters{font-size:18px!important}
+ .timeline-actions button{min-height:35px;font-size:11px!important}
+ .comparison .smallnote{font-size:10px!important;line-height:1.45!important}
+ .foot{padding:4px 0!important;flex-shrink:0}
+ .result-mode .left{padding:14px 21px 13px!important}
+ .result-mode .left>div:first-child{display:none!important}
+ .result-mode .casebox{padding:0!important}
+ .result-mode .facts{font-size:10px!important;line-height:1.4!important;margin:7px 0!important}
+ .result-mode .sentence{font-size:29px!important}
+ .result-mode .crime{font-size:25px!important}
+ .result-mode .right-top{padding:15px 21px!important}
+}
+@media(max-width:760px) and (max-height:700px){
+ .result-mode .facts{font-size:10px!important}
+ .result-mode .result-big{font-size:46px!important}
+}
+
+/* Mobile typography refinement: compact, readable, no jumbo headings. */
+@media(max-width:760px){
+ .app .topmark{font-size:9px!important}
+ .app .back{font-size:10px!important}
+ .left .title{font-size:clamp(34px,9vw,46px)!important;line-height:.95!important;letter-spacing:-.065em!important}
+ .left .sub{font-size:10px!important}
+ .case-label{font-size:9px!important}
+ .left .crime{font-size:clamp(19px,5.1vw,25px)!important;line-height:1.16!important}
+ .left .facts{font-size:10px!important;line-height:1.38!important}
+ .left .sentence{font-size:29px!important}
+ .left .sentence small{font-size:10px!important}
+ .right .prompt{font-size:clamp(19px,5.3vw,26px)!important;line-height:1.14!important}
+ .right .value{font-size:clamp(39px,11vw,53px)!important}
+ .right .unit{font-size:9px!important}
+ .right .result-big{font-size:clamp(39px,11vw,51px)!important;line-height:1!important}
+ .right .result-big span{font-size:17px!important}
+ .right .result-line{font-size:11px!important;line-height:1.42!important}
+ .right .compare .eyebrow{font-size:8px!important}
+ .right .legend{font-size:8px!important;gap:7px!important}
+ .right .feedback{font-size:9px!important}
+ .right .eyebrow{font-size:9px!important}
+ .right .legal-drawer summary{font-size:10px!important}
+ .right .legal-drawer-content .smallnote{font-size:10px!important}
+ .right .comparison-row{font-size:9px!important}
+ .right .comparison-row b{font-size:9px!important}
+ .right-bottom strong{font-size:10px!important}
+ .foot{font-size:9px!important}
+ .result-mode .left .crime{font-size:20px!important}
+ .result-mode .left .facts{font-size:9px!important}
+ .result-mode .left .sentence{font-size:24px!important}
+ .result-mode .right .result-big{font-size:clamp(38px,10vw,47px)!important}
+}
+
+.scenario-lab{border:1.5px solid #111;background:#fff}
+.scenario-lab summary{list-style:none;cursor:pointer;padding:11px 12px;display:flex;justify-content:space-between;align-items:center;font:700 11px 'DM Mono',monospace}
+.scenario-lab summary::-webkit-details-marker{display:none}
+.scenario-lab[open] summary{border-bottom:1px solid #111;background:#ddff68}
+.scenario-lab summary span{font-size:18px}
+.scenario-lab[open] summary span{transform:rotate(45deg)}
+.lab-content{padding:13px;display:grid;gap:9px}
+.lab-hint{font-size:10px;color:#62625c;line-height:1.5;margin:0}
+.lab-label{font:500 9px 'DM Mono',monospace;letter-spacing:.035em}
+.lab-row{display:flex;justify-content:space-between;align-items:center}
+#labRegime{width:100%;min-height:38px;border:1px solid #111;background:#f5f3ee;color:#111;padding:7px;font:600 12px 'Space Grotesk',sans-serif}
+#labYears{width:100%;accent-color:#171717}
+.lab-track{height:13px;background:#e6e6df;border:1px solid #111}
+.lab-track span{display:block;height:100%;width:50%;background:#ef8766;transition:width .2s}
+.lab-numbers{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.lab-numbers b{font-size:24px;letter-spacing:-.06em}
+.lab-numbers span{font:12px 'DM Mono',monospace}
+.lab-contrast{font-size:11px;line-height:1.4;background:#f5f3ee;padding:9px}
+.lab-links{display:flex;flex-wrap:wrap;gap:8px}
+.lab-links a{font:9px 'DM Mono',monospace;color:#111;text-underline-offset:3px}
+@media(max-width:760px){.scenario-lab summary{font-size:10px}.lab-content{gap:8px;padding:11px}.lab-numbers b{font-size:22px}}
+
+.surprise-file{border:1px solid #111;background:#ddff68;font:700 10px 'DM Mono',monospace;padding:10px;width:100%;min-height:39px}
+.surprise-file:hover{background:#f9b3ba}
+@media(max-width:760px){.surprise-file{font-size:9px;padding:8px;min-height:35px}}
+
+/* HAGB special case is an intentional zero-prison outcome, not a generic shortcut. */
+.result-big:has(span){overflow-wrap:anywhere}
+
+/* iPhone: compact single viewport. Card content cannot force overflowing rows. */
+@media(max-width:760px){
+ html,body{height:100%!important;overflow:hidden!important}
+ .app{height:100dvh!important;min-height:0!important;max-height:100dvh!important;overflow:hidden!important;display:grid!important;grid-template-rows:25px minmax(0,1fr) 17px!important;gap:6px!important;padding:8px 11px max(7px,env(safe-area-inset-bottom))!important}
+ .app header{min-height:0!important;height:25px!important}
+ .app header .back,.app header .topmark,.app header .meta{font-size:9px!important}
+ .frame{display:grid!important;grid-template-rows:minmax(0,44fr) minmax(0,56fr)!important;min-height:0!important;height:100%!important;overflow:hidden!important;margin:0!important;flex:none!important}
+ .left{height:100%!important;min-height:0!important;padding:12px 15px 11px!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;justify-content:space-between!important}
+ .left>div:first-child{flex:0 0 auto;min-height:0}
+ .left .title{font-size:clamp(29px,7.3vw,41px)!important;line-height:.91!important;margin:4px 0!important;letter-spacing:-.075em!important}
+ .left .sub{font-size:9px!important;line-height:1.25!important;margin:6px 0 0!important}
+ .left .eyebrow{font-size:8px!important}
+ .left .casebox{padding:6px 0 0!important;margin:0!important;min-height:0!important}
+ .left .case-label{font-size:8px!important;margin:0 0 5px!important}
+ .left .number{width:19px!important;height:19px!important;font-size:10px!important}
+ .left .crime{font-size:clamp(18px,4.7vw,24px)!important;line-height:1.1!important;margin:0!important}
+ .left .facts{font-size:9px!important;line-height:1.3!important;margin:6px 0!important;display:-webkit-box!important;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden!important}
+ .left .sentence{font-size:clamp(21px,6vw,29px)!important;line-height:1.1!important;overflow-wrap:anywhere!important;white-space:normal!important;display:flex!important;gap:5px;align-items:baseline;flex-wrap:wrap}
+ .left .sentence small{font-size:9px!important;font-weight:500!important;letter-spacing:0!important}
+ .right{height:100%!important;min-height:0!important;overflow:hidden!important;display:grid!important;grid-template-rows:minmax(0,1fr) 35px!important}
+ .right-top{padding:12px 15px!important;min-height:0!important;height:100%!important;overflow:auto!important;scrollbar-width:none}
+ .right-top::-webkit-scrollbar{display:none}
+ .right .prompt{font-size:clamp(19px,5.3vw,25px)!important;margin:8px 0 13px!important}
+ .right .dial{grid-template-columns:40px 1fr 40px!important}
+ .right .step{width:40px!important;height:40px!important;font-size:21px!important}
+ .right .value{font-size:clamp(38px,11vw,48px)!important}
+ .right .unit{font-size:8px!important;margin:5px 0 10px!important}
+ .right .answer{margin-top:16px!important;min-height:42px!important;padding:9px 13px!important}
+ .right-bottom{min-height:0!important;height:35px!important;padding:6px 14px!important;display:flex!important;gap:10px!important;flex-wrap:nowrap!important}
+ .right-bottom strong{font-size:9px!important;white-space:nowrap!important}
+ .progress{flex:1!important;min-width:0!important;display:flex!important;align-items:center!important;gap:7px!important}
+ .progress>i{display:none!important}
+ .progress-count{font:9px 'DM Mono',monospace;white-space:nowrap}
+ .progress-meter{height:5px;flex:1;min-width:0;background:#1112;border:1px solid #1116}
+ .progress-meter i{display:block;height:100%;background:#111}
+ .foot{height:17px!important;min-height:0!important;overflow:hidden!important;padding:0!important;font-size:8px!important;line-height:1.1!important}
+ .foot .disclaimer{max-width:78%!important;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+ .result-mode .left{padding:10px 15px!important}
+ .result-mode .left .casebox{padding:0!important}
+ .result-mode .left .crime{font-size:19px!important}
+ .result-mode .left .sentence{font-size:21px!important}
+ .result-mode .right-top{padding:10px 15px!important}
+ .result.show{gap:8px!important;overflow:visible!important}
+ .result.show .result-big{font-size:clamp(35px,10vw,45px)!important}
+ .result.show .result-line{font-size:10px!important;line-height:1.3!important}
+ .result.show .compare{padding:8px!important}
+ .result.show .track{height:13px!important}
+ .result.show .legal-drawer summary{padding:7px 10px!important}
+ .result.show .compare-toggle,.result.show .next,.result.show .surprise-file{min-height:32px!important;padding:6px!important}
+}
+@media(max-width:760px) and (max-height:640px){
+ .frame{grid-template-rows:minmax(0,42fr) minmax(0,58fr)!important}
+ .left .title{font-size:28px!important}
+ .left .sub{display:none!important}
+ .left .facts{-webkit-line-clamp:2!important}
+}
+
+.mode-switch{display:flex;gap:0;margin-bottom:15px;border:1px solid #111}
+.mode-switch button{flex:1;min-width:0;border:0;background:#f9f8f3;color:#111;font:700 10px 'DM Mono',monospace;padding:12px 5px}
+.mode-switch button+button{border-left:1px solid #111}
+.mode-switch button.active{background:#111;color:#fff}
+.daily-play[hidden],.daily-answer[hidden],#dailyNext[hidden]{display:none!important}
+.daily-question{font-size:clamp(23px,3vw,38px);font-weight:700;letter-spacing:-.05em;margin:12px 0 16px}
+.daily-options{display:grid;gap:9px}
+.daily-options button{border:1.5px solid #111;background:#fff;text-align:left;padding:14px;font-weight:700;font-size:14px}
+.daily-options button:active{background:#ddff68}
+.daily-options button.correct{background:#ddff68}
+.daily-options button.wrong{background:#f9b3ba}
+.daily-options button:disabled{opacity:1;color:#111}
+.daily-answer{margin-top:12px;border-top:1px solid #111;padding-top:10px}
+.daily-verdict{font-size:23px;font-weight:700;letter-spacing:-.045em}
+.daily-answer p{font-size:12px;line-height:1.42;margin:7px 0}
+.daily-answer a{font:10px 'DM Mono',monospace;color:#111}
+#dailyNext{width:100%;border:0;background:#111;color:white;font-weight:700;padding:13px;margin-top:11px}
+@media(max-width:760px){.mode-switch{margin-bottom:9px}.mode-switch button{font-size:9px;padding:9px 4px}.daily-question{font-size:21px;margin:7px 0 10px}.daily-options{gap:7px}.daily-options button{font-size:12px;padding:11px}.daily-verdict{font-size:20px}.daily-answer p{font-size:10px}.daily-answer{margin-top:8px}#dailyNext{padding:10px;margin-top:8px}}
+
+.case-filters{display:flex;gap:5px;flex-wrap:nowrap;margin:10px 0 0;min-width:0}
+.case-filters button{flex:1;min-width:0;padding:8px 3px;border:1px solid #111;background:transparent;font:700 9px 'DM Mono',monospace}
+.case-filters button.chosen{background:#111;color:white}
+#processGuess[hidden]{display:none!important}
+#processGuess .answer{width:100%;margin-top:15px}
+@media(max-width:760px){.case-filters{margin:6px 0 0}.case-filters button{padding:6px 2px;font-size:8px}.left .casebox{padding-top:3px!important}.left .facts{font-size:9px!important}.left .sentence{font-size:20px!important}}
+
+.process-choices{display:grid;gap:9px}
+.process-choices button{border:1.5px solid #151515;background:#fff;padding:14px 12px;font:700 12px 'DM Mono',monospace;text-align:left}
+.process-choices button:last-child{background:#ddff68}
+.process-choices button:hover{background:#f9b3ba}
+.process-hint{font-size:11px;line-height:1.5;color:#6a6966;margin:10px 0}
+@media(max-width:760px){#processGuess .prompt{font-size:21px!important;margin:8px 0 13px!important}.process-choices{gap:7px}.process-choices button{padding:11px 10px;font-size:10px;min-height:43px}.process-hint{font-size:9px;margin:8px 0}.result-mode .left .facts{-webkit-line-clamp:2!important}}
+
+#dailyDecision[hidden]{display:none!important}.daily-buttons{display:grid;gap:9px}.daily-buttons button{background:#fff;border:1.5px solid #111;padding:13px 10px;min-height:43px;text-align:left;font:700 12px 'DM Mono',monospace}.daily-buttons button:first-child{background:#ddff68}.daily-mini{font-size:11px;color:#555;line-height:1.4}.result .compare[hidden]{display:none!important}
+@media(max-width:760px){#dailyDecision .prompt{font-size:21px!important;margin:8px 0 14px!important}.daily-buttons{gap:7px}.daily-buttons button{font-size:10px;padding:10px;min-height:39px}.daily-mini{font-size:9px;margin:9px 0}}
+
+/* Discovery chrome stays hidden until requested */
+.case-filters[hidden]{display:none!important}
+.filter-toggle{display:block;align-self:flex-start;margin:7px 0 0;background:transparent;border:0;border-bottom:1px solid #111;padding:5px 0;font:700 9px 'DM Mono',monospace}
+.case-filters{margin:5px 0 0!important}
+.share-case{background:transparent;border:1px solid #111;padding:10px;font:700 10px 'DM Mono',monospace;width:100%;min-height:39px}
+.right .result.show .feedback{align-self:flex-start}
+@media(max-width:760px){
+ .filter-toggle{font-size:8px!important;margin:2px 0 0!important;padding:3px 0!important}
+ .case-filters{position:absolute;z-index:5;background:#f5f3ee;padding:8px;left:20px;right:20px;top:50px;border:1px solid #111;box-shadow:3px 3px 0 #111}
+ .left{position:relative}
+ .share-case{min-height:32px;padding:6px;font-size:9px}
+ .result-mode .left .filter-toggle{display:none}
+ .result-mode .left .casebox{padding-top:0!important}
+ .result-mode .left .case-label{margin-bottom:3px!important}
+ .result-mode .left .facts{-webkit-line-clamp:2!important}
+}
+
+.result-extra[hidden]{display:none!important}
+.result-extra{border:1px solid #111;background:#faf9f4}
+.result-extra summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none;padding:9px 12px;font:700 10px 'DM Mono',monospace}
+.result-extra summary::-webkit-details-marker{display:none}
+.result-extra summary span{font-size:18px}
+.result-extra[open] summary span{transform:rotate(45deg)}
+.result-extra .compare{border:0;border-top:1px solid #111;margin:0}
+.result .next{order:1;font-size:14px;min-height:48px;background:#111;color:#fff}
+.result .feedback{order:-2}
+.result #resultHeading{order:-1}
+.result .result-big{order:0}
+.result .result-line{order:0}
+.result .result-extra,.result .legal-drawer,.result .comparison,.result .compare-toggle{order:2}
+.result .surprise-file,.result .share-case{order:3}
+@media(max-width:760px){
+ .result.show{gap:7px!important}
+ .result .result-big{font-size:clamp(42px,12vw,54px)!important;line-height:1.02!important}
+ .result .result-line{font-size:11px!important;line-height:1.35!important}
+ .result .next{min-height:44px!important;font-size:12px!important}
+ .result-extra summary{padding:8px 10px;font-size:9px}
+ .result.show .result-extra .compare{padding:8px!important}
+ .result .surprise-file,.result .share-case{min-height:30px!important}
+}
+.city-entry{display:inline-flex;align-items:center;text-decoration:none;color:#111;background:#ddff68;border:1px solid #111;padding:7px 10px;font:700 10px monospace}.city-entry:hover{background:#f9b3ba}@media(max-width:760px){.city-entry{padding:6px;font-size:9px;white-space:nowrap}}</style></head><body><main class="app">
+<header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><a class="city-entry" href="/yatari-kac.html">ŞEHRİ KEŞFET ↗</a><span class="meta mono" id="counter">01 / 22</span></header>
+<section class="frame"><div class="left"><div><div class="eyebrow">TÜRKİYE / CEZA &amp; İNFAZ</div><h1 class="title">Yatarı<br><span>kaç?</span></h1><p class="sub">Verilen hapis cezası ile infaz süresi aynı şey değil. Sence kaç yıl?</p></div><button type="button" id="filterToggle" class="filter-toggle" aria-expanded="false" aria-controls="filters">KONULAR ⌄</button><nav class="case-filters" id="filters" hidden aria-label="Dosya kategorileri"><button data-cat="all" class="chosen">HEPSİ</button><button data-cat="news">GÜNDEM</button><button data-cat="daily">GÜNLÜK</button><button data-cat="sentence">İNFAZ</button></nav><div class="casebox"><div class="case-label"><span class="number" id="caseNo">01</span> <span id="caseTag">DOSYA / VARSAYIMSAL SENARYO</span></div><h2 class="crime" id="crime">Genel infaz rejimi</h2><p class="facts" id="facts"></p><div class="sentence" id="sentence">6 yıl <small>hapis cezası</small></div></div></div>
+<div class="right"><div class="right-top"><div id="processGuess" hidden><div class="eyebrow">DOSYAYI OKU / KARARINI VER</div><div class="prompt" id="processQuestion">Buradan yatar hesabı çıkar mı?</div><div class="process-choices"><button type="button" data-answer="yes">EVET, HESAPLANIR</button><button type="button" data-answer="no">HAYIR, HENÜZ BELLİ DEĞİL</button></div><p class="process-hint">Bir haber başlığı her zaman kesinleşmiş ceza değildir.</p></div><div id="dailyDecision" hidden><div class="eyebrow" id="dailyStage">AŞAMA 01 / SUÇ MU?</div><div class="prompt" id="dailyPrompt">Bu olayda suç oluşabilir mi?</div><div class="daily-buttons" id="dailyButtons"><button type="button" data-choice="crime">SUÇ OLUŞABİLİR</button><button type="button" data-choice="no">SUÇ DEĞİL</button></div><p class="daily-mini" id="dailyMini">Olayda yazan koşullara göre cevap ver.</p></div><div id="guess"><div class="eyebrow">TAHMİNİNİ YAP</div><div class="prompt">Cezaevinde yaklaşık<br>kaç yıl kalır?</div><div class="dial"><button class="step" id="minus" type="button" aria-label="Bir yıl azalt">−</button><div class="value" id="value">3</div><button class="step" id="plus" type="button" aria-label="Bir yıl artır">+</button></div><div class="unit">YIL / HİPOTETİK CEZAEVİ SÜRESİ</div><input class="slider" id="slider" type="range" min="0" max="30" value="3" step=".5" aria-label="Yıl tahmini"><button class="answer" type="button" id="reveal">KARARI GÖR →</button></div>
+<div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">DOSYA SONUCU</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><details class="result-extra" id="resultExtra"><summary>İNFAZ GRAFİĞİ <span>＋</span></summary><div class="compare"><div class="eyebrow">CEZANIN AŞAMALARI</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div></details><details class="legal-drawer" id="legalDrawer"><summary>HUKUKİ AYRINTILAR <span aria-hidden="true">⌄</span></summary><div class="legal-drawer-content"><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div></div></details><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><div class="timeline-screen"><div class="timeline-heading"><span class="mono">İNFAZ ZAMAN ÇİZGİSİ</span><span class="mono" id="timelineClock">0.0 YIL</span></div>
+<input id="timelineScrub" class="timeline-scrub" type="range" min="0" max="100" value="0" aria-label="İnfaz zaman çizelgesini ileri geri oynat">
+<div id="timelineCharacters" class="timeline-characters" aria-hidden="true"><span>●</span><span>●</span></div>
+<div class="timeline-actions"><button id="timelinePlay" type="button">▶ OYNAT</button><span class="mono">SÜREYİ İLERLET / KARŞILAŞTIR</span></div></div>
+<p class="smallnote">İki örnek de aynı toplam ceza içindir. Çizelge koşullu salıverilme eşiklerini gösterir; gerçek cezaevinden çıkış tarihi değildir.</p></div><button type="button" class="compare-toggle" id="compareToggle" aria-expanded="false">AYNI CEZAYI KARŞILAŞTIR ↗</button><button type="button" class="next" id="next">SONRAKİ DOSYA →</button><button type="button" class="surprise-file" id="surpriseFile">BAŞKA DOSYA ↗</button><button type="button" class="share-case" id="shareCase">SONUCU PAYLAŞ ↗</button></div></div><div class="right-bottom"><strong id="state">22 DOSYA / TAHMİN ET</strong><div class="progress" id="dots"></div></div></div></section>
+<footer class="foot"><span class="disclaimer">Yalnızca varsayımsal eğitim senaryosu. Gerçek infaz/tahliye hesabı değildir.</span><span class="mono"><a href="/" aria-label="Ana sayfa">← ÇIKIŞ</a></span></footer>
+</main><script>
+const cases=[
+{"title":"Eski sevgiliyi ısrarla aradı","description":"Ayrıldığı kişiyi sırf huzurunu bozmak amacıyla günlerce ısrarla arıyor. Şikâyet de var.","range":"3 ay – 1 yıl hapis","rangeKey":"short","law":"TCK m.123: Sırf huzur ve sükûnu bozma maksadıyla ısrarla arama, şikâyet üzerine 3 aydan 1 yıla kadar hapis cezasına konu olabilir.","years":0,"ratio":0,"special":"dailyCrime","source":"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
+{"title":"Arkadaşının hesabına girdi","description":"İzin almadan arkadaşının sosyal medya hesabına şifresiyle giriş yaptı. Verileri değiştirmedi.","range":"1 yıla kadar hapis veya adli para cezası","rangeKey":"fine","law":"TCK m.243/1: Hukuka aykırı bilişim sistemine girme veya orada kalma için 1 yıla kadar hapis veya adli para cezası öngörülür.","years":0,"ratio":0,"special":"dailyCrime","source":"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
+{"title":"Özel mesajları yayımladı","description":"İki kişi arasındaki özel mesajları hukuka aykırı biçimde herkese açık bir sayfada yayımladı. Mesajlaşmanın tarafı değil.","range":"2 – 5 yıl hapis","rangeKey":"long","law":"TCK m.132/2: Kişiler arasındaki haberleşme içeriklerinin hukuka aykırı ifşasında 2–5 yıl hapis aralığı bulunur.","years":0,"ratio":0,"special":"dailyCrime","source":"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
+{"title":"Komedyen tutuklandı","years":0,"ratio":0,"special":"process","description":"Bir komedyen gösterisindeki sözleri nedeniyle tutuklandı. Haber başlığını gördün: ‘Kaç yıl yatar?’","law":"Tutuklama mahkûmiyet değildir. CMK m.100–101 uyarınca tutuklama bir koruma tedbiridir. Kesinleşmiş hapis cezası yoksa infaz süresi hesaplanamaz.","source":"https://tr.euronews.com/2026/08/29/komedyen-deniz-goktas-tahliye-kararinin-ardindan-yeniden-tutuklandi","tag":"GÜNDEM · 2026"},
+{"title":"Gazeteci gözaltına alındı","years":0,"ratio":0,"special":"process","description":"Bir gazeteci haber paylaşımı nedeniyle gözaltına alındı. Sosyal medyada herkes ‘yatarını’ tartışıyor.","law":"Gözaltı, tutuklama ve kesinleşmiş mahkûmiyet farklı aşamalardır. CMK m.91 gözaltıyı, m.100–101 tutuklamayı düzenler. Bu bilgiyle yatar hesabı yapılamaz.","source":"https://tr.euronews.com/2026/10/21/ebubekir-sahinin-sikayeti-uzerine-gozaltina-alinan-gazeteci-ismail-ari-tutuklandi","tag":"GÜNDEM · 2026"},
+{"title":"‘Kesin kazandıran’ fon","years":0,"ratio":0,"special":"process","description":"Birisi komşularına ‘aylık garantili yüksek getiri’ diyerek para topluyor. Henüz soruşturma veya kesinleşmiş hüküm bilgisi yok.","law":"Sırf yüksek getiri vaadinden otomatik hapis süresi çıkmaz. Hileli davranış ve diğer unsurlar varsa TCK m.157–158 kapsamında dolandırıcılık değerlendirmesi yapılabilir. Sermaye piyasası mevzuatı da ilgili olabilir.","source":"https://mevzuat.adalet.gov.tr/mevzuat/103228","tag":"FON MEVZUSU"},
+{"title":"Avukata en klasik soru","years":0,"ratio":0,"special":"process","description":"‘Avukat bey, ifadeye çağırdılar. Şimdi tutuklanır mıyım?’ Sadece ifade davetiyesi var.","law":"İfadeye çağrılmak otomatik olarak tutuklanmak değildir. Tutuklama için CMK m.100 koşulları ve hâkim kararı aranır. Somut dosyada sonuç garanti edilemez.","source":"https://mevzuat.adalet.gov.tr/mevzuat/103227","tag":"AVUKATA SORULAN"},
+{"title":"Ekran görüntüsü delil mi?","years":0,"ratio":0,"special":"process","description":"‘WhatsApp ekran görüntüsü aldım, davayı kesin kazanır mıyım?’ Mesajın kaynağı, bütünlüğü ve edinilme şekli bilinmiyor.","law":"Ekran görüntüleri her durumda kesin delil değildir. Hukuka uygun elde edilme, doğruluk ve somut davanın niteliği değerlendirilir. Tek başına yatar hesabı yapılamaz.","source":"https://mevzuat.adalet.gov.tr/mevzuat/103228","tag":"AVUKATA SORULAN"},
+{"title":"Kira ödemeyince hapis?","years":0,"ratio":0,"special":"noCrime","description":"Kiracı iki hafta gecikti. Ev sahibi ‘Seni hapse attırırım’ dedi. Başka bir eylem yok.","law":"TBK m.315 kapsamında ödeme temerrüdünün fesih ve tahliye gibi özel hukuk sonuçları bulunabilir; sırf kira borcunu ödememek hapis suçu değildir.","tag":"AVUKATA SORULAN"},
+{"title":"Kirayı geciktirdi","years":0,"ratio":0,"special":"noCrime","description":"Kiracı kirasını zamanında yatırmadı. Ev sahibine tehdit, sahte belge veya dolandırıcılık gibi başka bir eylem yok.","law":"Türk Borçlar Kanunu m.315: kira bedelinin ödenmemesi için ihtar ve fesih koşulları düzenlenir. Tek başına kira borcunu geciktirmek hapis cezası doğurmaz."},
+{"title":"İşten istifa etti","years":0,"ratio":0,"special":"noCrime","description":"Bir çalışan, ihbar süresine uymadan işten ayrıldı. İşverene zarar vermek için başka bir suç işlemedi.","law":"4857 sayılı İş Kanunu m.17: bildirim sürelerine uyulmaması tazminat sonuçları doğurabilir; bu nedenle kendiliğinden hapis cezası verilmez."},
+{"title":"Komşusuna selam vermedi","years":0,"ratio":0,"special":"noCrime","description":"Apartmanda karşılaştığı komşusunu görmezden geldi. Hakaret, tehdit veya taciz yok.","law":"5237 sayılı Türk Ceza Kanunu: Sırf birine selam vermemek suç olarak tanımlanmamıştır. Hakaret ve tehdit ayrı davranışlardır."},
+{"title":"Mesaja cevap vermedi","years":0,"ratio":0,"special":"noCrime","description":"Ev sahibi, site yöneticisinin WhatsApp mesajını gördü ama cevap vermedi. Başka bir yükümlülük ihlali yok.","law":"634 sayılı Kat Mülkiyeti Kanunu: Yöneticiye WhatsApp mesajı üzerinden cevap vermemek tek başına suç olarak düzenlenmemiştir; kanuni yükümlülükler ayrıca değerlendirilir."},
+{"title":"Online siparişi iade etti","years":0,"ratio":0,"special":"noCrime","description":"Alıcı, cayma hakkı kapsamındaki standart bir ürünü süresi içinde satıcıya iade etti. Aldatma veya hile yok.","law":"6502 sayılı Kanun m.48 ve Mesafeli Sözleşmeler Yönetmeliği: Koşulları sağlanan cayma hakkının kullanılması suç değildir; istisnalar bulunur."},
+{title:"Site toplantısına gitmedi",years:0,ratio:0,special:"noCrime",description:"Site WhatsApp grubunda mesaj: ‘Kat malikleri toplantısına gelmeyenlere ceza var!’ Ev sahibi toplantıya gitmemiş. Başka bir eylem veya borç ihlali yok.",law:"634 sayılı Kat Mülkiyeti Kanunu m.29–30 toplantıyı ve karar yeter sayısını düzenler. Sırf toplantıya katılmamak nedeniyle hapis cezası ya da kanunda öngörülmüş otomatik para cezası yoktur. Katılmayan malik de geçerli kararlardan etkilenebilir."},
+{title:"Genel infaz rejimi",years:6,ratio:.5,description:"İstisna kapsamına girmeyen bir suçtan 6 yıl kesinleşmiş süreli hapis cezası. Tek mahkûmiyet, yetişkin, iyi hâl.",law:"5275 m.107/2 — süreli hapislerde genel kural 1/2."},
+{title:"Kasten öldürme",years:24,ratio:2/3,description:"TCK m.81 kapsamında 24 yıl süreli hapis cezası. Yetişkin ve iyi hâlli; başka mahkûmiyet yok.",law:"5275 m.107/2-a — kasten öldürmede 2/3 istisnası."},
+{title:"Genel infaz rejimi",years:10,ratio:.5,description:"Özel infaz oranı bulunmayan bir suçtan 10 yıl süreli hapis. Yetişkin, tek mahkûmiyet ve iyi hâl.",law:"5275 m.107/2 — genel kural 1/2."},
+{title:"İşkence",years:9,ratio:2/3,description:"TCK m.94–95 kapsamına giren bir suçtan 9 yıl süreli hapis. Yetişkin, tek mahkûmiyet ve iyi hâl.",law:"5275 m.107/2-c — işkence suçları için 2/3."},
+{title:"Genel infaz rejimi",years:4,ratio:.5,description:"İstisnai infaz rejimi uygulanmayan bir suçtan 4 yıl hapis. Yetişkin, iyi hâlli, tek mahkûmiyet.",law:"5275 m.107/2 — genel kural 1/2."},
+{title:"Eziyet",years:6,ratio:2/3,description:"TCK m.96 kapsamında 6 yıl süreli hapis cezası. Yetişkin, tek mahkûmiyet, iyi hâl.",law:"5275 m.107/2-c — eziyet suçu için 2/3."},
+{title:"Genel infaz rejimi",years:14,ratio:.5,description:"İstisna kapsamında olmayan bir suçtan 14 yıl hapis. Tek mahkûmiyet, yetişkin ve iyi hâl.",law:"5275 m.107/2 — genel kural 1/2."},
+{title:"Özel hayatın gizliliği",years:6,ratio:2/3,description:"TCK m.134 kapsamında 6 yıl süreli hapis cezası. Yetişkin, tek mahkûmiyet, iyi hâl.",law:"5275 m.107/2-f — özel hayat suçları için 2/3."},
+{"title":"Haberleşmenin gizliliği","years":9,"ratio":0.6666666666666666,"description":"TCK m.132 kapsamında kesinleşmiş 9 yıl süreli hapis cezası varsayımı. Yetişkin, tek mahkûmiyet, iyi hâl.","law":"5275 m.107/2-f — TCK 132 için 2/3."},
+{"title":"Kişisel veriler","years":12,"ratio":0.6666666666666666,"description":"TCK m.136 kapsamında 12 yıl süreli hapis cezası varsayımı. Yetişkin, tek mahkûmiyet, iyi hâl.","law":"5275 m.107/2-f — TCK 136 için 2/3."},
+{"title":"Cinsel taciz","years":6,"ratio":0.6666666666666666,"description":"TCK m.105 kapsamında kesinleşmiş 6 yıl süreli hapis cezası varsayımı. Yetişkin, tek mahkûmiyet, iyi hâl.","law":"5275 m.107/2-d — TCK 105 için 2/3."},
+{"title":"Nitelikli yaralama","years":18,"ratio":0.6666666666666666,"description":"TCK m.87/2-d kapsamındaki neticesi sebebiyle ağırlaşmış yaralama için 18 yıl kesinleşmiş hapis cezası varsayımı.","law":"5275 m.107/2-b — TCK 87/2-d için 2/3."},
+{"title":"İlk tekerrür","years":12,"ratio":0.6666666666666666,"description":"Tekerrür hükümlerinin uygulandığı süreli hapis için 12 yıl örneği. Önceki mahkûmiyet ve 108/2 üst sınırı ayrıca önemli.","law":"5275 m.108/1-d, m.108/2 — genel oran 2/3; önceki ceza üst sınırı etkileyebilir."},
+{"title":"İkinci tekerrür","years":12,"ratio":0.75,"description":"Mahkeme hükmünde ikinci defa tekerrür uygulanan 12 yıl süreli hapis cezası varsayımı.","law":"5275 m.108/3 — süreli hapis için 3/4."},
+{"title":"Genel infaz rejimi","years":16,"ratio":0.5,"description":"Özel infaz oranına tabi olmadığı varsayılan 16 yıllık kesinleşmiş süreli hapis cezası.","law":"5275 m.107/2 — genel koşullu salıverilme oranı 1/2."},
+{"title":"Kasten öldürme","years":18,"ratio":0.6666666666666666,"description":"TCK m.81 kapsamındaki süreli hapis için 18 yıllık kesinleşmiş ceza varsayımı.","law":"5275 m.107/2-a — TCK m.81 için 2/3."}
+];
+let index=0,guess=3,score=0,solved=false;let visited=new Set();
+const storageKey='aynen-yatari-v4';
+const $=id=>document.getElementById(id);
+let dailyStep=1,dailyFirst=null,dailySecond=null;
+let activeFilter='all';
+const visibleIndices=()=>cases.map((c,i)=>({c,i})).filter(({c})=>activeFilter==='all'||(activeFilter==='news'&&c.special==='process')||(activeFilter==='daily'&&c.special==='noCrime')||(activeFilter==='sentence'&&!c.special)).map(x=>x.i);
+
+const format=n=>Number.isInteger(n)?n.toLocaleString('tr-TR'):n.toLocaleString('tr-TR',{maximumFractionDigits:1});
+// All scenarios assume an offense committed after 4 June 2025, one final
+// sentence, no detention credit, no recidivism, adult and good behavior.
+// This is not a personal release-date calculator: eligibility for open prison
+// and the implementation of judicial discretion cannot be inferred here.
+const legalExample=c=>{
+ const threshold=c.special==='noCrime'?0:c.years*c.ratio;
+ const ds=Math.min(1,threshold); // illustrative 105/A maximum, not automatic
+ const minimumDays=Math.max(5,threshold*365/10); // 7550 mandatory floor
+ const illustrative=c.special==='noCrime'?0:Math.max(threshold-ds,minimumDays/365);
+ return {threshold,ds:threshold-illustrative,illustrative,minimumDays};
+};
+function draw(){
+ if(typeof stopPlayback==='function')stopPlayback();
+ const c=cases[index],max=Math.max(c.years,2);
+ $('counter').textContent=String(visibleIndices().indexOf(index)+1).padStart(2,'0')+' / '+String(visibleIndices().length).padStart(2,'0');
+ $('caseNo').textContent=String(index+1).padStart(2,'0');$('crime').textContent=c.title;
+ $('caseTag').textContent=c.special==='process'?'GÜNDEM / YARGILAMA':c.special==='dailyCrime'?'GÜNDELİK / CEZA KANUNU':c.special==='noCrime'?'GÜNDELİK / YATARI YOK':'İNFAZ / VARSAYIMSAL';
+ $('facts').textContent=c.description+(!c.special?' Suç tarihi: 2026 (varsayım).':'');
+ const eventSource=$('legalDrawer').querySelector('.event-source');if(eventSource)eventSource.remove();
+ $('sentence').innerHTML=c.special==='dailyCrime'?'OLAY NE? <small>Suçun cezasını bul</small>':c.special==='process'?'KARAR NE? <small>Suçlama ≠ ceza</small>':c.special==='noCrime'?'CEZA VAR MI? <small>Gündelik hayat dosyası</small>':c.years+' yıl <small>hapis cezası</small>';
+ $('slider').max=c.special==='noCrime'?5:max;$('slider').step='.5';
+ guess=c.special==='noCrime'?1:Math.min(max,Math.round(c.years*.5*2)/2);setGuess(guess);
+ $('compareToggle').hidden=false;$('resultExtra').hidden=false;$('resultExtra').open=false;$('result').querySelector('.compare').hidden=false;
+ $('processGuess').hidden=c.special!=='process';$('dailyDecision').hidden=!(c.special==='dailyCrime'||c.special==='noCrime');$('guess').style.display=c.special?'none':'block';dailyStep=1;dailyFirst=null;dailySecond=null;renderDailyStep();$('result').classList.remove('show');document.body.classList.remove('result-mode');$('legalDrawer').open=false;$('comparison').hidden=true;$('compareToggle').setAttribute('aria-expanded','false');$('compareToggle').textContent='AYNI CEZAYI KARŞILAŞTIR ↗';
+ $('state').textContent='DOĞRU TAHMİN: '+score+' / '+visibleIndices().length;
+ $('dots').innerHTML='<span class="progress-count">'+(visibleIndices().indexOf(index)+1)+' / '+visibleIndices().length+'</span><span class="progress-meter"><i style="width:'+((visibleIndices().indexOf(index)+1)/visibleIndices().length*100)+'%"></i></span>';
+ solved=false;processChoice=null;saveProgress();
+}
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+function setGuess(v){guess=clamp(v,0,cases[index].special==='noCrime'?5:cases[index].years);$('slider').value=guess;$('value').textContent=format(guess);}
+$('minus').onclick=()=>setGuess(guess-.5);$('plus').onclick=()=>setGuess(guess+.5);
+$('slider').oninput=e=>setGuess(Number(e.target.value));
+$('reveal').onclick=()=>{
+ if(solved)return;solved=true;visited.add(index);saveProgress();
+ const c=cases[index],x=legalExample(c),diff=Math.abs(guess-x.illustrative);
+ if(diff<=.25&&!c.special)score++;
+ $('feedback').textContent=diff<=.25?'YAKIN TAHMİN':diff<=1?'AZ FARKLA':'SENİN TAHMİNİN: '+format(guess)+' YIL';
+ $('feedback').classList.toggle('good',diff<=.25);
+ $('resultBig').innerHTML=format(x.illustrative)+' <span>yıl*</span>';
+ $('resultLine').innerHTML='Verilen ceza: <b>'+format(c.years)+' yıl</b>. Koşullu salıverilme eşiği: <b>'+format(x.threshold)+' yıl</b>. Standart 1 yıllık denetimli serbestlik varsayılırsa kurumda yaklaşık <b>'+format(x.illustrative)+' yıl</b>.';
+ $('inside').style.width=(x.illustrative/c.years*100)+'%';
+ $('outside').style.width=(x.ds/c.years*100)+'%';
+ $('end').style.width=((c.years-x.threshold)/c.years*100)+'%';
+ $('legal').textContent='*Kesin yatar süresi değil. '+c.law+' 5275 m.105/A kapsamında denetimli serbestlik ancak şartlar ve infaz hâkimi kararıyla mümkündür. 4 Haziran 2025 ve sonrasındaki suçlar için m.105/A/1 uyarınca en az 5 gün ve ilgili kurumda geçirilmesi gereken sürenin en az 1/10’u şartı dikkate alınır (geçiş hükümleri saklıdır). Açık cezaevi koşulları, geçici hükümler, mahsup ve başka cezalar ayrıca etkilidir.';
+ if(c.special==='noCrime'){
+  $('resultBig').innerHTML='0 <span>gün*</span>';
+  $('resultLine').innerHTML='<strong>YATARI YOK.</strong> Bu olay, anlatıldığı haliyle hapis cezası gerektiren bir suç değil. Yine de sözleşmeden, yönetim kararından veya başka kanundan kaynaklanan hukuki sonuçlar olabilir.';
+  $('inside').style.width='0%';$('outside').style.width='0%';$('end').style.width='100%';
+  $('legal').textContent=c.law+' Yalnızca olayda belirtilen varsayımlar değerlendirilmiştir.';
+  $('feedback').textContent=dailyFirst==='no'?'DOĞRU: SUÇ DEĞİL':'SUÇ SANDIN, DEĞİL';
+  if(dailyFirst==='no')score++;
+ }
+ if(c.special==='dailyCrime'){
+ $('resultBig').innerHTML='KANUNİ <span>ARALIK</span>';
+ $('resultLine').innerHTML='<strong>'+c.range+'</strong>. Bu kanundaki ceza aralığıdır; mahkemenin vereceği ceza veya cezaevinde kalış süresi değildir.';
+ $('inside').style.width='0%';$('outside').style.width='0%';$('end').style.width='100%';
+ $('legal').textContent=c.law+' Suçun tüm unsurlarının ispatı gerekir; hüküm ve infaz ayrıca değerlendirilir.';
+ $('feedback').textContent='2 AŞAMALI DOSYA · '+((dailyFirst==='crime'?1:0)+(dailySecond===c.rangeKey?1:0))+'/2 DOĞRU';
+ score+=(dailyFirst==='crime'?1:0)+(dailySecond===c.rangeKey?1:0);
+ }
+ if(c.special==='process'){
+ $('resultBig').innerHTML='? <span>yıl</span>';
+ $('resultLine').innerHTML='<strong>HENÜZ HESAPLANAMAZ.</strong> Suçlama, gözaltı ve tutuklama kesinleşmiş hapis cezası değildir. Bu dosyadan infaz süresi çıkarılamaz.';
+ $('inside').style.width='0%';$('outside').style.width='0%';$('end').style.width='100%';
+ $('legal').textContent=c.law;
+ $('feedback').textContent=processChoice==='no'?'DOĞRU: HENÜZ BELLİ DEĞİL':'HABER ≠ KESİNLEŞMİŞ CEZA';
+ if(processChoice==='no')score++;
+ if(c.source){const source=$('legalDrawer').querySelector('.sources');let a=source.querySelector('.event-source');if(!a){a=document.createElement('a');a.className='event-source';a.target='_blank';a.rel='noopener noreferrer';source.append(' · ',a)}a.href=c.source;a.textContent='OLAYIN KAYNAĞI ↗';}else{const a=$('legalDrawer').querySelector('.event-source');if(a)a.remove();}
+ }
+ $('compareToggle').hidden=!!c.special;$('resultExtra').hidden=!!c.special;
+ $('result').querySelector('.compare').hidden=!!c.special;
+ $('next').textContent=index===visibleIndices().at(-1)?'BAŞA DÖN ↺':'SONRAKİ DOSYA →';
+ $('resultExtra').open=false;
+ $('guess').style.display='none';$('dailyDecision').hidden=true;$('processGuess').hidden=true;$('result').classList.add('show');document.body.classList.add('result-mode');$('legalDrawer').open=false;
+ $('comparisonBars').innerHTML=[{name:'Genel 1/2',ratio:.5},{name:'İstisna 2/3',ratio:2/3}].map((r)=>'<div class="comparison-row"><span>'+r.name+'</span><span class="comparison-bar"><i style="width:'+(r.ratio*100)+'%"></i></span><b>'+format(c.years*r.ratio)+' yıl</b></div>').join('');
+ $('state').textContent='DOĞRU TAHMİN: '+score+' / '+visibleIndices().length;
+};
+let playback=null;
+function stopPlayback(){if(playback){clearInterval(playback);playback=null;}$('timelinePlay').textContent='▶ OYNAT';}
+function renderTimeline(percent){
+ const years=cases[index].years,elapsed=years*percent/100;
+ $('timelineClock').textContent=format(Math.round(elapsed*10)/10)+' YIL';
+ const icons=$('timelineCharacters').children;
+ icons[0].classList.toggle('released',elapsed>=years*.5);
+ icons[1].classList.toggle('released',elapsed>=years*2/3);
+ const bars=$('comparisonBars').querySelectorAll('.comparison-bar i');
+ bars.forEach((bar,i)=>{const limit=i===0?.5:2/3;bar.style.background='linear-gradient(to right,#111 '+Math.min(100,elapsed/(years*limit)*100)+'%,#f0734d '+Math.min(100,elapsed/(years*limit)*100)+'%)';});
+}
+$('timelineScrub').oninput=e=>{stopPlayback();renderTimeline(+e.target.value);};
+$('timelinePlay').onclick=()=>{
+ if(playback){stopPlayback();return;}
+ if(+$('timelineScrub').value>=100)$('timelineScrub').value=0;
+ $('timelinePlay').textContent='Ⅱ DURDUR';
+ playback=setInterval(()=>{
+   const next=Math.min(100,+$('timelineScrub').value+1.1);
+   $('timelineScrub').value=next;renderTimeline(next);
+   if(next>=100)stopPlayback();
+ },38);
+};
+$('compareToggle').onclick=()=>{
+ if(!solved)return;
+ const box=$('comparison');box.hidden=!box.hidden;
+ $('compareToggle').setAttribute('aria-expanded',String(!box.hidden));
+ $('compareToggle').textContent=box.hidden?'AYNI CEZAYI KARŞILAŞTIR ↗':'KARŞILAŞTIRMAYI KAPAT ×';
+ if(box.hidden)stopPlayback();else{ $('timelineScrub').value=0;renderTimeline(0); }
+};
+function renderDailyStep(){
+ const c=cases[index];if(!['dailyCrime','noCrime'].includes(c.special))return;
+ $('dailyStage').textContent='AŞAMA '+(dailyStep===1?'01':'02')+' / '+(dailyStep===1?'SUÇ MU?':'KANUNİ CEZA');
+ $('dailyPrompt').textContent=dailyStep===1?'Bu olayda suç oluşabilir mi?':'Kanunda hangi ceza aralığı var?';
+ const opts=dailyStep===1?[['crime','SUÇ OLUŞABİLİR'],['no','SUÇ DEĞİL']]:[['short','3 AY – 1 YIL'],['fine','1 YILA KADAR / PARA CEZASI'],['long','2 – 5 YIL']];
+ $('dailyButtons').innerHTML=opts.map(o=>'<button type="button" data-choice="'+o[0]+'">'+o[1]+'</button>').join('');
+ $('dailyMini').textContent=dailyStep===1?'Önce olayın suç oluşturup oluşturamayacağını tahmin et.':'Şimdi kanunda öngörülen temel ceza aralığını seç.';
+}
+$('dailyButtons').addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b||solved)return;
+ const c=cases[index];
+ if(dailyStep===1){dailyFirst=b.dataset.choice;if(c.special==='noCrime'){$('reveal').click();return;}dailyStep=2;renderDailyStep();return;}
+ dailySecond=b.dataset.choice;$('reveal').click();
+});
+function nextVisible(){const visible=visibleIndices();const pos=visible.indexOf(index);if(pos>=visible.length-1){index=visible[0];score=0;visited.clear()}else index=visible[pos+1];draw();}
+$('next').onclick=nextVisible;
+$('surpriseFile').onclick=()=>{const rest=visibleIndices().filter(i=>i!==index&&!visited.has(i));const pool=rest.length?rest:visibleIndices().filter(i=>i!==index);if(!pool.length)return;index=pool[Math.floor(Math.random()*pool.length)];draw();};
+let processChoice=null;
+document.querySelectorAll('.process-choices button').forEach(button=>button.addEventListener('click',()=>{
+ if(solved)return;processChoice=button.dataset.answer;$('reveal').click();
+}));
+document.querySelectorAll('.case-filters button').forEach(btn=>btn.addEventListener('click',()=>{activeFilter=btn.dataset.cat;document.querySelectorAll('.case-filters button').forEach(b=>b.classList.toggle('chosen',b===btn));index=visibleIndices()[0];score=0;visited.clear();draw();}));
+
+
+
+
+function saveProgress(){try{localStorage.setItem(storageKey,JSON.stringify({index,score,visited:[...visited],filter:activeFilter}))}catch(e){}}
+function restoreProgress(){try{
+ const raw=JSON.parse(localStorage.getItem(storageKey)||'null');
+ if(!raw||!Number.isInteger(raw.index)||raw.index<0||raw.index>=cases.length)return;
+ index=raw.index;score=Math.max(0,Number(raw.score)||0);visited=new Set((raw.visited||[]).filter(i=>Number.isInteger(i)&&i>=0&&i<cases.length));
+ activeFilter=['all','news','daily','sentence'].includes(raw.filter)?raw.filter:'all';
+ if(!visibleIndices().includes(index))index=visibleIndices()[0];
+ document.querySelectorAll('.case-filters button').forEach(b=>b.classList.toggle('chosen',b.dataset.cat===activeFilter));
+}catch(e){}}
+$('filterToggle').onclick=()=>{
+ const nav=$('filters');nav.hidden=!nav.hidden;$('filterToggle').setAttribute('aria-expanded',String(!nav.hidden));
+ $('filterToggle').textContent=nav.hidden?'KONULAR ⌄':'KONULAR ×';
+};
+$('shareCase').onclick=async()=>{
+ const c=cases[index],heading=$('resultBig').textContent.trim(),details=$('resultLine').textContent.trim();
+ const message='YATARI KAÇ?\n'+c.title+'\n'+heading+'\n'+details+'\nhttps://aynen.fun/yatari-kac.html';
+ try{if(navigator.share){await navigator.share({title:'Yatarı Kaç?',text:message,url:'https://aynen.fun/yatari-kac.html'});return;}
+ if(navigator.clipboard){await navigator.clipboard.writeText(message);$('shareCase').textContent='KOPYALANDI ✓';setTimeout(()=>$('shareCase').textContent='SONUCU PAYLAŞ ↗',1500)}}
+ catch(e){}
+};
+restoreProgress();
+draw();
+</script><script src="/share-kit.js?v=1" defer></script></body></html>
