@@ -87,3 +87,9 @@ body{background:radial-gradient(ellipse at 45% -15%,#e8f1e9 0%,#f5f6f2 47%,#f5f6
   .result-actions button{font-size:10px;padding:9px}
 }
 @media(prefers-reduced-motion:reduce){.action:hover:not(:disabled){transform:none}}
+.history-panel{min-height:60px;font-size:10px;line-height:1.5;color:#728379}
+.history-panel svg{display:block;width:100%;height:auto;max-height:120px}
+.history-last{margin:4px 0 0;color:#597b67;font-size:10px}
+.history-panel .muted{color:#97a397}
+#history:empty{display:none}
+@media(max-width:760px){.history-panel svg{height:90px}}
