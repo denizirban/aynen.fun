@@ -70,7 +70,7 @@ main{max-width:1100px;height:100dvh;min-height:550px;margin:auto;padding:14px 16
 .card p{font-size:13px;line-height:1.55;color:#695e4f;margin:0 0 17px}
 .card .buttons{display:flex;gap:7px;flex-wrap:wrap}
 .card button{flex:1;padding:13px 16px;min-height:48px;color:#fff;background:#2f3028;border:1px solid #2f3028;font-weight:800;font-size:13px}
-.card button.alt{background:#fbf8ef;color:#302e28}
+.card button.alt{background:#fbf8ef;color:#302e28}.card #ticket{flex-basis:100%;background:#e6cfaa;border-color:#af9773;color:#372c20}
 .report{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:17px}
 .report div{background:#e9e4d7;padding:10px}
 .report b{font-size:27px;letter-spacing:-.06em;display:block}
@@ -301,7 +301,7 @@ main{max-width:1120px}
 <div><b id="resultBest">0</b><span>KİŞİSEL REKOR</span></div>
 <div><b id="resultMistakes">0</b><span>YANLIŞ EL</span></div>
 </div>
-<div class="buttons"><button type="button" id="start">BİR ÖĞRENCİ UZAT →</button><button type="button" class="alt" id="share" hidden>SONUCU PAYLAŞ</button></div>
+<div class="buttons"><button type="button" id="start">BİR ÖĞRENCİ UZAT →</button><button type="button" class="alt" id="share" hidden>SONUCU PAYLAŞ</button><button type="button" class="alt" id="ticket" hidden>BİLETİ PNG OLARAK PAYLAŞ ↓</button></div>
 </div>
 </div>
 </section>
@@ -537,7 +537,7 @@ function start(){
   last:0,lastHud:0,roundId:s.roundId+1,seed:daySeed,
   remembered:0,missed:0,turnUntil:0,events:0,memory:false,memoryHit:false
  });
- $('modal').hidden=true;$('report').hidden=true;$('share').hidden=true;
+ $('modal').hidden=true;$('report').hidden=true;$('share').hidden=true;$('ticket').hidden=true;
  set('start','TEKRAR OYNA ↻');set('next','IŞIKLI ELE DOKUN →');
  hud();prepareOrder();beep(570,.08,.04);
 }
@@ -552,7 +552,7 @@ function end(){
  set('modalText',s.count+' yolcunun parasını ulaştırdın. '+s.remembered+' kez para üstünün sahibini hatırladın. '+s.mistakes+' kere yanlış ele uzattın. Aynı günün seferini arkadaşın da oynayabilir.');
  set('resultPeople',String(s.count));set('resultScore',String(s.score));
  set('resultBest',String(best()));set('resultMistakes',String(s.mistakes));
- $('report').hidden=false;$('share').hidden=false;
+ $('report').hidden=false;$('share').hidden=false;$('ticket').hidden=false;
  set('sceneMessage','SEFER BİTTİ');$('sceneMessage').classList.remove('memory');
  window.AynenShareResult={title:'Bir Öğrenci Uzat — aynen.fun',text:dayKey+' seferinde '+s.count+' yolcunun parasını uzattım. '+s.score+' puan, '+s.remembered+' doğru para üstü, '+s.bestStreak+' seri. Sen kaç yolcu yetiştirirsin?',url:'https://aynen.fun/bir-ogrenci-uzat.html'};
  beep(310,.24,.07);
@@ -580,6 +580,66 @@ $('sound').addEventListener('click',function(){
  s.sound=!s.sound;set('sound',s.sound?'SES AÇIK':'SES KAPALI');
  $('sound').setAttribute('aria-pressed',String(s.sound));if(s.sound)beep(530,.1,.04);
 });
+
+function makeTicket(){
+ var canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;
+ var c=canvas.getContext('2d');if(!c)return null;
+ var w=1080,h=1350;
+ var gradient=c.createLinearGradient(0,0,0,h);
+ gradient.addColorStop(0,'#d6ad67');gradient.addColorStop(.42,'#e8c98c');gradient.addColorStop(1,'#eee5cf');
+ c.fillStyle=gradient;c.fillRect(0,0,w,h);
+ // A collectible picture of the same dolmuş: sunlit window, rails, green seats.
+ c.fillStyle='#533f2d';c.fillRect(0,0,w,125);
+ c.fillStyle='#b08759';c.fillRect(88,168,w-176,408);
+ c.fillStyle='#352f28';c.fillRect(114,188,w-228,354);
+ var sky=c.createLinearGradient(0,193,0,570);sky.addColorStop(0,'#8db5b1');sky.addColorStop(.58,'#f5d29e');sky.addColorStop(1,'#b77c49');
+ c.fillStyle=sky;c.fillRect(130,207,w-260,316);
+ c.fillStyle='#ebd0a7';c.fillRect(507,189,26,355);
+ c.fillStyle='#9a805b';c.fillRect(129,468,w-258,19);
+ // silhouette of seats and perspective vanishing point
+ c.fillStyle='#3f4e3b';
+ c.beginPath();c.moveTo(0,650);c.lineTo(280,540);c.lineTo(442,810);c.lineTo(0,840);c.fill();
+ c.beginPath();c.moveTo(w,650);c.lineTo(w-280,540);c.lineTo(w-442,810);c.lineTo(w,840);c.fill();
+ c.fillStyle='#6d865e';c.fillRect(115,67,20,177);c.fillRect(945,67,20,177);
+ c.strokeStyle='#6d865e';c.lineWidth=21;
+ c.beginPath();c.moveTo(122,240);c.bezierCurveTo(55,248,80,296,122,295);c.bezierCurveTo(171,292,166,248,122,240);c.stroke();
+ c.beginPath();c.moveTo(956,240);c.bezierCurveTo(889,248,914,296,956,295);c.bezierCurveTo(1005,292,1000,248,956,240);c.stroke();
+ c.fillStyle='#f9f5e8';c.fillRect(64,719,w-128,575);
+ c.strokeStyle='#514836';c.lineWidth=3;c.strokeRect(64,719,w-128,575);
+ // Ticket perforation and ink typography.
+ c.setLineDash([8,12]);c.strokeStyle='#9e8c72';c.lineWidth=2;
+ c.beginPath();c.moveTo(97,844);c.lineTo(983,844);c.stroke();c.setLineDash([]);
+ c.fillStyle='#75664e';c.font='bold 22px monospace';c.textAlign='left';c.fillText('AYNEN.FUN   /   GÜNÜN SEFERİ',103,775);
+ c.fillText(dayKey,103,814);
+ c.fillStyle='#2b2821';c.font='bold 73px Arial';c.fillText('MUAVİNLİK',103,931);c.fillText('RAPORU',103,1001);
+ c.fillStyle='#76694f';c.font='bold 23px monospace';c.fillText('YOLCU',103,1069);c.fillText('PUAN',415,1069);c.fillText('DOĞRU İADE',719,1069);
+ c.fillStyle='#25241f';c.font='bold 63px Arial';c.fillText(String(s.count),103,1142);c.fillText(String(s.score),415,1142);c.fillText(String(s.remembered),719,1142);
+ c.fillStyle='#5f5a4e';c.font='22px monospace';c.fillText('GERÇEK MESLEK BELGESİ DEĞİLDİR.',103,1221);
+ c.font='bold 25px Arial';c.textAlign='center';c.fillText('aynen.fun/bir-ogrenci-uzat.html',540,1326);
+ return canvas;
+}
+function saveTicket(){
+ var c=makeTicket();if(!c)return;
+ function fallback(blob){
+  var a=document.createElement('a'),url=URL.createObjectURL(blob);
+  a.href=url;a.download='aynen-fun-dolmus-bileti.png';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url)},1500);
+  toast('BİLET İNDİRİLDİ');
+ }
+ c.toBlob(async function(blob){
+  if(!blob){toast('BİLET HAZIRLANAMADI');return}
+  try{
+   var f=new File([blob],'aynen-fun-dolmus-bileti.png',{type:'image/png'});
+   if(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]})){
+    try{await navigator.share({files:[f],title:'Bir Öğrenci Uzat — aynen.fun',text:s.count+' yolcu · '+s.score+' puan'});return}
+    catch(e){if(e&&e.name==='AbortError')return}
+   }
+   fallback(blob);
+  }catch(e){fallback(blob)}
+ },'image/png');
+}
+$('ticket').addEventListener('click',saveTicket);
+
 window.addEventListener('blur',function(){s.last=0});
 document.addEventListener('visibilitychange',function(){s.last=0});
 set('dailyLabel','GÜNÜN SEFERİ / '+dayKey);
