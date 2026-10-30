@@ -188,6 +188,18 @@ body{background:#789d5a}
  #sceneButton{padding:0 7px;font-size:9px}
 }
 @media(max-width:390px){.wordmark small{display:none}.hud-tools{gap:3px}.tool{padding:0 5px}.tool.select{max-width:82px}#sceneButton{font-size:8px;padding:0 5px}}
+
+/* Mobile controls wrap cleanly without clipping the photograph */
+@media(max-width:700px){
+ .hud{flex-wrap:wrap;row-gap:4px;align-items:center;padding:8px 10px 13px}
+ .brand{width:100%;justify-content:space-between;min-height:26px}
+ .home{min-height:24px}
+ .hud-tools{width:100%;justify-content:flex-end;gap:5px;min-width:0}
+ .tool{min-height:34px}
+ .search-wrap.show{right:10px;top:77px}
+ .results{top:116px;right:10px}
+ .guide{max-width:calc(100vw - 20px);white-space:normal;text-align:center}
+}
 </style></head><body><header class="hud"><div class="brand"><a class="home" href="/">← aynen.fun</a><div class="wordmark"><strong>bu da iş mi?</strong><small>İNSAN ATLASI / 80 İŞ</small></div></div><div class="hud-tools"><div id="searchBox" class="search-wrap"><input id="searchInput" type="search" placeholder="Meslek ara..." aria-label="Meslek ara" autocomplete="off"></div><button class="tool" id="searchToggle" type="button" aria-expanded="false" aria-label="Aramayı aç">⌕</button><select id="period" class="tool select" aria-label="Dönem filtresi"><option value="all">HEPSİ</option><option value="GEÇMİŞ">GEÇMİŞ</option><option value="BUGÜN">BUGÜN</option></select><button class="tool" id="sceneButton" type="button" title="Diğer meslek grubunu göster">GRUP 1 / 2 ↻</button><button class="tool random" id="random" type="button" title="Henüz görmediğim bir işi keşfet">↗ RASTGELE</button><div class="counter"><strong id="count">0 / 80</strong><span>KEŞFEDİLDİ</span></div></div></header><div id="results" class="results" aria-label="Meslek arama sonuçları"></div><main id="meadows" class="meadows" aria-label="Çimlerdeki insanları keşfederek mesleklere ulaş"></main><div class="endmark"><span>80 GERÇEK MESLEK · GÖRSEL KEŞİF ALANI</span><span>FOTOĞRAF TEMSİLÎDİR · 2 MESLEK GRUBU</span></div><div id="hint" class="guide">BİR İNSANA DOKUN · DİĞER 40 MESLEK İÇİN GRUP DEĞİŞTİR</div><section class="overlay" id="overlay" role="dialog" aria-modal="false" aria-labelledby="detailTitle" aria-hidden="true"><div class="scrim" id="scrim"></div><div class="drawer"><div id="handle" class="handle"></div><div class="drawer-head"><span id="detailIndex">MESLEK 01 / 80</span><button class="close" type="button" id="close" aria-label="Bilgi panelini kapat">×</button></div><div class="detail-body" id="detail"></div><div class="drawer-nav"><button id="prev" type="button">← ÖNCEKİ</button><span id="panelPos">1 / 80</span><button id="next" type="button">SONRAKİ →</button></div><div class="drawer-foot"><button id="randomPanel" type="button">↗ GÖRMEDİĞİM BİRİ</button><button id="share" type="button">PAYLAŞ ↗</button></div></div></section><script>
 (function(){
 'use strict';
@@ -285,7 +297,7 @@ $('#period').addEventListener('change',e=>{filter=e.target.value;render();result
 $('#searchToggle').addEventListener('click',()=>{$('#searchBox').classList.toggle('show');const open=$('#searchBox').classList.contains('show');$('#searchToggle').setAttribute('aria-expanded',String(open));if(open)$('#searchInput').focus();else{$('#searchInput').value='';searchTerm='';render();$('#results').classList.remove('show')}});
 $('#searchInput').addEventListener('input',e=>{searchTerm=e.target.value;render();resultMatches()});
 $('#random').addEventListener('click',randomJob);$('#randomPanel').addEventListener('click',randomJob);
-$('#sceneButton').addEventListener('click',()=>{scenePage=1-scenePage;render();});
+$('#sceneButton').addEventListener('click',()=>{if(activeId!==null)closeDetail();scenePage=1-scenePage;render();});
 $('#prev').addEventListener('click',()=>advance(-1));$('#next').addEventListener('click',()=>advance(1));
 $('#share').addEventListener('click',share);$('#close').addEventListener('click',()=>closeDetail());
 $('#scrim').addEventListener('click',()=>closeDetail());
