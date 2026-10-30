@@ -1,30 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Siyah gece zemini üzerinde karakteristik sorguçlu ibibik kuşu illüstrasyonu">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Canlı kobalt mavi ve limon sarısı renkler önünde turkuaz ve turuncu yalıçapkını illüstrasyonu">
 <defs>
- <linearGradient id="night" x1=".12" y1=".1" x2=".95" y2=".93"><stop stop-color="#242d28"/><stop offset="1" stop-color="#0b1719"/></linearGradient>
- <linearGradient id="feather" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f1c783"/><stop offset=".6" stop-color="#ca915d"/><stop offset="1" stop-color="#936844"/></linearGradient>
- <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#252728"/><stop offset="1" stop-color="#101718"/></linearGradient>
+ <linearGradient id="blue" x1="0" y1="0" x2=".97" y2="1"><stop stop-color="#2f5be7"/><stop offset="1" stop-color="#1d2f94"/></linearGradient>
+ <linearGradient id="birdBlue" x1=".2" y1=".1" x2="1" y2="1"><stop stop-color="#74eddd"/><stop offset=".56" stop-color="#09a8bd"/><stop offset="1" stop-color="#085eab"/></linearGradient>
+ <linearGradient id="orange" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#ffd170"/><stop offset=".52" stop-color="#fc8855"/><stop offset="1" stop-color="#da4f54"/></linearGradient>
 </defs>
-<path d="M17 64Q33 12 109 17L254 19Q305 33 304 91L295 177Q281 207 236 205L69 203Q17 191 16 139Z" fill="url(#night)"/>
-<circle cx="249" cy="65" r="32" fill="#82968b" opacity=".14"/>
-<path d="M17 175Q63 163 110 176T206 174Q260 162 297 175" fill="none" stroke="#9eae94" stroke-width="1" stroke-dasharray="2 7" opacity=".46"/>
-<path d="M41 181Q122 178 275 179" stroke="#aa9473" stroke-width="5" stroke-linecap="round"/>
-<path d="M64 183Q53 169 44 168M241 179Q252 166 269 166" stroke="#aa9473" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-<path d="M110 127Q80 113 61 127Q91 129 120 149L164 157Z" fill="#161b1d" stroke="#d5b88d" stroke-width="1.7"/>
-<path d="M70 123L100 133M80 121L114 141M95 126L128 146" stroke="#f4e8cb" stroke-width="5"/>
-<path d="M115 110Q132 94 155 101Q182 111 194 135Q193 161 172 174Q141 182 119 165Q104 144 115 110Z" fill="url(#feather)" stroke="#191f1c" stroke-width="2.8"/>
-<path d="M122 124Q139 112 172 126Q177 139 163 150Q144 157 120 141Z" fill="url(#wing)" stroke="#252928" stroke-width="2"/>
-<path d="M124 124Q137 130 157 130M124 135Q140 142 164 138M127 147Q139 150 152 148" fill="none" stroke="#faf4df" stroke-width="8" stroke-linecap="round"/>
-<path d="M146 158Q155 175 168 174" fill="none" stroke="#fff0d1" stroke-width="3.5" stroke-linecap="round"/>
-<path d="M173 103Q177 89 181 80L198 73Q224 72 233 92Q230 110 211 117L193 129Q182 116 173 103Z" fill="url(#feather)" stroke="#22221e" stroke-width="2.6"/>
-<path d="M181 81L165 42L173 43L194 73M189 73L184 30L193 32L204 72M201 72L208 28L216 32L216 76M212 75L230 39L237 45L226 83M223 81L249 58L254 66L232 92" fill="url(#feather)" stroke="#261f1b" stroke-width="2.2" stroke-linejoin="round"/>
-<path d="M167 42L173 43M184 30L193 32M208 28L216 32M230 39L237 45M249 58L254 66" stroke="#141819" stroke-width="7" stroke-linecap="round"/>
-<path d="M229 92L306 97Q276 107 230 99Z" fill="#312d29" stroke="#191b1b" stroke-width="1.6"/>
-<circle cx="215" cy="87" r="3.8" fill="#1d201d"/><circle cx="216" cy="86" r="1.3" fill="#fff"/>
-<path d="M144 174Q142 185 137 188M167 173Q166 184 174 187M136 187L124 188M136 187L142 190M173 187L181 188M174 187L169 190" stroke="#604f37" stroke-width="2.3" stroke-linecap="round" fill="none"/>
-<g fill="none" stroke="#d3c79d" stroke-width="1.6" stroke-linecap="round" opacity=".8">
-<path d="M48 63Q62 54 77 63M44 53Q63 40 84 54"/>
-<path d="M258 132Q265 124 274 130M260 142Q272 132 284 140"/>
+<!-- Poster-like, high-contrast editorial artwork that reads at thumbnail scale -->
+<rect x="8" y="8" width="304" height="204" rx="7" fill="url(#blue)"/>
+<path d="M8 151Q81 131 131 159Q194 194 312 148V212H8Z" fill="#e4eb77"/>
+<circle cx="197" cy="104" r="83" fill="#70e2c8"/>
+<path d="M108 8Q78 31 63 72Q45 113 8 129V8Z" fill="#ff9c90"/>
+<path d="M270 10Q287 49 312 64V8Z" fill="#f6b667"/>
+<circle cx="73" cy="75" r="21" fill="#e7f187"/>
+<circle cx="274" cy="174" r="25" fill="#fb8b80"/>
+<!-- visual sound motif -->
+<g fill="none" stroke="#193a9d" stroke-width="3.2" stroke-linecap="round">
+ <path d="M35 100Q50 88 65 101"/><path d="M25 114Q48 93 74 116"/>
 </g>
-<path d="M45 82Q50 75 56 81L66 92L77 80" stroke="#e0d2ad" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".67"/>
-<circle cx="53" cy="156" r="2" fill="#efd9a3"/><circle cx="261" cy="160" r="2" fill="#efd9a3"/>
+<!-- perch and dynamic diagonal -->
+<path d="M44 190Q128 180 290 203" fill="none" stroke="#1d2855" stroke-width="8" stroke-linecap="round"/>
+<path d="M99 187L77 170M252 201l20-13" fill="none" stroke="#1d2855" stroke-width="5" stroke-linecap="round"/>
+<!-- elegant elongated tail, black rim with vivid blue feather splits -->
+<path d="M130 143Q106 166 62 201Q109 193 156 173L162 153Z" fill="#174eaa" stroke="#193366" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M127 163Q105 178 80 190M142 168Q116 184 101 189" fill="none" stroke="#83ede2" stroke-width="4" stroke-linecap="round"/>
+<!-- body, orange chest, teal mantle -->
+<path d="M148 103Q184 94 204 124Q219 152 201 170Q177 191 146 172Q120 150 128 125Q132 112 148 103Z" fill="url(#orange)" stroke="#173d69" stroke-width="3.6" stroke-linejoin="round"/>
+<path d="M144 112Q170 107 188 124Q202 142 184 163Q174 179 148 170Q133 161 130 140Q127 122 144 112Z" fill="url(#birdBlue)" stroke="#153d73" stroke-width="3.8"/>
+<path d="M142 125Q160 118 177 129M137 139Q156 131 181 140M139 154Q153 150 174 152" stroke="#8aeadd" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/>
+<!-- white side patch, bold orange chest visible at small sizes -->
+<path d="M182 129Q198 130 202 149Q204 164 189 168L179 167Q189 145 182 129Z" fill="#fbe8b1"/>
+<!-- neck and head -->
+<path d="M185 91Q184 65 211 55Q238 46 251 69Q264 91 246 108Q234 123 215 117L198 128Q187 114 185 91Z" fill="url(#birdBlue)" stroke="#173d69" stroke-width="3.6"/>
+<path d="M198 69Q219 57 237 64M191 78Q220 65 247 76M198 90Q219 81 248 87" fill="none" stroke="#99f2d1" stroke-width="5" stroke-linecap="round"/>
+<!-- cheek, throat -->
+<path d="M208 100Q222 111 240 101Q236 117 219 122L206 116Z" fill="#ffb55f" stroke="#173d69" stroke-width="2"/>
+<path d="M204 109Q215 115 222 114" stroke="#fcf3da" stroke-width="6" stroke-linecap="round"/>
+<!-- distinctive long kingfisher bill -->
+<path d="M244 79L306 87L244 98Q251 87 244 79Z" fill="#152956" stroke="#14234a" stroke-width="2" stroke-linejoin="round"/>
+<path d="M250 86L301 88" stroke="#d7e1ac" stroke-width="2" stroke-linecap="round"/>
+<!-- bright eye -->
+<circle cx="236" cy="82" r="5.2" fill="#0b1b34"/><circle cx="237.7" cy="80" r="1.8" fill="#ffffff"/>
+<!-- legs/feet -->
+<path d="M170 168L163 184L153 189M189 165L192 186L182 192" stroke="#9b4e41" stroke-width="4.2" fill="none" stroke-linecap="round"/>
+<path d="M152 189L143 189M152 189L157 192M183 192L173 194" stroke="#9b4e41" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+<!-- small poster dots -->
+<circle cx="49" cy="153" r="3" fill="#1d429d"/><circle cx="287" cy="132" r="4" fill="#e4eb77"/>
 </svg>
