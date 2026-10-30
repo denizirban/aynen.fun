@@ -276,6 +276,61 @@ body{overflow:hidden}
  .hintpill{display:none!important}
  .discover-hotspots{clip-path:inset(0 0 18% 0)!important}
 }
+
+/* Left-side compact tool rail — scene stays visible, case details occupy the rail. */
+:root{--rail-w:clamp(245px,25vw,335px)}
+.app{padding-left:var(--rail-w)!important}
+.stage{left:var(--rail-w)!important;width:calc(100% - var(--rail-w))!important}
+.world{left:0!important}
+.bar{left:calc(var(--rail-w) + 12px)!important;right:auto!important}
+.panel,.panel.minimized{
+ left:0!important;right:auto!important;top:0!important;bottom:0!important;
+ width:var(--rail-w)!important;height:100dvh!important;max-height:100dvh!important;
+ border-radius:0!important;border:0!important;border-right:2px solid #45644b!important;
+ box-shadow:4px 0 14px #24402e27!important;padding:65px 13px 18px!important;
+ background:#f6ebd5f7!important;overflow-y:auto!important
+}
+.panel.minimized>*:not(.event-tools){display:block!important}
+.panel.minimized #archive[hidden]{display:none!important}
+.panel .event-tools{position:sticky!important;top:-65px!important;display:grid!important;grid-template-columns:1fr 1fr 36px!important;gap:5px!important;padding:8px 0!important}
+.panel .event-tools button{min-height:34px!important;padding:5px!important;font-size:9px!important}
+.panel .event-tools .panel-toggle{display:none!important}
+.panel .switches{grid-template-columns:1fr!important;gap:5px!important}
+.panel .switch{min-height:36px!important;font-size:10px!important;padding:8px!important}
+.panel h1{font-size:clamp(20px,2vw,29px)!important}
+.panel .story{font-size:11px!important;line-height:1.35!important}
+.panel .judgment{padding:10px!important}
+.panel .judgment strong{font-size:19px!important}
+.panel .judgment p{font-size:11px!important}
+.panel .archive{grid-template-columns:1fr!important}
+.hintpill{left:12px!important}
+@media(max-width:780px){
+ :root{--rail-w:clamp(152px,42vw,205px)}
+ .app{padding-left:var(--rail-w)!important}
+ .stage{left:var(--rail-w)!important;width:calc(100% - var(--rail-w))!important}
+ .panel,.panel.minimized{
+  left:0!important;right:auto!important;top:0!important;bottom:0!important;
+  width:var(--rail-w)!important;height:100dvh!important;max-height:100dvh!important;
+  padding:48px 7px 14px!important;border-radius:0!important;overflow-y:auto!important;
+  max-width:none!important;max-height:100dvh!important
+ }
+ .panel h1,.panel.minimized #title{font-size:18px!important;line-height:1.08!important}
+ .panel .story{font-size:10px!important}
+ .panel .switches{grid-template-columns:1fr!important}
+ .panel .switch{font-size:9px!important;min-height:37px!important}
+ .panel .event-tools{grid-template-columns:1fr 1fr!important;top:-48px!important}
+ .panel .event-tools button{font-size:8px!important;padding:5px 2px!important;min-height:32px!important}
+ .panel .event-tools .panel-toggle{display:none!important}
+ .panel .judgment strong{font-size:16px!important}
+ .panel .judgment p{font-size:9px!important}
+ .bar{top:7px!important;left:calc(var(--rail-w) + 8px)!important}
+ .bar .brand{font-size:15px!important;padding:7px 9px!important}
+ .city-pins{display:none!important}
+ .hotspot .object-art{width:33px!important;height:33px!important}
+ .hotspot svg{width:29px!important;height:29px!important}
+ .hintpill{display:none!important}
+ .discover-hotspots{clip-path:none!important}
+}
 </style></head><body><main class="app"><header class="bar"><a class="brand" href="/">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><section class="stage">
 <div class="world"><div class="hintpill" id="hint">BİR YERE DOKUN ↓</div><svg class="scene" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Yemyeşil ağaçların arasında elle çizilmiş pastel bir Türkiye mahallesi. Binalara dokunarak olayları keşfet.">
 <defs>
@@ -504,6 +559,6 @@ $('randomEvent').onclick=()=>{chapter[active]=((chapter[active]||0)+1)%(episodes
 document.querySelectorAll('.building').forEach(el=>{el.addEventListener('click',()=>render(el.dataset.place));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();render(el.dataset.place)}})});
 $('panelToggle').onclick=()=>{const p=$('casePanel'),closed=p.classList.toggle('minimized');$('panelToggle').setAttribute('aria-expanded',String(!closed));$('panelToggle').setAttribute('aria-label',closed?'Olay panelini genişlet':'Olay panelini küçült')};
 render(active);
-if(window.matchMedia('(max-width:780px)').matches){$('casePanel').classList.add('minimized');$('panelToggle').setAttribute('aria-expanded','false');}
+$('casePanel').classList.remove('minimized');
 document.querySelectorAll('.discover-hotspots button,.city-pins button').forEach(b=>b.addEventListener('click',()=>{if(window.matchMedia('(max-width:780px)').matches){$('casePanel').classList.remove('minimized');$('panelToggle').setAttribute('aria-expanded','true');}}));
 </script></body></html>
