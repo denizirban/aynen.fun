@@ -83,6 +83,12 @@ h1{font-size:clamp(35px,5.7vw,82px);line-height:.99;letter-spacing:-.072em;font-
 .inline-teaser{font-size:17px}.inline-story{font-size:12px;line-height:1.65}
 .inline-tools{display:flex}.inline-source,.inline-copy{font-size:10px}
 }
+
+.nearby-choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.nearby-country{border:1px solid #d5d5d5;background:#fff;color:#111;padding:10px 12px;text-align:left;font-size:12px;min-height:42px}
+.nearby-country small{display:block;color:#777;font:10px/1.5 ui-monospace,Menlo,monospace;margin-top:4px}
+.nearby-country:hover,.nearby-country:focus-visible{background:#f3f3ee;border-color:#111}
+.empty strong{font-size:13px;color:#111}.empty p{line-height:1.55;margin:9px 0}
 [hidden]{display:none!important}
 @media(max-width:900px){.stage{grid-template-columns:minmax(0,1fr) minmax(290px,.9fr);gap:14px}.pane{padding-left:15px}.globe-pane{min-height:450px}.globe-space{min-height:400px}.record-list{max-height:510px}}
 @media(max-width:700px){
@@ -130,7 +136,7 @@ h1{font-size:clamp(35px,5.7vw,82px);line-height:.99;letter-spacing:-.072em;font-
     <div class="graph-legend">KUTUYA TIKLA: DOSYA AÇ · BOŞ ALANI SÜRÜKLE: HARİTADA GEZ</div>
   </section>
   <section class="countries-wrap"><div class="section-heading"><h3>Ülke dizini</h3><span id="countryCountLabel">KAYITLI ÜLKELER</span></div><div class="country-grid" id="countries"></div></section>
-  <footer class="note">Seçilmiş ve kaynaklandırılmış arşiv; bütün dünya vergilerinin eksiksiz envanteri değildir. Tarihî dönemler bugünkü ülke sınırlarıyla yaklaşık eşleştirilir. “Vergi”, “harç” ve “erişim ücreti” bazı kayıtlarda farklı hukuki türlerdir. Kaynaklara kayıt ayrıntısından erişilebilir.</footer>
+  <footer class="note">Kaynakları tek tek doğrulanmış, genişleyen seçilmiş bir arşivdir. Henüz dosyası olmayan ülkeler için yakındaki kayıtlar önerilir; bütün dünya vergilerinin eksiksiz envanteri değildir. Tarihî dönemler bugünkü ülke sınırlarıyla yaklaşık eşleştirilir. “Vergi”, “harç” ve “erişim ücreti” bazı kayıtlarda farklı hukuki türlerdir. Kaynaklara kayıt ayrıntısından erişilebilir.</footer>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
