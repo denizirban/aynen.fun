@@ -295,10 +295,87 @@
   ball(dogRoot,.27,.25,.24,mat('dogface','#40302d'),-.82,.41,0);
   ball(dogRoot,.09,.08,.09,black,-1.05,.34,.09);
   for(var dx of [-.53,.48])for(var dz of [-.22,.2])cylinder(dogRoot,.075,.072,.3,mat('dogleg','#49382e'),dx,.18,dz);
-  var tail=capsule(dogRoot,[.68,.45,0],[1.18,.73,.08],.09,mat('dogtail','#342a25'));
+  var tailRoot=new THREE.Group();tailRoot.position.set(.68,.45,0);dogRoot.add(tailRoot);
+  var tail=capsule(tailRoot,[0,0,0],[.5,.28,.08],.09,mat('dogtail','#342a25'));
   var bowl=cylinder(scene,.34,.28,.15,mat('petbowl','#b86274',.45),-6.4,.11,4.2);
   interactive(dogRoot,'pet','Köpeğin');
   var dogRug=addMesh(scene,new THREE.CircleGeometry(2.5,48),mat('rug','#8c9d68',1),-5.5,.006,3.15,false,true);dogRug.rotation.x=-Math.PI/2;dogRug.scale.set(1.55,.83,1);
+
+  // Art-directed detail pass: floor rug fibers, cabinet fronts, seams, curtains,
+  // and small household objects. All geometry is local: no external model requests.
+  function makeLinenTexture(){
+    return makeTexture(512,512,function(ctx,W,H){
+      ctx.fillStyle='#c9be9c';ctx.fillRect(0,0,W,H);
+      for(var i=0;i<3000;i++){
+        var x=(i*71.73)%W,y=(i*41.29)%H;
+        ctx.strokeStyle=i%3?'rgba(255,246,208,.17)':'rgba(96,85,63,.10)';
+        ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+2,y+5);ctx.stroke();
+      }
+    });
+  }
+  var linen=new THREE.MeshStandardMaterial({map:makeLinenTexture(),roughness:1});
+  function rug(x,z,w,h){
+    var group=new THREE.Group();scene.add(group);group.position.set(x,.012,z);
+    var shape=addMesh(group,new THREE.PlaneGeometry(w,h),linen,0,0,0,false,true);
+    shape.rotation.x=-Math.PI/2;
+    var border=mat('rugBorder','#cfcbb0',1);
+    for(var dx of [-w*.48,w*.48])box(group,.025,.012,h*.92,border,dx,.014,0);
+    for(var dz of [-h*.46,h*.46])box(group,w*.96,.012,.025,border,0,.014,dz);
+    return group
+  }
+  rug(-5.5,3.1,3.2,2.1);
+  function littleCurtain(){
+    var fabric=mat('fabric','#b97951',.98);
+    var print=makeTexture(256,512,function(ctx,W,H){
+      ctx.fillStyle='#bc7548';ctx.fillRect(0,0,W,H);
+      for(var i=0;i<370;i++){
+        var x=(i*67.1)%W,y=(i*47.3)%H;
+        ctx.strokeStyle=i%3===0?'rgba(255,236,188,.55)':'rgba(255,212,162,.32)';
+        ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+6,y+7,x+3,y+13);ctx.stroke();
+      }
+    });
+    var cloth=new THREE.MeshStandardMaterial({map:print,side:THREE.DoubleSide,roughness:.99});
+    // Pleated café curtain on right side of window. Its folds catch the sunlight.
+    for(var i=0;i<13;i++){
+      var x=-1.30+i*.10,fold=Math.cos(i*Math.PI)*.10;
+      var panel=addMesh(scene,new THREE.PlaneGeometry(.145,3.3),cloth,x,4.3,-5.08+fold,false,false);
+      panel.rotation.y=fold*.8;
+    }
+    capsule(scene,[-1.55,5.98,-4.97],[.04,5.98,-4.97],.038,stainless);
+  }
+  littleCurtain();
+  function cabinetDetail(){
+    // Recessed panels and steel handles give real depth to the cabinetry.
+    var panel=mat('cabinetPanel','#f7f5ea',.62);
+    for(var z of [-3.9,-1.65,.7,2.75]){
+      box(scene,.065,.89,1.42,panel,5.82,.80,z);
+      box(scene,.09,.04,.67,wood,5.75,1.30,z);
+      capsule(scene,[5.73,.90,z-.29],[5.73,.90,z+.30],.032,stainless);
+    }
+    // Fine backsplash with subtle grout lines.
+    var grout=mat('grout','#c6c5b5');
+    for(var x=0;x<4;x++)capsule(scene,[5.75,1.62+x*.22,-5.44],[8.75,1.62+x*.22,-5.44],.008,grout);
+    for(var x=0;x<13;x++)capsule(scene,[5.8+x*.235,1.62,-5.44],[5.8+x*.235,2.5,-5.44],.008,grout);
+  }
+  cabinetDetail();
+  function countertopStillLife(){
+    // Board and a few deliberately imperfect domestic props.
+    var g=new THREE.Group();scene.add(g);
+    box(g,.80,.055,.53,mat('board2','#bb976b'),5.84,1.66,-3.28);
+    ball(g,.19,.15,.17,mat('lemon','#dfb75b'),5.58,1.82,-3.35);
+    ball(g,.16,.13,.15,mat('tomato','#c9704d'),5.95,1.81,-3.18);
+    for(var i=0;i<4;i++){
+      var yy=1.62+i*.065;
+      cylinder(g,.19,.19,.025,mat('plates','#e5dfcd'),7.12,yy,2.72);
+    }
+    cylinder(g,.23,.2,.55,mat('utensil','#7e926d'),7.06,1.89,.20);
+    for(var j=0;j<5;j++){
+      var a=j*Math.PI*2/5;
+      capsule(g,[7.06,2.12,.2],[7.06+Math.cos(a)*.18,2.48,.2+Math.sin(a)*.18],.023,stainless);
+    }
+  }
+  countertopStillLife();
+
   // Person meshes with curved forms, clothing, hair and expressive subtle motions.
   function makePerson(key,look,small){
     var root=new THREE.Group();scene.add(root);
@@ -311,8 +388,10 @@
     capsule(body,[.14,.97,0],[.16,.48,.01],.125,pants);
     ball(body,.155,.075,.24,mat('shoe'+key,'#53493e'),-.15,.45,.09);
     ball(body,.155,.075,.24,mat('shoe2'+key,'#53493e'),.15,.45,.09);
-    capsule(body,[-.3,1.44,0],[-.43,1.04,.06],.10,skin);
-    capsule(body,[.3,1.44,0],[.42,1.04,.07],.10,skin);
+    var leftArm=new THREE.Group();leftArm.position.set(-.3,1.44,0);body.add(leftArm);
+    capsule(leftArm,[0,0,0],[-.13,-.4,.06],.10,skin);
+    var rightArm=new THREE.Group();rightArm.position.set(.3,1.44,0);body.add(rightArm);
+    capsule(rightArm,[0,0,0],[.12,-.4,.07],.10,skin);
     cylinder(body,.09,.09,.14,skin,0,1.66,0);
     ball(body,.25,.30,.24,skin,0,1.97,0);
     var hairstyle=ball(body,.265,.16,.25,hair,0,2.22,-.02);
@@ -326,7 +405,7 @@
     capsule(body,[-.075,1.88,.238],[.072,1.88,.238],.012,mat('mouth','#8a5c4e'));
     root.userData.person=key;
     root.traverse(function(o){if(o.isMesh){o.userData.owner=root;pickables.push(o)}});
-    actors[key]={root,body,sideHair,initial:look.pos.slice(),position:new THREE.Vector3(...look.pos)};
+    actors[key]={root,body,leftArm,rightArm,sideHair,initial:look.pos.slice(),position:new THREE.Vector3(...look.pos)};
     root.position.set(...look.pos);
     return root
   }
@@ -424,6 +503,10 @@
       var moving=root.position.distanceToSquared(goal)>.07;
       var bob=moving?Math.sin(elapsed*11)*.036:Math.sin(elapsed*1.5+k.length)*.012;
       data.body.position.y=bob;
+      var working=key==='self'&&state.currentSpot||key==='partner'&&state.partnerSpot||key==='kid'&&state.kidSpot;
+      var motion=working?Math.sin(elapsed*5+k.length)*.35:Math.sin(elapsed*1.3+k.length)*.035;
+      data.leftArm.rotation.x+=((working?-.48:0)+motion-data.leftArm.rotation.x)*Math.min(1,dt*7);
+      data.rightArm.rotation.x+=((working?-.48:0)-motion-data.rightArm.rotation.x)*Math.min(1,dt*7);
       if(moving)root.rotation.y=Math.atan2(goal.x-root.position.x,goal.z-root.position.z);
       else root.rotation.y+=(-.15-root.rotation.y)*Math.min(1,dt*.8);
     }
@@ -454,6 +537,7 @@
       oldSnapshot=snapshot();lastStateTime=elapsed;refresh(oldSnapshot);
     }
     updateActors(oldSnapshot||{},dt,elapsed);
+    tailRoot.rotation.y=Math.sin(elapsed*5.2)*.42;
     if(selectionRing.visible){selectionRing.children[0].rotation.z=elapsed*.12;attention.material.opacity=.10+.07*Math.sin(elapsed*3)}
     if(host.classList.contains('is-ready'))renderer.render(scene,camera);
   }
