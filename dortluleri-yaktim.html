@@ -129,7 +129,7 @@ var stages=[
  {name:'HAVAALANI',sign:'GİDİŞ',tag:'BAVUL İNDİRİYORUM',color:'#e2e3e1',target:485,rate:.68,deadline:11}
 ];
 var palette=['#a4b9bc','#d8ac86','#adacb3','#bac4ab','#d2b78f','#cbd4c7','#8eabb6'];
-var s={phase:'intro',level:0,carX:560,dragging:false,cars:[],oncoming:[],spawn:0,wave:0,elapsed:0,delay:0,queue:0,score:0,bank:0,levelDelay:0,lost:0,streak:0,passed:0,peak:0,stagePeak:0,milestones:0,clock:0,announce:0,flash:0,bonus:1,fail:false,muted:true,toastTimer:null,clockTime:0};
+var s={phase:'intro',level:0,carX:560,dragging:false,cars:[],oncoming:[],spawn:0,wave:0,elapsed:0,escapeTime:0,lastReward:0,delay:0,queue:0,score:0,bank:0,levelDelay:0,lost:0,streak:0,passed:0,peak:0,stagePeak:0,milestones:0,clock:0,announce:0,flash:0,bonus:1,fail:false,muted:true,toastTimer:null,clockTime:0};
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function random(a,b){return a+Math.random()*(b-a)}
 function bestScore(){try{return Number(localStorage.getItem('aynen-dortlu-best')||0)}catch(e){return 0}}
@@ -163,7 +163,7 @@ function reset(){
  setupStage();updateBest();toast('PARK YERİNİ SEÇ');playTone(440,.08);
 }
 function setupStage(){
- s.phase='placing';s.carX=stages[s.level].target;s.cars=[];s.oncoming=[];s.spawn=0;s.wave=0;s.elapsed=0;s.queue=0;s.stagePeak=0;s.milestones=0;s.levelDelay=0;s.bonus=1;s.announce=0;
+ s.phase='placing';s.carX=stages[s.level].target;s.cars=[];s.oncoming=[];s.spawn=0;s.wave=0;s.elapsed=0;s.escapeTime=0;s.queue=0;s.stagePeak=0;s.milestones=0;s.levelDelay=0;s.bonus=1;s.announce=0;
  for(var i=0;i<5;i++){
   s.cars.push(makeCar(-110+i*108,i%3===0?1:2,i%4===0?'van':'car'));
   s.oncoming.push(makeCar(970+i*136,0,'car'));
@@ -210,12 +210,12 @@ function leave(){
  var chain=1+Math.min(s.streak,5)*.28;
  var earned=Math.max(0,Math.round(s.levelDelay*tension*chain));
  s.bank+=earned;s.delay=s.bank;s.passed++;
+ s.phase='escaping';s.escapeTime=0;s.lastReward=earned;
  setText('delay',Math.floor(s.bank)+' sn');
  setText('streak',String(s.streak));
- $('action').classList.remove('danger');
+ setText('action','ARABA KAÇIYOR...');
+ $('action').disabled=true;$('action').classList.remove('danger');
  $('clock').classList.remove('countdown');
- if(s.level>=stages.length-1){finish(false,true);return}
- s.level++;setupStage();
  toast('+'+earned+' sn · '+(nearMiss?'KIL PAYI ×'+chain.toFixed(1):'ŞİMDİLİK KURTULDUN.'));
  playTone(nearMiss?820:530,.11);
 }
@@ -247,6 +247,14 @@ function advance(dt){
  s.clockTime+=dt;
  if(s.phase==='intro'||s.phase==='end')return;
  if(s.phase==='placing'){s.flash+=dt;return}
+ if(s.phase==='escaping'){
+  s.flash+=dt;s.escapeTime+=dt;
+  if(s.escapeTime>=.82){
+   if(s.level>=stages.length-1)finish(false,true);
+   else{s.level++;setupStage();toast('YENİ DURAK. AYNI MAZERET.')}
+  }
+  return;
+ }
  s.elapsed+=dt;s.flash+=dt;
  var stage=stages[s.level],next=stage.deadline-s.elapsed;
  if(s.elapsed>=stage.deadline){finish(true,false);return}
@@ -319,7 +327,7 @@ function advance(dt){
 function rect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(x,y,w,h)}
 function line(x1,y1,x2,y2,col,width){ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
 function round(x,y,w,h,r,fill,stroke,width){
- ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width||2;ctx.stroke()}
+ ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width||2;ctx.stroke()}
 }
 function label(t,x,y,size,color,align){
  ctx.fillStyle=color||'#161616';ctx.font='bold '+(size||13)+'px Arial';ctx.textAlign=align||'center';ctx.fillText(t,x,y);ctx.textAlign='start';
@@ -371,7 +379,34 @@ function drawRoad(){
  if(s.phase==='placing'){
   ctx.save();ctx.strokeStyle='#f4ae25';ctx.lineWidth=3;ctx.setLineDash([10,7]);
   ctx.strokeRect(tx-86,368,172,62);ctx.setLineDash([]);ctx.restore();
-  label('×1.8',tx,363,12,'#111');
+  label('×2.4',tx,363,12,'#111');
+ }
+}
+function drawStageDetails(){
+ // Each district is recognizable at a glance, while sharing one simple driving model.
+ if(s.level===0){
+  for(var i=0;i<4;i++){rect(217+i*29,469,19,21,'#d5ccb9');line(217+i*29,468,236+i*29,468,'#62625a',2)}
+  label('SEPETLER',273,512,9,'#74766e');
+ }else if(s.level===1){
+  for(var j=0;j<9;j++)rect(250+j*18,178,10,89,'#f1f0e6');
+  label('OKUL',330,291,12,'#f1f0e6');
+ }else if(s.level===2){
+  rect(688,468,94,8,'#3b6a86');
+  round(716,481,60,25,1,'#f4f7f4','#1b1b1b',1);
+  label('DURAK',747,497,11,'#333');
+ }else if(s.level===3){
+  rect(767,165,7,102,'#464646');round(748,195,48,29,3,'#242424','#111',1);
+  var green=s.phase==='parked'&&s.elapsed>7;
+  ctx.fillStyle=green?'#86ba92':'#c95a49';ctx.beginPath();ctx.arc(760,210,6,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=green?'#8bb6a1':'#4d544e';ctx.beginPath();ctx.arc(783,210,6,0,Math.PI*2);ctx.fill();
+ }else if(s.level===4){
+  for(var k=0;k<9;k++){line(12+k*111,166,25+k*111,145,'#a1adb7',3);line(12+k*111,456,25+k*111,466,'#a1adb7',3)}
+  label('BAĞLANTI YOLU',734,505,10,'#5e686e');
+ }else if(s.level===5){
+  rect(669,473,120,37,'#eee7dc');
+  round(689,477,52,23,2,'#e5e3df','#444',1);
+  rect(697,480,14,13,'#c7a784');rect(716,480,14,13,'#bdc4b8');
+  label('BAGAJ',750,504,10,'#5d5d5b');
  }
 }
 function drawVehicle(c){
@@ -394,7 +429,14 @@ function drawVehicle(c){
  ctx.restore();
 }
 function drawPlayer(){
- var x=s.carX,y=397;
+ var escape=s.phase==='escaping'?clamp(s.escapeTime/.8,0,1):0;
+ var x=s.carX+escape*450,y=397;
+ if(escape>0){
+  for(var i=0;i<4;i++){
+   line(x-77-i*36,385,x-62-i*36,385,'rgba(255,255,255,'+(.8-escape*.4)+')',2.5);
+   line(x-77-i*36,412,x-62-i*36,412,'rgba(255,255,255,'+(.8-escape*.4)+')',2.5);
+  }
+ }
  ctx.save();ctx.translate(x,y);
  var selected=s.phase==='placing',blink=selected||Math.floor(s.flash*2)%2===0;
  if(s.phase==='parked'&&blink){
@@ -442,10 +484,15 @@ function draw(){
  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,width,height);
  ctx.fillStyle='#edeee8';ctx.fillRect(0,0,width,height);
  ctx.setTransform(dpr*scale,0,0,dpr*scale,dpr*offX,dpr*offY);
- drawBuildings();drawRoad();
+ drawBuildings();drawRoad();drawStageDetails();
  for(var i=0;i<s.oncoming.length;i++)drawVehicle(s.oncoming[i]);
  for(var j=0;j<s.cars.length;j++)drawVehicle(s.cars[j]);
  drawPlayer();drawReaction();drawPolice();
+ if(s.phase==='escaping'){
+  round(318,187,264,67,3,'#fffef6','#141414',2);
+  label('+'+s.lastReward+' sn',450,227,29,'#171717');
+  label('TRAFİK GERİDE KALDI',450,244,10,'#777');
+ }
  // Location label and readable minimap HUD in canvas.
  round(14,14,138,27,3,'#f9f9f7dd','#777',1);
  label('PARK YASAĞI',83,32,11,'#111');
