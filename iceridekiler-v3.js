@@ -57,7 +57,8 @@ if(state.camera&&Number.isFinite(state.camera.x)&&Number.isFinite(state.camera.y
 }
 function limitCamera(){
  CAMERA.zoom=clamp(CAMERA.zoom,1,3.2);
- const rx=W/(2*CAMERA.zoom),ry=H/(2*CAMERA.zoom);
+ const vw=typeof webglActive!=='undefined'&&webglActive?H*(C.getBoundingClientRect().width/Math.max(1,C.getBoundingClientRect().height)):W;
+ const rx=vw/(2*CAMERA.zoom),ry=H/(2*CAMERA.zoom);
  CAMERA.x=clamp(CAMERA.x,rx,W-rx);CAMERA.y=clamp(CAMERA.y,ry,H-ry);
 }
 limitCamera();
@@ -179,7 +180,7 @@ function refreshThreat(){
  }
  advice.textContent=msg;icon.textContent=symbol;
 }
-function updateUi(force){const w=wave();['tissue','energy','inflam','memory'].forEach(n=>{$(n+'-n').textContent=Math.round(state[n]);$(n+'-bar').style.width=clamp(state[n],0,100)+'%'});
+function updateUi(force){const w=wave();$('stage').dataset.phase=state.phase;['tissue','energy','inflam','memory'].forEach(n=>{$(n+'-n').textContent=Math.round(state[n]);$(n+'-bar').style.width=clamp(state[n],0,100)+'%'});
  $('points').textContent=state.points+' ARAŞTIRMA';$('chapter').textContent=state.mode==='sandbox'?'SERBEST YAŞAM · '+(state.chapter-5)+'. OLAY':'OLAY '+String(Math.min(state.chapter+1,campaign.length)).padStart(2,'0')+' / '+campaign.length.toString().padStart(2,'0');
  $('episode-title').textContent=state.chapter>=campaign.length&&state.mode!=='sandbox'?'Doku raporu hazır.':w.title;
  $('episode-desc').textContent=state.chapter>=campaign.length&&state.mode!=='sandbox'?'Tüm senaryolar tamamlandı.':w.desc;
@@ -565,19 +566,27 @@ function paintZones(t){
   c.fillStyle='rgba('+z.color+',.64)';c.font=(9*VIEW.scale)+'px DM Mono,monospace';c.textAlign='center';c.fillText(z.name,x,y-r*.84);c.textAlign='start';
  }
 }
+function worldView(){
+ const rect=C.getBoundingClientRect();
+ const ratio=Math.max(.2,rect.width/Math.max(1,rect.height));
+ return {width:webglActive?H*ratio:W,height:H,rect};
+}
 function screenPoint(ev){
- const r=C.getBoundingClientRect();
- const sx=(ev.clientX-r.left)/Math.max(1,r.width)*VIEW.w;
- const sy=(ev.clientY-r.top)/Math.max(1,r.height)*VIEW.h;
- return {px:sx,py:sy,x:clamp(CAMERA.x+(sx-VIEW.w/2)/(VIEW.sx*CAMERA.zoom),0,W),y:clamp(CAMERA.y+(sy-VIEW.h/2)/(VIEW.sy*CAMERA.zoom),0,H)};
+ const view=worldView(),r=view.rect;
+ const rx=(ev.clientX-r.left)/Math.max(1,r.width)-.5;
+ const ry=(ev.clientY-r.top)/Math.max(1,r.height)-.5;
+ return {px:(rx+.5)*VIEW.w,py:(ry+.5)*VIEW.h,
+  x:clamp(CAMERA.x+rx*view.width/CAMERA.zoom,0,W),
+  y:clamp(CAMERA.y+ry*view.height/CAMERA.zoom,0,H)};
 }
 function moveCamera(x,y){CAMERA.x=x;CAMERA.y=y;limitCamera();updateCameraUI();}
 function zoomCamera(to,clientX,clientY){
  const rect=C.getBoundingClientRect(),cx=clientX??(rect.left+rect.width*.5),cy=clientY??(rect.top+rect.height*.5);
  const p=screenPoint({clientX:cx,clientY:cy});
  CAMERA.zoom=clamp(to,1,3.2);
- CAMERA.x=p.x-(p.px-VIEW.w*.5)/(VIEW.sx*CAMERA.zoom);
- CAMERA.y=p.y-(p.py-VIEW.h*.5)/(VIEW.sy*CAMERA.zoom);
+ const view=worldView();
+ CAMERA.x=p.x-((p.px/VIEW.w)-.5)*view.width/CAMERA.zoom;
+ CAMERA.y=p.y-((p.py/VIEW.h)-.5)*view.height/CAMERA.zoom;
  limitCamera();updateCameraUI();
 }
 function updateCameraUI(){
@@ -643,12 +652,12 @@ function setupCamera(){
    const d=Math.max(1,Math.hypot(arr[0].x-arr[1].x,arr[0].y-arr[1].y));
    const od=Math.max(1,Math.hypot(older[0].x-older[1].x,older[0].y-older[1].y));
    zoomCamera(CAMERA.zoom*d/od,mid.x,mid.y);
-   CAMERA.x-=(mid.x-oldMid.x)*W/Math.max(1,rect.width)/CAMERA.zoom;
+   CAMERA.x-=(mid.x-oldMid.x)*worldView().width/Math.max(1,rect.width)/CAMERA.zoom;
    CAMERA.y-=(mid.y-oldMid.y)*H/Math.max(1,rect.height)/CAMERA.zoom;
   }else if(pointers.size===1){
    if(Math.hypot(e.clientX-downStart.x,e.clientY-downStart.y)>7)gestureMoved=true;
    if(gestureMoved){
-    CAMERA.x-=(e.clientX-old.x)*W/Math.max(1,rect.width)/CAMERA.zoom;
+    CAMERA.x-=(e.clientX-old.x)*worldView().width/Math.max(1,rect.width)/CAMERA.zoom;
     CAMERA.y-=(e.clientY-old.y)*H/Math.max(1,rect.height)/CAMERA.zoom;
    }
   }
@@ -746,7 +755,12 @@ function setupVisualOptions(){
  btn.addEventListener('click',()=>{state.fx=!state.fx;sync();save();notice(state.fx?'Görsel efektler açık.':'Ekonomik görsel mod açık.');});
  sync();
 }
-function init(){resizeScene();window.addEventListener('resize',resizeScene,{passive:true});setupDrawer();setupSound();setupVisualOptions();setupCamera();
+function setupMobileEpisode(){
+ const card=document.querySelector('.episode'),button=$('episode-expand');
+ if(!card||!button)return;
+ button.addEventListener('click',()=>{const expanded=card.classList.toggle('mobile-expanded');button.setAttribute('aria-expanded',String(expanded));button.setAttribute('aria-label',expanded?'Olay ayrıntılarını kapat':'Olay ayrıntılarını aç');});
+}
+function init(){resizeScene();window.addEventListener('resize',resizeScene,{passive:true});setupDrawer();setupSound();setupVisualOptions();setupCamera();setupMobileEpisode();
  if($('campaign-progress'))$('campaign-progress').hidden=false;
  $('start').onclick=start;$('next').onclick=beginChapter;$('reset').onclick=restart;
  document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>skill(b.dataset.action)));
