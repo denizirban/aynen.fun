@@ -249,14 +249,14 @@ function step(dt){state.clock+=dt;stepSignals(dt);
 /* Chromatic jelly-organism illustration system, inspired by the supplied warm
    glow-on-black references. Shapes are drawn from code, not from source images. */
 const ART={
- macro:{light:'#f3d58c',edge:'#ae7544',shade:'#694137',glow:'rgba(231,171,89,.36)',person:'guardian'},
- neutro:{light:'#ffcb93',edge:'#c37d55',shade:'#673f3f',glow:'rgba(246,166,105,.35)',person:'walker'},
- dend:{light:'#f5d0aa',edge:'#b97d55',shade:'#6a4750',glow:'rgba(246,175,125,.28)',person:'antenna'},
- nk:{light:'#ebd6b9',edge:'#c19d8c',shade:'#73505b',glow:'rgba(248,191,160,.3)',person:'horns'},
- tcell:{light:'#c6d6f9',edge:'#8c9dcc',shade:'#51567a',glow:'rgba(124,168,246,.32)',person:'bead'},
- bcell:{light:'#f5d9a1',edge:'#b99365',shade:'#765345',glow:'rgba(255,195,96,.31)',person:'round'},
- treg:{light:'#e4c9cd',edge:'#b27f9b',shade:'#63475d',glow:'rgba(222,140,187,.28)',person:'round'},
- fibro:{light:'#e2cbab',edge:'#9d8c84',shade:'#52434d',glow:'rgba(211,179,156,.3)',person:'branch'}
+ macro:{light:'#ffdc67',edge:'#f5a447',shade:'#a94b48',glow:'rgba(255,176,65,.48)',person:'guardian'},
+ neutro:{light:'#ffb59b',edge:'#f46b78',shade:'#9a476e',glow:'rgba(255,107,132,.46)',person:'walker'},
+ dend:{light:'#aff5e0',edge:'#52bea9',shade:'#326c95',glow:'rgba(89,236,210,.44)',person:'antenna'},
+ nk:{light:'#ddb5ff',edge:'#b579d9',shade:'#6356b0',glow:'rgba(202,129,255,.5)',person:'horns'},
+ tcell:{light:'#95ccff',edge:'#598ee8',shade:'#4d519b',glow:'rgba(79,152,255,.53)',person:'bead'},
+ bcell:{light:'#d9ff9e',edge:'#8fce73',shade:'#527972',glow:'rgba(166,241,116,.49)',person:'round'},
+ treg:{light:'#ffc1eb',edge:'#e68ac7',shade:'#955d9e',glow:'rgba(246,140,211,.48)',person:'round'},
+ fibro:{light:'#ffe1ac',edge:'#d69b73',shade:'#917c9c',glow:'rgba(255,189,115,.41)',person:'branch'}
 };
 const VIEW={w:900,h:525,sx:1,sy:1,scale:1};
 function resizeScene(){
@@ -268,6 +268,7 @@ function resizeScene(){
  VIEW.scale=Math.max(.8,Math.min(2.25,Math.min(VIEW.sx,VIEW.sy)*1.45));
 }
 function drawDust(t){
+ if(!state.fx)return;
  let c=ctx,w=VIEW.w,h=VIEW.h;
  for(let i=0;i<110;i++){
   let x=((i*173.83+37)%900)/900*w;
@@ -291,12 +292,20 @@ function halo(x,y,r,color,power=1){
 function paint(t){
  const c=ctx;const w=VIEW.w,h=VIEW.h;c.setTransform(1,0,0,1,0,0);
  c.fillStyle='#020203';c.fillRect(0,0,w,h);
+ const ambient=state.phase!=='active'?'#171622':({bacteria:'#241116',virus:'#111b32',allergen:'#241523',debris:'#241d15'}[wave().kind]||'#161520');
  let g=c.createRadialGradient(w*.51,h*.51,10,w*.51,h*.52,Math.max(w,h)*.72);
- g.addColorStop(0,'#151015');g.addColorStop(.32,'#0c0b10');g.addColorStop(.75,'#030304');g.addColorStop(1,'#000');
+ g.addColorStop(0,ambient);g.addColorStop(.33,'#0b0b14');g.addColorStop(.75,'#030304');g.addColorStop(1,'#000');
  c.fillStyle=g;c.fillRect(0,0,w,h);
  let a=c.createRadialGradient(w*.46,h*.65,0,w*.46,h*.65,Math.max(w,h)*.55);
  a.addColorStop(0,'rgba(97,46,47,.075)');a.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=a;c.fillRect(0,0,w,h);
  drawDust(t);
+ if(state.phase==='active'&&state.fx){
+  const ww=wave(),xx=ww.x*VIEW.sx,yy=ww.y*VIEW.sy,kind=ww.kind;
+  const tint={bacteria:'234,111,101',virus:'100,139,252',allergen:'245,135,198',debris:'244,186,105'}[kind]||'236,168,131';
+  const bloom=c.createRadialGradient(xx,yy,0,xx,yy,Math.max(w,h)*.32);
+  bloom.addColorStop(0,'rgba('+tint+',.105)');bloom.addColorStop(.35,'rgba('+tint+',.04)');bloom.addColorStop(1,'rgba('+tint+',0)');
+  c.fillStyle=bloom;c.fillRect(0,0,w,h);
+ }
  // Very restrained extracellular fibers, mostly invisible unless an event is active.
  c.save();c.strokeStyle='rgba(196,174,167,.048)';c.lineWidth=1;
  for(let q=0;q<8;q++){let yy=(q+1)*h/9;
@@ -305,9 +314,9 @@ function paint(t){
  // Chemical signals radiate through the black biological space.
  for(const sig of signals){
   const x=sig.x*VIEW.sx,y=sig.y*VIEW.sy,alpha=Math.max(0,1-sig.age/13);
-  const hue=sig.kind==='calm'?'177,184,241':sig.kind==='repair'?'237,196,143':'255,150,126';
-  for(let k=0;k<2;k++){
-   c.strokeStyle='rgba('+hue+','+(alpha*.20)+')';c.lineWidth=1.1;
+  const hue=sig.kind==='calm'?'199,142,241':sig.kind==='repair'?'111,244,177':sig.kind==='rally'?'90,230,248':'255,150,126';
+  for(let k=0;k<(state.fx?3:1);k++){
+   c.strokeStyle='rgba('+hue+','+(alpha*.28)+')';c.lineWidth=1.1;
    c.beginPath();c.ellipse(x,y,(20+sig.age*8+k*32)*VIEW.scale,(20+sig.age*8+k*32)*VIEW.scale,0,0,TWO);c.stroke();
   }
  }
@@ -315,16 +324,23 @@ function paint(t){
  for(const cell of hosts){
   let x=cell.x*VIEW.sx,y=cell.y*VIEW.sy;
   const r=27*VIEW.scale;
-  c.save();c.globalAlpha=cell.dead?.36:cell.infect>0?.67:.25;
+  c.save();c.globalAlpha=cell.dead?.33:cell.infect>0?.78:.34;
   c.shadowBlur=cell.infect>0?24:12;c.shadowColor=cell.infect>0?'#ee7895':'#d6b996';
   let hg=c.createRadialGradient(x-r*.3,y-r*.4,1,x,y,r*1.5);
-  hg.addColorStop(0,cell.infect>0?'#f1bdc7':'#e3d8bb');hg.addColorStop(.7,cell.infect>0?'#985b78':'#6c685a');hg.addColorStop(1,'rgba(35,26,24,0)');
+  hg.addColorStop(0,cell.infect>0?'#ffb8dc':'#8fddcd');hg.addColorStop(.7,cell.infect>0?'#bb4c91':'#4a7e85');hg.addColorStop(1,'rgba(35,26,24,0)');
   c.fillStyle=hg;c.beginPath();c.ellipse(x,y,r*1.5,r,Math.sin(cell.id)*.2,0,TWO);c.fill();c.restore();
-  if(cell.infect>0)halo(x,y,r*2,'rgba(235,93,126,0.2)',1);
+  if(cell.infect>0&&state.fx)halo(x,y,r*2,'rgba(235,93,126,0.2)',1);
  }
  for(const d of debris){const x=d.x*VIEW.sx,y=d.y*VIEW.sy;c.save();c.translate(x,y);c.rotate(d.id);c.fillStyle='#ba8764bb';c.shadowColor='#dc8f68';c.shadowBlur=7;c.beginPath();c.ellipse(0,0,5*VIEW.scale,3*VIEW.scale,.5,0,TWO);c.fill();c.restore();}
  for(const p of particles)paintParticle(p,t);
  for(const u of agents)paintAgent(u,t);
+ if(state.fx&&state.phase==='active'){
+  for(let i=0;i<Math.min(26,agents.length);i+=2){
+   const u=agents[i];if(u.hit<=0)continue;
+   const x=u.x*VIEW.sx,y=u.y*VIEW.sy,rr=(5+Math.sin(t*.006+i)*4)*VIEW.scale;
+   c.beginPath();c.arc(x+rr,y-rr*.6,1.3*VIEW.scale,0,TWO);c.fillStyle='#ffe9d5';c.shadowColor='#ff96ae';c.shadowBlur=8;c.fill();c.shadowBlur=0;
+  }
+ }
  for(const fx of bursts){
   c.beginPath();c.arc(fx.x*VIEW.sx,fx.y*VIEW.sy,(4+fx.life*44)*VIEW.scale,0,TWO);
   c.strokeStyle='rgba(235,211,183,'+(Math.max(0,1-fx.life/.65)*.50)+')';c.lineWidth=1.5;c.stroke();
@@ -357,7 +373,7 @@ function paintAgent(u,t){
  c.save();c.translate(x,y+bob*base);c.scale(base,base);
  c.rotate(Math.sin(t*.0005+u.id)*.065);
  // Soft jelly halo with subtle cyan/red aberration, like the second reference.
- c.shadowColor=info.glow;c.shadowBlur=24;
+ c.shadowColor=info.glow;c.shadowBlur=state.fx?32:5;
  const R=d.r*1.1;
  const headY=(u.type==='macro'?-3:0);
  // Character limbs and morphology silhouette.
@@ -387,7 +403,7 @@ function paintAgent(u,t){
  }
  c.closePath();c.fillStyle=grad;c.fill();
  c.shadowBlur=0;
- c.save();c.globalCompositeOperation='screen';c.lineWidth=.85;c.strokeStyle='rgba(103,166,249,.18)';c.translate(-1.35,0);c.stroke();c.translate(2.5,0);c.strokeStyle='rgba(253,102,116,.14)';c.stroke();c.restore();
+ if(state.fx){c.save();c.globalCompositeOperation='screen';c.lineWidth=1.25;c.strokeStyle='rgba(103,166,249,.26)';c.translate(-1.35,0);c.stroke();c.translate(2.5,0);c.strokeStyle='rgba(253,102,116,.24)';c.stroke();c.restore();}
  // Internal translucency, softly glowing organelle
  c.globalAlpha=.23;c.fillStyle='#ffd5c8';c.beginPath();c.ellipse(R*.15,R*.32,R*.5,R*.42,.13,0,TWO);c.fill();c.globalAlpha=1;
  // Eyelike details give each cell a charming character without turning it into an animal.
