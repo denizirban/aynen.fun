@@ -856,13 +856,14 @@ function decideFamilyJob(who){
  if(isPartner){helper=result;autonomyCounts.partner++;dayInitiatives.partner++}
  else {childTask=result;autonomyCounts.kid++;dayInitiatives.kid++}
  var whoLabel=isPartner?'Eşin':'Çocuk';
- familyNotice(whoLabel+' kendi başladı: '+result.name);
+ var response=isPartner?(result.spot==='sink'?'Bulaşıkları ben hallederim.':result.spot==='stove'?'Yemeğe başlayayım.':'Bunu ben hallederim.'):(result.spot==='pet'?'Mamasını ben koyarım.':result.spot==='kid'?'Ödevime başlayayım.':'Bunu ben yaparım.');
+ say(response);familyNotice(whoLabel+' kendi başladı: '+result.name);
  message(whoLabel+' bir işi üstlendi.');
  saveGame();
  return result
 }
 function familyTick(){
- if(!started||paused||ended||time<nextFamilyDecision)return;
+ if(!started||paused||ended||time>=22*60||time<nextFamilyDecision)return;
  nextFamilyDecision=time+24+Math.random()*13;
  var order=Math.floor((time-17*60)/30)%2===0?['partner','kid']:['kid','partner'];
  order.forEach(function(w){decideFamilyJob(w)});
@@ -874,7 +875,7 @@ function familyHtml(){
  ];
  return '<p class="family-intro">Ev halkı sadece beklemiyor. Açık olduğunda kendi tercih ettikleri güvenli işlere başlayabiliyorlar. Önce senin verdiğin görevler yapılır; istersen özerkliği kapatabilirsin.</p>'+
  list.map(function(c){
-  var busy=c.who==='partner'?(helper?helper.name:'Şu anda müsait'):(childTask?childTask.name:'Şu anda müsait');
+  var busy=c.who==='partner'?(helper?helper.name:(partnerEnergy<26?'Biraz dinleniyor':'Şu anda müsait')):(childTask?childTask.name:(kidEnergy<30?'Biraz dinleniyor':'Şu anda müsait'));
   var lvl=helperSkill(c.who),progress=c.practice%4;
   return '<article class="family-setting-card"><div class="family-setting-top"><div><strong>'+c.title+' · Seviye '+lvl+'</strong><p>'+busy+' · Enerji %'+Math.round(c.energy)+'</p></div><button class="family-mode-btn'+(c.auto?'':' off')+'" data-family-auto="'+c.who+'" aria-pressed="'+c.auto+'">'+(c.auto?'KENDİ KARAR VERİR':'BEN YÖNETİRİM')+'</button></div>'+
    '<div class="family-traits">'+Object.keys(habits[c.who]).map(function(key){var trait=habits[c.who][key];return '<button type="button" data-family-habit="'+c.who+':'+key+'" class="'+(c.trait===key?'active':'')+'" aria-pressed="'+(c.trait===key?'true':'false')+'">'+trait.name+'</button>'}).join('')+'</div>'+
@@ -1000,7 +1001,7 @@ function finish(j,kind){
  if(kind==='kid'){kidEnergy=clamp(kidEnergy-j.weight*.9);childTask=null;kidPractice=Math.min(40,kidPractice+1);if(kidPractice%4===0&&kidPractice<=16)familyNotice('Çocuğun ev işleri becerisi seviye '+helperSkill('kid')+' oldu.');}
  if(j.key==='dinner'){cash=Math.max(0,cash-35);if(owned.includes('herbs'))peace=clamp(peace+3)}if(j.key==='pet'){petEnergy=clamp(petEnergy+12)};grantXp(12+Math.min(8,Math.round(j.dur/5))+(j.expired?0:5));evaluateGoals();evaluateBadges();rewardChapters();
  message((kind==='partner'?'Eşin bitirdi: ':kind==='kid'?'Çocuk bitirdi: ':'Bitti: ')+j.name);
- if(j.initiative)familyNotice((kind==='partner'?'Eşin':'Çocuk')+' kendi bitirdi: '+j.name);if(kind==='self')startSelf();if(kind==='partner')startPartner();render();saveGame();
+ if(j.initiative){if(kind==='partner')friendship=clamp(friendship+1);if(kind==='kid')trust=clamp(trust+1);familyNotice((kind==='partner'?'Eşin':'Çocuk')+' kendi bitirdi: '+j.name)}if(kind==='self')startSelf();if(kind==='partner')startPartner();render();saveGame();
 }
 
 function advance(dt){
