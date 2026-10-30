@@ -339,8 +339,7 @@
   torus(selectionRing,.52,.045,mat('select','#d4ea8f',.55,.1),0,.04,0);
   var attention=addMesh(selectionRing,new THREE.CircleGeometry(.42,32),new THREE.MeshBasicMaterial({color:'#e2f69c',transparent:true,opacity:.14,depthWrite:false}),0,.025,0,false,false);
   attention.rotation.x=-Math.PI/2;
-  var currentSceneState={};
-  function snapshot(){return window.EvinKitchenBridge && window.EvinKitchenBridge.getState ? window.EvinKitchenBridge.getState() : {}}
+    function snapshot(){return window.EvinKitchenBridge && window.EvinKitchenBridge.getState ? window.EvinKitchenBridge.getState() : {}}
   function setTarget(key){
     var pos=stationPositions[key];
     if(!pos)return;
@@ -456,7 +455,7 @@
     }
     updateActors(oldSnapshot||{},dt,elapsed);
     if(selectionRing.visible){selectionRing.children[0].rotation.z=elapsed*.12;attention.material.opacity=.10+.07*Math.sin(elapsed*3)}
-    renderer.render(scene,camera);
+    if(host.classList.contains('is-ready'))renderer.render(scene,camera);
   }
   window.Evin3D={
     focus:focus,reset:resetCamera,zoom:adjustZoom,select:setTarget,isReady:true,
@@ -465,7 +464,7 @@
       host.classList.toggle('is-ready',Boolean(on));
       document.getElementById('game').classList.toggle('scene-3d-ready',Boolean(on));
       var button=document.getElementById('visualMode');
-      if(button){button.textContent=on?'3D':'2D';button.setAttribute('aria-label',on?'3D sahnesi açık, 2D görünümüne geç':'2D sahnesi açık, 3D görünümüne geç');}
+      if(button){button.hidden=false;button.textContent=on?'3D':'2D';button.setAttribute('aria-label',on?'3D sahnesi açık, 2D görünümüne geç':'2D sahnesi açık, 3D görünümüne geç');}
       try{localStorage.setItem('evin-patronu:scene-mode',on?'3d':'2d')}catch(e){}
     },
     destroy:function(){living=false;ro.disconnect();renderer.dispose();host.replaceChildren()}
