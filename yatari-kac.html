@@ -268,11 +268,35 @@
  .result-mode .left .case-label{margin-bottom:3px!important}
  .result-mode .left .facts{-webkit-line-clamp:2!important}
 }
+
+.result-extra[hidden]{display:none!important}
+.result-extra{border:1px solid #111;background:#faf9f4}
+.result-extra summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none;padding:9px 12px;font:700 10px 'DM Mono',monospace}
+.result-extra summary::-webkit-details-marker{display:none}
+.result-extra summary span{font-size:18px}
+.result-extra[open] summary span{transform:rotate(45deg)}
+.result-extra .compare{border:0;border-top:1px solid #111;margin:0}
+.result .next{order:1;font-size:14px;min-height:48px;background:#111;color:#fff}
+.result .feedback{order:-2}
+.result #resultHeading{order:-1}
+.result .result-big{order:0}
+.result .result-line{order:0}
+.result .result-extra,.result .legal-drawer,.result .comparison,.result .compare-toggle{order:2}
+.result .surprise-file,.result .share-case{order:3}
+@media(max-width:760px){
+ .result.show{gap:7px!important}
+ .result .result-big{font-size:clamp(42px,12vw,54px)!important;line-height:1.02!important}
+ .result .result-line{font-size:11px!important;line-height:1.35!important}
+ .result .next{min-height:44px!important;font-size:12px!important}
+ .result-extra summary{padding:8px 10px;font-size:9px}
+ .result.show .result-extra .compare{padding:8px!important}
+ .result .surprise-file,.result .share-case{min-height:30px!important}
+}
 </style></head><body><main class="app">
 <header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 22</span></header>
 <section class="frame"><div class="left"><div><div class="eyebrow">TÜRKİYE / CEZA &amp; İNFAZ</div><h1 class="title">Yatarı<br><span>kaç?</span></h1><p class="sub">Verilen hapis cezası ile infaz süresi aynı şey değil. Sence kaç yıl?</p></div><button type="button" id="filterToggle" class="filter-toggle" aria-expanded="false" aria-controls="filters">KONULAR ⌄</button><nav class="case-filters" id="filters" hidden aria-label="Dosya kategorileri"><button data-cat="all" class="chosen">HEPSİ</button><button data-cat="news">GÜNDEM</button><button data-cat="daily">GÜNLÜK</button><button data-cat="sentence">İNFAZ</button></nav><div class="casebox"><div class="case-label"><span class="number" id="caseNo">01</span> <span id="caseTag">DOSYA / VARSAYIMSAL SENARYO</span></div><h2 class="crime" id="crime">Genel infaz rejimi</h2><p class="facts" id="facts"></p><div class="sentence" id="sentence">6 yıl <small>hapis cezası</small></div></div></div>
 <div class="right"><div class="right-top"><div id="processGuess" hidden><div class="eyebrow">DOSYAYI OKU / KARARINI VER</div><div class="prompt" id="processQuestion">Buradan yatar hesabı çıkar mı?</div><div class="process-choices"><button type="button" data-answer="yes">EVET, HESAPLANIR</button><button type="button" data-answer="no">HAYIR, HENÜZ BELLİ DEĞİL</button></div><p class="process-hint">Bir haber başlığı her zaman kesinleşmiş ceza değildir.</p></div><div id="dailyDecision" hidden><div class="eyebrow" id="dailyStage">AŞAMA 01 / SUÇ MU?</div><div class="prompt" id="dailyPrompt">Bu olayda suç oluşabilir mi?</div><div class="daily-buttons" id="dailyButtons"><button type="button" data-choice="crime">SUÇ OLUŞABİLİR</button><button type="button" data-choice="no">SUÇ DEĞİL</button></div><p class="daily-mini" id="dailyMini">Olayda yazan koşullara göre cevap ver.</p></div><div id="guess"><div class="eyebrow">TAHMİNİNİ YAP</div><div class="prompt">Cezaevinde yaklaşık<br>kaç yıl kalır?</div><div class="dial"><button class="step" id="minus" type="button" aria-label="Bir yıl azalt">−</button><div class="value" id="value">3</div><button class="step" id="plus" type="button" aria-label="Bir yıl artır">+</button></div><div class="unit">YIL / HİPOTETİK CEZAEVİ SÜRESİ</div><input class="slider" id="slider" type="range" min="0" max="30" value="3" step=".5" aria-label="Yıl tahmini"><button class="answer" type="button" id="reveal">KARARI GÖR →</button></div>
-<div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">DOSYA SONUCU</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><div class="compare"><div class="eyebrow">CEZANIN AŞAMALARI</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div><details class="legal-drawer" id="legalDrawer"><summary>HUKUKİ AYRINTILAR <span aria-hidden="true">⌄</span></summary><div class="legal-drawer-content"><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div></div></details><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><div class="timeline-screen"><div class="timeline-heading"><span class="mono">İNFAZ ZAMAN ÇİZGİSİ</span><span class="mono" id="timelineClock">0.0 YIL</span></div>
+<div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">DOSYA SONUCU</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><details class="result-extra" id="resultExtra"><summary>İNFAZ GRAFİĞİ <span>＋</span></summary><div class="compare"><div class="eyebrow">CEZANIN AŞAMALARI</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div></details><details class="legal-drawer" id="legalDrawer"><summary>HUKUKİ AYRINTILAR <span aria-hidden="true">⌄</span></summary><div class="legal-drawer-content"><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div></div></details><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><div class="timeline-screen"><div class="timeline-heading"><span class="mono">İNFAZ ZAMAN ÇİZGİSİ</span><span class="mono" id="timelineClock">0.0 YIL</span></div>
 <input id="timelineScrub" class="timeline-scrub" type="range" min="0" max="100" value="0" aria-label="İnfaz zaman çizelgesini ileri geri oynat">
 <div id="timelineCharacters" class="timeline-characters" aria-hidden="true"><span>●</span><span>●</span></div>
 <div class="timeline-actions"><button id="timelinePlay" type="button">▶ OYNAT</button><span class="mono">SÜREYİ İLERLET / KARŞILAŞTIR</span></div></div>
@@ -342,7 +366,7 @@ function draw(){
  $('sentence').innerHTML=c.special==='dailyCrime'?'OLAY NE? <small>Suçun cezasını bul</small>':c.special==='process'?'KARAR NE? <small>Suçlama ≠ ceza</small>':c.special==='noCrime'?'CEZA VAR MI? <small>Gündelik hayat dosyası</small>':c.years+' yıl <small>hapis cezası</small>';
  $('slider').max=c.special==='noCrime'?5:max;$('slider').step='.5';
  guess=c.special==='noCrime'?1:Math.min(max,Math.round(c.years*.5*2)/2);setGuess(guess);
- $('compareToggle').hidden=false;$('result').querySelector('.compare').hidden=false;
+ $('compareToggle').hidden=false;$('resultExtra').hidden=false;$('resultExtra').open=false;$('result').querySelector('.compare').hidden=false;
  $('processGuess').hidden=c.special!=='process';$('dailyDecision').hidden=!(c.special==='dailyCrime'||c.special==='noCrime');$('guess').style.display=c.special?'none':'block';dailyStep=1;dailyFirst=null;dailySecond=null;renderDailyStep();$('result').classList.remove('show');document.body.classList.remove('result-mode');$('legalDrawer').open=false;$('comparison').hidden=true;$('compareToggle').setAttribute('aria-expanded','false');$('compareToggle').textContent='AYNI CEZAYI KARŞILAŞTIR ↗';
  $('state').textContent='DOĞRU TAHMİN: '+score+' / '+visibleIndices().length;
  $('dots').innerHTML='<span class="progress-count">'+(visibleIndices().indexOf(index)+1)+' / '+visibleIndices().length+'</span><span class="progress-meter"><i style="width:'+((visibleIndices().indexOf(index)+1)/visibleIndices().length*100)+'%"></i></span>';
@@ -389,9 +413,10 @@ $('reveal').onclick=()=>{
  if(processChoice==='no')score++;
  if(c.source){const source=$('legalDrawer').querySelector('.sources');let a=source.querySelector('.event-source');if(!a){a=document.createElement('a');a.className='event-source';a.target='_blank';a.rel='noopener noreferrer';source.append(' · ',a)}a.href=c.source;a.textContent='OLAYIN KAYNAĞI ↗';}else{const a=$('legalDrawer').querySelector('.event-source');if(a)a.remove();}
  }
- $('compareToggle').hidden=!!c.special;
+ $('compareToggle').hidden=!!c.special;$('resultExtra').hidden=!!c.special;
  $('result').querySelector('.compare').hidden=!!c.special;
  $('next').textContent=index===visibleIndices().at(-1)?'BAŞA DÖN ↺':'SONRAKİ DOSYA →';
+ $('resultExtra').open=false;
  $('guess').style.display='none';$('dailyDecision').hidden=true;$('processGuess').hidden=true;$('result').classList.add('show');document.body.classList.add('result-mode');$('legalDrawer').open=false;
  $('comparisonBars').innerHTML=[{name:'Genel 1/2',ratio:.5},{name:'İstisna 2/3',ratio:2/3}].map((r)=>'<div class="comparison-row"><span>'+r.name+'</span><span class="comparison-bar"><i style="width:'+(r.ratio*100)+'%"></i></span><b>'+format(c.years*r.ratio)+' yıl</b></div>').join('');
  $('state').textContent='DOĞRU TAHMİN: '+score+' / '+visibleIndices().length;
