@@ -1,420 +1,129 @@
-<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="description" content="Yaratıcı Bakanlık: gerçek tarihsel vergilerden ilham alan illüstrasyonlu bir maliye simülasyonu."><title>Yaratıcı Bakanlık — aynen.fun</title><style>
-:root{color-scheme:light;--ink:#111;--faint:#737373;--line:#dfdfdf}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}body{margin:0;background:#fff;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
-button,input{font:inherit}button{cursor:pointer}
-button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #111;outline-offset:3px}
-.app{max-width:1120px;margin:0 auto;padding:15px 22px 26px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;font:11px/1.4 ui-monospace,SFMono-Regular,monospace}
-.top a{color:#111;text-decoration:none}.top a:hover{text-decoration:underline}
-.top-right{display:flex;align-items:center;gap:15px}.small-restart{border:0;background:none;font-size:11px;text-decoration:underline;text-underline-offset:3px;padding:7px 0}
-.brand{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:12px 0 13px}
-.brand h1{font-size:clamp(25px,3vw,39px);line-height:1;letter-spacing:-.065em;margin:0;font-weight:800}
-.brand p{font-size:12px;line-height:1.4;color:#555;max-width:320px;margin:0}
-.hud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid #111;border-bottom:1px solid #111;margin-bottom:15px}
-.metric{padding:9px 12px 10px 0;display:flex;align-items:baseline;gap:10px}
-.metric+ .metric{border-left:1px solid #ddd;padding-left:16px}
-.metric small{font:10px/1.3 ui-monospace,SFMono-Regular,monospace;color:#555;letter-spacing:.035em}
-.metric strong{font-size:23px;line-height:1;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
-.main{max-width:100%}.chapter{display:flex;justify-content:space-between;gap:10px;align-items:center;font:10px/1.3 ui-monospace,monospace;letter-spacing:.06em;color:#4b4b4b}
-.progress{display:flex;gap:4px;flex:0 1 240px}
-.progress i{display:block;height:3px;flex:1;background:#e4e4e4}.progress i.done{background:#111}
-.title-row{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin:7px 0 12px}
-.title-row h2{font-size:clamp(26px,4vw,43px);font-weight:800;letter-spacing:-.055em;line-height:1.04;margin:0}
-.title-row p{font-size:12px;line-height:1.45;color:#666;margin:5px 0 0;max-width:610px}
-.where{font:10px ui-monospace,monospace;white-space:nowrap;color:#555;text-align:right}
-.scene{position:relative;overflow:hidden;border:1px solid #cfcfcf;background:#9bd5ed}
-.scene svg{display:block;width:100%;height:auto;aspect-ratio:900/390}
-.scene-mark{position:absolute;left:14px;top:12px;background:#fffdf6ea;border:1px solid #1010104d;padding:6px 8px;font:10px ui-monospace,monospace;letter-spacing:.02em;color:#111}
-.scene-mark-right{left:auto;right:14px}
-.scene .drift-cloud{animation:cloudDrift 16s ease-in-out infinite alternate;transform-origin:center}
-.scene .drift-cloud.two{animation-duration:20s;animation-direction:alternate-reverse}
-.scene .walker{animation:walkerDrift 5s ease-in-out infinite alternate}
-.scene .smoke{animation:smokeDrift 4s ease-in-out infinite alternate}
-.scene .wheel{transform-box:fill-box;transform-origin:center;animation:spin 5s linear infinite}
-.scene .little-wave{animation:wave 2.2s ease-in-out infinite alternate;transform-origin:top}
-@keyframes cloudDrift{to{transform:translateX(18px)}}@keyframes walkerDrift{to{transform:translateX(8px)}}@keyframes smokeDrift{to{transform:translateY(-10px);opacity:.28}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes wave{to{transform:rotate(5deg)}}
-.scene-caption{border:1px solid #ddd;border-top:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 13px;font-size:12px;line-height:1.4}
-.scene-caption .live{font:9px ui-monospace,monospace;flex-shrink:0;border:1px solid #aaa;padding:4px 6px}
-.controls{margin:16px 0 0;border-top:1px solid #111;padding-top:12px}
-.controls-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700}
-.controls-top output{font-size:24px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
-input[type=range]{width:100%;accent-color:#111;display:block;margin:14px 0 4px;cursor:pointer;min-height:22px}
-.scale{display:flex;justify-content:space-between;color:#777;font:10px ui-monospace,monospace}
-.preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid #e1e1e1;border-bottom:1px solid #e1e1e1;margin:14px 0 13px}
-.preview div{padding:9px 11px 9px 0;font-size:11px;color:#666}
-.preview div+div{border-left:1px solid #eee;padding-left:13px}
-.preview b{display:block;font-size:18px;line-height:1.3;color:#111;font-variant-numeric:tabular-nums}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.actions button,.result-actions button,.end-actions button{border:1px solid #111;background:#fff;color:#111;border-radius:0;min-height:48px;padding:11px 13px;text-align:center;font-size:12px;font-weight:700;line-height:1.25;transition:background .15s,color .15s}
-.actions button:first-child,.result-actions button:first-child,.end-actions button:first-child{background:#111;color:#fff}
-.actions button:hover,.result-actions button:hover,.end-actions button:hover{background:#444;color:#fff}
-.actions button small{display:block;margin-top:4px;font-size:10px;font-weight:400;opacity:.7}
-.disclaimer{font:9px/1.5 ui-monospace,monospace;color:#777;margin:9px 0 0}
-.result{margin:14px 0 0;border-top:1px solid #111;padding-top:12px}
-.result-label{font:10px ui-monospace,monospace;letter-spacing:.04em}
-.result h3{font-size:clamp(20px,3vw,26px);letter-spacing:-.04em;line-height:1.16;margin:8px 0}
-.result p{font-size:12px;line-height:1.5;color:#444;margin:0 0 9px}
-.result .delta{font:11px/1.5 ui-monospace,monospace;margin:10px 0}
-.result-actions,.end-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
-details.archive{border-top:1px solid #ddd;border-bottom:1px solid #ddd;margin:12px 0 0;padding:10px 0}
-details.archive summary{cursor:pointer;list-style:none;font-size:12px;font-weight:700;display:flex;justify-content:space-between}
-details.archive summary::after{content:"+";font-size:17px;line-height:13px}
-details.archive[open] summary::after{content:"−"}
-.archive-body p{margin:12px 0 7px;font-family:Georgia,serif;font-size:14px;line-height:1.45;color:#111}
-.archive-body small{font:10px/1.4 ui-monospace,monospace;color:#666;display:block;margin-bottom:8px}
-.archive-body a{font:11px ui-monospace,monospace;color:#111;text-decoration:underline;text-underline-offset:2px}
-.history{border-top:1px solid #ddd;padding:12px 0;margin-top:20px}
-.history summary{font:11px ui-monospace,monospace;cursor:pointer;list-style:none}
-.history summary::before{content:"+ ";font-size:15px}.history[open] summary::before{content:"− "}
-.history-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-top:13px;font:11px/1.5 ui-monospace,monospace}
-.history-list div{border-bottom:1px solid #eee;padding:5px 0}
-.footer{font:10px/1.45 ui-monospace,monospace;color:#767676;margin:13px 0 0}
-.hidden{display:none!important}
-.end-screen{padding:17px 0 0}
-.end-screen h2{font-size:clamp(29px,5vw,54px);line-height:1.02;letter-spacing:-.06em;margin:8px 0 12px}
-.end-screen p{font-size:13px;color:#555;line-height:1.5;max-width:540px}
-.end-world{margin:15px 0;border:1px solid #ddd;overflow:hidden;background:#a6d7ef}
-.end-world svg{display:block;width:100%}
-.end-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;font:11px ui-monospace,monospace}
-.end-stats span{border:1px solid #ddd;padding:8px 10px}
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="description" content="Dünyanın sıra dışı vergilerini küre, arşiv ve bağlantı haritasında keşfet. Tarih boyunca vergilendirilen tuhaf şeyler."><title>Yaratıcı Bakanlık — Dünya Vergi Atlası</title><style>
+:root{--ink:#141414;--muted:#747474;--line:#dedede;--paper:#fdfdfb}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#fff;color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #171717;outline-offset:3px}
+button{border-radius:0}.shell{max-width:1480px;margin:auto;padding:22px clamp(18px,3vw,44px) 32px}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #171717;padding-bottom:13px}
+.back{color:#171717;text-decoration:none;font-size:12px}.identity{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;text-align:right}
+.mast{padding:28px 0 23px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end}
+.eyebrow{font:10px ui-monospace,Menlo,monospace;letter-spacing:.14em;color:#575757}
+h1{font-size:clamp(35px,5.7vw,82px);line-height:.99;letter-spacing:-.072em;font-weight:800;margin:9px 0 10px}
+.intro{font-size:13px;line-height:1.5;max-width:470px;color:#666;margin:0}
+.stats{display:flex;gap:22px;align-items:end}.stat strong{display:block;font-size:30px;line-height:1;font-weight:800;letter-spacing:-.05em}.stat span{display:block;font:9px/1.5 ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em;margin-top:5px;color:#777}
+.controlbar{display:flex;align-items:center;gap:12px;justify-content:space-between;border-top:1px solid #dedede;border-bottom:1px solid #dedede;padding:10px 0;margin-bottom:17px;flex-wrap:wrap}
+.views{display:flex;align-items:center;gap:7px}.tab{border:1px solid #ddd;background:#fff;padding:9px 13px;letter-spacing:.02em;font-size:11px;font-weight:700}.tab[aria-pressed=true]{background:#111;color:#fff;border-color:#111}
+.search-wrap{display:flex;align-items:center;gap:9px;max-width:390px;flex:1}.search{height:35px;border:1px solid #dedede;background:#fff;padding:0 12px;width:100%;font-size:12px}.search::placeholder{color:#999}.clear-search{border:none;background:none;font-size:12px;color:#555;padding:6px;white-space:nowrap}
+.stage{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(315px,.8fr);gap:24px;align-items:start}
+.globe-pane{position:relative;min-width:0;min-height:580px;display:flex;flex-direction:column;justify-content:center}
+.globe-label{display:flex;align-items:center;justify-content:space-between;position:absolute;z-index:2;top:8px;left:0;right:0;font:10px ui-monospace,Menlo,monospace;color:#666;letter-spacing:.04em;pointer-events:none}
+.globe-space{position:relative;display:flex;align-items:center;justify-content:center;min-height:500px;width:100%}
+.globe-fallback{position:absolute;width:min(95%,530px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 34% 32%,#a2e0ec 0,#48b4e0 35%,#2e88c0 72%,#15567f 100%);box-shadow:inset -38px -17px 70px #0d507a6e,0 12px 38px #7faed039;pointer-events:none}
+.globe-fallback svg{width:100%;height:100%;display:block;opacity:.65;animation:drift-land 24s linear infinite}
+@keyframes drift-land{50%{transform:translateX(4%)}}#globe{position:relative;z-index:1;width:100%;max-width:720px;aspect-ratio:1.09;touch-action:none;cursor:grab;display:block}#globe:active{cursor:grabbing}
+.globe-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #eee;padding:9px 0;color:#777;font:10px/1.4 ui-monospace,Menlo,monospace}
+.ghost-btn{background:none;border:0;border-bottom:1px solid #999;padding:4px 0;color:#222;font-size:11px}.ghost-btn:hover{border-color:#111}
+.pane{border-left:1px solid #ddd;padding-left:23px;min-height:580px}
+.pane-top{display:flex;justify-content:space-between;align-items:center;gap:10px;font:10px ui-monospace,Menlo,monospace;letter-spacing:.07em;color:#666}
+.pane h2{font-size:clamp(29px,3.4vw,46px);line-height:1.08;letter-spacing:-.06em;margin:16px 0 8px}
+.pane-description{color:#696969;font-size:12px;line-height:1.5;max-width:370px;margin:0 0 16px}
+.filters{display:flex;align-items:center;gap:5px;flex-wrap:wrap;border-bottom:1px solid #ddd;padding-bottom:12px}
+.filter{border:1px solid #ddd;background:#fff;font-size:10px;padding:6px 9px;color:#555}
+.filter[aria-pressed=true]{background:#171717;border-color:#171717;color:#fff}
+.record-list{max-height:555px;overflow:auto;scrollbar-width:thin}.record{width:100%;text-align:left;background:#fff;border:0;border-bottom:1px solid #e7e7e7;padding:13px 1px;display:grid;grid-template-columns:35px 1fr 20px;gap:9px;align-items:start}
+.record:hover,.record:focus-visible{background:#faf9f5}.rec-num{font:10px ui-monospace,Menlo,monospace;color:#999;margin-top:3px}
+.record strong{font-size:15px;line-height:1.25;display:block;letter-spacing:-.015em}.record small{display:block;font:10px/1.4 ui-monospace,Menlo,monospace;color:#888;margin-top:6px}.record .arrow{font-size:18px;color:#8b8b8b}
+.empty{padding:26px 4px;font-size:13px;line-height:1.6;color:#777}
+.countries-wrap{border-top:1px solid #171717;margin-top:27px;padding-top:14px}
+.section-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:13px}
+.section-heading h3{font-size:13px;margin:0;letter-spacing:-.01em}
+.section-heading span{font:10px ui-monospace,Menlo,monospace;color:#888}
+.country-grid{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.country-chip{border:1px solid #e1e1e1;background:#fff;padding:7px 9px;display:flex;gap:9px;align-items:center;font-size:11px}.country-chip small{font:10px ui-monospace,Menlo,monospace;color:#777}
+.country-chip:hover,.country-chip[aria-pressed=true]{border-color:#111;background:#f6f5f0}
+.note{margin-top:21px;border-top:1px solid #ededed;padding-top:10px;font:10px/1.65 ui-monospace,Menlo,monospace;color:#888}
+.graph-section{display:none;position:relative;min-height:620px;border:1px solid #ddd;overflow:hidden;background:radial-gradient(circle at center,#fff,#fafaf9);touch-action:none}
+.graph-section.active{display:block}.graph-head{position:absolute;z-index:2;top:16px;left:18px;right:18px;display:flex;justify-content:space-between;gap:16px;pointer-events:none}
+.graph-head>div{max-width:450px}.graph-head h2{font-size:20px;letter-spacing:-.04em;margin:0 0 5px}.graph-head p{color:#777;font:10px/1.4 ui-monospace,monospace;margin:0}
+.graph-controls{display:flex;gap:6px;pointer-events:auto}.graph-controls button{width:32px;height:32px;background:#fff;border:1px solid #ddd;font-size:18px}
+.graph-svg{display:block;width:100%;height:650px;cursor:grab;touch-action:none}.graph-svg:active{cursor:grabbing}.node-card{cursor:pointer;outline:none}.node-card:hover .card-frame,.node-card:focus-visible .card-frame{stroke:#111;stroke-width:2}.connection{stroke:#b9b9b9;stroke-width:1;opacity:.5;pointer-events:none}.connection.emphasis{stroke:#111;opacity:.75;stroke-width:1.6}
+.graph-legend{position:absolute;bottom:13px;left:18px;color:#888;font:10px ui-monospace,monospace;pointer-events:none}
+.graph-fallback{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;padding:110px 18px 25px}.graph-fallback button{border:1px solid #ddd;background:#fff;padding:16px;text-align:left;min-height:100px}
+.modal{position:fixed;inset:0;z-index:80;background:#fff;display:none;overflow-y:auto;overscroll-behavior:contain}.modal.open{display:block}.modal-inner{max-width:1110px;margin:auto;padding:24px clamp(18px,4vw,42px) 50px}
+.modal-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #111;padding-bottom:14px;gap:10px}
+.modal-top span{font:10px ui-monospace,monospace;letter-spacing:.12em}.modal-top button{border:1px solid #111;background:#fff;padding:9px 14px;font-size:11px}
+.modal-kicker{font:11px ui-monospace,monospace;color:#777;margin:40px 0 12px;letter-spacing:.05em}
+.modal h2{font-size:clamp(49px,8vw,105px);letter-spacing:-.078em;line-height:.94;margin:0;max-width:970px}
+.modal-lede{font-size:clamp(17px,2.4vw,23px);line-height:1.4;letter-spacing:-.025em;color:#565656;max-width:670px;margin:24px 0}
+.modal-illustration{height:230px;position:relative;background:linear-gradient(140deg,#e6f1e6,#a2ccd7 70%,#84a6b7);overflow:hidden;border:1px solid #ddd;margin:22px 0 30px;display:flex;align-items:center;justify-content:center}
+.modal-art-circle{width:260px;height:260px;border-radius:50%;background:#e6bc8f;position:absolute;bottom:-105px;left:18%;filter:blur(0px)}
+.modal-art-words{font-size:clamp(65px,12vw,140px);font-weight:900;letter-spacing:-.1em;opacity:.58;position:relative;transform:rotate(-8deg);color:#243f50;user-select:none}
+.modal-art-index{position:absolute;left:16px;top:15px;background:#fff;color:#111;padding:6px;font:9px ui-monospace,monospace}
+.modal-grid{display:grid;grid-template-columns:240px 1fr;gap:70px}
+.data-panel{border-top:1px solid #111;font:11px ui-monospace,monospace}.data-pair{padding:13px 0;border-bottom:1px solid #ddd}.data-pair small{display:block;color:#909090;margin-bottom:6px}.data-pair b{display:block;font-size:12px;font-weight:500}
+.story h3,.related h3{font-size:13px;margin:0 0 12px}.story p{font-size:17px;line-height:1.75;max-width:650px;margin:0 0 24px}
+.source-link{display:inline-block;padding:11px 13px;border:1px solid #111;text-decoration:none;font-size:12px;font-weight:700}.source-link:hover{background:#111;color:#fff}
+.related{border-top:1px solid #ddd;margin-top:35px;padding-top:20px}.related-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.related button{background:#fff;border:1px solid #ddd;min-height:70px;padding:12px;text-align:left;font-size:13px}.related button:hover{background:#faf9f5;border-color:#111}.related button small{display:block;color:#777;margin-top:7px;font-size:10px}
+.modal-actions{margin-top:25px;display:flex;gap:10px;flex-wrap:wrap}.modal-actions button{border:1px solid #111;background:#fff;padding:11px 16px;font-size:12px}
+.modal-actions button:first-child{background:#111;color:#fff}
+[hidden]{display:none!important}
+@media(max-width:900px){.stage{grid-template-columns:minmax(0,1fr) minmax(290px,.9fr);gap:14px}.pane{padding-left:15px}.globe-pane{min-height:450px}.globe-space{min-height:400px}.record-list{max-height:510px}}
 @media(max-width:700px){
-.app{padding:11px 12px 25px}.top{font-size:10px}.top-right{gap:8px}.brand{align-items:flex-start;margin:15px 0 11px}.brand h1{font-size:29px}
-.brand p{max-width:145px;font-size:10px;line-height:1.3}
-.hud{margin-bottom:14px}.metric{padding:8px 5px;display:block}.metric+ .metric{padding-left:9px}.metric small{display:block;font-size:8px;min-height:21px}.metric strong{font-size:21px}
-.title-row{display:block;margin:8px 0 11px}.title-row h2{font-size:29px}.title-row p{font-size:11px;line-height:1.37;margin:5px 0 7px}.where{text-align:left;font-size:9px}
-.scene-mark{font-size:8px;top:7px;left:7px;padding:5px}.scene-mark-right{right:7px;left:auto}
-.scene svg{aspect-ratio:900/440;object-fit:cover;object-position:center}.scene-caption{padding:8px 9px;font-size:11px}.scene-caption .live{font-size:8px;padding:3px}
-.controls{margin-top:13px}.controls-top{font-size:12px}.controls-top output{font-size:22px}
-.preview{margin:11px 0}.preview div{padding:8px 4px;font-size:9px}.preview div+div{padding-left:7px}.preview b{font-size:17px}
-.actions button,.result-actions button,.end-actions button{min-height:50px;padding:9px 5px;font-size:11px}.actions button small{font-size:9px}
-.history-list{grid-template-columns:1fr}.footer{font-size:9px}
+.shell{padding:14px 14px 30px}.nav{padding-bottom:11px}.identity{font-size:9px}.mast{display:block;padding:20px 0 18px}.mast h1{font-size:43px}.intro{font-size:12px}.stats{margin-top:17px;gap:26px}.stat strong{font-size:23px}.stat span{font-size:9px}
+.controlbar{gap:9px;margin-bottom:10px}.tab{font-size:10px;padding:9px}.search-wrap{max-width:none;flex:1 1 100%;order:2}.search{height:37px}
+.stage{display:flex;flex-direction:column;gap:9px}.globe-pane{width:100%;min-height:0}.globe-space{min-height:0}.globe-fallback{width:85%}#globe{width:100%;max-width:560px;aspect-ratio:1.1}.globe-label{top:0;font-size:9px}
+.globe-footer{font-size:9px}.pane{border-left:0;border-top:1px solid #dedede;padding-left:0;padding-top:15px;width:100%;min-height:0}.pane h2{font-size:35px;margin:9px 0 6px}.pane-description{margin-bottom:10px}.record-list{max-height:none}
+.countries-wrap{margin-top:20px}.country-grid{max-height:170px;overflow:auto;scrollbar-width:thin}.country-chip{font-size:10px}
+.graph-section{min-height:520px}.graph-svg{height:560px}.graph-head{top:12px;left:12px;right:12px}.graph-head h2{font-size:16px}.graph-head p{font-size:9px;max-width:200px}.graph-controls button{width:27px;height:27px}
+.modal-inner{padding:14px 16px 35px}.modal-kicker{margin-top:30px}.modal h2{font-size:clamp(43px,12vw,72px)}.modal-lede{font-size:16px;margin:16px 0}.modal-illustration{height:180px;margin:20px 0}.modal-grid{grid-template-columns:1fr;gap:25px}.data-panel{display:grid;grid-template-columns:repeat(2,1fr);column-gap:14px}.story p{font-size:15px}.related-list{grid-template-columns:1fr}
 }
-@media(max-width:390px){.brand p{max-width:120px}.scene-caption{align-items:flex-start}.scene-caption .live{white-space:nowrap}.metric strong{font-size:19px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-</style></head><body>
-<div class="app">
- <div class="top"><a href="/" aria-label="aynen.fun ana sayfa">← aynen.fun</a><div class="top-right"><span>RESMÎ OLMAYAN BAKANLIK</span><button type="button" class="small-restart" id="restartTop">Yeni oyun ↻</button></div></div>
- <header class="brand"><h1>yaratıcı bakanlık.</h1><p>Bir vergi çıkar. Halkın bulduğu yolu izle.</p></header>
- <div class="hud" aria-label="Oyun göstergeleri">
-  <div class="metric"><small>HAZİNE</small><strong id="treasury">30</strong></div>
-  <div class="metric"><small>HALKIN SABRI</small><strong id="patience">%75</strong></div>
-  <div class="metric"><small>VERGİDEN KAÇINMA</small><strong id="evasion">%5</strong></div>
- </div>
- <main class="main" id="main">
-  <section id="roundScreen">
-   <div class="chapter"><span id="kicker">KARARNAME 01 / 12</span><div class="progress" id="progress" aria-label="Oyun ilerlemesi"></div></div>
-   <div class="title-row"><div><h2 id="title">Pencere Vergisi</h2><p id="desc"></p></div><div class="where" id="where"></div></div>
-   <div class="scene"><svg id="sceneArt" viewBox="0 0 900 390" role="img" aria-label="Kararınıza göre değişen çizim dünyası" preserveAspectRatio="xMidYMid slice"></svg><span class="scene-mark" id="scenePlace">İngiltere · 1696</span><span class="scene-mark scene-mark-right" id="sceneStatus">OLASI SONUÇ</span></div>
-   <div class="scene-caption"><span id="sceneLine" aria-live="polite">Oranı değiştir. Halkın tepkisini izle.</span><span class="live">OYUN SİMÜLASYONU</span></div>
-   <div class="controls" id="controls">
-    <div class="controls-top"><label for="taxRate">Vergi oranını belirle</label><output id="rateValue" for="taxRate">%40</output></div>
-    <input type="range" id="taxRate" min="0" max="100" step="5" value="40" aria-label="Vergi oranı">
-    <div class="scale"><span>Düşük</span><span>Yüksek</span></div>
-    <div class="preview"><div>Tahmini gelir <b id="projectIncome">+0</b></div><div>Sabır etkisi <b id="projectPatience">0</b></div><div>Kaçınma etkisi <b id="projectEvasion">0</b></div></div>
-    <div class="actions"><button type="button" id="approve">KANUNU ÇIKAR<small id="primaryAction"></small></button><button type="button" id="soften">YUMUŞAT / VAZGEÇ<small id="secondaryAction"></small></button></div>
-    <p class="disclaimer">Tahminler gerçek ekonomik veriler değil, oyunun kurgusal modelidir.</p>
-   </div>
-   <section class="result hidden" id="outcome" aria-live="polite">
-     <div class="result-label">KARARNAMENİN ARDINDAN · OYUN KURGUSU</div><h3 id="resultTitle"></h3>
-     <p id="resultText"></p><div id="delta" class="delta"></div>
-     <details class="archive" id="archive"><summary>Gerçekte ne olmuş? / Kaynak</summary><div class="archive-body"><p id="archiveExcerpt"></p><small id="archiveMeta"></small><a id="source" target="_blank" rel="noopener noreferrer">Tarihsel kaynağı aç ↗</a></div></details>
-     <div class="result-actions"><button type="button" id="next">SONRAKİ KARARNAME →</button><button type="button" id="shareDecision">SONUCU PAYLAŞ</button></div>
-   </section>
+</style></head>
+<body>
+<div class="shell">
+  <nav class="nav"><a href="/" class="back">← aynen.fun</a><span class="identity">YARATICI BAKANLIK / GLOBAL TAX INDEX <span id="edition">2026</span></span></nav>
+  <header class="mast">
+    <div><div class="eyebrow">ARCHIVE OF EXTRAORDINARY TAXES · VOL. 01</div><h1>yaratıcı bakanlık.</h1><p class="intro">Bir zamanlar pencereye, sakala, oyuna, hatta internete vergi koyuldu. Dünyanın en beklenmedik vergilerinin birbirine bağlanan arşivi.</p></div>
+    <div class="stats"><div class="stat"><strong id="statRecords">—</strong><span>KAYIT</span></div><div class="stat"><strong id="statCountries">—</strong><span>ÜLKE</span></div><div class="stat"><strong>2000+</strong><span>YILLIK İZLER</span></div></div>
+  </header>
+  <div class="controlbar">
+   <div class="views" role="group" aria-label="Görünüm"><button id="viewGlobe" type="button" class="tab" aria-pressed="true">◉ DÜNYA ATLASI</button><button id="viewGraph" type="button" class="tab" aria-pressed="false">⌁ BAĞLANTI HARİTASI</button></div>
+   <div class="search-wrap"><label for="search" class="eyebrow" style="font-size:10px;white-space:nowrap">ARA /</label><input id="search" class="search" type="search" placeholder="Vergi, ülke, tema, yıl…" autocomplete="off" aria-label="Arşivde ara"><button type="button" id="clearSearch" class="clear-search" hidden>Temizle</button></div>
+  </div>
+  <div id="atlasView" class="stage">
+    <section class="globe-pane" aria-label="Etkileşimli dünya küresi">
+      <div class="globe-label"><span>01 / ÜLKEYİ SEÇ</span><span id="globeHint">DÖNDÜR · DOKUN</span></div>
+      <div class="globe-space">
+       <div class="globe-fallback" id="globeFallback" aria-hidden="true"><svg viewBox="0 0 300 300"><path d="M44 104Q67 58 120 72L132 94 112 112 118 145 92 158 88 202 66 178 51 136Z M172 80Q226 54 254 98L244 134 215 136 196 181 169 159 183 123Z M226 224Q251 192 263 216L251 243 229 243Z" fill="#96cb77" stroke="#578e7f" stroke-width="1.5"/></svg></div>
+       <canvas id="globe" width="680" height="630" aria-label="Sürükleyerek döndürebileceğiniz ve ülke seçebileceğiniz dönen dünya küresi" tabindex="0"></canvas>
+      </div>
+      <div class="globe-footer"><span id="globeNotice">Harita hazırlanıyor…</span><button class="ghost-btn" id="toggleRotation" type="button">Dönüşü durdur Ⅱ</button></div>
+    </section>
+    <section class="pane" aria-label="Seçili ülke vergi kayıtları">
+      <div class="pane-top"><span id="countryCode">GB / DOSYA</span><span id="countLabel">KAYIT LİSTESİ</span></div>
+      <h2 id="countryTitle">Birleşik Krallık</h2>
+      <p class="pane-description" id="countryDescription">Ülkeye tıkla, tarihte nelerin vergilendirildiğini gör.</p>
+      <div class="filters" aria-label="Döneme göre filtrele"><button type="button" class="filter" data-filter="hepsi" aria-pressed="true">TÜMÜ</button><button type="button" class="filter" data-filter="gecmis" aria-pressed="false">GEÇMİŞ</button><button type="button" class="filter" data-filter="aktif" aria-pressed="false">GÜNCEL</button><button type="button" class="filter" data-filter="plan" aria-pressed="false">PLANLANAN</button></div>
+      <div class="record-list" id="recordList" aria-live="polite"></div>
+    </section>
+  </div>
+  <section id="graphView" class="graph-section" aria-label="Vergilerin ilişkisel bağlantı haritası">
+    <div class="graph-head"><div><h2>Birbiriyle bağlantılı vergiler.</h2><p>Her kutu bir arşiv kaydı. Çizgiler ortak konu ve davranışları gösterir. Sürükle, yakınlaş, keşfet.</p></div><div class="graph-controls"><button type="button" id="graphPlus" title="Yakınlaş" aria-label="Yakınlaş">+</button><button type="button" id="graphMinus" title="Uzaklaş" aria-label="Uzaklaş">−</button><button type="button" id="graphReset" title="Görünümü sıfırla" aria-label="Görünümü sıfırla">↺</button></div></div>
+    <svg id="graphSvg" class="graph-svg" role="img" aria-label="Vergi başlıklarını bağlayan etkileşimli ilişki ağı"></svg><div id="graphFallback" class="graph-fallback" hidden></div>
+    <div class="graph-legend">KUTUYA TIKLA: DOSYA AÇ · BOŞ ALANI SÜRÜKLE: HARİTADA GEZ</div>
   </section>
-  <section class="end-screen hidden" id="endScreen" aria-live="polite"></section>
- </main>
- <details class="history" id="history"><summary>Karar defteri <span id="historyCount">(0)</span></summary><div class="history-list" id="log"></div></details>
- <p class="footer">Vergi örnekleri kaynaklara dayanan tarihî veya güncel uygulamalardır. Gelir, tepki, olaylar ve sonuçlar oyun kurgusudur; gerçek mali tahmin değildir.</p>
+  <section class="countries-wrap"><div class="section-heading"><h3>Ülke dizini</h3><span id="countryCountLabel">KAYITLI ÜLKELER</span></div><div class="country-grid" id="countries"></div></section>
+  <footer class="note">Seçilmiş ve kaynaklandırılmış arşiv; bütün dünya vergilerinin eksiksiz envanteri değildir. Tarihî dönemler bugünkü ülke sınırlarıyla yaklaşık eşleştirilir. “Vergi”, “harç” ve “erişim ücreti” bazı kayıtlarda farklı hukuki türlerdir. Kaynaklara kayıt ayrıntısından erişilebilir.</footer>
 </div>
-<script>
-(function(){
-"use strict";
-const cases=[{"era":"GERÇEK TARİHSEL VERGİ","name":"Pencere Vergisi","time":"İngiltere · 1696","desc":"Pencere sayısına göre vergi toplandı. İnsanlar bazı pencereleri örerek vergiden kaçındı.","opts":[["Pencere başına ağır tarife",24,-12,15,"Vergi gelir sağlar ama insanlar tüketimi azaltabilir veya kaçınma yolları bulabilir. Bu sonuç oyun simülasyonudur."],["Mütevazı tarife",10,-4,5,"Daha az gelir ve daha az toplumsal tepki. Bu sonuç oyun simülasyonudur."]],"url":"https://www.nationalarchives.gov.uk/education/resources/georgian-britain-age-modernity/window-tax/","kind":"window","fact":"Vergi kaçınması için pencereler gerçekten tuğlayla kapatıldı; vergi 1851'de kaldırıldı.","place":"İngiltere","group":"ARŞİVLENMİŞ","intro":"Pencere sayısına göre vergi toplandı. İnsanlar bazı pencereleri örerek vergiden kaçındı."},{"name":"İdrar Vergisi","era":"GERÇEK · ANTİK ROMA","time":"Roma · MS 1. yüzyıl","desc":"İdrar, çamaşır temizleme ve deri işleme gibi işlerde kullanılıyordu. Vespasian döneminde bunun ticari kullanımına ilişkin vergi uygulaması kaynaklarda geçiyor.","url":"https://academic.oup.com/edited-volume/43505/chapter/364128738","kind":"roman","fact":"Oxford'un Roma vergileri incelemesi, 'idrar vergisi'nin herkesin tuvalet kullanmasına konmuş evrensel bir vergi değil; çırpıcı veya tabakçılara yönelik olabileceğini belirtiyor.","opts":[["Ticari kullanımı vergilendir",24,-14,14,"Her şeyin ekonomik değeri var, ama herkesin değil."],["İşletmelere muafiyet ver",9,-5,5,"İşletmeler daha az ödeme yapıyor."]]},{"era":"GERÇEK TARİHSEL VERGİ","name":"Sakal Vergisi","time":"Rusya · 1705","desc":"I. Petro, sakal taşımak isteyen erkeklerden ücret aldı; ödeme için sakal jetonları kullanıldı.","opts":[["Sakala yüksek vergi",25,-13,16,"Vergi gelir sağlar ama insanlar tüketimi azaltabilir veya kaçınma yolları bulabilir. Bu sonuç oyun simülasyonudur."],["Simgesel sakal harcı",11,-4,5,"Daha az gelir ve daha az toplumsal tepki. Bu sonuç oyun simülasyonudur."]],"url":"https://www.si.edu/object/beard-token-russia-1705%3Anmah_993363","kind":"beard","fact":"Vergiyi ödeyen erkeklerin sakal jetonu taşıdığına ilişkin 1705 tarihli fiziksel nesne Smithsonian koleksiyonundadır.","place":"Rusya","group":"ARŞİVLENMİŞ","intro":"I. Petro, sakal taşımak isteyen erkeklerden ücret aldı; ödeme için sakal jetonları kullanıldı."},{"name":"Bisiklet Plakası Vergisi","era":"GERÇEK · HOLLANDA","time":"Hollanda · 1924","desc":"Bisiklete binmek için devlete yıllık vergi ödeniyordu. Ödediğini kanıtlamak için bisiklete metal vergi plakası takılıyordu.","url":"https://www.bdmuseum.nl/digitale-reis-door-de-geschiedenis-van-belastingen-in-nederland/","kind":"cycle","fact":"Hollanda Vergi ve Gümrük Müzesi: 1924'te 3 guldenlik yıllık bisiklet vergisi ve metal plaka zorunluluğu.","opts":[["Her bisiklete plaka",24,-12,18,"Bisikletin üstünde bir maliye etiketi var."],["İndirimli plaka",12,-5,6,"Biraz daha ulaşılabilir."]]},{"name":"Tuğla Vergisi","era":"GERÇEK TARİHSEL VERGİ","time":"Britanya · 1784–1850","desc":"Tuğla başına vergi! Üreticiler daha büyük tuğlalar yapmaya başlayınca devlet 1803'te boyut sınırını sıkılaştırdı.","kind":"brick","fact":"1784'te başlayan vergi tuğla başınaydı. Üreticiler boyutu büyüttü; 1803'te büyük tuğlalara iki kat tarife getirildi.","url":"https://www.scottishbrickhistory.co.uk/brick-tax-1784-1850/","opts":[["Tuğla başına tarife",27,-13,16,"İnsanlar tuğlayı büyütüp vergiye cevap veriyor."],["Büyük tuğlaya istisna",14,-5,7,"İnşaatın hesabı değişti."]]},{"name":"Bekârlık Vergisi","era":"GERÇEK · İTALYA","time":"İtalya · 1927","desc":"Faşist İtalya, 25–65 yaş arasındaki bekâr erkeklere medeni durumları nedeniyle vergi yükledi. Kişisel hayatı maliye cetveline çevirdi.","url":"https://www.normattiva.it/atto/caricaDettaglioAtto?atto.codiceRedazionale=026U2132&atto.dataPubblicazioneGazzetta=1926-12-24&qId=&tipoDettaglio=originario","kind":"people","fact":"1926 tarihli 2132 sayılı kararname 1927'de uygulanan bekârlık vergisini düzenledi; faşist nüfus politikasıydı.","opts":[["Medeni hâli vergilendir",23,-18,18,"Maliye nüfus politikasına dönüşüyor."],["Uygulamadan vazgeç",7,6,2,"Özel hayata karışmadan gelir aramak gerekiyor."]]},{"name":"Desenli Duvar Kâğıdı Vergisi","era":"GERÇEK TARİHSEL VERGİ","time":"Britanya · 1712","desc":"Duvar kâğıdının üzerine vergi konunca insanların duvarları nasıl süsleyeceği bile maliyenin konusu oldu.","url":"https://www.vam.ac.uk/articles/a-brief-history-of-wallpaper","kind":"wallpaper","fact":"Victoria and Albert Museum, Britanya'da duvar kâğıdının 1712'de yard başına vergilendirilmeye başlandığını belgeliyor.","opts":[["Deseni vergilendir",26,-15,17,"Duvar kâğıdında desenin bedeli artırıldı."],["Düz kâğıdı muaf tut",11,-4,5,"Düz duvar daha cazip görünüyor."]]},{"name":"Kapı-Pencere Vergisi","era":"GERÇEK · FRANSA","time":"Fransa · 1798","desc":"Fransa'da kapılar ve pencereler vergi konusu oldu. Binaların dış görünüşü bile beyannamenin parçasına dönüştü.","url":"https://www.economie.gouv.fr/saef/fiscalite-historique","kind":"window","fact":"Fransa Ekonomi Bakanlığı'nın maliye tarihi arşivi 1798'de kapı ve pencere vergisinin getirildiğini kaydediyor.","opts":[["Her açıklığı say",25,-16,20,"Duvarla maliye birbirine karıştı."],["Sadece genişleri say",10,-6,7,"Mimari biraz nefes aldı."]]},{"era":"GERÇEK · İRLANDA","name":"Plastik Poşet Vergisi","time":"İrlanda · 2002'den beri","desc":"İrlanda'da plastik poşetlere çevre vergisi kondu. Kullanım ciddi biçimde düştü; vergi geliri azalırken istenen çevresel davranış arttı.","url":"https://www.audit.gov.ie/en/find-report/publications/2024/21-assessment-and-collection-of-plastic-bag-levy-liability.pdf","opts":[["Poşet başına yüksek ücret",27,-12,17,"Vergi gelirinin düşmesi bazen başarısızlık değil, tüketimin azalması demek."],["Düşük ücret uygula",14,-4,6,"Kamu geliri ve davranış etkisi değişebilir. Buradaki puanlar kurgusaldır."]],"kind":"bag","fact":"İrlanda'nın 2002'de getirdiği poşet harcı, poşet kullanımını azaltmayı hedefledi.","place":"İrlanda","group":"ARŞİVLENMİŞ","intro":"İrlanda'da plastik poşetlere çevre vergisi kondu. Kullanım ciddi biçimde düştü; vergi geliri azalırken istenen çevresel davranış arttı."},{"era":"GERÇEK · BİRLEŞİK KRALLIK","name":"Şekerli İçecek Harcı","time":"Birleşik Krallık · 2018'den beri","desc":"Şeker içeriği yüksek içeceklerin üretici ve ithalatçılarına uygulanan harç. Amaç ürünlerde şekeri azaltmayı teşvik etmek.","url":"https://www.gov.uk/guidance/check-if-your-drink-is-liable-for-the-soft-drinks-industry-levy","opts":[["Şeker oranına göre harç",28,-12,17,"Şirketler harç ödemek yerine içeceklerini yeniden formüle edebilir."],["Eşiği gevşet",15,-4,6,"Kamu geliri ve davranış etkisi değişebilir. Buradaki puanlar kurgusaldır."]],"kind":"soda","fact":"2018'den beri üretici/ithalatçıya şeker oranına bağlı harç uygulanıyor; formül değiştirmek vergi yükünü azaltabiliyor.","place":"Birleşik Krallık","group":"ARŞİVLENMİŞ","intro":"Şeker içeriği yüksek içeceklerin üretici ve ithalatçılarına uygulanan harç. Amaç ürünlerde şekeri azaltmayı teşvik etmek."},{"name":"Tuz Vergisi","era":"GERÇEK · HİNDİSTAN","time":"Britanya Hindistanı · 1930","desc":"Tuz üzerindeki sömürge vergisi, Gandhi'nin 1930 Tuz Yürüyüşü ile sivil itaatsizliğin simgelerinden biri hâline geldi.","url":"https://ideas.repec.org/h/spr/sptchp/978-3-030-68214-9_5.html","kind":"salt","fact":"1930'da Gandhi'nin Dandi'de vergi ödemeden tuz alması, Britanya sömürge yönetimine karşı açık bir protestoydu.","opts":[["Tuzun vergisini koru",26,-22,23,"Tuz, toplumsal direnişin simgesine dönüşüyor."],["Tuzu serbest bırak",7,10,2,"Gündelik bir zorunluluktaki baskı kalkıyor."]]},{"era":"GERÇEK · JAPONYA","name":"Ülkeden Çıkış Vergisi","time":"Japonya · 2026","desc":"Japonya, uluslararası çıkış yapan çoğu yolcudan ayrıca vergi alıyor. Bilet maliyetinin içine eklenen bu tutar ülkenin ziyaretçi politikalarına kaynak sağlıyor.","url":"https://www.nta.go.jp/english/taxes/indirect/basic_knowledge.htm","opts":[["Çıkış başına vergi uygula",26,-12,17,"Japonya, turist olup olmamana bakmadan çoğu uluslararası yolcudan çıkış sırasında vergi alıyor."],["Daha düşük tutar seç",13,-4,6,"Kamu geliri ve davranış etkisi değişebilir. Buradaki puanlar kurgusaldır."]],"kind":"travel","fact":"Japonya'da uluslararası yolcu çıkış vergisi 1 Temmuz 2026 itibarıyla genelde 3.000 yen; bazı önceden düzenlenmiş biletlerde 1.000 yen.","place":"Japonya","group":"ARŞİVLENMİŞ","intro":"Japonya, uluslararası çıkış yapan çoğu yolcudan ayrıca vergi alıyor. Bilet maliyetinin içine eklenen bu tutar ülkenin ziyaretçi politikalarına kaynak sağlıyor."},{"era":"GERÇEK · TÜRKİYE","name":"Yurt Dışına Çıkış Harcı","time":"Türkiye · 2026","desc":"Pasaport ve bilet yetmiyor: Türkiye'den yurt dışına çıkarken ayrı bir harç da gündeme geliyor. Tutar ve muafiyetler ilgili yılın resmî tarifesine göre belirleniyor.","url":"https://gib.gov.tr/mevzuat/kanun/455/teblig/11846","opts":[["Çıkış başına harcı koru",22,-12,17,"Herkesin vize ve bilet hesabına bir de çıkış harcı giriyor."],["Muafiyetleri genişlet",9,-4,6,"Kamu geliri ve davranış etkisi değişebilir. Buradaki puanlar kurgusaldır."]],"kind":"travel","fact":"Türkiye'de yurt dışına çıkış harcı tutar ve istisnaları yasal mevzuatla düzenlenir.","place":"Türkiye","group":"ARŞİVLENMİŞ","intro":"Pasaport ve bilet yetmiyor: Türkiye'den yurt dışına çıkarken ayrı bir harç da gündeme geliyor. Tutar ve muafiyetler ilgili yılın resmî tarifesine göre belirleniyor."},{"era":"GERÇEK TARİHSEL VERGİ","name":"Şömine Vergisi","time":"İngiltere · 1662","desc":"1662 yılında evlerdeki şömine ve ocakların sayısı üzerinden vergi alınmaya başlandı. Evin sıcaklığı bile sayılabilir hâle geldi.","url":"https://www.nationalarchives.gov.uk/e179/notes.asp?action=3&slctgrantid=352","opts":[["Her ocağı say",26,-15,18,"Evin sıcaklığına vergi makbuzu eşlik ediyor."],["Tek ocağı muaf tut",12,-4,5,"Isınmak biraz daha erişilebilir."]],"kind":"hearth","fact":"İngiltere'de 1662'de çıkarılan ocak/şömine vergisi, evdeki ocak sayısına göre hesaplanıyordu.","place":"İngiltere","group":"ARŞİVLENMİŞ","intro":"Evlerdeki ocak, şömine ve soba sayısına göre yıllık vergi tahsil edildi."},{"era":"GERÇEK TARİHSEL VERGİ","name":"Şapka Vergisi","time":"Britanya · 1784","desc":"Erkek şapkaları üzerine uygulanan vergi, özel vergi pullarıyla takip edildi.","opts":[["Her şapkayı vergilendir",26,-14,17,"Vergi gelir sağlar ama insanlar tüketimi azaltabilir veya kaçınma yolları bulabilir. Bu sonuç oyun simülasyonudur."],["Lüks şapkaya odaklan",12,-4,5,"Daha az gelir ve daha az toplumsal tepki. Bu sonuç oyun simülasyonudur."]],"url":"https://www.parliament.uk/about/living-heritage/transformingsociety/private-lives/taxation/overview/taxes18thcentury/","kind":"hat","fact":"Britanya'da şapka damga vergisinin 1784 tarihli uygulaması vardır.","place":"Britanya","group":"ARŞİVLENMİŞ","intro":"Erkek şapkaları üzerine uygulanan vergi, özel vergi pullarıyla takip edildi."},{"era":"GERÇEK TARİHSEL VERGİ","name":"Sabun Vergisi","time":"Britanya · 1712","desc":"Sabun vergisi gündelik hijyen ürünlerini de vergilendiriyordu; 1853'te kaldırıldı.","opts":[["Sabuna yüksek vergi",27,-15,18,"Vergi gelir sağlar ama insanlar tüketimi azaltabilir veya kaçınma yolları bulabilir. Bu sonuç oyun simülasyonudur."],["Sabunu düşük vergilendir",13,-4,5,"Daha az gelir ve daha az toplumsal tepki. Bu sonuç oyun simülasyonudur."]],"url":"https://www.parliament.uk/about/living-heritage/transformingsociety/private-lives/taxation/overview/taxes18thcentury/","kind":"goods","fact":"Sabun vergisi Britanya'da 1712'de başladı; 1853'te kaldırıldı.","place":"Britanya","group":"ARŞİVLENMİŞ","intro":"Sabun vergisi gündelik hijyen ürünlerini de vergilendiriyordu; 1853'te kaldırıldı."},{"era":"GERÇEK TARİHSEL VERGİ","name":"Peruk Pudrası Vergisi","time":"Britanya · 1795","desc":"Saç pudrası kullananların yıllık ücret karşılığı sertifika alması gerekiyordu.","url":"https://wshc.org.uk/a-hair-raising-tax/","opts":[["Pudra sertifikası uygula",26,-17,23,"Moda değişiyor; saç pudrasının kullanımındaki düşüşte vergi de etkili oldu. Gelir ve halk tepkisi sayıları oyun modelidir."],["Sertifikayı ucuzlat",12,-5,7,"Daha düşük oran nedeniyle daha az gelir; sayılar oyun modelidir."]],"kind":"beard","fact":"Britanya'da 1795 tarihli saç pudrası vergisi yıllık ücret ve sertifika üzerinden uygulanıyordu.","place":"Britanya","group":"ARŞİVLENMİŞ","intro":"Saç pudrası kullananların yıllık ücret karşılığı sertifika alması gerekiyordu."}];
-const key="aynen-yaratici-bakanlik-v4";
-const rounds=12;
-const $=id=>document.getElementById(id);
-const clamp=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
-const fmt=n=>(n>0?"+":"")+n;
-function newState(){
- const order=cases.map((_,i)=>i);
- for(let i=order.length-1;i>1;i--){const j=1+Math.floor(Math.random()*i);[order[i],order[j]]=[order[j],order[i]];}
- return {order,turn:0,treasury:30,patience:75,evasion:5,phase:"decision",policies:[],history:[],rate:40,selectedRate:40,lastKind:"",lastText:""};
-}
-function load(){
- try{const v=JSON.parse(localStorage.getItem(key)||"null");if(v&&Array.isArray(v.order)&&v.order.length===cases.length&&Array.isArray(v.policies)&&v.phase&&Number.isInteger(v.turn)&&v.turn>=0&&v.turn<=rounds)return v;}catch(_){}
- return newState();
-}
-let state=load();
-function save(){try{localStorage.setItem(key,JSON.stringify(state));}catch(_){}}
-function current(){return cases[state.order[state.turn]];}
-function policyHas(kind){return state.policies.some(p=>p.kind===kind&&p.rate>=45);}
-function calculate(v,kind){
- const mobility=kind==="travel"&&policyHas("cycle")?3:kind==="cycle"&&policyHas("travel")?3:0;
- const housing=["window","brick","hearth"].includes(kind)&&state.policies.some(p=>["window","brick","hearth"].includes(p.kind)&&p.rate>=45)?3:0;
- const environment=kind==="bag"||kind==="soda";
- let income=Math.round(v*.43*(1-v*.0063)-state.evasion*.035);
- let patience=Math.round(-v*.13-(kind==="salt"||kind==="people"?5:0)-mobility-housing+(v<20?3:0));
- let avoidance=Math.round(v*.12+(v>60?(v-60)*.1:0)+(kind==="window"||kind==="brick"?3:0)+housing);
- if(v===0){income=0;patience=5;avoidance=-3;}
- if(environment&&v>40){patience+=4;}
- return {income:Math.max(0,income),patience,avoidance};
-}
-const reactions={
- window:["Pencereler açık. Şimdilik.","Bazı pencereler tuğlayla kapatılıyor.","Evler kararı delmenin yolunu buldu: daha az pencere."],
- brick:["Tuğlalar yerli yerinde.","Üreticiler tuğlaları büyütüyor.","Az adet, dev tuğla. Vergi matematiği değişti."],
- hearth:["Bacalar tütüyor.","Bazı ocaklar kullanılmıyor.","Sokakta daha az baca dumanı var."],
- wallpaper:["Duvarlar desenli.","Düz duvar kâğıdı rağbet görüyor.","Desenler kayboldu. Duvarlar sessiz."],
- cycle:["Bisikletler yola çıkıyor.","Plakası olmayan bisikletler kenarda.","Bisikletçiler azaldı, yayalar çoğaldı."],
- travel:["Yolcular geçiyor.","Bazı yolcular planını erteliyor.","Çıkış kapısında sıra seyrekleşti."],
- beard:["Sakallar duruyor.","Tıraş dükkânları doluyor.","Sakallar kayboldu, berberler çalışıyor."],
- hat:["Şapkalar rüzgârda.","Şapkalar el değiştiriyor.","Bazı şapkalar ortadan kayboldu."],
- people:["Meydan kalabalık.","İnsanlar medeni hâlini tartışıyor.","Meydanda itirazlar büyüdü."],
- bag:["Pazar poşet dolu.","İnsanlar bez çanta taşıyor.","Poşet azaldı. Yeniden kullanılabilir çantalar çoğaldı."],
- soda:["Raflar şekerli içeceklerle dolu.","Şirketler reçeteyi değiştiriyor.","Şeker miktarı yeniden düşünülüyor."],
- salt:["Tuz satılıyor.","Pazarda itirazlar başladı.","Tuz üzerine tartışma meydanı doldurdu."],
- roman:["Pazar çalışıyor.","İşletmeler başka çözümler arıyor.","Tüccarlar yeni bir hesap yapıyor."],
- goods:["Tezgâhlar dolu.","Satıcılar ürünleri saklıyor.","Daha az ürün tezgâhta görünüyor."]
-};
-function reaction(kind,v){
- const k=reactions[kind]||reactions.goods;
- return k[v>=65?2:v>=30?1:0];
-}
-function cloud(x,y,s,klass){
- return '<g transform="translate('+x+' '+y+') scale('+s+')"><g class="drift-cloud '+(klass||"")+'">'+
- '<path d="M-76 15 Q-89 -9 -63 -17 Q-60 -47 -29 -38 Q-4 -78 31 -44 Q57 -55 70 -23 Q105 -18 84 16Z" fill="#fffdf8" stroke="#c9e0e9" stroke-width="2" stroke-linejoin="round"/>'+
- '<path d="M-54 13Q-35 0 -17 12M18 12Q33 -1 51 12" stroke="#d3e9ee" stroke-width="5" fill="none" opacity=".5"/></g></g>';
-}
-function baseSky(){
- let s='<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#2588c7"/><stop offset=".96" stop-color="#a9dff0"/></linearGradient><linearGradient id="grass" x2=".1" y2="0" x1=".9" y1="1"><stop stop-color="#a8d778"/><stop offset="1" stop-color="#68ae64"/></linearGradient></defs>';
- s+='<rect width="900" height="390" fill="url(#sky)"/>';
- s+=cloud(190,110,1.16,"")+cloud(690,100,1.38,"two")+cloud(445,142,.5,"");
- s+='<path d="M0 221 Q159 194 293 214Q451 186 586 211Q752 188 900 213V390H0Z" fill="#b9dc82" stroke="#6ea56e" stroke-width="2"/>';
- s+='<path d="M0 247Q155 218 292 242Q510 201 678 244Q782 220 900 236V390H0Z" fill="#92c86e" stroke="#609c60" stroke-width="2"/>';
- for(let i=0;i<25;i++){const x=(i*103+19)%910,y=236+(i*17)%72;s+='<path d="M'+x+' '+y+'l'+(13+i%3*7)+' -3" stroke="#6f9c60" stroke-width="1.2" opacity=".7"/>';}
- s+='<path d="M0 332Q180 305 379 323Q636 344 900 302V390H0Z" fill="url(#grass)" stroke="#63955b" stroke-width="2"/>';
- for(let i=0;i<45;i++){const x=(i*67+32)%900,y=338+(i*23)%57;s+='<path d="M'+x+' '+y+'l'+(8+i%4*4)+' -'+(2+i%3*3)+'" stroke="#4e9055" opacity=".65" stroke-width="1.4"/>';}
- return s;
-}
-function person(x,y,clothing,beard,hat,scale){
- scale=scale||1;
- let p='<g transform="translate('+x+' '+y+') scale('+scale+')"><g class="walker">';
- p+='<ellipse cy="7" cx="0" rx="19" ry="5" fill="#4e825c" opacity=".2"/>';
- p+='<path d="M-5 -24L-8 -2M5 -24L8 -2" fill="none" stroke="#504c46" stroke-width="5" stroke-linecap="round"/>';
- p+='<path d="M-13 -51Q0 -58 13 -51L13 -25Q0 -20 -13 -25Z" fill="'+clothing+'" stroke="#554c49" stroke-width="1.5"/>';
- p+='<path d="M-12 -46L-19 -29M12 -46L20 -30" fill="none" stroke="#b98b72" stroke-width="5" stroke-linecap="round"/>';
- p+='<circle cx="0" cy="-68" r="14" fill="#ebc4a4" stroke="#805d51" stroke-width="1.3"/>';
- p+='<path d="M-13 -72Q-10 -91 8 -82Q16 -81 14 -72Z" fill="#6c4b3e"/>';
- if(beard)p+='<path d="M-12 -66Q-12 -44 0 -43Q13 -44 12 -66Q3 -60 0 -62Q-8 -60 -12 -66" fill="#71463b"/>';
- p+='<circle cx="-5" cy="-69" r="1.3" fill="#362f2b"/><circle cx="5" cy="-69" r="1.3" fill="#362f2b"/>';
- if(hat)p+='<path d="M-16 -81L16 -81L14 -98L-12 -98Z" fill="#53667a" stroke="#433b36" stroke-width="1.5"/><path d="M-22 -81L22 -81" stroke="#433b36" stroke-width="4"/>';
- return p+'</g></g>';
-}
-function house(x,y,w,h,id,kind,v){
- const wall=["#f4d8b0","#eac5b3","#e6d8bc","#e1c4a0"][id%4];
- let a='<g><path d="M'+(x-10)+' '+y+'L'+(x+w/2)+' '+(y-40)+'L'+(x+w+10)+' '+y+'Z" fill="'+(id%2?"#ac695b":"#b97d66")+'" stroke="#765a50" stroke-width="2" stroke-linejoin="round"/>';
- a+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+wall+'" stroke="#816f5e" stroke-width="2"/>';
- for(let j=0;j<3;j++){
- const wx=x+12+j*(w-38)/2,wy=y+27;
- const sealed=kind==="window"&&v>=30&&(j+id)%4<Math.floor(v/24);
- const plain=kind==="wallpaper"&&v>48;
- a+='<rect x="'+wx+'" y="'+wy+'" width="18" height="30" fill="'+(sealed?"#bd8779":plain?"#e7d0c1":"#a6d4dd")+'" stroke="#705e52" stroke-width="1.3"/>';
- if(sealed){for(let k=0;k<3;k++)a+='<path d="M'+wx+' '+(wy+k*9+4)+'h18" stroke="#8f695c" stroke-width="1"/>';}
- else a+='<path d="M'+(wx+9)+' '+wy+'v30" stroke="#f7ebd5" stroke-width="2"/>';
- }
- a+='<rect x="'+(x+w/2-11)+'" y="'+(y+h-42)+'" width="22" height="42" fill="#816d5b" stroke="#65534c" stroke-width="1.5"/><circle cx="'+(x+w/2+5)+'" cy="'+(y+h-21)+'" r="1.6" fill="#e3d09d"/>';
- if(kind==="hearth"&&v<60)a+='<g class="smoke"><path d="M'+(x+w-22)+' '+(y-32)+'q-15 -17 -2 -29q11 -12 -1 -26" fill="none" stroke="#dfedef" stroke-width="7" opacity=".65" stroke-linecap="round"/></g>';
- if(kind==="wallpaper"&&v<48){for(let i=0;i<5;i++)a+='<circle cx="'+(x+11+i*(w-20)/5)+'" cy="'+(y+h-9)+'" r="2" fill="#b96a66"/>';}
- return a+'</g>';
-}
-function town(kind,v){
- let s='';
- s+='<path d="M0 336Q300 309 520 327Q690 338 900 317V390H0Z" fill="#dfcd99" stroke="#ae9b77" stroke-width="2"/>';
- for(let i=0;i<5;i++){const x=12+i*180,w=145,y=180+(i%2)*13,h=142-(i%2)*13;s+=house(x,y,w,h,i,kind,v);}
- if(kind==="brick"){
-  for(let i=0;i<4;i++){const x=100+i*175,h=v>45?34:16;s+='<rect x="'+x+'" y="'+(342-h)+'" width="'+(v>45?78:38)+'" height="'+h+'" fill="#c77c65" stroke="#976254" stroke-width="2"/>';if(v>45)s+='<path d="M'+x+' 325h78" stroke="#98604d" stroke-width="1.5"/>';}
- }
- s+=person(330,372,"#627c82",false,false,.73);
- s+=person(745,371,"#ab8274",false,false,.82);
- return s;
-}
-function square(kind,v){
- let s='<path d="M0 332Q430 305 900 328V390H0Z" fill="#ddc69a" stroke="#b7a07a" stroke-width="2"/>';
- s+=house(25,192,145,139,0,kind,v)+house(718,187,162,142,1,kind,v);
- for(let i=0;i<6;i++){const x=220+i*82;const beard=kind==="beard"&&v>=35?i%5===0:kind==="beard"||i%2===0;const hat=kind==="hat"&&v>45?i%4===0:kind==="hat"||i%3===0;s+=person(x,345,["#638a7b","#d9a16e","#6b7d9e"][i%3],beard,hat,.95+(i%2)*.1);}
- if(kind==="people"&&v>45)s+='<g><path d="M385 218h130v35H385Z" fill="#f7f1df" stroke="#6f6758" stroke-width="2"/><text x="450" y="241" fill="#3a3a36" font-size="16" font-family="Arial" text-anchor="middle">İTİRAZ VAR</text></g>';
- return s;
-}
-function bicycle(x,y,moving){
- let s='<g transform="translate('+x+' '+y+')">';
- s+='<circle cx="0" cy="0" r="30" fill="none" stroke="#494c4b" stroke-width="3"/><circle cx="102" cy="0" r="30" fill="none" stroke="#494c4b" stroke-width="3"/>';
- s+='<path d="M0 0L36 -45L68 0L0 0M36 -45L102 0M68 0L84 -45M78 -45H98M27 -48H48" stroke="#608c83" stroke-width="5" fill="none" stroke-linecap="round"/>';
- s+='<circle cx="46" cy="-88" r="11" fill="#e5bb96" stroke="#866f5f"/>';
- s+='<path d="M45 -76L36 -48L77 -24M37 -48L13 -24" stroke="#3b586a" stroke-width="7" stroke-linecap="round"/>';
- if(moving)s+='<path d="M-40 -10h-12M-35 3h-17" stroke="#91a16d" stroke-width="2"/>';
- return s+'</g>';
-}
-function ride(kind,v){
- let s='<path d="M0 331Q450 311 900 329V390H0Z" fill="#d8ce9d" stroke="#ad9979" stroke-width="2"/>';
- if(kind==="travel"){
-  s+='<rect x="40" y="201" width="355" height="126" fill="#e0d8c4" stroke="#817e70" stroke-width="2"/><path d="M25 199l175 -40 214 40" fill="#a6b9b8" stroke="#6d8080" stroke-width="2"/>';
-  for(let i=0;i<5;i++)s+='<rect x="'+(65+i*62)+'" y="227" width="45" height="46" fill="#9dc6d0" stroke="#738f93"/>';
-  s+='<path d="M550 125L716 167L837 166L715 180L658 207L632 196L651 180L551 143Z" fill="#f5f5ed" stroke="#718a95" stroke-width="3"/>';
-  const count=v>60?2:v>30?4:7;
-  for(let i=0;i<count;i++){const x=460+i*55;s+=person(x,357,["#566f80","#bb876c"][i%2],false,false,.75);s+='<rect x="'+(x+12)+'" y="341" width="18" height="23" rx="2" fill="#a17c67" stroke="#765b4d"/>';}
- }else{
-  const count=v>65?1:v>35?3:5;
-  for(let i=0;i<count;i++)s+=bicycle(35+i*175,337+(i%2)*7,true);
-  for(let i=count;i<5;i++)s+=person(72+i*170,368,"#6d8894",false,false,.83);
- }
- return s;
-}
-function market(kind,v){
- let s='<path d="M0 333Q430 310 900 332V390H0Z" fill="#dccb9f" stroke="#b59d7b" stroke-width="2"/>';
- const colors=["#d98f7d","#d6ad77","#8db5a2","#c5a1a1"];
- for(let i=0;i<5;i++){
- const x=25+i*176;
- s+='<rect x="'+x+'" y="250" width="145" height="83" fill="#ecd3ac" stroke="#796f60" stroke-width="2"/>';
- s+='<path d="M'+(x-8)+' 250l13 -40h139l13 40Z" fill="'+colors[i%4]+'" stroke="#78675a" stroke-width="2"/>';
- for(let j=0;j<5;j++)s+='<path d="M'+(x+j*29)+' 250l12 -40" stroke="#f6dfca" stroke-width="9" opacity=".75"/>';
- for(let j=0;j<4;j++){const hidden=v>57&&j%3===i%3;const y=294+(j%2)*15,xx=x+18+j*31;if(hidden)continue;const item=kind==="soda"?"#d6a56e":kind==="salt"?"#f4f0e6":kind==="bag"?"#8ca08a":"#b5a085";s+='<rect x="'+xx+'" y="'+y+'" width="17" height="23" rx="'+(kind==="soda"?5:2)+'" fill="'+item+'" stroke="#877864" stroke-width="1.4"/>';}
- }
- for(let i=0;i<4;i++){const x=105+i*216;s+=person(x,375,["#779ba1","#bb9272"][i%2],false,false,.62);}
- if(kind==="bag"&&v>=35){for(let i=0;i<3;i++){const x=155+i*270;s+='<path d="M'+x+' 357h30v18h-30zM'+(x+6)+' 357q0 -14 9 -14q9 0 9 14" fill="#ad9675" stroke="#77674d" stroke-width="2"/>';}}
- return s;
-}
-function drawScene(v){
- if(state.turn>=rounds)return;
- const k=current().kind||"goods";
- let s=baseSky();
- if(["window","brick","hearth","wallpaper"].includes(k))s+=town(k,v);
- else if(["beard","hat","people"].includes(k))s+=square(k,v);
- else if(["cycle","travel"].includes(k))s+=ride(k,v);
- else s+=market(k,v);
- $("sceneArt").innerHTML=s;
-}
-function metrics(){
- $("treasury").textContent=state.treasury;
- $("patience").textContent="%"+state.patience;
- $("evasion").textContent="%"+state.evasion;
-}
-function syncPreview(){
- if(state.phase!=="decision")return;
- const s=current(),v=state.rate,p=calculate(v,s.kind);
- $("rateValue").textContent="%"+v;
- $("taxRate").value=v;
- $("projectIncome").textContent=fmt(p.income);
- $("projectPatience").textContent=fmt(p.patience);
- $("projectEvasion").textContent=fmt(p.avoidance);
- $("sceneLine").textContent=reaction(s.kind,v);
- drawScene(v);
-}
-function historyRender(){
- $("historyCount").textContent="("+state.history.length+")";
- $("log").replaceChildren();
- state.history.forEach((h,i)=>{const div=document.createElement("div");div.textContent=String(i+1).padStart(2,"0")+" / "+h.name+" · %"+h.rate+" · "+h.impact;$("log").appendChild(div);});
-}
-function renderProgress(){
- $("progress").replaceChildren();
- for(let i=0;i<rounds;i++){const bar=document.createElement("i");if(i<state.turn)bar.className="done";$("progress").appendChild(bar);}
-}
-function renderRound(){
- if(state.turn>=rounds||state.patience<=0||state.evasion>=100){renderEnd();return;}
- $("roundScreen").classList.remove("hidden");$("endScreen").classList.add("hidden");
- const s=current();metrics();historyRender();renderProgress();
- $("kicker").textContent="KARARNAME "+String(state.turn+1).padStart(2,"0")+" / "+rounds;
- $("title").textContent=s.name;
- $("desc").textContent=s.desc;
- $("where").textContent=s.time;
- $("scenePlace").textContent=s.time;
- $("primaryAction").textContent=s.opts[0][0];
- $("secondaryAction").textContent=s.opts[1][0];
- $("approve").textContent="KANUNU ÇIKAR";
- const small1=document.createElement("small");small1.textContent=s.opts[0][0];$("approve").append(small1);
- $("soften").textContent="YUMUŞAT / VAZGEÇ";
- const small2=document.createElement("small");small2.textContent=s.opts[1][0];$("soften").append(small2);
- const done=state.phase==="result";
- $("controls").classList.toggle("hidden",done);
- $("outcome").classList.toggle("hidden",!done);
- $("sceneStatus").textContent=done?"YÜRÜRLÜKTE":"OLASI SONUÇ";
- if(done){
-  drawScene(state.selectedRate);
-  renderOutcome(true);
- }else{syncPreview();}
-}
-function renderOutcome(restored){
- const s=current();
- const v=state.selectedRate;
- $("resultTitle").textContent=state.resultTitle||"Halk başka bir hesap yaptı.";
- $("resultText").textContent=state.lastText||reaction(s.kind,v);
- $("sceneLine").textContent=reaction(s.kind,v);
- $("delta").textContent=state.delta||"";
- $("archiveExcerpt").textContent=s.fact||s.desc;
- $("archiveMeta").textContent=s.time+" · Belgelenmiş tarihsel bilgi; oyundaki tepkiler ve puanlar kurgusaldır.";
- $("source").href=s.url||"#";
- $("source").classList.toggle("hidden",!s.url);
- $("archive").open=false;
- $("next").textContent=state.turn===rounds-1?"DÖNEMİ BİTİR →":"SONRAKİ KARARNAME →";
- if(!restored){
-  const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  $("outcome").scrollIntoView({behavior:reduce?"auto":"smooth",block:"nearest"});
- }
-}
-function apply(choice){
- if(state.phase!=="decision")return;
- const s=current();
- const waive=/vazgeç|serbest bırak/i.test(s.opts[1][0]);
- const v=choice===0?state.rate:(waive?0:Math.round(state.rate*.35));
- const p=calculate(v,s.kind);
- state.phase="result";state.selectedRate=v;
- state.treasury=Math.max(0,state.treasury+p.income);
- state.patience=clamp(state.patience+p.patience,0,100);
- state.evasion=clamp(state.evasion+p.avoidance,0,100);
- let bonus="";
- if(["cycle","travel"].includes(s.kind)&&state.policies.some(t=>["cycle","travel"].includes(t.kind)&&t.kind!==s.kind&&t.rate>=45)&&v>=45)bonus=" Önceki ulaşım vergisiyle birleşince itiraz büyüyor.";
- if(["window","brick"].includes(s.kind)&&state.policies.some(t=>["window","brick"].includes(t.kind)&&t.kind!==s.kind&&t.rate>=45)&&v>=45)bonus=" Daha önceki yapı vergisiyle birleşince kaçınma yolları çoğalıyor.";
- state.lastText=reaction(s.kind,v)+bonus+" (Bu tepki oyun senaryosudur.)";
- state.resultTitle=v===0?"Vergi rafa kaldırıldı.":v>65?"Halk her zamanki gibi bir yol buldu.":v>35?"Kanun çıktı. Yan etkisi de.":"Hazine sakin. Halk daha sakin.";
- state.delta="HAZİNE "+fmt(p.income)+" · SABIR "+fmt(p.patience)+" · KAÇINMA "+fmt(p.avoidance);
- state.policies.push({kind:s.kind,rate:v});
- state.history.push({name:s.name,rate:v,impact:state.lastText.replace(" (Bu tepki oyun senaryosudur.)","")});
- metrics();historyRender();save();
- renderRound();
- renderOutcome(false);
-}
-async function share(text){
- const message=text+" https://aynen.fun/yaratici-bakanlik.html";
- if(navigator.share){try{await navigator.share({title:"Yaratıcı Bakanlık",text:message});return;}catch(e){if(e.name==="AbortError")return;}}
- try{await navigator.clipboard.writeText(message);alert("Paylaşım metni kopyalandı.");}
- catch(e){window.prompt("Paylaşım metnini kopyala:",message);}
-}
-function renderEnd(){
- $("roundScreen").classList.add("hidden");$("endScreen").classList.remove("hidden");
- metrics();historyRender();
- const end=state.patience<=0?"Halk bakanlığı kapattı.":state.evasion>=100?"Vergi yok. İstisna var.":"12 kararname. Bir sürü yan etki.";
- const last=state.history[state.history.length-1];
- const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- $("endScreen").innerHTML='<div class="chapter">DÖNEM SONU / RESMÎ OLMAYAN RAPOR</div><h2>'+escapeHtml(end)+'</h2><p>Hazine hesabı tuttu. Halk kendine başka bir çözüm buldu. Bir dahaki hükûmet başka bir vergi deneyebilir.</p>'+
- '<div class="end-world"><svg viewBox="0 0 900 390" aria-label="İllüstrasyon şehir manzarası">'+baseSky()+town("window",Math.min(90,state.evasion))+'</svg></div>'+
- '<div class="end-stats"><span>HAZİNE: '+state.treasury+'</span><span>SABIR: %'+state.patience+'</span><span>KAÇINMA: %'+state.evasion+'</span><span>KARAR: '+state.history.length+'</span></div>'+
- '<div class="end-actions"><button id="restartEnd" type="button">YENİ HÜKÛMET ↻</button><button id="shareEnd" type="button">SONUCUMU PAYLAŞ</button></div>';
- $("restartEnd").onclick=restart;
- $("shareEnd").onclick=()=>share("Yaratıcı Bakanlık · "+end+" Hazine "+state.treasury+" · Sabır %"+state.patience+" · Kaçınma %"+state.evasion+" · "+(last?"Son vergi: "+last.name+".":""));
-}
-function restart(){
- if(state.history.length&&!(window.confirm("Mevcut kararların silinsin ve yeni oyun başlasın mı?")))return;
- state=newState();save();$("history").open=false;renderRound();window.scrollTo({top:0,behavior:"smooth"});
-}
-$("taxRate").addEventListener("input",e=>{if(state.phase!=="decision")return;state.rate=Number(e.target.value);syncPreview();save();});
-$("approve").onclick=()=>apply(0);
-$("soften").onclick=()=>apply(1);
-$("next").onclick=()=>{
- if(state.phase!=="result")return;
- state.turn++;state.rate=40;state.phase="decision";state.lastText="";save();renderRound();
- window.scrollTo({top:0,behavior:"smooth"});
-};
-$("shareDecision").onclick=()=>share("Yaratıcı Bakanlık · "+current().name+" · %"+state.selectedRate+" · "+state.lastText);
-$("restartTop").onclick=restart;
-renderRound();
-})();
-</script><script src="/share-kit.js?v=1" defer></script></body></html>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Vergi detay dosyası" aria-hidden="true">
+ <div class="modal-inner"><div class="modal-top"><span id="modalNumber">YARATICI BAKANLIK / DOSYA</span><button type="button" id="modalClose" aria-label="Detayı kapat">KAPAT ✕</button></div><div class="modal-kicker" id="modalKicker"></div><h2 id="modalTitle"></h2><p class="modal-lede" id="modalLede"></p>
+ <div class="modal-illustration" id="modalIllustration" aria-hidden="true"><div class="modal-art-circle"></div><div class="modal-art-words" id="modalArtWord"></div><div class="modal-art-index" id="modalArtIndex"></div></div>
+ <div class="modal-grid"><div class="data-panel" id="modalMeta"></div><div class="story"><h3>ARŞİV NOTU</h3><p id="modalStory"></p><a id="modalSource" class="source-link" href="#" target="_blank" rel="noopener noreferrer">ORİJİNAL KAYNAĞI AÇ ↗</a><div class="related"><h3>BAĞLANTILI KAYITLAR</h3><div class="related-list" id="modalRelated"></div></div><div class="modal-actions"><button type="button" id="modalNext">BAŞKA BİR VERGİ →</button><button type="button" id="modalShare">BAĞLANTIYI KOPYALA</button></div></div></div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script src="/yaratici-atlas-data.js?v=1"></script>
+<script src="/yaratici-atlas-app.js?v=1"></script>
+<script src="/share-kit.js?v=1" defer></script>
+</body></html>
