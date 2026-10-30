@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Siyah gece zemini üzerinde karakteristik sorguçlu ibibik kuşu illüstrasyonu">
+<defs>
+ <linearGradient id="night" x1=".12" y1=".1" x2=".95" y2=".93"><stop stop-color="#242d28"/><stop offset="1" stop-color="#0b1719"/></linearGradient>
+ <linearGradient id="feather" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f1c783"/><stop offset=".6" stop-color="#ca915d"/><stop offset="1" stop-color="#936844"/></linearGradient>
+ <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#252728"/><stop offset="1" stop-color="#101718"/></linearGradient>
+</defs>
+<path d="M17 64Q33 12 109 17L254 19Q305 33 304 91L295 177Q281 207 236 205L69 203Q17 191 16 139Z" fill="url(#night)"/>
+<circle cx="249" cy="65" r="32" fill="#82968b" opacity=".14"/>
+<path d="M17 175Q63 163 110 176T206 174Q260 162 297 175" fill="none" stroke="#9eae94" stroke-width="1" stroke-dasharray="2 7" opacity=".46"/>
+<path d="M41 181Q122 178 275 179" stroke="#aa9473" stroke-width="5" stroke-linecap="round"/>
+<path d="M64 183Q53 169 44 168M241 179Q252 166 269 166" stroke="#aa9473" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M110 127Q80 113 61 127Q91 129 120 149L164 157Z" fill="#161b1d" stroke="#d5b88d" stroke-width="1.7"/>
+<path d="M70 123L100 133M80 121L114 141M95 126L128 146" stroke="#f4e8cb" stroke-width="5"/>
+<path d="M115 110Q132 94 155 101Q182 111 194 135Q193 161 172 174Q141 182 119 165Q104 144 115 110Z" fill="url(#feather)" stroke="#191f1c" stroke-width="2.8"/>
+<path d="M122 124Q139 112 172 126Q177 139 163 150Q144 157 120 141Z" fill="url(#wing)" stroke="#252928" stroke-width="2"/>
+<path d="M124 124Q137 130 157 130M124 135Q140 142 164 138M127 147Q139 150 152 148" fill="none" stroke="#faf4df" stroke-width="8" stroke-linecap="round"/>
+<path d="M146 158Q155 175 168 174" fill="none" stroke="#fff0d1" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M173 103Q177 89 181 80L198 73Q224 72 233 92Q230 110 211 117L193 129Q182 116 173 103Z" fill="url(#feather)" stroke="#22221e" stroke-width="2.6"/>
+<path d="M181 81L165 42L173 43L194 73M189 73L184 30L193 32L204 72M201 72L208 28L216 32L216 76M212 75L230 39L237 45L226 83M223 81L249 58L254 66L232 92" fill="url(#feather)" stroke="#261f1b" stroke-width="2.2" stroke-linejoin="round"/>
+<path d="M167 42L173 43M184 30L193 32M208 28L216 32M230 39L237 45M249 58L254 66" stroke="#141819" stroke-width="7" stroke-linecap="round"/>
+<path d="M229 92L306 97Q276 107 230 99Z" fill="#312d29" stroke="#191b1b" stroke-width="1.6"/>
+<circle cx="215" cy="87" r="3.8" fill="#1d201d"/><circle cx="216" cy="86" r="1.3" fill="#fff"/>
+<path d="M144 174Q142 185 137 188M167 173Q166 184 174 187M136 187L124 188M136 187L142 190M173 187L181 188M174 187L169 190" stroke="#604f37" stroke-width="2.3" stroke-linecap="round" fill="none"/>
+<g fill="none" stroke="#d3c79d" stroke-width="1.6" stroke-linecap="round" opacity=".8">
+<path d="M48 63Q62 54 77 63M44 53Q63 40 84 54"/>
+<path d="M258 132Q265 124 274 130M260 142Q272 132 284 140"/>
+</g>
+<path d="M45 82Q50 75 56 81L66 92L77 80" stroke="#e0d2ad" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".67"/>
+<circle cx="53" cy="156" r="2" fill="#efd9a3"/><circle cx="261" cy="160" r="2" fill="#efd9a3"/>
+</svg>
