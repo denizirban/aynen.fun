@@ -287,6 +287,9 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 <filter id="sceneGrain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".26" numOctaves="1" seed="7" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g"><feFuncA type="linear" slope=".04"/></feComponentTransfer></filter>
 <clipPath id="floorClip"><path d="M0 327L1082 403L1400 371V900H0Z"/></clipPath>
 <clipPath id="windowClip"><rect x="62" y="40" width="480" height="260" rx="4"/></clipPath>
+
+<radialGradient id="lampGlow"><stop stop-color="#fff1c4" stop-opacity=".5"/><stop offset="1" stop-color="#fff1c4" stop-opacity="0"/></radialGradient>
+<pattern id="grain" patternUnits="userSpaceOnUse" width="45" height="41"><circle cx="4" cy="8" r=".65" fill="#faf0d2" opacity=".26"/><circle cx="31" cy="29" r=".5" fill="#55664b" opacity=".18"/></pattern>
 </defs>
 <!-- 1970s miniature set — avocado glazed ceramics, molded furnishings, warm studio light -->
 <rect width="1400" height="900" fill="#afba86"/>
@@ -399,23 +402,74 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 <!-- floor puddles/props -->
 <ellipse cx="1016" cy="832" rx="29" ry="12" fill="#d4836b"/><ellipse cx="1016" cy="829" rx="20" ry="6" fill="#745443"/>
 <path d="M92 810L135 795L157 814L116 836Z" fill="#f4ebd5" stroke="#b4ac97" stroke-width="2"/>
-<!-- family silhouettes -->
-<g class="person selectable" id="elderActor" data-person="elder" role="button" tabindex="0" aria-label="Aile büyüğü" transform="translate(422 490)"><ellipse cx="0" cy="84" rx="38" ry="13" fill="#15151522"/><path d="M-36 4Q0 -22 35 5L43 71L-33 76Z" fill="#827e93" stroke="#55515d" stroke-width="4"/><rect x="-26" y="59" width="20" height="67" rx="9" fill="#716b55"/><rect x="9" y="59" width="20" height="67" rx="9" fill="#716b55"/><circle cy="-14" r="25" fill="#775441"/><path d="M-24 -15Q-17 -54 0 -42Q22 -45 26 -11" fill="#2d2d28"/><path d="M-23 29L-57 56M26 29L61 49" stroke="#775441" stroke-width="15" stroke-linecap="round"/><path d="M-21 -9H-1M3 -9H21" stroke="#222" stroke-width="4"/><path d="M-1 -9H3" stroke="#222" stroke-width="3"/></g>
-<g class="person selectable" id="partnerActor" data-person="partner" role="button" tabindex="0" aria-label="Eşin" transform="translate(885 351)"><ellipse cx="0" cy="142" rx="46" ry="15" fill="#17171722"/><path d="M-28 13Q12 -8 41 18L46 87L-40 94Z" fill="#e4e0d7" stroke="#333" stroke-width="4"/><path d="M-28 86V137M22 85V135" stroke="#343638" stroke-width="27" stroke-linecap="round"/><path d="M-26 15L-63 71M40 21L73 53" stroke="#c09a76" stroke-width="16" stroke-linecap="round"/><circle cx="0" cy="-8" r="27" fill="#c69d78"/><path d="M-28 -13Q-20 -48 10 -40Q35 -34 27 -2L14 -20L-3 -14Z" fill="#3b3028"/><path d="M-20 -6L-3 -3M4 -4L24 -7" stroke="#31302b" stroke-width="4"/></g>
-<g class="person selectable" id="kidActor" data-person="kid" role="button" tabindex="0" aria-label="Çocuk" transform="translate(746 714)"><ellipse cx="0" cy="90" rx="36" ry="10" fill="#17171733"/><path d="M-33 2Q-10 -14 25 5L36 78L-35 79Z" fill="#e58a51" stroke="#4f352d" stroke-width="3"/><path d="M-22 77L-32 117M15 76L25 113" stroke="#92916e" stroke-width="18" stroke-linecap="round"/><circle cy="-13" r="25" fill="#654337"/><path d="M-24 -23Q-34 -56 0 -51Q33 -56 24 -14Z" fill="#252525"/><path d="M-19 12L-67 -22M20 12L64 -16" stroke="#654337" stroke-width="12" stroke-linecap="round"/></g>
-<g transform="translate(317 805)"><ellipse rx="80" ry="12" fill="#15151536"/><path d="M-63 -22Q-30 -70 40 -45Q88 -8 53 0Q-18 22 -69 0Z" fill="#3d3b38" stroke="#222" stroke-width="3"/><path d="M58 -37Q96 -66 96 -27" class="dog-tail" fill="none" stroke="#3d3b38" stroke-width="12" stroke-linecap="round"/><circle cx="-59" cy="-17" r="22" fill="#3f3b38"/><path d="M-72 -33L-88 -51L-77 -13Z" fill="#1f2020"/><circle cx="-66" cy="-21" r="3" fill="#fff"/></g>
+<!-- retro modeled interactive household characters -->
+<g class="person selectable" id="elderActor" data-person="elder" role="button" tabindex="0" aria-label="Aile büyüğü" transform="translate(422 490)">
+<ellipse cx="2" cy="114" rx="41" ry="13" fill="#3b4634" opacity=".22"/>
+<!-- pressed khaki slacks and leather slippers -->
+<path d="M-24 59L-27 114L-8 114L4 77L13 117L33 118L26 57Z" fill="#787f60" stroke="#677356" stroke-width="2"/>
+<path d="M-29 113Q-13 105 -6 114L-3 126L-34 125Z" fill="#5c5544"/><path d="M13 117Q26 111 34 118L38 129L10 127Z" fill="#5c5544"/>
+<!-- folded polo with dimension -->
+<path d="M-33 4Q-20-8 3-8Q28-7 37 8L36 64Q3 75 -31 61Z" fill="url(#shirtLilac)" stroke="#847078" stroke-width="2"/>
+<path d="M-17 3L-2 17L9 2" fill="none" stroke="#e7d3c6" stroke-width="4"/>
+<path d="M-33 10Q-44 25 -50 51L-34 62Q-17 38 -13 28" fill="url(#skinDark)" stroke="#875e47" stroke-width="2"/>
+<path d="M29 8Q47 21 55 47L39 57Q23 41 13 25" fill="url(#skinDark)" stroke="#875e47" stroke-width="2"/>
+<ellipse cx="-33" cy="57" rx="13" ry="8" fill="#85583f"/><ellipse cx="41" cy="53" rx="12" ry="9" fill="#8b6147"/>
+<!-- ceramic mug held at the table -->
+<path d="M26 48L47 47L49 65Q40 71 30 64Z" fill="#e9deb8" stroke="#9b997d" stroke-width="2"/><path d="M48 50Q61 47 58 57Q55 63 48 61" fill="none" stroke="#aba78d" stroke-width="3"/>
+<!-- softly modeled head -->
+<path d="M-5-53Q12-53 22-40L24-17Q24-1 8 8L-10 4Q-29-7-28-26Q-28-51-5-53Z" fill="url(#skinDark)" stroke="#81583e" stroke-width="1.5"/>
+<path d="M-25-34Q-28-51-14-55Q10-68 23-44Q13-51 0-50Q-13-46-25-34" fill="#4b4135"/>
+<path d="M-27-16Q-25-32-20-38" stroke="#5d5347" stroke-width="4" fill="none"/>
+<path d="M-20-21L-2-20M6-20L22-23M-3-20L6-20" stroke="#555044" stroke-width="3" fill="none"/>
+<path d="M-21-19Q-11-7-1-19M5-19Q14-6 23-20" fill="none" stroke="#4e4941" stroke-width="2"/>
+<path d="M-1-4Q6 1 13-3" fill="none" stroke="#6a4136" stroke-width="2.2" stroke-linecap="round"/>
+</g>
+<g class="person selectable" id="partnerActor" data-person="partner" role="button" tabindex="0" aria-label="Eşin" transform="translate(885 351)">
+<ellipse cx="2" cy="140" rx="44" ry="13" fill="#384231" opacity=".2"/>
+<!-- tailored high-waist trousers -->
+<path d="M-34 79L-28 140L-3 140L6 95L17 139L40 136L35 81Z" fill="#797862" stroke="#615f51" stroke-width="2"/>
+<ellipse cx="-17" cy="140" rx="16" ry="6" fill="#5c5049"/><ellipse cx="29" cy="137" rx="16" ry="6" fill="#60534a"/>
+<!-- vintage cream blouse -->
+<path d="M-37 16Q-25-2 3-3Q30-4 43 18L43 85Q-2 96 -38 83Z" fill="#e5ddc5" stroke="#b4aa92" stroke-width="2"/>
+<path d="M-16 4L0 20L15 4" fill="#f8f2de" stroke="#b5ae99" stroke-width="2"/><path d="M-18 34Q0 43 26 33" fill="none" stroke="#f8f2df" stroke-width="4" opacity=".65"/>
+<!-- arms leaning at table -->
+<path d="M-34 24Q-48 39-53 62Q-56 75-46 81L-32 75Q-25 52-12 42" fill="url(#skinWarm)" stroke="#ad8065" stroke-width="2"/>
+<path d="M36 24Q56 41 57 58Q55 76 47 80L36 72Q28 45 17 40" fill="url(#skinWarm)" stroke="#ad8065" stroke-width="2"/>
+<!-- modeled face, brushed brown hair -->
+<ellipse cx="0" cy="-13" rx="27" ry="33" fill="url(#skinWarm)" stroke="#9c7357" stroke-width="1.5"/>
+<path d="M-27-17Q-27-52-3-55Q24-61 32-28L25-12Q17-32 7-35Q-5-28-23-25Z" fill="#4c3a2e"/>
+<path d="M-19-8L-4-5M7-6L21-9" stroke="#554c40" stroke-width="3"/><path d="M-7 1Q0 3 7 0" stroke="#8a5748" stroke-width="1.5" fill="none"/><path d="M-6 13Q2 16 10 12" fill="none" stroke="#9c5b4f" stroke-width="2"/>
+<!-- small phone -->
+<path d="M50 37L65 38L66 67L51 66Z" fill="#373d39" stroke="#8e9589" stroke-width="2"/>
+</g>
+<g class="person selectable" id="kidActor" data-person="kid" role="button" tabindex="0" aria-label="Çocuk" transform="translate(746 714)">
+<ellipse cx="2" cy="106" rx="39" ry="13" fill="#3a4b33" opacity=".22"/>
+<path d="M-32 56L-29 109L-9 112L4 73L13 113L35 115L31 57Z" fill="#a0a57f" stroke="#6a775a" stroke-width="2"/>
+<path d="M-31 110Q-22 105-10 111L-8 123L-36 123Z" fill="#c6a17b"/><path d="M13 111Q26 106 36 114L39 125H14Z" fill="#be9474"/>
+<path d="M-35 8Q-20-6 7-6Q33-4 40 19L37 66Q1 74-35 62Z" fill="url(#shirtOrange)" stroke="#ae6d4c" stroke-width="2"/>
+<path d="M-31 22Q-49 15-59-15" fill="none" stroke="#a97452" stroke-width="15" stroke-linecap="round"/>
+<path d="M31 22Q50 9 60-13" fill="none" stroke="#a97452" stroke-width="15" stroke-linecap="round"/>
+<circle cx="-60" cy="-15" r="8" fill="#b77f5c"/><circle cx="60" cy="-14" r="8" fill="#b77f5c"/>
+<ellipse cx="0" cy="-18" rx="24" ry="29" fill="url(#skinDark)"/>
+<g fill="#34322d"><circle cx="-24" cy="-39" r="16"/><circle cx="-11" cy="-49" r="17"/><circle cx="8" cy="-48" r="16"/><circle cx="24" cy="-38" r="14"/><circle cx="-24" cy="-23" r="10"/><circle cx="24" cy="-24" r="11"/></g>
+<circle cx="-8" cy="-14" r="2.3" fill="#3e2921"/><circle cx="10" cy="-14" r="2.3" fill="#3e2921"/>
+<path d="M-7-1Q0 5 8-1" stroke="#61382d" stroke-width="2" fill="none" stroke-linecap="round"/>
+</g>
 <!-- tiny scattered things -->
 <path d="M103 823L158 800L170 830L117 854Z" fill="#efe5d5" stroke="#222" stroke-width="3"/>
 <path d="M976 789L1013 781L1030 800L990 808Z" fill="#e2dfd5"/><path d="M979 797L1024 793" stroke="#555" stroke-width="2"/>
-<ellipse cx="1016" cy="834" rx="28" ry="10" fill="#d75c73"/><ellipse cx="1016" cy="830" rx="19" ry="5" fill="#6e463d"/>
-<!-- player -->
+
+
+<!-- playable character -->
 <g id="player" class="selectable" data-person="self" role="button" tabindex="0" aria-label="Oyuncu karakterin">
-<ellipse class="player-shadow" cx="0" cy="22" rx="28" ry="10"/>
-<path class="player-body" d="M-21 -18Q-4 -28 19 -18L26 22H-25Z"/>
-<path d="M-17 3L-33 23M19 2L34 22" stroke="#aa7456" stroke-width="11" stroke-linecap="round"/>
-<circle cy="-36" r="20" fill="#c18b69" stroke="#222" stroke-width="2"/>
-<path d="M-19 -44Q-14 -70 5 -59Q24 -56 18 -37L4 -53L-6 -48Z" fill="#2c2726"/>
-<path d="M-11 23V38M11 23V38" stroke="#333" stroke-width="12" stroke-linecap="round"/>
+<ellipse class="player-shadow" cy="25" rx="27" ry="10" fill="#3f4834" opacity=".26"/>
+<path d="M-25 7L-23 31L-7 36L-2 18L11 36L27 31L23 6Z" fill="#7b8564" stroke="#677656" stroke-width="1.5"/>
+<path d="M-28-14Q-13-27 7-25Q26-22 30-7L27 15Q4 23-24 14Z" fill="url(#shirtOrange)" stroke="#ab6a4e" stroke-width="2"/>
+<path d="M-25-4Q-39 5-37 20L-24 22L-10 1" fill="url(#skinWarm)"/>
+<path d="M27-6Q40 8 37 19L25 23L11 2" fill="url(#skinWarm)"/>
+<ellipse cx="1" cy="-39" rx="20" ry="24" fill="url(#skinWarm)"/>
+<path d="M-20-40Q-20-66-4-68Q16-70 24-47L18-35Q13-49 4-54L-16-43Z" fill="#513e31"/>
+<path d="M-12-39h8M6-40h8" stroke="#574336" stroke-width="2"/><path d="M-3-27Q2-24 9-28" fill="none" stroke="#8c5949" stroke-width="1.5"/>
 </g>
 <g id="decor-herbs" display="none"><path d="M1040 280L1080 280L1073 318H1047Z" fill="#ac7655" stroke="#624c39" stroke-width="4"/><path d="M1058 281L1042 245M1058 280L1077 239M1058 284V230" fill="none" stroke="#477950" stroke-width="5"/><ellipse cx="1040" cy="251" rx="16" ry="9" fill="#6ca369" transform="rotate(30 1040 251)"/><ellipse cx="1075" cy="246" rx="16" ry="10" fill="#5c8b5b" transform="rotate(-35 1075 246)"/></g>
 <g id="decor-board" display="none"><rect x="769" y="80" width="94" height="143" fill="#d5c5a4" stroke="#615b50" stroke-width="6"/><path d="M789 100H840M789 113H832M789 132H840" stroke="#8d897d" stroke-width="3"/><path d="M793 155L846 154L842 199L791 201Z" fill="#f0d59f"/><circle cx="818" cy="158" r="5" fill="#c96d62"/></g>
@@ -427,38 +481,10 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 
 <!-- kitchen detail layer -->
 <g id="sceneDetails" pointer-events="none">
-<!-- pendant lamp -->
-<path d="M695 0L695 117" stroke="#4b4a42" stroke-width="5"/>
-<ellipse cx="695" cy="122" rx="57" ry="6" fill="#26372e"/>
-<path d="M653 126Q664 143 638 179Q695 195 753 179Q730 138 738 126Z" fill="#557362" stroke="#314b40" stroke-width="3"/>
-<path d="M640 178Q696 193 752 178" fill="none" stroke="#b9c4aa" stroke-width="5" opacity=".7"/>
-<ellipse cx="696" cy="194" rx="80" ry="33" fill="url(#lampGlow)" opacity=".6"/>
-<!-- bottle group -->
-<path d="M761 289v-27h-6v-19h17v19h-6v27" fill="#477b4d" stroke="#395e42" stroke-width="2"/>
-<path d="M774 292v-20h-5v-24h15v24h-4v20" fill="#a8804d" stroke="#806143" stroke-width="2"/>
-<path d="M792 298v-32h-6v-11h17v11h-6v32" fill="#cfb27b" stroke="#846e49" stroke-width="2"/>
-<!-- cup and handles on table -->
-<ellipse cx="585" cy="537" rx="17" ry="7" fill="#e9dfd0" stroke="#797268" stroke-width="2"/>
-<path d="M568 536v17q16 9 34-1v-16" fill="#d8ae6e" stroke="#7e6346" stroke-width="2"/>
-<path d="M600 540q18-5 13 7q-3 7-13 6" fill="none" stroke="#876c4c" stroke-width="4"/>
-<!-- fruit bowl -->
-<ellipse cx="729" cy="531" rx="32" ry="13" fill="#f5eee0" stroke="#aaa295" stroke-width="3"/>
-<circle cx="709" cy="525" r="9" fill="#e6b349"/><circle cx="724" cy="521" r="10" fill="#d68a48"/><circle cx="739" cy="525" r="10" fill="#bf6250"/>
-<path d="M722 514L726 508" stroke="#52753b" stroke-width="2"/>
-<!-- paper for homework -->
-<path d="M710 594L778 574L814 594L744 614Z" fill="#eee7dc" stroke="#bcb4a5" stroke-width="2"/>
-<path d="M725 593L764 583M733 599L785 588" stroke="#8698aa" stroke-width="2"/>
-<!-- fridge magnets -->
-<circle cx="1351" cy="463" r="5" fill="#bd735b"/><rect x="1288" y="482" width="37" height="37" fill="#fbf6e8" stroke="#b9b4ac" stroke-width="2" transform="rotate(-6 1305 500)"/>
-<path d="M1295 505l12-13 11 8" stroke="#73a083" stroke-width="3" fill="none"/><circle cx="1340" cy="560" r="6" fill="#88a381"/>
-<!-- herb leaves on sill -->
-<path d="M484 294V261" stroke="#63835f" stroke-width="3"/>
-<path d="M484 280Q459 257 461 248Q488 250 484 280M486 271Q513 248 515 245Q510 279 486 271" fill="#709866"/>
-<rect x="468" y="287" width="32" height="23" rx="3" fill="#a97d55"/>
-<!-- floor rugs, softly irregular -->
-<path d="M271 852Q299 792 414 776Q510 784 561 860L555 894H267Z" fill="#8f9973" opacity=".56"/>
-<!-- kitchen steam only when cooking -->
-<g id="steam" opacity="0"><path d="M1199 295Q1181 281 1197 263Q1210 247 1197 236" fill="none" stroke="#f6f4ea" stroke-width="6" stroke-linecap="round"/><path d="M1216 297Q1196 279 1211 259Q1224 243 1217 230" fill="none" stroke="#f6f4ea" stroke-width="5" stroke-linecap="round"/></g>
+<!-- polished light, gentle steam while cooking -->
+<path d="M52 314L548 326" stroke="#f6f3d6" stroke-width="4" opacity=".65"/>
+<path d="M342 514L970 432" stroke="#f7dbab" stroke-width="3" opacity=".45"/>
+<g id="steam" opacity="0"><path d="M1199 296Q1182 278 1197 259Q1206 245 1199 234" fill="none" stroke="#f9f5df" stroke-width="6" stroke-linecap="round"/><path d="M1217 300Q1203 285 1215 260Q1226 245 1217 233" fill="none" stroke="#f9f5df" stroke-width="4" stroke-linecap="round"/></g>
 </g>
 <!-- clickable stations -->
 <g class="hotspot" data-station="stove" role="button" tabindex="0" aria-label="Ocak"><circle class="halo" cx="1193" cy="280" r="24"/><text class="sym" x="1193" y="283">🍳</text><text class="spot-label" x="1193" y="248">OCAK</text></g>
