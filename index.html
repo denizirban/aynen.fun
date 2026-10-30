@@ -483,7 +483,7 @@ let requested=new URLSearchParams(location.search).get('game');if(requested==='p
   const W=scene.clientWidth, V=window.innerHeight||760;
   if(!W)return;
   const mobile=W<=760;
-  const H=mobile?Math.max(V*1.7,1550):V;
+  const H=mobile?Math.max(V*2.2,1900):V;
   const insetX=mobile?14:clamp(W*.019,14,30),insetY=mobile?15:clamp(H*.021,11,20);
   const catWidth=mobile?clamp(W*.3,105,142):clamp(Math.min(W*.096,H*.237),90,168);
   const catY=mobile?Math.min(H*.31,550):H/2;
@@ -492,7 +492,7 @@ let requested=new URLSearchParams(location.search).get('game');if(requested==='p
   if(mobile)scene.style.setProperty('--scatter-scene-height',Math.ceil(H)+'px');
   const cw=catWidth,ch=cw*198/230;
   const mascot={x:W/2-cw/2-22,y:catY-ch/2-21,w:cw+44,h:ch+42};
-  const base=mobile?clamp(W*.285,90,120):Math.min(149,W/9.1,H/6.55);
+  const base=mobile?clamp(W*.245,79,108):Math.min(149,W/9.1,H/6.55);
   const variations=[1.07,.91,1.1,.95,1.01,1.08,.9,1.13,.89,1.04,.96,1.03];
   let layoutBoxes=null;
   for(let k=0;k<15 && !layoutBoxes;k++){
