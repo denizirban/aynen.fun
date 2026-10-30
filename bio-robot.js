@@ -23,6 +23,7 @@ let cells=starter(),undoStack=[],savedCells=null,version=1,completed=[],best=[],
 const FIRST_KEY='aynen_bio_intro_completed_v4';
 let tutorialSeen=false,hasPlayed=false,nextTipDismissed=false;
 try{tutorialSeen=localStorage.getItem(FIRST_KEY)==='1'}catch(e){}
+let zoom=1;
 let coachStep=0,hasPlaced=false,hasSelected=false;
 let mode='build',paused=false,model=null,results=null,drawerType='',audio=false,ambient=true,precision=true;
 let W=1200,H=720,dpr=1,unit=52,baseX=600,baseY=405,hover=null,pointerId=-1,painted='',last=0,t=0,toastTimer=null;
@@ -62,6 +63,7 @@ function getStats(){
 }
 function update(){
  const st=getStats(),en=model?Math.round(100*model.energy/model.energyMax):100;
+ $('zoomValue').textContent=Math.round(zoom*100)+'%';
  $('statEnergy').textContent=en+'%';$('statBalance').textContent=st.balance+'%';$('statThrust').textContent=st.thrust+'%';
  $('barEnergy').style.width=en+'%';$('barBalance').style.width=st.balance+'%';$('barThrust').style.width=st.thrust+'%';
  $('selectedName').textContent=selected==='erase'?'Sil':COLORS[selected].label;
@@ -89,6 +91,9 @@ function update(){
  $('runSubtitle').textContent=mode==='build'?'Robotunu çalıştır':mode==='running'?(paused?'Harekete devam':'Simülasyonu durdur'):'Bir şey değiştir';
  $('runGlyph').innerHTML='<use href="#'+(mode==='running'&&!paused?'i-pause':'i-play')+'"/>';
  $('runBtn').disabled=mode==='build'&&!st.q.muscle;
+ const balance=st.balance;
+ const insight=mode==='build'?(st.q.muscle===0?'Kas hücresi olmadan robot hareket edemez.':balance<60?'Robot dönmeye yatkın: kasları iki yana dağıt.':st.q.sensor===0?'Duyu ekleyerek yönünü düzeltmesini sağlayabilirsin.':st.q.energy===0?'Enerji hücresi eklersen daha uzun hareket eder.':'Hazır: hücre yerlerini değiştirip hareketini test et.'):mode==='running'?(paused?'Deney durdu. Devam et veya robotu düzenle.':model?.collisions?'Bir engele çarptı: duyu hücrelerini dene.':'Robotun yolculuğunu takip et.'):results?.success?'Başarılı! Bir hücre değiştirerek gelişimi ölç.':'İpucunu inceleyip yeniden dene.';
+ $('insightText').textContent=insight;
  coachStep=mode==='running'||mode==='result'?3:hasPlaced?2:hasSelected?1:0;
  const ct=[
  ['1 / 3 · KEŞFET','Robotun hazır','Aşağıdan bir hücre seçip ortadaki + noktalarına ekleyebilirsin. İstersen hemen Test et.'],
@@ -168,6 +173,13 @@ function finish(success,reason){
  else if(level>0&&s.s.q.sensor===0)msg='Duyu hücresi olmadan yönünü düzeltmek zor. Ön tarafa bir duyu hücresi ekle.';
  else msg='Robot henüz hedefe ulaşamadı. Hücre konumlarını ve enerji rezervini değiştir.';
  $('resultText').textContent=msg;
+ const motor=s.s.q.muscle, sensors=s.s.q.sensor, energyCells=s.s.q.energy;
+ const suggestion=success?'Geliştirme deneyi: aynı görevi bir hücre eksilterek tamamlamayı dene.':
+    s.s.balance<65?'Bir kas hücresini karşı tarafa yerleştir. Daha dengeli hareket edebilir.':
+    !sensors?'Robotun ön tarafına Duyu hücresi ekle. Engelleri fark edip yönünü düzeltebilir.':
+    reason==='energy'||energyCells===0?'Bir Enerji hücresi ekleyerek robotun daha uzun hareket etmesini sağla.':
+    motor<=1?'Bir Kas hücresi daha ekle; ancak iki tarafa dengeli dağıt.':'Kas, Duyu ve Enerji hücrelerinin yerleşimlerini değiştir.';
+ $('resultSuggestion').textContent='Bir sonraki deneme → '+suggestion;
  $('resultTitle').textContent=success?'İŞE YARADI!':$('resultTitle').textContent;
  $('nextMissionBtn').hidden=!success||level>=MISSIONS.length-1;
  $('resultProgress').textContent=Math.round(progress*100)+'%';$('resultEnergy').textContent=results.energy+'%';$('resultTime').textContent=s.time.toFixed(1)+'s';
@@ -225,7 +237,7 @@ function wrap(a){while(a>PI)a-=TWO;while(a< -PI)a+=TWO;return a}
 function resize(){
  W=window.innerWidth;H=window.innerHeight;dpr=Math.min(window.devicePixelRatio||1,1.7);
  canvas.width=Math.max(2,Math.floor(W*dpr));canvas.height=Math.max(2,Math.floor(H*dpr));canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
- unit=W<800?clamp(W*.095,26,40):clamp(Math.min(W*.055,H*.091),37,72);
+ unit=(W<800?clamp(W*.095,26,40):clamp(Math.min(W*.055,H*.091),37,72))*zoom;
  baseX=W*(W<800?.52:.50);baseY=H*(W<800?.52:.58);
 }
 function poly(points,color,stroke,lw=1){
@@ -333,6 +345,8 @@ function drawMissionPreview(time){
  ctx.restore();
 }
 function drawBuild(time){
+ // A real-time, orientation-aware blueprint behind the sculpted model.
+
  const x=baseX,y=baseY+unit*1.20;
  drawLabRings(time,x,y,unit*3);
  // Compact floating plinth, constructed from translucent layers.
@@ -571,6 +585,10 @@ $('tipClose').addEventListener('click',()=>{
  update();
 });
 $('runBtn').addEventListener('click',stepButton);
+ function changeZoom(delta){zoom=clamp(Math.round((zoom+delta)*10)/10,.7,1.5);resize();update()}
+ $('zoomIn').addEventListener('click',()=>changeZoom(.1));
+ $('zoomOut').addEventListener('click',()=>changeZoom(-.1));
+ $('zoomReset').addEventListener('click',()=>{zoom=1;resize();update()});
 $('resumeBtn').addEventListener('click',()=>{if(mode==='running'&&paused)stepButton()});
 $('pauseEditBtn').addEventListener('click',enterBuild);
 $('fullscreenBtn').addEventListener('click',fullscreen);
