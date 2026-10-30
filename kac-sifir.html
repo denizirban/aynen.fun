@@ -262,6 +262,29 @@ footer{font-size:7px}footer>span:first-child{min-width:0;text-overflow:ellipsis;
 .buy-compare{line-height:1.1}
 }
 
+
+/* Magnitude museum: curated real-world references, signed deltas */
+.buy-content{min-height:0;gap:3px}
+.buy-result{white-space:normal;overflow-y:auto;text-overflow:clip;line-height:1.08;max-height:2.2em;font-size:clamp(16px,2.2vw,23px)}
+.buy-context{font-size:clamp(10px,1.12vw,11.5px);line-height:1.18;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.buy-compare{font:clamp(9px,1.08vw,10.8px)/1.18 "Courier New",monospace;color:#424242;min-height:0;overflow:auto;scrollbar-width:thin}
+.buy-select{margin-top:auto;flex:none;gap:4px}
+.buy-select button{font-size:9px;padding:5px 7px}
+.buy-disclaimer{margin:0;flex:none;min-height:0}
+@media(max-width:600px){
+.buy-result{font-size:16px;line-height:1.07}
+.buy-context{font-size:10px;line-height:1.14}
+.buy-compare{font-size:9px;line-height:1.12}
+.buy-select button{font-size:8px;padding:4px 5px;min-height:24px}
+.buy-disclaimer{font-size:8px}
+#pane-buy .sketch{width:72px}
+}
+@media(max-width:390px){
+#pane-buy .sketch{width:56px}
+.buy-select button{font-size:7px;padding:4px}
+.buy-context{font-size:9px}
+}
+
 </style>
 </head>
 <body>
@@ -283,7 +306,7 @@ footer{font-size:7px}footer>span:first-child{min-width:0;text-overflow:ellipsis;
 <nav class="disc-tabs" role="tablist" aria-label="Keşif türü">
 <button class="disc-tab active" type="button" data-pane="idea" id="tab-idea" role="tab" aria-controls="pane-idea" aria-selected="true">SIFIRIN FİKRİ</button>
 <button class="disc-tab" type="button" data-pane="between" id="tab-between" role="tab" aria-controls="pane-between" aria-selected="false">0–1 ARASI ∞</button>
-<button class="disc-tab" type="button" data-pane="buy" id="tab-buy" role="tab" aria-controls="pane-buy" aria-selected="false">GERÇEK ÖLÇEK</button>
+<button class="disc-tab" type="button" data-pane="buy" id="tab-buy" role="tab" aria-controls="pane-buy" aria-selected="false">GERÇEK HAYAT</button>
 </nav>
 <div class="disc-body">
 <div class="disc-pane active" id="pane-idea" role="tabpanel" aria-labelledby="tab-idea">
@@ -301,18 +324,19 @@ footer{font-size:7px}footer>span:first-child{min-width:0;text-overflow:ellipsis;
 <div class="between-thought" id="between-thought">İki reel sayı arasında sonsuz reel sayı bulunur.</div>
 </section></div>
 <div class="disc-pane" id="pane-buy" role="tabpanel" aria-labelledby="tab-buy" hidden>
-<div class="sketch buy-sketch" role="img" aria-label="Karşılaştırmanın çizimi"><svg id="buy-art" viewBox="0 0 168 126" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div class="sketch buy-sketch" role="img" aria-label="Seçilen ölçeğin görsel karşılığı"><svg id="buy-art" viewBox="0 0 168 126" xmlns="http://www.w3.org/2000/svg"></svg></div>
 <div class="buy-content">
-<div class="tiny" id="buy-label">GERÇEK DÜNYADA KARŞILIĞI</div>
-<h2 class="buy-result" id="buy-result" aria-live="polite">0 · denge</h2>
-<p class="buy-context" id="buy-context">Ölçeğin gerçek karşılıklarını keşfet.</p>
-<div class="buy-compare" id="buy-compare">Üç farklı alanda sıfırın iki yönü var.</div>
-<div class="buy-select" role="group" aria-label="Karşılaştırma türü">
-<button data-mode="para" class="chosen" type="button" aria-pressed="true">PARA</button>
-<button data-mode="zaman" type="button" aria-pressed="false">ZAMAN</button>
-<button data-mode="yukseklik" type="button" aria-pressed="false">YÜKSEKLİK</button>
+<div class="tiny" id="buy-label">SAYI GERÇEK HAYATTA NEYE BENZİYOR?</div>
+<h2 class="buy-result" id="buy-result" aria-live="polite">0 · net değişim yok</h2>
+<p class="buy-context" id="buy-context">Sıfır, referans noktasındaki değişimsizliktir.</p>
+<div class="buy-compare" id="buy-compare">Sayıyı kaydırarak gerçek büyüklüklerle karşılaştır.</div>
+<div class="buy-select" role="group" aria-label="Karşılaştırma alanı">
+<button data-mode="auto" class="chosen" type="button" aria-pressed="true">KARIŞIK</button>
+<button data-mode="life" type="button" aria-pressed="false">CANLILAR</button>
+<button data-mode="matter" type="button" aria-pressed="false">MADDE</button>
+<button data-mode="chance" type="button" aria-pressed="false">OLASILIK</button>
 </div>
-<div class="buy-disclaimer"><a id="buy-source" href="https://www.csgb.gov.tr/poco-pages/asgari-ucret" target="_blank" rel="noopener noreferrer">ÇSGB · 2026 ↗</a><span id="buy-note"> Nominal referans; satın alma gücü değil.</span></div>
+<div class="buy-disclaimer"><a id="buy-source" href="https://nigms.nih.gov/biobeat/2024/09/cells-by-the-numbers-2" target="_blank" rel="noopener noreferrer">NIH · REFERANS ↗</a><span id="buy-note"> Tahmini değerlerde yaklaşık işareti kullanılır.</span></div>
 </div>
 </div>
 </div></section>
@@ -524,7 +548,7 @@ var ideas=[
 ['Sıfırın tek mucidi yok.','TARİH','0','Boş basamağı belirtmekle sıfırı sayı olarak kullanmak farklı gelişmelerdir. Babil ve Maya geleneklerinde yer tutucular; Hint matematiğinde sıfırla işlem kuralları gelişti.','Brahmagupta · MS 628'],
 ['Hiçlik bir sayı olabilir mi?','ONTOLOJİ','∅','“Neden hiçlik yerine bir şey var?” sorusu felsefenin klasik problemlerindendir. Matematiksel 0 kesin tanımlıdır; felsefedeki mutlak hiçlik aynı kavram değildir.','0 sayısı ≠ mutlak hiçlik']
 ];
-var num=0,view='idea',touched=false,index=0,chosen='para';
+var num=0,view='idea',touched=false,index=0,chosen='auto';
 var E=function(x){return document.getElementById(x)};
 function renderIdea(){var q=ideas[num];E('idea-title').textContent=q[0];E('idea-tag').textContent=q[1];E('idea-symbol').textContent=q[2];E('idea-text').textContent=q[3];E('idea-formula').textContent=q[4];E('idea-step').textContent=String(num+1).padStart(2,'0')+' / '+ideas.length}
 E('idea-prev').addEventListener('click',function(){num=(num+ideas.length-1)%ideas.length;renderIdea()});
@@ -538,66 +562,77 @@ document.querySelectorAll('.disc-tab').forEach(function(b){
  b.addEventListener('click',function(){showPane(b.dataset.pane,true)});
  b.addEventListener('keydown',function(e){if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;e.preventDefault();var a=['idea','between','buy'],next=a[(a.indexOf(view)+(e.key==='ArrowRight'?1:2))%3];showPane(next,true);E('tab-'+next).focus()});
 });
-var references={
- para:{source:'ÇSGB · 2026 ↗',url:'https://www.csgb.gov.tr/poco-pages/asgari-ucret',note:'Nominal kıyas; güncel alım gücü hesabı değil.'},
- zaman:{source:'NASA · EVRENİN YAŞI ↗',url:'https://science.nasa.gov/exoplanets/what-is-the-universe/',note:'1 gün = 86.400 sn; 1 yıl ≈ 365,2425 gün.'},
- yukseklik:{source:'NOAA · OKYANUS ↗',url:'https://oceanexplorer.noaa.gov/ocean-fact/ocean-depth/',note:'Everest: Nepal Mountain Academy · 8.848,86 m.'}
-};
-var salary2026=28075.5,everest=8848.86,challenger=10935,universeAgeYears=13.8e9,secondsPerYear=365.2425*86400;
-var illustrations={
-para:'<rect x="19" y="25" width="130" height="78" rx="3" fill="#ecece7" stroke="#111" stroke-width="3"/><rect x="30" y="37" width="108" height="54" fill="#fff" stroke="#111" stroke-width="2"/><circle cx="84" cy="64" r="21" fill="#e4e4db" stroke="#111" stroke-width="2.4"/><path d="M75 55h18M75 63h18M84 47v34M75 70h18" stroke="#111" stroke-width="2.4" stroke-linecap="round"/><path d="M26 21h119" stroke="#111" stroke-width="2" stroke-dasharray="4 5"/>',
-zaman:'<circle cx="84" cy="65" r="47" fill="#f6f6f3" stroke="#111" stroke-width="3"/><circle cx="84" cy="65" r="3.5" fill="#111"/><path d="M84 65V34m0 31l24 17" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/><path d="M84 23v8M84 99v8M42 65h8m68 0h8" stroke="#111" stroke-width="3"/><path d="M25 20l9-7m100 7l-9-7" stroke="#111" stroke-width="3" stroke-linecap="round"/>',
-yukseklik:'<path d="M4 64h160" stroke="#111" stroke-width="2" stroke-dasharray="5 4"/><path d="M10 62l34-22 22 10 35-34 26 21 31 25z" fill="#ecebe5" stroke="#111" stroke-width="2.7" stroke-linejoin="round"/><path d="M2 66h164v56H2z" fill="#e5eff3"/><path d="M2 66c18 8 33-7 51 0s33-8 51 0 37-7 62 0" fill="none" stroke="#111" stroke-width="2"/><path d="M20 82l26 9 19-5 17 19 19-7 25 10 19-7" fill="none" stroke="#111" stroke-width="2.3"/><path d="M83 58v15" stroke="#111" stroke-width="2"/><circle cx="83" cy="66" r="3.5" fill="#111"/>'
-};
-function pretty(num,digits){
- if(num===0)return '0';
- var abs=Math.abs(num);
- if(abs>=1e7||abs<1e-3){var parts=num.toExponential(2).split('e');return parts[0].replace('.',',')+' × 10^'+Number(parts[1]);}
- return num.toLocaleString('tr-TR',{maximumSignificantDigits:digits||3});
+// Curated anchors: real measurements and explicitly identified mathematical counts.
+function factorial(n){var p=1;for(var j=2;j<=n;j++)p*=j;return p}
+var anchors=[
+{id:'bacterium',at:0,amount:1,cat:'life',image:'micro',name:'Tek bir bakteri hücresi',unit:'bakteri',summary:'Bakteriler mikroskobik ve tek hücreli canlılardır. Ölçeğin en küçük sayma örneği: tek bir hücre.',source:'NIH · HÜCRELER',url:'https://nigms.nih.gov/biobeat/2024/09/cells-by-the-numbers-2',kind:'tanım'},
+{id:'cards10',at:Math.log10(factorial(10)),amount:factorial(10),cat:'chance',image:'cards',name:'10 farklı kartın sıralanışı',unit:'diziliş',summary:'10 farklı kartın 3.628.800 farklı sıralanışı vardır. Bu sayı tam olarak 10! ile hesaplanır.',source:'HESAP · 10!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'},
+{id:'neurons',at:Math.log10(86e9),amount:86e9,cat:'life',image:'neuron',name:'İnsan beynindeki nöronlar',unit:'nöron',summary:'Bir insan beyninde yaklaşık 86 milyar nöron bulunur. Bireyler arasında farklılık vardır.',source:'NIH · BEYİN',url:'https://www.nih.gov/about-nih/nih-turning-discovery-into-health/healthy-mind',kind:'tahmin'},
+{id:'human-cells',at:Math.log10(3e13),amount:3e13,cat:'life',image:'cells',name:'Bir yetişkinin insan hücreleri',unit:'insan hücresi',summary:'Bir yetişkin insan bedeninde yaklaşık 30 trilyon insan hücresi bulunur; cinsiyete ve bedene göre değişir.',source:'NIH · HÜCRE SAYISI',url:'https://nigms.nih.gov/biobeat/2024/09/cells-by-the-numbers-2',kind:'tahmin'},
+{id:'cards20',at:Math.log10(factorial(20)),amount:factorial(20),cat:'chance',image:'cards',name:'20 farklı kartın sıralanışı',unit:'diziliş',summary:'20 farklı kartın yerlerini değiştirirsen 20! farklı diziliş elde edersin. Matematiksel sayım, gerçekleşmiş olay sayısı değil.',source:'HESAP · 20!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'},
+{id:'drop',at:Math.log10(1.67e21),amount:1.67e21,cat:'matter',image:'drop',name:'Bir su damlasındaki moleküller',unit:'su molekülü',summary:'0,05 mL olarak varsayılan bir su damlasında yaklaşık 1,67 × 10²¹ su molekülü bulunur; damla hacmine bağlıdır.',source:'BIPM · MOL',url:'https://www.bipm.org/en/publications/si-brochure',kind:'hesap'},
+{id:'stars',at:23,amount:1e23,cat:'matter',image:'stars',name:'Gözlemlenebilir evrendeki yıldızlar',unit:'yıldız',summary:'ESA’nın kaba tahmini 10²²–10²⁴ yıldız aralığındadır. Burada karşılaştırma için 10²³ orta ölçek alındı.',source:'ESA · YILDIZLAR',url:'https://www.esa.int/Science_Exploration/Space_Science/How_many_stars_are_there_in_the_Universe',kind:'kaba tahmin'},
+{id:'liter',at:Math.log10(3.34e25),amount:3.34e25,cat:'matter',image:'drop',name:'Bir litre sudaki moleküller',unit:'su molekülü',summary:'Yaklaşık 1 kg saf suda, mol ve Avogadro sabiti kullanılarak yaklaşık 3,34 × 10²⁵ molekül hesaplanır.',source:'BIPM · MOL',url:'https://www.bipm.org/en/publications/si-brochure',kind:'hesap'},
+{id:'earth-microbes',at:Math.log10(5e30),amount:5e30,cat:'life',image:'planet',name:'Dünya üzerindeki prokaryotlar',unit:'prokaryotik hücre',summary:'1998 tarihli bir araştırma, Dünya üzerindeki prokaryot sayısını 4–6 × 10³⁰ olarak tahmin etti. Güncel kesin sayım değildir.',source:'PNAS · 1998',url:'https://pmc.ncbi.nlm.nih.gov/articles/33863/',kind:'tarihsel tahmin'},
+{id:'cards30',at:Math.log10(factorial(30)),amount:factorial(30),cat:'chance',image:'cards',name:'30 farklı nesnenin sıralanışı',unit:'diziliş',summary:'30 farklı nesneyi sıraya koymanın tam 30! farklı yolu vardır. Gerçekte hepsini denemek gerekmiyor.',source:'HESAP · 30!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'},
+{id:'cards35',at:Math.log10(factorial(35)),amount:factorial(35),cat:'chance',image:'cards',name:'35 farklı nesnenin sıralanışı',unit:'diziliş',summary:'35! olası sıra, çok az sayıda nesneden bile devasa sayıların doğabileceğini gösterir.',source:'HESAP · 35!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'},
+{id:'cards40',at:Math.log10(factorial(40)),amount:factorial(40),cat:'chance',image:'cards',name:'40 farklı nesnenin sıralanışı',unit:'diziliş',summary:'40! ≈ 8,16 × 10⁴⁷ olası sıralanıştır. Matematiksel ihtimal sayısıdır; gerçekleşen olay sayısı değil.',source:'HESAP · 40!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'},
+{id:'cards45',at:Math.log10(factorial(45)),amount:factorial(45),cat:'chance',image:'cards',name:'45 farklı nesnenin sıralanışı',unit:'diziliş',summary:'45 farklı nesneyi dizmenin 45! yolu vardır. Gerçek nesnelerin tüm dizilişlerinin gerçekleşmesi gerekmez.',source:'HESAP · 45!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'},
+{id:'cards52',at:Math.log10(factorial(52)),amount:factorial(52),cat:'chance',image:'cards',name:'52 kartlık destenin sıralanışı',unit:'diziliş',summary:'Standart bir oyun destesinin 52! ≈ 8,07 × 10⁶⁷ farklı dizilişi vardır. Bu matematiksel olarak kesin bir sayımdır.',source:'HESAP · 52!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'},
+{id:'cards55',at:Math.log10(factorial(55)),amount:factorial(55),cat:'chance',image:'cards',name:'55 farklı nesnenin sıralanışı',unit:'diziliş',summary:'55 farklı nesnenin sırasını değiştirme olasılıkları 55! ile hesaplanır.',source:'HESAP · 55!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'},
+{id:'particles',at:Math.log10(4e80),amount:4e80,cat:'matter',image:'atom',name:'Gözlemlenebilir evrendeki parçacıklar',unit:'madde parçacığı',summary:'2021 tarihli bir fizik modelinde gözlemlenebilir evrendeki madde parçacıkları yaklaşık 4 × 10⁸⁰ hesaplandı. Modele bağlı tahmindir.',source:'AIP ADVANCES · 2021',url:'https://doi.org/10.1063/5.0064475',kind:'modele bağlı'},
+{id:'cards60',at:Math.log10(factorial(60)),amount:factorial(60),cat:'chance',image:'cards',name:'60 farklı nesnenin sıralanışı',unit:'diziliş',summary:'60! farklı sıralama seçeneği vardır. Bu kadar kombinasyonu tek tek üretmek pratik değildir.',source:'HESAP · 60!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'},
+{id:'cards70',at:Math.log10(factorial(70)),amount:factorial(70),cat:'chance',image:'cards',name:'70 farklı nesnenin sıralanışı',unit:'diziliş',summary:'70! ≈ 1,20 × 10¹⁰⁰ sıralanış: Googol büyüklüğünde olasılıklar, yalnızca 70 nesneden doğabilir.',source:'HESAP · 70!',url:'https://mathworld.wolfram.com/Factorial.html',kind:'kesin'}
+];
+function scientific(v,sig){
+ if(v===0)return '0';
+ if(v>=0.01&&v<10000000)return v.toLocaleString('tr-TR',{maximumSignificantDigits:sig||3});
+ var e=v.toExponential((sig||3)-1).split('e');
+ return Number(e[0]).toLocaleString('tr-TR')+' × 10'+(Number(e[1])<0?'⁻':'')+String(Math.abs(Number(e[1]))).replace(/[0-9]/g,function(c){return '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]||c});
 }
-function amountLabel(k){return k<=12?Math.pow(10,k).toLocaleString('tr-TR'):'10^'+k}
-function elapsed(seconds){
- if(seconds<60)return pretty(seconds,3)+' saniye';
- if(seconds<3600){var min=Math.floor(seconds/60),sec=Math.round(seconds%60);return min+' dk'+(sec?' '+sec+' sn':'');}
- if(seconds<86400){var h=Math.floor(seconds/3600),min=Math.floor(seconds%3600/60);return h+' saat'+(min?' '+min+' dk':'');}
- if(seconds<secondsPerYear)return pretty(seconds/86400)+' gün';
- return pretty(seconds/secondsPerYear)+' yıl';
+function powLabel(k){return k<=12?Math.pow(10,k).toLocaleString('tr-TR'):'10'+String(k).split('').map(function(c){return '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]}).join('')}
+function pickAnchor(k){
+ var all=anchors.filter(function(a){return chosen==='auto'||a.cat===chosen});
+ return all.reduce(function(best,a){return !best||Math.abs(a.at-k)<Math.abs(best.at-k)?a:best},null);
+}
+function graphics(type,neg){
+ var ink='#151515',shape='';
+ if(type==='micro')shape='<ellipse cx="83" cy="64" rx="37" ry="19" fill="#dbe6dc" stroke="'+ink+'" stroke-width="3" transform="rotate(-18 83 64)"/><path d="M43 57l-18-12m23 27l-18 9m92-27l21-10m-19 25l18 12" stroke="'+ink+'" stroke-width="2" fill="none"/><g fill="'+ink+'"><circle cx="66" cy="67" r="3"/><circle cx="82" cy="56" r="3"/><circle cx="100" cy="64" r="3"/></g>';
+ else if(type==='neuron')shape='<circle cx="84" cy="64" r="19" fill="#e0e3e8" stroke="'+ink+'" stroke-width="3"/><circle cx="84" cy="64" r="6" fill="'+ink+'"/><g fill="none" stroke="'+ink+'" stroke-width="3" stroke-linecap="round"><path d="M70 49L52 34 36 38 23 26M73 80L61 100 44 104M100 76l28 15 17-2M99 49l17-18 19 2M65 62l-35-6-11 8M84 43V22"/></g>';
+ else if(type==='cells')shape='<g fill="#e4e8e0" stroke="'+ink+'" stroke-width="2.4"><circle cx="62" cy="42" r="18"/><circle cx="101" cy="42" r="18"/><circle cx="42" cy="76" r="18"/><circle cx="81" cy="80" r="18"/><circle cx="120" cy="77" r="18"/></g><g fill="'+ink+'"><circle cx="62" cy="42" r="4"/><circle cx="101" cy="42" r="4"/><circle cx="42" cy="76" r="4"/><circle cx="81" cy="80" r="4"/><circle cx="120" cy="77" r="4"/></g>';
+ else if(type==='drop')shape='<path d="M84 14C61 45 44 67 44 85a40 40 0 0 0 80 0c0-18-17-40-40-71z" fill="#dfeef3" stroke="'+ink+'" stroke-width="3"/><path d="M60 84c0 14 10 23 24 24" fill="none" stroke="'+ink+'" stroke-width="3"/><g fill="'+ink+'"><circle cx="77" cy="73" r="3"/><circle cx="99" cy="82" r="3"/><circle cx="79" cy="91" r="3"/></g>';
+ else if(type==='stars')shape='<g fill="'+ink+'"><circle cx="39" cy="32" r="3"/><circle cx="124" cy="35" r="3"/><circle cx="143" cy="92" r="4"/><circle cx="48" cy="101" r="3"/><circle cx="111" cy="107" r="2"/></g><path d="M85 19l11 31 29 12-29 12-11 31-12-31-29-12 29-12z" fill="#eee8db" stroke="'+ink+'" stroke-width="2.5"/>';
+ else if(type==='planet')shape='<circle cx="84" cy="62" r="44" fill="#e2ebea" stroke="'+ink+'" stroke-width="3"/><path d="M55 34l22-4 12 11-3 15-17 7-12-10-8-2m41 37 8-14 19-5 10 9-14 17-16 9" stroke="'+ink+'" stroke-width="2.5" fill="#c8d5c9"/><path d="M39 62h89M84 19c-25 24-25 63 0 87M84 19c25 24 25 63 0 87" stroke="'+ink+'" stroke-width="1.5" fill="none"/>';
+ else if(type==='cards')shape='<rect x="47" y="22" width="74" height="93" rx="5" fill="#ddd" stroke="'+ink+'" stroke-width="2.5" transform="rotate(12 84 68)"/><rect x="43" y="17" width="74" height="93" rx="5" fill="#eee" stroke="'+ink+'" stroke-width="2.5" transform="rotate(-9 80 64)"/><rect x="50" y="18" width="71" height="91" rx="5" fill="#fff" stroke="'+ink+'" stroke-width="3"/><path d="M86 36l12 21-12 21-12-21z" fill="#dad6ce" stroke="'+ink+'" stroke-width="2.5"/>';
+ else shape='<g stroke="'+ink+'" stroke-width="2" fill="none"><ellipse cx="84" cy="64" rx="55" ry="22" transform="rotate(30 84 64)"/><ellipse cx="84" cy="64" rx="55" ry="22" transform="rotate(-30 84 64)"/><ellipse cx="84" cy="64" rx="55" ry="22" transform="rotate(90 84 64)"/></g><circle cx="84" cy="64" r="12" fill="#e5e7f0" stroke="'+ink+'" stroke-width="3"/><circle cx="35" cy="48" r="5" fill="'+ink+'"/><circle cx="122" cy="93" r="5" fill="'+ink+'"/>';
+ if(neg)shape+='<path d="M20 16h28" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>';
+ return shape;
 }
 function renderBuy(){
- var neg=index<0,zero=index===0,k=Math.abs(index)-1,n=zero?0:Math.pow(10,k);
- var label=E('buy-label'),result=E('buy-result'),context=E('buy-context'),compare=E('buy-compare'),source=E('buy-source'),note=E('buy-note');
- var reference=references[chosen],signed=neg?'−':'+';
- E('buy-art').innerHTML=illustrations[chosen];
- E('buy-art').parentElement.setAttribute('aria-label',chosen==='para'?'Maaş karşılaştırması için para çizimi':chosen==='zaman'?'Zaman karşılaştırması için saat çizimi':'Deniz seviyesi, dağ ve okyanus kesiti');
- source.href=reference.url;source.textContent=reference.source;note.textContent=' '+reference.note;
- if(chosen==='para'){
-  label.textContent=zero?'DENGE · 0 TL':(neg?'BORÇ · ':'BİRİKİM · ')+signed+amountLabel(k)+' TL';
-  result.textContent=zero?'0 TL · denge':(neg?'− ':'+ ')+amountLabel(k)+' TL';
-  context.textContent=zero?'Ne birikim ne borç. Sıfır, ikisinin sınırı.':neg?'Bu tutarda borcun var. Satın alma gücü değil.':'Bu tutarda birikimin var. Borçla aynı yönde değil.';
-  compare.textContent=zero?'2026 net asgari ücret: 28.075,50 TL / ay.': '2026 net asgari ücretin '+pretty(n/salary2026)+' aylık tutarına eşit (nominal).';
- }else if(chosen==='zaman'){
-  label.textContent=zero?'ŞİMDİ · 0 SANİYE':(neg?'GEÇMİŞ · −':'GELECEK · +')+amountLabel(k)+' SN';
-  result.textContent=zero?'Şimdi. Tam sıfır.':elapsed(n)+(neg?' önce':' sonra');
-  context.textContent=zero?'Sıfır saniye geçmişte de değil, gelecekte de değil.':neg?'Başlangıç noktasının geçmişine doğru gidiyorsun.':'Başlangıç noktasının geleceğine doğru gidiyorsun.';
-  if(zero)compare.textContent='Zamanın yönü, işareti değişince değişir.';
-  else if(neg&&n/secondsPerYear>universeAgeYears)compare.textContent='Evrenin ≈13,8 milyar yıllık yaşını aşar; gerçek bir geçmiş tarihi değil, matematiksel ölçek.';
-  else if(n>=secondsPerYear)compare.textContent='1 yıl ≈ '+pretty(secondsPerYear,6)+' saniye. '+(neg?'Geçmişe doğru nominal süre.':'Geleceğe dair tahmin değildir.');
-  else compare.textContent='1 gün = 86.400 saniye. Bir günün '+pretty(100*n/86400,3)+'% kadarı.';
+ var neg=index<0,zero=index===0,k=Math.abs(index)-1,a=pickAnchor(Math.max(0,k));
+ var amount=zero?0:Math.pow(10,k),ratio=amount/a.amount,source=E('buy-source'),label=E('buy-label'),title=E('buy-result'),desc=E('buy-context'),comp=E('buy-compare');
+ E('buy-art').innerHTML=graphics(zero?'atom':a.image,neg);
+ source.textContent=a.source+' ↗';source.href=a.url;
+ if(zero){
+  label.textContent='0 · BAŞLANGIÇ NOKTASI';
+  title.textContent='0 · net değişim yok';
+  desc.textContent='Sıfır, bir şeyden hiç bulunmaması veya net değişimin olmaması demektir.';
+  comp.textContent='Sayıyı sağa kaydırdığında artış, sola kaydırdığında azalış büyüklüğü görürsün. Sayılabilir nesnelerin negatif adedi olmaz.';
  }else{
-  var ref=neg?challenger:everest,refName=neg?'Challenger Deep':'Everest';
-  label.textContent=zero?'DENİZ SEVİYESİ · 0 M':(neg?'DENİZ ALTI · −':'DENİZ ÜSTÜ · +')+amountLabel(k)+' M';
-  result.textContent=zero?'Deniz seviyesi':(neg?'− ':'+ ')+amountLabel(k)+' metre';
-  context.textContent=zero?'0 metre: yukarı ve aşağıyı ayıran referans.':neg?'Deniz seviyesinin altındaki varsayımsal bir nokta.':'Deniz seviyesinin üzerindeki varsayımsal bir nokta.';
-  if(zero)compare.textContent='Everest: +8.848,86 m · Challenger Deep: yaklaşık −10.935 m.';
-  else if(n>ref)compare.textContent=refName+' referansının '+pretty(n/ref,3)+' katı. Dünya üzerinde bu büyüklükte '+(neg?'bilinen bir okyanus derinliği':'bir dağ yüksekliği')+' yok.';
-  else compare.textContent=refName+' ölçüsünün '+pretty(n/ref*100,3)+'% kadarı ('+pretty(ref,6)+' m referans).';
+  label.textContent=(neg?'− AZALIŞ':'＋ ARTIŞ')+' · '+powLabel(k);
+  title.textContent=a.name;
+  desc.textContent=a.summary;
+  var r=ratio>=1?'yaklaşık '+scientific(ratio,3)+' katı':(ratio>.001?'yaklaşık %'+scientific(ratio*100,3)+' kadarı':'yaklaşık '+scientific(1/ratio,3)+' kat daha küçük');
+  comp.textContent='Seçilen sayı: '+powLabel(k)+' · '+a.name+' referansının '+r+'.';
+  if(neg)comp.textContent+=' Eksi işareti negatif adet değil, varsayımsal net azalıştır.';
+  else if(k>=85)comp.textContent+=' Bu ölçekte birçok karşılık fiziksel değil, teoriktir.';
+  if(k>=33&&a.cat==='life')comp.textContent+=' Bu sayı Dünya için verilen mikrop tahminini aşabilir; gerçek bir örnek sayımı değildir.';
+  if(k>=82&&a.cat==='matter')comp.textContent+=' Gözlemlenebilir evrenin tahmini parçacık sayısını aşabilir.';
  }
+ E('buy-note').textContent=' '+(zero?'Değerler kaynaklı, bazıları yaklaşık veya matematiksel hesap.':a.kind.toUpperCase()+' · ORAN OTOMATİK HESAPLANIR.');
 }
 document.querySelectorAll('[data-mode]').forEach(function(b){
- b.addEventListener('click',function(){chosen=b.dataset.mode;
-  document.querySelectorAll('[data-mode]').forEach(function(bb){var is=bb===b;bb.classList.toggle('chosen',is);bb.setAttribute('aria-pressed',String(is));});
-  renderBuy();
- });
+ b.addEventListener('click',function(){chosen=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(function(bb){var yes=bb===b;bb.classList.toggle('chosen',yes);bb.setAttribute('aria-pressed',String(yes))});renderBuy()});
 });
 window.aynenNumberChanged=function(next){index=next;renderBuy();if(!touched)showPane(index===0?'idea':'buy',false)};
 renderIdea();window.aynenNumberChanged(Number(E('scale').value));
