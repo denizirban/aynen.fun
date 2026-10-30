@@ -59,6 +59,57 @@ canvas{width:100%;height:100%;display:block}
 .panel{padding:19px 19px 16px}.panel p{font-size:13px}.panel h1{margin:17px 0}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+
+/* Kaldırım v2 — tactile, lightweight in-game UI. */
+:root{--paper:#f4ead7;--ink:#29261f;--chalk:#fff2d8}
+#game{background:#d9b5a1}
+.noise{opacity:.095}
+.top{top:max(12px,env(safe-area-inset-top));left:clamp(12px,2.3vw,30px);right:clamp(12px,2.3vw,30px)}
+.back{background:#fff5dfd9;border-radius:2px;border-color:#544235;padding:9px 11px;box-shadow:2px 3px 0 #5d4438;font-weight:900}
+.title{top:0}.title strong{font-size:clamp(20px,3vw,34px);text-shadow:1px 2px #f8dfc2;letter-spacing:-.085em}
+.title span{font-size:9px;background:#ffefcae0;padding:2px 5px}
+.metrics{gap:6px}.metric{background:#f8efdcdf;border:1px solid #786353;box-shadow:1px 2px 0 #57423b;align-items:center;min-width:68px;padding:6px 9px}
+.metric b{font-size:19px}.metric small{letter-spacing:.04em}
+#status{border:1px solid #6a5648;top:63px;background:#f5eacbe8;font-size:9px;box-shadow:2px 3px 0 #5f5548;letter-spacing:.03em}
+#tip{top:19%;background:#fff3c2;border:1.5px solid #46372c;box-shadow:3px 4px 0 #41352d;z-index:5;border-radius:2px}
+#hint{bottom:max(22px,env(safe-area-inset-bottom));padding:7px 10px;background:#312b25bc;font-size:11px;border-radius:2px;letter-spacing:.015em;color:#fff9ee;text-shadow:none}
+#control{background:#ffd45f;border:3px solid #3d3028;box-shadow:4px 5px 0 #3d3028;width:clamp(78px,10vw,105px);height:clamp(78px,10vw,105px);font-size:15px;z-index:4}
+#control.pressed{background:#eeb789;box-shadow:1px 2px 0 #3d3028}
+#charge{height:10px;bottom:max(26px,env(safe-area-inset-bottom));width:125px;background:#eee8d6;border:1px solid #493c33;z-index:4}
+#charge i{background:linear-gradient(90deg,#eab75c,#d85b49)}
+#charge::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 1px 3px #39292355}
+.utility{position:absolute;z-index:4;top:max(68px,calc(env(safe-area-inset-top) + 58px));right:clamp(12px,2.3vw,30px);display:flex;gap:5px}
+.utility button{min-width:51px;height:27px;background:#fff3dddc;color:#2a2722;border:1px solid #7a6451;padding:3px 8px;font:700 10px "Courier New",monospace;box-shadow:2px 2px 0 #584b40}
+.utility button[hidden]{display:none}
+.utility button:active{transform:translate(1px,1px);box-shadow:none}
+.overlay{background:#211e1aa3;backdrop-filter:blur(3px)}
+.panel{background:#f6eddd;border-color:#4b3c31;box-shadow:6px 7px 0 #43382b;border-radius:3px}
+.panel h1,.panel h2{letter-spacing:-.095em}
+.eyebrow{color:#786b60}
+.intro-skater{border-color:#6a5448;margin:13px 0;box-shadow:inset 0 5px 9px #5d4b3833}
+.primary{background:#f3c85b;box-shadow:2px 3px 0 #554337}
+.primary:hover{background:#f3ad92}
+.sub{color:#756a61}
+#resultReason{font-size:14px;font-weight:800;background:#fae5c9;padding:7px 9px;border-left:3px solid #c76b52;display:none;margin-bottom:12px}
+#results:not([hidden]) #resultReason{display:block}
+#pauseOverlay .panel{max-width:355px}
+#pauseOverlay .panel h2{margin:18px 0 10px}
+@media(max-width:650px){
+.top{top:max(10px,env(safe-area-inset-top))}
+.title{left:49%;top:32px}.title strong{font-size:22px}.title span{font-size:7px}
+.metrics{gap:3px}.metric{min-width:40px;padding:4px 5px}.metric small{font-size:7px}.metric b{font-size:13px}
+#status{top:95px;max-width:85%;font-size:8px;text-align:center}
+#tip{top:24%;font-size:13px}
+.utility{top:max(63px,calc(env(safe-area-inset-top) + 51px));right:12px;gap:4px}
+.utility button{font-size:9px;height:23px;padding:2px 5px;min-width:41px}
+#hint{font-size:8px;max-width:162px;left:10px;bottom:max(15px,env(safe-area-inset-bottom))}
+#control{right:12px;bottom:max(13px,env(safe-area-inset-bottom))}
+#charge{bottom:max(13px,env(safe-area-inset-bottom));width:93px;left:51%}
+.panel{max-height:92svh}
+}
+@media(max-width:500px) and (max-height:640px){#status{top:65px;left:44%}.title{display:none}.intro-skater{display:none}.panel{padding:12px}}
+
 </style>
 </head>
 <body>
@@ -72,7 +123,8 @@ canvas{width:100%;height:100%;display:block}
 </div>
 <div id="status" aria-live="polite">MODA · KALDIRIM DURUMU BELİRSİZ</div>
 <div id="tip" aria-live="polite"></div>
-<div id="hint">BASILI TUT → BIRAK: ZIPLA<br>HAVADAYKEN DOKUN: NUMARA<br>KLAVYE: BOŞLUK / ↑</div>
+<div class="utility"><button type="button" id="sound" aria-label="Sesi aç veya kapat" aria-pressed="false">SES: KAPALI</button><button type="button" id="pause" aria-label="Oyunu duraklat" hidden>DURAKLAT</button></div>
+<div id="hint">BASILI TUT → BIRAK: ZIPLA<br>HAVADA DOKUN → NUMARA<br>HER YERDEN KONTROL ET</div>
 <div id="charge"><i id="chargeFill"></i></div>
 <button id="control" type="button" aria-label="Zıplamak için basılı tut, bırakınca zıpla"><span id="controlLabel">ZIPLA</span><small>bas · bırak</small></button>
 <div class="overlay" id="overlay">
@@ -82,9 +134,10 @@ canvas{width:100%;height:100%;display:block}
 <p id="panelText">İstanbul'da kaykay sürmek istiyorsun. Yolda duba var, kaldırımda scooter var. Dümdüz gitmek teoride mümkün.</p>
 <div class="intro-skater" aria-hidden="true"><svg viewBox="0 0 420 132" preserveAspectRatio="xMidYMid slice"><rect y="98" width="420" height="34" fill="#827a79"/><path d="M0 97H420" stroke="#e6d4bd" stroke-width="5"/><g transform="translate(104 6)"><ellipse cx="52" cy="108" rx="71" ry="10" fill="#343330" opacity=".25"/><path d="M8 102Q55 108 113 101" fill="none" stroke="#272525" stroke-width="9" stroke-linecap="round"/><circle cx="26" cy="110" r="7" fill="#20201f"/><circle cx="92" cy="109" r="7" fill="#20201f"/><path d="M38 57L52 85L38 98M60 55L72 81L88 97" fill="none" stroke="#203849" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 25L68 22L76 61L35 64Z" fill="#c94e54" stroke="#382a28" stroke-width="3"/><path d="M34 30L65 30M32 41L71 41M36 52L74 52" stroke="#fff0d8" stroke-width="5"/><path d="M33 28L11 60M69 32L91 56" stroke="#cf9279" stroke-width="10" stroke-linecap="round"/><ellipse cx="51" cy="7" rx="22" ry="23" fill="#d7a48a" stroke="#382a28" stroke-width="2"/><path d="M27 0Q48 -24 75 -2L75 6L27 6Z" fill="#f4ebd7" stroke="#382a28" stroke-width="3"/><path d="M67 -3L86 3L70 7" fill="#d94f51"/></g><text x="244" y="76" font-family="Arial" font-weight="900" font-size="18" fill="#20201f">BİR YERDEN</text><text x="244" y="96" font-family="Arial" font-weight="900" font-size="24" fill="#20201f">BAŞLAYALIM.</text></svg></div>
 <button class="primary" id="start">KAYKAYA BİN →</button>
-<div id="results" hidden><div class="stats"><div><b id="resultM">0 m</b><small>MESAFE</small></div><div><b id="resultS">0</b><small>PUAN</small></div><div><b id="resultB">0 m</b><small>REKOR</small></div></div><button class="share" id="share">SONUCU PAYLAŞ ↗</button></div>
-<span class="sub">TEK TUŞ · KLAVYE + DOKUNMATİK · SES KAPALI</span>
+<div id="results" hidden><div id="resultReason"></div><div class="stats"><div><b id="resultM">0 m</b><small>MESAFE</small></div><div><b id="resultS">0</b><small>PUAN</small></div><div><b id="resultB">0 m</b><small>REKOR</small></div></div><button class="share" id="share">SONUCU PAYLAŞ ↗</button></div>
+<span class="sub">TEK DOKUNUŞ · MOBİL + KLAVYE · REKOR KAYDEDİLİR</span>
 </div></div>
+<div class="overlay" id="pauseOverlay" hidden><div class="panel"><div class="eyebrow">İSTANBUL / KISA MOLA</div><h2>Bir<br>soluklan.</h2><p>Şehir aynı yerde. Kaldığın yerden devam et.</p><button class="primary" type="button" id="resume">DEVAM ET →</button><button class="share" type="button" id="exit">BAŞA DÖN</button></div></div>
 </div>
 <script>
 (function(){
@@ -92,8 +145,8 @@ canvas{width:100%;height:100%;display:block}
 const $=id=>document.getElementById(id);
 const canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const H=720,GROUND=637,PI=Math.PI*2;
-let W=1280,dpr=1,run=false,last=0,elapsed=0,distance=0,score=0,best=0,speed=370,lives=3,streak=0,invuln=0,shake=0,spawnLeft=420,obstacles=[],effects=[],textTimer=0,zone=-1,gameOver=false;
-const player={x:255,y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0};
+let W=1280,dpr=1,run=false,paused=false,last=0,elapsed=0,distance=0,score=0,best=0,speed=340,lives=3,streak=0,invuln=0,shake=0,spawnLeft=420,obstacles=[],effects=[],textTimer=0,zone=-1,gameOver=false,soundOn=false,audio=null,crashReason="",nearCount=0;
+const player={x:255,y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0};
 const names=['MODA','KADIKÖY','KARAKÖY','BEŞİKTAŞ','CİHANGİR','ŞİŞLİ','ÜSKÜDAR','TAKSİM','BALAT'];
 const zoneName=()=>names[Math.min(names.length-1,Math.floor(distance/390))];
 const hazards=[
@@ -128,112 +181,182 @@ function resize(){
 window.addEventListener('resize',resize);resize();
 function makeParticle(x,y,c,n=7){for(let i=0;i<n;i++)effects.push({x,y,vx:(Math.random()-.5)*150,vy:-50-Math.random()*130,life:.4+Math.random()*.3,r:2+Math.random()*4,c})}
 function toast(s){$('tip').textContent=s;$('tip').classList.add('on');textTimer=2}
+
+function sfx(kind){
+ if(!soundOn)return;
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;if(!audio)audio=new AC();
+  if(audio.state==='suspended')audio.resume();
+  const now=audio.currentTime,osc=audio.createOscillator(),gain=audio.createGain();
+  const cfg={jump:[235,410,.14,'triangle',.025],land:[140,84,.09,'triangle',.028],trick:[490,720,.13,'sine',.022],hit:[120,48,.22,'sawtooth',.024],point:[620,820,.09,'sine',.015]}[kind]||[180,210,.1,'triangle',.02];
+  osc.type=cfg[3];osc.frequency.setValueAtTime(cfg[0],now);osc.frequency.exponentialRampToValueAtTime(cfg[1],now+cfg[2]);
+  gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(cfg[4],now+.008);gain.gain.exponentialRampToValueAtTime(.0001,now+cfg[2]);
+  osc.connect(gain);gain.connect(audio.destination);osc.start(now);osc.stop(now+cfg[2]+.01);
+ }catch(e){}
+}
+$('sound').addEventListener('click',()=>{
+ soundOn=!soundOn;$('sound').textContent=soundOn?'SES: AÇIK':'SES: KAPALI';$('sound').setAttribute('aria-pressed',String(soundOn));sfx('point');
+});
+function stop(automatic=false){
+ if(!run||paused)return;
+ paused=true;release();$('pauseOverlay').hidden=false;$('pause').textContent='DEVAM';
+ if(!automatic)$('pauseOverlay').querySelector('#resume').focus();
+}
+function resume(){
+ if(!run)return;
+ paused=false;$('pauseOverlay').hidden=true;$('pause').textContent='DURAKLAT';last=performance.now();
+}
+$('pause').addEventListener('click',()=>paused?resume():stop());
+$('resume').addEventListener('click',resume);
+$('exit').addEventListener('click',()=>{run=false;paused=false;gameOver=false;release();$('pauseOverlay').hidden=true;$('pause').hidden=true;$('results').hidden=true;$('start').textContent='KAYKAYA BİN →';$('panelTitle').innerHTML='Kaldırım<br>bul.';$('panelText').textContent="İstanbul'da kaykay sürmek istiyorsun. Dümdüz gitmek teoride mümkün.";$('overlay').hidden=false});
 function reset(){
- run=true;gameOver=false;elapsed=0;distance=0;score=0;speed=370;lives=3;streak=0;invuln=0;shake=0;spawnLeft=550;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;
- Object.assign(player,{y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0});
- $('overlay').hidden=true;$('controlLabel').textContent='ZIPLA';$('charge').classList.remove('on');$('control').classList.remove('pressed');$('tip').classList.remove('on');last=performance.now();updateHud();toast('KALDIRIM BULUNAMADI. YOLDAN DEVAM.');
+ run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';
+ Object.assign(player,{y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0});
+ $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;
+ $('controlLabel').textContent='ZIPLA';$('charge').classList.remove('on');$('control').classList.remove('pressed');$('tip').classList.remove('on');last=performance.now();updateHud();toast('BASILI TUT → BIRAKINCA ZIPLA');
 }
 function finish(){
  if(gameOver)return;
- gameOver=true;run=false;player.charging=false;$('control').classList.remove('pressed');$('charge').classList.remove('on');
+ gameOver=true;run=false;paused=false;player.charging=false;$('control').classList.remove('pressed');$('charge').classList.remove('on');$('pause').hidden=true;
  const meters=Math.floor(distance/10);
  if(meters>best){best=meters;try{localStorage.setItem('aynen-kaldirim-best',String(best))}catch(e){}}
- $('panelTitle').innerHTML=meters>100?'Şuraya<br>kadar.':'Bu kadar<br>mı?';
- $('panelText').textContent=meters>100?'İstanbul’da '+meters+' metre kaykay sürüldü. Kaldırım hâlâ bulunamadı.':'En azından kaykayı getirdin. Bir dahakine dubayı soldan al.';
+ $('panelTitle').innerHTML=meters>160?'Kaldırım<br>yine bitti.':'Bir daha<br>denersin.';
+ $('panelText').textContent='İstanbul’da '+meters+' metre kaykay sürdün. Kaldırım hâlâ bulunamadı.';
+ $('resultReason').textContent=crashReason||'Yol biraz kalabalıktı.';
  $('start').textContent='BİR DAHA DENE ↻';
  $('results').hidden=false;$('resultM').textContent=meters+' m';$('resultS').textContent=score.toLocaleString('tr-TR');$('resultB').textContent=best+' m';
  $('overlay').hidden=false;
 }
-function jump(){
- const p=clamp(player.charge/.65,0,1);
- player.vy=-530-p*260;player.y=-1;player.onGround=false;player.charge=0;player.trick=false;player.spin=0;
- makeParticle(player.x-22,GROUND,'#f8edd5',5);
+function jump(power){
+ const p=clamp((power===undefined?player.charge:power)/.65,0,1);
+ player.vy=-(W<590?485:515)-p*275;
+ player.y=-2;player.onGround=false;player.charge=0;player.trick=false;player.spin=0;player.buffer=0;
+ makeParticle(player.x-22,GROUND,'#f8edd5',6);sfx('jump');
 }
 function press(e){
  if(e)e.preventDefault();
- if(!run)return;
+ if(!run||paused)return;
  if(!player.onGround){
-   if(!player.trick){player.trick=true;player.spin=0;makeParticle(player.x,GROUND-118-player.y,'#ffdb66',7)}
+   const timeToLand=player.vy>0?-player.y/player.vy:99;
+   if(timeToLand<.17){player.buffer=.17;player.bufferPower=.23;return}
+   if(!player.trick){player.trick=true;player.airTrickTime=0;player.spin=0;makeParticle(player.x,GROUND+player.y-110,'#ffdb66',7);sfx('trick')}
    return;
  }
  if(player.charging)return;
- player.charging=true;player.charge=.08;$('charge').classList.add('on');$('control').classList.add('pressed');
+ player.charging=true;player.charge=.04;$('chargeFill').style.width='7%';$('charge').classList.add('on');$('control').classList.add('pressed');
 }
 function release(e){
  if(e)e.preventDefault();
  if(!player.charging)return;
  player.charging=false;$('charge').classList.remove('on');$('control').classList.remove('pressed');
- if(run&&player.onGround)jump();
+ if(run&&!paused&&player.onGround)jump();
 }
 $('start').addEventListener('click',reset);
 const btn=$('control');
 btn.addEventListener('pointerdown',e=>{press(e);try{btn.setPointerCapture(e.pointerId)}catch(err){}});
 btn.addEventListener('pointerup',release);
-btn.addEventListener('pointercancel',release);
-btn.addEventListener('lostpointercapture',release);
-canvas.addEventListener('pointerdown',press);
+btn.addEventListener('pointercancel',()=>{player.charging=false;$('charge').classList.remove('on');$('control').classList.remove('pressed')});
+btn.addEventListener('lostpointercapture',()=>{if(player.charging)release()});
+canvas.addEventListener('pointerdown',e=>{press(e);try{canvas.setPointerCapture(e.pointerId)}catch(err){}});
 canvas.addEventListener('pointerup',release);
-canvas.addEventListener('pointercancel',release);
+canvas.addEventListener('pointercancel',()=>{player.charging=false;$('charge').classList.remove('on')});
 window.addEventListener('keydown',e=>{
  if(['Space','ArrowUp','KeyW'].includes(e.code)){e.preventDefault();if(!e.repeat)press()}
  if(e.code==='Enter'&&!run)reset();
+ if(e.code==='Escape'&&run){e.preventDefault();paused?resume():stop()}
 });
 window.addEventListener('keyup',e=>{if(['Space','ArrowUp','KeyW'].includes(e.code)){e.preventDefault();release()}});
-window.addEventListener('blur',()=>{if(player.charging)release();last=performance.now()});
-document.addEventListener('visibilitychange',()=>{last=performance.now()});
+window.addEventListener('blur',()=>{if(run&&!paused)stop(true);last=performance.now()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&run&&!paused)stop(true);last=performance.now()});
 $('share').addEventListener('click',async()=>{
- const t='İstanbul’da '+Math.floor(distance/10)+' m kaykay sürdüm. Kaldırım hâlâ yok. #aynenfun';
+ const meters=Math.floor(distance/10);
+ const t='İstanbul’da '+meters+' m kaykay sürdüm. '+(crashReason||'Kaldırım hâlâ yok.')+' #aynenfun';
  const url='https://aynen.fun/kaldirim.html';
  try{if(navigator.share){await navigator.share({title:'Kaldırım — aynen.fun',text:t,url});return}if(navigator.clipboard){await navigator.clipboard.writeText(t+'\n'+url);$('share').textContent='KOPYALANDI ✓';return}}catch(e){if(e.name==='AbortError')return}
  window.prompt('Paylaş:',t+' '+url);
 });
+
+
 function spawn(){
- const stage=Math.floor(distance/1800);
- let pool=hazards.filter(h=>stage>1||!['taksi','barikat'].includes(h.type));
+ const stage=Math.floor(distance/2800);
+ const pool=hazards.filter(h=>stage>1||!['taksi','barikat'].includes(h.type));
  let h=pool[Math.floor(Math.random()*pool.length)];
- for(let i=0;i<4&&h.type===previous;i++)h=pool[Math.floor(Math.random()*pool.length)];
+ for(let i=0;i<5&&h.type===previous;i++)h=pool[Math.floor(Math.random()*pool.length)];
  previous=h.type;
- obstacles.push({...h,x:W+100,passed:false,hit:false});
- spawnLeft=clamp(370+Math.random()*270-speed*.20,290,570);
+ obstacles.push({...h,x:W+80,passed:false,hit:false,near:false});
+ const baseGap=W<590?370:430;
+ const ease=clamp(1-elapsed/32,0,1);
+ // Keep the minimum approach time readable at higher speeds.
+ spawnLeft=Math.max(baseGap*.75,(baseGap+Math.random()*170+ease*170)*(speed/340));
 }
 function update(dt){
- if(!run)return;
- dt=Math.min(.043,dt);elapsed+=dt;speed=clamp(370+distance*.014,370,770);
+ if(!run||paused)return;
+ dt=Math.min(.035,dt);elapsed+=dt;
+ const baseSpeed=W<590?270:340;
+ speed=clamp(baseSpeed+Math.max(0,elapsed-6)*7.6,baseSpeed,W<590?565:730);
  const dx=speed*dt;distance+=dx;spawnLeft-=dx;
  if(spawnLeft<=0)spawn();
  const z=Math.min(names.length-1,Math.floor(distance/3900));
- if(z!==zone){zone=z;$('status').textContent=names[z]+' · KALDIRIM DURUMU BELİRSİZ';if(z>0)toast(names[z]+'. GEÇİŞLER BİRAZ DAR.')}
- if(player.charging){player.charge=Math.min(.65,player.charge+dt);$('chargeFill').style.width=(100*player.charge/.65)+'%';if(player.charge>=.65){release()}}
+ if(z!==zone){zone=z;$('status').textContent=names[z]+' · KALDIRIM DURUMU BELİRSİZ';if(z>0)toast(names[z]+'. KALDIRIM HALA YOK.')}
+ if(player.charging){
+  player.charge=Math.min(.65,player.charge+dt);
+  $('chargeFill').style.width=(100*player.charge/.65)+'%';
+ }
+ player.landing=Math.max(0,player.landing-dt);
+ if(player.buffer>0)player.buffer-=dt;
  if(!player.onGround){
-  player.y+=player.vy*dt;player.vy+=1560*dt;
-  if(player.trick)player.spin=Math.min(PI,player.spin+dt*11);
-  if(player.y>=0){player.y=0;player.vy=0;player.onGround=true;makeParticle(player.x,GROUND,'#efdeca',8);
-   if(player.trick){score+=200+streak*20;streak++;toast('TEMİZ İNDİ. +'+(200+(streak-1)*20));}
+  player.y+=player.vy*dt;player.vy+=1530*dt;
+  if(player.trick){player.spin=Math.min(Math.PI*1.98,player.spin+dt*11);player.airTrickTime+=dt}
+  if(player.y>=0){
+   const airborneTrick=player.trick;
+   player.y=0;player.vy=0;player.onGround=true;player.landing=.18;player.landCount++;
+   makeParticle(player.x,GROUND,'#e8dbc8',8);sfx('land');
+   if(airborneTrick){
+     const bonus=180+Math.min(220,streak*20);score+=bonus;streak++;
+     toast('TEMİZ İNİŞ +'+bonus);
+   }
    player.trick=false;player.spin=0;
+   if(player.buffer>0){const power=player.bufferPower;player.buffer=0;jump(power)}
   }
  }
  invuln=Math.max(0,invuln-dt);
  for(const h of obstacles){
   h.x-=dx;
-  const left=h.x-h.width*.5,right=h.x+h.width*.5;
-  if(!h.hit&&invuln===0&&right>player.x-24&&left<player.x+27&&-player.y<h.height-8){
-   h.hit=true;invuln=1.55;shake=14;lives--;streak=0;player.vy=Math.min(player.vy,-300);player.onGround=false;makeParticle(player.x+28,GROUND-player.y-20,'#d7594b',13);
-   if(lives<=0){updateHud();finish();return}toast(h.note);
+  const left=h.x-h.width*.5+7,right=h.x+h.width*.5-7;
+  const overlap=right>player.x-20&&left<player.x+21;
+  const air=-player.y;
+  if(overlap&&air>h.height-4&&air<h.height+43)h.near=true;
+  if(!h.hit&&invuln===0&&overlap&&air<Math.max(9,h.height-17)){
+   h.hit=true;invuln=1.5;shake=10;lives--;streak=0;crashReason=h.note;
+   player.vy=Math.min(player.vy,-245);player.onGround=false;
+   makeParticle(player.x+28,GROUND+player.y-20,'#d7594b',12);sfx('hit');
+   if(lives<=0){updateHud();finish();return}
+   toast(h.note);
   }
   if(!h.passed&&right<player.x-22){
-   h.passed=true;if(!h.hit){score+=50+Math.min(200,streak*15);streak++;if(streak%6===0)toast(streak+' ENGEL. DEVAM.');}
+   h.passed=true;
+   if(!h.hit){
+    const close=h.near?85:0;
+    const bonus=60+Math.min(175,streak*15)+close;score+=bonus;streak++;if(h.near){nearCount++;if(nearCount%3===0)toast('RAMAK KALDI +85')}
+    else if(streak%7===0)toast(streak+' ENGEL. DEVAM.');
+    sfx('point');
+   }
   }
  }
- obstacles=obstacles.filter(h=>h.x> -170);
- effects.forEach(e=>{e.x+=e.vx*dt;e.y+=e.vy*dt;e.vy+=230*dt;e.life-=dt});effects=effects.filter(e=>e.life>0);
- shake=Math.max(0,shake-60*dt);
+ obstacles=obstacles.filter(h=>h.x>-170);
+ effects.forEach(e=>{e.x+=e.vx*dt;e.y+=e.vy*dt;e.vy+=230*dt;e.life-=dt});
+ effects=effects.filter(e=>e.life>0);
+ shake=Math.max(0,shake-50*dt);
  if(textTimer>0){textTimer-=dt;if(textTimer<=0)$('tip').classList.remove('on')}
  hudTick-=dt;if(hudTick<=0){updateHud();hudTick=.09}
 }
 function updateHud(){
  $('distance').textContent=Math.floor(distance/10);
- $('score').textContent=score.toLocaleString('tr-TR');$('lives').textContent='♥'.repeat(Math.max(0,lives))+'♡'.repeat(3-Math.max(0,lives));
+ $('score').textContent=score.toLocaleString('tr-TR');
+ $('lives').textContent='♥'.repeat(Math.max(0,lives))+'♡'.repeat(3-Math.max(0,lives));
 }
+
 function building(x,i,par){
  // Normalize indexes for off-screen buildings at negative world positions.
  i=((i%2520)+2520)%2520;
