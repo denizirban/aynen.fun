@@ -1,115 +1,151 @@
 <!doctype html>
-<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#050806"><meta name="description" content="BIO ROBOT: Hücrelerini birleştir, yaşayan makinenin hareketini keşfet. Tam ekran biyorobot simülasyonu.">
-<title>BIO ROBOT — aynen.fun</title><link rel="icon" href="/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#edf1f2">
+<meta name="description" content="BIO ROBOT — Hücrelerden kendi robotunu kur, yüzdür, geliştir. aynen.fun">
+<title>BIO ROBOT — aynen.fun</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#060908;--glass:rgba(9,17,14,.84);--line:rgba(193,246,199,.24);--line2:rgba(193,246,199,.12);--ink:#ebf7ed;--muted:#91a99b;--acid:#b7ff70;--pink:#f452af;--mint:#bdf1e2;--blue:#9ae3de;--amber:#f5be77}
-*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer;color:inherit}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible{outline:2px solid var(--acid);outline-offset:3px}button:disabled{opacity:.38;cursor:not-allowed}.mono{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em}.tiny{font-size:9px;letter-spacing:.17em}.cyan{color:var(--mint)}.acid{color:var(--acid)}.pink{color:var(--pink)}
-#game{position:fixed;inset:0;isolation:isolate;background:#060908}
-#scene{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;outline-offset:-5px}
-#game:after{content:"";position:absolute;inset:0;z-index:1;background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,#c2ffed07 4px),radial-gradient(ellipse at 50% 53%,transparent 40%,#0009 130%);pointer-events:none}
-.vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#05090788,transparent 24%,transparent 79%,#05090766);mix-blend-mode:normal}
-.hud{position:absolute;inset:0;z-index:3;pointer-events:none}.hud>*{pointer-events:auto}
-.top{position:absolute;left:clamp(15px,5.2vw,87px);right:24px;top:max(18px,env(safe-area-inset-top));display:flex;align-items:flex-start;justify-content:space-between;gap:12px;pointer-events:none}
-.title-block{pointer-events:none}.wordmark{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(31px,3.6vw,59px);line-height:.85;letter-spacing:.28em;text-shadow:0 0 23px #c9ff9855;white-space:nowrap}.wordmark span{color:var(--acid)}.wordmark em{font-style:normal;color:var(--pink);text-shadow:0 0 20px #ff4cb75b}.tagline{display:flex;align-items:center;gap:10px;margin-top:14px;color:#9ac4a4;letter-spacing:.24em}.tagline:before{content:"";width:37px;height:1px;background:var(--acid)}
-.top-actions{display:flex;align-items:center;gap:9px}.top-actions a,.top-actions button{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);background:#07100ce0;color:var(--mint);border-radius:7px;transition:background .15s}.top-actions a:hover,.top-actions button:hover{background:#193125}
-.rail{position:absolute;top:118px;left:clamp(12px,1.55vw,27px);display:flex;flex-direction:column;gap:9px;z-index:4}
-.tool-rail{width:46px;height:46px;border:1px solid var(--line);background:linear-gradient(145deg,#101c16e8,#060c09ec);display:grid;place-items:center;border-radius:5px;box-shadow:inset 0 0 14px #a5eac508;transition:.18s}
-.tool-rail svg{width:22px;height:22px;fill:none;stroke:#c4ead2;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.tool-rail:hover,.tool-rail[aria-pressed=true]{border-color:#b7ff70a8;background:#162a1b;box-shadow:0 0 18px #9cf5671a}.tool-rail[aria-pressed=true] svg{stroke:var(--acid)}
-.stats{position:absolute;left:clamp(77px,7.15vw,124px);top:clamp(156px,21vh,220px);width:clamp(170px,20vw,292px);display:flex;flex-direction:column;gap:17px;pointer-events:none}
-.metric{display:grid;grid-template-columns:31px minmax(0,1fr);align-items:center;gap:10px}.metric-icon{border:1px solid var(--line);width:28px;height:29px;transform:rotate(30deg);display:grid;place-items:center}.metric-icon span{transform:rotate(-30deg);color:var(--acid);font-size:16px}.metric:nth-child(2) .metric-icon span{color:var(--mint)}.metric:nth-child(3) .metric-icon span{color:var(--pink)}
-.metric-label{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:7px}.metric-label span{color:#cce5d1}.metric-label b{font-weight:400;font-size:10px;color:#d8f4dd;white-space:nowrap}.meter{height:5px;border:1px solid #9fcfb741;display:flex;gap:3px;padding:1px}.meter i{height:100%;display:block;background:var(--acid);box-shadow:0 0 8px #b4fa69aa;transition:width .2s}.metric:nth-child(2) .meter i{background:var(--mint);box-shadow:0 0 8px #b6ffee66}.metric:nth-child(3) .meter i{background:var(--pink);box-shadow:0 0 10px #f452af88}
-.lab-caption{border-left:1px solid #adccae66;padding-left:13px;color:#9fc8aa;line-height:2.1;font-size:9px;letter-spacing:.2em;margin-top:7px}.lab-caption .dot{color:var(--acid);margin-right:9px}
-.mission{position:absolute;right:clamp(18px,3vw,48px);top:clamp(109px,14vh,160px);width:clamp(225px,25vw,350px);background:linear-gradient(118deg,#060e0abf,#07130f8f);border:1px solid var(--line);border-radius:3px;padding:18px 20px 18px;box-shadow:inset 0 1px #c6f5cc10}
-.mission-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;color:#b7cfbc}.mission h2{font-family:'Barlow Condensed',sans-serif;font-size:25px;letter-spacing:.12em;font-weight:600;margin:0;display:flex;align-items:center;gap:10px;text-transform:uppercase}.mission h2:before{content:"";width:8px;height:8px;background:var(--pink);transform:rotate(45deg);box-shadow:0 0 14px #fa42aa6a}.mission p{margin:8px 0 17px;font-size:11px;line-height:1.7;color:#c0d6c9;max-width:285px}.progress-line{height:4px;border:1px solid #86bda455;background:#151f19;position:relative}.progress-line i{display:block;height:100%;width:0%;background:var(--acid);box-shadow:0 0 16px var(--acid);transition:width .18s}.mission-footer{display:flex;justify-content:space-between;align-items:center;margin-top:9px;color:#adc8b4}
-.overlay-caption{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));font-size:10px;letter-spacing:.2em;color:#d3f2db9e;text-align:center;pointer-events:none;white-space:nowrap;text-shadow:0 1px 6px #000}
-.dock{position:absolute;bottom:max(15px,env(safe-area-inset-bottom));left:clamp(14px,2.25vw,38px);right:clamp(14px,2.25vw,38px);min-height:114px;display:flex;align-items:center;gap:15px;padding:13px 15px;border:1px solid #a0ccac66;background:linear-gradient(120deg,#07110cfa,#07120df1 56%,#07110ce9);clip-path:polygon(0 12px,12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px));box-shadow:inset 0 0 28px #b7ff700c}
-.dock:after{content:"";position:absolute;inset:4px;border:1px solid #aad7b521;clip-path:inherit;pointer-events:none}
-.selected-info{width:235px;max-width:235px;min-width:185px;display:flex;gap:12px;align-items:center;border-right:1px solid #a6cdb25e;padding-right:17px}
-.selected-art{width:77px;height:77px;border:1px solid #9ed4ae30;display:grid;place-items:center;background:linear-gradient(145deg,#0d2917,#0a130e);flex:none}.selected-art svg{width:62px;height:62px;filter:drop-shadow(0 0 12px #b7ff7065)}
-.selected-info h3{font-size:12px;letter-spacing:.12em;font-weight:500;margin:7px 0 5px;color:var(--acid);text-transform:uppercase}.selected-info p{font-size:9px;line-height:1.55;color:#a5b7aa;margin:0}
-.cell-tools{display:flex;gap:9px;align-items:center;flex:1;min-width:0;justify-content:center}
-.cell-tool{position:relative;min-width:63px;width:clamp(53px,5.5vw,87px);height:75px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:linear-gradient(#0b1610,#0a130f);border:1px solid #a2cfaf39;transition:.16s;border-radius:4px}
-.cell-tool[aria-pressed=true]{border-color:var(--acid);background:#183220;box-shadow:0 0 17px #a1f36c25,inset 0 0 15px #affc6430}.cell-tool:hover{border-color:#bffac698}.cell-tool svg{width:43px;height:45px;filter:drop-shadow(0 0 8px #95eaa42a)}.cell-tool span{font-size:8px;letter-spacing:.14em;color:#b4c5b4}.cell-tool[aria-pressed=true] span{color:#d9ffb5}
-.small-actions{display:flex;align-items:center;gap:7px;padding:0 6px}.square-action{width:48px;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:#0d1711;font-size:9px;color:#c7dfca}.square-action svg{width:20px;height:20px;fill:none;stroke:var(--mint);stroke-width:1.5}.square-action:hover,.square-action[aria-pressed=true]{border-color:var(--acid);color:var(--acid)}
-.run{position:relative;min-width:clamp(160px,18vw,260px);height:81px;display:flex;align-items:center;justify-content:center;gap:14px;background:linear-gradient(115deg,#13341b,#08210d);border:1.5px solid var(--acid);box-shadow:inset 0 0 24px #93fa3450,0 0 22px #a4ff3639;color:#ceffc1;border-radius:3px;transition:.18s}
-.run:hover{background:#254b23;box-shadow:inset 0 0 29px #b7ff7052,0 0 34px #b7ff7052}.run svg{width:32px;height:32px;fill:var(--acid);filter:drop-shadow(0 0 9px #b7ff70)}.run b{font-family:'Barlow Condensed',sans-serif;font-size:26px;letter-spacing:.11em;font-weight:600;display:block;text-align:left}.run small{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;display:block;text-align:left;color:#8ebb8d;margin-top:4px}
-.drawer{position:absolute;z-index:8;left:clamp(70px,5.6vw,100px);top:118px;width:min(380px,calc(100vw - 95px));max-height:calc(100vh - 265px);overflow-y:auto;overscroll-behavior:contain;background:#07110fed;border:1px solid #9fddad66;box-shadow:0 15px 75px #000c,0 0 35px #a0ff6212;backdrop-filter:blur(16px);padding:20px;display:none}
-.drawer.open{display:block;animation:appear .16s ease-out}.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.drawer-head h2{font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.13em;font-size:27px;margin:5px 0 0}.xbtn{width:30px;height:30px;background:none;border:1px solid var(--line);font-size:20px}.drawer p{font-size:12px;line-height:1.7;color:#a9c2b1}.mission-choice{display:flex;width:100%;text-align:left;align-items:center;justify-content:space-between;gap:10px;border:1px solid #83ad8e35;background:#0c1b13;padding:13px;margin-bottom:9px}.mission-choice.active{border-color:var(--acid);background:#1a3020}.mission-choice b{font-size:12px;display:block;font-weight:600}.mission-choice small{color:#91b49a;font-size:10px;line-height:1.7;display:block;margin-top:3px}
-.action-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.mini-btn{background:#11271a;border:1px solid #7caf8459;padding:11px 13px;font-size:11px;border-radius:2px}.mini-btn:hover{border-color:var(--acid)}.mini-btn.strong{background:#244c26;border-color:var(--acid);color:#dfffbd}
-.datalist{display:grid;grid-template-columns:1fr auto;gap:12px;border-bottom:1px solid var(--line2);padding:11px 0;font-size:11px}.datalist span{color:#aac4b2}.datalist b{font-family:'DM Mono',monospace;font-weight:400;color:var(--acid)}.toggle{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line2);padding:12px 0;font-size:12px}.toggle input{accent-color:#b7ff70;width:18px;height:18px}
-.dialog-scrim{position:absolute;z-index:15;inset:0;display:none;align-items:center;justify-content:center;background:#010602bf;padding:18px;backdrop-filter:blur(7px)}.dialog-scrim.open{display:flex}
-.dialog{position:relative;width:min(430px,100%);background:linear-gradient(145deg,#0b1b13,#07110b);border:1px solid #a1d4a65e;padding:28px;box-shadow:0 26px 120px #000e,0 0 90px #a4f9560c}.dialog-kicker{color:var(--acid)}.dialog h2{font-family:'Barlow Condensed',sans-serif;font-size:46px;line-height:1.02;letter-spacing:.06em;margin:17px 0 12px;font-weight:600}.dialog p{color:#b1c5b6;font-size:12px;line-height:1.75;margin:0 0 14px}.results{display:flex;gap:8px;margin:20px 0}.results div{flex:1;background:#10241a;border:1px solid var(--line2);padding:11px}.results strong{font-family:'Barlow Condensed',sans-serif;font-size:29px;font-weight:500;color:var(--acid)}.results span{font-size:9px;color:#98afa0;display:block;margin-top:4px;letter-spacing:.12em}
-.dialog-buttons{display:flex;gap:8px}.dialog-buttons button{flex:1;min-height:46px;border:1px solid var(--line);background:#102117;font-size:11px;letter-spacing:.1em}.dialog-buttons .strong{background:#214722;border-color:var(--acid);color:var(--acid)}
-.toast{position:absolute;z-index:30;top:calc(50% - 40px);left:50%;transform:translate(-50%,-50%);min-width:170px;max-width:calc(100% - 40px);border:1px solid #a3e3b4a0;background:#0b2017ed;box-shadow:0 8px 30px #000b;padding:12px 17px;font-size:12px;text-align:center;color:var(--acid);opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
-#legend{position:absolute;right:clamp(19px,3vw,48px);bottom:152px;color:#acd5b8;font-size:9px;letter-spacing:.13em;text-align:right;line-height:1.8;pointer-events:none}
-#legend b{color:var(--acid);font-weight:400}#legend .pink{color:var(--pink)}
-@keyframes appear{from{transform:translateX(-8px);opacity:.2}to{transform:none;opacity:1}}
-@media(max-width:1150px){.selected-info{width:150px;min-width:135px}.selected-art{width:55px;height:63px}.selected-art svg{width:48px}.selected-info p{display:none}.cell-tool{min-width:52px;height:65px}.dock{gap:9px}.run{min-width:160px}.run b{font-size:22px}.stats{left:80px;top:163px;width:200px}}
-@media(max-width:760px){.wordmark{font-size:32px;letter-spacing:.18em}.tagline{font-size:7px;margin-top:8px;gap:5px;letter-spacing:.11em}.tagline:before{width:20px}.top{left:13px;right:13px;top:max(12px,env(safe-area-inset-top))}.top-actions a,.top-actions button{width:32px;height:32px}.rail{top:96px;left:9px;gap:7px}.tool-rail{height:38px;width:38px}.tool-rail svg{width:19px;height:19px}.stats{top:100px;left:56px;width:136px;gap:9px}.metric{grid-template-columns:17px 1fr;gap:6px}.metric-icon{width:17px;height:18px}.metric-icon span{font-size:11px}.metric-label{margin-bottom:4px;gap:3px}.metric-label span,.metric-label b{font-size:8px;letter-spacing:0}.meter{height:4px}.lab-caption{display:none}.mission{right:9px;top:96px;width:min(47vw,198px);padding:9px 10px}.mission-header{font-size:7px;margin-bottom:6px}.mission h2{font-size:15px;letter-spacing:.07em;gap:6px}.mission h2:before{width:5px;height:5px}.mission p{font-size:9px;line-height:1.45;margin:6px 0 9px}.mission-footer{font-size:8px;margin-top:5px}.progress-line{height:3px}.dock{left:7px;right:7px;bottom:max(7px,env(safe-area-inset-bottom));min-height:112px;display:grid;grid-template-columns:1fr 112px;grid-template-rows:61px 36px;gap:4px;padding:8px}.selected-info{display:none}.cell-tools{grid-column:1;grid-row:1;justify-content:space-around;gap:3px}.cell-tool{min-width:0;width:24%;height:57px;gap:1px}.cell-tool svg{width:31px;height:32px}.cell-tool span{font-size:7px}.run{grid-column:2;grid-row:1/3;min-width:0;width:100%;height:100%;gap:4px;flex-direction:column}.run b{font-size:19px;text-align:center}.run small{display:none}.run svg{width:26px;height:26px}.small-actions{grid-column:1;grid-row:2;justify-content:space-around;gap:3px;padding:0}.square-action{width:30%;height:31px;flex-direction:row;gap:4px;font-size:8px}.square-action svg{width:14px;height:14px}.overlay-caption{font-size:8px;bottom:calc(129px + env(safe-area-inset-bottom));max-width:88vw;white-space:normal;line-height:1.5}.drawer{left:55px;top:96px;width:calc(100vw - 66px);max-height:calc(100svh - 245px);padding:15px}#legend{right:12px;bottom:139px;font-size:7px}.toast{font-size:11px}}
-@media(max-width:380px){.wordmark{font-size:27px}.tagline{display:none}.top-actions{gap:3px}.stats{width:114px}.mission{width:49vw}.mission p{display:none}.mission h2{font-size:14px}}
-@media(max-height:590px) and (min-width:761px){.top{top:10px}.wordmark{font-size:36px}.tagline{margin-top:5px}.rail{top:89px;gap:5px}.tool-rail{height:35px;width:35px}.stats{top:106px;gap:9px}.mission{top:95px;padding:10px}.dock{height:86px;min-height:86px;padding:6px 10px}.run{height:68px}.cell-tool{height:60px}.selected-art{height:58px}.overlay-caption{bottom:109px}.drawer{top:83px;max-height:calc(100vh - 190px)}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
-</style></head>
-<body><div id="game">
-<canvas id="scene" tabindex="0" aria-label="BIO ROBOT üç boyutlu görünümlü simülasyon alanı. Hücre seçtikten sonra hücre yuvalarına dokunun."></canvas><div class="vignette"></div>
-<svg width="0" height="0" style="position:absolute;visibility:hidden" aria-hidden="true"><defs>
-<symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7zM12 12V22M3 7l9 5 9-5"/></symbol>
-<symbol id="i-cells" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="18" r="3"/><circle cx="19" cy="18" r="3"/><path d="m10 7-4 8m8-8 4 8M8 18h8"/></symbol>
-<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 19V11h4v8M10 19V4h4v15M16 19V8h4v11"/></symbol>
-<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m9 2 .7 2.5 2.3.5 2.3-.5L15 2l2.5 1.4-.6 2.7 1.7 1.7 2.7-.6L23 10l-2.5 1v2l2.5 1-1.7 2.8-2.7-.6-1.7 1.7.6 2.7L15 22l-.7-2.5-2.3-.5-2.3.5L9 22l-2.5-1.4.6-2.7-1.7-1.7-2.7.6L1 14l2.5-1v-2L1 10l1.7-2.8 2.7.6 1.7-1.7-.6-2.7z"/></symbol>
-<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v6m0-10h.01"/></symbol>
-<symbol id="i-save" viewBox="0 0 24 24"><path d="M4 3h14l3 3v15H3V3zM7 3v7h10V3M7 21v-8h10v8"/></symbol>
-<symbol id="i-sym" viewBox="0 0 24 24"><path d="M12 2v20M4 6h5v12H4zM15 6h5v12h-5z"/></symbol>
+:root{color-scheme:light;--bg:#e9eff0;--ink:#1e3441;--sub:#657985;--subtle:#8799a0;--edge:#cedadc;--white:#fff;--primary:#354db4;--primary2:#253c97;--teal:#52aaa5;--coral:#ed9782;--gold:#e6b765;--shadow:0 20px 65px rgba(37,61,76,.10)}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}button,a{font:inherit}button{cursor:pointer;color:inherit}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible{outline:3px solid #7e9fea;outline-offset:3px}button:disabled{opacity:.46;cursor:not-allowed}.mono{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.025em}.small{font-size:11px}.muted{color:var(--sub)}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(100%);white-space:nowrap}
+#game{position:fixed;inset:0;isolation:isolate;background:#e8eff1}#scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;outline-offset:-4px}
+#game:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,#e9eff0cc 0,transparent 22%,transparent 82%,#f1f4f3bd 100%)}
+.hud{position:absolute;inset:0;z-index:2;pointer-events:none}.hud>*{pointer-events:auto}
+.top{position:absolute;z-index:5;top:0;left:0;right:0;min-height:79px;padding:13px clamp(16px,3.1vw,48px);display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #ced9d966;background:linear-gradient(180deg,#f6f8f8e8,#f3f6f5bb);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:12px}.brand-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:#283b66;color:white;box-shadow:0 5px 12px #24356029}.brand-icon svg{width:27px;height:27px}
+.wordmark{font-size:23px;font-weight:700;letter-spacing:-.067em;line-height:1}.wordmark span{color:#5271bd}.brand small{display:block;margin-top:4px;color:#7d9199;font-size:9px;letter-spacing:.09em}
+.top-middle{display:flex;gap:11px;align-items:center}.top-middle .mono{color:var(--sub)}.pill{display:inline-flex;align-items:center;gap:7px;padding:10px 13px;border:1px solid var(--edge);border-radius:30px;background:#fff9;font-size:11px;font-weight:700;box-shadow:0 2px 9px #2038400c}.pill:hover{background:#fff}.pill .circle{width:7px;height:7px;border-radius:50%;background:#6db7aa}.top-actions{display:flex;gap:8px;align-items:center}.top-actions button,.top-actions a{width:37px;height:37px;background:#fff9;border:1px solid var(--edge);border-radius:10px;display:grid;place-items:center;font-size:20px;transition:background .15s}.top-actions button:hover,.top-actions a:hover{background:white}.top-actions .word{width:auto;padding:0 13px;font-size:11px;font-weight:600}
+.inset-head{position:absolute;top:clamp(107px,16vh,161px);left:clamp(16px,3.7vw,58px);width:min(265px,27vw);z-index:4}
+.section-kicker{font-size:10px;letter-spacing:.115em;font-weight:700;color:#8ca4a7}.inset-head h1{font-size:clamp(24px,2.8vw,38px);font-weight:600;line-height:1.14;letter-spacing:-.058em;margin:11px 0 10px}
+.inset-head p{font-size:13px;line-height:1.55;color:#6f8790;margin:0 0 18px}.coach{background:#fffffff0;border:1px solid #d4dfe1;box-shadow:var(--shadow);border-radius:16px;padding:16px;position:relative}
+.coach-top{display:flex;align-items:center;justify-content:space-between;gap:5px;color:#7d9297;margin-bottom:11px}
+.coach strong{font-size:16px;font-weight:700;letter-spacing:-.04em;display:block;line-height:1.25;margin-bottom:8px}
+.coach p{font-size:12px;color:#657983;line-height:1.55;margin:0}
+.coach-next{display:flex;gap:7px;align-items:center;margin-top:13px}.coach-step{width:27px;height:5px;border-radius:9px;background:#dee7e7}.coach-step.done{background:#6db6ad}.coach-step.active{background:var(--primary)}
+.coach .coach-help{background:none;border:0;font-size:11px;color:#4865bc;font-weight:700;padding:9px 0 0;margin-top:6px}
+.controls-rail{position:absolute;right:clamp(18px,3.4vw,55px);top:clamp(107px,16vh,161px);width:clamp(205px,20vw,285px);z-index:3}
+.mission{background:#fffefdf2;border:1px solid #d1dcdf;border-radius:16px;box-shadow:var(--shadow);padding:18px}.mission-header{display:flex;align-items:center;justify-content:space-between;color:#8599a0;font-size:10px}.mission-header .live{color:#7a9e9d}
+.mission h2{font-size:21px;line-height:1.13;letter-spacing:-.058em;margin:13px 0 6px;font-weight:700}.mission p{margin:0 0 17px;color:#6a818c;font-size:12px;line-height:1.55}
+.mission-progress{height:6px;border-radius:5px;overflow:hidden;background:#e3e9ec}.mission-progress i{height:100%;display:block;width:0;background:var(--primary);border-radius:5px;transition:width .16s}
+.mission-footer{display:flex;justify-content:space-between;margin-top:8px;font-size:9px;color:#7e9297}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+.metric{border:1px solid #d8e2e3;background:#fefefeec;border-radius:11px;padding:12px 10px 11px;text-align:center}
+.metric .symbol{display:block;font-size:17px;line-height:1;color:#4864ad;margin-bottom:8px}
+.metric:nth-child(2) .symbol{color:#63a79e}.metric:nth-child(3) .symbol{color:#d8916b}
+.metric-label{font-size:9px;color:#6b818b;letter-spacing:.04em;font-weight:600;margin-bottom:5px}.metric-val{font-family:'DM Mono',monospace;font-size:12px;color:#294354}.metric .tiny-meter{height:3px;margin-top:8px;border-radius:6px;background:#e3e9eb}.metric .tiny-meter i{height:3px;width:0%;display:block;background:#526ebc;border-radius:6px}.metric:nth-child(2) .tiny-meter i{background:#66a79c}.metric:nth-child(3) .tiny-meter i{background:#db9a73}
+.stage-note{position:absolute;left:50%;transform:translateX(-50%);bottom:clamp(164px,23vh,188px);display:flex;align-items:center;justify-content:center;gap:9px;white-space:nowrap;padding:8px 12px;border-radius:20px;background:#fff9;color:#637982;font-size:11px;box-shadow:0 4px 24px #3252660d;border:1px solid #deebeb95;z-index:2;pointer-events:none}
+.stage-note i{width:7px;height:7px;border-radius:50%;background:#55b5a3}
+.dock{position:absolute;z-index:5;bottom:max(18px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(1100px,calc(100% - 36px));min-height:122px;padding:13px 15px;display:flex;align-items:center;gap:16px;border:1px solid #d1dce0;border-radius:20px;background:#fffffff2;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 14px 55px #29415b1f}
+.selected-info{width:177px;min-width:160px;display:flex;align-items:center;gap:9px;border-right:1px solid #dee6e8;padding-right:13px}.selected-art{flex:none;display:grid;place-items:center;width:52px;height:54px;background:#edf3f6;border-radius:12px}.selected-art svg{width:42px;height:42px}
+.selected-info .name{display:block;font-weight:700;font-size:12px;letter-spacing:-.03em;margin:5px 0}.selected-info p{margin:0;font-size:10px;color:#748792;line-height:1.35}
+.cell-tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;flex:1;min-width:0}.cell-tool{min-width:0;min-height:86px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#f3f6f7;border:2px solid transparent;border-radius:12px;transition:.15s}.cell-tool svg{width:38px;height:39px;filter:drop-shadow(0 5px 2px #2941541c)}.cell-tool span{font-weight:700;font-size:11px;color:#425862}
+.cell-tool:hover{background:#e9f0f4}.cell-tool[aria-pressed=true]{border-color:#5066bd;background:#ebefff;box-shadow:0 0 0 2px white inset}.cell-tool[aria-pressed=true] span{color:#3851a7}
+.small-actions{display:flex;align-items:center;gap:6px}.square-action{height:42px;width:42px;background:#f4f7f7;border:1px solid var(--edge);border-radius:10px;display:flex;align-items:center;justify-content:center}.square-action svg{width:19px;height:19px;stroke:#607a87;stroke-width:1.6;fill:none}.square-action:hover,.square-action[aria-pressed=true]{background:#eaf0ff;border-color:#7f9dd2}
+.run{display:flex;align-items:center;justify-content:center;gap:9px;min-width:174px;height:81px;padding:0 16px;background:var(--primary);border:1px solid var(--primary);border-radius:13px;color:white;box-shadow:0 8px 21px #334ba349}.run:hover{background:var(--primary2)}.run svg{width:22px;height:22px;fill:white}.run b{font-size:17px;letter-spacing:-.025em;font-weight:700;white-space:nowrap}.run small{display:block;font-size:10px;margin-top:4px;color:#d5e0ff;font-weight:500}
+.drawer-back{display:none;position:fixed;inset:0;z-index:8;background:#0d23333d}.drawer-back.open{display:block}
+.drawer{position:absolute;z-index:9;right:clamp(18px,3.5vw,54px);top:97px;width:min(350px,calc(100% - 30px));max-height:calc(100dvh - 230px);overflow:auto;background:#fff;border:1px solid #d6dfe2;border-radius:17px;box-shadow:0 22px 90px #19394b38;padding:20px;display:none}.drawer.open{display:block}
+.drawer-head{display:flex;align-items:start;justify-content:space-between;gap:15px;margin-bottom:13px}.drawer-head h2{font-size:24px;letter-spacing:-.055em;margin:4px 0 0}.xbtn{background:#f0f4f5;border:0;border-radius:9px;width:31px;height:31px;font-size:21px}
+.drawer p,.drawer li{font-size:12px;line-height:1.65;color:#6b818b}.drawer p{margin:0 0 15px}
+.mission-choice{width:100%;display:flex;align-items:center;justify-content:space-between;gap:9px;padding:13px;background:#f4f7f7;border:1px solid #e2e9ea;border-radius:10px;text-align:left;margin-bottom:8px}.mission-choice.active{background:#eaf0fe;border-color:#8198de}.mission-choice b{display:block;font-size:12px}.mission-choice small{display:block;font-size:10px;color:#718791;line-height:1.5;margin-top:4px}
+.action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.mini-btn{border:1px solid #ccdadd;background:#f3f6f7;border-radius:9px;padding:11px 13px;font-size:11px;font-weight:700}.mini-btn.strong{background:var(--primary);border-color:var(--primary);color:white}
+.datalist{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #e3e9eb;font-size:12px}.datalist span{color:#71858d}.datalist b{font-size:11px;font-weight:600}
+.toggle{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:12px 0;border-bottom:1px solid #e7ecee}.toggle input{width:18px;height:18px;accent-color:var(--primary)}
+.dialog-scrim{position:absolute;inset:0;z-index:11;display:none;align-items:center;justify-content:center;padding:18px;background:#1735448a;backdrop-filter:blur(8px)}.dialog-scrim.open{display:flex}
+.dialog{position:relative;width:min(440px,100%);background:#fff;border-radius:22px;padding:29px;box-shadow:0 25px 80px #183a4e44}.dialog h2{font-size:35px;line-height:1.07;letter-spacing:-.07em;margin:13px 0}.dialog p{font-size:13px;line-height:1.7;color:#677f8a}.dialog-kicker{font-size:10px;color:#5270b7;font-weight:700;letter-spacing:.1em}.results{display:flex;gap:8px;margin:18px 0}.results div{flex:1;padding:12px 9px;background:#f0f4f6;border-radius:10px}.results strong{font-size:26px;letter-spacing:-.07em}.results span{display:block;font-size:9px;margin-top:6px;color:#7e949c}
+.dialog-buttons{display:flex;flex-wrap:wrap;gap:8px}.dialog-buttons button{flex:1;min-width:80px;min-height:44px;border-radius:10px;background:#f1f5f6;border:1px solid #d6e2e4;font-size:11px;font-weight:700}.dialog-buttons .strong{background:var(--primary);border-color:var(--primary);color:white}
+.toast{position:absolute;z-index:20;left:50%;top:51%;transform:translate(-50%,-50%);background:#2c4264;color:#fff;border-radius:12px;padding:13px 18px;font-size:12px;box-shadow:0 12px 36px #27425c66;opacity:0;pointer-events:none;transition:opacity .2s;max-width:calc(100% - 30px);text-align:center}.toast.show{opacity:1}
+@media(max-width:1120px){.selected-info{display:none}.dock{width:calc(100% - 25px)}.inset-head{width:222px}.controls-rail{width:220px}.inset-head h1{font-size:27px}}
+@media(max-width:800px){.top{min-height:65px;padding:9px 12px}.brand-icon{width:33px;height:33px;border-radius:10px}.brand-icon svg{width:22px}.wordmark{font-size:18px}.brand small{font-size:8px}.top-middle{display:none}.top-actions{gap:5px}.top-actions button,.top-actions a{width:33px;height:33px;border-radius:9px}.top-actions .word{width:auto;font-size:10px;padding:0 9px}
+.inset-head{left:13px;top:82px;width:calc(100% - 26px);pointer-events:none}.inset-head h1{display:none}.inset-head>p{display:none}.section-kicker{font-size:9px}.coach{display:none}
+.controls-rail{top:100px;left:12px;right:12px;width:auto;display:flex;align-items:stretch;gap:6px;pointer-events:none}
+.mission{width:55%;flex:1;padding:10px 11px;border-radius:12px;pointer-events:auto}.mission h2{font-size:14px;margin:6px 0 4px}.mission p{font-size:10px;line-height:1.35;margin-bottom:7px}.mission-header{font-size:9px}.mission-footer{font-size:8px;margin-top:5px}.mission-progress{height:4px}
+.stats{width:44%;max-width:180px;flex:none;gap:4px;align-self:start;margin:0}.metric{padding:7px 3px;border-radius:9px}.metric .symbol{font-size:12px;margin-bottom:4px}.metric-label{font-size:8px;margin-bottom:4px}.metric-val{font-size:9px}.metric .tiny-meter{margin-top:5px}
+.stage-note{bottom:calc(140px + env(safe-area-inset-bottom));font-size:10px;padding:6px 9px;width:max-content;max-width:calc(100% - 18px);white-space:normal;text-align:center;line-height:1.4}
+.dock{width:calc(100% - 14px);bottom:max(7px,env(safe-area-inset-bottom));padding:8px 9px;min-height:115px;border-radius:15px;gap:6px;display:grid;grid-template-columns:1fr 115px;grid-template-rows:64px 35px}
+.cell-tools{grid-column:1;grid-row:1;gap:4px}.cell-tool{min-height:60px;gap:2px;border-width:1.5px;border-radius:9px}.cell-tool svg{width:30px;height:31px}.cell-tool span{font-size:9px}
+.small-actions{grid-column:1;grid-row:2;justify-content:space-between;padding:0 3px}.square-action{width:31%;height:33px;border-radius:7px}.square-action svg{height:17px;width:17px}
+.run{grid-column:2;grid-row:1/3;min-width:0;width:100%;height:100%;padding:9px 4px;gap:4px;flex-direction:column;border-radius:10px}.run b{font-size:15px}.run small{font-size:9px;text-align:center}.run svg{width:23px;height:23px}
+.drawer{top:69px;right:10px;max-height:calc(100dvh - 212px);width:min(340px,calc(100% - 20px));padding:17px}.toast{top:55%}
+}
+@media(max-width:390px){.wordmark{font-size:16px}.brand small{display:none}.top-actions .word{font-size:9px}.mission p{display:none}.stats{max-width:155px}.metric-val{font-size:8px}.stage-note{bottom:137px}}
+@media(max-height:640px) and (min-width:801px){.top{min-height:60px;padding-top:7px;padding-bottom:7px}.inset-head,.controls-rail{top:83px}.inset-head>p{display:none}.coach{padding:12px}.dock{bottom:7px;min-height:89px;padding:7px}.cell-tool{min-height:69px}.run{height:68px}.stage-note{bottom:119px}.drawer{top:70px;max-height:calc(100vh - 170px)}}
+@media(prefers-reduced-motion:reduce){*,*:after,*:before{transition:none!important;animation:none!important}}
+</style>
+</head><body>
+<div id="game">
+<canvas id="scene" tabindex="0" role="img" aria-label="Canlı robot tasarım alanı. Renkli hücre yuvalarına dokunarak yeni hücre ekle."></canvas>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute;visibility:hidden"><defs>
+<symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7zM12 12v10M3 7l9 5 9-5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M12 11v6M12 7h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M6 3 21 12 6 21z" fill="currentColor"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/></symbol>
 <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 6 4 11l5 5M4 11h11a5 5 0 0 1 0 10h-2"/></symbol>
+<symbol id="i-sym" viewBox="0 0 24 24"><path d="M12 2v20M4 6h5v12H4zM15 6h5v12h-5z"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V3h8v3M6 6l1 15h10l1-15M10 10v8M14 10v8"/></symbol>
-<symbol id="i-play" viewBox="0 0 32 32"><path d="M6 3 28 16 6 29z"/></symbol>
-<symbol id="i-pause" viewBox="0 0 32 32"><path d="M9 4h5v24H9zM19 4h5v24h-5z"/></symbol>
 </defs></svg>
 <div class="hud">
 <header class="top">
-<div class="title-block"><div class="wordmark"><span>BIO</span> <em>ROBOT</em></div><div class="tagline mono tiny">CANLI SİSTEMLER • DENEYSEL MAKİNELER</div></div>
-<div class="top-actions"><button id="fullscreenBtn" aria-label="Tam ekran aç/kapat" title="Tam ekran" type="button">⛶</button><a href="/" aria-label="aynen.fun ana sayfa" title="Ana sayfa">×</a></div>
+<a class="brand" href="/" aria-label="aynen.fun ana sayfa"><span class="brand-icon"><svg viewBox="0 0 24 24"><use href="#i-cube"/></svg></span><span><span class="wordmark">bio<span>robot.</span></span><small class="mono">AYNEN.FUN / MINI LAB</small></span></a>
+<div class="top-middle"><span class="mono">MİKRO-DÜNYA / 01</span><button type="button" class="pill" data-panel="missions"><span class="circle"></span> GÖREVLERİ GÖR <span aria-hidden="true">⌄</span></button></div>
+<div class="top-actions"><button type="button" class="word" data-panel="help"><svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-info"/></svg> <span>Nasıl oynanır?</span></button><button type="button" data-panel="analysis" aria-label="Tasarım analizi" title="Analiz">⌁</button><button type="button" data-panel="settings" aria-label="Ayarlar" title="Ayarlar">⚙</button><button id="fullscreenBtn" type="button" aria-label="Tam ekran" title="Tam ekran">⛶</button><a href="/" title="Kapat ve aynen.fun’a dön" aria-label="Kapat">×</a></div>
 </header>
-<nav class="rail" aria-label="Oyun menüleri">
-<button type="button" class="tool-rail" data-panel="missions" aria-pressed="false" aria-label="Görevler" title="Görevler"><svg><use href="#i-cube"/></svg></button>
-<button type="button" class="tool-rail" data-panel="biology" aria-pressed="false" aria-label="Hücreler" title="Hücreler"><svg><use href="#i-cells"/></svg></button>
-<button type="button" class="tool-rail" data-panel="analysis" aria-pressed="false" aria-label="Analiz" title="Analiz"><svg><use href="#i-chart"/></svg></button>
-<button type="button" class="tool-rail" data-panel="settings" aria-pressed="false" aria-label="Ayarlar" title="Ayarlar"><svg><use href="#i-gear"/></svg></button>
-<button type="button" class="tool-rail" data-panel="help" aria-pressed="false" aria-label="Nasıl oynanır" title="Nasıl oynanır"><svg><use href="#i-info"/></svg></button>
-</nav>
-<section class="stats" aria-label="Canlı robot istatistikleri">
-<div class="metric"><div class="metric-icon"><span>ϟ</span></div><div><div class="metric-label mono"><span>ENERJİ</span><b id="statEnergy">100 / 100</b></div><div class="meter"><i id="barEnergy" style="width:100%"></i></div></div></div>
-<div class="metric"><div class="metric-icon"><span>◎</span></div><div><div class="metric-label mono"><span>DENGE</span><b id="statBalance">100 / 100</b></div><div class="meter"><i id="barBalance" style="width:100%"></i></div></div></div>
-<div class="metric"><div class="metric-icon"><span>↟</span></div><div><div class="metric-label mono"><span>İTİCİ GÜÇ</span><b id="statThrust">40 / 100</b></div><div class="meter"><i id="barThrust" style="width:40%"></i></div></div></div>
-<div class="lab-caption mono"><div><span class="dot">●</span>MODÜLER GÖVDE</div><div><span class="dot">●</span>FİZİK TEMELLİ HAREKET</div><div><span class="dot">●</span>4 HÜCRE TİPİ</div></div>
+<section class="inset-head" aria-label="Oyuna başlangıç">
+<div class="section-kicker mono">BUILD A LIVING MACHINE</div>
+<h1>Küçük hücreler.<br>Büyük hareketler.</h1>
+<p>Robotuna hücre ekle, suya bırak ve ne yaptığını izle.</p>
+<div class="coach" id="coach">
+<div class="coach-top"><span class="mono" id="coachCounter">1 / 3 · BAŞLANGIÇ</span><span aria-hidden="true">↗</span></div>
+<strong id="coachTitle">Bir hücre seç.</strong>
+<p id="coachText">Aşağıdan renkli hücrelerden birine dokun. Sonra robotun yanındaki + alanlarına ekle.</p>
+<div class="coach-next" aria-hidden="true"><span class="coach-step active"></span><span class="coach-step"></span><span class="coach-step"></span></div>
+<button class="coach-help" type="button" data-panel="help">Nasıl çalışıyor? ↗</button>
+</div>
 </section>
+<div class="controls-rail">
 <section class="mission" aria-label="Aktif görev">
-<div class="mission-header mono tiny"><span id="missionId">GÖREV 01</span><span id="clock">00:00</span></div>
-<h2 id="missionName">İLK HAREKET</h2><p id="missionHint">Canlı robotunu oluştur ve hedefe ulaş.</p>
-<div class="progress-line"><i id="missionProgress"></i></div><div class="mission-footer mono tiny"><span id="missionStatus">HAZIR / TASARIM</span><span id="missionPercent">0%</span></div>
+<div class="mission-header mono"><span id="missionId">GÖREV 01 / 04</span><span id="clock" class="live">00:00</span></div>
+<h2 id="missionName">İlk hareket</h2>
+<p id="missionHint">Robotunu hedefe ulaştır.</p>
+<div class="mission-progress"><i id="missionProgress"></i></div>
+<div class="mission-footer mono"><span id="missionStatus">TASARIM MODU</span><span id="missionPercent">0%</span></div>
 </section>
-<div class="overlay-caption mono" id="stageCaption">BİR HÜCRE SEÇ • ROBOTUN YANINA DOKUN • CANLANDIR</div>
-<div id="legend" class="mono"><div><b>●</b> HÜCRE DÜZENİ <span class="pink" id="cellCounter">05 / 24</span></div><div id="modeLabel">BUILD MODE / DRAG TO PLACE</div></div>
-<footer class="dock" aria-label="Oyun kontrolleri">
-<div class="selected-info"><div class="selected-art" id="selectedArt"></div><div><span class="mono tiny">SEÇİLİ HÜCRE</span><h3 id="selectedName">KAS HÜCRESİ</h3><p id="selectedDesc">İtki üretir.<br>Konumu yönü belirler.</p></div></div>
-<div class="cell-tools" role="toolbar" aria-label="Hücre seçimi">
-<button type="button" class="cell-tool" data-cell="core" aria-pressed="false" title="Yapı hücresi"><svg viewBox="0 0 60 60" fill="none"><path d="m30 5 22 11v29L30 57 8 45V16Z" fill="#9efa68" fill-opacity=".65" stroke="#dbffc2"/><path d="M30 30V57M8 16l22 14 22-14" stroke="#eaffd0"/><path d="M30 5v25" stroke="#f4fff0"/></svg><span>YAPI</span></button>
-<button type="button" class="cell-tool" data-cell="muscle" aria-pressed="true" title="Kas hücresi"><svg viewBox="0 0 60 60" fill="none"><path d="m20 13 15-7 10 7v38l-15 7-10-8Z" fill="#ee49a4" fill-opacity=".8" stroke="#ffa1d9"/><path d="M35 6v44L20 57V13M35 50l10 1" stroke="#ffc7e7"/><path d="m20 27 15-7m-15 20 15-7" stroke="#ff8fce"/></svg><span>KAS</span></button>
-<button type="button" class="cell-tool" data-cell="sensor" aria-pressed="false" title="Duyu hücresi"><svg viewBox="0 0 60 60" fill="none"><path d="M30 4 48 29 30 56 12 29Z" fill="#a0f4e1" fill-opacity=".4" stroke="#ccfff2"/><path d="M30 4v52M12 29h36M30 4 12 29l18 7 18-7" stroke="#bdfff0"/><circle cx="30" cy="29" r="5" fill="#cbfff3"/></svg><span>DUYU</span></button>
-<button type="button" class="cell-tool" data-cell="energy" aria-pressed="false" title="Enerji hücresi"><svg viewBox="0 0 60 60" fill="none"><path d="M30 5 49 17v26L30 55 11 43V17Z" fill="#d8ff8a" fill-opacity=".55" stroke="#eaffc5"/><path d="m33 13-13 20h10l-4 16 16-25H31Z" fill="#ffe995" stroke="#fff6c7"/></svg><span>ENERJİ</span></button>
+<section class="stats" aria-label="Robotun durumu">
+<div class="metric"><span class="symbol">ϟ</span><div class="metric-label">Enerji</div><div class="metric-val" id="statEnergy">100%</div><div class="tiny-meter"><i id="barEnergy" style="width:100%"></i></div></div>
+<div class="metric"><span class="symbol">◎</span><div class="metric-label">Denge</div><div class="metric-val" id="statBalance">100%</div><div class="tiny-meter"><i id="barBalance" style="width:100%"></i></div></div>
+<div class="metric"><span class="symbol">➜</span><div class="metric-label">İtki</div><div class="metric-val" id="statThrust">40%</div><div class="tiny-meter"><i id="barThrust" style="width:40%"></i></div></div>
+</section>
+</div>
+<div class="stage-note" id="stageCaption"><i></i> Renkli yuvalara dokunarak hücre ekle</div>
+<footer class="dock" aria-label="Robot yapım araçları">
+<div class="selected-info"><span class="selected-art" id="selectedArt"></span><div><span class="mono muted">SEÇİLİ HÜCRE</span><strong class="name" id="selectedName">Kas</strong><p id="selectedDesc">Robotu hareket ettirir.</p></div></div>
+<div class="cell-tools" role="toolbar" aria-label="Hücre tipleri">
+<button type="button" class="cell-tool" data-cell="core" aria-pressed="false" title="Destek: Gövdeyi büyütür"><svg viewBox="0 0 60 60" fill="none"><path d="M30 5 52 17v26L30 55 8 43V17Z" fill="#8c9ad9" stroke="#3d579e" stroke-width="2"/><path d="M30 29 8 17M30 29 52 17M30 29v26" stroke="#eaf0ff" stroke-width="2"/><circle cx="30" cy="30" r="8" fill="#e2e9ff"/></svg><span>Destek</span></button>
+<button type="button" class="cell-tool" data-cell="muscle" aria-pressed="true" title="Kas: Hareket üretir"><svg viewBox="0 0 60 60" fill="none"><path d="M18 12 37 5l9 11v34l-20 8-10-12Z" fill="#ea8e73" stroke="#b76e60" stroke-width="2"/><path d="m18 24 27-7m-27 20 27-8m-17-22v50" stroke="#ffe9dc" stroke-width="3"/></svg><span>Kas</span></button>
+<button type="button" class="cell-tool" data-cell="sensor" aria-pressed="false" title="Duyu: Yönü bulur"><svg viewBox="0 0 60 60" fill="none"><path d="M30 4 52 29 30 56 8 29Z" fill="#92dad4" stroke="#4b989a" stroke-width="2"/><path d="M30 4v52M8 29h44" stroke="#ddffff" stroke-width="2"/><circle cx="30" cy="29" r="8" fill="#e3fffa"/></svg><span>Duyu</span></button>
+<button type="button" class="cell-tool" data-cell="energy" aria-pressed="false" title="Enerji: Daha uzun yaşar"><svg viewBox="0 0 60 60" fill="none"><path d="M30 5 52 17v26L30 55 8 43V17Z" fill="#f0cb89" stroke="#d49c53" stroke-width="2"/><path d="M32 12 19 33h12l-5 16 17-25H31Z" fill="#fff2bf" stroke="#fffaf1" stroke-width="2"/></svg><span>Enerji</span></button>
 </div>
 <div class="small-actions">
-<button class="square-action" id="undoBtn" type="button" title="Geri al"><svg><use href="#i-undo"/></svg><span>GERİ</span></button>
-<button class="square-action" id="mirrorBtn" type="button" aria-pressed="false" title="Simetrik yerleştirme"><svg><use href="#i-sym"/></svg><span>SİMETRİ</span></button>
-<button class="square-action" id="eraseBtn" type="button" aria-pressed="false" title="Hücre sil"><svg><use href="#i-trash"/></svg><span>SİL</span></button>
+<button class="square-action" id="undoBtn" type="button" title="Geri al" aria-label="Geri al"><svg viewBox="0 0 24 24"><use href="#i-undo"/></svg></button>
+<button class="square-action" id="mirrorBtn" type="button" title="Simetrik yerleştir" aria-pressed="false" aria-label="Simetrik yerleştir"><svg viewBox="0 0 24 24"><use href="#i-sym"/></svg></button>
+<button class="square-action" id="eraseBtn" type="button" title="Hücre sil" aria-pressed="false" aria-label="Hücre sil"><svg viewBox="0 0 24 24"><use href="#i-trash"/></svg></button>
 </div>
-<button type="button" class="run" id="runBtn"><svg id="runGlyph" viewBox="0 0 32 32"><use href="#i-play"/></svg><span><b id="runLabel">CANLANDIR</b><small id="runSubtitle">SİMÜLASYONU BAŞLAT</small></span></button>
+<button id="runBtn" class="run" type="button"><svg id="runGlyph" viewBox="0 0 24 24"><use href="#i-play"/></svg><span><b id="runLabel">Test et</b><small id="runSubtitle">Robotunu çalıştır</small></span></button>
 </footer>
 </div>
-<aside class="drawer" id="drawer" aria-live="polite"></aside>
-<div class="dialog-scrim" id="resultScrim" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
-<div class="dialog"><button type="button" id="closeResult" class="xbtn" style="position:absolute;right:15px;top:15px" aria-label="Kapat">×</button><div class="mono dialog-kicker" id="resultKicker">DENEY SONUCU</div><h2 id="resultTitle">HEDEF BULUNDU.</h2><p id="resultText"></p><div class="results"><div><strong id="resultProgress">0%</strong><span>MESAFE</span></div><div><strong id="resultEnergy">0%</strong><span>ENERJİ</span></div><div><strong id="resultTime">0s</strong><span>SÜRE</span></div></div><div class="dialog-buttons"><button type="button" id="retryBtn" class="strong">YENİDEN DENE</button><button type="button" id="editBtn">DÜZENLE</button><button type="button" id="shareBtn">PAYLAŞ ↗</button></div></div>
-</div>
+<div id="drawerBack" class="drawer-back"></div>
+<aside id="drawer" class="drawer" aria-label="Açılır menü"></aside>
+<div id="resultScrim" class="dialog-scrim" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+<div class="dialog"><button class="xbtn" id="closeResult" type="button" aria-label="Kapat" style="position:absolute;right:16px;top:14px">×</button>
+<span class="dialog-kicker mono" id="resultKicker">DENEY SONUCU</span><h2 id="resultTitle">Deney tamamlandı.</h2><p id="resultText"></p>
+<div class="results"><div><strong id="resultProgress">0%</strong><span>İLERLEME</span></div><div><strong id="resultEnergy">0%</strong><span>KALAN ENERJİ</span></div><div><strong id="resultTime">0s</strong><span>SÜRE</span></div></div>
+<div class="dialog-buttons"><button class="strong" id="retryBtn" type="button">Tekrar dene</button><button id="editBtn" type="button">Robotu geliştir</button><button id="shareBtn" type="button">Paylaş ↗</button></div>
+</div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
-</div><script src="/bio-robot.js?v=2" defer></script>
+</div>
+<script src="/bio-robot.js?v=3" defer></script>
 </body></html>
