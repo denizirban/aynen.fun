@@ -142,6 +142,20 @@ canvas{width:100%;height:100%;display:block}
 #results .stats{margin:8px 0 10px}
 #results .share{padding:9px;margin-top:5px}
 }
+
+/* The street is the interface: state of Istanbul stays compact. */
+#cityEvent{position:absolute;z-index:3;top:23%;right:clamp(16px,4vw,55px);pointer-events:none;max-width:min(310px,44vw);background:#f5e6cbf2;border:2px solid #493931;box-shadow:5px 6px 0 #4d3a33;transform:translateY(-8px) rotate(2deg);opacity:0;transition:opacity .22s,transform .22s;padding:12px 16px}
+#cityEvent.on{opacity:1;transform:translateY(0) rotate(2deg)}
+#cityEvent small{display:block;font:800 10px/1.2 'Courier New',monospace;letter-spacing:.12em;color:#8c493b;margin-bottom:6px}
+#cityEvent strong{display:block;font:900 clamp(18px,2vw,26px)/1.05 Arial;letter-spacing:-.04em}
+#cityEvent span{display:block;margin-top:7px;font:12px/1.35 Arial;color:#4f453e}
+@media(max-width:650px){
+ #cityEvent{right:12px;top:25%;max-width:51vw;padding:9px 11px}
+ #cityEvent small{font-size:8px}
+ #cityEvent strong{font-size:17px}
+ #cityEvent span{font-size:10px}
+}
+
 </style>
 </head>
 <body>
@@ -158,6 +172,7 @@ canvas{width:100%;height:100%;display:block}
 <div id="mission" hidden aria-live="polite"></div>
 <div id="combo" hidden aria-live="polite"></div>
 <div id="tip" aria-live="polite"></div>
+<div id="cityEvent" role="status" aria-live="polite" aria-atomic="true"><small>ŞEHİR DURUMU</small><strong id="cityEventTitle"></strong><span id="cityEventText"></span></div>
 <div class="utility"><button type="button" id="sound" aria-label="Sesi aç veya kapat" aria-pressed="false">SES: KAPALI</button><button type="button" id="pause" aria-label="Oyunu duraklat" hidden>DURAKLAT</button></div>
 <div id="hint">BASILI TUT → BIRAK: ZIPLA<br>HAVADA DOKUN → NUMARA<br>HER YERDEN KONTROL ET</div>
 <div id="charge"><i id="chargeFill"></i></div>
@@ -189,7 +204,7 @@ const canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const H=720,GROUND=637,PI=Math.PI*2;
 let W=1280,dpr=1,run=false,paused=false,last=0,elapsed=0,distance=0,score=0,best=0,speed=340,lives=3,streak=0,invuln=0,shake=0,spawnLeft=420,obstacles=[],effects=[],textTimer=0,zone=-1,gameOver=false,soundOn=false,audio=null,crashReason="",nearCount=0;
 const player={x:255,y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0,airClears:0};
-const names=['MODA','KADIKÖY','KARAKÖY','BEŞİKTAŞ','CİHANGİR','ŞİŞLİ','ÜSKÜDAR','TAKSİM','BALAT'];
+const names=['MODA','KADIKÖY','KARAKÖY','BEŞİKTAŞ','CİHANGİR','ŞİŞLİ','ÜSKÜDAR','TAKSİM','BALAT','MECİDİYEKÖY'];
 const zoneName=()=>names[Math.min(names.length-1,Math.floor(distance/390))];
 const hazards=[
 {type:'duba',width:51,height:71,label:'DUBA',note:'Duba. Olduğu yer artık park yeri.'},
@@ -204,10 +219,57 @@ const hazards=[
 {type:'kasa',width:94,height:70,label:'MEYVE KASASI',note:'Manav kasaları biraz taştı.'},
 {type:'saksi',width:70,height:90,label:'SAKSI',note:'Çiçekçi dükkânı bütün sokağa yayıldı.'}
 ];
-let previous='',hudTick=0,mode='endless',seed=0,randomState=1,dailyStamp='',targetMeters=0,startedBest=0,missionIndex=0,missionProgress=0,missionStartMeters=0,missionDoneTimer=0,spawnCount=0,nearMax=0,tricks=0,cleared=0,maxCombo=0,unlocked=[],metTarget=false,passedRecord=false;
+let previous='',cityStateIndex=-1,cityPhase=-1,cityEventTime=0,incidentCount=0,visualTick=0,hudTick=0,mode='endless',seed=0,randomState=1,dailyStamp='',targetMeters=0,startedBest=0,missionIndex=0,missionProgress=0,missionStartMeters=0,missionDoneTimer=0,spawnCount=0,nearMax=0,tricks=0,cleared=0,maxCombo=0,unlocked=[],metTarget=false,passedRecord=false;
 const allStickers=['DUBA USTASI','MARTI NÖBETİ','TAKSİ DİKKAT','KAZI BİTMEZ','SİMİT HATTI'];
 const stickerMap={duba:0,marti:1,taksi:2,cukur:3,simit:4};
 const missions=[{text:'3 engel geç',kind:'pass',goal:3},{text:'2 numara yap',kind:'trick',goal:2},{text:'200 m ilerle',kind:'meters',goal:200},{text:'2 ramak kala geçiş',kind:'near',goal:2},{text:'6 engel geç',kind:'pass',goal:6},{text:'400 m ilerle',kind:'meters',goal:400}];
+
+
+/* Story events are deliberately seeded independently from obstacle RNG.
+   Same challenge seed = same street conditions on every device. */
+const cityStates=[
+ {id:'tasinma',name:'TAŞINMA GÜNÜ',desc:'Apartmandaki herkes bugün taşınıyor.',focus:['koli','tasinma','damacana','hali','kurye'],tone:'#e7bba5',prop:'boxes'},
+ {id:'pazar',name:'PAZAR KURULDU',desc:'Yolun yarısı artık manav.',focus:['kasa','pazararabasi','simit','file','meyve','tente'],tone:'#d6c997',prop:'market'},
+ {id:'altyapi',name:'ALTYAPI ÇALIŞMASI',desc:'Kaldırımı açmışlar. Kapatma tarihi yok.',focus:['duba','cukur','barikat','kablo','fayans','boya','zincir'],tone:'#d5aaa3',prop:'works'},
+ {id:'esnaf',name:'ESNAF TAŞTI',desc:'Kaldırımın yeni işletmecileri var.',focus:['tabure','masa','sandalye','simit','doner','cay','tabela'],tone:'#d9ba9b',prop:'chairs'},
+ {id:'motor',name:'İKİ DAKİKALIĞINA',desc:'Herkes iki dakikalığına park etmiş.',focus:['motor','scooter','bisiklet','taksi','kurye','konteyner'],tone:'#c6b6b4',prop:'motor'},
+ {id:'marti',name:'MARTILAR İŞ BAŞINDA',desc:'Simitin varsa şansın yok.',focus:['marti','file','simit','pazararabasi'],tone:'#c2d1c5',prop:'gulls'},
+ {id:'dugun',name:'DÜĞÜN HAZIRLIĞI',desc:'Sokak trafiğe açık. Teoride.',focus:['sandalye','masa','damacana','cay','hali','tente'],tone:'#e7bbbc',prop:'celebration'},
+ {id:'kucuk',name:'KÜÇÜK BİR ÇALIŞMA',desc:'Bütün sokak kapanmış ama küçük.',focus:['duba','barikat','zincir','kablo','tabela','boya'],tone:'#d8ba8f',prop:'works'}
+];
+function stateForCycle(cycle){
+ if(cycle<0)return null;
+ let index=(hashSeed('CITYv2-'+seed+'-'+cycle)>>>0)%cityStates.length;
+ if(cycle>0&&index===cityStateIndex)index=(index+1)%cityStates.length;
+ return {...cityStates[index],index};
+}
+function currentCity(){return cityStateIndex>=0?cityStates[cityStateIndex]:null}
+function cityIntensity(){return Math.min(4,Math.floor(spawnCount/9))}
+function updateStreetLabel(){
+ const area=names[Math.min(names.length-1,Math.floor(distance/3900))];
+ const st=currentCity();
+ $('status').textContent=area+' · '+(st?st.name:'KALDIRIM DURUMU BELİRSİZ');
+}
+function enterCityState(cycle){
+ const next=stateForCycle(cycle);
+ cityPhase=cycle;cityStateIndex=next?next.index:-1;
+ updateStreetLabel();
+ if(next){
+  $('cityEventTitle').textContent=next.name;
+  $('cityEventText').textContent=next.desc;
+  $('cityEvent').classList.add('on');
+  cityEventTime=3.25;
+  sfx('point');
+ }
+}
+function updateCityEvents(dt){
+ const cycle=spawnCount<8?-1:Math.floor((spawnCount-8)/9);
+ if(cycle!==cityPhase)enterCityState(cycle);
+ if(cityEventTime>0){
+  cityEventTime-=dt;
+  if(cityEventTime<=0)$('cityEvent').classList.remove('on');
+ }
+}
 
 const urlArgs=new URLSearchParams(location.search);
 const querySeed=urlArgs.get('challenge');
@@ -307,7 +369,7 @@ function missionEvent(kind,n=1){
   missionIndex++;missionProgress=0;missionStartMeters=Math.floor(distance/10);missionDoneTimer=.6;
   sfx('point');
  }
- missionPanel();
+ missionPanel();updateStreetLabel();$('cityEvent').classList.remove('on');
 }
 function streakLabel(){
  const multi=Math.min(5,1+Math.floor(streak/5));
@@ -337,7 +399,7 @@ $('dailyStart').addEventListener('click',()=>{
 
 function reset(){
  setupMode();
- run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';metTarget=false;missionIndex=0;missionProgress=0;missionStartMeters=0;missionDoneTimer=0;spawnCount=0;nearMax=0;tricks=0;cleared=0;maxCombo=0;passedRecord=false;
+ run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';cityStateIndex=-1;cityPhase=-1;cityEventTime=0;incidentCount=0;visualTick=0;metTarget=false;missionIndex=0;missionProgress=0;missionStartMeters=0;missionDoneTimer=0;spawnCount=0;nearMax=0;tricks=0;cleared=0;maxCombo=0;passedRecord=false;
  Object.assign(player,{y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0,airClears:0});
  $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;$('share').textContent='ARKADAŞINA MEYDAN OKU ↗';$('combo').hidden=true;
  missionPanel();
@@ -456,9 +518,10 @@ $('shareCard').addEventListener('click',async()=>{
 function spawn(){
  const stage=spawnCount>=16?2:spawnCount>=8?1:0;
  const warmup=spawnCount<8;
- const pool=hazards.filter(h=>warmup?['duba','koli','tabure','scooter'].includes(h.type):stage>0||!['taksi','barikat'].includes(h.type));
- let h=pool[Math.floor(randGame()*pool.length)];
- for(let i=0;i<5&&h.type===previous;i++)h=pool[Math.floor(randGame()*pool.length)];
+ const pool=hazards.filter(h=>warmup?['duba','koli','tabure','scooter'].includes(h.type):stage===1?h.tier!==3:true);
+ const city=currentCity(),weighted=city?pool.concat(pool.filter(h=>city.focus.includes(h.type)),pool.filter(h=>city.focus.includes(h.type))):pool;
+ let h=weighted[Math.floor(randGame()*weighted.length)];
+ for(let i=0;i<6&&h.type===previous;i++)h=weighted[Math.floor(randGame()*weighted.length)];
  previous=h.type;
  obstacles.push({...h,x:W+80,passed:false,hit:false,near:false});spawnCount++;
  const baseGap=W<590?370:430;
@@ -473,8 +536,9 @@ function update(dt){
  speed=clamp(baseSpeed+Math.max(0,elapsed-6)*7.6,baseSpeed,W<590?565:730);
  const dx=speed*dt;distance+=dx;spawnLeft-=dx;
  if(spawnLeft<=0)spawn();
+ updateCityEvents(dt);
  const z=Math.min(names.length-1,Math.floor(distance/3900));
- if(z!==zone){zone=z;$('status').textContent=names[z]+' · KALDIRIM DURUMU BELİRSİZ';if(z>0)toast(names[z]+'. KALDIRIM HALA YOK.')}
+ if(z!==zone){zone=z;updateStreetLabel();if(z>0)toast(names[z]+'. KALDIRIM HÂLÂ YOK.')}
  if(missionDoneTimer>0)missionDoneTimer-=dt;
  if(mode==='duel'&&!metTarget&&targetMeters&&Math.floor(distance/10)>targetMeters){metTarget=true;toast('ARKADAŞINI GEÇTİN.');sfx('point')}
  if(!passedRecord&&startedBest>=30&&Math.floor(distance/10)>startedBest){passedRecord=true;toast('YENİ REKOR.');sfx('point')}
