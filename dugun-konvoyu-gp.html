@@ -31,7 +31,7 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 .overlay[hidden]{display:none}
 .mode-options{display:flex;gap:8px;justify-content:center;margin:10px 0 4px}.mode-options button{flex:1;font-size:11px;font-weight:900;background:#18315a;color:#d6e4ff;border:1px solid #426aa1;padding:12px 6px}.mode-options button[aria-pressed="true"]{background:#fce9b0;border-color:#ffd467;color:#303048;box-shadow:inset 0 -3px 0 #b88c50}
 .mode-caption{font-size:11px!important;color:#b1cbde!important;margin:5px 0 9px!important;min-height:17px}
-.mission-strip{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;justify-content:center;z-index:2;pointer-events:none;font-family:"DM Mono",monospace;white-space:nowrap;max-width:95%;transition:opacity .3s}
+.mission-strip{position:absolute;bottom:14px;left:12px;transform:none;display:flex;gap:6px;align-items:center;justify-content:center;z-index:2;pointer-events:none;font-family:"DM Mono",monospace;white-space:nowrap;max-width:95%;transition:opacity .3s}
 .mission-chip{background:rgba(12,30,59,.88);border:1px solid #8ca5bb;border-radius:3px;padding:6px 10px;color:#ffedb1;font-size:clamp(9px,.85vw,12px);font-weight:500}.mission-chip.done{color:#a8f2c3;border-color:#64bd91}
 #tutorial{position:absolute;left:50%;top:29%;transform:translateX(-50%);z-index:3;display:none;align-items:center;justify-content:center;gap:7px;max-width:88%;padding:8px 12px;border-radius:5px;background:rgba(13,31,57,.94);border:1px solid #ffdf75;color:#fff1c5;font:500 clamp(11px,1vw,14px)/1.4 "DM Mono",monospace;text-align:center;pointer-events:none}
 #tutorial.on{display:flex}
@@ -41,7 +41,7 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 .result-action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.result-action-row button{background:#24456f;border:1px solid #85a5cc;padding:12px 5px;color:#f5f7fa;font-size:11px;font-weight:700}
 .result-action-row button:active{background:#396088}
 .result-card-foot{font-size:10px!important;color:#b0c6d7!important}
-@media(max-width:650px){.mission-strip{bottom:3%;gap:3px}.mission-chip{font-size:9px;padding:5px 6px}.mode-options{gap:5px}.mode-options button{font-size:10px;padding:12px 2px}.result-action-row{gap:5px}.result-action-row button{font-size:10px}}
+@media(max-width:650px){.mission-strip{bottom:5px;left:5px;gap:3px}.mission-strip #m-lap{display:none}.mission-chip{font-size:9px;padding:5px 6px}.mode-options{gap:5px}.mode-options button{font-size:10px;padding:12px 2px}.result-action-row{gap:5px}.result-action-row button{font-size:10px}}
 @media(max-height:515px){.mission-strip{bottom:2%}.mission-chip{padding:3px 6px;font-size:9px}#tutorial{top:25%;font-size:10px}.card .rules{display:none}}
 
 .card{width:min(440px,100%);max-height:100%;overflow:auto;background:#10234c;border:3px solid #eff2d6;outline:5px solid #13224d;box-shadow:10px 10px 0 #080e24;padding:clamp(14px,3vw,27px);text-align:center}
@@ -129,9 +129,11 @@ let drumClock=0,drumStep=0,roadCut=[false,false];
 const dortluBtn=document.getElementById("dortlu"),comboFloat=document.getElementById("combo-float"),tutorialEl=document.getElementById("tutorial"),progressEl=document.getElementById("h-progress"),progressTrack=document.getElementById("progress-track"),missionProgress=document.getElementById("m-progress"),missionStreak=document.getElementById("m-streak"),missionLap=document.getElementById("m-lap"),missionStrip=document.getElementById("mission-strip");
 let runMode="quick",dailyKey="",runRng=null,attempts=0,tutorialStage=0,tutorialClock=0,runEvents=[],hadHorn=false,firstGame=true;
 let lastLap=1,comboFloatTime=0,particles=[],pulse=0,rumble=0,helpShown=false,goalUnlocked=[false,false,false];
-let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
+let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const rand=(a,b)=>a+Math.random()*(b-a);
+const siteBase="https://aynen.fun/dugun-konvoyu-gp.html";
+const shareModeUrl=()=>siteBase+(runMode==="daily"?"?mode=daily":"");
 function rect(x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h));}
 function poly(coords,color){c.fillStyle=color;c.beginPath();c.moveTo(coords[0],coords[1]);for(let i=2;i<coords.length;i+=2)c.lineTo(coords[i],coords[i+1]);c.closePath();c.fill();}
 function txt(t,x,y,size,color,align){c.fillStyle=color;c.font="bold "+size+"px monospace";c.textAlign=align||"left";c.fillText(String(t),Math.round(x),Math.round(y));}
@@ -171,7 +173,7 @@ function showTutorial(msg,ttl){
 }
 function hideTutorial(){tutorialEl.classList.remove("on");tutorialClock=0}
 function start(){
-g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
+g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
 dailyKey=trDay();runRng=runMode==="daily"?seededRandom(stringHash("dugun-gp-v4-"+dailyKey)):null;attempts++;tutorialStage=0;hadHorn=false;runEvents=[];
 lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=(runMode==="daily"?stringHash("scene-"+dailyKey):Math.random()*10000);flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",1.7);missionStrip.style.display="flex";progressTrack.style.display="block";updateHud();showTutorial("← → YÖNLENDİR · + GELİNCE KORNA ÇAL",3.3);
 }
@@ -179,18 +181,108 @@ function bestScore(){try{return Number(localStorage.getItem("dugun-gp-best")||0)
 function saveBest(){try{if(g.score>bestScore())localStorage.setItem("dugun-gp-best",String(g.score))}catch(e){}}
 document.getElementById("best").textContent="EN İYİ SKOR: "+String(bestScore()).padStart(6,"0");
 document.getElementById("start").addEventListener("click",start);
+
+function scoreIdentity(win){
+ if(g.maxConvoy>=14&&win)return ["KONVOY BAŞKANI","Bütün sülale salonda. Otopark yetmedi."];
+ if(g.bestCombo>=5)return ["KORNA ORKESTRASI","Beş araçlık seri. Konvoy kendini topladı."];
+ if(g.nearMiss>=5)return ["KIL PAYI ENİŞTE","Yola değil, reflekslerine güvendin."];
+ if(g.horns>=10&&g.joined<=2)return ["KORNACI BAŞI","Korna mesaisi yüksek. Araç sayısı mütevazı."];
+ if(g.hearts===1&&win)return ["SON CANLA YETİŞEN","Salona girdin. Arabayı bir kontrol ettir."];
+ if(g.maxConvoy>=9)return ["MAHALLE ORGANİZATÖRÜ","Düğünden haberi olmayan bile katıldı."];
+ if(!win)return ["KONVOYDAN KOPAN","Salona giden yönü bir daha kontrol et."];
+ return ["GELİN TARAFINDAN","Düğün salonuna vardın. Şimdilik yeter."];
+}
+function saveStats(win){
+ saveBest();
+ try{
+  localStorage.setItem("dugun-gp-last",JSON.stringify({score:g.score,convoy:g.maxConvoy,win:!!win,mode:runMode}));
+  const current=Number(localStorage.getItem("dugun-gp-games")||0);
+  localStorage.setItem("dugun-gp-games",String(current+1));
+  if(runMode==="daily"&&g.score>dailyBest())localStorage.setItem(dailyBestKey(),String(g.score));
+ }catch(e){}
+}
+function lastRun(){
+ try{return JSON.parse(localStorage.getItem("dugun-gp-last")||"null")}catch(e){return null}
+}
 function finish(win){
-mode="end";saveBest();fanfare();
-const headline=win?"SALONA ULAŞTIN!":"KONVOY DAĞILDI";
-const detail=win?(g.convoy>=14?"Bütün sülaleyi getirdin. Salonda masa kalmadı.":"Gelin arabası doğru düğün salonuna yetişti."):"Konvoy yarı yolda dağıldı. Gelin arabası hâlâ yolda.";
-setMenu('<div class="eyebrow">YARIŞ SONU / RESMÎ TUTANAK</div><h2>'+headline+'</h2><p>'+detail+'</p><p style="font-size:26px;color:#ffde73;font-weight:900">'+String(g.score).padStart(6,"0")+' PUAN</p><p>'+g.joined+' YENİ ARAÇ · '+g.horns+' KORNA · '+g.nearMiss+' KIL PAYI</p><p>EN İYİ SKOR: '+String(bestScore()).padStart(6,"0")+'</p><button class="cta" id="again" type="button">BİR DAHA →</button><button class="secondary" id="share" type="button">SONUCU PAYLAŞ</button><a class="secondary" href="/">DİĞER OYUNLAR</a>');
-document.getElementById("again").onclick=start;
-document.getElementById("share").onclick=share;
+ mode="end";hideTutorial();
+ const previous=lastRun();const priorBest=runMode==="daily"?dailyBest():bestScore();
+ saveStats(win);fanfare();missionStrip.style.display="none";
+ const [identity,description]=scoreIdentity(win);
+ const target=nextTarget();
+ const improved=g.score>priorBest;
+ const bestLabel=runMode==="daily"?"BUGÜNÜN REKORU":"KİŞİSEL REKOR";
+ const resultSub=improved?"YENİ REKOR!":previous&&previous.score>g.score?"ÖNCEKİ TURDA "+Math.max(0,previous.score-g.score)+" PUAN DAHA YAPMIŞTIN.":"BİR TUR DAHA?";
+ const modeLabel=runMode==="daily"?"GÜNÜN KONVOYU · "+dailyKey:"HIZLI YARIŞ";
+ setMenu('<div class="eyebrow">'+modeLabel+' / YARIŞ SONU</div>'
+ +'<h2 style="margin-bottom:5px">'+(win?"SALONA YETİŞTİN!":"KONVOY DAĞILDI")+'</h2>'
+ +'<div class="result-tier">'+identity+'</div>'
+ +'<p style="font-size:11px;margin:5px 0">'+description+'</p>'
+ +'<div style="font-size:clamp(29px,5vw,44px);color:#ffdf75;font-weight:900;line-height:1.1">'+String(g.score).padStart(6,"0")+'</div>'
+ +'<p class="eyebrow" style="margin:3px 0;color:#ffe299">'+(improved?"★ ":"")+bestLabel+' '+String(runMode==="daily"?dailyBest():bestScore()).padStart(6,"0")+'</p>'
+ +'<div class="result-grid"><div><strong>'+g.maxConvoy+'</strong>ARAÇ</div><div><strong>'+g.bestCombo+'×</strong>EN İYİ SERİ</div><div><strong>'+g.nearMiss+'</strong>KIL PAYI</div></div>'
+ +'<button class="cta" id="again" type="button">TEKRAR DENE →</button>'
+ +'<div class="result-action-row"><button id="share" type="button">PAYLAŞ ↗</button><button id="story" type="button">HİKÂYE GÖRSELİ ↓</button></div>'
+ +'<p class="result-card-foot">'+resultSub+' · '+target+'</p>');
+ const again=document.getElementById("again"),shareEl=document.getElementById("share"),storyEl=document.getElementById("story");
+ again.onclick=start;shareEl.onclick=share;storyEl.onclick=downloadStory;
+}
+function nextTarget(){
+ if(g.maxConvoy<7)return "SONRAKİ HEDEF: 7 ARABALIK KONVOY";
+ if(g.bestCombo<3)return "SONRAKİ HEDEF: 3 ARABA ÜST ÜSTE";
+ if(g.maxConvoy<14)return "SONRAKİ HEDEF: 14 ARABA TOPLA";
+ return "SONRAKİ HEDEF: REKORUNU GEÇ";
+}
+function shareText(){
+ const [identity]=scoreIdentity(g.distance>=2280);
+ return "Düğün Konvoyu GP · "+identity+"\n"+g.score+" puan · "+g.maxConvoy+" araç · "+g.bestCombo+"× seri.\nAynı düğüne yetişebilir misin? "+shareModeUrl();
 }
 async function share(){
-const text="Düğün Konvoyu GP'de "+g.score+" puan yaptım. "+g.joined+" arabayı konvoya kattım. Sen yetişebilir misin? https://aynen.fun/dugun-konvoyu-gp.html";
-try{if(navigator.share)await navigator.share({title:"Düğün Konvoyu GP",text,url:"https://aynen.fun/dugun-konvoyu-gp.html"});else if(navigator.clipboard){await navigator.clipboard.writeText(text);document.getElementById("share").textContent="KOPYALANDI ✓"}else{prompt("Paylaş:",text)}}catch(e){}
+ const text=shareText();
+ try{
+  if(navigator.share){await navigator.share({title:"Düğün Konvoyu GP",text,url:shareModeUrl()});return}
+  if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);document.getElementById("share").textContent="KOPYALANDI ✓";return}
+  window.prompt("Paylaş",text);
+ }catch(e){if(e.name!=="AbortError")window.prompt("Paylaş",text)}
 }
+function makeStoryCanvas(){
+ const cv=document.createElement("canvas");cv.width=1080;cv.height=1920;
+ const p=cv.getContext("2d");if(!p)return null;
+ p.fillStyle="#142c5a";p.fillRect(0,0,1080,1920);
+ // Original shareable 9:16 art card: retro road, ribbons, city and wedding car.
+ p.fillStyle="#2373dc";p.fillRect(0,280,1080,760);
+ p.fillStyle="#469d33";p.fillRect(0,1020,1080,900);
+ p.fillStyle="#ffefb6";p.fillRect(90,460,900,130);
+ p.fillStyle="#b5434b";p.fillRect(90,575,900,14);
+ p.textAlign="center";p.fillStyle="#9b3045";p.font="bold 76px monospace";p.fillText("DÜĞÜN KONVOYU",540,548);
+ p.fillStyle="#2a343b";p.beginPath();p.moveTo(498,825);p.lineTo(582,825);p.lineTo(1200,1920);p.lineTo(-120,1920);p.fill();
+ p.strokeStyle="#fff6da";p.lineWidth=14;p.setLineDash([32,48]);p.beginPath();p.moveTo(540,865);p.lineTo(540,1900);p.stroke();p.setLineDash([]);
+ const colors=["#e64a43","#e7e1d8","#d5ae62","#52708b"];
+ for(let i=0;i<7;i++){
+  let z=i/7,x=140+(i%3)*260,y=975+i*103,w=95+z*48;
+  p.fillStyle="#131e2c";p.fillRect(x-8,y+43,w+16,20);p.fillStyle=colors[i%4];p.fillRect(x,y,w,55);
+  p.fillStyle="#8dc5d7";p.fillRect(x+19,y-17,w-37,30);
+  p.fillStyle="#fff0e0";p.beginPath();p.moveTo(x+w/2,y+35);p.lineTo(x+w/2-29,y+13);p.lineTo(x+w/2-24,y+48);p.lineTo(x+w/2,y+35);p.lineTo(x+w/2+29,y+13);p.lineTo(x+w/2+24,y+48);p.fill();
+ }
+ p.fillStyle="rgba(7,21,49,.93)";p.fillRect(65,1280,950,510);
+ p.fillStyle="#f9e7a6";p.textAlign="center";p.font="bold 65px monospace";p.fillText(scoreIdentity(g.distance>=2280)[0].slice(0,22),540,1370);
+ p.font="bold 132px monospace";p.fillText(String(g.score).padStart(6,"0"),540,1550);
+ p.fillStyle="#fff";p.font="46px monospace";p.fillText(g.maxConvoy+" ARAÇ   ·   "+g.bestCombo+"× SERİ",540,1655);
+ p.fillStyle="#b9d4e7";p.font="bold 39px monospace";p.fillText(runMode==="daily"?"GÜNÜN KONVOYU":"HIZLI YARIŞ",540,1731);
+ p.fillStyle="#fff2c5";p.font="bold 50px monospace";p.fillText("AYNEN.FUN",540,1837);
+ return cv;
+}
+function downloadStory(){
+ try{
+  const card=makeStoryCanvas();if(!card)return;
+  const link=document.createElement("a");
+  link.download="dugun-konvoyu-gp-"+g.score+".png";
+  link.href=card.toDataURL("image/png");
+  document.body.appendChild(link);link.click();link.remove();
+  const el=document.getElementById("story");if(el)el.textContent="GÖRSEL HAZIR ✓";
+ }catch(e){const el=document.getElementById("story");if(el)el.textContent="DESTEKLENMİYOR"}
+}
+
 function pause(){if(mode==="playing"){mode="pause";pauseBtn.textContent="▶";setMenu('<div class="eyebrow">KONVOY BEKLİYOR</div><h2>MOLA</h2><p>Kimse düğüne geç kalmadı. Henüz.</p><button class="cta" id="resume" type="button">DEVAM ET →</button><a class="secondary" href="/">AYNEN.FUN</a>');document.getElementById("resume").onclick=pause}
 else if(mode==="pause"){mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now()}}
 pauseBtn.onclick=pause;
@@ -200,7 +292,7 @@ if(mode!=="playing"||g.hornCD>0)return;
 g.hornCD=.90;pulse=.42;g.horns++;hadHorn=true;tone(350,.16,"sawtooth",.065);setTimeout(()=>tone(425,.14,"sawtooth",.05),115);
 let gathered=0;
 for(const o of objects){if(o.type==="guest"&&!o.joined&&!o.passed&&o.z<.75&&o.z>.08&&Math.abs(o.lane-g.lane)<.67){
-o.joined=true;o.pop=1;gathered++;g.joined++;g.convoy++;g.combo++;g.score+=170+Math.min(g.combo,8)*45;g.comboClock=5.5;showCombo("+"+(170+Math.min(g.combo,8)*45)+"  ·  "+g.combo+"x SERİ");makeConfetti(o.z,o.lane,18);g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
+o.joined=true;o.pop=1;gathered++;g.joined++;g.convoy++;g.combo++;g.score+=170+Math.min(g.combo,8)*45;g.comboClock=5.5;g.maxConvoy=Math.max(g.maxConvoy,g.convoy);g.bestCombo=Math.max(g.bestCombo,g.combo);showCombo("+"+(170+Math.min(g.combo,8)*45)+"  ·  "+g.combo+"x SERİ");makeConfetti(o.z,o.lane,18);g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
 }}
 if(gathered)announce(gathered>1?gathered+" ARAÇ DAHA KATILDI!":["DAYININ ARKADAŞI DA GELDİ","KONVOYA +1 ARAÇ","HALA OĞLU YETİŞTİ","KORNAYI DUYUP GELDİ"][Math.floor(rand(0,4))],1.3);
 else{g.combo=0;announce("KORNA ÇALINDI. DUYAN YOK.",.6)}
