@@ -22,6 +22,8 @@ if(api){
   light(0x60dbea,9500,270,-130,220);
   light(0xba81ff,7500,260,180,60);
   const cells=new Map(), microbes=new Map(), tissues=new Map();
+  const captures=new Map(),lastInfected=new Map(),interactions=[];
+  const v3=new THREE.Vector3();
   let previousFrame=0,quality=1,slowFrames=0,fastFrames=0,active=true;
   const colors={
    macro:[0xffca6a,0xf39755],neutro:[0xffb2bb,0xee6784],dend:[0x9affdf,0x52c9b8],
@@ -29,6 +31,14 @@ if(api){
    treg:[0xffc8ee,0xd683c0],fibro:[0xffdbab,0xcd9879]
   };
   const sphere=new THREE.SphereGeometry(1,22,16);
+  const eventGeo=new THREE.SphereGeometry(1,12,10);
+  const captureMat=new THREE.MeshBasicMaterial({color:0xffd38a,transparent:true,opacity:.88,depthWrite:false});
+  const infectMat=new THREE.MeshBasicMaterial({color:0xff7bc9,transparent:true,opacity:.72,depthWrite:false});
+  function burst(x,y,z,kind='clear'){
+   if(interactions.length>=42)return;
+   const mesh=new THREE.Mesh(eventGeo,kind==='infection'?infectMat.clone():captureMat.clone());
+   mesh.position.set(x,y,z);mesh.scale.setScalar(2);scene.add(mesh);interactions.push({mesh,started:performance.now(),kind});
+  }
   const tiny=new THREE.SphereGeometry(1,10,8);
   const createJelly=(type,id)=>{
    const palette=colors[type]||colors.macro;
@@ -118,6 +128,12 @@ if(api){
     scene.remove(mesh);map.delete(id);
    }
   }
+  function animateInteractions(now){
+   for(let i=interactions.length-1;i>=0;i--){const p=interactions[i],age=(now-p.started)/1000;
+    if(age>.58){scene.remove(p.mesh);p.mesh.material.dispose();interactions.splice(i,1);continue;}
+    const ease=1-Math.pow(1-age/.58,2);p.mesh.scale.setScalar(2+ease*(p.kind==='infection'?15:22));p.mesh.material.opacity=(1-ease)*.65;
+   }
+  }
   function anim(now){
    if(!active||!document.body.contains(canvas))return;
    requestAnimationFrame(anim);
@@ -167,15 +183,35 @@ if(api){
    },scale,(mesh,a,time)=>{
      mesh.position.set(a.x-450,262.5-a.y,27);const s=a.type==='virus'?7.7:a.type==='allergen'?5:6.4;
      mesh.scale.set(s,s,s);mesh.rotation.z=time*.001+(a.id%13);
+     if(a.type==='bacteria'){
+      // Visual phagocytosis: near a macrophage, bacteria shrink into its cell membrane.
+      let nearest=null,dist=Infinity;
+      for(const cell of d.agents)if(cell.type==='macro'||cell.type==='neutro'){
+       const dd=Math.hypot(cell.x-a.x,cell.y-a.y);
+       if(dd<dist){nearest=cell;dist=dd;}
+      }
+      if(nearest&&dist<34){
+       const f=Math.max(0,1-dist/34);
+       mesh.scale.multiplyScalar(1-f*.38);
+       mesh.position.x+=(nearest.x-a.x)*f*.18;
+       mesh.position.y-=(nearest.y-a.y)*f*.18;
+       if(!captures.has(a.id)&&dist<17){captures.set(a.id,{x:a.x,y:a.y,t:time});burst(a.x-450,262.5-a.y,32,'clear');}
+      }else captures.delete(a.id);
+     }
    },now);
    updateMesh(tissues,d.hosts,a=>{
      const mesh=new THREE.Mesh(hostGeo,cmat.clone());scene.add(mesh);return mesh;
    },scale,(mesh,h,time)=>{
      mesh.position.set(h.x-450,262.5-h.y,-22);
      const v=1+Math.sin(time*.0008+h.id)*.035;const k=lastW<700?.65:1;mesh.scale.set(40*v*k,29*v*k,9*k);
+     const was=lastInfected.get(h.id)||false,infected=h.infect>0;
+     if(infected&&!was)burst(h.x-450,262.5-h.y,3,'infection');
+     if(!infected&&was)burst(h.x-450,262.5-h.y,12,'clear');
+     lastInfected.set(h.id,infected);
      const m=mesh.material;if(h.infect>0){m.color.setHex(0xf0a4bc);m.emissive.setHex(0xff638f);m.opacity=.37;}
      else if(h.dead){m.opacity=.08;}else{m.color.setHex(0x8bdacf);m.emissive.setHex(0x3d9e8d);m.opacity=lastW<700?.105:.15;}
    },now);
+   animateInteractions(now);
    for(const b of bg)b.material.opacity=state.phase==='active'?.055:.03;
    try{renderer.render(scene,camera)}catch(error){
     console.warn('[İçeridekiler] WebGL rendering failed, Canvas fallback restored.',error);
