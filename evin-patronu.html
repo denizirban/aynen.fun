@@ -406,6 +406,37 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
  #game:has(#action.visible) #family{opacity:.35;pointer-events:none}
 }
 @media(max-height:650px) and (min-width:651px){#quickBar{bottom:7px;padding:7px}#quickBar .quick-meta{display:none}#quickBar .quick-actions{margin-top:4px}#quickBar .quick-actions button{min-height:30px}}
+
+/* V5.1 — on phones, keep the kitchen visible and bring up panels only on demand */
+.quick-nav{display:none}
+@media(max-width:650px){
+ #quickBar{bottom:max(8px,env(safe-area-inset-bottom));z-index:18}
+ .quick-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:9px;padding-top:7px;border-top:1px solid #dce3d2}
+ .quick-nav button{border:1px solid #d6ddcb;border-radius:7px;background:#f0f2e7;color:#4d684f;min-height:34px;font:700 9px 'DM Mono',monospace;padding:5px 2px}
+ .quick-nav button[aria-expanded="true"]{background:#456a4d;color:white}
+ #goalCard,#levelWidget{display:none!important}
+ #tasks.collapsed{display:none!important}
+ #tasks:not(.collapsed){display:flex;left:7px;right:7px;top:auto;bottom:174px;width:auto;max-height:min(54dvh,430px);z-index:22;box-shadow:0 15px 40px #15211849}
+ #family{display:none}
+ #family.mobile-open{display:block;left:7px;right:7px;top:auto;bottom:174px;width:auto;max-width:none;padding:11px;z-index:22}
+ #family.mobile-open .person-card .avatar{width:min(51px,13vw)}
+ #family.mobile-open .person-card b{font-size:10px}
+ #family.mobile-open #relations{display:flex;font-size:9px}
+ #family.mobile-open .family-activity{display:block;font-size:9px}
+ #family.mobile-open #familySettings,#family.mobile-open #editAvatars{font-size:9px;padding:6px}
+ #action{bottom:max(8px,env(safe-area-inset-bottom))!important;max-height:74dvh;overflow:auto}
+ #helpPanel{bottom:186px;z-index:32}
+ #game:has(#action.visible) #family.mobile-open{display:none}
+ #game:has(#action.visible) #tasks{display:none}
+}
+@media(max-height:650px) and (max-width:650px){
+ #quickBar{padding:6px 9px}
+ .quick-title{margin:2px 0}
+ .quick-nav{margin-top:5px;padding-top:5px}
+ .quick-nav button{min-height:28px}
+ #family.mobile-open,#tasks:not(.collapsed){bottom:156px;max-height:44dvh}
+ #helpPanel{bottom:164px;max-height:54dvh}
+}
 </style>
 </head>
 <body>
@@ -667,6 +698,11 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
  <div class="quick-title" id="quickTitle">İşler burada belirecek.</div>
  <div class="quick-meta" id="quickMeta">Henüz başlamadı.</div>
  <div class="quick-actions"><button type="button" id="quickShow">YERİNİ GÖSTER</button><button type="button" id="quickAssign">BAŞLAT</button></div>
+ <nav class="quick-nav" aria-label="Oyun panelleri">
+ <button type="button" id="mobileTasks" aria-expanded="false">GÖREVLER</button>
+ <button type="button" id="mobileFamily" aria-expanded="false">EV HALKI</button>
+ <button type="button" id="mobileBuild">GELİŞTİR</button>
+ </nav>
 </div>
 <div id="helpPanel" class="hidden" role="dialog" aria-label="Oynama rehberi"><div class="help-head"><strong>NASIL OYNANIR?</strong><button type="button" id="closeHelp" aria-label="Rehberi kapat">×</button></div>
  <p><b>1.</b> Sıradaki işe veya yapılacaklar listesine dokun.</p>
@@ -786,7 +822,7 @@ function notebookHtml(){
  if(noteTab==='family')$('#noteBody').innerHTML=familyHtml();
  if(noteTab==='memories')$('#noteBody').innerHTML='<p style="font-size:12px;color:#777;margin:0 0 14px">'+totalDone+' iş tamamlandı · '+totalShared+' ailece iş · '+(day-1)+' akşam geride kaldı.</p><div class="badge-grid">'+badgeCatalog.map(function(b){var has=achievements.includes(b.id);return '<div class="badge-tile'+(has?'':' locked')+'"><span class="emblem">'+(has?b.icon:'?')+'</span><div><b>'+b.title+'</b><p>'+b.desc+'</p></div></div>'}).join('')+'</div>';
 }
-function openNote(tab){if(!started)return;noteTab=tab||'upgrades';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
+function openNote(tab){if(!started)return;closeMobileFamily();if(innerWidth<=650)setTasksOpen(false);noteTab=tab||'upgrades';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
 function closeNote(){if($('#notebook').classList.contains('hidden'))return;$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
 function buyUpgrade(id){if(!started||ended)return;var u=upgradeCatalog.find(function(a){return a.id===id});if(!u||owned.includes(id)||level<u.level||cash<u.price)return;cash-=u.price;owned.push(id);grantXp(14);evaluateBadges();rewardChapters();render();notebookHtml();saveGame();floatReward(u.icon+' '+u.name+' kuruldu');message('Mutfak geliştirildi: '+u.name)}
 function openCare(who){
@@ -1023,7 +1059,20 @@ function setTasksOpen(open){
  $('#tasks').classList.toggle('collapsed',!open);
  $('#fold').textContent=open?'KAPAT −':'LİSTEYİ AÇ +';
  $('#tasksHead').setAttribute('aria-expanded',String(open));
+ $('#mobileTasks').setAttribute('aria-expanded',String(open));
+ if(open&&innerWidth<=650)closeMobileFamily();
 }
+function closeMobileFamily(){
+ $('#family').classList.remove('mobile-open');
+ $('#mobileFamily').setAttribute('aria-expanded','false');
+}
+function toggleMobileFamily(){
+ var opening=!$('#family').classList.contains('mobile-open');
+ if(opening)setTasksOpen(false);
+ $('#family').classList.toggle('mobile-open',opening);
+ $('#mobileFamily').setAttribute('aria-expanded',String(opening));
+}
+
 function showHelp(open){
  $('#helpPanel').classList.toggle('hidden',!open);
  $('#quickHelp').setAttribute('aria-expanded',String(open));
@@ -1095,9 +1144,9 @@ function locateJob(j){
  $('#room').style.setProperty('--cam-x',Math.round(cameraX)+'px');$('#room').style.setProperty('--cam-y',Math.round(cameraY)+'px');
  });
 }
-function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=null;showTaskTarget(j);$('#askKid').hidden=false;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+' ÖNCESİ / '+Math.ceil(j.remaining)+' DK';$('#actionContext').textContent=j.assigned?(j.assigned==='self'?'Bu işi sen üstlendin.':j.assigned==='partner'?'Eşin bu işle ilgileniyor.':'Çocuk bu işle ilgileniyor.'):('Kim yapsın? '+(j.due-time<35?'Bu iş yakında gecikecek.':'Dilediğin kişiye görev ver.'));$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'SIRAYA EKLE':'BEN YAPAYIM';$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?'EŞE SIRALA':'EŞİME VER';$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j));$('#action').classList.add('visible');placeAction(j.spot);if(innerWidth<850)setTasksOpen(false);}
+function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=null;showTaskTarget(j);$('#askKid').hidden=false;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+' ÖNCESİ / '+Math.ceil(j.remaining)+' DK';$('#actionContext').textContent=j.assigned?(j.assigned==='self'?'Bu işi sen üstlendin.':j.assigned==='partner'?'Eşin bu işle ilgileniyor.':'Çocuk bu işle ilgileniyor.'):('Kim yapsın? '+(j.due-time<35?'Bu iş yakında gecikecek.':'Dilediğin kişiye görev ver.'));$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'SIRAYA EKLE':'BEN YAPAYIM';$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?'EŞE SIRALA':'EŞİME VER';$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j));$('#action').classList.add('visible');placeAction(j.spot);if(innerWidth<850)setTasksOpen(false);closeMobileFamily();}
 
-function hideAction(){var wasFinding=taskBeingFound!==null;$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;clearTaskTarget();placeAction(null);if(wasFinding)resetCameraView()}
+function hideAction(){closeMobileFamily();var wasFinding=taskBeingFound!==null;$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;clearTaskTarget();placeAction(null);if(wasFinding)resetCameraView()}
 function startSelf(){
  if(current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('Sen: '+current.name)}}
 function startPartner(){if(helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message('Eşin başladı: '+helper.name)}}
@@ -1177,7 +1226,10 @@ function frame(now){
  }
  requestAnimationFrame(frame)
 }
-$('#start').onclick=function(){if(getSave()&&!confirm('Kaldığın oyunun kaydı silinecek. Yeni oyuna başlansın mı?'))return;reset('fresh')};$('#resume').onclick=loadSave;$('#again').onclick=function(){reset('next')};$('#newFromStart').onclick=function(){if(confirm('Kaydedilen ilerlemenin üzerine yeni oyun başlasın mı?'))reset('fresh')};$('#quickShow').onclick=function(){var j=find(quickTaskId);if(j)locateJob(j)};
+$('#start').onclick=function(){if(getSave()&&!confirm('Kaldığın oyunun kaydı silinecek. Yeni oyuna başlansın mı?'))return;reset('fresh')};$('#resume').onclick=loadSave;$('#again').onclick=function(){reset('next')};$('#newFromStart').onclick=function(){if(confirm('Kaydedilen ilerlemenin üzerine yeni oyun başlasın mı?'))reset('fresh')};$('#mobileTasks').onclick=function(){setTasksOpen($('#tasks').classList.contains('collapsed'))};
+$('#mobileFamily').onclick=toggleMobileFamily;
+$('#mobileBuild').onclick=function(){setTasksOpen(false);closeMobileFamily();openNote('upgrades')};
+$('#quickShow').onclick=function(){var j=find(quickTaskId);if(j)locateJob(j)};
 $('#quickAssign').onclick=quickAssign;
 $('#quickHelp').onclick=function(){showHelp($('#helpPanel').classList.contains('hidden'))};
 $('#closeHelp').onclick=function(){showHelp(false)};
