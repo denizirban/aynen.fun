@@ -128,6 +128,31 @@ body{background:#ffeccf;color:var(--ink)}
  .law-body p{font-size:10px!important;line-height:1.35!important}
  .city-pins button[data-goto="cafe"]{top:39%;left:36%}
 }
+
+/* Interaction repair: collapsed panels truly collapse; choices remain reachable on mobile. */
+.infaz:not([open]) .infaz-inner{display:none!important}
+.infaz[hidden],details.infaz[hidden]{display:none!important}
+.detail:not([open]) .law-body{display:none!important}
+.detail .law-body{display:block!important;min-height:0!important}
+.detail[open] .law-body p{display:block!important;color:#293b2e!important}
+.panel{overscroll-behavior:contain;scrollbar-width:thin}
+.panel .switches{display:grid!important;flex:none!important;visibility:visible!important;opacity:1!important}
+.panel .switch{cursor:pointer;pointer-events:auto!important}
+@media(max-width:780px){
+ .panel{max-height:min(58dvh,530px)!important;bottom:max(8px,env(safe-area-inset-bottom))!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;padding:11px 12px 12px!important}
+ .panel .switches{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important}
+ .panel .switch{min-height:43px!important;font-size:10px!important;line-height:1.2!important}
+ .panel .story{font-size:10px!important}
+ .panel h1{font-size:20px!important}
+ .infaz:not([open]){padding:9px!important}
+ .detail:not([open]){min-height:0!important;padding:0!important}
+ .detail summary{min-height:33px!important}
+ .detail[open] .law-body{padding:8px 10px 12px!important}
+ .city-pins{z-index:3}
+ .city-pins button{pointer-events:auto!important;touch-action:manipulation}
+ .city-pins button[data-goto="phone"],.city-pins button[data-goto="court"],.city-pins button[data-goto="street"]{bottom:auto!important;top:43%!important}
+ .city-pins button[data-goto="cafe"]{top:33%!important}
+}
 </style></head><body><main class="app"><header class="bar"><a class="brand" href="/yatari-kac.html">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><section class="stage">
 <div class="world"><div class="hintpill" id="hint">BİR YERE DOKUN ↓</div><svg class="scene" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Yemyeşil ağaçların arasında elle çizilmiş pastel bir Türkiye mahallesi. Binalara dokunarak olayları keşfet.">
 <defs>
@@ -249,7 +274,7 @@ const ranges={
  'Aracın önünü kesip kişiyi zorla alıkoydu':{label:'TCK 109 • Fiilin özelliklerine göre değişir',ratio:null}
 };
 function renderInfaz(){
- const c=cases[active],o=c.options[selected[active]??0],data=ranges[o[0]],yes=/SUÇ|DOLANDIRICILIK|İNFAZ/.test(o[1])&&!/DEĞİL|YOK|OTOMATİK/.test(o[1]);
+ const c=cases[active],o=c.options[Math.min(Math.max(0,Number(selected[active])||0),c.options.length-1)],data=ranges[o[0]],yes=/SUÇ|DOLANDIRICILIK|İNFAZ/.test(o[1])&&!/DEĞİL|YOK|OTOMATİK/.test(o[1]);
  $('infaz').hidden=!yes;
  if(!yes)return;
  $('ceza').textContent=data?.label||'Suç türüne göre ceza değişir';
@@ -263,7 +288,7 @@ $('demoPenalty').addEventListener('input',renderInfaz);
 
 let active='apartment',selected={};try{selected=JSON.parse(localStorage.getItem('yatari-city-choices')||'{}')}catch(e){}
 const $=id=>document.getElementById(id);
-function render(key){active=key;const c=cases[key],choice=selected[key]??0;
+function render(key){active=key;const c=cases[key],choice=Math.min(Math.max(0,Number(selected[key])||0),c.options.length-1);
  $('area').textContent=c.label+' / BİR HAREKETİ DEĞİŞTİR';
  $('title').textContent=c.title;$('story').textContent=c.story;
  $('switches').replaceChildren();
