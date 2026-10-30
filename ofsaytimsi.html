@@ -190,6 +190,9 @@ html,body{height:100%;overflow:hidden;background:#08140f;color:#f3f5ef}
 }
 @media(max-width:410px){.broadcast-score .club .k{max-width:80px;font-size:8px}.broadcast-clock{min-width:55px}.pitch-hud{font-size:7px}.decision-row{gap:7px}.decision-question strong{font-size:20px}.decisions button{min-width:74px;padding:12px 8px}.review-top-tools button{font-size:8px}}
 @media(max-height:690px){.touchline{padding-top:3px;padding-bottom:3px}.manager{min-height:36px}.decision-hub{padding-top:6px;padding-bottom:6px}#decisionPanel{gap:5px}.stands{height:25px}.broadcast-score{height:50px}}
+.camera-switch{pointer-events:auto;background:#071e17bd;color:#eff7eb;border:1px solid #8aab9066;cursor:pointer;font-size:10px;letter-spacing:.025em}
+.camera-switch:hover{background:#1d4230}.camera-switch:focus-visible{outline:3px solid #c5dfb3;outline-offset:2px}
+@media(max-width:700px){.camera-switch{font-size:8px;padding:5px 7px}}
 </style></head><body><div class="page"><nav class="nav"><a href="/">← aynen.fun</a><span>FUTBOL / HAKEM AKADEMİSİ</span></nav><header class="intro"><h1>Ofsaytımsı.</h1><p>Maç biter. Tartışma bitmez.</p></header><main id="app" class="shell"></main><div class="below"><span>Oyun kurgusaldır. Kural bölümü gerçek ofsayt prensiplerine dayanır.</span><span>AYNEN.FUN</span></div><footer class="footer">KARARINIZ İNCELENMEKTEDİR. / SONSUZA KADAR</footer></div>
 <script>(function game() {
   'use strict';
@@ -216,7 +219,7 @@ html,body{height:100%;overflow:hidden;background:#08140f;color:#f3f5ef}
     {def:69,attack:74,ball:44,keeperForward:true,tip:'Kaleci ilerideyse sondan ikinci rakip kim?',quip:'Son pozisyon. Tartışma yeni başladı.'}
   ];
   const N=cases.length;
-  let activeCases=cases.slice(),previewing=false,guideOpen=false,previewTimer=null,fxTimer=null,linesUsed=0,incidentGoals=[0,1],story='',frameRAF=null,currentFrame=55;
+  let activeCases=cases.slice(),previewing=false,guideOpen=false,previewTimer=null,fxTimer=null,linesUsed=0,incidentGoals=[0,1],story='',frameRAF=null,currentFrame=55,cameraMode='tv';
   let home='GS',away='FB',round=0,correct=0,wrong=0,score=[0,0],fair=[0,0],selectedX=65,answered=false,scenario=null,dragging=false;
   const findClub=(id)=>clubs.find(c=>c.id===id);
   const side=(i)=>findClub(i===0?home:away);
@@ -289,7 +292,7 @@ html,body{height:100%;overflow:hidden;background:#08140f;color:#f3f5ef}
       person("support-3",X(Math.max(10,scenario.def-25)),230,def.ink,8),
       person("support-4",X(Math.max(12,scenario.ball-23)),185,atk.ink,7)
     ].join("");
-    const boxWidth=window.innerWidth<=700?560:900;
+    const boxWidth=cameraMode==='wide'?900:(window.innerWidth<=700?560:760);
     const center=(ax+bx+dx)/3;
     const left=boxWidth===900?0:Math.max(0,Math.min(900-boxWidth,center-boxWidth/2));
     return `<svg id="pitch" class="pitch" viewBox="${left.toFixed(1)} 0 ${boxWidth} 440" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Yayın kamerası açısında ofsayt pozisyonu. Kaydırma çubuğundan pas anına geri dön.">
@@ -312,7 +315,7 @@ html,body{height:100%;overflow:hidden;background:#08140f;color:#f3f5ef}
         <path d="M755 157A65 65 0 0 0 755 283"/>
       </g>
       <g class="goal-net"><rect x="878" y="175" width="21" height="90" fill="url(#net)" stroke="#f3f3e9" stroke-width="2.5"/><rect x="0" y="175" width="20" height="90" fill="url(#net)" stroke="#f3f3e9" stroke-width="2.5"/></g>
-      <path d="M${dx} 18V422" stroke="#234f35" stroke-width="1" opacity=".16"/>
+  
       <g id="varGuide" class="${guideOpen?'':'hide-guide'}">
          <rect x="${dx}" y="16" width="${880-dx}" height="408" fill="#acd3b2" opacity=".1"/>
          <line x1="${dx}" y1="16" x2="${dx}" y2="425" stroke="#dff2a3" stroke-width="3" stroke-dasharray="10 5"/>
@@ -360,7 +363,7 @@ html,body{height:100%;overflow:hidden;background:#08140f;color:#f3f5ef}
         </div>
         <div class="pitch-wrap"><div class="field-frame">${pitch()}</div>
           <div class="field-vignette"></div>
-          <div class="pitch-hud"><span class="camera-indicator">● KAMERA 01 / TAKTİK AÇI</span><span class="field-hint" id="fieldHint">POZİSYON HAZIRLANIYOR</span></div>
+          <div class="pitch-hud"><button class="camera-indicator camera-switch" id="cameraMode" type="button" aria-label="Kamera açısını değiştir">◉ YAYIN KAMERASI</button><span class="field-hint" id="fieldHint">POZİSYON HAZIRLANIYOR</span></div>
           <div class="scene-overlay" id="sceneOverlay" aria-hidden="true"><strong>ATAK!</strong><small>${atk.name.toUpperCase()} HÜCUMDA</small></div>
         </div>
         <div class="touchline">
@@ -398,7 +401,16 @@ html,body{height:100%;overflow:hidden;background:#08140f;color:#f3f5ef}
      document.getElementById("varGuide").classList.remove("hide-guide");
      document.getElementById("line").disabled=true;document.getElementById("lineCount").textContent=(2-linesUsed)+" HAK";
    };
-   document.getElementById("screen").onclick=async()=>{
+   document.getElementById("cameraMode").onclick=()=>{
+   cameraMode=cameraMode==='tv'?'wide':'tv';
+   const bx=X(scenario.ball),ax=X(selectedX),dx=X(offsideLine());
+   const width=cameraMode==='wide'?900:(window.innerWidth<=700?560:760);
+   const center=(ax+bx+dx)/3;
+   const left=width===900?0:Math.max(0,Math.min(900-width,center-width/2));
+   document.getElementById("pitch").setAttribute("viewBox",left.toFixed(1)+" 0 "+width+" 440");
+   document.getElementById("cameraMode").textContent=cameraMode==='wide'?"▣ GENEL SAHA":"◉ YAYIN KAMERASI";
+ };
+ document.getElementById("screen").onclick=async()=>{
      try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();}catch(_){}
    };
    document.onkeydown=e=>{
