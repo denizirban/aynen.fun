@@ -13,7 +13,7 @@ const colors={"Ev":"#a5d4d5","Giyim":"#dbb9ab","Gündelik":"#d5c7b5","Ulaşım":
 const shapes={"Ev":"▤","Giyim":"◒","Gündelik":"◈","Ulaşım":"◉","Toplum":"◌","Yiyecek":"◐","Hayvan":"♧","Seyahat":"✈","Çevre":"◎","Teknoloji":"⌘"};
 let selected="GB",unknownCountry=null,filter="hepsi",query="",view="globe",modalRecord=null,previousFocus=null;
 let graphZoom=null,graphSVG=null,graphFit=null;
-const globe={playing:true,dragging:false,lastX:0,lastY:0,downX:0,downY:0,moved:false,rotation:[2,-24,0],projection:null,path:null,features:null,ctx:null,canvas:$("globe"),width:0,height:0,radius:0,hit:null,lastFrame:0,previousFrame:0};
+const globe={playing:true,dragging:false,lastX:0,lastY:0,downX:0,downY:0,moved:false,rotation:[2,-54,0],projection:null,path:null,features:null,ctx:null,canvas:$("globe"),width:0,height:0,radius:0,hit:null,lastFrame:0,previousFrame:0};
 function filterRecord(r){return filter==="hepsi"||r.status===filter||(filter==="aktif"&&r.status==="donemsel");}
 function findMatches(){
  const q=normalize(query.trim());
