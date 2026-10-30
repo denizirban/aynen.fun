@@ -455,6 +455,15 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 #game.scene-3d-ready .scene-caption{display:none}
 #kitchen3d{height:100dvh}
 }
+
+#cameraTools #visualMode{width:auto;min-width:37px;padding:0 7px;border-left:1px solid #c6cbbb;font:700 10px 'DM Mono',monospace;color:#2a6441}
+#cameraTools #visualMode[hidden]{display:none!important}
+@media(max-width:650px){
+#cameraTools:has(#visualMode:not([hidden])){display:flex!important;position:absolute;left:auto;right:7px;top:166px;bottom:auto;transform:none;z-index:16;padding:1px;background:#fbf9eadb}
+#cameraTools:has(#visualMode:not([hidden])) button:not(#visualMode){display:none}
+#cameraTools #visualMode{min-height:30px}
+#game:has(#action.visible) #cameraTools{display:none!important}
+}
 </style>
 </head>
 <body>
@@ -705,7 +714,7 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 <g id="focusTarget" visibility="hidden" pointer-events="none"><circle id="focusOuter" r="53" fill="#f8ffe9" fill-opacity=".18" stroke="#efffca" stroke-width="5" stroke-dasharray="9 6"/><circle r="34" fill="none" stroke="#3e6a46" stroke-width="4"/><path d="M-70 0h23M47 0h23M0-70v23M0 47v23" stroke="#f9ffe2" stroke-width="5"/><rect x="-104" y="-98" width="208" height="31" rx="10" fill="#fffbe6" stroke="#547351" stroke-width="2"/><text id="focusLabel" y="-77" text-anchor="middle" font-size="13" font-family="Arial" font-weight="700" fill="#2f533a">NESNENİN YERİ</text></g>
 <rect width="1400" height="900" fill="url(#grain)" pointer-events="none"/>
 </svg>
-<div id="sceneShade"></div><div class="stage-vignette" aria-hidden="true"></div><div class="scene-caption"><span class="scene-dot"></span><span>EV / MUTFAK</span><span class="scene-sep">·</span><span id="sceneMood">GÜNDÜZ</span></div><div id="cameraTools" aria-label="Kamera kontrolleri"><button type="button" id="cameraOut" aria-label="Uzaklaştır">−</button><button type="button" id="cameraReset" aria-label="Kamerayı sıfırla">⌖</button><button type="button" id="cameraIn" aria-label="Yakınlaştır">+</button></div>
+<div id="sceneShade"></div><div class="stage-vignette" aria-hidden="true"></div><div class="scene-caption"><span class="scene-dot"></span><span>EV / MUTFAK</span><span class="scene-sep">·</span><span id="sceneMood">GÜNDÜZ</span></div><div id="cameraTools" aria-label="Kamera kontrolleri"><button type="button" id="cameraOut" aria-label="Uzaklaştır">−</button><button type="button" id="cameraReset" aria-label="Kamerayı sıfırla">⌖</button><button type="button" id="cameraIn" aria-label="Yakınlaştır">+</button><button type="button" id="visualMode" aria-label="3D ve 2D görünüm arasında geçiş" hidden>3D</button></div>
 <header id="top">
 <div class="brand"><a class="back" href="/" aria-label="aynen.fun ana sayfa">←</a><div><b>EVİN PATRONU</b><small>YAŞAYAN MUTFAK SİMÜLASYONU</small></div></div>
 <div class="clock"><div><small id="dayLabel">GÜN 01 / AKŞAM</small><strong id="time">17:00</strong></div><div class="controls"><button class="mini" id="pause" aria-label="Duraklat">Ⅱ</button><button class="mini" id="saveNow" aria-label="Kaydet" title="Kaydet">⌑</button><button class="mini on" data-speed="1">1×</button><button class="mini" data-speed="2">2×</button><button class="mini" data-speed="3">3×</button></div></div>
@@ -1291,6 +1300,7 @@ document.querySelectorAll('[data-task-filter]').forEach(function(b){b.addEventLi
 $('#cameraIn').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.zoom(.14);else setCamera(cameraScale+.14)};
 $('#cameraOut').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.zoom(-.14);else setCamera(cameraScale-.14)};
 $('#cameraReset').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.reset();resetCameraView();clearTaskTarget()};
+$('#visualMode').onclick=function(){if(window.Evin3D){window.Evin3D.setEnabled(!window.Evin3D.isReady);hideAction()}};
 $('#room').addEventListener('wheel',function(e){if(!started||ended)return;e.preventDefault();setCamera(cameraScale+(e.deltaY<0?.075:-.075))},{passive:false});
 $('#openNotebook').onclick=function(){openNote('upgrades')};$('#familySettings').onclick=function(){openNote('family')};$('#storyButton').onclick=function(){openNote('roadmap')};
 $('#goalMore').onclick=function(){openNote('goals')};
