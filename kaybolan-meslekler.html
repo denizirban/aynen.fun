@@ -84,7 +84,9 @@ button,input,a{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-v
 .sheet.seen .pin{background:#b4b5ae}
 .seen-mark{position:absolute;top:12px;left:14px;z-index:2;background:var(--white);color:#181818;border:1.5px solid #1a1a1a;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900;pointer-events:none}
 .detail-handle{display:none}
-.detail{overflow:auto;overscroll-behavior:contain}
+.detail{overflow:hidden;overscroll-behavior:contain}
+.detail-content{overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1 1 auto;-webkit-overflow-scrolling:touch}
+.detail-header,.detail-nav,.detail-mini{position:relative;top:auto;bottom:auto;flex-shrink:0}
 .detail-header{position:sticky;top:0;z-index:2;background:#fffdf6;flex:none}
 .detail-content{flex:1 0 auto;padding-bottom:25px}
 .detail-nav{position:sticky;bottom:42px;z-index:3;background:#fffdf6;border-top:1px solid #222;border-bottom:1px solid #ddd8c9;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:58px;padding:6px 18px}
@@ -234,7 +236,7 @@ function openDetail(id,continuation=false,skipUrl=false){
  $('#detailContent').innerHTML='<div class="detail-eyebrow">'+esc(j.zone)+' / '+esc(j.status)+'</div><h2 id="detailTitle">'+esc(j.n)+'</h2><div class="detail-ill">'+svg(j)+'</div><div class="info-row fact"><b>NE YAPARDI?</b><p>'+esc(j.task)+'.</p></div><div class="info-row"><b>DÖNEM</b><p>'+esc(j.era)+'</p></div><div class="info-row"><b>HİKÂYESİ</b><p>'+esc(j.fact)+'</p></div><div class="info-row"><b>NE OLDU?</b><p>'+esc(j.shift)+'</p></div><div class="info-row"><b>KAYNAK</b><p><a href="'+esc(j.url)+'" target="_blank" rel="noopener noreferrer">'+esc(j.src)+' ↗</a></p></div>';
  $('#detailPosition').textContent=(ix+1)+' / '+deck.length;
  $('#panel').classList.add('open');$('#panel').setAttribute('aria-hidden','false');document.body.classList.add('no-scroll');
- $('.detail').scrollTop=0;
+ $('#detailContent').scrollTop=0;
  if(!continuation)$('#close').focus();
 }
 function closeDetail(fromHistory=false){
@@ -280,16 +282,18 @@ document.addEventListener('keydown',e=>{
   else if(!e.shiftKey&&document.activeElement===focusables[focusables.length-1]){e.preventDefault();focusables[0].focus()}
  }
 });
-let yStart=null,xStart=null;
+let yStart=null,xStart=null,dragAllowed=false;
 $('.detail').addEventListener('touchstart',e=>{
  if(e.touches.length!==1){yStart=null;return}
+ dragAllowed=!!e.target.closest('.detail-handle,.detail-header')||$('#detailContent').scrollTop<3;
  yStart=e.touches[0].clientY;xStart=e.touches[0].clientX;
 },{passive:true});
 $('.detail').addEventListener('touchend',e=>{
  if(yStart===null||currentId===null)return;
  const dy=e.changedTouches[0].clientY-yStart,dx=e.changedTouches[0].clientX-xStart;
  yStart=null;xStart=null;
- if(window.matchMedia('(max-width:580px)').matches&&dy>95&&Math.abs(dy)>Math.abs(dx)*1.6&&$('.detail').scrollTop<5)closeDetail();
+ if(dragAllowed&&window.matchMedia('(max-width:580px)').matches&&dy>95&&Math.abs(dy)>Math.abs(dx)*1.6&&$('#detailContent').scrollTop<3)closeDetail();
+ dragAllowed=false;
 },{passive:true});
 window.addEventListener('popstate',()=>{
  const id=Number(new URLSearchParams(location.search).get('meslek'));
