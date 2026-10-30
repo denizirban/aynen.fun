@@ -162,6 +162,15 @@ body{background:#ffeccf;color:var(--ink)}
 .archive button{border:1px solid #72836c;border-radius:10px;background:#fff5e6;text-align:left;color:#203629;padding:8px;font:600 10px/1.3 Arial,sans-serif}
 .archive button.current{background:#b4d68f;border-color:#2d583a}
 @media(max-width:780px){.event-tools button{font-size:9px;min-height:31px;padding:6px 8px}.archive button{font-size:10px;padding:7px}.panel{max-height:min(62dvh,560px)!important}}
+
+.law-reference{display:grid;gap:8px}
+.law-clause{padding:9px 10px;background:#fff7e8;border:1px solid #bea68b;border-radius:9px}
+.law-clause b{font-size:12px;line-height:1.3;color:#314a39}
+.law-clause p{margin:4px 0 0!important;padding:0!important;font:11px/1.4 Arial,sans-serif!important}
+.law-application{font:11px/1.4 Arial,sans-serif!important;margin:8px 0!important;color:#333!important}
+.law-related{font:700 9px monospace;color:#8a725c;padding-top:8px;border-top:1px solid #d3c1a7}
+.law-disclaimer{font:9px/1.4 Arial,sans-serif;color:#7e756a;margin-top:8px}
+@media(max-width:780px){.law-clause{padding:8px}.law-clause b{font-size:11px}.law-clause p,.law-application{font-size:10px!important}.law-reference{gap:5px}}
 </style></head><body><main class="app"><header class="bar"><a class="brand" href="/yatari-kac.html">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><section class="stage">
 <div class="world"><div class="hintpill" id="hint">BİR YERE DOKUN ↓</div><svg class="scene" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Yemyeşil ağaçların arasında elle çizilmiş pastel bir Türkiye mahallesi. Binalara dokunarak olayları keşfet.">
 <defs>
@@ -219,7 +228,7 @@ body{background:#ffeccf;color:var(--ink)}
 <g class="building" data-place="court" role="button" tabindex="0" aria-label="Adliye"><rect x="332" y="557" width="170" height="244" fill="transparent"/></g>
 <rect width="800" height="1000" filter="url(#grain)" opacity=".5" pointer-events="none"/>
 </g></svg><div class="city-pins" aria-label="Mekân seçimi"><button data-goto="apartment">⌂ APARTMAN</button><button data-goto="cafe">☕ KAFE</button><button data-goto="phone">▣ TELEFON</button><button data-goto="street">↗ SOKAK</button><button data-goto="office">▥ OFİS</button><button data-goto="court">⚖ ADLİYE</button></div><div class="zoom">DOKUN: APARTMAN · KAFE · TELEFON · SOKAK · OFİS · ADLİYE</div></div>
-<aside class="panel"><div class="event-tools"><button id="randomEvent" type="button" class="random-event">↻ SONRAKİ</button><button id="archiveToggle" type="button" class="archive-toggle" aria-expanded="false">OLAYLAR ▾</button></div><div id="archive" class="archive" hidden aria-label="Bu mekândaki olaylar"></div><div class="eyebrow" id="area">01 / APARTMAN</div><h1 id="title">Komşu yine müziği açtı.</h1><p class="story" id="story">Gece yarısı, bütün apartman duyuyor. Şimdi olayı değiştir.</p><div class="switches" id="switches"></div><div class="judgment" aria-live="polite"><div class="eyebrow">HUKUKİ DURUM</div><strong id="verdict">DURUMA BAĞLI.</strong><p id="explanation"></p></div><details class="infaz" id="infaz"><summary>İNFAZ BİLGİSİNİ KEŞFET <span>＋</span></summary><div class="infaz-inner"><div class="eyebrow">CEZA / İNFAZ ATLASI</div><div class="infaz-number" id="ceza">—</div><p class="infaz-note" id="infazNote"></p><div class="infaz-track" aria-hidden="true"><span id="infazFill"></span></div><div class="infaz-stages"><span>HÜKÜM</span><span>KOŞULLU SALIVERİLME</span></div><label class="infaz-label" for="demoPenalty">ÖRNEK KESİNLEŞMİŞ CEZA <output id="penaltyOut">4 yıl</output></label><input id="demoPenalty" type="range" min="1" max="20" step="1" value="4"><div class="infaz-sample" id="infazSample"></div></div></details><details class="detail" id="details"><summary>KANUN NE DİYOR? <span aria-hidden="true">＋</span></summary><div class="law-body"><p id="law"></p></div></details></aside></section><footer class="foot"><span>Gerçek mevzuattan esinlenen varsayımsal durumlar. Otomatik suç veya tahliye kararı değildir.</span><a class="cta" href="/yatari-kac.html">KLASİK OYUN ↗</a></footer></main>
+<aside class="panel"><div class="event-tools"><button id="randomEvent" type="button" class="random-event">↻ SONRAKİ</button><button id="archiveToggle" type="button" class="archive-toggle" aria-expanded="false">OLAYLAR ▾</button></div><div id="archive" class="archive" hidden aria-label="Bu mekândaki olaylar"></div><div class="eyebrow" id="area">01 / APARTMAN</div><h1 id="title">Komşu yine müziği açtı.</h1><p class="story" id="story">Gece yarısı, bütün apartman duyuyor. Şimdi olayı değiştir.</p><div class="switches" id="switches"></div><div class="judgment" aria-live="polite"><div class="eyebrow">HUKUKİ DURUM</div><strong id="verdict">DURUMA BAĞLI.</strong><p id="explanation"></p></div><details class="infaz" id="infaz"><summary>İNFAZ BİLGİSİNİ KEŞFET <span>＋</span></summary><div class="infaz-inner"><div class="eyebrow">CEZA / İNFAZ ATLASI</div><div class="infaz-number" id="ceza">—</div><p class="infaz-note" id="infazNote"></p><div class="infaz-track" aria-hidden="true"><span id="infazFill"></span></div><div class="infaz-stages"><span>HÜKÜM</span><span>KOŞULLU SALIVERİLME</span></div><label class="infaz-label" for="demoPenalty">ÖRNEK KESİNLEŞMİŞ CEZA <output id="penaltyOut">4 yıl</output></label><input id="demoPenalty" type="range" min="1" max="20" step="1" value="4"><div class="infaz-sample" id="infazSample"></div></div></details><details class="detail" id="details"><summary>KANUN NE DİYOR? <span aria-hidden="true">＋</span></summary><div class="law-body"><div class="law-reference" id="lawReference"></div><p class="law-application" id="lawApplication"></p><div class="law-related">BU OLAYLA İLGİLİ DİĞER DAYANAKLAR</div><p id="law"></p><div class="law-disclaimer">Bu özet, kanun maddesinin tamamı değil; seçili olayın öğretici açıklamasıdır.</div></div></details></aside></section><footer class="foot"><span>Gerçek mevzuattan esinlenen varsayımsal durumlar. Otomatik suç veya tahliye kararı değildir.</span><a class="cta" href="/yatari-kac.html">KLASİK OYUN ↗</a></footer></main>
 <script>
 const $=id=>document.getElementById(id);
 const cases={
@@ -313,13 +322,65 @@ $('demoPenalty').addEventListener('input',renderInfaz);
 
 let active='apartment',selected={};try{selected=JSON.parse(localStorage.getItem('yatari-city-choices')||'{}')}catch(e){}
 
+// Curated clause descriptions: show what the cited provisions regulate, not just their numbers.
+const lawIndex={
+ 'TCK 86':['Kasten yaralama','Bir kişinin bedenine acı verme veya sağlığının ya da algılama yeteneğinin bozulmasına neden olma fiillerini düzenler.'],
+ 'TCK 106':['Tehdit','Kişinin kendisine veya yakınına yönelik belirli kötülüklerin gerçekleştirileceği tehdidine ilişkin suç hükmüdür.'],
+ 'TCK 109':['Kişiyi hürriyetinden yoksun kılma','Bir kimsenin hukuka aykırı biçimde bir yere gitme veya bir yerde kalma özgürlüğünden yoksun bırakılmasını düzenler.'],
+ 'TCK 123/A':['Israrlı takip','Israrlı fiziksel takip veya iletişim yoluyla temas aramanın ciddi huzursuzluk ya da güvenlik endişesi yaratmasını düzenler.'],
+ 'TCK 123':['Kişilerin huzur ve sükûnunu bozma','Sırf huzur bozma amacıyla ısrarlı telefon, gürültü veya benzeri hukuka aykırı davranışları düzenler.'],
+ 'TCK 132':['Haberleşmenin gizliliğini ihlal','Kişiler arasındaki haberleşmenin gizliliği ve haberleşme içeriklerinin hukuka aykırı ifşasına ilişkin suçları düzenler.'],
+ 'TCK 134':['Özel hayatın gizliliğini ihlal','Özel hayatın gizliliğinin ihlali ve özel hayata ilişkin görüntü ya da seslerin hukuka aykırı ifşasına ilişkin hükümler içerir.'],
+ 'TCK 157':['Dolandırıcılık','Hileli davranışlarla bir kimseyi aldatıp zararına olarak yarar sağlamaya ilişkin suç hükmüdür.'],
+ 'TCK 158':['Nitelikli dolandırıcılık','Dolandırıcılık suçunun kanunda sayılan nitelikli işleniş biçimlerini düzenler.'],
+ 'TCK 160':['Kaybolmuş veya hata sonucu ele geçmiş eşya','Kaybolmuş veya hata sonucu ele geçmiş eşya üzerinde malik gibi tasarrufta bulunma durumuna ilişkin hükmü düzenler.'],
+ 'TCK 243':['Bilişim sistemine girme','Bir bilişim sisteminin bütününe veya bir kısmına hukuka aykırı olarak girme veya sistemde kalma fiillerini düzenler.'],
+ '634 m.20':['Ortak giderlere katılma','Kat maliklerinin ortak gider ve avans payı ödeme yükümlülüklerini düzenler.'],
+ '634 m.29':['Kat malikleri kurulu toplantısı','Kat malikleri kurulunun ne zaman ve nasıl toplanacağını düzenler.'],
+ '634 m.30':['Toplantı ve karar yeter sayısı','Kat malikleri kurulunun toplantı ve karar yeter sayısını düzenler.'],
+ '634 m.33':['Hâkimin müdahalesi','Kat mülkiyeti uyuşmazlıklarında hâkim müdahalesi ve kurul kararlarına başvuru yollarıyla ilgilidir.'],
+ '4857 m.17':['Süreli fesih','Belirsiz süreli iş sözleşmelerinin bildirim süreleriyle feshine ve bildirim şartına uyulmamasının sonuçlarına ilişkindir.'],
+ '4857 m.32':['Ücret ve ücretin ödenmesi','İşçi ücretinin kapsamını ve ödenmesini düzenler.'],
+ 'CMK 91':['Gözaltı','Gözaltına alma şartlarını ve sürecini düzenler; gözaltı mahkûmiyet değildir.'],
+ 'CMK 100':['Tutuklama nedenleri','Tutuklama için kuvvetli suç şüphesi ve kanunda öngörülen diğer koşullarla ilgili düzenlemedir.'],
+ '5275 m.107':['Koşullu salıverilme','Kesinleşmiş hapis cezasının infazı sırasında koşullu salıverilme koşullarını ve farklı oranları düzenler.']
+};
+function lookupLaw(c,option){
+ const txt=(c.law||'')+' '+option[2],label=option[0]+' '+option[2];
+ const refs=[];
+ const probes=[
+  [/ısrarlı takip/i,'TCK 123/A'],[/huzur.*boz|ısrarlı.*ara|ısrarlı.*gürültü/i,'TCK 123'],
+  [/bilişim|hesabına izinsiz|şifresini/i,'TCK 243'],[/özel (?:mesaj|yazışma)|haberleşme/i,'TCK 132'],[/özel hayat|özel görüntü/i,'TCK 134'],
+  [/kasten yarala|fiziksel saldır|kasten vur/i,'TCK 86'],[/tehdit/i,'TCK 106'],
+  [/hürriyet|zorla alıkoy|gitmesini zorla/i,'TCK 109'],[/dolandırıcılık|hileli/i,'TCK 157'],
+  [/kaybolmuş|unutulan telefon|sahiplenmek için aldı/i,'TCK 160'],
+  [/aidat|ortak gider/i,'634 m.20'],[/site toplantı|kat malikleri toplantı/i,'634 m.29'],
+  [/toplantı.*karar|karar yeter/i,'634 m.30'],[/karar.*itiraz|kararın iptal/i,'634 m.33'],
+  [/ihbar süres|istifa/i,'4857 m.17'],[/maaş|ücret/i,'4857 m.32'],
+  [/gözaltı/i,'CMK 91'],[/tutuk/i,'CMK 100'],[/koşullu salıverilme|infaz rejimi/i,'5275 m.107']
+ ];
+ for(const [re,id] of probes)if(re.test(label)&&lawIndex[id])refs.push(id);
+ if(!refs.length){
+  const matches=[...txt.matchAll(/(?:TCK|CMK)\s*m\.?\s*(\d{2,3}(?:\/A)?)/gi)];
+  for(const m of matches){const id=(m[0].toUpperCase().includes('CMK')?'CMK ':'TCK ')+m[1];if(lawIndex[id])refs.push(id)}
+ }
+ if(!refs.length&&/Kat Mülkiyeti/i.test(txt))refs.push('634 m.29');
+ if(!refs.length&&/iş kanunu/i.test(txt))refs.push('4857 m.17');
+ return [...new Set(refs)].slice(0,3);
+}
+function renderLaw(c,option){
+ const ref=lookupLaw(c,option),node=$('lawReference');node.replaceChildren();
+ if(ref.length){ref.forEach(id=>{const block=document.createElement('div');block.className='law-clause';const name=document.createElement('b'),desc=document.createElement('p');name.textContent=id+' — '+lawIndex[id][0];desc.textContent=lawIndex[id][1];block.append(name,desc);node.appendChild(block)})}
+ else{const p=document.createElement('p');p.textContent='Bu olayda suç tanımı yanında özel hukuk, idare hukuku veya usul kuralları da gündeme gelebilir.';node.appendChild(p)}
+ $('lawApplication').textContent='BU OLAYDA: '+option[2];
+}
 function render(key){active=key;const c=currentCase(key),choice=Math.min(Math.max(0,Number(selected[choiceKey(key)])||0),c.options.length-1);
  $('area').textContent=cases[key].label+' / OLAY '+((chapter[key]||0)+1)+' / '+(episodes[key].length+1);
  buildArchive(key);
  $('title').textContent=c.title;$('story').textContent=c.story;
  $('switches').replaceChildren();
  c.options.forEach((o,i)=>{const b=document.createElement('button');b.type='button';b.className='switch'+(i===choice?' selected':'');b.textContent=o[0];b.setAttribute('aria-pressed',String(i===choice));b.onclick=()=>{selected[choiceKey(key)]=i;try{localStorage.setItem('yatari-city-choices',JSON.stringify(selected))}catch(e){}render(key)};$('switches').appendChild(b)});
- $('verdict').textContent=c.options[choice][1];$('explanation').textContent=c.options[choice][2];$('law').innerHTML=c.law;
+ $('verdict').textContent=c.options[choice][1];$('explanation').textContent=c.options[choice][2];$('law').innerHTML=c.law;renderLaw(c,c.options[choice]);
  renderInfaz();$('details').open=false;$('hint').textContent=cases[key].label+' / OLAYI KURCALA →';
  document.querySelectorAll('.building').forEach(b=>b.style.opacity=b.dataset.place===key?'1':'.82');
  document.querySelectorAll('.city-pins button').forEach(b=>b.classList.toggle('active',b.dataset.goto===key));
