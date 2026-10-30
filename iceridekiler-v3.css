@@ -243,3 +243,54 @@ body{background:#030307}
  .action{min-height:55px}
  .world-tools{bottom:calc(92px + env(safe-area-inset-bottom))}
 }
+
+/* Mobile vNext: playable world stays the hero, not the HUD. */
+@media(max-width:700px){
+ .game{--top-safe:env(safe-area-inset-top,0px);--bottom-safe:env(safe-area-inset-bottom,0px)}
+ .hud-top{padding:calc(5px + var(--top-safe)) 9px 0;gap:5px}
+ .brand{gap:6px}
+ .brand .home{width:25px;height:25px}
+ .brand h1{font-size:16px}
+ .brand-kicker{display:none}
+ .top-controls .icon-btn{width:31px;height:31px}
+ .metric-grid{grid-row:2;grid-column:1/-1;margin-top:3px}
+ .metric{min-width:0;border-radius:8px;padding:6px 8px}
+ .metric-head{display:flex;flex-direction:row;align-items:center;justify-content:space-between}
+ .metric-head span{font-size:7px}
+ .metric-head b{font-size:12px}
+ .track{margin-top:4px}
+ .threat-hud{top:calc(87px + var(--top-safe));left:9px;right:9px;width:auto;max-width:none;transform:none;padding:7px 10px;border-radius:9px}
+ .threat-caption strong{font-size:9px}
+ .left-rail{top:calc(131px + var(--top-safe));left:9px;width:calc(100% - 63px)}
+ .episode{padding:8px 10px;background:#151222bb}
+ .episode-head{margin-bottom:3px}
+ .episode-progress{margin:3px 0 6px}
+ .episode-title-row h2{font-size:13px}
+ .episode:not(.mobile-expanded) .episode-body{display:none!important}
+ .episode .next{margin-top:6px;min-height:34px}
+ .mobile-menu{right:8px;top:calc(131px + var(--top-safe));gap:4px}
+ .mobile-menu .rail-btn{width:34px;height:34px}
+ .sidebar{top:calc(128px + var(--top-safe));right:49px;width:min(345px,calc(100vw - 60px));bottom:calc(105px + var(--bottom-safe))}
+ .bottom-dock{bottom:calc(6px + var(--bottom-safe));left:6px;right:6px}
+ .actions{padding:5px;gap:4px;border-radius:12px}
+ .action{min-height:60px;gap:2px}
+ .action .glyph{font-size:22px}
+ .action b{font-size:10px}
+ .action small{font-size:8px}
+ .world-tools{right:8px;bottom:calc(83px + var(--bottom-safe));background:#11111ec9;padding:3px}
+ .world-tool{height:28px;width:28px}
+ .world-map{bottom:calc(122px + var(--bottom-safe))}
+ .camera-help{display:none!important}
+ .vignette{background:radial-gradient(ellipse at 50% 47%,transparent 62%,#0005 100%)}
+ .game[data-phase="active"] .episode:not(.mobile-expanded){padding:7px 10px}
+ .game[data-phase="active"] .episode:not(.mobile-expanded) .episode-title-row h2{font-size:12px}
+ .game[data-phase="active"] .episode .next{display:none}
+}
+@media(max-width:390px){
+ .threat-hud{top:calc(84px + env(safe-area-inset-top,0px))}
+ .left-rail,.mobile-menu{top:calc(124px + env(safe-area-inset-top,0px))}
+ .metric{padding:6px}
+ .metric-head span{font-size:6.5px}
+ .metric-head b{font-size:11px}
+ .action{min-height:57px}
+}
