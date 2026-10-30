@@ -27,7 +27,23 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 .hud-stage{color:#ffecb8;overflow:hidden;text-overflow:ellipsis}.chaos-wrap{display:flex;align-items:center;gap:6px}.chaos-track{height:5px;width:clamp(36px,8vw,115px);background:#172d62;border:1px solid #7ba3db}.chaos-track i{display:block;width:0%;height:100%;background:#ff6674}.hud-ready{color:#fff1bc}
 @media(max-width:650px){.pixel-hud{padding:7px 7px 6px}.hud-main{gap:4px;grid-template-columns:1.2fr .7fr .6fr .9fr 1fr}.metric-label{font-size:clamp(7px,2.15vw,10px)}.metric-value{font-size:clamp(11px,3.3vw,15px)}.hud-sub{font-size:8px;margin-top:5px}.chaos-track{width:32px}.hud-stage{max-width:48vw}}
 .overlay{position:absolute;inset:0;display:grid;place-items:center;background:rgba(6,17,47,.72);z-index:4;padding:16px}
+
 .overlay[hidden]{display:none}
+.mode-options{display:flex;gap:8px;justify-content:center;margin:10px 0 4px}.mode-options button{flex:1;font-size:11px;font-weight:900;background:#18315a;color:#d6e4ff;border:1px solid #426aa1;padding:12px 6px}.mode-options button[aria-pressed="true"]{background:#fce9b0;border-color:#ffd467;color:#303048;box-shadow:inset 0 -3px 0 #b88c50}
+.mode-caption{font-size:11px!important;color:#b1cbde!important;margin:5px 0 9px!important;min-height:17px}
+.mission-strip{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;justify-content:center;z-index:2;pointer-events:none;font-family:"DM Mono",monospace;white-space:nowrap;max-width:95%;transition:opacity .3s}
+.mission-chip{background:rgba(12,30,59,.88);border:1px solid #8ca5bb;border-radius:3px;padding:6px 10px;color:#ffedb1;font-size:clamp(9px,.85vw,12px);font-weight:500}.mission-chip.done{color:#a8f2c3;border-color:#64bd91}
+#tutorial{position:absolute;left:50%;top:29%;transform:translateX(-50%);z-index:3;display:none;align-items:center;justify-content:center;gap:7px;max-width:88%;padding:8px 12px;border-radius:5px;background:rgba(13,31,57,.94);border:1px solid #ffdf75;color:#fff1c5;font:500 clamp(11px,1vw,14px)/1.4 "DM Mono",monospace;text-align:center;pointer-events:none}
+#tutorial.on{display:flex}
+.hud-progress{height:4px;background:#1a3c80;border:1px solid #5988c6;border-radius:10px;margin-top:6px;overflow:hidden}.hud-progress>i{display:block;width:0%;height:100%;background:#f6cf6c;transition:width .17s}
+.result-tier{font:900 clamp(22px,4vw,34px)/1.07 "Courier New",monospace;color:#ffdf86;margin:10px 0 6px;text-shadow:3px 3px 0 #873d62}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0}.result-grid div{padding:9px 4px;background:#182e58;border:1px solid #496b95;font-size:10px;color:#cbdff1}.result-grid strong{display:block;font-size:clamp(17px,3vw,23px);color:#fff2cc;margin-bottom:3px}
+.result-action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.result-action-row button{background:#24456f;border:1px solid #85a5cc;padding:12px 5px;color:#f5f7fa;font-size:11px;font-weight:700}
+.result-action-row button:active{background:#396088}
+.result-card-foot{font-size:10px!important;color:#b0c6d7!important}
+@media(max-width:650px){.mission-strip{bottom:3%;gap:3px}.mission-chip{font-size:9px;padding:5px 6px}.mode-options{gap:5px}.mode-options button{font-size:10px;padding:12px 2px}.result-action-row{gap:5px}.result-action-row button{font-size:10px}}
+@media(max-height:515px){.mission-strip{bottom:2%}.mission-chip{padding:3px 6px;font-size:9px}#tutorial{top:25%;font-size:10px}.card .rules{display:none}}
+
 .card{width:min(440px,100%);max-height:100%;overflow:auto;background:#10234c;border:3px solid #eff2d6;outline:5px solid #13224d;box-shadow:10px 10px 0 #080e24;padding:clamp(14px,3vw,27px);text-align:center}
 .eyebrow{color:#92d8e7;font-weight:bold;font-size:11px;letter-spacing:.18em;margin:0 0 10px}
 .card h1,.card h2{font-size:clamp(29px,5.2vw,45px);line-height:1.02;letter-spacing:-.08em;text-transform:uppercase;color:#fff1a2;margin:7px 0 16px;text-shadow:3px 4px 0 #e45645}
@@ -78,18 +94,19 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 <div class="metric speed"><span class="metric-label">HIZ</span><span class="metric-value" id="h-speed">130 km</span></div>
 <div class="metric convoy"><span class="metric-label">KONVOY</span><span class="metric-value" id="h-convoy">04 ♥♥♥</span></div>
 </div><div class="hud-sub"><span class="hud-stage" id="h-stage">GELİN ALMA · MAHALLE</span><span class="hud-goal" id="h-goal">HEDEF 7 ARAÇ</span><span class="chaos-wrap">KAOS <span class="chaos-track"><i id="h-chaos"></i></span></span><span class="hud-ready" id="h-horn">KORNA HAZIR</span></div></div>
+<div class="hud-progress" aria-hidden="true" id="progress-track" style="position:absolute;z-index:2;top:86px;left:10px;right:10px;margin-top:0;opacity:.82"><i id="h-progress"></i></div><div id="tutorial" aria-live="polite"></div><div class="mission-strip" id="mission-strip" aria-live="off"><span class="mission-chip" id="m-progress">HEDEF 4 / 7</span><span class="mission-chip" id="m-streak">SERİ 0×</span><span class="mission-chip" id="m-lap">SALONA 2.2 KM</span></div>
 <div class="banner" id="banner" role="status" aria-live="polite"></div><div id="combo-float" aria-live="off"></div>
 <div class="overlay" id="overlay">
 <section class="card" id="menu">
 <div class="eyebrow">AYNEN.FUN / 1987 ARCADE EDITION</div>
 <h1>DÜĞÜN<br>KONVOYU GP</h1>
-<p>Mahallede gelin alma bitti. Düğün salonuna kadar konvoyu büyüt. Ama yolda üç ayrı düğün daha var.</p>
+<p>Arabayı yönlendir, <b style="color:#ffdf81">+ işaretli araca yaklaşınca korna çal</b>, konvoyu büyüt. Salona geç kalma.</p><div class="mode-options"><button type="button" class="mode-option" id="mode-quick" aria-pressed="true">HIZLI YARIŞ</button><button type="button" class="mode-option" id="mode-daily" aria-pressed="false">GÜNÜN KONVOYU</button></div><p class="mode-caption" id="mode-caption">Hemen başla. Her seferinde yeni konvoy.</p>
 <div class="rules">
-<div><strong>← → DİREKSİYON</strong>Sağdan soldan çıkan akrabalara dikkat et.</div>
-<div><strong>BOŞLUK / KORNA</strong>+ işaretli arabalar yaklaşınca korna çal. X: dörtlülerle korun.</div>
+<div><strong>← → SÜRÜŞ</strong>Sağa sola geç; çarpmadan sıyrıl.</div>
+<div><strong>KORNA = ARAÇ TOPLA</strong>Yakınken bas. X: dörtlü koruması.</div>
 </div>
-<p>Mahalle → E-5 → Düğün Salonu. <span class="accent">3 can. Gerisi korna.</span></p>
-<button class="cta" id="start" type="button">KONVOYA KATIL →</button>
+<p>3 kısa etap · 3 can · <span class="accent">en büyük konvoyu sen kur.</span></p>
+<button class="cta" id="start" type="button">YARIŞA BAŞLA →</button>
 <p class="scoreline" id="best">EN İYİ SKOR: 000000</p>
 </section>
 </div>
@@ -109,7 +126,8 @@ const overlay=document.getElementById("overlay"),menu=document.getElementById("m
 let mode="menu",muted=false,audio=null,last=0,seconds=0,objects=[],spawnTimer=0,nextId=1,noticeTimer=0,flash=0,runSeed=0;
 const input={left:false,right:false,brake:false,boost:false};
 let drumClock=0,drumStep=0,roadCut=[false,false];
-const dortluBtn=document.getElementById("dortlu"),comboFloat=document.getElementById("combo-float");
+const dortluBtn=document.getElementById("dortlu"),comboFloat=document.getElementById("combo-float"),tutorialEl=document.getElementById("tutorial"),progressEl=document.getElementById("h-progress"),progressTrack=document.getElementById("progress-track"),missionProgress=document.getElementById("m-progress"),missionStreak=document.getElementById("m-streak"),missionLap=document.getElementById("m-lap"),missionStrip=document.getElementById("mission-strip");
+let runMode="quick",dailyKey="",runRng=null,attempts=0,tutorialStage=0,tutorialClock=0,runEvents=[],hadHorn=false,firstGame=true;
 let lastLap=1,comboFloatTime=0,particles=[],pulse=0,rumble=0,helpShown=false,goalUnlocked=[false,false,false];
 let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
@@ -128,9 +146,34 @@ function weddingBeat(){
 function fanfare(){tone(523,.17,"square",.04);setTimeout(()=>tone(659,.18,"square",.04),130);setTimeout(()=>tone(784,.23,"square",.04),265)}
 function announce(msg,forSeconds){banner.textContent=msg;banner.classList.add("show");noticeTimer=forSeconds||1.6}
 function setMenu(html){overlay.hidden=false;menu.innerHTML=html}
+
+function trDay(){
+ return new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Istanbul",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+}
+function seededRandom(seed){let z=seed>>>0;return ()=>{z+=0x6D2B79F5;let x=z;x=Math.imul(x^(x>>>15),x|1);x^=x+Math.imul(x^(x>>>7),x|61);return ((x^(x>>>14))>>>0)/4294967296}}
+function stringHash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function gameRandom(){return runRng?runRng():Math.random()}
+function gameRange(a,b){return a+gameRandom()*(b-a)}
+function dailyBestKey(){return "dugun-gp-daily-"+dailyKey}
+function dailyBest(){try{return Number(localStorage.getItem(dailyBestKey())||0)}catch(e){return 0}}
+const modeQuick=document.getElementById("mode-quick"),modeDaily=document.getElementById("mode-daily"),modeCaption=document.getElementById("mode-caption");
+function chooseMode(t){
+ runMode=t;
+ modeQuick.setAttribute("aria-pressed",String(t==="quick"));modeDaily.setAttribute("aria-pressed",String(t==="daily"));
+ modeCaption.textContent=t==="daily"?"Herkese aynı konvoy · bugün için tek parkur · kendi rekorun.":"Hemen başla. Her seferinde yeni konvoy.";
+ const startBtn=document.getElementById("start");if(startBtn)startBtn.textContent=t==="daily"?"GÜNÜN KONVOYUNU OYNA →":"YARIŞA BAŞLA →";
+}
+modeQuick.addEventListener("click",()=>chooseMode("quick"));
+modeDaily.addEventListener("click",()=>chooseMode("daily"));
+try{if(new URLSearchParams(location.search).get("mode")==="daily")chooseMode("daily")}catch(e){}
+function showTutorial(msg,ttl){
+ tutorialEl.textContent=msg;tutorialEl.classList.add("on");tutorialClock=ttl||2.1;
+}
+function hideTutorial(){tutorialEl.classList.remove("on");tutorialClock=0}
 function start(){
 g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
-lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=Math.random()*10000;flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",2);
+dailyKey=trDay();runRng=runMode==="daily"?seededRandom(stringHash("dugun-gp-v4-"+dailyKey)):null;attempts++;tutorialStage=0;hadHorn=false;runEvents=[];
+lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=(runMode==="daily"?stringHash("scene-"+dailyKey):Math.random()*10000);flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",1.7);missionStrip.style.display="flex";progressTrack.style.display="block";updateHud();showTutorial("← → YÖNLENDİR · + GELİNCE KORNA ÇAL",3.3);
 }
 function bestScore(){try{return Number(localStorage.getItem("dugun-gp-best")||0)}catch(e){return 0}}
 function saveBest(){try{if(g.score>bestScore())localStorage.setItem("dugun-gp-best",String(g.score))}catch(e){}}
@@ -154,7 +197,7 @@ pauseBtn.onclick=pause;
 soundBtn.onclick=function(){muted=!muted;soundBtn.textContent=muted?"SES: KAPALI":"SES: AÇIK";if(!muted)tone(580,.09)};
 function horn(){
 if(mode!=="playing"||g.hornCD>0)return;
-g.hornCD=.90;pulse=.42;g.horns++;tone(350,.16,"sawtooth",.065);setTimeout(()=>tone(425,.14,"sawtooth",.05),115);
+g.hornCD=.90;pulse=.42;g.horns++;hadHorn=true;tone(350,.16,"sawtooth",.065);setTimeout(()=>tone(425,.14,"sawtooth",.05),115);
 let gathered=0;
 for(const o of objects){if(o.type==="guest"&&!o.joined&&!o.passed&&o.z<.75&&o.z>.08&&Math.abs(o.lane-g.lane)<.67){
 o.joined=true;o.pop=1;gathered++;g.joined++;g.convoy++;g.combo++;g.score+=170+Math.min(g.combo,8)*45;g.comboClock=5.5;showCombo("+"+(170+Math.min(g.combo,8)*45)+"  ·  "+g.combo+"x SERİ");makeConfetti(o.z,o.lane,18);g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
@@ -178,17 +221,17 @@ function dortlu(){
 dortluBtn.addEventListener("pointerdown",e=>{e.preventDefault();dortlu()});
 
 function spawn(){
- const lanes=[-.73,0,.73],r=Math.random(),guestChance=g.lap===1?.59:g.lap===2?.47:.38;
+ const lanes=[-.73,0,.73],r=gameRandom(),guestChance=g.lap===1?.59:g.lap===2?.47:.38;
  let type=r<guestChance?"guest":r<guestChance+.34?"rival":"obstacle";
  if(g.distance<145&&type==="obstacle")type="guest";
- let lane=lanes[Math.floor(rand(0,lanes.length))];
+ let lane=lanes[Math.floor(gameRange(0,lanes.length))];
  if(objects.some(o=>o.z>.65&&o.z<1.1&&Math.abs(o.lane-lane)<.25))
    lane=lanes[(lanes.indexOf(lane)+1)%3];
- const variant=Math.floor(rand(0,6));
- objects.push({id:nextId++,z:1.05,lane,originalLane:lane,type,variant,joined:false,passed:false,wobble:rand(0,6.28),speed:rand(.85,1.08)});
+ const variant=Math.floor(gameRange(0,6));
+ objects.push({id:nextId++,z:1.05,lane,originalLane:lane,type,variant,joined:false,passed:false,wobble:gameRange(0,6.28),speed:gameRange(.85,1.08)});
 }
 function update(dt){
- seconds+=dt;g.hornCD=Math.max(0,g.hornCD-dt);
+ seconds+=dt;g.hornCD=Math.max(0,g.hornCD-dt);tutorialClock-=dt;if(tutorialClock<=0)tutorialEl.classList.remove("on");
  drumClock+=dt;if(drumClock>.48-(g.lap-1)*.035){drumClock=0;if(seconds>2)weddingBeat()}
  g.dortluCD=Math.max(0,g.dortluCD-dt);g.dortluOn=Math.max(0,g.dortluOn-dt);
  g.invuln=Math.max(0,g.invuln-dt);noticeTimer-=dt;comboFloatTime-=dt;
@@ -227,7 +270,7 @@ function update(dt){
   announce("SALONA AZ KALDI · YOL KESİLMİŞ!",2);
  }
  spawnTimer-=dt;
- if(spawnTimer<=0){spawn();spawnTimer=clamp(rand(1.0,1.4)-g.chaos*.0038-(g.lap-1)*.11,.49,1.35)}
+ if(spawnTimer<=0){spawn();spawnTimer=clamp(gameRange(1.0,1.4)-g.chaos*.0038-(g.lap-1)*.11,.49,1.35)}
  for(const o of objects){
   o.z-=dt*(.14+g.speed*.00143)*o.speed;if(o.pop>0)o.pop-=dt;
   if(o.type==="rival")o.lane=clamp(o.originalLane+Math.sin(seconds*2.6+o.wobble)*(.06+g.chaos*.0015),-.90,.90);
@@ -260,8 +303,8 @@ function update(dt){
  }
  objects=objects.filter(o=>o.z>-.14);
  if(Math.abs(g.lane)>.94){g.speed=Math.max(46,g.speed-dt*31);g.chaos=Math.min(100,g.chaos+dt*.7)}
- if(!helpShown&&seconds>5&&objects.some(o=>o.type==="guest"&&o.z<.7&&o.z>.19)){
-   helpShown=true;announce("+ İŞARETLİ ARABA YAKIN · KORNA ÇAL!",1.6);
+ if(!helpShown&&seconds>4&&objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.7&&o.z>.19)){
+   helpShown=true;showTutorial("ŞİMDİ KORNA!  + ARACI KONVOYA KAT",2.3);
  }
  for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=54*dt;p.life-=dt}
  particles=particles.filter(p=>p.life>0);
@@ -279,7 +322,16 @@ goalEl.textContent=goalUnlocked[g.lap-1]?"HEDEF TAMAM ✓":"HEDEF "+[7,10,14][g.
 chaosEl.style.width=g.chaos+"%";const target=objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.76&&o.z>.14&&Math.abs(o.lane-g.lane)<.7);
 hornEl.textContent=g.hornCD>0?"KORNA DOLUYOR":target?"YAKINDA ARAÇ! KORNA":"KORNA HAZIR";
 hornEl.classList.toggle("ready",target&&g.hornCD===0);
+
 hornBtn.classList.toggle("active",target&&g.hornCD===0);
+if(target&&g.hornCD===0&&!hadHorn&&tutorialClock<=0&&seconds<17)showTutorial("KORNAYA DOKUN · ARABAYI KONVOYA KAT",1.6);
+const wanted=[7,10,14][g.lap-1],current=Math.min(g.convoy,wanted);
+missionProgress.textContent=goalUnlocked[g.lap-1]?"ETAP HEDEFİ ✓":"KONVOY "+current+" / "+wanted;
+missionProgress.classList.toggle("done",goalUnlocked[g.lap-1]);
+missionStreak.textContent=g.combo>1?"SERİ "+g.combo+"×":"REKOR "+String(bestScore()).padStart(4,"0");
+missionLap.textContent="SALONA "+Math.max(0,Math.ceil((2280-g.distance)/10)/100).toFixed(1)+" KM";
+progressEl.style.width=clamp(g.distance/2280*100,0,100)+"%";
+
 }
 updateHud();
 function roadCenter(y){const t=clamp((y-93)/177,0,1);return 240+Math.sin(g.distance*.0033+1.3-t*1.15)*37*t*t}
