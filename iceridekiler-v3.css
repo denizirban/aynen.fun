@@ -152,3 +152,28 @@ body{background:#030307}
 }
 @media(max-width:400px){.threat-hud{width:min(200px,55vw)}.threat-caption strong{max-width:97px}.action-advisor #advisor{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.portrait-organism,.threat-dot{animation:none!important}}
+
+/* Living tissue map and precise spatial camera */
+.world-tools{position:absolute;z-index:7;right:96px;bottom:145px;display:flex;gap:4px;align-items:center;padding:5px;border:1px solid #9ec7e33f;background:#11121cd9;backdrop-filter:blur(16px);border-radius:12px;box-shadow:0 10px 38px #0007}
+.world-tool{width:30px;height:32px;background:#ffffff0b;border:1px solid transparent;color:#d6e5ff;border-radius:8px;font:18px 'Space Grotesk',sans-serif;display:grid;place-items:center}
+.world-tool:hover,.world-tool:focus-visible{background:#829de92d;border-color:#91b6f777}
+.world-tool.map-toggle{color:#a8f0d9}
+.world-scale{min-width:43px;text-align:center;font-size:10px;color:#9cbedc}
+.world-map{position:absolute;z-index:9;right:95px;bottom:205px;width:265px;max-width:calc(100vw - 32px);padding:10px;background:#151322ef;border:1px solid #b1a8da72;border-radius:12px;box-shadow:0 17px 50px #000b;backdrop-filter:blur(18px)}
+.world-map[hidden]{display:none}
+.map-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;color:#d7c8f6}
+.map-heading button{width:25px;height:25px;border:1px solid #b5a5cb66;border-radius:7px;background:#ffffff0e;color:#eeddfb}
+#minimap{display:block;width:100%;aspect-ratio:240/142;border:1px solid #6c688654;background:#08090f;border-radius:8px;cursor:crosshair;touch-action:manipulation}
+.map-key{display:flex;gap:10px;margin-top:7px;font:9px 'DM Mono',monospace;color:#9590a7}
+.map-key span:nth-child(1){color:#f8b47e}.map-key span:nth-child(2){color:#74d7e3}.map-key span:nth-child(3){color:#c19efe}
+.camera-help{position:absolute;z-index:2;right:94px;bottom:195px;color:#aaa5ba;font-size:8px;letter-spacing:.03em;text-align:right;pointer-events:none;text-shadow:0 0 9px #000}
+@media(max-width:1190px){.world-tools{right:75px}.world-map{right:75px}.camera-help{right:75px}}
+@media(max-width:850px){.world-tools{right:64px}.world-map{right:65px}.camera-help{right:64px}}
+@media(max-width:700px){
+ .world-tools{right:10px;bottom:calc(116px + env(safe-area-inset-bottom));padding:4px;gap:3px;border-radius:9px}
+ .world-tool{width:29px;height:30px;font-size:17px}
+ .world-scale{min-width:37px;font-size:9px}
+ .world-map{right:10px;bottom:calc(170px + env(safe-area-inset-bottom));width:230px}
+ .camera-help{right:10px;bottom:calc(162px + env(safe-area-inset-bottom));font-size:7px;max-width:140px}
+}
+@media(max-width:380px){.camera-help{display:none}.world-tool{width:26px}.world-scale{min-width:33px}}
