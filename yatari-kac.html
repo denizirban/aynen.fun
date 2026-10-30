@@ -129,6 +129,28 @@
  .result-mode .left .sentence{font-size:24px!important}
  .result-mode .right .result-big{font-size:clamp(38px,10vw,47px)!important}
 }
+
+.scenario-lab{border:1.5px solid #111;background:#fff}
+.scenario-lab summary{list-style:none;cursor:pointer;padding:11px 12px;display:flex;justify-content:space-between;align-items:center;font:700 11px 'DM Mono',monospace}
+.scenario-lab summary::-webkit-details-marker{display:none}
+.scenario-lab[open] summary{border-bottom:1px solid #111;background:#ddff68}
+.scenario-lab summary span{font-size:18px}
+.scenario-lab[open] summary span{transform:rotate(45deg)}
+.lab-content{padding:13px;display:grid;gap:9px}
+.lab-hint{font-size:10px;color:#62625c;line-height:1.5;margin:0}
+.lab-label{font:500 9px 'DM Mono',monospace;letter-spacing:.035em}
+.lab-row{display:flex;justify-content:space-between;align-items:center}
+#labRegime{width:100%;min-height:38px;border:1px solid #111;background:#f5f3ee;color:#111;padding:7px;font:600 12px 'Space Grotesk',sans-serif}
+#labYears{width:100%;accent-color:#171717}
+.lab-track{height:13px;background:#e6e6df;border:1px solid #111}
+.lab-track span{display:block;height:100%;width:50%;background:#ef8766;transition:width .2s}
+.lab-numbers{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.lab-numbers b{font-size:24px;letter-spacing:-.06em}
+.lab-numbers span{font:12px 'DM Mono',monospace}
+.lab-contrast{font-size:11px;line-height:1.4;background:#f5f3ee;padding:9px}
+.lab-links{display:flex;flex-wrap:wrap;gap:8px}
+.lab-links a{font:9px 'DM Mono',monospace;color:#111;text-underline-offset:3px}
+@media(max-width:760px){.scenario-lab summary{font-size:10px}.lab-content{gap:8px;padding:11px}.lab-numbers b{font-size:22px}}
 </style></head><body><main class="app">
 <header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 08</span></header>
 <section class="frame"><div class="left"><div><div class="eyebrow">TÜRKİYE / CEZA &amp; İNFAZ</div><h1 class="title">Yatarı<br><span>kaç?</span></h1><p class="sub">Verilen hapis cezası ile infaz süresi aynı şey değil. Sence kaç yıl?</p></div><div class="casebox"><div class="case-label"><span class="number" id="caseNo">01</span> DOSYA / VARSAYIMSAL SENARYO</div><h2 class="crime" id="crime">Genel infaz rejimi</h2><p class="facts" id="facts"></p><div class="sentence" id="sentence">6 yıl <small>hapis cezası</small></div></div></div>
@@ -137,7 +159,25 @@
 <input id="timelineScrub" class="timeline-scrub" type="range" min="0" max="100" value="0" aria-label="İnfaz zaman çizelgesini ileri geri oynat">
 <div id="timelineCharacters" class="timeline-characters" aria-hidden="true"><span>●</span><span>●</span></div>
 <div class="timeline-actions"><button id="timelinePlay" type="button">▶ OYNAT</button><span class="mono">SÜREYİ İLERLET / KARŞILAŞTIR</span></div></div>
-<p class="smallnote">İki örnek de aynı toplam ceza içindir. Çizelge koşullu salıverilme eşiklerini gösterir; gerçek cezaevinden çıkış tarihi değildir.</p></div><button type="button" class="compare-toggle" id="compareToggle" aria-expanded="false">AYNI CEZAYI KARŞILAŞTIR ↗</button><button type="button" class="next" id="next">SONRAKİ DOSYA →</button></div></div><div class="right-bottom"><strong id="state">08 DOSYA / TAHMİN ET</strong><div class="progress" id="dots"></div></div></div></section>
+<p class="smallnote">İki örnek de aynı toplam ceza içindir. Çizelge koşullu salıverilme eşiklerini gösterir; gerçek cezaevinden çıkış tarihi değildir.</p></div><details class="scenario-lab" id="scenarioLab"><summary>TEK ŞEYİ DEĞİŞTİR <span aria-hidden="true">＋</span></summary>
+<div class="lab-content">
+<p class="lab-hint">Aynı kesinleşmiş süreli hapis cezası. Rejimi değiştir, koşullu salıverilme eşiği nasıl değişiyor gör.</p>
+<label class="lab-label" for="labRegime">İNFAZ REJİMİ</label>
+<select id="labRegime">
+<option value="general">Genel rejim — 1/2</option>
+<option value="murder">Kasten öldürme — 2/3</option>
+<option value="torture">İşkence / eziyet — 2/3</option>
+<option value="privacy">Özel hayatın gizliliği — 2/3</option>
+<option value="repeat1">İlk tekerrür — 2/3*</option>
+<option value="repeat2">İkinci tekerrür — 3/4*</option>
+</select>
+<div class="lab-label lab-row"><label for="labYears">VARSAYILAN CEZA</label><output id="labYearsOut">12 yıl</output></div>
+<input id="labYears" type="range" min="4" max="30" value="12" step="1">
+<div class="lab-visual"><div class="lab-track"><span id="labFilled"></span></div><div class="lab-numbers"><b id="labThreshold">6 yıl</b><span id="labRatio">1/2</span></div></div>
+<div class="lab-contrast" id="labContrast">Genel rejimde 12 yıl cezanın koşullu salıverilme eşiği 6 yıldır.</div>
+<p class="lab-hint">*Tekerrür hükümleri ve önceki mahkûmiyetin etkisi ayrıca değerlendirilir. Bu kontrol gerçek dosya için tahliye hesabı yapmaz.</p>
+<div class="lab-links"><a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 / MADDE 107–108 ↗</a><a href="https://adlisicil.adalet.gov.tr/Home/SayfaDetay/ceza-infaz-kurumu-istatistikleri-2025-haber-bulteni-yayimlandi04052026091434" target="_blank" rel="noopener">2025 RESMÎ İSTATİSTİKLER ↗</a></div>
+</div></details><button type="button" class="compare-toggle" id="compareToggle" aria-expanded="false">AYNI CEZAYI KARŞILAŞTIR ↗</button><button type="button" class="next" id="next">SONRAKİ DOSYA →</button></div></div><div class="right-bottom"><strong id="state">08 DOSYA / TAHMİN ET</strong><div class="progress" id="dots"></div></div></div></section>
 <footer class="foot"><span class="disclaimer">Yalnızca varsayımsal eğitim senaryosu. Gerçek infaz/tahliye hesabı değildir.</span><span class="mono"><a href="/" aria-label="Ana sayfa">← ÇIKIŞ</a></span></footer>
 </main><script>
 const cases=[
@@ -173,7 +213,7 @@ function draw(){
  $('sentence').innerHTML=c.years+' yıl <small>hapis cezası</small>';
  $('slider').max=max;$('slider').step='.5';
  guess=Math.min(max,Math.round(c.years*.5*2)/2);setGuess(guess);
- $('guess').style.display='block';$('result').classList.remove('show');document.body.classList.remove('result-mode');$('legalDrawer').open=false;$('comparison').hidden=true;$('compareToggle').setAttribute('aria-expanded','false');$('compareToggle').textContent='AYNI CEZAYI KARŞILAŞTIR ↗';
+ $('guess').style.display='block';$('result').classList.remove('show');document.body.classList.remove('result-mode');$('legalDrawer').open=false;$('scenarioLab').open=false;$('comparison').hidden=true;$('compareToggle').setAttribute('aria-expanded','false');$('compareToggle').textContent='AYNI CEZAYI KARŞILAŞTIR ↗';
  $('state').textContent='DOĞRU TAHMİN: '+score+' / '+cases.length;
  $('dots').innerHTML=cases.map((_,i)=>'<i class="'+(i<index?'done':'')+'"></i>').join('');
  solved=false;
@@ -229,5 +269,28 @@ $('compareToggle').onclick=()=>{
  if(box.hidden)stopPlayback();else{ $('timelineScrub').value=0;renderTimeline(0); }
 };
 $('next').onclick=()=>{if(index===cases.length-1){index=0;score=0}else index++;draw()};
+
+// Explorer: only the statutory conditional-release threshold is simulated.
+// Prison time and release dates require independent checks.
+const regimes={
+ general:{ratio:.5,label:'Genel rejim',source:'5275 m.107/2'},
+ murder:{ratio:2/3,label:'Kasten öldürme',source:'5275 m.107/2-a'},
+ torture:{ratio:2/3,label:'İşkence / eziyet',source:'5275 m.107/2-c'},
+ privacy:{ratio:2/3,label:'Özel hayatın gizliliği',source:'5275 m.107/2-f'},
+ repeat1:{ratio:2/3,label:'İlk tekerrür',source:'5275 m.108/1-d'},
+ repeat2:{ratio:.75,label:'İkinci tekerrür',source:'5275 m.108/3'}
+};
+function updateLab(){
+ const item=regimes[$('labRegime').value],years=Number($('labYears').value),threshold=years*item.ratio;
+ $('labYearsOut').textContent=years+' yıl';
+ $('labThreshold').textContent=format(threshold)+' yıl';
+ $('labRatio').textContent=item.ratio===.5?'1/2':item.ratio===.75?'3/4':'2/3';
+ $('labFilled').style.width=(item.ratio*100)+'%';
+ $('labContrast').textContent=item.label+' seçildi: '+years+' yıl ceza için koşullu salıverilme eşiği '+format(threshold)+' yıl. Kaynak: '+item.source+'. Bu hesap cezaevinde kalış süresi değildir.';
+}
+$('labRegime').addEventListener('change',updateLab);
+$('labYears').addEventListener('input',updateLab);
+$('scenarioLab').addEventListener('toggle',()=>{if($('scenarioLab').open){stopPlayback();updateLab();}});
+updateLab();
 draw();
 </script><script src="/share-kit.js?v=1" defer></script></body></html>
