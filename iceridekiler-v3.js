@@ -51,6 +51,7 @@ function event(msg){state.logs.unshift({time:Math.round(state.clock),text:msg});
 function save(){try{state.camera={x:CAMERA.x,y:CAMERA.y,zoom:CAMERA.zoom};localStorage.setItem(KEY,JSON.stringify({state,agents,particles,hosts,debris,signals}));$('saved').textContent='KAYDEDİLDİ ✓'}catch(e){$('saved').textContent='KAYIT YOK'}}
 function resetWorld(){agents=[];particles=[];hosts=[];debris=[];signals=[];bursts=[];flares=[];for(let i=0;i<5;i++)addAgent('macro').permanent=true;addAgent('dend').permanent=true;addAgent('fibro').permanent=true;addAgent('treg').permanent=true;for(let k=0;k<22;k++){let x=80+(k%6)*148+rnd(-22,22),y=95+Math.floor(k/6)*109+rnd(-21,21);hosts.push({id:++maxId,x,y,infect:0,dead:false,heal:0});}}
 if(!hosts.length||!agents.length)resetWorld();
+let webglActive=false;
 const CAMERA={x:450,y:262.5,zoom:1};
 if(state.camera&&Number.isFinite(state.camera.x)&&Number.isFinite(state.camera.y)&&Number.isFinite(state.camera.zoom)){
  CAMERA.x=state.camera.x;CAMERA.y=state.camera.y;CAMERA.zoom=clamp(state.camera.zoom,1,3.2);
@@ -691,7 +692,6 @@ function inspect(ev){const pt=screenPoint(ev);const x=pt.x,y=pt.y;
  else{state.focus={x:clamp(x,45,W-45),y:clamp(y,45,H-45)};state.focusSet=true;if(state.phase==='active')addSignal(state.focus.x,state.focus.y,13,'rally');$('selection').textContent='Müdahale odağı değişti';notice('Bu bölgeye müdahale edebilirsin.');updateUi(true);}}
 let reportShown=false;
 
-let webglActive=false;
 window.immuneBridge={
  read(){return {state,agents,particles,hosts,debris,signals,types,camera:CAMERA}},
  useWebGL(enabled){webglActive=!!enabled;document.getElementById('stage')?.classList.toggle('webgl-ready',webglActive);}
