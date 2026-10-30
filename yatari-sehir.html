@@ -212,6 +212,7 @@ body{background:#ffeccf;color:var(--ink)}
 </g></svg><div class="city-pins" aria-label="Mekân seçimi"><button data-goto="apartment">⌂ APARTMAN</button><button data-goto="cafe">☕ KAFE</button><button data-goto="phone">▣ TELEFON</button><button data-goto="street">↗ SOKAK</button><button data-goto="office">▥ OFİS</button><button data-goto="court">⚖ ADLİYE</button></div><div class="zoom">DOKUN: APARTMAN · KAFE · TELEFON · SOKAK · OFİS · ADLİYE</div></div>
 <aside class="panel"><button id="randomEvent" type="button" class="random-event">↻ BAŞKA MEKÂN</button><div class="eyebrow" id="area">01 / APARTMAN</div><h1 id="title">Komşu yine müziği açtı.</h1><p class="story" id="story">Gece yarısı, bütün apartman duyuyor. Şimdi olayı değiştir.</p><div class="switches" id="switches"></div><div class="judgment" aria-live="polite"><div class="eyebrow">HUKUKİ DURUM</div><strong id="verdict">DURUMA BAĞLI.</strong><p id="explanation"></p></div><details class="infaz" id="infaz"><summary>İNFAZ BİLGİSİNİ KEŞFET <span>＋</span></summary><div class="infaz-inner"><div class="eyebrow">CEZA / İNFAZ ATLASI</div><div class="infaz-number" id="ceza">—</div><p class="infaz-note" id="infazNote"></p><div class="infaz-track" aria-hidden="true"><span id="infazFill"></span></div><div class="infaz-stages"><span>HÜKÜM</span><span>KOŞULLU SALIVERİLME</span></div><label class="infaz-label" for="demoPenalty">ÖRNEK KESİNLEŞMİŞ CEZA <output id="penaltyOut">4 yıl</output></label><input id="demoPenalty" type="range" min="1" max="20" step="1" value="4"><div class="infaz-sample" id="infazSample"></div></div></details><details class="detail" id="details"><summary>KANUN NE DİYOR? <span aria-hidden="true">＋</span></summary><div class="law-body"><p id="law"></p></div></details></aside></section><footer class="foot"><span>Gerçek mevzuattan esinlenen varsayımsal durumlar. Otomatik suç veya tahliye kararı değildir.</span><a class="cta" href="/yatari-kac.html">KLASİK OYUN ↗</a></footer></main>
 <script>
+const $=id=>document.getElementById(id);
 const cases={
  apartment:{label:'APARTMAN',title:'Komşu yine müziği açtı.',story:'Gece yarısı, bütün apartman duyuyor. Şimdi olayı değiştir.',options:[
  ['Normal sesle müzik','BU HALİYLE SUÇ DEĞİL.','Sırf müzik dinlemek suç değil; olayın rahatsızlık yaratıp yaratmadığı ve başka koşullar önemlidir.'],
@@ -287,7 +288,7 @@ function renderInfaz(){
 $('demoPenalty').addEventListener('input',renderInfaz);
 
 let active='apartment',selected={};try{selected=JSON.parse(localStorage.getItem('yatari-city-choices')||'{}')}catch(e){}
-const $=id=>document.getElementById(id);
+
 function render(key){active=key;const c=cases[key],choice=Math.min(Math.max(0,Number(selected[key])||0),c.options.length-1);
  $('area').textContent=c.label+' / BİR HAREKETİ DEĞİŞTİR';
  $('title').textContent=c.title;$('story').textContent=c.story;
