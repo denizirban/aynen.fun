@@ -48,14 +48,33 @@ h1{font-weight:600;font-size:clamp(31px,4.5vw,58px);line-height:1.04;letter-spac
 @media(min-width:1000px){.viewport{scroll-snap-type:x proximity}}
 @media(max-width:650px){header{padding:17px 18px 0}.intro{padding:27px 18px 0;display:block}.intro .actions{margin-top:16px}.hint{display:none}.stage{margin-top:18px}.viewport{padding:0 8px 5px;scroll-snap-type:x proximity}.track{height:clamp(400px,54svh,485px);padding:0 15px;gap:6px}.entry{flex-basis:147px}.plate{width:132px;left:8px}.slip{max-width:104px}.track::before{bottom:60px}.dot{bottom:52px}.num{bottom:22px}.stem{bottom:78px}.footer{padding:4px 18px 22px}.footer .small-note{max-width:215px}.player{bottom:0;right:0;width:100%;border-radius:14px 14px 0 0;max-width:none;box-shadow:0 -13px 40px #000a;padding:18px 22px calc(22px + env(safe-area-inset-bottom))}}
 @media(prefers-reduced-motion:reduce){.viewport{scroll-behavior:auto}.plate,.dot,.bird-image{transition:none}}
+
+.library-tools{padding:18px clamp(20px,4.4vw,65px) 0;max-width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px}
+.search-wrap{position:relative;min-width:210px;flex:0 1 250px;display:flex;align-items:center;border-bottom:1px solid #54564f;color:#d5d3c7}
+.search-wrap span{font:23px/1 'Space Grotesk',sans-serif;padding-right:6px}
+.search-wrap input{background:transparent;border:0;outline:0;color:#f0eee7;padding:8px 0 10px;width:100%;font:11px 'DM Mono',monospace}
+.search-wrap input::placeholder{color:#8b8f85}.search-wrap:focus-within{border-bottom-color:#e9e3d5}
+.filters{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1}
+.chip{border:1px solid #373a36;background:transparent;color:#b7b9b0;border-radius:999px;font:10px 'DM Mono',monospace;padding:7px 11px;white-space:nowrap}
+.chip:hover,.chip:focus-visible{border-color:#cdc9bd;color:#fff}
+.chip.active{background:#e9e6dc;border-color:#e9e6dc;color:#1d1d1b}
+.catalog-line{width:100%;display:flex;align-items:center;gap:16px;color:#999a91;font:9px 'DM Mono',monospace;letter-spacing:.055em;padding-top:2px}
+#heardCount{color:#c6cbbf}.right-tip{margin-left:auto}.empty-state{width:100%;color:#d0c7b3;font-size:11px;margin:0}
+.entry.is-hidden{display:none!important}.entry.heard:not(.selected) .dot{background:#a7bda6}
+.entry.saved .stamp{background:#ebd8a6;color:#26261e}
+.player-controls{margin-top:11px;display:flex;gap:6px;justify-content:space-between}
+.micro{flex:1;background:transparent;border:1px solid #c5c1b7;color:#35342e;border-radius:6px;padding:10px 5px;font:9px 'DM Mono',monospace}
+.micro:hover{background:#d5d1c6}.micro[aria-pressed="true"]{background:#2c2d28;color:white}
+@media(max-width:800px){.library-tools{gap:12px}.search-wrap{flex-basis:100%;max-width:400px}.filters{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;padding-bottom:3px}.filters::-webkit-scrollbar{display:none}.chip{flex:none}}
+@media(max-width:650px){.intro{padding-top:20px}.intro .actions{margin-top:13px}.library-tools{padding:15px 18px 0;gap:8px}.catalog-line{gap:12px}.right-tip{display:none}.stage{margin-top:10px}.track{height:clamp(380px,51svh,458px)}.micro{padding:12px 4px}.player{max-height:70svh;overflow:auto}}
 </style></head><body>
 <header><a href="/" class="home">← aynen.fun</a><span class="issue">SESLİ DOĞA ARŞİVİ &nbsp; / &nbsp; 01—60</span></header>
-<div class="intro"><div><h1>Türkiye’nin kuşları.</h1><p>60 tür. Gerçek kuş sesleri. Birine dokun.</p></div><div class="actions"><span class="hint">← YATAY KAYDIR →</span><button class="pill" type="button" id="random">Rastgele bir kuş ↗</button></div></div>
+<div class="intro"><div><h1>Türkiye’nin kuşları.</h1><p>60 tür. Gerçek kuş sesleri. Birine dokun.</p></div><div class="actions"><span class="hint">← YATAY KAYDIR →</span><button class="pill" type="button" id="random">Rastgele dinle ↗</button></div></div><div class="library-tools"><div class="search-wrap"><label class="sr-only" for="birdSearch">Kuş ara</label><span aria-hidden="true">⌕</span><input id="birdSearch" type="search" autocomplete="off" placeholder="Kuş adı veya yaşam alanı ara…"></div><div id="filters" class="filters" role="group" aria-label="Kuşları filtrele"></div><div class="catalog-line"><span id="resultCount">60 / 60 KUŞ</span><span id="heardCount">0 / 60 SES DİNLENDİ</span><span class="right-tip">YATAY KAYDIR · DİNLE · KAYDET</span></div><p class="empty-state" id="emptyState" hidden>Bu filtrede kuş bulunamadı. Başka bir kelime dene.</p></div>
 <section class="stage" aria-label="Türkiye'deki altmış kuşun sesli arşivi">
 <div class="viewport" id="viewport"><div class="track" id="track"></div></div>
 </section>
 <div class="footer"><span class="small-note">FOTOĞRAFLAR: WIKIMEDIA / SESLER: WIKIMEDIA COMMONS<br>Tür listesi: Türkiye Kuş Kayıt Komitesi · <a href="https://www.kustr.org/kuskayitkomitesi/turkiye-tur-listesi/" target="_blank" rel="noopener noreferrer">Kaynak</a></span><div class="arrows"><button type="button" class="arrow" id="prev" aria-label="Sola kaydır">←</button><button type="button" class="arrow" id="next" aria-label="Sağa kaydır">→</button></div></div>
-<aside class="player" id="player" role="region" aria-label="Seçilen kuşun bilgileri" aria-live="polite"><div class="topline"><span id="indicator">KUŞ / 01</span><button id="dismiss" class="dismiss" aria-label="Bilgi kartını kapat">×</button></div><h2 id="birdName"></h2><p class="latin" id="birdLatin"></p><p class="fact" id="birdFact"></p><p class="meta" id="birdMeta"></p><div class="audio-row"><button class="listen" id="listen" type="button">▶ Sesi dinle</button><span class="sound-status" id="soundStatus">Ses kaydı aranıyor…</span></div><a class="source" id="source" href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer">Ses kaynağı ↗</a></aside>
+<aside class="player" id="player" role="region" aria-label="Seçilen kuşun bilgileri" aria-live="polite"><div class="topline"><span id="indicator">KUŞ / 01</span><button id="dismiss" class="dismiss" aria-label="Bilgi kartını kapat">×</button></div><h2 id="birdName"></h2><p class="latin" id="birdLatin"></p><p class="fact" id="birdFact"></p><p class="meta" id="birdMeta"></p><div class="audio-row"><button class="listen" id="listen" type="button">▶ Sesi dinle</button><span class="sound-status" id="soundStatus">Ses kaydı aranıyor…</span></div><div class="player-controls"><button class="micro" type="button" id="backBird" aria-label="Önceki kuş">← Önceki</button><button class="micro" type="button" id="favorite" aria-pressed="false">☆ Kaydet</button><button class="micro" type="button" id="forwardBird">Sonraki →</button></div><a class="source" id="source" href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer">Ses kaynağı ↗</a></aside>
 <audio id="audio" preload="none"></audio>
 <script>
 'use strict';
@@ -74,6 +93,53 @@ function createEntry(b,i){
  el.querySelector('.plate').addEventListener('click',()=>choose(i,true));el.querySelector('.dot').addEventListener('click',()=>choose(i,true));track.appendChild(el);return el;
 }
 const entries=BIRDS.map(createEntry);
+
+const storageKey='aynen_bird_atlas_v2';
+function fromStorage(){try{const x=JSON.parse(localStorage.getItem(storageKey)||'{}');return {heard:new Set(Array.isArray(x.heard)?x.heard:[]),saved:new Set(Array.isArray(x.saved)?x.saved:[])}}catch(e){return {heard:new Set(),saved:new Set()}}}
+const progress=fromStorage(),heard=progress.heard,saved=progress.saved;
+function persist(){try{localStorage.setItem(storageKey,JSON.stringify({heard:[...heard],saved:[...saved]}))}catch(e){}}
+const filtersList=[['all','Tümü'],['bahce','Şehir & bahçe'],['orman','Orman'],['sulak','Sulak alan'],['bozkir','Bozkır'],['yirtici','Yırtıcılar'],['gece','Gece'],['saved','☆ Kaydettiklerim'],['heard','Dinlediklerim']];
+let activeFilter='all',searchTerm='',visibleIndices=BIRDS.map((_,i)=>i);
+const normalize=s=>String(s||'').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function updateProgress(){
+ $('heardCount').textContent=heard.size+' / '+BIRDS.length+' SES DİNLENDİ';
+ entries.forEach((el,i)=>{el.classList.toggle('heard',heard.has(BIRDS[i].latin));el.classList.toggle('saved',saved.has(BIRDS[i].latin))});
+ if(current){const yes=saved.has(current.latin);$('favorite').setAttribute('aria-pressed',String(yes));$('favorite').textContent=yes?'★ Kaydedildi':'☆ Kaydet'}
+}
+function applyFilters(){
+ visibleIndices=[];
+ BIRDS.forEach((b,i)=>{
+  const matchesGroup=activeFilter==='all'||b.group===activeFilter||(activeFilter==='saved'&&saved.has(b.latin))||(activeFilter==='heard'&&heard.has(b.latin));
+  const matchesSearch=normalize([b.name,b.latin,b.habitat,b.wiki].join(' ')).includes(normalize(searchTerm));
+  const visible=matchesGroup&&matchesSearch;
+  entries[i].classList.toggle('is-hidden',!visible);
+  if(visible)visibleIndices.push(i);
+ });
+ $('resultCount').textContent=visibleIndices.length+' / '+BIRDS.length+' KUŞ';
+ $('emptyState').hidden=visibleIndices.length!==0;
+ if(current&&!visibleIndices.includes(activeIndex))$('dismiss').click();
+ if(visibleIndices.length)viewport.scrollTo({left:0,behavior:'auto'});
+ updateProgress();
+}
+$('birdSearch').addEventListener('input',e=>{searchTerm=e.target.value;applyFilters()});
+$('filters').innerHTML=filtersList.map(([value,label])=>'<button class="chip'+(value==='all'?' active':'')+'" type="button" data-filter="'+value+'" aria-pressed="'+(value==='all'?'true':'false')+'">'+label+'</button>').join('');
+$('filters').addEventListener('click',e=>{
+ const btn=e.target.closest('[data-filter]');if(!btn)return;
+ activeFilter=btn.dataset.filter;
+ $('filters').querySelectorAll('[data-filter]').forEach(el=>{const on=el.dataset.filter===activeFilter;el.classList.toggle('active',on);el.setAttribute('aria-pressed',String(on))});
+ applyFilters();
+});
+function moveBird(step){
+ if(!visibleIndices.length)return;
+ const position=visibleIndices.indexOf(activeIndex);
+ const target=visibleIndices[(Math.max(0,position)+step+visibleIndices.length)%visibleIndices.length];
+ choose(target,true);
+}
+$('backBird').onclick=()=>moveBird(-1);
+$('forwardBird').onclick=()=>moveBird(1);
+$('favorite').onclick=()=>{if(!current)return;const k=current.latin;saved.has(k)?saved.delete(k):saved.add(k);persist();updateProgress();if(activeFilter==='saved')applyFilters()};
+audio.addEventListener('playing',()=>{if(!current)return;heard.add(current.latin);persist();updateProgress()});
+
 function showStatus(s){$('soundStatus').textContent=s}
 function setButton(s,disabled){$('listen').textContent=s;$('listen').disabled=!!disabled}
 function pause(){audio.pause();audio.removeAttribute('src');audio.load();setButton('▶ Sesi dinle',false)}
@@ -82,12 +148,12 @@ function choose(i,playWhenReady){
  const old=activeIndex;activeIndex=i;current=b;
  entries.forEach((el,j)=>el.classList.toggle('selected',j===i));
  if(old!==i)pause();
- player.classList.add('open');$('indicator').textContent='KUŞ / '+String(b.id).padStart(2,'0')+' — '+BIRDS.length;
+ player.classList.add('open');updateProgress();$('indicator').textContent='KUŞ / '+String(b.id).padStart(2,'0')+' — '+BIRDS.length;
  $('birdName').textContent=b.name;$('birdLatin').textContent=b.latin;$('birdFact').textContent=b.fact;
  $('birdMeta').textContent=b.habitat+' · '+b.season;
  $('source').href='https://commons.wikimedia.org/w/index.php?search='+encodeURIComponent(b.latin+' filetype:audio')+'&title=Special:MediaSearch&type=audio';
  $('source').textContent='Ses kaynağı: Wikimedia Commons ↗';
- entries[i].scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+ viewport.scrollTo({left:Math.max(0,entries[i].offsetLeft-viewport.clientWidth/2+entries[i].clientWidth/2),behavior:'smooth'});
  const cached=tuneCache[b.latin];
  if(cached&&cached.url){showStatus('Gerçek doğa kaydı · dinlemeye hazır');setButton('▶ Sesi dinle',false);applySource(cached)}
  else{showStatus('Ses kaydı aranıyor…');setButton('… Ses aranıyor',true)}
@@ -116,12 +182,17 @@ $('listen').addEventListener('click',()=>{
  if(r&&r.url)startAudio(r);else{setButton('… Ses aranıyor',true);resolveSound(current).then(out=>{if(out){setButton('▶ Sesi dinle',false);showStatus('Kayıt hazır · tekrar dokun')}else{setButton('Kayda ulaşılamadı',true);showStatus('Kayıt bulunamadı')}})}
 });
 audio.addEventListener('ended',()=>{setButton('▶ Tekrar dinle',false);showStatus('Kayıt sona erdi')});
-audio.addEventListener('error',()=>{if(!current)return;setButton('▶ Tekrar dene',false);showStatus('Ses kaynağı yüklenemedi · kaynak bağlantısını açabilirsin')});
+audio.addEventListener('error',()=>{if(!current)return;const b=current,ix=activeIndex;
+ if(tuneCache[b.latin]&&tuneCache[b.latin].pinned&&!b.pinnedFailed){
+ b.pinnedFailed=true;delete tuneCache[b.latin];b.soundPromise=null;showStatus('Alternatif kayıt aranıyor…');setButton('… Tekrar deneniyor',true);
+ resolveSound(b).then(r=>{if(ix!==activeIndex)return;if(r){showStatus('Alternatif kayıt hazır · dinlemek için bas');setButton('▶ Sesi dinle',false);applySource(r)}else{showStatus('Ses açılamadı · kaynak bağlantısını kullan');setButton('▶ Tekrar dene',false)}});
+ }else{setButton('▶ Tekrar dene',false);showStatus('Ses yüklenemedi · kaynak bağlantısını açabilirsin')}
+});
 $('dismiss').onclick=()=>{player.classList.remove('open');pause();entries.forEach(e=>e.classList.remove('selected'));activeIndex=-1;current=null};
-$('random').onclick=()=>{let i=Math.floor(Math.random()*BIRDS.length);if(i===activeIndex)i=(i+1)%BIRDS.length;choose(i,true)};
+$('random').onclick=()=>{if(!visibleIndices.length)return;let i=visibleIndices[Math.floor(Math.random()*visibleIndices.length)];if(i===activeIndex&&visibleIndices.length>1)i=visibleIndices[(visibleIndices.indexOf(i)+1)%visibleIndices.length];choose(i,true)};
 $('prev').onclick=()=>viewport.scrollBy({left:-460,behavior:'smooth'});
 $('next').onclick=()=>viewport.scrollBy({left:460,behavior:'smooth'});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&current)$('dismiss').click();if(!current||e.target.tagName==='BUTTON')return;if(e.key==='ArrowRight'){e.preventDefault();choose(Math.min(activeIndex+1,19),false)}else if(e.key==='ArrowLeft'){e.preventDefault();choose(Math.max(activeIndex-1,0),false)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&current)$('dismiss').click();if(!current||e.target.tagName==='BUTTON')return;if(e.key==='ArrowRight'){e.preventDefault();moveBird(1)}else if(e.key==='ArrowLeft'){e.preventDefault();moveBird(-1)}});
 let dragging=false,startX=0,startScroll=0,moved=false;
 viewport.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;dragging=true;moved=false;startX=e.clientX;startScroll=viewport.scrollLeft});
 window.addEventListener('pointermove',e=>{if(!dragging)return;let dx=e.clientX-startX;if(Math.abs(dx)>5){moved=true;viewport.classList.add('dragging');viewport.scrollLeft=startScroll-dx}});
@@ -162,7 +233,7 @@ async function loadPhotos(){
  for(let offset=0;offset<BIRDS.length;offset+=20){
   const slice=BIRDS.slice(offset,offset+20);
   try{
-   const wikiTitles=slice.map(b=>b.wiki).join('|';
+   const wikiTitles=slice.map(b=>b.wiki).join('|');
    const url='https://en.wikipedia.org/w/api.php?'+params({prop:'pageimages',piprop:'thumbnail',pithumbsize:520,titles:wikiTitles,redirects:1});
    const data=await getJSON(url,12000),pageMap={},redirects={};
    (data.query&&data.query.redirects||[]).forEach(r=>redirects[r.from.toLowerCase()]=r.to.toLowerCase());
@@ -172,12 +243,11 @@ async function loadPhotos(){
  }
 }
 loadPhotos();
-(async()=>{ // Arka planda yalnızca gerçek, lisansı görülebilen ses dosyalarını çöz.
- for(let i=0;i<BIRDS.length;i++){
-  const b=BIRDS[i];try{await resolveSound(b);if(activeIndex===i&&tuneCache[b.latin]&&tuneCache[b.latin].url){showStatus('Kayıt hazır · oynatmak için ▶');setButton('▶ Sesi dinle',false);applySource(tuneCache[b.latin])}}catch(e){}
-  await new Promise(r=>setTimeout(r,160));
- }
-})();
+const observer=new IntersectionObserver(items=>{
+ for(const item of items){if(item.isIntersecting){const i=entries.indexOf(item.target);if(i>=0)resolveSound(BIRDS[i]).then(r=>{if(activeIndex===i&&r){showStatus('Kayıt hazır · oynatmak için ▶');setButton('▶ Sesi dinle',false);applySource(r)}})}}
+},{root:viewport,rootMargin:'0px 320px 0px 320px',threshold:0});
+entries.forEach(e=>observer.observe(e));
+applyFilters();
 </script>
 <script src="/share-kit.js?v=1" defer></script>
 </body></html>
