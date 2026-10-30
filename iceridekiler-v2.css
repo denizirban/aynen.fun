@@ -1,0 +1,89 @@
+/* İçeridekiler — biological simulation visual system v2 */
+:root{--paper:#f5f6f2;--line:#dce3dc;--ink:#1b2922}
+body{background:radial-gradient(ellipse at 45% -15%,#e8f1e9 0%,#f5f6f2 47%,#f5f6f2 100%)}
+.page{max-width:1420px}
+.titleline{margin-bottom:17px}
+.titleline h1{font-weight:790;letter-spacing:-.082em}
+.titleline p{color:#596d60;max-width:420px;line-height:1.55}
+.metric{box-shadow:0 2px 12px #7189790a}
+.metric b{letter-spacing:-.04em}
+.stage{background:#dfece3;box-shadow:0 14px 50px #63897414}
+.stage canvas{touch-action:manipulation}
+.episode{border-radius:12px}
+.episode h3{font-size:15px}
+.episode .solid{white-space:nowrap}
+.stage-help{position:absolute;z-index:3;bottom:61px;left:16px;font-size:10px;background:#ffffffda;border:1px solid #d6e6d9;border-radius:7px;padding:6px 8px;color:#547064;pointer-events:none}
+.episode-head{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:9px;color:#788b7f}
+.episode-progress{height:4px;background:#e3e8e1;border-radius:99px;overflow:hidden;margin:9px 0 7px}
+.episode-progress>i{height:100%;width:0;background:#7eac90;display:block;transition:width .3s ease}
+.goal{display:block;color:#497060;font-size:11px;margin:7px 0 0}
+.action{position:relative;min-height:93px;transition:border-color .16s,background .16s,transform .16s}
+.action:hover:not(:disabled){transform:translateY(-2px)}
+.action b{font-size:11px;max-width:112px}
+.action:nth-child(5){grid-column:1/-1;min-height:52px;flex-direction:row;align-items:center}
+.action:nth-child(5) .glyph{font-size:20px}
+.action:nth-child(5) b{max-width:none}
+.action:nth-child(5) small{margin-left:auto}
+.panel{box-shadow:0 1px 10px #66897608}
+.panel-kicker{font-size:10px;font-weight:550;line-height:1.5;color:#7c8a7f;margin:11px 0}
+.side-science{display:block;font-size:11px;color:#677d6d;line-height:1.5}
+.side-science summary{font-weight:700;cursor:pointer;color:#243e30}
+.side-science p{margin:8px 0 0}
+.side-science a{color:#3b7860;text-underline-offset:3px}
+.detail-kind{display:block;margin-top:10px;font:9px/1.5 ui-monospace,monospace;color:#94a29a}
+.bio-key{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
+.bio-key span{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#596e61;background:#f3f7f2;border:1px solid #e3eae0;border-radius:100px;padding:6px 8px}
+.bio-key i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--dot)}
+.report-meta{font-size:11px;color:#667e6d;margin:-7px 0 18px}
+.share-row{display:flex;gap:14px;margin-top:17px;align-items:center;flex-wrap:wrap}
+.share-row a,.share-row button{font-size:11px;background:none;border:0;color:#477762;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0}
+.result-actions{flex-wrap:wrap}
+.result-actions button{min-width:104px}
+.scrim{background:#dce9df70}
+.welcome{padding:29px;border:1px solid #d1e2d4}
+.welcome h2{font-size:37px}
+#selection{max-width:76%}
+.panel-header h2{font-weight:750}
+.statline{font:10px/1.5 ui-monospace,monospace;color:#83948a;margin-top:9px}
+#focus-info{display:block;margin-top:7px;color:#3e6e59;font:9px ui-monospace,monospace}
+@media(max-width:960px){.titleline p{max-width:340px}}
+@media(max-width:760px){
+  .page{padding:10px 10px 20px}
+  .titleline{margin:13px 0}
+  .titleline h1{font-size:clamp(36px,10vw,49px)}
+  .stage-help{left:9px;bottom:47px;font-size:9px;max-width:230px}
+  .scene-bottom #selection{max-width:76%}
+  .under-scene{display:block}
+  .episode{gap:9px}
+  .episode h3{font-size:12px}
+  .episode .solid{white-space:normal;max-width:126px}
+  .sidebar{display:flex;gap:8px}
+  .action:nth-child(5){grid-column:auto;min-height:72px;flex-direction:column;align-items:flex-start}
+  .action:nth-child(5) b{max-width:90px}
+  .action:nth-child(5) small{margin-left:0}
+  .actions{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .action{min-height:72px}
+  .action b{font-size:9px;max-width:none}
+  .action small{font-size:8px}
+  .unit-row{display:grid;grid-template-columns:20px 1fr auto}
+  .unit-row .upgrade{grid-column:auto}
+  .panel{padding:11px}
+  .goal{font-size:10px}
+}
+@media(max-width:440px){
+  .titleline p{font-size:11px}
+  .action{padding:8px 5px;min-height:78px}
+  .actions{gap:4px}
+  .action b{font-size:9px}
+  .action .glyph{font-size:18px}
+  .action small{font-size:8px}
+  .action:nth-child(5){min-height:78px}
+  .unit-row{grid-template-columns:17px 1fr auto;gap:6px}
+  .unit-row .upgrade{grid-column:auto;font-size:9px;padding:7px}
+  .stage-help{font-size:8px}
+  .welcome{padding:20px}
+  .welcome h2{font-size:29px}
+  .result{padding:16px}
+  .result-actions button{font-size:10px;padding:9px}
+}
+@media(prefers-reduced-motion:reduce){.action:hover:not(:disabled){transform:none}}
