@@ -31,6 +31,31 @@
 .random-event{align-self:flex-end;background:#fff;border:1px solid #111;padding:7px 9px;border-radius:20px;font:700 9px monospace}
 .infaz{display:block!important}.infaz[hidden]{display:none!important}.infaz summary{cursor:pointer;font:700 11px monospace;display:flex;align-items:center;justify-content:space-between;list-style:none}.infaz summary::-webkit-details-marker{display:none}.infaz summary span{font-size:18px}.infaz[open] summary span{transform:rotate(45deg)}.infaz-inner{display:grid;gap:7px;margin-top:10px}
 @media(max-width:780px){.city-pins button{padding:5px 6px;font-size:8px}.city-pins button[data-goto="cafe"]{left:39%;top:38%}.city-pins button[data-goto="street"]{left:35%;bottom:8%}.random-event{font-size:8px;padding:5px 8px}.infaz summary{font-size:10px}}
+
+/* Illustrated paper-cut direction: muted gouache palette, charcoal ink, organic silhouettes. */
+:root{--forest:#438c52;--mint:#7abb60;--bark:#cf967b;--ivory:#fff0cd;--ink:#23332a}
+body{background:#ffeccf;color:var(--ink)}
+.app{background:#ffeccf}
+.stage{border-color:#293d30;background:#c0d6ac}
+.world{background:linear-gradient(180deg,#fae2b7 0%,#f9e7c8 41%,#a6c78b 42%,#87b36e 100%)}
+.world:before{background-image:radial-gradient(#1d3d2322 .55px,transparent .75px);background-size:5px 5px;opacity:.19;z-index:2;pointer-events:none}
+.scene{filter:none}
+.panel{background:#f9e9ce;border-color:#293d30}
+.brand span{color:#b96343}
+.eyebrow{color:#54634b}
+.hintpill,.city-pins button{border-radius:24px;background:#fff1d2;border-color:#25382b;box-shadow:2px 3px 0 #263b2b30;color:#263b2b}
+.city-pins button.active{background:#e8a38a;transform:translateY(-3px)}
+.building:hover{filter:drop-shadow(0 2px 2px #163a2345)}
+.switch{background:#fff3dc;border-color:#334633;border-radius:15px;box-shadow:none}
+.switch.selected{background:#a5d17e;box-shadow:2px 3px 0 #3c6046}
+.judgment{background:#f6cfb1;border:1px solid #b77761;border-radius:18px}
+.judgment strong{color:#733b2d}
+.infaz{background:#fae8be;border-color:#b99876;border-radius:18px}
+.infaz-track{background:#d7c6a1}.infaz-track span{background:linear-gradient(90deg,#b96148,#e29b67)}
+.detail{background:#fbeed4;border-color:#a79477;border-radius:12px}
+.random-event{background:#fff0d2;border-radius:18px;border-color:#41533d}
+.cta{background:#263a2b}
+@media(max-width:780px){.stage{grid-template-rows:minmax(0,50fr) minmax(0,50fr)}.city-pins button{font-size:8px;padding:6px 7px}.panel{padding:11px 13px}.hintpill{max-width:64%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 </style></head><body><main class="app"><header class="bar"><a class="brand" href="/yatari-kac.html">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><section class="stage">
 <div class="world"><div class="hintpill" id="hint">BİR YERE DOKUN ↓</div><svg class="scene" viewBox="0 0 800 560" role="img" aria-label="Apartman, kafe, sokak, ofis, telefon ve adliye içeren tıklanabilir oyun şehri" preserveAspectRatio="xMidYMid meet">
 <defs><pattern id="brick" width="30" height="20" patternUnits="userSpaceOnUse"><path d="M0 0H30M0 20H30M15 0V10M0 10H30" stroke="#a77c7244" stroke-width="1"/></pattern></defs>
@@ -45,7 +70,17 @@
 <g class="building" tabindex="0" role="button" aria-label="Telefon" data-place="phone"><rect x="75" y="437" width="77" height="108" rx="12" fill="#575d68" stroke="#111" stroke-width="3"/><rect x="83" y="446" width="61" height="85" rx="5" fill="#f9b6b4"/><path d="M95 468H134M95 485H122M95 501H132" stroke="#fff" stroke-width="6" stroke-linecap="round"/><text class="place-label" x="114" y="555" text-anchor="middle">TELEFON</text></g>
 <g class="building" tabindex="0" role="button" aria-label="Sokak" data-place="street"><g class="person"><circle cx="255" cy="463" r="15" fill="#b16c4e" stroke="#111" stroke-width="2"/><path d="M255 478V524M255 496L236 515M255 496L276 510M255 524L237 550M255 524L274 550" stroke="#111" stroke-width="6" fill="none"/></g><text class="place-label" x="275" y="550">SOKAK</text></g>
 <g class="building" tabindex="0" role="button" aria-label="Adliye" data-place="court"><path d="M520 479L612 440L704 479Z" fill="#a5acc0" stroke="#111" stroke-width="3"/><rect x="527" y="480" width="170" height="61" fill="#e6e0ca" stroke="#111" stroke-width="3"/><g stroke="#111" stroke-width="5"><path d="M546 483V535M576 483V535M607 483V535M639 483V535M675 483V535"/></g><text class="place-label" x="610" y="558" text-anchor="middle">ADLİYE</text></g>
-</svg><div class="city-pins" aria-label="Mekân seçimi"><button data-goto="apartment">⌂ APARTMAN</button><button data-goto="cafe">☕ KAFE</button><button data-goto="phone">▣ TELEFON</button><button data-goto="street">↗ SOKAK</button><button data-goto="office">▥ OFİS</button><button data-goto="court">⚖ ADLİYE</button></div><div class="zoom">DOKUN: APARTMAN · KAFE · TELEFON · SOKAK · OFİS · ADLİYE</div></div>
+<g pointer-events="none" aria-hidden="true">
+<path d="M-25 0Q35 65 0 155Q-20 236 22 328L58 360Q15 223 89 155Q124 88 105 -20Z" fill="#cc9177" stroke="#293d2d" stroke-width="2"/>
+<path d="M-70 3Q-15 -68 91 -30Q150 -4 145 51Q190 110 105 145Q39 186 -35 114Z" fill="#4c9f59" stroke="#2c6141" stroke-width="2"/>
+<path d="M-45 170Q-12 132 51 155Q115 142 117 198Q149 246 89 272Q29 309 -38 249Z" fill="#78ba58" stroke="#2c6141" stroke-width="2"/>
+<path d="M745 -20Q722 74 785 169Q805 226 768 320L810 346Q830 216 821 125Q792 45 825 -30Z" fill="#d79a7e" stroke="#293d2d" stroke-width="2"/>
+<path d="M663 -40Q724 -90 813 -25Q889 12 864 92Q849 131 791 135Q743 185 689 140Q618 105 663 46Z" fill="#54a45e" stroke="#2d6542" stroke-width="2"/>
+<path d="M718 168Q759 129 808 159Q850 145 873 209Q897 264 820 295Q775 319 733 273Q681 254 718 168Z" fill="#78b65a" stroke="#30683f" stroke-width="2"/>
+<path d="M-40 511Q67 457 142 505Q187 475 216 546L-20 585Z" fill="#379353" stroke="#285c3e" stroke-width="2"/>
+<path d="M621 560Q671 478 742 501Q783 461 848 511V585Z" fill="#45a15b" stroke="#285c3e" stroke-width="2"/>
+<g stroke-linecap="round"><path d="M184 107v28M170 121h28M174 111l20 20M194 111l-20 20" stroke="#fff7c8" stroke-width="2"/><path d="M523 90v19M514 99h19M517 93l13 13M530 93l-13 13" stroke="#2d4930" stroke-width="2"/><path d="M723 381v18M714 390h18" stroke="#fff3c4" stroke-width="2"/></g>
+</g></svg><div class="city-pins" aria-label="Mekân seçimi"><button data-goto="apartment">⌂ APARTMAN</button><button data-goto="cafe">☕ KAFE</button><button data-goto="phone">▣ TELEFON</button><button data-goto="street">↗ SOKAK</button><button data-goto="office">▥ OFİS</button><button data-goto="court">⚖ ADLİYE</button></div><div class="zoom">DOKUN: APARTMAN · KAFE · TELEFON · SOKAK · OFİS · ADLİYE</div></div>
 <aside class="panel"><button id="randomEvent" type="button" class="random-event">↻ BAŞKA MEKÂN</button><div class="eyebrow" id="area">01 / APARTMAN</div><h1 id="title">Komşu yine müziği açtı.</h1><p class="story" id="story">Gece yarısı, bütün apartman duyuyor. Şimdi olayı değiştir.</p><div class="switches" id="switches"></div><div class="judgment" aria-live="polite"><div class="eyebrow">HUKUKİ DURUM</div><strong id="verdict">DURUMA BAĞLI.</strong><p id="explanation"></p></div><details class="infaz" id="infaz"><summary>İNFAZ BİLGİSİNİ KEŞFET <span>＋</span></summary><div class="infaz-inner"><div class="eyebrow">CEZA / İNFAZ ATLASI</div><div class="infaz-number" id="ceza">—</div><p class="infaz-note" id="infazNote"></p><div class="infaz-track" aria-hidden="true"><span id="infazFill"></span></div><div class="infaz-stages"><span>HÜKÜM</span><span>KOŞULLU SALIVERİLME</span></div><label class="infaz-label" for="demoPenalty">ÖRNEK KESİNLEŞMİŞ CEZA <output id="penaltyOut">4 yıl</output></label><input id="demoPenalty" type="range" min="1" max="20" step="1" value="4"><div class="infaz-sample" id="infazSample"></div></div></details><details class="detail" id="details"><summary>KANUN NE DİYOR? ＋</summary><p id="law"></p></details></aside></section><footer class="foot"><span>Gerçek mevzuattan esinlenen varsayımsal durumlar. Otomatik suç veya tahliye kararı değildir.</span><a class="cta" href="/yatari-kac.html">KLASİK OYUN ↗</a></footer></main>
 <script>
 const cases={
