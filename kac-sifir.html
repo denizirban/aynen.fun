@@ -218,6 +218,23 @@ footer{font-size:7px}footer>span:first-child{min-width:0;text-overflow:ellipsis;
 .idea-copy p{font-size:10px;line-height:1.2}.idea-symbol>span{font-size:38px}.between-thought,.buy-disclaimer{display:none}
 }
 
+
+/* Keep all reading and navigation within the single viewport on narrow phones */
+#idea-text{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.idea-copy h2,.idea-copy .tiny,.idea-bottom{flex-shrink:0}
+.buy-result{min-height:0;overflow-y:auto;scrollbar-width:thin}
+@media(max-width:380px){
+#pane-idea,#pane-buy{gap:7px}
+.sketch{width:58px}
+.idea-symbol>span{font-size:37px}
+.idea-copy h2{font-size:14px}
+.idea-copy p{font-size:10px;line-height:1.22}
+.disc-tab{font-size:8px}
+.idea-bottom>span{font-size:8px}
+.buy-result{font-size:16px}
+.buy-select button{font-size:7px;padding:4px}
+}
+
 </style>
 </head>
 <body>
