@@ -215,7 +215,7 @@ $('exit').addEventListener('click',()=>{run=false;paused=false;gameOver=false;re
 function reset(){
  run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';
  Object.assign(player,{y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0});
- $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;
+ $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;$('share').textContent='SONUCU PAYLAŞ ↗';
  $('controlLabel').textContent='ZIPLA';$('charge').classList.remove('on');$('control').classList.remove('pressed');$('tip').classList.remove('on');last=performance.now();updateHud();toast('BASILI TUT → BIRAKINCA ZIPLA');
 }
 function finish(){
@@ -639,40 +639,106 @@ function obstacleDraw(h){
  ctx.save();ctx.globalAlpha=.22;ellipse(-h.width*.22,-Math.max(15,h.height*.52),Math.max(8,h.width*.14),4,'#fff1d5');ctx.restore();
  ctx.restore();
 }
+
 function skater(){
- const p=player,air=-p.y,walk=Math.sin(elapsed*15)*1.7,ang=p.trick?Math.min(PI,p.spin):0;
- const px=p.x,py=GROUND-air;
- ctx.save();if(invuln>0&&Math.floor(invuln*11)%2===0)ctx.globalAlpha=.55;
- ellipse(px,GROUND+11,51+air*.08,9,'#2d29273b');
- ctx.translate(px,py);ctx.rotate(ang);
- // Hand-made board with distinct trucks and wheels.
- R(-54,-1,109,13,8,'#dca462','#252a2b',4);R(-53,-1,107,4,4,'#e68b58');
- circle(-34,15,11,'#303234','#191d1e',3);circle(35,15,11,'#303234','#191d1e',3);
- circle(-34,15,3,'#c1b6aa');circle(35,15,3,'#c1b6aa');
- // Shoes & legs bend under jump with elastic overshoot.
- let crouch=p.charging?12:!p.onGround?10:walk;
+ const p=player,air=-p.y,px=p.x,py=GROUND+p.y,step=Math.floor(elapsed*12);
+ const wobble=p.onGround?[-2,0,-1,1][step%4]:0;
+ const crouch=p.charging?17+Math.min(14,p.charge*24):!p.onGround?11:p.landing?9:0;
+ const landScale=p.landing>0?1-clamp(p.landing/.18,0,1)*.045:1;
+ const spin=p.trick?p.spin:0;
+ const size=W<470?.83:1;
+ // The shadow remains on the asphalt and stretches while airborne.
+ ctx.save();ctx.globalAlpha=clamp(.38-air/800,.13,.38);
+ ellipse(px,GROUND+18,48+air*.16,9+air*.014,'#282b29');ctx.restore();
+ ctx.save();ctx.translate(px,py+wobble);ctx.scale(size,landScale*size);ctx.rotate(spin);
  ctx.lineCap='round';ctx.lineJoin='round';
- line(-13,-90,-19,-53,'#26394b',17);line(-19,-53,-30,-14,'#26394b',17);
- line(17,-89,29,-59,'#273d53',17);line(29,-59,26,-16,'#273d53',17);
- R(-42,-18,30,13,7,'#efe6d5','#62534b',2);R(16,-20,34,12,7,'#e9e3d8','#62534b',2);
- // Body striped sweater
- ctx.save();ctx.translate(0,crouch);
- poly([[-28,-156],[13,-160],[31,-92],[-14,-87]],'#a84741','#514033',3);
- for(let i=0;i<5;i++)line(-24+i*.8,-142+i*12,18+i*.7,-148+i*12,'#eee0c8',5);
- // Arm swings.
- line(-28,-143,-48,-100,'#d3a087',13);line(-48,-100,-61,-89,'#d3a087',11);
- line(22,-145,41,-119,'#c68c75',13);line(41,-119,46,-100,'#c68c75',12);
- circle(-60,-88,9,'#ce967c');circle(45,-99,9,'#ce967c');
- // Neck, head, nose and cap.
- R(-5,-175,11,25,5,'#cf947a');
- ellipse(1,-190,27,31,'#cf947b');ellipse(-5,-185,12,21,'#dfb197');
- circle(14,-191,3,'#20201d');circle(-9,-191,2,'#29221f');
- poly([[20,-188],[37,-177],[19,-176]],'#c58f72','#9a6459',1);
- line(15,-169,1,-166,'#704a3c',1.7);
- ctx.beginPath();ctx.arc(0,-198,27,Math.PI,PI);ctx.lineTo(25,-197);ctx.fillStyle='#ece5d2';ctx.fill();ctx.strokeStyle='#6d625b';ctx.lineWidth=2;ctx.stroke();
- R(-4,-201,46,8,5,'#e8ddc7','#60514b',2);R(-1,-219,5,5,1,'#d44b4a');
+ function joint(ax,ay,bx,by,col,thick){
+  line(ax+1,ay+2,bx+2,by+3,'#51423e',thick+4);
+  line(ax,ay,bx,by,col,thick);
+  line(ax-3,ay-2,bx-3,by-2,'#f8e4d12b',Math.max(2,thick*.2));
+ }
+ // Soft board outline and molded rubber wheels.
+ ctx.shadowColor='#302a276b';ctx.shadowBlur=6;ctx.shadowOffsetY=3;
+ ctx.beginPath();ctx.moveTo(-58,-3);ctx.quadraticCurveTo(-49,-11,-38,-6);ctx.lineTo(37,-5);ctx.quadraticCurveTo(51,-12,60,-2);
+ ctx.quadraticCurveTo(55,9,46,9);ctx.lineTo(-47,9);ctx.quadraticCurveTo(-60,8,-58,-3);ctx.closePath();
+ ctx.fillStyle='#d69d57';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#33332f';ctx.stroke();
+ ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+ line(-43,-4,45,-3,'#f3d292',3);
+ for(let i of [-35,34]){
+  R(i-12,10,24,7,3,'#42474b');
+  circle(i,16,11,'#292f31','#d3bdb0',3);circle(i-2,14,4,'#838e8b');
+ }
+ // Cuffed, slightly bulging dark blue jeans.
+ joint(-9,-85,-23,-51,'#304757',18);
+ joint(-23,-51,-34,-14,'#263c4e',18);
+ joint(13,-87,29,-57,'#304757',19);
+ joint(29,-57,23,-16,'#21374a',17);
+ R(-34,-54,14,5,2,'#91a3a44a');R(18,-45,12,4,2,'#96a1a95c');
+ // Chunky trainers sit flat on the board.
+ ctx.shadowColor='#302c2c57';ctx.shadowBlur=4;
+ poly([[-51,-23],[-31,-24],[-9,-17],[-11,-9],[-44,-8],[-56,-13]],'#e7e2d7','#635d54',2.5);
+ poly([[13,-27],[34,-26],[50,-16],[48,-9],[13,-9],[8,-16]],'#e4e0d6','#665e54',2.5);
+ ctx.shadowBlur=0;
+ line(-41,-15,-18,-15,'#a8a79c',3);line(18,-15,43,-15,'#9fa29d',3);
+ line(-44,-20,-31,-20,'#bcb9b2',2);line(18,-21,31,-21,'#bcb9b2',2);
+ // Shirt shadow (uneven clay hem) and 3D stripe texture.
+ const top=-154+crouch,bottom=-86+crouch;
+ const fabric=ctx.createLinearGradient(-31,top,37,bottom);
+ fabric.addColorStop(0,'#e58a75');fabric.addColorStop(.35,'#b54b42');fabric.addColorStop(1,'#893d3a');
+ ctx.beginPath();ctx.moveTo(-26,top+8);ctx.quadraticCurveTo(-13,top-4,14,top-1);
+ ctx.quadraticCurveTo(27,top+3,34,top+14);ctx.lineTo(24,bottom-5);
+ ctx.quadraticCurveTo(9,bottom+5,-18,bottom);ctx.closePath();
+ ctx.fillStyle=fabric;ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#61443e';ctx.stroke();
+ // A narrow light ridge conveys the finger-molded sweater edge.
+ ctx.save();ctx.beginPath();ctx.moveTo(-25,top+8);ctx.lineTo(14,top-2);ctx.lineTo(35,top+12);ctx.lineTo(25,bottom-5);ctx.lineTo(-18,bottom);ctx.closePath();ctx.clip();
+ for(let i=0;i<6;i++){
+  const y=top+10+i*11;
+  ctx.beginPath();ctx.moveTo(-34,y-3);ctx.quadraticCurveTo(-1,y+3,40,y-4);
+  ctx.strokeStyle='#f5e5cc';ctx.lineWidth=6;ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-33,y+3);ctx.lineTo(33,y+2);ctx.strokeStyle='#823e3735';ctx.lineWidth=2;ctx.stroke();
+ }
+ for(let i=0;i<45;i++){
+  let x=(rnd(i*43+22)-.5)*51,y=top+rnd(i*29+154)*62;
+  circle(x,y,1.15,i%3?'#f9dbb125':'#823d3939');
+ }
  ctx.restore();
+ // Arms in front and behind shirt. A little asymmetry is deliberate.
+ const armY=top+23;
+ joint(-25,armY,-42,armY+34,'#ce9c82',12);
+ joint(-42,armY+34,p.charging?-48:-53,armY+51,'#c88e78',11);
+ joint(25,armY+5,39,armY+36,'#c9927e',12);
+ joint(39,armY+36,p.charging?25:46,armY+53,'#d9a78d',11);
+ circle(p.charging?-48:-53,armY+51,8,'#cfa58a');
+ circle(p.charging?25:46,armY+53,8,'#d8ae93');
+ // Neck, head, nose, eyes and cap: sculpted proportions.
+ const neckY=top-10;
+ R(-6,neckY-7,13,22,4,'#c98e78');
+ const faceY=top-35;
+ const skin=ctx.createRadialGradient(-10,faceY-12,3,5,faceY,38);
+ skin.addColorStop(0,'#f6cdb4');skin.addColorStop(.54,'#dca88e');skin.addColorStop(1,'#aa7366');
+ ellipse(0,faceY,27,31,skin);
+ ellipse(-9,faceY+7,15,20,'#f2b9a142');
+ ellipse(25,faceY+2,6,9,'#c78773');
+ poly([[20,faceY-3],[37,faceY+9],[22,faceY+9]],'#ce977c','#a86d5b',2);
+ // Intentionally indifferent expression.
+ line(10,faceY-4,18,faceY-4,'#704f44',2);
+ circle(15,faceY-3,2.3,'#282624');line(9,faceY+16,20,faceY+16,'#875b51',1.6);
+ circle(-19,faceY+3,3,'#cc947d');
+ // Cap crown and extended brim.
+ ctx.shadowColor='#362e2b4f';ctx.shadowBlur=3;
+ poly([[-26,faceY-17],[-20,faceY-37],[-3,faceY-43],[17,faceY-37],[27,faceY-21],[20,faceY-16]],'#f1e9d6','#63594f',2);
+ poly([[-9,faceY-22],[14,faceY-25],[39,faceY-17],[34,faceY-11],[12,faceY-14]],'#efe1c9','#766055',2);
+ ctx.shadowBlur=0;
+ R(-11,faceY-34,8,6,2,'#cf594b');
+ line(-20,faceY-27,0,faceY-28,'#ffffff5c',2);
  ctx.restore();
+ // The charge lives next to the character, not in a distant HUD.
+ if(p.charging&&run&&!paused){
+  const bx=px-39,by=py-247;
+  R(bx,by,78,8,4,'#faedce','#44372f',2);
+  R(bx+2,by+2,74*p.charge/.65,4,2,p.charge>.55?'#d96852':'#e5b659');
+  if(p.charge>=.65)txt('HAZIR',px,by-9,12,'#292621');
+ }
 }
 function draw(){
  ctx.save();ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
