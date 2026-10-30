@@ -238,6 +238,7 @@ function update(dt){
  dortluBtn.textContent=g.dortluOn>0?"⚡ AÇIK":g.dortluCD>0?"DÖRTLÜ "+Math.ceil(g.dortluCD):"⚡ DÖRTLÜ";
  updateHud();
 }
+const scoreEl=document.getElementById("h-score"),timeEl=document.getElementById("h-time"),lapEl=document.getElementById("h-lap"),speedEl=document.getElementById("h-speed"),convoyEl=document.getElementById("h-convoy"),stageEl=document.getElementById("h-stage"),chaosEl=document.getElementById("h-chaos"),hornEl=document.getElementById("h-horn");
 function updateHud(){
 scoreEl.textContent=String(g.score).padStart(6,"0");timeEl.textContent=Math.max(0,Math.ceil(g.time));lapEl.textContent=g.lap+"/3";
 speedEl.textContent=Math.round(g.speed)+" km";convoyEl.textContent=String(g.convoy).padStart(2,"0")+"  "+"♥".repeat(g.hearts);
