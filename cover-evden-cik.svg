@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Apartman kapısından bavul ve taşınma kolileriyle dışarı çıkan küçük insan figürü">
+<defs>
+ <linearGradient id="house" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7f4e9"/><stop offset="1" stop-color="#deded2"/></linearGradient>
+</defs>
+<ellipse cx="161" cy="189" rx="133" ry="12" fill="#c0c5b6" opacity=".42"/>
+<!-- apartment -->
+<path d="M59 52L170 36L234 55V185H64Z" fill="url(#house)" stroke="#292e2c" stroke-width="3" stroke-linejoin="round"/>
+<path d="M54 52L171 32L244 52L238 66L169 49L59 65Z" fill="#2e3a36" stroke="#2b302e" stroke-width="2"/>
+<path d="M64 91L235 91M64 133L235 133" stroke="#d2d6cb" stroke-width="3"/>
+<g fill="#a3c5b8" stroke="#273c38" stroke-width="3">
+<rect x="80" y="75" width="29" height="30" rx="1"/><rect x="126" y="70" width="28" height="32" rx="1"/>
+<rect x="80" y="117" width="29" height="31" rx="1"/><rect x="126" y="111" width="28" height="31" rx="1"/>
+</g>
+<path d="M94 75v30M140 70v32M94 117v31M140 111v31" stroke="#e3ece0" stroke-width="2"/>
+<path d="M170 105L218 104V186H170Z" fill="#252d2b" stroke="#252d2b" stroke-width="3"/>
+<path d="M171 109L190 109V179H171Z" fill="#c3d0b6" opacity=".83"/>
+<path d="M190 109L216 109V179H190Z" fill="#e4dfce" opacity=".7"/>
+<path d="M215 110L235 103L236 176L215 180Z" fill="#da9d75" stroke="#3d362e" stroke-width="2"/>
+<circle cx="223" cy="148" r="2.5" fill="#3b352d"/>
+<!-- stairs -->
+<path d="M166 183H238L246 192H160Z" fill="#c6c4b6" stroke="#343a35" stroke-width="2"/>
+<path d="M163 191H248L261 199H147Z" fill="#dedbcf" stroke="#353b36" stroke-width="2"/>
+<!-- absurd big key floating -->
+<circle cx="254" cy="61" r="21" fill="#f5c56c" stroke="#30332d" stroke-width="3"/>
+<circle cx="254" cy="61" r="8" fill="none" stroke="#30332d" stroke-width="3"/>
+<path d="M255 80L271 113L280 112L275 103L282 97L277 87L267 89L261 77Z" fill="#f5c56c" stroke="#30332d" stroke-width="2.5" stroke-linejoin="round"/>
+<!-- tiny person leaving -->
+<ellipse cx="259" cy="183" rx="37" ry="5" fill="#8f9890" opacity=".3"/>
+<circle cx="257" cy="123" r="12" fill="#e7b08e" stroke="#34322d" stroke-width="2"/>
+<path d="M248 116Q257 108 268 117" fill="#303432" stroke="#303432" stroke-width="3"/>
+<path d="M250 136Q261 131 272 139L271 162L250 163Z" fill="#668675" stroke="#293c35" stroke-width="2.5"/>
+<path d="M253 163L247 179L242 185M267 162L276 177L283 182" fill="none" stroke="#293c35" stroke-width="6" stroke-linecap="round"/>
+<path d="M252 143L239 158M270 143L283 156" fill="none" stroke="#293c35" stroke-width="5" stroke-linecap="round"/>
+<!-- one comically large cardboard box -->
+<path d="M280 154L312 151V182L280 185Z" fill="#d9aa73" stroke="#3e3932" stroke-width="2.5"/>
+<path d="M280 154L292 147L317 149L312 151Z" fill="#efd2a0" stroke="#3e3932" stroke-width="2"/>
+<path d="M295 151L299 183" stroke="#b87d4a" stroke-width="3"/>
+<path d="M276 155Q285 155 286 160" stroke="#dfb18f" stroke-width="6" stroke-linecap="round"/>
+<!-- suitcase on wheels -->
+<rect x="273" y="178" width="22" height="8" rx="2" fill="#d67f65" stroke="#3e3532" stroke-width="2"/>
+<circle cx="277" cy="189" r="3" fill="#32322f"/><circle cx="292" cy="189" r="3" fill="#32322f"/>
+<!-- eviction arrow, grounded motion -->
+<path d="M33 165Q47 155 64 159" fill="none" stroke="#d88762" stroke-width="4" stroke-linecap="round"/>
+<path d="M51 150L66 159L52 166" fill="none" stroke="#d88762" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M71 181L97 181M78 188L106 188" stroke="#9fb5a6" stroke-width="2.3" stroke-linecap="round" opacity=".6"/>
+</svg>
