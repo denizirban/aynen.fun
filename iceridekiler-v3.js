@@ -681,9 +681,16 @@ function inspect(ev){const pt=screenPoint(ev);const x=pt.x,y=pt.y;
  if(found){if(window.openBiologyPanel)window.openBiologyPanel('inspect');const d=types[found.type];const portrait=$('cell-portrait');if(portrait){portrait.style.setProperty('--portrait-color',ART[found.type].light);portrait.style.setProperty('--portrait-edge',ART[found.type].edge);portrait.classList.add('selected');}$('selection').textContent=d.label+(found.hit>0?' / aktif yanıt':' / devriyede');$('detail').innerHTML='<strong>'+d.label+'</strong><p style="margin:5px 0 0">'+d.info+'</p><span class="detail-kind">'+d.group.toUpperCase()+' · 1 CANLI HÜCRE</span>';if($('cell-legend'))$('cell-legend').textContent=d.label+' · '+d.group;}
  else{state.focus={x:clamp(x,45,W-45),y:clamp(y,45,H-45)};state.focusSet=true;if(state.phase==='active')addSignal(state.focus.x,state.focus.y,13,'rally');$('selection').textContent='Müdahale odağı değişti';notice('Bu bölgeye müdahale edebilirsin.');updateUi(true);}}
 let reportShown=false;
+
+let webglActive=false;
+window.immuneBridge={
+ read(){return {state,agents,particles,hosts,debris,signals,types,camera:CAMERA}},
+ useWebGL(enabled){webglActive=!!enabled;document.getElementById('stage')?.classList.toggle('webgl-ready',webglActive);}
+};
+
 function loop(t){if(!frameTime)frameTime=t;const dt=Math.min(.04,(t-frameTime)/1000);frameTime=t;const run=state.phase!=='paused'&&state.phase!=='finished'&&document.visibilityState==='visible';
  if(run){let remain=dt*state.speed;while(remain>0){const d=Math.min(remain,.04);step(d);remain-=d;}}
- paint(t);
+ if(!webglActive)paint(t);
  if(!$('world-map').hidden&&t-(loop.lastMap||0)>180){paintMiniMap();loop.lastMap=t;}
  if(t-uiTime>260){uiTime=t;updateUi(false)}
  if(t-saveTime>4500&&state.phase!=='intro'&&state.phase!=='finished'){saveTime=t;save()}
