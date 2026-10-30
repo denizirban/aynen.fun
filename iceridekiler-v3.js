@@ -135,6 +135,40 @@ function renderHistory(){const el=$('history');if(!el)return;const data=state.hi
  pts.forEach(p=>svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="4" fill="#8abfa4" stroke="#598c74" stroke-width="1"/>');svg+='</svg>';
  el.innerHTML=svg+'<p class="history-last">'+data[data.length-1].title+' · doku '+data[data.length-1].tissue+'/100</p>';
 }
+
+function refreshThreat(){
+ const w=wave(),infected=hosts.filter(h=>h.infect>0).length;
+ const n=particles.length+debris.length+infected;
+ const risk=state.phase==='active'?clamp(Math.round((particles.length+debris.length)*3.9+infected*9+Math.max(0,state.inflam-28)*.30),0,100):0;
+ let label='SİSTEM DENGELİ',hint='Hücreler rutin devriyede.',level='calm';
+ if(state.phase==='active'){
+   if(w.kind==='bacteria'){label='BAKTERİ KOLONİSİ';hint='Makrofaj + nötrofil etkili; fazla alarm inflamasyonu artırır.';}
+   else if(w.kind==='virus'){label='VİRAL ENFEKSİYON';hint='Enfekte hücreler için NK ve T yanıtını izle.';}
+   else if(w.kind==='allergen'){label='ALERJEN TEMASI';hint='Enfeksiyon değil; gereksiz yanıt dokuya zarar verebilir.';}
+   else{label='DOKU ONARIMI';hint='Kalıntı temizliği ve doku onarımını destekle.';}
+   level=risk>65?'danger':risk>30?'watch':'calm';
+ }
+ $('threat-label').textContent=label;
+ $('threat-count').textContent=n+' ETKEN';
+ $('threat-bar').style.width=risk+'%';
+ $('threat-hud').dataset.level=level;
+ $('threat-hud').dataset.kind=state.phase==='active'?w.kind:'none';
+ $('threat-fact').textContent=hint;
+ const advice=$('advisor'),icon=$('advisor-icon');
+ if(!advice||!icon)return;
+ let msg='Sistemi başlat. Sonra bir hücreye dokun.',symbol='◉';
+ if(state.phase==='between'){msg=state.chapter>0?'Ödüllerini laboratuvarda kullanabilir, sonraki olaya geçebilirsin.':'İlk olayı başlat. Hücreleri inceleyebilirsin.';symbol='↗';}
+ else if(state.phase==='paused'){msg='Simülasyon duraklatıldı.';symbol='Ⅱ';}
+ else if(state.phase==='active'){
+  if(state.tissue<55){msg='Doku sağlığı düşüyor · Onarımı düşün.';symbol='✣';}
+  else if(state.inflam>55){msg='İnflamasyon yüksek · Sakinleştir.';symbol='≈';}
+  else if(w.kind==='allergen'){msg='Alerjen kendi kendine uzaklaşır · Fazla alarma gerek yok.';symbol='≈';}
+  else if(w.kind==='debris'){msg='Kalıntılar var · Makrofaj ve onarım yararlı.';symbol='◉';}
+  else if(w.kind==='virus'){msg=state.presentation<22?'Önce antijen sunumunu destekle.':'Özgül T yanıtı ve NK hücrelerini izle.';symbol='⌁';}
+  else {msg=n>9?'Bakteriler çoğalıyor · Bölge seçip devriye gönder.':'Bakteri yükü azalıyor · Doku dengesini koru.';symbol='✳';}
+ }
+ advice.textContent=msg;icon.textContent=symbol;
+}
 function updateUi(force){const w=wave();['tissue','energy','inflam','memory'].forEach(n=>{$(n+'-n').textContent=Math.round(state[n]);$(n+'-bar').style.width=clamp(state[n],0,100)+'%'});
  $('points').textContent=state.points+' ARAŞTIRMA';$('chapter').textContent=state.mode==='sandbox'?'SERBEST YAŞAM · '+(state.chapter-5)+'. OLAY':'OLAY '+String(Math.min(state.chapter+1,campaign.length)).padStart(2,'0')+' / '+campaign.length.toString().padStart(2,'0');
  $('episode-title').textContent=state.chapter>=campaign.length&&state.mode!=='sandbox'?'Doku raporu hazır.':w.title;
@@ -153,7 +187,7 @@ function updateUi(force){const w=wave();['tissue','energy','inflam','memory'].fo
  document.querySelectorAll('[data-action]').forEach(btn=>{const act=btn.dataset.action,remaining=Math.ceil((state.actionReady[act]||0)-state.clock);
  btn.disabled=state.phase!=='active'||state.energy<costs[act]||remaining>0||(act==='target'&&!w.antigen);
  const small=btn.querySelector('small');if(small)small.textContent=remaining>0?remaining+' sn bekle':'−'+costs[act]+' enerji';});
- renderUpgrades();drawLogs();renderHistory();}
+ renderUpgrades();drawLogs();renderHistory();refreshThreat();}
 function pickTarget(a){const kind=wave().kind;let pick=null,best=Infinity;
  const priority=(t)=>distance(a,t)-(state.focusSet&&distance(t,state.focus)<165?Math.min(65,types[a.type].speed*1.1):0);
  if(a.type==='fibro'||a.type==='treg'||a.type==='bcell'){return null;}
@@ -419,7 +453,7 @@ function paintAgent(u,t){
 let inspectSnapshot='';
 function inspect(ev){const rect=C.getBoundingClientRect();const x=(ev.clientX-rect.left)/rect.width*W,y=(ev.clientY-rect.top)/rect.height*H;
  let found=null,best=55;for(const a of agents){const d=Math.hypot(x-a.x,y-a.y);if(d<best){found=a;best=d;}}
- if(found){if(window.openBiologyPanel)window.openBiologyPanel('inspect');const d=types[found.type];$('selection').textContent=d.label+(found.hit>0?' / aktif yanıt':' / devriyede');$('detail').innerHTML='<strong>'+d.label+'</strong><p style="margin:5px 0 0">'+d.info+'</p><span class="detail-kind">'+d.group.toUpperCase()+' · 1 CANLI HÜCRE</span>';if($('cell-legend'))$('cell-legend').textContent=d.label+' · '+d.group;}
+ if(found){if(window.openBiologyPanel)window.openBiologyPanel('inspect');const d=types[found.type];const portrait=$('cell-portrait');if(portrait){portrait.style.setProperty('--portrait-color',ART[found.type].light);portrait.style.setProperty('--portrait-edge',ART[found.type].edge);portrait.classList.add('selected');}$('selection').textContent=d.label+(found.hit>0?' / aktif yanıt':' / devriyede');$('detail').innerHTML='<strong>'+d.label+'</strong><p style="margin:5px 0 0">'+d.info+'</p><span class="detail-kind">'+d.group.toUpperCase()+' · 1 CANLI HÜCRE</span>';if($('cell-legend'))$('cell-legend').textContent=d.label+' · '+d.group;}
  else{state.focus={x:clamp(x,45,W-45),y:clamp(y,45,H-45)};state.focusSet=true;if(state.phase==='active')addSignal(state.focus.x,state.focus.y,13,'rally');$('selection').textContent='Müdahale odağı değişti';notice('Bu bölgeye müdahale edebilirsin.');updateUi(true);}}
 let reportShown=false;
 function loop(t){if(!frameTime)frameTime=t;const dt=Math.min(.04,(t-frameTime)/1000);frameTime=t;const run=state.phase!=='paused'&&state.phase!=='finished'&&document.visibilityState==='visible';
@@ -472,7 +506,14 @@ function setupSound(){
  $('next').addEventListener('click',()=>softSound(490));
 }
 
-function init(){resizeScene();window.addEventListener('resize',resizeScene,{passive:true});setupDrawer();setupSound();
+function setupVisualOptions(){
+ const btn=$('effects'),lab=$('effects-label');
+ if(!btn)return;
+ function sync(){btn.setAttribute('aria-pressed',String(state.fx));lab.textContent=state.fx?'AÇIK':'EKONOMİK';}
+ btn.addEventListener('click',()=>{state.fx=!state.fx;sync();save();notice(state.fx?'Görsel efektler açık.':'Ekonomik görsel mod açık.');});
+ sync();
+}
+function init(){resizeScene();window.addEventListener('resize',resizeScene,{passive:true});setupDrawer();setupSound();setupVisualOptions();
  if($('campaign-progress'))$('campaign-progress').hidden=false;
  $('start').onclick=start;$('next').onclick=beginChapter;$('reset').onclick=restart;C.addEventListener('click',inspect);
  document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>skill(b.dataset.action)));
