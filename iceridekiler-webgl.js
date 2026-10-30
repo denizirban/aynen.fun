@@ -140,6 +140,13 @@ if(api){
    }
    for(const [id,mesh] of map)if(!seen.has(id)){
     scene.remove(mesh);map.delete(id);
+    if(map===tissues&&mesh.material)mesh.material.dispose();
+    if(map===microbes&&mesh.geometry)mesh.geometry.dispose();
+    if(map===cells&&mesh.userData){
+      mesh.traverse(o=>{if(o.isMesh&&o.material&&![
+       mesh.userData.material].includes(o.material)&&!o.material.userData?.shared) o.material.dispose();});
+      mesh.userData.material.dispose();
+    }
    }
   }
   function animateInteractions(now){
@@ -253,7 +260,7 @@ if(api){
    },now);
    for(const [id,capture] of ingestion){
      const age=(now-capture.t)/1000;
-     if(age>.85){if(capture.ghost){scene.remove(capture.ghost);capture.ghost.geometry.dispose();}ingestion.delete(id);continue;}
+     if(age>.85){if(capture.ghost){scene.remove(capture.ghost);capture.ghost.geometry.dispose();}ingestion.delete(id);captures.delete(id);continue;}
      const host=d.agents.find(a=>a.id===capture.owner);
      if(!host)continue;
      const tip=age/.85;
