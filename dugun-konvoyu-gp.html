@@ -108,6 +108,7 @@ c.imageSmoothingEnabled=false;c.setTransform(2,0,0,2,0,0);
 const overlay=document.getElementById("overlay"),menu=document.getElementById("menu"),banner=document.getElementById("banner"),soundBtn=document.getElementById("sound"),pauseBtn=document.getElementById("pause"),hornBtn=document.getElementById("horn");
 let mode="menu",muted=false,audio=null,last=0,seconds=0,objects=[],spawnTimer=0,nextId=1,noticeTimer=0,flash=0,runSeed=0;
 const input={left:false,right:false,brake:false,boost:false};
+let drumClock=0,drumStep=0,roadCut=[false,false];
 const dortluBtn=document.getElementById("dortlu"),comboFloat=document.getElementById("combo-float");
 let lastLap=1,comboFloatTime=0,particles=[],pulse=0,rumble=0,helpShown=false,goalUnlocked=[false,false,false];
 let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
@@ -117,12 +118,19 @@ function rect(x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y
 function poly(coords,color){c.fillStyle=color;c.beginPath();c.moveTo(coords[0],coords[1]);for(let i=2;i<coords.length;i+=2)c.lineTo(coords[i],coords[i+1]);c.closePath();c.fill();}
 function txt(t,x,y,size,color,align){c.fillStyle=color;c.font="bold "+size+"px monospace";c.textAlign=align||"left";c.fillText(String(t),Math.round(x),Math.round(y));}
 function tone(freq,dur,type,volume){if(muted)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==="suspended")audio.resume();const o=audio.createOscillator(),gain=audio.createGain(),now=audio.currentTime;o.type=type||"square";o.frequency.setValueAtTime(freq,now);gain.gain.setValueAtTime(volume||.045,now);gain.gain.exponentialRampToValueAtTime(.0001,now+dur);o.connect(gain);gain.connect(audio.destination);o.start(now);o.stop(now+dur+.01)}catch(e){}}
+function weddingBeat(){
+ if(muted)return;
+ if(drumStep%2===0)tone(95,.085,"sine",.014);
+ else tone(210,.058,"triangle",.008);
+ if(drumStep%8===6)tone(294,.13,"square",.004);
+ drumStep++;
+}
 function fanfare(){tone(523,.17,"square",.04);setTimeout(()=>tone(659,.18,"square",.04),130);setTimeout(()=>tone(784,.23,"square",.04),265)}
 function announce(msg,forSeconds){banner.textContent=msg;banner.classList.add("show");noticeTimer=forSeconds||1.6}
 function setMenu(html){overlay.hidden=false;menu.innerHTML=html}
 function start(){
 g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
-lastLap=1;goalUnlocked=[false,false,false];comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=Math.random()*10000;flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",2);
+lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=Math.random()*10000;flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",2);
 }
 function bestScore(){try{return Number(localStorage.getItem("dugun-gp-best")||0)}catch(e){return 0}}
 function saveBest(){try{if(g.score>bestScore())localStorage.setItem("dugun-gp-best",String(g.score))}catch(e){}}
@@ -131,8 +139,8 @@ document.getElementById("start").addEventListener("click",start);
 function finish(win){
 mode="end";saveBest();fanfare();
 const headline=win?"SALONA ULAŞTIN!":"KONVOY DAĞILDI";
-const detail=win?"Gelin arabası sonunda doğru düğün salonunda.":"Bir sonraki düğünde tekrar denersin.";
-setMenu('<div class="eyebrow">YARIŞ SONU / RESMÎ TUTANAK</div><h2>'+headline+'</h2><p>'+detail+'</p><p style="font-size:26px;color:#ffde73;font-weight:900">'+String(g.score).padStart(6,"0")+' PUAN</p><p>'+g.joined+' ARAÇ KONVOYA KATILDI · '+g.horns+' KORNA</p><p>EN İYİ SKOR: '+String(bestScore()).padStart(6,"0")+'</p><button class="cta" id="again" type="button">BİR DAHA →</button><button class="secondary" id="share" type="button">SONUCU PAYLAŞ</button><a class="secondary" href="/">DİĞER OYUNLAR</a>');
+const detail=win?(g.convoy>=14?"Bütün sülaleyi getirdin. Salonda masa kalmadı.":"Gelin arabası doğru düğün salonuna yetişti."):"Konvoy yarı yolda dağıldı. Gelin arabası hâlâ yolda.";
+setMenu('<div class="eyebrow">YARIŞ SONU / RESMÎ TUTANAK</div><h2>'+headline+'</h2><p>'+detail+'</p><p style="font-size:26px;color:#ffde73;font-weight:900">'+String(g.score).padStart(6,"0")+' PUAN</p><p>'+g.joined+' YENİ ARAÇ · '+g.horns+' KORNA · '+g.nearMiss+' KIL PAYI</p><p>EN İYİ SKOR: '+String(bestScore()).padStart(6,"0")+'</p><button class="cta" id="again" type="button">BİR DAHA →</button><button class="secondary" id="share" type="button">SONUCU PAYLAŞ</button><a class="secondary" href="/">DİĞER OYUNLAR</a>');
 document.getElementById("again").onclick=start;
 document.getElementById("share").onclick=share;
 }
@@ -181,6 +189,7 @@ function spawn(){
 }
 function update(dt){
  seconds+=dt;g.hornCD=Math.max(0,g.hornCD-dt);
+ drumClock+=dt;if(drumClock>.48-(g.lap-1)*.035){drumClock=0;if(seconds>2)weddingBeat()}
  g.dortluCD=Math.max(0,g.dortluCD-dt);g.dortluOn=Math.max(0,g.dortluOn-dt);
  g.invuln=Math.max(0,g.invuln-dt);noticeTimer-=dt;comboFloatTime-=dt;
  if(comboFloatTime<0)comboFloat.classList.remove("on");
@@ -209,6 +218,14 @@ function update(dt){
  if(g.comboClock>0){g.comboClock-=dt;if(g.comboClock<=0)g.combo=0;}
  if(g.distance>=2280){g.score+=Math.floor(g.time)*25+g.hearts*220+g.convoy*70;finish(true);return}
  if(g.time<=0){finish(false);return}
+ if(!roadCut[0]&&g.distance>390&&g.distance<650){
+  roadCut[0]=true;objects.push({id:nextId++,z:.95,lane:0,originalLane:0,type:"roadblock",variant:0,joined:false,passed:false,wobble:0,speed:.95});
+  announce("YOL KESENLER VAR · FRENLE YA DA SIYRIL!",2.4);
+ }
+ if(!roadCut[1]&&g.distance>1740&&g.distance<1970){
+  roadCut[1]=true;objects.push({id:nextId++,z:.95,lane:.73,originalLane:.73,type:"roadblock",variant:1,joined:false,passed:false,wobble:0,speed:1});
+  announce("SALONA AZ KALDI · YOL KESİLMİŞ!",2);
+ }
  spawnTimer-=dt;
  if(spawnTimer<=0){spawn();spawnTimer=clamp(rand(1.0,1.4)-g.chaos*.0038-(g.lap-1)*.11,.49,1.35)}
  for(const o of objects){
@@ -218,6 +235,15 @@ function update(dt){
    o.passed=true;
    const delta=Math.abs(o.lane-g.lane);
    if(o.type==="escort"){g.score+=12;continue}
+   if(o.type==="roadblock"){
+     if(delta<.39&&g.speed>106&&g.invuln<=0){
+       g.hearts--;g.invuln=1.5;g.speed=65;g.chaos=clamp(g.chaos+8,0,100);
+       flash=.29;rumble=.5;g.combo=0;g.convoy=Math.max(1,g.convoy-1);tone(100,.28,"sawtooth",.06);
+       announce("YOL KESMEYİ GÖRMEDİN!",1.6);
+       if(g.hearts<=0){finish(false);return}
+     }else {g.score+=300;showCombo("+300 · YOL KESME ATLATILDI");makeConfetti(o.z,o.lane,12)}
+     continue;
+   }
    if(o.joined){g.score+=80;continue}
    if(delta<.31){
     if(g.invuln<=0){
@@ -540,15 +566,36 @@ function effects(){
  c.save();c.setTransform(1,0,0,1,0,0);
  for(const p of particles){rect(p.x*2,p.y*2,Math.max(2,3*p.life),Math.max(2,4*p.life),p.color)}
  if(pulse>0){
-  const x=(240+g.lane*116+Math.sin(g.distance*.0033)*32)*2,y=475;
+  const x=(roadCenter(240)+g.lane*roadHalf(240)*.83)*2,y=475;
   c.strokeStyle="rgba(255,248,184,"+(pulse/.42*.8)+")";c.lineWidth=3;
   c.beginPath();c.ellipse(x,y,(.42-pulse)*250+30,(.42-pulse)*75+9,0,0,Math.PI*2);c.stroke();
  }
  if(g.dortluOn>0){
-  const x=(240+g.lane*116+Math.sin(g.distance*.0033)*32)*2;
+  const x=(roadCenter(240)+g.lane*roadHalf(240)*.83)*2;
   if(Math.floor(seconds*7)%2===0){rect(x-61,459,13,7,"#ffb627");rect(x+48,459,13,7,"#ffb627")}
  }
  if(input.boost&&g.speed>145){for(let i=0;i<9;i++){const xx=100+i*93%760,yy=390+(i*19+seconds*320)%130;rect(xx,yy,2,9,"#ffffff38")}}
+ c.restore();
+}
+
+function roadblockSprite(x,y,w){
+ c.save();c.setTransform(1,0,0,1,0,0);
+ x*=2;y*=2;w=Math.max(10,w*2);
+ const h=w*.56;
+ // Two kids with raised arms and a ribbon across the road.
+ rect(x-w*.48,y-h*.52,w*.96,4,"#eae4cb");
+ rect(x-w*.45,y-h*.52,w*.16,6,"#e23d50");
+ rect(x+w*.27,y-h*.52,w*.16,6,"#e23d50");
+ for(const dx of [-.46,.46]){
+   const px=x+dx*w;
+   rect(px-3,y-h*.38,6,8,"#f0bc90");
+   rect(px-5,y-h*.14,10,11,dx<0?"#405fa0":"#dd8c43");
+   rect(px-4,y-h*.02,3,9,"#2b394e");rect(px+2,y-h*.02,3,9,"#2b394e");
+   rect(px-dx*4,y-h*.27,Math.max(3,w*.06),3,"#efbc90");
+ }
+ rect(x-w*.28,y-h*.7,w*.56,h*.23,"#ffebaa");
+ txt("MAKAS!",x,y-h*.53,Math.max(8,w*.16),"#a73f45","center");
+ if(w>45)txt("FREN!",x,y-h*.87,Math.max(8,w*.16),"#fff4dd","center");
  c.restore();
 }
 function vehicles(){
@@ -557,7 +604,7 @@ for(const o of sorted){
 if(o.z>1||o.z<-.13)continue;
 const y=roadY(o.z),half=roadHalf(y),center=roadCenter(y),x=center+o.lane*half*.83;
 const width=5+46*Math.pow(1-clamp(o.z,0,1),1.5);
-carSprite(x,y,width,o.type,o.variant,o.joined,false);
+if(o.type==="roadblock")roadblockSprite(x,y,width);else carSprite(x,y,width,o.type,o.variant,o.joined,false);
 if(o.joined&&o.z<.55&&o.z>0&&(o.pop>0||Math.sin(seconds*9+o.id)>0.95))txt("♪",x,y-width*.9,Math.max(6,width*.24),"#ffeabf","center");
 }
 }
@@ -575,8 +622,7 @@ function decorations(){
 }
 
 function playerCar(){
-const portrait=window.innerHeight>window.innerWidth,shift=portrait?90:116;
-const x=240+g.lane*shift+Math.sin(g.distance*.0033)*32,vy=240,shake=flash>0?rand(-3,3):0;
+const x=roadCenter(240)+g.lane*roadHalf(240)*.83,vy=240,shake=flash>0?rand(-3,3):0;
 if(g.invuln>0&&Math.floor(seconds*12)%2===0)return;
 rect(x-32+shake,242,64,3,"#202d32");
 carSprite(x+shake,vy,70,"player",0,false,true);
