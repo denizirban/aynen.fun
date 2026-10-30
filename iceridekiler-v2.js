@@ -180,7 +180,7 @@ function stepAgents(dt){
  if(target&&distance(a,target.obj)<target.range){
   if(target.kind==='bug'){target.obj.hp-=types[type].dps*dt*(1+state.antibody*.012);a.hit=.3;if(type==='dend')state.presentation=clamp(state.presentation+dt*6,0,100);if(type==='neutro')state.inflam+=dt*.55;}
   if(target.kind==='debris'){target.obj.hp-=types[type].dps*dt;a.hit=.3;}
-  if(target.kind==='host'){target.obj.infect-=types[type].dps*dt*(type==='tcell'?1+.25*state.activation/100:1);a.hit=.3;state.inflam+=dt*.13;if(target.obj.infect<=0){target.obj.infect=0;target.obj.heal=6;pop(target.obj.x,target.obj.y,'#9fc4d2')}}
+  if(target.kind==='host'){target.obj.infect-=types[type].dps*dt*(type==='tcell'?1+.25*state.activation/100:1);a.hit=.3;state.inflam+=dt*.13;if(target.obj.infect<=0){target.obj.infect=0;target.obj.dead=true;target.obj.heal=11;state.tissue-=.38;if(debris.length<55)debris.push({id:++maxId,x:target.obj.x,y:target.obj.y,hp:1.5});pop(target.obj.x,target.obj.y,'#9fc4d2')}}
  }
  if(type==='dend'&&w.antigen&&state.phase==='active'&&state.chapterTime>3){state.presentation=clamp(state.presentation+dt*(.35+.12*Math.min(8,particles.length)),0,100);}
  if(type==='fibro'&&state.phase==='active'&&w.kind==='debris'){state.tissue=Math.min(100,state.tissue+dt*.4)}
@@ -195,8 +195,8 @@ function stepThreat(dt){
  if(b.hp<=0){if(b.type==='bacteria')state.kills++;state.points+=b.type==='bacteria'&&Math.random()<.25?1:0;pop(b.x,b.y,b.type==='virus'?'#b48cc2':'#85ad9a');particles.splice(i,1);}
  }
  for(let i=debris.length-1;i>=0;i--){if(debris[i].hp<=0){pop(debris[i].x,debris[i].y,'#d6a985');debris.splice(i,1)}}
- for(const h of hosts){if(h.heal>0)h.heal=Math.max(0,h.heal-dt);
- if(h.infect>0){h.infect+=dt*.08;state.tissue-=dt*.035;if(h.infect>=9){h.infect=0;h.heal=10;state.tissue-=.8;for(let i=0;i<2;i++)addParticle('virus',h.x,h.y,w.antigen);pop(h.x,h.y,'#c57991');}}}
+ for(const h of hosts){if(h.dead){const nearFibro=agents.some(a=>a.type==='fibro'&&distance(a,h)<90);h.heal=Math.max(0,h.heal-dt*(nearFibro?1.7:1));if(h.heal<=0){h.dead=false;h.heal=0;}continue;}
+ if(h.infect>0){h.infect+=dt*.08;state.tissue-=dt*.035;if(h.infect>=9){h.infect=0;h.dead=true;h.heal=12;state.tissue-=.8;if(debris.length<55)debris.push({id:++maxId,x:h.x,y:h.y,hp:1.5});for(let i=0;i<2;i++)addParticle('virus',h.x,h.y,w.antigen);pop(h.x,h.y,'#c57991');}}}
  if(w.kind==='bacteria'&&state.chapterTime>5&&particles.length>0){state.replication=(state.replication||0)+dt;if(state.replication>8.8){state.replication=0;let b=particles[Math.floor(Math.random()*particles.length)];if(b&&particles.length<28)addParticle('bacteria',b.x,b.y,w.antigen);}}
  if(w.kind==='virus'&&state.chapterTime>8){state.replication=(state.replication||0)+dt;if(state.replication>9.8){state.replication=0;const inf=hosts.filter(h=>h.infect>0);if(inf.length){const h=inf[0];addParticle('virus',h.x,h.y,w.antigen);}}}
 }
@@ -236,9 +236,9 @@ function paint(t){ctx.save();ctx.clearRect(0,0,W,H);const g=ctx.createLinearGrad
  for(let i=0;i<13;i++){let y=((i*57+t*.012)%590)-35,x=82+Math.sin(y*.022)*12;ctx.beginPath();ctx.ellipse(x,y,10,6,.2,0,TWO);ctx.fillStyle='#cc8883a8';ctx.fill();}
  // Host cells
  for(const h of hosts){ctx.save();ctx.translate(h.x,h.y);let sick=h.infect>0;
- ctx.beginPath();ctx.ellipse(0,0,47,32,Math.sin(h.id)*.3,0,TWO);ctx.fillStyle=sick?'#e1c3cb9f':'#f5faef8f';ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle=sick?'#ca8798a8':'#bbd2c1ba';ctx.stroke();ctx.beginPath();ctx.ellipse(0,0,13,9,.2,0,TWO);ctx.fillStyle=sick?'#b86e82a8':'#b3c9b5a4';ctx.fill();
+ ctx.beginPath();ctx.ellipse(0,0,47,32,Math.sin(h.id)*.3,0,TWO);ctx.fillStyle=h.dead?'#b7b1ae88':sick?'#e1c3cb9f':'#f5faef8f';ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle=h.dead?'#9e9896a8':sick?'#ca8798a8':'#bbd2c1ba';ctx.stroke();ctx.beginPath();ctx.ellipse(0,0,13,9,.2,0,TWO);ctx.fillStyle=sick?'#b86e82a8':'#b3c9b5a4';ctx.fill();
  if(sick){ctx.strokeStyle='#bd677280';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,25+Math.sin(t*.003+h.id)*3,0,TWO);ctx.stroke();}
- if(h.heal>0){ctx.strokeStyle='#7aab95';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,35,0,TWO);ctx.stroke();}ctx.restore();}
+ if(h.heal>0){ctx.strokeStyle=h.dead?'#b18a87':'#7aab95';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,35,0,TWO);ctx.stroke();}ctx.restore();}
  // Tissue breach
  if(state.phase==='active'&&['scrape','repair'].includes(wave().id)){const a=wave();ctx.beginPath();ctx.ellipse(a.x,a.y,84,38,.1,0,TWO);ctx.fillStyle='#c4867b27';ctx.fill();ctx.setLineDash([4,8]);ctx.strokeStyle='#bc8577';ctx.lineWidth=3;ctx.stroke();ctx.setLineDash([]);}
  // Signaling gradients
