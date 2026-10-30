@@ -177,3 +177,69 @@ body{background:#030307}
  .camera-help{right:10px;bottom:calc(162px + env(safe-area-inset-bottom));font-size:7px;max-width:140px}
 }
 @media(max-width:380px){.camera-help{display:none}.world-tool{width:26px}.world-scale{min-width:33px}}
+
+/* True WebGL layer: input stays on transparent foreground interaction canvas. */
+#webgl-stage{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block;pointer-events:none;opacity:0;transition:opacity .35s}
+.game.webgl-ready #webgl-stage{opacity:1}
+.game.webgl-ready #world{opacity:0;pointer-events:auto;z-index:1}
+.episode-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.episode-expand{display:none}
+@media(max-width:700px){
+ /* Focus first on playing: no big modal-style quest panel over the organisms. */
+ .game{height:100dvh;min-height:0}
+ .hud-top{padding:calc(7px + env(safe-area-inset-top,0px)) 10px 0;gap:5px}
+ .brand h1{font-size:16px}.brand-kicker{font-size:6px}
+ .home{width:25px;height:25px}
+ .metric-grid{gap:4px}
+ .metric{padding:7px 6px 6px;min-width:0;border-radius:7px}
+ .metric-head{flex-direction:column;align-items:start;gap:1px}
+ .metric-head span{font-size:7px;letter-spacing:0}
+ .metric-head b{font-size:13px}
+ .world-hud{display:none}
+ .threat-hud{top:112px;left:10px;transform:none;width:calc(100% - 66px);max-width:none;padding:7px 9px;border-radius:8px}
+ .threat-fact{display:none}
+ .left-rail{top:165px;left:10px;bottom:auto;width:calc(100% - 64px);max-width:none;gap:0}
+ .episode{padding:9px 11px;background:#161321c5;border:1px solid #8f759f5c;border-radius:10px;box-shadow:0 5px 20px #0006}
+ .episode-head{margin:0 0 5px}.episode-head .mono{font-size:8px}
+ .episode-progress{margin:5px 0 8px}
+ .episode-title-row h2{font-size:14px;margin:0;line-height:1.15;letter-spacing:-.025em;flex:1}
+ .episode-expand{display:grid;place-items:center;flex:none;height:27px;width:29px;background:#d4b2f519;border:1px solid #bfa6db40;border-radius:7px;color:#e3c5fa;font-size:20px}
+ .episode-body{display:none;padding-top:7px}
+ .episode.mobile-expanded .episode-body{display:block}
+ .episode.mobile-expanded .episode-expand{transform:rotate(180deg)}
+ .episode .goal{font-size:9px}
+ .episode .next{margin:7px 0 0;padding:8px 10px;font-size:10px;min-height:34px;border-radius:7px}
+ .game[data-phase="active"] .episode .next{display:none}
+ .game[data-phase="active"] .episode{background:#12122296;border-color:#8f8fc234}
+ .game[data-phase="active"] .episode:not(.mobile-expanded){padding:7px 10px}
+ .game[data-phase="active"] .episode:not(.mobile-expanded) .episode-progress{display:none}
+ .action-advisor{margin:6px 0 0;padding:6px 8px}
+ .mobile-menu{top:165px;right:9px;gap:5px}
+ .mobile-menu .rail-btn{width:35px;height:35px;border-radius:9px}
+ .sidebar{top:160px;right:52px;bottom:calc(130px + env(safe-area-inset-bottom));width:calc(100vw - 64px);max-width:350px}
+ .bottom-dock{bottom:calc(12px + env(safe-area-inset-bottom));left:8px;right:8px;width:auto;z-index:9}
+ .dock-caption{display:none}
+ .actions{gap:5px;padding:6px;border-radius:12px;background:#11101fe8}
+ .action{min-height:65px;padding:5px 2px}
+ .action .glyph{font-size:22px}.action b{font-size:9px}.action small{font-size:8px}
+ .world-tools{right:9px;bottom:calc(104px + env(safe-area-inset-bottom));display:flex;gap:2px;padding:3px;border-radius:10px;background:#11111da6;border-color:#ffffff22}
+ .world-tool{width:28px;height:28px;border-radius:7px;font-size:17px}
+ .world-scale{font-size:8px;min-width:32px}
+ .camera-help{display:none}
+ .world-map{right:9px;bottom:calc(149px + env(safe-area-inset-bottom));width:226px}
+ .toast{bottom:calc(195px + env(safe-area-inset-bottom))}
+ .vignette{background:radial-gradient(ellipse at 50% 49%,transparent 55%,#0007 100%)}
+}
+@media(max-width:390px){
+ .threat-hud{top:108px}
+ .left-rail,.mobile-menu{top:159px}
+ .episode-title-row h2{font-size:13px}
+ .action{min-height:60px}
+ .action .glyph{font-size:19px}
+ .metric-head span{font-size:6.7px}
+}
+@media(max-height:650px) and (max-width:700px){
+ .threat-hud{top:94px}.left-rail,.mobile-menu{top:133px}
+ .action{min-height:55px}
+ .world-tools{bottom:calc(92px + env(safe-area-inset-bottom))}
+}
