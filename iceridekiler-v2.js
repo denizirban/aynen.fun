@@ -52,7 +52,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify({state,agents,partic
 function resetWorld(){agents=[];particles=[];hosts=[];debris=[];signals=[];bursts=[];flares=[];for(let i=0;i<5;i++)addAgent('macro').permanent=true;addAgent('dend').permanent=true;addAgent('fibro').permanent=true;addAgent('treg').permanent=true;for(let k=0;k<22;k++){let x=80+(k%6)*148+rnd(-22,22),y=95+Math.floor(k/6)*109+rnd(-21,21);hosts.push({id:++maxId,x,y,infect:0,dead:false,heal:0});}}
 if(!hosts.length||!agents.length)resetWorld();
 function start(){if(state.phase!=='intro')return;state.phase='between';$('overlay').hidden=true;event('Doku devriyesi başladı.');updateUi(true);save();}
-function beginChapter(){if(state.phase!=='between'||state.chapter>=campaign.length)return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;
+function beginChapter(){if(state.phase!=='between'||(state.chapter>=campaign.length&&state.mode!=='sandbox'))return;const w=wave();state.phase='active';state.chapterTime=0;state.presentation=0;state.antibody=0;state.signals=0;state.replication=0;
  const memo=state.memories[w.antigen]||0;state.activation=(w.antigen&&memo>0)?Math.min(55,memo):0;state.focus={x:w.x,y:w.y};particles=[];debris=[];signals=[];
  if(w.kind==='debris'){for(let i=0;i<w.count;i++)debris.push({id:++maxId,x:w.x+rnd(-115,115),y:w.y+rnd(-80,80),hp:3});}
  else for(let i=0;i<w.count;i++)addParticle(w.kind,w.x,w.y,w.antigen);
