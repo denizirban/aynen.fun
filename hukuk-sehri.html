@@ -594,7 +594,8 @@ document.querySelectorAll('.building').forEach(el=>{el.addEventListener('click',
 $('panelToggle').onclick=()=>{const p=$('casePanel'),closed=p.classList.toggle('minimized');$('panelToggle').setAttribute('aria-expanded',String(!closed));$('panelToggle').setAttribute('aria-label',closed?'Olay panelini genişlet':'Olay panelini küçült')};
 render(active);
 $('casePanel').classList.remove('minimized');
-document.querySelectorAll('.discover-hotspots button,.city-pins button').forEach(b=>b.addEventListener('click',()=>{if(window.matchMedia('(max-width:780px)').matches){$('casePanel').classList.remove('minimized');$('panelToggle').setAttribute('aria-expanded','true');}}));
+document.querySelectorAll('.discover-hotspots button,.city-pins button').forEach(b=>b.addEventListener('click',()=>{if(true){$('casePanel').classList.remove('minimized');$('panelToggle').setAttribute('aria-expanded','true');}}));
+$('casePanel').classList.add('minimized');
 $('railEvents').onclick=()=>{const a=$('archive');$('casePanel').classList.remove('minimized');a.hidden=!a.hidden;$('archiveToggle').setAttribute('aria-expanded',String(!a.hidden));};
 $('railNext').onclick=()=>{$('randomEvent').click();$('casePanel').classList.remove('minimized')};
 $('railPanel').onclick=()=>{$('casePanel').classList.toggle('minimized')};
