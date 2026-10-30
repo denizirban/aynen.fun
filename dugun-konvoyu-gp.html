@@ -80,6 +80,20 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 .pad .hint,.mini{display:none}.card{padding:17px}.card h1{font-size:33px}.card .rules{margin:10px 0}
 }
 @media(max-height:490px){#app{padding:3px 6px;gap:3px}.top{height:21px}.pad{height:43px}.pad button{min-height:40px}.card{padding:10px 15px}.card p{font-size:11px;margin:6px 0}.card .rules{margin:8px 0}.cta{padding:9px}.card h1{font-size:27px;margin:4px 0 8px}}
+
+@media(max-width:410px){
+ .pad{gap:3px;padding:0 2px}.pad .group{gap:4px}
+ .pad button{min-width:0!important;width:42px!important;min-height:54px;font-size:17px}
+ .pad button.horn{width:82px!important;min-width:82px!important;font-size:10px!important}
+ .pad button.special{width:66px!important;min-width:66px!important;font-size:9px!important}
+ .pad button#brake{font-size:10px!important}
+ .hud-goal{display:none}.hud-sub{gap:4px}
+ .hud-stage{font-size:8px;max-width:44vw}
+ .hud-ready{max-width:40vw;overflow:hidden;text-overflow:ellipsis}
+ .mission-strip{bottom:5px;left:4px}.mission-chip{padding:4px 4px;font-size:8px}
+ .mission-strip #m-streak{display:none}
+}
+@media(max-height:660px) and (max-width:650px){.pad{height:56px}.pad button{min-height:50px}.top{height:22px}}
 </style>
 </head>
 <body>
@@ -222,10 +236,13 @@ function finish(win){
  +'<p class="eyebrow" style="margin:3px 0;color:#ffe299">'+(improved?"★ ":"")+bestLabel+' '+String(runMode==="daily"?dailyBest():bestScore()).padStart(6,"0")+'</p>'
  +'<div class="result-grid"><div><strong>'+g.maxConvoy+'</strong>ARAÇ</div><div><strong>'+g.bestCombo+'×</strong>EN İYİ SERİ</div><div><strong>'+g.nearMiss+'</strong>KIL PAYI</div></div>'
  +'<button class="cta" id="again" type="button">TEKRAR DENE →</button>'
- +'<div class="result-action-row"><button id="share" type="button">PAYLAŞ ↗</button><button id="story" type="button">HİKÂYE GÖRSELİ ↓</button></div>'
+ +'<div class="result-action-row"><button id="share" type="button">PAYLAŞ ↗</button><button id="story" type="button">INSTAGRAM GÖRSELİ ↓</button><button id="whatsapp" type="button">WHATSAPP</button><button id="postx" type="button">X ÜZERİNDE PAYLAŞ</button></div>'
  +'<p class="result-card-foot">'+resultSub+' · '+target+'</p>');
  const again=document.getElementById("again"),shareEl=document.getElementById("share"),storyEl=document.getElementById("story");
  again.onclick=start;shareEl.onclick=share;storyEl.onclick=downloadStory;
+ const whats=document.getElementById("whatsapp"),post=document.getElementById("postx");
+ whats.onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent(shareText()),"_blank","noopener,noreferrer");
+ post.onclick=()=>window.open("https://twitter.com/intent/tweet?text="+encodeURIComponent(shareText()),"_blank","noopener,noreferrer");
 }
 function nextTarget(){
  if(g.maxConvoy<7)return "SONRAKİ HEDEF: 7 ARABALIK KONVOY";
@@ -279,7 +296,7 @@ function downloadStory(){
   link.download="dugun-konvoyu-gp-"+g.score+".png";
   link.href=card.toDataURL("image/png");
   document.body.appendChild(link);link.click();link.remove();
-  const el=document.getElementById("story");if(el)el.textContent="GÖRSEL HAZIR ✓";
+  const el=document.getElementById("story");if(el)el.textContent="GÖRSEL İNDİRİLDİ ✓";
  }catch(e){const el=document.getElementById("story");if(el)el.textContent="DESTEKLENMİYOR"}
 }
 
