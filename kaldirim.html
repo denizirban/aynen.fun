@@ -255,6 +255,7 @@ const cityStates=[
  {id:'motor',name:'İKİ DAKİKALIĞINA',desc:'Herkes iki dakikalığına park etmiş.',focus:['motor','scooter','bisiklet','taksi','kurye','konteyner'],tone:'#c6b6b4',prop:'motor'},
  {id:'marti',name:'MARTILAR İŞ BAŞINDA',desc:'Simitin varsa şansın yok.',focus:['marti','file','simit','pazararabasi'],tone:'#c2d1c5',prop:'gulls'},
  {id:'dugun',name:'DÜĞÜN HAZIRLIĞI',desc:'Sokak trafiğe açık. Teoride.',focus:['sandalye','masa','damacana','cay','hali','tente'],tone:'#e7bbbc',prop:'celebration'},
+ {id:'yagmur',name:'YAĞMUR BAŞLADI',desc:'Birazdan göl olur.',focus:['cukur','kablo','damacana','barikat'],tone:'#8fa7b2',prop:'rain'},
  {id:'kucuk',name:'KÜÇÜK BİR ÇALIŞMA',desc:'Bütün sokak kapanmış ama küçük.',focus:['duba','barikat','zincir','kablo','tabela','boya'],tone:'#d8ba8f',prop:'works'}
 ];
 function stateForCycle(cycle){
@@ -389,7 +390,7 @@ function missionEvent(kind,n=1){
   missionIndex++;missionProgress=0;missionStartMeters=Math.floor(distance/10);missionDoneTimer=.6;
   sfx('point');
  }
- missionPanel();updateStreetLabel();$('cityEvent').classList.remove('on');
+ missionPanel();
 }
 function streakLabel(){
  const multi=Math.min(5,1+Math.floor(streak/5));
@@ -422,7 +423,7 @@ function reset(){
  run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';cityStateIndex=-1;cityPhase=-1;cityEventTime=0;incidentCount=0;visualTick=0;metTarget=false;missionIndex=0;missionProgress=0;missionStartMeters=0;missionDoneTimer=0;spawnCount=0;nearMax=0;tricks=0;cleared=0;maxCombo=0;passedRecord=false;
  Object.assign(player,{y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0,airClears:0});
  $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;$('share').textContent='ARKADAŞINA MEYDAN OKU ↗';$('combo').hidden=true;
- missionPanel();
+ missionPanel();updateStreetLabel();$('cityEvent').classList.remove('on');
  $('controlLabel').textContent='ZIPLA';$('charge').classList.remove('on');$('control').classList.remove('pressed');$('tip').classList.remove('on');last=performance.now();updateHud();toast('BASILI TUT → BIRAKINCA ZIPLA');
 }
 function finish(){
@@ -597,7 +598,9 @@ function update(dt){
   if(!h.hit&&invuln===0&&overlap&&air<Math.max(9,h.height-17)){
    h.hit=true;h.shiver=1;invuln=1.5;shake=10;lives--;streak=0;crashReason=h.note;streakLabel();
    player.vy=Math.min(player.vy,-245);player.onGround=false;
-   makeParticle(player.x+28,GROUND+player.y-20,'#d7594b',12);sfx('hit');
+   makeParticle(player.x+28,GROUND+player.y-20,['boya','cay','meyve','file'].includes(h.type)?'#e2b571':'#d7594b',12);
+   if(navigator.vibrate)try{navigator.vibrate(30)}catch(e){}
+   sfx('hit');
    if(lives<=0){updateHud();finish();return}
    toast(h.note);
   }
@@ -605,6 +608,7 @@ function update(dt){
    h.passed=true;h.shiver=.48;
    if(!h.hit){
     if(!player.onGround)player.airClears++;
+    if(h.near)makeParticle(player.x+22,GROUND+player.y,'#ebd4a2',4);
     const close=h.near?85:0;
     const multiplier=Math.min(5,1+Math.floor(streak/5));
     const bonus=(60+Math.min(175,streak*15)+close)*multiplier;
@@ -829,6 +833,88 @@ function background(){
   ctx.fillRect(x+12+r*31,635+r*62,3+r*7,2+r*3);
  }
 }
+
+/* Physical miniature stage: non-collidable details may move, but hazards keep clear silhouettes. */
+function streetTheatre(){
+ const st=currentCity(),lvl=cityIntensity();
+ if(!st&&lvl<1)return;
+ ctx.save();
+ if(st){ctx.globalAlpha=.075;R(0,0,W,602,0,st.tone);ctx.globalAlpha=1}
+ const width=460,offset=(distance*.46)%width,start=Math.floor(distance*.46/width);
+ const stop=Math.floor(elapsed*12);
+ for(let k=-1;k<W/width+2;k++){
+  const tile=start+k,x=k*width+160-offset;
+  ctx.save();ctx.translate(x,0);
+  if(st){
+   if(st.prop==='boxes'){
+    R(-54,519,108,40,9,'#c78e9c','#754f58',3);R(-59,504,25,52,5,'#b77585');
+    R(34,510,24,43,5,'#bc7989');R(63,523,43,35,1,'#cea37b','#886b52',3);
+    R(76,523,10,35,0,'#efd0a0');
+   }else if(st.prop==='market'){
+    line(-75,444,-75,562,'#6d6357',4);line(86,444,86,562,'#6d6357',4);
+    poly([[-91,455],[-72,442],[84,442],[105,456]],'#d66b55','#694b3e',3);
+    for(let i=0;i<7;i++)R(-88+i*27,455,27,13,1,i%2?'#f0e5cb':'#478263');
+    R(-47,525,106,34,3,'#ab7d53','#78553b',3);
+    for(let j=0;j<7;j++)circle(-34+j*14,523+(j%2)*3,8,['#e0a546','#8bad56','#c96350'][j%3]);
+   }else if(st.prop==='works'){
+    R(-48,539,100,20,1,'#e3d5b7','#765a4a',3);
+    for(let i=0;i<4;i++)poly([[-47+i*25,558],[-30+i*25,558],[-12+i*25,539],[-29+i*25,539]],'#c77751');
+    line(-57,484,-57,556,'#99876b',5);R(-106,472,96,35,2,'#f0c46f','#745c45',3);
+    txt('ÇALIŞMA',-57,495,12,'#4f3c2f');
+   }else if(st.prop==='chairs'){
+    for(let i=0;i<3;i++){let px=-55+i*48;
+     R(px,541,35,8,2,'#cd9875');line(px+5,547,px+2,560,'#765748',4);
+     line(px+30,547,px+32,560,'#765748',4);line(px,540,px,514,'#91624c',4);
+     R(px-1,510,36,9,3,'#d2a27f');
+    }
+   }else if(st.prop==='motor'){
+    for(let i=0;i<2;i++){let px=-36+i*85;
+     circle(px-20,557,11,'#444747');circle(px+22,557,11,'#444747');
+     poly([[px-25,545],[px+4,530],[px+25,547],[px,554]],i?'#9caec2':'#c9aa69');
+     line(px+13,536,px+21,520,'#3b4646',4);
+    }
+   }else if(st.prop==='gulls'){
+    for(let i=0;i<3;i++){let px=-55+i*59,py=271+Math.sin(stop*.3+i+tile)*10;
+     line(px-18,py+5,px,py,'#f4eee2',5);line(px,py,px+18,py+6,'#f4eee2',5)}
+    R(-43,521,106,34,2,'#b88255');txt('SİMİT',10,545,18,'#f9e9ca');
+   }else if(st.prop==='celebration'){
+    for(let i=0;i<9;i++){let px=-94+i*27,yy=390+Math.sin(i)*6;
+     line(px,yy,px+29,yy+1,'#82685d',2);
+     poly([[px+8,yy],[px+20,yy],[px+14,yy+22]],['#eebd7b','#cb92a2','#9bbda8'][i%3])}
+    for(let i=0;i<3;i++){R(-45+i*47,539,30,10,3,'#c4916c');line(-34+i*47,549,-36+i*47,560,'#725647',4)}
+   }else if(st.prop==='rain'){
+    ctx.save();ctx.globalAlpha=.38;
+    for(let i=0;i<15;i++){let px=-95+i*20,py=152+((i*81+elapsed*176)%370);
+     line(px,py,px-8,py+18,'#c4d8dd',2)}
+    ctx.restore();ellipse(0,567,89,8,'#b5d3d780');ellipse(7,566,46,3,'#e8ede1ba');
+   }
+  }
+  if(lvl>=2&&tile%4===0){
+   ctx.save();ctx.translate(-55,306);ctx.scale(1+lvl*.07,1+lvl*.07);
+   R(-5,-20,136,46,3,'#edcb70','#7d5342',3);
+   txt(lvl>=3?'KALDIRIM?':'GEÇİŞ',63,10,lvl>=3?19:21,'#564238');
+   ctx.restore();
+  }
+  if(lvl>=3&&tile%5===1){
+   for(let i=0;i<2;i++){
+    ellipse(-22+i*53,195,12,7,'#f2e9db');
+    if(stop%71>=3)circle(-19+i*53,195,4,'#323735');
+   }
+  }
+  ctx.restore();
+ }
+ if(lvl>=4){
+  // Huge gull shadow: purely atmospheric, never collides.
+  const x=W+210-(distance*.35%(W+600));
+  ctx.save();ctx.translate(x,671);ctx.globalAlpha=.17;
+  ellipse(0,0,68,11,'#353c40');
+  poly([[-15,0],[-145,-33],[-86,-6]],'#353c40');
+  poly([[15,0],[145,-33],[86,-6]],'#353c40');
+  ctx.restore();
+ }
+ ctx.restore();
+}
+
 function foreground(){
  // Rare street sign depth cue. Fade it near the skater to preserve gameplay clarity.
  const gap=1440,offset=(distance*.79)%gap;
@@ -1121,6 +1207,7 @@ function draw(){
  ctx.save();ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
  if(shake)ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake*.45);
  background();
+ streetTheatre();
  for(const h of obstacles)obstacleDraw(h);
  skater();
  foreground();
