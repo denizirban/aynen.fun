@@ -248,10 +248,13 @@
 .process-choices button:hover{background:#f9b3ba}
 .process-hint{font-size:11px;line-height:1.5;color:#6a6966;margin:10px 0}
 @media(max-width:760px){#processGuess .prompt{font-size:21px!important;margin:8px 0 13px!important}.process-choices{gap:7px}.process-choices button{padding:11px 10px;font-size:10px;min-height:43px}.process-hint{font-size:9px;margin:8px 0}.result-mode .left .facts{-webkit-line-clamp:2!important}}
+
+#dailyDecision[hidden]{display:none!important}.daily-buttons{display:grid;gap:9px}.daily-buttons button{background:#fff;border:1.5px solid #111;padding:13px 10px;min-height:43px;text-align:left;font:700 12px 'DM Mono',monospace}.daily-buttons button:first-child{background:#ddff68}.daily-mini{font-size:11px;color:#555;line-height:1.4}.result .compare[hidden]{display:none!important}
+@media(max-width:760px){#dailyDecision .prompt{font-size:21px!important;margin:8px 0 14px!important}.daily-buttons{gap:7px}.daily-buttons button{font-size:10px;padding:10px;min-height:39px}.daily-mini{font-size:9px;margin:9px 0}}
 </style></head><body><main class="app">
 <header><a class="back mono" href="/" aria-label="Oyunlara dön">← OYUNLAR</a><span class="topmark">YATARI KAÇ? / 2026</span><span class="meta mono" id="counter">01 / 22</span></header>
 <section class="frame"><div class="left"><div><div class="eyebrow">TÜRKİYE / CEZA &amp; İNFAZ</div><h1 class="title">Yatarı<br><span>kaç?</span></h1><p class="sub">Verilen hapis cezası ile infaz süresi aynı şey değil. Sence kaç yıl?</p></div><nav class="case-filters" aria-label="Dosya kategorileri"><button data-cat="all" class="chosen">HEPSİ</button><button data-cat="news">GÜNDEM</button><button data-cat="daily">GÜNLÜK</button><button data-cat="sentence">İNFAZ</button></nav><div class="casebox"><div class="case-label"><span class="number" id="caseNo">01</span> DOSYA / VARSAYIMSAL SENARYO</div><h2 class="crime" id="crime">Genel infaz rejimi</h2><p class="facts" id="facts"></p><div class="sentence" id="sentence">6 yıl <small>hapis cezası</small></div></div></div>
-<div class="right"><div class="right-top"><div id="processGuess" hidden><div class="eyebrow">DOSYAYI OKU / KARARINI VER</div><div class="prompt" id="processQuestion">Buradan yatar hesabı çıkar mı?</div><div class="process-choices"><button type="button" data-answer="yes">EVET, HESAPLANIR</button><button type="button" data-answer="no">HAYIR, HENÜZ BELLİ DEĞİL</button></div><p class="process-hint">Bir haber başlığı her zaman kesinleşmiş ceza değildir.</p></div><div id="guess"><div class="eyebrow">TAHMİNİNİ YAP</div><div class="prompt">Cezaevinde yaklaşık<br>kaç yıl kalır?</div><div class="dial"><button class="step" id="minus" type="button" aria-label="Bir yıl azalt">−</button><div class="value" id="value">3</div><button class="step" id="plus" type="button" aria-label="Bir yıl artır">+</button></div><div class="unit">YIL / HİPOTETİK CEZAEVİ SÜRESİ</div><input class="slider" id="slider" type="range" min="0" max="30" value="3" step=".5" aria-label="Yıl tahmini"><button class="answer" type="button" id="reveal">KARARI GÖR →</button></div>
+<div class="right"><div class="right-top"><div id="processGuess" hidden><div class="eyebrow">DOSYAYI OKU / KARARINI VER</div><div class="prompt" id="processQuestion">Buradan yatar hesabı çıkar mı?</div><div class="process-choices"><button type="button" data-answer="yes">EVET, HESAPLANIR</button><button type="button" data-answer="no">HAYIR, HENÜZ BELLİ DEĞİL</button></div><p class="process-hint">Bir haber başlığı her zaman kesinleşmiş ceza değildir.</p></div><div id="dailyDecision" hidden><div class="eyebrow" id="dailyStage">AŞAMA 01 / SUÇ MU?</div><div class="prompt" id="dailyPrompt">Bu olayda suç oluşabilir mi?</div><div class="daily-buttons" id="dailyButtons"><button type="button" data-choice="crime">SUÇ OLUŞABİLİR</button><button type="button" data-choice="no">SUÇ DEĞİL</button></div><p class="daily-mini" id="dailyMini">Olayda yazan koşullara göre cevap ver.</p></div><div id="guess"><div class="eyebrow">TAHMİNİNİ YAP</div><div class="prompt">Cezaevinde yaklaşık<br>kaç yıl kalır?</div><div class="dial"><button class="step" id="minus" type="button" aria-label="Bir yıl azalt">−</button><div class="value" id="value">3</div><button class="step" id="plus" type="button" aria-label="Bir yıl artır">+</button></div><div class="unit">YIL / HİPOTETİK CEZAEVİ SÜRESİ</div><input class="slider" id="slider" type="range" min="0" max="30" value="3" step=".5" aria-label="Yıl tahmini"><button class="answer" type="button" id="reveal">KARARI GÖR →</button></div>
 <div class="result" id="result"><span class="feedback" id="feedback"></span><div class="eyebrow" id="resultHeading">VARSAYIMSAL CEZAEVİ SÜRESİ</div><div class="result-big" id="resultBig"></div><div class="result-line" id="resultLine"></div><div class="compare"><div class="eyebrow">CEZANIN AŞAMALARI</div><div class="track"><span class="inside" id="inside"></span><span class="outside" id="outside"></span><span class="end" id="end"></span></div><div class="legend"><span style="--c:#161616">Cezaevi örneği</span><span style="--c:#ff9c70">Denetimli serbestlik</span><span style="--c:#d8e8bd">Koşullu salıverilme sonrası</span></div></div><details class="legal-drawer" id="legalDrawer"><summary>HUKUKİ AYRINTILAR <span aria-hidden="true">⌄</span></summary><div class="legal-drawer-content"><p class="smallnote" id="legal"></p><div class="sources">KAYNAK: <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=5275" target="_blank" rel="noopener">5275 s. Kanun m. 107</a> · <a href="https://mevzuat.adalet.gov.tr/mevzuat/102944?query=105%2FA" target="_blank" rel="noopener">m. 105/A</a></div></div></details><div class="comparison" id="comparison" hidden><div class="eyebrow">AYNI CEZA / FARKLI İNFAZ</div><div id="comparisonBars"></div><div class="timeline-screen"><div class="timeline-heading"><span class="mono">İNFAZ ZAMAN ÇİZGİSİ</span><span class="mono" id="timelineClock">0.0 YIL</span></div>
 <input id="timelineScrub" class="timeline-scrub" type="range" min="0" max="100" value="0" aria-label="İnfaz zaman çizelgesini ileri geri oynat">
 <div id="timelineCharacters" class="timeline-characters" aria-hidden="true"><span>●</span><span>●</span></div>
@@ -260,6 +263,9 @@
 <footer class="foot"><span class="disclaimer">Yalnızca varsayımsal eğitim senaryosu. Gerçek infaz/tahliye hesabı değildir.</span><span class="mono"><a href="/" aria-label="Ana sayfa">← ÇIKIŞ</a></span></footer>
 </main><script>
 const cases=[
+{"title":"Eski sevgiliyi ısrarla aradı","description":"Ayrıldığı kişiyi sırf huzurunu bozmak amacıyla günlerce ısrarla arıyor. Şikâyet de var.","range":"3 ay – 1 yıl hapis","rangeKey":"short","law":"TCK m.123: Sırf huzur ve sükûnu bozma maksadıyla ısrarla arama, şikâyet üzerine 3 aydan 1 yıla kadar hapis cezasına konu olabilir.","years":0,"ratio":0,"special":"dailyCrime","source":"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
+{"title":"Arkadaşının hesabına girdi","description":"İzin almadan arkadaşının sosyal medya hesabına şifresiyle giriş yaptı. Verileri değiştirmedi.","range":"1 yıla kadar hapis veya adli para cezası","rangeKey":"fine","law":"TCK m.243/1: Hukuka aykırı bilişim sistemine girme veya orada kalma için 1 yıla kadar hapis veya adli para cezası öngörülür.","years":0,"ratio":0,"special":"dailyCrime","source":"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
+{"title":"Özel mesajları yayımladı","description":"İki kişi arasındaki özel mesajları hukuka aykırı biçimde herkese açık bir sayfada yayımladı. Mesajlaşmanın tarafı değil.","range":"2 – 5 yıl hapis","rangeKey":"long","law":"TCK m.132/2: Kişiler arasındaki haberleşme içeriklerinin hukuka aykırı ifşasında 2–5 yıl hapis aralığı bulunur.","years":0,"ratio":0,"special":"dailyCrime","source":"https://mevzuat.adalet.gov.tr/mevzuat/103228"},
 {"title":"Komedyen tutuklandı","years":0,"ratio":0,"special":"process","description":"Bir komedyen gösterisindeki sözleri nedeniyle tutuklandı. Haber başlığını gördün: ‘Kaç yıl yatar?’","law":"Tutuklama mahkûmiyet değildir. CMK m.100–101 uyarınca tutuklama bir koruma tedbiridir. Kesinleşmiş hapis cezası yoksa infaz süresi hesaplanamaz.","source":"https://tr.euronews.com/2026/08/29/komedyen-deniz-goktas-tahliye-kararinin-ardindan-yeniden-tutuklandi","tag":"GÜNDEM · 2026"},
 {"title":"Gazeteci gözaltına alındı","years":0,"ratio":0,"special":"process","description":"Bir gazeteci haber paylaşımı nedeniyle gözaltına alındı. Sosyal medyada herkes ‘yatarını’ tartışıyor.","law":"Gözaltı, tutuklama ve kesinleşmiş mahkûmiyet farklı aşamalardır. CMK m.91 gözaltıyı, m.100–101 tutuklamayı düzenler. Bu bilgiyle yatar hesabı yapılamaz.","source":"https://tr.euronews.com/2026/10/21/ebubekir-sahinin-sikayeti-uzerine-gozaltina-alinan-gazeteci-ismail-ari-tutuklandi","tag":"GÜNDEM · 2026"},
 {"title":"‘Kesin kazandıran’ fon","years":0,"ratio":0,"special":"process","description":"Birisi komşularına ‘aylık garantili yüksek getiri’ diyerek para topluyor. Henüz soruşturma veya kesinleşmiş hüküm bilgisi yok.","law":"Sırf yüksek getiri vaadinden otomatik hapis süresi çıkmaz. Hileli davranış ve diğer unsurlar varsa TCK m.157–158 kapsamında dolandırıcılık değerlendirmesi yapılabilir. Sermaye piyasası mevzuatı da ilgili olabilir.","source":"https://mevzuat.adalet.gov.tr/mevzuat/103228","tag":"FON MEVZUSU"},
@@ -291,6 +297,7 @@ const cases=[
 ];
 let index=0,guess=3,score=0,solved=false;let visited=new Set();
 const $=id=>document.getElementById(id);
+let dailyStep=1,dailyFirst=null,dailySecond=null;
 let activeFilter='all';
 const visibleIndices=()=>cases.map((c,i)=>({c,i})).filter(({c})=>activeFilter==='all'||(activeFilter==='news'&&c.special==='process')||(activeFilter==='daily'&&c.special==='noCrime')||(activeFilter==='sentence'&&!c.special)).map(x=>x.i);
 
@@ -313,11 +320,11 @@ function draw(){
  $('caseNo').textContent=String(index+1).padStart(2,'0');$('crime').textContent=c.title;
  $('facts').textContent=c.description+(!c.special?' Suç tarihi: 2026 (varsayım).':'');
  const eventSource=$('legalDrawer').querySelector('.event-source');if(eventSource)eventSource.remove();
- $('sentence').innerHTML=c.special==='process'?'KARAR NE? <small>Suçlama ≠ ceza</small>':c.special==='noCrime'?'CEZA VAR MI? <small>Gündelik hayat dosyası</small>':c.years+' yıl <small>hapis cezası</small>';
+ $('sentence').innerHTML=c.special==='dailyCrime'?'OLAY NE? <small>Suçun cezasını bul</small>':c.special==='process'?'KARAR NE? <small>Suçlama ≠ ceza</small>':c.special==='noCrime'?'CEZA VAR MI? <small>Gündelik hayat dosyası</small>':c.years+' yıl <small>hapis cezası</small>';
  $('slider').max=c.special==='noCrime'?5:max;$('slider').step='.5';
  guess=c.special==='noCrime'?1:Math.min(max,Math.round(c.years*.5*2)/2);setGuess(guess);
- $('compareToggle').hidden=false;
- $('processGuess').hidden=c.special!=='process';$('guess').style.display=c.special==='process'?'none':'block';$('result').classList.remove('show');document.body.classList.remove('result-mode');$('legalDrawer').open=false;$('comparison').hidden=true;$('compareToggle').setAttribute('aria-expanded','false');$('compareToggle').textContent='AYNI CEZAYI KARŞILAŞTIR ↗';
+ $('compareToggle').hidden=false;$('result').querySelector('.compare').hidden=false;
+ $('processGuess').hidden=c.special!=='process';$('dailyDecision').hidden=!(c.special==='dailyCrime'||c.special==='noCrime');$('guess').style.display=c.special?'none':'block';dailyStep=1;dailyFirst=null;dailySecond=null;renderDailyStep();$('result').classList.remove('show');document.body.classList.remove('result-mode');$('legalDrawer').open=false;$('comparison').hidden=true;$('compareToggle').setAttribute('aria-expanded','false');$('compareToggle').textContent='AYNI CEZAYI KARŞILAŞTIR ↗';
  $('state').textContent='DOĞRU TAHMİN: '+score+' / '+visibleIndices().length;
  $('dots').innerHTML='<span class="progress-count">'+(visibleIndices().indexOf(index)+1)+' / '+visibleIndices().length+'</span><span class="progress-meter"><i style="width:'+((visibleIndices().indexOf(index)+1)/visibleIndices().length*100)+'%"></i></span>';
  solved=false;processChoice=null;
@@ -329,7 +336,7 @@ $('slider').oninput=e=>setGuess(Number(e.target.value));
 $('reveal').onclick=()=>{
  if(solved)return;solved=true;visited.add(index);
  const c=cases[index],x=legalExample(c),diff=Math.abs(guess-x.illustrative);
- if(diff<=.25&&c.special!=='process')score++;
+ if(diff<=.25&&!c.special)score++;
  $('feedback').textContent=diff<=.25?'YAKIN TAHMİN':diff<=1?'AZ FARKLA':'SENİN TAHMİNİN: '+format(guess)+' YIL';
  $('feedback').classList.toggle('good',diff<=.25);
  $('resultBig').innerHTML=format(x.illustrative)+' <span>yıl*</span>';
@@ -343,7 +350,16 @@ $('reveal').onclick=()=>{
   $('resultLine').innerHTML='<strong>YATARI YOK.</strong> Bu olay, anlatıldığı haliyle hapis cezası gerektiren bir suç değil. Yine de sözleşmeden, yönetim kararından veya başka kanundan kaynaklanan hukuki sonuçlar olabilir.';
   $('inside').style.width='0%';$('outside').style.width='0%';$('end').style.width='100%';
   $('legal').textContent=c.law+' Yalnızca olayda belirtilen varsayımlar değerlendirilmiştir.';
-  $('feedback').textContent=diff<.01?'TAM İSABET':'CEZA DİYE DUYDUN, SUÇ DEĞİL';
+  $('feedback').textContent=dailyFirst==='no'?'DOĞRU: SUÇ DEĞİL':'SUÇ SANDIN, DEĞİL';
+  if(dailyFirst==='no')score++;
+ }
+ if(c.special==='dailyCrime'){
+ $('resultBig').innerHTML='KANUNİ <span>ARALIK</span>';
+ $('resultLine').innerHTML='<strong>'+c.range+'</strong>. Bu kanundaki ceza aralığıdır; mahkemenin vereceği ceza veya cezaevinde kalış süresi değildir.';
+ $('inside').style.width='0%';$('outside').style.width='0%';$('end').style.width='100%';
+ $('legal').textContent=c.law+' Suçun tüm unsurlarının ispatı gerekir; hüküm ve infaz ayrıca değerlendirilir.';
+ $('feedback').textContent='2 AŞAMALI DOSYA · '+((dailyFirst==='crime'?1:0)+(dailySecond===c.rangeKey?1:0))+'/2 DOĞRU';
+ score+=(dailyFirst==='crime'?1:0)+(dailySecond===c.rangeKey?1:0);
  }
  if(c.special==='process'){
  $('resultBig').innerHTML='? <span>yıl</span>';
@@ -355,8 +371,9 @@ $('reveal').onclick=()=>{
  if(c.source){const source=$('legalDrawer').querySelector('.sources');let a=source.querySelector('.event-source');if(!a){a=document.createElement('a');a.className='event-source';a.target='_blank';a.rel='noopener noreferrer';source.append(' · ',a)}a.href=c.source;a.textContent='OLAYIN KAYNAĞI ↗';}else{const a=$('legalDrawer').querySelector('.event-source');if(a)a.remove();}
  }
  $('compareToggle').hidden=!!c.special;
+ $('result').querySelector('.compare').hidden=!!c.special;
  $('next').textContent=index===visibleIndices().at(-1)?'BAŞA DÖN ↺':'SONRAKİ DOSYA →';
- $('guess').style.display='none';$('processGuess').hidden=true;$('result').classList.add('show');document.body.classList.add('result-mode');$('legalDrawer').open=false;
+ $('guess').style.display='none';$('dailyDecision').hidden=true;$('processGuess').hidden=true;$('result').classList.add('show');document.body.classList.add('result-mode');$('legalDrawer').open=false;
  $('comparisonBars').innerHTML=[{name:'Genel 1/2',ratio:.5},{name:'İstisna 2/3',ratio:2/3}].map((r)=>'<div class="comparison-row"><span>'+r.name+'</span><span class="comparison-bar"><i style="width:'+(r.ratio*100)+'%"></i></span><b>'+format(c.years*r.ratio)+' yıl</b></div>').join('');
  $('state').textContent='DOĞRU TAHMİN: '+score+' / '+visibleIndices().length;
 };
@@ -389,6 +406,20 @@ $('compareToggle').onclick=()=>{
  $('compareToggle').textContent=box.hidden?'AYNI CEZAYI KARŞILAŞTIR ↗':'KARŞILAŞTIRMAYI KAPAT ×';
  if(box.hidden)stopPlayback();else{ $('timelineScrub').value=0;renderTimeline(0); }
 };
+function renderDailyStep(){
+ const c=cases[index];if(!['dailyCrime','noCrime'].includes(c.special))return;
+ $('dailyStage').textContent='AŞAMA '+(dailyStep===1?'01':'02')+' / '+(dailyStep===1?'SUÇ MU?':'KANUNİ CEZA');
+ $('dailyPrompt').textContent=dailyStep===1?'Bu olayda suç oluşabilir mi?':'Kanunda hangi ceza aralığı var?';
+ const opts=dailyStep===1?[['crime','SUÇ OLUŞABİLİR'],['no','SUÇ DEĞİL']]:[['short','3 AY – 1 YIL'],['fine','1 YILA KADAR / PARA CEZASI'],['long','2 – 5 YIL']];
+ $('dailyButtons').innerHTML=opts.map(o=>'<button type="button" data-choice="'+o[0]+'">'+o[1]+'</button>').join('');
+ $('dailyMini').textContent=dailyStep===1?'Önce olayın suç oluşturup oluşturamayacağını tahmin et.':'Şimdi kanunda öngörülen temel ceza aralığını seç.';
+}
+$('dailyButtons').addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b||solved)return;
+ const c=cases[index];
+ if(dailyStep===1){dailyFirst=b.dataset.choice;if(c.special==='noCrime'){$('reveal').click();return;}dailyStep=2;renderDailyStep();return;}
+ dailySecond=b.dataset.choice;$('reveal').click();
+});
 function nextVisible(){const visible=visibleIndices();const pos=visible.indexOf(index);if(pos>=visible.length-1){index=visible[0];score=0;visited.clear()}else index=visible[pos+1];draw();}
 $('next').onclick=nextVisible;
 $('surpriseFile').onclick=()=>{const rest=visibleIndices().filter(i=>i!==index&&!visited.has(i));const pool=rest.length?rest:visibleIndices().filter(i=>i!==index);if(!pool.length)return;index=pool[Math.floor(Math.random()*pool.length)];draw();};
