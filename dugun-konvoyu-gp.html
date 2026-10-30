@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#112c75">
+<meta name="description" content="Düğün Konvoyu GP: Kornayla konvoyu büyüt, rakip düğünlerden sıyrıl. Retro arcade yarış oyunu.">
+<title>Düğün Konvoyu GP — aynen.fun</title>
+<style>
+:root{font-family:"Courier New",monospace;color:#eef4ff;background:#101c37}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}
+button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer;touch-action:none}
+button:focus-visible,a:focus-visible{outline:3px solid #ffdc6b;outline-offset:3px}
+#app{position:relative;height:100dvh;max-width:1500px;margin:0 auto;padding:8px 12px 10px;display:flex;flex-direction:column;gap:8px}
+.top{height:27px;flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;font-weight:900;letter-spacing:.05em}
+.top a{color:#dce8ff;text-decoration:none}.top .right{display:flex;align-items:center;gap:8px}.top button{height:27px;background:#213555;color:#eaf5ff;border:1px solid #537399;padding:0 10px;border-radius:3px}
+.frame{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden;border:3px solid #070f27;box-shadow:0 0 0 2px #4e6fa5;background:#164cbd}
+canvas{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none}
+.frame:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,.055) 4px);pointer-events:none;opacity:.5}
+.banner{position:absolute;top:18%;left:50%;transform:translateX(-50%);background:#ffefb0;color:#992f38;padding:6px 12px;font-weight:900;font-size:clamp(9px,1.45vw,15px);white-space:nowrap;box-shadow:4px 4px 0 #d94b4b;pointer-events:none;display:none;text-align:center;z-index:3}.banner.show{display:block}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;background:rgba(6,17,47,.72);z-index:4;padding:16px}
+.overlay[hidden]{display:none}
+.card{width:min(440px,100%);max-height:100%;overflow:auto;background:#10234c;border:3px solid #eff2d6;outline:5px solid #13224d;box-shadow:10px 10px 0 #080e24;padding:clamp(14px,3vw,27px);text-align:center}
+.eyebrow{color:#92d8e7;font-weight:bold;font-size:11px;letter-spacing:.18em;margin:0 0 10px}
+.card h1,.card h2{font-size:clamp(29px,5.2vw,45px);line-height:1.02;letter-spacing:-.08em;text-transform:uppercase;color:#fff1a2;margin:7px 0 16px;text-shadow:3px 4px 0 #e45645}
+.card h2{font-size:clamp(25px,4vw,36px)}
+.card p{font-size:13px;line-height:1.56;color:#e2ecff;margin:10px 0}
+.card .rules{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:17px 0;text-align:left}
+.rules>div{border:1px solid #5376a9;background:#1b3667;padding:10px;font-size:11px;line-height:1.4}
+.rules strong{display:block;color:#ffdd72;font-size:12px;margin-bottom:4px}
+.cta{width:100%;background:#ffde68;border:0;border-bottom:5px solid #d67e28;color:#2a2141;padding:14px 18px;font-size:15px;font-weight:900;margin:8px 0 0;letter-spacing:.04em}
+.cta:active{transform:translateY(3px);border-bottom-width:2px}
+.secondary{display:inline-block;background:#243d6c;border:1px solid #668cc6;color:#fff;padding:10px 13px;font-size:12px;text-decoration:none;margin:9px 4px 0}
+.scoreline{color:#b7cbff!important;font-weight:900}.accent{color:#ffe07b}
+.pad{height:66px;flex:none;display:flex;align-items:stretch;justify-content:space-between;gap:8px}
+.group{display:flex;gap:8px;min-width:0}
+.pad button{min-width:68px;min-height:55px;border:2px solid #7291ad;background:#263d5c;color:#fff2cd;font-size:22px;font-weight:900;box-shadow:0 3px 0 #080f23;border-radius:4px;user-select:none;-webkit-user-select:none}
+.pad button:active,.pad button.down{background:#3b6387;transform:translateY(2px);box-shadow:0 1px 0 #080f23}
+.pad button.horn{min-width:124px;background:#eac954;color:#39283e;border-color:#ffe28a;font-size:14px;letter-spacing:.04em}
+.pad button.horn:disabled{opacity:.6}
+.pad .hint{font-size:10px;color:#a4b8d7;align-self:center;line-height:1.4;text-align:center}
+.mini{color:#aec1e2;font-size:9px;white-space:nowrap;align-self:center}
+@media(max-width:650px){
+#app{padding:4px 5px 7px;gap:5px}.top{height:25px;font-size:10px}
+.top button{font-size:10px;padding:0 7px}.frame{border-width:2px}
+.pad{height:68px}.pad button{min-width:57px}.pad button.horn{min-width:103px}
+.pad .hint,.mini{display:none}.card{padding:17px}.card h1{font-size:33px}.card .rules{margin:10px 0}
+}
+@media(max-height:490px){#app{padding:3px 6px;gap:3px}.top{height:21px}.pad{height:43px}.pad button{min-height:40px}.card{padding:10px 15px}.card p{font-size:11px;margin:6px 0}.card .rules{margin:8px 0}.cta{padding:9px}.card h1{font-size:27px;margin:4px 0 8px}}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="top"><a href="/" aria-label="aynen.fun ana sayfa">← AYNEN.FUN</a><span>DÜĞÜN KONVOYU GP <span style="color:#ffdb6c">★</span></span><div class="right"><button id="sound" type="button" aria-label="Sesi aç kapat">SES: AÇIK</button><button id="pause" type="button" aria-label="Oyunu duraklat">Ⅱ</button></div></header>
+<div class="frame" id="frame">
+<canvas id="game" width="480" height="270" aria-label="Düğün konvoyunda retro yarış; ok tuşları veya dokunmatik kontroller ile oynanır"></canvas>
+<div class="banner" id="banner" role="status" aria-live="polite"></div>
+<div class="overlay" id="overlay">
+<section class="card" id="menu">
+<div class="eyebrow">AYNEN.FUN / 1987 ARCADE EDITION</div>
+<h1>DÜĞÜN<br>KONVOYU GP</h1>
+<p>Bir düğüne yetişiyorsun. Yoldaki herkes başka bir düğüne gidiyor.</p>
+<div class="rules">
+<div><strong>← → DİREKSİYON</strong>Konvoydaki araçlara çarpmadan ilerle.</div>
+<div><strong>BOŞLUK / KORNA</strong>Açık renkli araçları konvoya kat. Yaklaşınca bas.</div>
+</div>
+<p>3 etap. 3 can. <span class="accent">Konvoyu büyüt, gelin arabasını salona ulaştır.</span></p>
+<button class="cta" id="start" type="button">KONVOYA KATIL →</button>
+<p class="scoreline" id="best">EN İYİ SKOR: 000000</p>
+</section>
+</div>
+</div>
+<div class="pad" aria-label="Oyun kontrolleri">
+<div class="group"><button id="left" aria-label="Sola dön" type="button">◀</button><button id="right" aria-label="Sağa dön" type="button">▶</button></div>
+<span class="hint">← → YÖNLENDİR &nbsp;·&nbsp; BOŞLUK KORNA<br>↑ HIZLAN &nbsp;↓ FREN &nbsp;·&nbsp; P DURAKLAT</span>
+<div class="group"><button id="brake" aria-label="Fren" type="button" style="font-size:12px">FREN</button><button id="horn" class="horn" aria-label="Korna çal" type="button">♪ KORNA</button></div>
+</div>
+</div>
+<script>
+(function(){
+"use strict";
+const W=480,H=270,canvas=document.getElementById("game"),c=canvas.getContext("2d",{alpha:false});
+c.imageSmoothingEnabled=false;
+const overlay=document.getElementById("overlay"),menu=document.getElementById("menu"),banner=document.getElementById("banner"),soundBtn=document.getElementById("sound"),pauseBtn=document.getElementById("pause"),hornBtn=document.getElementById("horn");
+let mode="menu",muted=false,audio=null,last=0,seconds=0,objects=[],spawnTimer=0,nextId=1,noticeTimer=0,flash=0,runSeed=0;
+const input={left:false,right:false,brake:false,boost:false};
+let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:1,combo:0,chaos:0,lap:1,hornCD:0,invuln:0,horns:0,joined:0};
+const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+const rand=(a,b)=>a+Math.random()*(b-a);
+function rect(x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h));}
+function poly(coords,color){c.fillStyle=color;c.beginPath();c.moveTo(coords[0],coords[1]);for(let i=2;i<coords.length;i+=2)c.lineTo(coords[i],coords[i+1]);c.closePath();c.fill();}
+function txt(t,x,y,size,color,align){c.fillStyle=color;c.font="bold "+size+"px monospace";c.textAlign=align||"left";c.fillText(String(t),Math.round(x),Math.round(y));}
+function tone(freq,dur,type,volume){if(muted)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==="suspended")audio.resume();const o=audio.createOscillator(),gain=audio.createGain(),now=audio.currentTime;o.type=type||"square";o.frequency.setValueAtTime(freq,now);gain.gain.setValueAtTime(volume||.045,now);gain.gain.exponentialRampToValueAtTime(.0001,now+dur);o.connect(gain);gain.connect(audio.destination);o.start(now);o.stop(now+dur+.01)}catch(e){}}
+function fanfare(){tone(523,.17,"square",.04);setTimeout(()=>tone(659,.18,"square",.04),130);setTimeout(()=>tone(784,.23,"square",.04),265)}
+function announce(msg,forSeconds){banner.textContent=msg;banner.classList.add("show");noticeTimer=forSeconds||1.6}
+function setMenu(html){overlay.hidden=false;menu.innerHTML=html}
+function start(){
+g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:1,combo:0,chaos:0,lap:1,hornCD:0,invuln:0,horns:0,joined:0};
+objects=[];seconds=0;spawnTimer=.6;runSeed=Math.random()*10000;flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("DÜĞÜN KONVOYU HAREKET EDİYOR",2);
+}
+function bestScore(){try{return Number(localStorage.getItem("dugun-gp-best")||0)}catch(e){return 0}}
+function saveBest(){try{if(g.score>bestScore())localStorage.setItem("dugun-gp-best",String(g.score))}catch(e){}}
+document.getElementById("best").textContent="EN İYİ SKOR: "+String(bestScore()).padStart(6,"0");
+document.getElementById("start").addEventListener("click",start);
+function finish(win){
+mode="end";saveBest();fanfare();
+const headline=win?"SALONA ULAŞTIN!":"KONVOY DAĞILDI";
+const detail=win?"Gelin arabası sonunda doğru düğün salonunda.":"Bir sonraki düğünde tekrar denersin.";
+setMenu('<div class="eyebrow">YARIŞ SONU / RESMÎ TUTANAK</div><h2>'+headline+'</h2><p>'+detail+'</p><p style="font-size:26px;color:#ffde73;font-weight:900">'+String(g.score).padStart(6,"0")+' PUAN</p><p>'+g.joined+' ARAÇ KONVOYA KATILDI · '+g.horns+' KORNA</p><p>EN İYİ SKOR: '+String(bestScore()).padStart(6,"0")+'</p><button class="cta" id="again" type="button">BİR DAHA →</button><button class="secondary" id="share" type="button">SONUCU PAYLAŞ</button><a class="secondary" href="/">DİĞER OYUNLAR</a>');
+document.getElementById("again").onclick=start;
+document.getElementById("share").onclick=share;
+}
+async function share(){
+const text="Düğün Konvoyu GP'de "+g.score+" puan yaptım. "+g.joined+" arabayı konvoya kattım. Sen yetişebilir misin? https://aynen.fun/dugun-konvoyu-gp.html";
+try{if(navigator.share)await navigator.share({title:"Düğün Konvoyu GP",text,url:"https://aynen.fun/dugun-konvoyu-gp.html"});else if(navigator.clipboard){await navigator.clipboard.writeText(text);document.getElementById("share").textContent="KOPYALANDI ✓"}else{prompt("Paylaş:",text)}}catch(e){}
+}
+function pause(){if(mode==="playing"){mode="pause";pauseBtn.textContent="▶";setMenu('<div class="eyebrow">KONVOY BEKLİYOR</div><h2>MOLA</h2><p>Kimse düğüne geç kalmadı. Henüz.</p><button class="cta" id="resume" type="button">DEVAM ET →</button><a class="secondary" href="/">AYNEN.FUN</a>');document.getElementById("resume").onclick=pause}
+else if(mode==="pause"){mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now()}}
+pauseBtn.onclick=pause;
+soundBtn.onclick=function(){muted=!muted;soundBtn.textContent=muted?"SES: KAPALI":"SES: AÇIK";if(!muted)tone(580,.09)};
+function horn(){
+if(mode!=="playing"||g.hornCD>0)return;
+g.hornCD=1.25;g.horns++;tone(350,.16,"sawtooth",.065);setTimeout(()=>tone(425,.14,"sawtooth",.05),115);
+let gathered=0;
+for(const o of objects){if(o.type==="guest"&&!o.joined&&!o.passed&&o.z<.75&&o.z>.08&&Math.abs(o.lane-g.lane)<.67){
+o.joined=true;gathered++;g.joined++;g.convoy++;g.combo++;g.score+=150+Math.min(g.combo,8)*30;g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);
+}}
+if(gathered)announce(gathered>1?gathered+" ARAÇ DAHA KATILDI!":"KONVOYA +1 ARAÇ",1.3);
+else{g.combo=0;announce("KORNA ÇALINDI. DUYAN YOK.",.65)}
+}
+function spawn(){
+const lanes=[-.73,0,.73],kind=Math.random();
+let type=kind<.44?"guest":kind<.79?"rival":"obstacle";
+if(g.distance<160&&type==="obstacle")type="guest";
+let lane=lanes[Math.floor(rand(0,lanes.length))];
+if(objects.length>2&&objects.some(o=>o.z>.65&&o.lane===lane))lane=lanes[(lanes.indexOf(lane)+1)%3];
+const variant=Math.floor(rand(0,4));
+objects.push({id:nextId++,z:1.09,lane,originalLane:lane,type,variant,joined:false,passed:false,wobble:rand(0,6.28),speed:rand(.83,1.12)});
+}
+function update(dt){
+seconds+=dt;g.hornCD=Math.max(0,g.hornCD-dt);g.invuln=Math.max(0,g.invuln-dt);noticeTimer-=dt;
+if(noticeTimer<=0)banner.classList.remove("show");flash=Math.max(0,flash-dt);
+const steer=(Number(input.right)-Number(input.left))*dt*(input.brake?1.55:1.08);
+g.lane=clamp(g.lane+steer,-1.05,1.05);
+const targetSpeed=input.brake?72:input.boost?170:137;
+g.speed+=(targetSpeed-g.speed)*Math.min(1,dt*(input.brake?2.3:.7));
+g.distance+=g.speed*dt*.315;g.time-=dt;
+g.lap=Math.min(3,1+Math.floor(g.distance/760));
+g.chaos=clamp(g.chaos+dt*.14,0,100);
+if(g.distance>=2280){g.score+=Math.floor(g.time)*20+g.hearts*150;finish(true);return}
+if(g.time<=0){finish(false);return}
+spawnTimer-=dt;
+if(spawnTimer<=0){spawn();spawnTimer=clamp(rand(.96,1.44)-g.chaos*.0035,.62,1.4)}
+for(const o of objects){
+o.z-=dt*(.14+g.speed*.00143)*o.speed;
+if(o.type==="rival")o.lane=clamp(o.originalLane+Math.sin(seconds*2.6+o.wobble)*(.08+g.chaos*.0015),-.94,.94);
+if(o.z<.12&&!o.passed){
+o.passed=true;
+if(!o.joined&&Math.abs(o.lane-g.lane)<.36&&g.invuln<=0){
+g.hearts--;g.invuln=1.4;g.speed=Math.max(54,g.speed-63);g.combo=0;g.chaos=clamp(g.chaos+10,0,100);flash=.3;tone(100,.3,"sawtooth",.07);announce("KONVOYDA KÜÇÜK BİR AKSAKLIK",1.3);
+if(g.hearts<=0){finish(false);return}
+}else if(o.joined){g.score+=60}else if(Math.abs(o.lane-g.lane)<.56){g.score+=35}
+}
+}
+objects=objects.filter(o=>o.z>-.2);
+if(Math.abs(g.lane)>.95){g.speed=Math.max(45,g.speed-dt*22);if(Math.random()<dt*.8)g.score=Math.max(0,g.score-5)}
+hornBtn.disabled=g.hornCD>0;
+hornBtn.textContent=g.hornCD>0?"KORNA "+g.hornCD.toFixed(1):"♪ KORNA";
+}
+function roadCenter(y){const t=clamp((y-93)/177,0,1);return 240+Math.sin(g.distance*.0033+1.3-t*1.15)*37*t*t}
+function roadHalf(y){const t=clamp((y-93)/177,0,1);return 9+191*Math.pow(t,1.18)}
+function roadY(z){return 94+176*Math.pow(clamp(1-z,0,1),1.55)}
+function seeded(i){const x=Math.sin(i*127.1+runSeed*.02)*43758.5453;return x-Math.floor(x)}
+function cloud(x,y){rect(x,y+5,32,7,"#e9f8fd");rect(x+5,y,19,6,"#fffdfa");rect(x+23,y+2,10,8,"#f8faff");rect(x-4,y+8,43,4,"#8dd6f2")}
+function background(){
+const stage=g.lap;
+rect(0,0,W,270,"#2a7df2");rect(0,42,W,56,"#2173ed");rect(0,85,W,15,"#388ce9");
+const offset=(g.distance*.023)%540;
+for(let i=0;i<5;i++)cloud(((i*151-offset*.24+550)%550)-40,25+(i%3)*13);
+if(stage===1){
+rect(0,93,480,15,"#3d9bbd");rect(0,107,480,17,"#126fbb");
+for(let i=0;i<74;i++)rect((i*43+runSeed)%480,105+Math.floor(seeded(i*7)*17),8,2,i%2?"#a0e6ef":"#4badeb");
+for(let i=0;i<75;i++){let x=i*7-4;let h=5+Math.floor(seeded(i)*21);rect(x,103-h,5,h,i%4===0?"#bdc4a3":"#55657a");}
+rect(0,110,480,7,"#2f6d5e");
+rect(27,77,2,39,"#243e6d");rect(103,69,2,47,"#243e6d");
+for(let k=0;k<12;k++){let x=27+k*7;let mid=65+Math.abs(k-5)*3;rect(x,mid,1,112-mid,"#334b74")}
+poly([15,85,27,77,103,69,144,90,144,93,104,73,26,81],"#344b75");
+}else if(stage===2){
+poly([0,113,0,90,26,80,51,94,82,71,123,97,157,80,198,105,243,76,290,109,337,83,399,112,446,79,480,91,480,125],"#61727b");
+for(let i=0;i<18;i++){const x=i*31+Math.floor(seeded(i+42)*11),h=9+seeded(i+66)*11;rect(x,105-h,16,h,i%3===0?"#f0c197":"#d0cab3");rect(x+3,106-h,5,3,"#b8514b")}
+}else{
+rect(0,99,480,19,"#afd8de");for(let i=0;i<23;i++){const x=i*23;rect(x,99-(i%3)*5,16,18,"#dbc8a1");rect(x+5,92-(i%3)*5,6,5,"#a34b43")}
+rect(5,68,55,34,"#f4ecce");rect(4,66,57,5,"#b84d53");txt("SALON",32,84,10,"#8d3343","center");
+}
+rect(0,114,480,156,stage===2?"#6bab33":"#35921d");
+for(let y=115;y<270;y+=11)rect(0,y,480,1,y%3?"#4ca32c":"#69a833");
+}
+function road(){
+for(let y=93;y<270;y+=2){
+const t=(y-93)/177,cx=roadCenter(y),half=roadHalf(y),w=Math.max(2,t*8),wig=Math.floor(g.distance*.025+(1-t)*15);
+const grass=((wig%3+3)%3===0)?"#4fa226":"#368a1e";
+rect(0,y,480,2,grass);
+rect(cx-half-8*t,y,half*2+16*t,2,"#c7c8b5");
+rect(cx-half-6*t,y,half*2+12*t,2,wig%2?"#e9eeec":"#e54341");
+rect(cx-half,y,half*2,2,"#353d44");
+rect(cx-half+4*t,y,Math.max(1,1+t*1.4),2,"#f4f0d2");
+rect(cx+half-6*t,y,Math.max(1,1+t*1.4),2,"#f4f0d2");
+if(wig%3!==0){const lineW=Math.max(1,t*2.8);rect(cx-half/3,y,lineW,2,"#d6dcd4");rect(cx+half/3,y,lineW,2,"#d6dcd4")}
+}
+}
+function foliage(){
+for(let i=0;i<24;i++){
+const z=((i/24+g.distance*.00016)%1);
+const y=roadY(z),half=roadHalf(y),cx=roadCenter(y),size=3+24*Math.pow(1-z,1.7);
+const side=i%2===0?1:-1,x=cx+side*(half+16+size*.2),yy=y;
+if(size<4)continue;
+rect(x-size*.11,yy-size*.6,size*.23,size*.62,"#594c31");
+poly([x,yy-size*1.55,x-size*.53,yy-size*.46,x+size*.53,yy-size*.46],"#174e2e");
+poly([x,yy-size*1.1,x-size*.65,yy-size*.17,x+size*.65,yy-size*.17],"#216c36");
+rect(x-size*.24,yy-size*.51,size*.49,size*.16,"#309a3e");
+}
+}
+function bannerArch(){
+if(g.distance>160)return;
+const z=clamp(.65-g.distance/520,0,1),y=roadY(z),half=roadHalf(y)*1.4,cx=roadCenter(y);
+if(z===0)return;
+const h=11+(1-z)*33;
+rect(cx-half,y-h,4,h+2,"#4ca6d4");rect(cx+half-4,y-h,4,h+2,"#4ca6d4");rect(cx-half,y-h,half*2,8,"#ffe9ac");
+rect(cx-half+5,y-h+1,half*2-10,6,"#e6c56e");txt("DÜĞÜN KONVOYU",cx,y-h+6,Math.max(4,Math.floor(3+(1-z)*6)),"#be3440","center");
+}
+function carSprite(cx,y,w,type,variant,joined,player){
+w=Math.max(4,w);const h=w*.69,bodyY=y-h;
+const palette=player?"#e74739":type==="guest"?"#dbd6b5":type==="rival"?(variant%2?"#8a3991":"#c6a1c5"):(variant%2?"#e0a54b":"#7b889a");
+rect(cx-w*.48,bodyY+h*.72,w*.2,h*.33,"#161c29");rect(cx+w*.28,bodyY+h*.72,w*.2,h*.33,"#161c29");
+rect(cx-w*.43,bodyY+h*.29,w*.86,h*.63,"#17202a");
+rect(cx-w*.47,bodyY+h*.32,w*.94,h*.46,palette);
+poly([cx-w*.32,bodyY+h*.31,cx-w*.21,bodyY+h*.04,cx+w*.22,bodyY+h*.04,cx+w*.34,bodyY+h*.31],"#162939");
+rect(cx-w*.19,bodyY+h*.08,w*.38,h*.18,"#4bb2c5");
+rect(cx-w*.36,bodyY+h*.74,w*.17,h*.11,"#f8aa5f");rect(cx+w*.19,bodyY+h*.74,w*.17,h*.11,"#f8aa5f");
+rect(cx-w*.17,bodyY+h*.75,w*.34,h*.14,"#29313c");
+if(player||type==="rival"||joined){
+const bow=player?"#f3f5ec":joined?"#f8e1bb":"#ff84b7";
+poly([cx,bodyY+h*.6,cx-w*.18,bodyY+h*.46,cx-w*.19,bodyY+h*.72],"#ffffff");
+poly([cx,bodyY+h*.6,cx+w*.18,bodyY+h*.46,cx+w*.19,bodyY+h*.72],bow);
+rect(cx-w*.03,bodyY+h*.56,w*.06,h*.11,player?"#eee":"#ff5fa1");
+if(player){rect(cx-w*.21,bodyY+h*.82,w*.06,h*.24,"#f6e8ed");rect(cx+w*.12,bodyY+h*.82,w*.06,h*.24,"#f6e8ed")}
+}
+if(type==="guest"&&!joined&&w>10){rect(cx-w*.18,bodyY-h*.28,w*.36,h*.24,"#fff1b2");txt("+",cx,bodyY-h*.07,Math.max(5,Math.floor(w*.27)),"#a83828","center")}
+if(joined&&w>7){txt("♥",cx,bodyY-h*.29,Math.max(5,Math.floor(w*.28)),"#f6eff5","center")}
+if(type==="obstacle"&&w>11){rect(cx-w*.27,bodyY+h*.3,w*.54,h*.24,"#4c5b65");rect(cx-w*.32,bodyY+h*.09,w*.63,h*.13,"#e8b55d")}
+}
+function vehicles(){
+const sorted=objects.slice().sort((a,b)=>b.z-a.z);
+for(const o of sorted){
+if(o.z>1||o.z<-.13)continue;
+const y=roadY(o.z),half=roadHalf(y),center=roadCenter(y),x=center+o.lane*half*.83;
+const width=5+46*Math.pow(1-clamp(o.z,0,1),1.5);
+carSprite(x,y,width,o.type,o.variant,o.joined,false);
+}
+}
+function decorations(){
+if(g.lap!==3)return;
+const z=((g.distance-1520)%600)/600,y=roadY(1-z);
+if(y<100)return;
+const cx=roadCenter(y),hw=roadHalf(y)*1.15;
+rect(cx-hw,y-32,3,38,"#f0d5ae");rect(cx+hw-3,y-32,3,38,"#f0d5ae");
+rect(cx-hw,y-32,hw*2,8,"#f8e3b7");txt("DÜĞÜN SALONU",cx,y-25,8,"#ad3e3b","center");
+}
+function playerCar(){
+const x=240+g.lane*116+Math.sin(g.distance*.0033)*32,vy=255,shake=flash>0?rand(-3,3):0;
+if(g.invuln>0&&Math.floor(seconds*12)%2===0)return;
+rect(x-21+shake,258,44,3,"#1a2d2f");
+carSprite(x+shake,vy,66,"player",0,false,true);
+if(input.brake){rect(x-23+shake,247,10,5,"#ffec73");rect(x+13+shake,247,10,5,"#ffec73")}
+}
+function hud(){
+rect(0,0,480,38,"#184bcd");rect(0,36,480,2,"#123d92");
+txt("SCORE",10,14,11,"#f6eee4");txt(String(g.score).padStart(6,"0"),10,29,11,"#fff4a2");
+txt("TIME",135,14,11,"#ffe36d");txt(String(Math.max(0,Math.ceil(g.time))).padStart(2,"0"),147,29,11,"#ffec91");
+txt("LAP",223,14,11,"#91f18e");txt(g.lap+"/3",231,29,11,"#b8efba");
+txt("SPEED",290,14,11,"#fff");txt(Math.round(g.speed)+"km",300,29,11,"#fff0cc");
+txt("♥".repeat(g.hearts),466,14,13,"#ffacc0","right");
+txt("KONVOY "+String(g.convoy).padStart(2,"0"),466,29,9,"#ffdc75","right");
+rect(4,39,93,8,"#1b2447");rect(5,40,Math.round(g.chaos*.91),6,"#ed5b6c");txt("KAOS",100,46,7,"#fff3bd");
+if(g.hornCD>0){rect(382,40,92,7,"#142555");rect(382,40,92*(1-g.hornCD/1.25),7,"#f9cc5a")}
+else txt("KORNA HAZIR",474,46,8,"#fbedad","right");
+}
+function draw(){
+background();road();foliage();bannerArch();decorations();vehicles();playerCar();hud();
+if(mode==="menu"){rect(162,65,156,18,"#ffedab");txt("DÜĞÜN KONVOYU GP",240,78,10,"#ad3242","center")}
+if(flash>0){c.fillStyle="rgba(255,245,200,"+(flash*.65)+")";c.fillRect(0,40,W,H-40)}
+if(mode==="pause"){rect(0,0,480,270,"rgba(9,13,35,.28)")}
+}
+function frame(now){const dt=Math.min((now-(last||now))/1000,.05);last=now;if(mode==="playing")update(dt);draw();requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+function hold(id,key){
+const el=document.getElementById(id);
+el.addEventListener("pointerdown",e=>{e.preventDefault();input[key]=true;el.classList.add("down");try{el.setPointerCapture(e.pointerId)}catch(err){}});
+const stop=()=>{input[key]=false;el.classList.remove("down")};
+el.addEventListener("pointerup",stop);el.addEventListener("pointercancel",stop);el.addEventListener("lostpointercapture",stop);
+}
+hold("left","left");hold("right","right");hold("brake","brake");
+hornBtn.addEventListener("pointerdown",e=>{e.preventDefault();horn()});
+const keys={ArrowLeft:"left",KeyA:"left",ArrowRight:"right",KeyD:"right",ArrowDown:"brake",KeyS:"brake",ArrowUp:"boost",KeyW:"boost"};
+addEventListener("keydown",e=>{
+if(keys[e.code]){e.preventDefault();input[keys[e.code]]=true}
+if(e.code==="Space"){e.preventDefault();if(!e.repeat)horn()}
+if(e.code==="KeyP"||e.code==="Escape"){e.preventDefault();if(!e.repeat)pause()}
+if(e.code==="Enter"&&mode==="menu"){e.preventDefault();start()}
+});
+addEventListener("keyup",e=>{if(keys[e.code]){e.preventDefault();input[keys[e.code]]=false}});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&mode==="playing")pause()});
+addEventListener("blur",()=>{Object.keys(input).forEach(k=>input[k]=false);if(mode==="playing")pause()});
+canvas.addEventListener("pointerdown",e=>{if(mode!=="playing")return;const r=canvas.getBoundingClientRect();const xx=(e.clientX-r.left)/r.width;input.left=xx<.43;input.right=xx>.57});
+canvas.addEventListener("pointerup",()=>{input.left=false;input.right=false});
+canvas.addEventListener("pointercancel",()=>{input.left=false;input.right=false});
+})();
+</script>
+</body>
+</html>
