@@ -331,7 +331,41 @@ body{overflow:hidden}
  .hintpill{display:none!important}
  .discover-hotspots{clip-path:none!important}
 }
-</style></head><body><main class="app"><header class="bar"><a class="brand" href="/">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><section class="stage">
+
+/* TRUE LEFT ICON RAIL / FULL WIDTH VISUAL CANVAS */
+:root{--rail-w:58px!important}
+.app{padding-left:0!important}
+.stage{left:58px!important;width:calc(100% - 58px)!important;right:0!important}
+.world{left:0!important;width:100%!important}
+.bar{left:74px!important;top:9px!important;z-index:15!important}
+.bar .brand{font-size:17px!important;padding:10px 13px!important}
+.slim-rail{position:absolute;z-index:40;top:0;bottom:0;left:0;width:58px;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 6px;background:#f6e9cf;border-right:2px solid #507258;box-shadow:3px 0 14px #223c3130}
+.slim-rail button,.slim-rail a{display:grid;place-items:center;width:44px;height:44px;border:1.5px solid #55745c;border-radius:13px;background:#fff4dc;color:#2b4a35;font:700 22px Arial;text-decoration:none;cursor:pointer;touch-action:manipulation}
+.slim-rail button:active,.slim-rail button:focus-visible{background:#c6dea0}
+.slim-rail a{margin-top:auto}
+.panel,.panel.minimized{left:auto!important;right:16px!important;top:auto!important;bottom:16px!important;width:min(355px,calc(100vw - 88px))!important;height:auto!important;max-height:min(77dvh,700px)!important;min-height:0!important;padding:14px!important;border:1.5px solid #58704d!important;border-radius:20px!important;box-shadow:0 11px 26px #203a283b!important;overflow-y:auto!important;background:#f9ecd6f5!important}
+.panel.minimized{width:270px!important;max-height:120px!important;padding:10px!important}
+.panel.minimized>*:not(.event-tools){display:none!important}
+.panel.minimized #title,.panel.minimized #area{display:block!important}
+.panel .event-tools{top:0!important;grid-template-columns:1fr 1fr!important}
+.panel .event-tools .panel-toggle{display:none!important}
+.panel .switches{grid-template-columns:1fr 1fr!important}
+.city-pins{display:none!important}
+.discover-hotspots{clip-path:none!important}
+@media(max-width:780px){
+ :root{--rail-w:46px!important}
+ .slim-rail{width:46px;padding:9px 4px;gap:9px}
+ .slim-rail button,.slim-rail a{width:36px;height:40px;border-radius:11px;font-size:19px}
+ .stage{left:46px!important;width:calc(100% - 46px)!important}
+ .bar{left:54px!important;top:8px!important}
+ .bar .brand{font-size:15px!important;padding:8px 10px!important}
+ .panel,.panel.minimized{top:auto!important;left:auto!important;right:7px!important;bottom:max(8px,env(safe-area-inset-bottom))!important;width:min(325px,calc(100vw - 61px))!important;height:auto!important;max-height:57dvh!important;padding:10px!important;border-radius:16px!important}
+ .panel.minimized{width:min(215px,calc(100vw - 61px))!important;max-height:100px!important}
+ .panel .switches{grid-template-columns:1fr!important}
+ .panel h1{font-size:21px!important}
+ .hotspot .object-art{width:37px!important;height:37px!important}
+}
+</style></head><body><main class="app"><header class="bar"><a class="brand" href="/">yatarı <span>kaç?</span></a><span class="topnote">DENEYSEL ŞEHİR / BİR HAREKET HER ŞEYİ DEĞİŞTİRİR</span><a href="/" class="topnote">OYUNLAR ↗</a></header><nav class="slim-rail" aria-label="Şehir araçları"><button id="railEvents" title="Olayları aç" aria-label="Olayları aç">▦</button><button id="railNext" title="Sonraki olay" aria-label="Sonraki olay">↻</button><button id="railPanel" title="Olay kartını aç veya kapat" aria-label="Olay kartını aç veya kapat">☰</button><a href="/" title="Ana sayfa" aria-label="Ana sayfa">⌂</a></nav><section class="stage">
 <div class="world"><div class="hintpill" id="hint">BİR YERE DOKUN ↓</div><svg class="scene" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Yemyeşil ağaçların arasında elle çizilmiş pastel bir Türkiye mahallesi. Binalara dokunarak olayları keşfet.">
 <defs>
 <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".43" numOctaves="3" seed="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".115"/></feComponentTransfer></filter>
@@ -560,5 +594,9 @@ document.querySelectorAll('.building').forEach(el=>{el.addEventListener('click',
 $('panelToggle').onclick=()=>{const p=$('casePanel'),closed=p.classList.toggle('minimized');$('panelToggle').setAttribute('aria-expanded',String(!closed));$('panelToggle').setAttribute('aria-label',closed?'Olay panelini genişlet':'Olay panelini küçült')};
 render(active);
 $('casePanel').classList.remove('minimized');
-document.querySelectorAll('.discover-hotspots button,.city-pins button').forEach(b=>b.addEventListener('click',()=>{if(window.matchMedia('(max-width:780px)').matches){$('casePanel').classList.remove('minimized');$('panelToggle').setAttribute('aria-expanded','true');}}));
+document.querySelectorAll('.discover-hotspots button,.city-pins button').forEach(b=>b.addEventListener('click',()=>{if(true){$('casePanel').classList.remove('minimized');$('panelToggle').setAttribute('aria-expanded','true');}}));
+$('casePanel').classList.add('minimized');
+$('railEvents').onclick=()=>{const a=$('archive');$('casePanel').classList.remove('minimized');a.hidden=!a.hidden;$('archiveToggle').setAttribute('aria-expanded',String(!a.hidden));};
+$('railNext').onclick=()=>{$('randomEvent').click();$('casePanel').classList.remove('minimized')};
+$('railPanel').onclick=()=>{$('casePanel').classList.toggle('minimized')};
 </script></body></html>
