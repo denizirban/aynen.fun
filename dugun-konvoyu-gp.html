@@ -45,7 +45,16 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 .pad button{min-width:68px;min-height:55px;border:2px solid #7291ad;background:#263d5c;color:#fff2cd;font-size:22px;font-weight:900;box-shadow:0 3px 0 #080f23;border-radius:4px;user-select:none;-webkit-user-select:none}
 .pad button:active,.pad button.down{background:#3b6387;transform:translateY(2px);box-shadow:0 1px 0 #080f23}
 .pad button.horn{min-width:124px;background:#eac954;color:#39283e;border-color:#ffe28a;font-size:14px;letter-spacing:.04em}
-.pad button.horn:disabled{opacity:.6}
+.pad button.horn:disabled,.pad button.special:disabled{opacity:.6}.pad button.horn.active{box-shadow:0 0 0 3px #fff0a0,0 0 20px #e3b759}
+.pad button.special{min-width:115px;background:#2d5480;color:#ffedbc;border-color:#92b5dc;font-size:12px}
+.pad button.special.active{background:#fff0a0;color:#563e21;border-color:#fdd071}
+.hud-ready.ready{color:#ffed77;text-shadow:0 0 10px #fbb85c}
+.hud-stage{font-weight:500}
+#combo-float{position:absolute;bottom:23%;left:50%;z-index:2;transform:translate(-50%,0);pointer-events:none;min-width:100px;text-align:center;font-family:"DM Mono",monospace;font-size:clamp(14px,1.6vw,22px);color:#fff3cb;text-shadow:1px 2px #652f4a;opacity:0;transition:opacity .17s}
+#combo-float.on{opacity:1}
+.frame{background:#163367}
+@media(max-width:650px){.pad button.special{min-width:68px;max-width:78px;font-size:10px}.pad button.horn{min-width:84px;font-size:11px}.pad .group{gap:5px}.pad button{min-width:52px}}
+
 .pad .hint{font-size:10px;color:#a4b8d7;align-self:center;line-height:1.4;text-align:center}
 .mini{color:#aec1e2;font-size:9px;white-space:nowrap;align-self:center}
 @media(max-width:650px){
@@ -69,7 +78,7 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 <div class="metric speed"><span class="metric-label">HIZ</span><span class="metric-value" id="h-speed">130 km</span></div>
 <div class="metric convoy"><span class="metric-label">KONVOY</span><span class="metric-value" id="h-convoy">04 ♥♥♥</span></div>
 </div><div class="hud-sub"><span class="hud-stage" id="h-stage">GELİN ALMA · MAHALLE</span><span class="chaos-wrap">KAOS <span class="chaos-track"><i id="h-chaos"></i></span></span><span class="hud-ready" id="h-horn">KORNA HAZIR</span></div></div>
-<div class="banner" id="banner" role="status" aria-live="polite"></div>
+<div class="banner" id="banner" role="status" aria-live="polite"></div><div id="combo-float" aria-live="off"></div>
 <div class="overlay" id="overlay">
 <section class="card" id="menu">
 <div class="eyebrow">AYNEN.FUN / 1987 ARCADE EDITION</div>
@@ -77,7 +86,7 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 <p>Mahallede gelin alma bitti. Düğün salonuna kadar konvoyu büyüt. Ama yolda üç ayrı düğün daha var.</p>
 <div class="rules">
 <div><strong>← → DİREKSİYON</strong>Sağdan soldan çıkan akrabalara dikkat et.</div>
-<div><strong>BOŞLUK / KORNA</strong>Üzerinde + olan araç yakındayken bas; konvoya katılsın.</div>
+<div><strong>BOŞLUK / KORNA</strong>+ işaretli arabalar yaklaşınca korna çal. X: dörtlülerle korun.</div>
 </div>
 <p>Mahalle → E-5 → Düğün Salonu. <span class="accent">3 can. Gerisi korna.</span></p>
 <button class="cta" id="start" type="button">KONVOYA KATIL →</button>
@@ -87,8 +96,8 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 </div>
 <div class="pad" aria-label="Oyun kontrolleri">
 <div class="group"><button id="left" aria-label="Sola dön" type="button">◀</button><button id="right" aria-label="Sağa dön" type="button">▶</button></div>
-<span class="hint">← → YÖNLENDİR &nbsp;·&nbsp; BOŞLUK KORNA<br>↑ HIZLAN &nbsp;↓ FREN &nbsp;·&nbsp; P DURAKLAT</span>
-<div class="group"><button id="brake" aria-label="Fren" type="button" style="font-size:12px">FREN</button><button id="horn" class="horn" aria-label="Korna çal" type="button">♪ KORNA</button></div>
+<span class="hint">← → YÖNLENDİR &nbsp;·&nbsp; BOŞLUK KORNA<br>↑ HIZLAN &nbsp;↓ FREN &nbsp;·&nbsp; X DÖRTLÜ &nbsp;·&nbsp; P DURAKLAT</span>
+<div class="group"><button id="brake" aria-label="Fren" type="button" style="font-size:12px">FREN</button><button id="dortlu" class="special" aria-label="Dörtlü flaşörleri aç" type="button">⚡ DÖRTLÜ</button><button id="horn" class="horn" aria-label="Korna çal" type="button">♪ KORNA</button></div>
 </div>
 </div>
 <script>
@@ -99,7 +108,9 @@ c.imageSmoothingEnabled=false;c.setTransform(2,0,0,2,0,0);
 const overlay=document.getElementById("overlay"),menu=document.getElementById("menu"),banner=document.getElementById("banner"),soundBtn=document.getElementById("sound"),pauseBtn=document.getElementById("pause"),hornBtn=document.getElementById("horn");
 let mode="menu",muted=false,audio=null,last=0,seconds=0,objects=[],spawnTimer=0,nextId=1,noticeTimer=0,flash=0,runSeed=0;
 const input={left:false,right:false,brake:false,boost:false};
-let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,chaos:0,lap:1,hornCD:0,invuln:0,horns:0,joined:0};
+const dortluBtn=document.getElementById("dortlu"),comboFloat=document.getElementById("combo-float");
+let lastLap=1,comboFloatTime=0,particles=[],pulse=0,rumble=0,helpShown=false;
+let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const rand=(a,b)=>a+Math.random()*(b-a);
 function rect(x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h));}
@@ -110,8 +121,8 @@ function fanfare(){tone(523,.17,"square",.04);setTimeout(()=>tone(659,.18,"squar
 function announce(msg,forSeconds){banner.textContent=msg;banner.classList.add("show");noticeTimer=forSeconds||1.6}
 function setMenu(html){overlay.hidden=false;menu.innerHTML=html}
 function start(){
-g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,chaos:0,lap:1,hornCD:0,invuln:0,horns:0,joined:0};
-objects=[{id:nextId++,z:.54,lane:-.72,originalLane:-.72,type:"escort",variant:2,joined:true,passed:false,wobble:0,speed:.72},{id:nextId++,z:.69,lane:.72,originalLane:.72,type:"escort",variant:1,joined:true,passed:false,wobble:0,speed:.74},{id:nextId++,z:.86,lane:0,originalLane:0,type:"escort",variant:0,joined:true,passed:false,wobble:0,speed:.74}];seconds=0;spawnTimer=.5;runSeed=Math.random()*10000;flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",2);
+g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,combo:0,comboClock:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
+lastLap=1;comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[{id:nextId++,z:.54,lane:-.72,originalLane:-.72,type:"escort",variant:2,joined:true,passed:false,wobble:0,speed:.72},{id:nextId++,z:.69,lane:.72,originalLane:.72,type:"escort",variant:1,joined:true,passed:false,wobble:0,speed:.74},{id:nextId++,z:.86,lane:0,originalLane:0,type:"escort",variant:0,joined:true,passed:false,wobble:0,speed:.74}];seconds=0;spawnTimer=.5;runSeed=Math.random()*10000;flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",2);
 }
 function bestScore(){try{return Number(localStorage.getItem("dugun-gp-best")||0)}catch(e){return 0}}
 function saveBest(){try{if(g.score>bestScore())localStorage.setItem("dugun-gp-best",String(g.score))}catch(e){}}
@@ -135,60 +146,106 @@ pauseBtn.onclick=pause;
 soundBtn.onclick=function(){muted=!muted;soundBtn.textContent=muted?"SES: KAPALI":"SES: AÇIK";if(!muted)tone(580,.09)};
 function horn(){
 if(mode!=="playing"||g.hornCD>0)return;
-g.hornCD=1.25;g.horns++;tone(350,.16,"sawtooth",.065);setTimeout(()=>tone(425,.14,"sawtooth",.05),115);
+g.hornCD=.90;pulse=.42;g.horns++;tone(350,.16,"sawtooth",.065);setTimeout(()=>tone(425,.14,"sawtooth",.05),115);
 let gathered=0;
 for(const o of objects){if(o.type==="guest"&&!o.joined&&!o.passed&&o.z<.75&&o.z>.08&&Math.abs(o.lane-g.lane)<.67){
-o.joined=true;o.pop=1;gathered++;g.joined++;g.convoy++;g.combo++;g.score+=150+Math.min(g.combo,8)*30;g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
+o.joined=true;o.pop=1;gathered++;g.joined++;g.convoy++;g.combo++;g.score+=170+Math.min(g.combo,8)*45;g.comboClock=5.5;showCombo("+"+(170+Math.min(g.combo,8)*45)+"  ·  "+g.combo+"x SERİ");makeConfetti(o.z,o.lane,18);g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
 }}
 if(gathered)announce(gathered>1?gathered+" ARAÇ DAHA KATILDI!":["DAYININ ARKADAŞI DA GELDİ","KONVOYA +1 ARAÇ","HALA OĞLU YETİŞTİ","KORNAYI DUYUP GELDİ"][Math.floor(rand(0,4))],1.3);
-else{g.combo=0;announce("KORNA ÇALINDI. DUYAN YOK.",.65)}
+else{g.combo=0;announce("KORNA ÇALINDI. DUYAN YOK.",.6)}
 }
+
+function showCombo(t){comboFloat.textContent=t;comboFloat.classList.add("on");comboFloatTime=1.4}
+function makeConfetti(z,lane,count){
+ const y=roadY(z),x=roadCenter(y)+lane*roadHalf(y)*.83;
+ for(let i=0;i<count;i++)particles.push({x:x+rand(-9,9),y:y-rand(3,16),vx:rand(-24,24),vy:rand(-40,-8),life:rand(.5,1.4),color:["#fff0cb","#f47da0","#d9e8f9","#eecc69","#8fba75"][i%5]});
+ if(particles.length>110)particles.splice(0,particles.length-110);
+}
+function dortlu(){
+ if(mode!=="playing"||g.dortluCD>0)return;
+ g.dortluCD=12;g.dortluOn=2.4;g.invuln=Math.max(g.invuln,2.4);
+ tone(810,.1,"square",.045);setTimeout(()=>tone(680,.10,"square",.045),110);
+ announce("DÖRTLÜLER YANDI · 2 SN KORUMA",1.3);
+}
+dortluBtn.addEventListener("pointerdown",e=>{e.preventDefault();dortlu()});
+
 function spawn(){
-const lanes=[-.73,0,.73],kind=Math.random();
-let type=kind<.44?"guest":kind<.79?"rival":"obstacle";
-if(g.distance<160&&type==="obstacle")type="guest";
-let lane=lanes[Math.floor(rand(0,lanes.length))];
-if(objects.length>2&&objects.some(o=>o.z>.65&&o.lane===lane))lane=lanes[(lanes.indexOf(lane)+1)%3];
-const variant=Math.floor(rand(0,4));
-objects.push({id:nextId++,z:1.09,lane,originalLane:lane,type,variant,joined:false,passed:false,wobble:rand(0,6.28),speed:rand(.83,1.12)});
+ const lanes=[-.73,0,.73],r=Math.random(),guestChance=g.lap===1?.59:g.lap===2?.47:.38;
+ let type=r<guestChance?"guest":r<guestChance+.34?"rival":"obstacle";
+ if(g.distance<145&&type==="obstacle")type="guest";
+ let lane=lanes[Math.floor(rand(0,lanes.length))];
+ if(objects.some(o=>o.z>.65&&o.z<1.1&&Math.abs(o.lane-lane)<.25))
+   lane=lanes[(lanes.indexOf(lane)+1)%3];
+ const variant=Math.floor(rand(0,6));
+ objects.push({id:nextId++,z:1.05,lane,originalLane:lane,type,variant,joined:false,passed:false,wobble:rand(0,6.28),speed:rand(.85,1.08)});
 }
 function update(dt){
-seconds+=dt;g.hornCD=Math.max(0,g.hornCD-dt);g.invuln=Math.max(0,g.invuln-dt);noticeTimer-=dt;
-if(noticeTimer<=0)banner.classList.remove("show");flash=Math.max(0,flash-dt);
-const steer=(Number(input.right)-Number(input.left))*dt*(input.brake?1.55:1.08);
-g.lane=clamp(g.lane+steer,innerHeight>innerWidth?-.55:-1.05,innerHeight>innerWidth?.55:1.05);
-const targetSpeed=input.brake?72:input.boost?170:137;
-g.speed+=(targetSpeed-g.speed)*Math.min(1,dt*(input.brake?2.3:.7));
-g.distance+=g.speed*dt*.315;g.time-=dt;
-g.lap=Math.min(3,1+Math.floor(g.distance/760));
-g.chaos=clamp(g.chaos+dt*.14,0,100);
-if(g.distance>=2280){g.score+=Math.floor(g.time)*20+g.hearts*150;finish(true);return}
-if(g.time<=0){finish(false);return}
-spawnTimer-=dt;
-if(spawnTimer<=0){spawn();spawnTimer=clamp(rand(.96,1.44)-g.chaos*.0035,.62,1.4)}
-for(const o of objects){
-o.z-=dt*(.14+g.speed*.00143)*o.speed;if(o.pop>0)o.pop-=dt;
-if(o.type==="rival")o.lane=clamp(o.originalLane+Math.sin(seconds*2.6+o.wobble)*(.08+g.chaos*.0015),-.94,.94);
-if(o.z<.12&&!o.passed){
-o.passed=true;
-if(!o.joined&&Math.abs(o.lane-g.lane)<.36&&g.invuln<=0){
-g.hearts--;g.invuln=1.4;g.speed=Math.max(54,g.speed-63);g.combo=0;g.chaos=clamp(g.chaos+10,0,100);flash=.3;tone(100,.3,"sawtooth",.07);announce(["DAYI ANİ FREN YAPTI!","YANLIŞ KONVOYA GİRDİN!","GÖZÜN YOLDA OLSUN!","KONVOY KARIŞTI!"][Math.floor(rand(0,4))],1.3);
-if(g.hearts<=0){finish(false);return}
-}else if(o.joined){g.score+=60}else if(Math.abs(o.lane-g.lane)<.56){g.score+=35}
+ seconds+=dt;g.hornCD=Math.max(0,g.hornCD-dt);
+ g.dortluCD=Math.max(0,g.dortluCD-dt);g.dortluOn=Math.max(0,g.dortluOn-dt);
+ g.invuln=Math.max(0,g.invuln-dt);noticeTimer-=dt;comboFloatTime-=dt;
+ if(comboFloatTime<0)comboFloat.classList.remove("on");
+ if(noticeTimer<=0)banner.classList.remove("show");
+ flash=Math.max(0,flash-dt);pulse=Math.max(0,pulse-dt);rumble=Math.max(0,rumble-dt);
+ const steer=(Number(input.right)-Number(input.left))*dt*(input.brake?1.50:1.20);
+ g.lane=clamp(g.lane+steer,innerHeight>innerWidth?-.64:-1.04,innerHeight>innerWidth?.64:1.04);
+ const targetSpeed=input.brake?74:input.boost?173:136;
+ g.speed+=(targetSpeed-g.speed)*Math.min(1,dt*(input.brake?2.3:.95));
+ g.distance+=g.speed*dt*.315;g.time-=dt;
+ g.lap=Math.min(3,1+Math.floor(g.distance/760));
+ if(g.lap>lastLap){
+  lastLap=g.lap;g.checkpoints++;g.time+=8;g.score+=500+g.convoy*25;
+  g.chaos=clamp(g.chaos+13,0,100);
+  announce(g.lap===2?"E-5 · BAŞKA DÜĞÜNLER DE VAR!":"SON ETAP · SALON GÖRÜNDÜ!",2.5);
+  showCombo("+500 ETAP BONUSU · +8 SN");
+  fanfare();makeConfetti(.48,0,28);
+ }
+ g.chaos=clamp(g.chaos+dt*(.30+g.lap*.12),0,100);
+ if(g.comboClock>0){g.comboClock-=dt;if(g.comboClock<=0)g.combo=0;}
+ if(g.distance>=2280){g.score+=Math.floor(g.time)*25+g.hearts*220+g.convoy*70;finish(true);return}
+ if(g.time<=0){finish(false);return}
+ spawnTimer-=dt;
+ if(spawnTimer<=0){spawn();spawnTimer=clamp(rand(1.0,1.4)-g.chaos*.0038-(g.lap-1)*.11,.49,1.35)}
+ for(const o of objects){
+  o.z-=dt*(.14+g.speed*.00143)*o.speed;if(o.pop>0)o.pop-=dt;
+  if(o.type==="rival")o.lane=clamp(o.originalLane+Math.sin(seconds*2.6+o.wobble)*(.06+g.chaos*.0015),-.90,.90);
+  if(o.z<.11&&!o.passed){
+   o.passed=true;
+   const delta=Math.abs(o.lane-g.lane);
+   if(o.type==="escort"){g.score+=12;continue}
+   if(o.joined){g.score+=80;continue}
+   if(delta<.31){
+    if(g.invuln<=0){
+     g.hearts--;g.invuln=1.35;g.speed=Math.max(58,g.speed-47);g.combo=0;g.comboClock=0;
+     g.convoy=Math.max(1,g.convoy-1);g.chaos=clamp(g.chaos+12,0,100);flash=.28;rumble=.42;
+     tone(105,.27,"sawtooth",.06);announce(["DAYI ANİ FREN YAPTI!","YANLIŞ KONVOYA GİRDİN!","GÖZÜN YOLDA OLSUN!","KONVOY KARIŞTI!"][Math.floor(rand(0,4))],1.25);
+     if(g.hearts<=0){finish(false);return}
+    }else{g.score+=90;showCombo("+90 · DÖRTLÜ KALKANI")}
+   }else if(delta<.56){
+    g.nearMiss++;g.score+=100;showCombo("+100 · KIL PAYI!");
+    if(g.nearMiss%4===0){g.score+=250;announce("4 YAKIN GEÇİŞ · BONUS!",1.1)}
+   }else g.score+=20;
+  }
+ }
+ objects=objects.filter(o=>o.z>-.14);
+ if(Math.abs(g.lane)>.94){g.speed=Math.max(46,g.speed-dt*31);g.chaos=Math.min(100,g.chaos+dt*.7)}
+ if(!helpShown&&seconds>5&&objects.some(o=>o.type==="guest"&&o.z<.7&&o.z>.19)){
+   helpShown=true;announce("+ İŞARETLİ ARABA YAKIN · KORNA ÇAL!",1.6);
+ }
+ for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=54*dt;p.life-=dt}
+ particles=particles.filter(p=>p.life>0);
+ hornBtn.disabled=g.hornCD>0;hornBtn.textContent=g.hornCD>0?"KORNA "+g.hornCD.toFixed(1):"♪ KORNA";
+ dortluBtn.disabled=g.dortluCD>0;dortluBtn.classList.toggle("active",g.dortluOn>0);
+ dortluBtn.textContent=g.dortluOn>0?"⚡ AÇIK":g.dortluCD>0?"DÖRTLÜ "+Math.ceil(g.dortluCD):"⚡ DÖRTLÜ";
+ updateHud();
 }
-}
-objects=objects.filter(o=>o.z>-.2);
-if(Math.abs(g.lane)>.95){g.speed=Math.max(45,g.speed-dt*22);if(Math.random()<dt*.8)g.score=Math.max(0,g.score-5)}
-hornBtn.disabled=g.hornCD>0;
-hornBtn.textContent=g.hornCD>0?"KORNA "+g.hornCD.toFixed(1):"♪ KORNA";
-updateHud();
-}
-const scoreEl=document.getElementById("h-score"),timeEl=document.getElementById("h-time"),lapEl=document.getElementById("h-lap"),speedEl=document.getElementById("h-speed"),convoyEl=document.getElementById("h-convoy"),stageEl=document.getElementById("h-stage"),chaosEl=document.getElementById("h-chaos"),hornEl=document.getElementById("h-horn");
 function updateHud(){
 scoreEl.textContent=String(g.score).padStart(6,"0");timeEl.textContent=Math.max(0,Math.ceil(g.time));lapEl.textContent=g.lap+"/3";
 speedEl.textContent=Math.round(g.speed)+" km";convoyEl.textContent=String(g.convoy).padStart(2,"0")+"  "+"♥".repeat(g.hearts);
 stageEl.textContent=["GELİN ALMA · MAHALLE","E-5 · KONVOY TRAFİĞİ","DÜĞÜN SALONU · SON ÇIKIŞ"][g.lap-1];
-chaosEl.style.width=g.chaos+"%";hornEl.textContent=g.hornCD>0?"KORNA DOLUYOR":"KORNA HAZIR";
+chaosEl.style.width=g.chaos+"%";const target=objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.76&&o.z>.14&&Math.abs(o.lane-g.lane)<.7);
+hornEl.textContent=g.hornCD>0?"KORNA DOLUYOR":target?"YAKINDA ARAÇ! KORNA":"KORNA HAZIR";
+hornEl.classList.toggle("ready",target&&g.hornCD===0);
+hornBtn.classList.toggle("active",target&&g.hornCD===0);
 }
 updateHud();
 function roadCenter(y){const t=clamp((y-93)/177,0,1);return 240+Math.sin(g.distance*.0033+1.3-t*1.15)*37*t*t}
@@ -500,6 +557,7 @@ const keys={ArrowLeft:"left",KeyA:"left",ArrowRight:"right",KeyD:"right",ArrowDo
 addEventListener("keydown",e=>{
 if(keys[e.code]){e.preventDefault();input[keys[e.code]]=true}
 if(e.code==="Space"){e.preventDefault();if(!e.repeat)horn()}
+if(e.code==="KeyX"){e.preventDefault();if(!e.repeat)dortlu()}
 if(e.code==="KeyP"||e.code==="Escape"){e.preventDefault();if(!e.repeat)pause()}
 if(e.code==="Enter"&&mode==="menu"){e.preventDefault();start()}
 });
