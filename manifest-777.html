@@ -123,6 +123,7 @@ a{color:inherit;text-decoration:none}
 #universe[data-mood="ritual"] #orb{filter:drop-shadow(0 0 10px #cbb2f555)}
 @media(max-width:780px){#eventVisual{left:11px;bottom:64px;max-width:32%}#eventVisual .signal{font-size:16px;padding:6px 8px}#eventVisual .signal small{font-size:7px}}
 </style>
+<link rel="stylesheet" href="/manifest-777-v2.css?v=2">
 </head>
 <body>
 <div class="shell">
@@ -132,6 +133,7 @@ a{color:inherit;text-decoration:none}
     <section class="universe" id="universe" data-mood="idle" aria-label="Animasyonlu evren simülasyonu">
       <div class="scene-head"><span>KOZMİK OPERASYON MERKEZİ<br>TALEP NO: <b id="ticketNo">777-000</b></span><span>EVREN İLE BAĞLANTI<br><b id="connection">KISMEN MEVCUT</b></span></div>
       <div id="stars"></div>
+      <div class="world-tags"><span class="wt">DOSYA <b id="sceneWish">BEKLENİYOR</b></span><span class="wt">GELEN İŞARET <b id="queueCount">0777</b></span><span class="wt">İŞLENEN EVRAK <b id="formCount">00</b></span></div>
       <svg id="universeSvg" viewBox="0 0 720 480" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         <defs>
           <radialGradient id="orbgrad"><stop stop-color="#efe1ff"/><stop offset=".30" stop-color="#b29be1"/><stop offset=".69" stop-color="#6c589b"/><stop offset="1" stop-color="#3a3457"/></radialGradient>
@@ -153,13 +155,13 @@ a{color:inherit;text-decoration:none}
           <path d="M288 145Q355 91 420 148" fill="none" stroke="#fff" stroke-width="3" opacity=".32"/>
           <text x="360" y="215" font-family="Georgia,serif" font-style="italic" font-size="85" font-weight="bold" text-anchor="middle" fill="#f9f3ff" letter-spacing="-10">777</text>
         </g>
-        <g id="office">
+        <g id="office"><g id="paperPile"></g>
           <path d="M170 345L545 345L596 394L132 394Z" fill="#b5a28b" stroke="#413b3f" stroke-width="4"/>
           <path d="M142 388L586 388L576 406L151 406Z" fill="#75675e"/>
           <rect x="181" y="400" width="16" height="70" fill="#5b5049"/><rect x="528" y="400" width="16" height="70" fill="#5b5049"/>
           <rect x="262" y="321" width="108" height="60" rx="4" fill="#1e2430" stroke="#9d8da2" stroke-width="4"/>
           <rect x="272" y="330" width="88" height="39" fill="#312a45"/>
-          <text x="316" y="352" font-family="monospace" font-size="11" text-anchor="middle" fill="#cfb2ff">TALEP: BEKLEMEDE</text>
+          <text x="316" y="352" font-family="monospace" font-size="11" text-anchor="middle" fill="#cfb2ff" id="screenText">TALEP: BEKLEMEDE</text>
           <path d="M250 382H386L404 390H233Z" fill="#c9c1b0"/>
           <rect x="440" y="331" width="65" height="47" rx="3" fill="#f8f1df" stroke="#9d9386"/>
           <path d="M451 347h42M451 358h35M451 368h22" stroke="#a6a296" stroke-width="2"/>
@@ -182,6 +184,7 @@ a{color:inherit;text-decoration:none}
       <div id="floatingSigns"></div><div id="eventVisual" aria-hidden="true"></div>
       <div id="glitch" aria-hidden="true">EVREN ONAYLADI*</div>
       <div id="cosmicStatus">OPERATÖR DURUMU: BAŞVURU BEKLENİYOR</div>
+      <button id="deskAction" type="button" hidden>✎ BİR EVRAK HALLET (+4)</button>
       <button type="button" id="orbitButton" title="Kozmik merkeze dokun">↻ 777'YE DOKUN · BİR İŞARET AL</button>
       <div class="scene-foot"><span>GERÇEKLİK SİMÜLASYONU v0.777</span><span>*EVRENİN ONAYI HUKUKEN BAĞLAYICI DEĞİLDİR.</span></div>
     </section>
@@ -189,6 +192,8 @@ a{color:inherit;text-decoration:none}
       <div id="chooseScreen" class="active">
         <div class="eyebrow">01 / EVRENE TALEP GÖNDER</div>
         <h2>Ne manifestliyoruz?</h2>
+        <div class="mode-tabs"><button type="button" class="selected" id="freeMode">SERBEST OYUN</button><button type="button" id="dailyMode">GÜNÜN KADERİ ✦</button></div>
+        <div id="modeDescription">Dileğini seç. Yedi gün boyunca onu gerçekleştirmeye çalış.</div>
         <p>7 işaret. 7 karar. Bir evren. Sorumluluk tamamen size ait.</p>
         <div class="options" id="wishes">
           <button class="wish" data-wish="money">Bol para</button>
@@ -205,13 +210,14 @@ a{color:inherit;text-decoration:none}
       <div id="playScreen">
         <div class="eyebrow" id="roundLabel">KOZMİK GÜN 01 / 07</div>
         <div class="progress" id="roundProgress" aria-hidden="true"></div>
-        <div class="ticket"><div class="eyebrow" id="eventTag">BİR İŞARET GELDİ</div><h2 id="eventTitle"></h2><p id="eventDesc"></p></div>
+        <div class="event-echo" id="eventEcho" hidden></div><div class="ticket"><div class="eyebrow" id="eventTag">BİR İŞARET GELDİ</div><h2 id="eventTitle"></h2><p id="eventDesc"></p></div>
         <div class="answers" id="answers"></div>
         
         <div class="meter-box"><div class="meters">
-          <div class="meter"><small>KOZMİK<br>TİTREŞİM</small><div class="val" id="vibe">0</div><div class="track"><b id="vibeTrack" style="width:0%"></b></div></div>
+          <div class="meter"><small>İÇSEL<br>MOTİVASYON</small><div class="val" id="vibe">0</div><div class="track"><b id="vibeTrack" style="width:0%"></b></div></div>
           <div class="meter"><small>GÖRÜLEN<br>İŞARETLER</small><div class="val" id="signs">0</div><div class="track"><b id="signsTrack" style="width:0%"></b></div></div>
           <div class="meter"><small>GERÇEK<br>İLERLEME</small><div class="val" id="progress">0</div><div class="track"><b id="progressTrack" style="width:0%"></b></div></div>
+          <div class="meter"><small>KALAN<br>ZAMAN</small><div class="val" id="time">90</div><div class="track"><b id="timeTrack" style="width:90%"></b></div></div>
         </div></div>
       </div>
       <div id="endScreen">
@@ -220,7 +226,7 @@ a{color:inherit;text-decoration:none}
         <p>7 işaret incelendi. Gerçeklik departmanından nihai açıklama geldi.</p>
         <div class="receipt" id="receipt" aria-label="Paylaşılabilir sonuç kartı">
           <div class="receipt-brand"><b>MANIFEST 777</b><span>KOZMİK İŞLEM FİŞİ</span></div>
-          <div class="receipt-title" id="resultTitle"></div>
+          <div class="result-archetype" id="resultArchetype"></div><div class="receipt-title" id="resultTitle"></div>
           <div class="receipt-quote" id="resultQuote"></div>
           <div class="receipt-metrics">
             <div><span id="rvibe">0</span><small>TİTREŞİM</small></div>
@@ -229,7 +235,7 @@ a{color:inherit;text-decoration:none}
           </div>
           <div class="smallprint" id="receiptWish"></div>
         </div>
-        <div class="buttons-end"><button type="button" class="primary" id="share">PAYLAŞ <span>↗</span></button><button type="button" class="secondary" id="save">KARTI PNG KAYDET ↓</button></div>
+        <div id="resultScore"></div><div id="bestResult"></div><div class="buttons-end"><button type="button" class="primary" id="share">PAYLAŞ <span>↗</span></button><button type="button" class="secondary" id="save">KARTI PNG KAYDET ↓</button></div>
         <button type="button" class="secondary" style="margin-top:7px" id="again">YENİ BİR KADER DENE ↻</button>
         <div class="whisper">Evren ile yapılan görüşmeler tamamen oyunsaldır. Kozmik işlem fişi hiçbir şeyin kanıtı değildir.</div>
       </div>
