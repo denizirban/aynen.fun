@@ -236,82 +236,169 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 @media(max-width:650px){#room{transform:translate3d(calc(var(--cam-x) - 8vw),var(--cam-y),0) scale(var(--cam-zoom));width:100%;height:100%;transform-origin:center}#top .brand{top:8px;left:7px;height:42px}#top .brand .back{width:27px;height:27px}#top .brand b{font-size:12px!important}#top .clock{top:8px;left:auto;right:7px;height:42px;padding:3px 5px;gap:3px}#top .clock strong{font-size:15px}#top .clock small{display:none}#top .clock .mini{min-width:24px;font-size:10px}#top .clock #saveNow{display:none}#top .stats{top:57px;right:7px;gap:0}#top .stat{min-width:55px;padding:4px 5px}#top .stat strong{font-size:11px}#tasks{top:auto;bottom:8px;left:7px;width:calc(100vw - 14px);max-height:55dvh;z-index:21}#tasks.collapsed{width:calc(49vw - 7px);max-width:210px}#tasks .task-list{max-height:38dvh}#tasks .tasks-head b{font-size:12px}#tasks .tasks-head b span{font-size:9px}#tasks .tasks-head>span{font-size:8px}#tasks .task-filters button{font-size:9px;padding:7px 2px}#family{bottom:8px;right:7px;width:calc(51vw - 7px);padding:7px}#family .family-head{margin-bottom:4px}#family .family-head b{font-size:11px}#family .family-head small{display:none}.person-card .avatar{width:34px;border-radius:7px}.person-card b{font-size:8px}#relations{font-size:7px}#levelWidget{top:104px;bottom:auto;left:7px;width:50vw;max-width:225px;padding:8px}#levelWidget .lvl-top{gap:4px}#levelFlag{font-size:8px;padding:4px}#homeRank{font-size:10px}#openNotebook{font-size:8px;padding:6px 5px}#goalCard{top:104px;right:7px;width:43vw;padding:8px}.goal-head{font-size:8px}.goal-head span{display:none}.goal-mini{font-size:9px;padding:5px 0}.goal-mini:nth-child(n+2){display:none}#goalMore{font-size:8px}#cameraTools{bottom:91px;left:50%;opacity:.9}#cameraTools button{width:27px;height:25px}.scene-caption{display:none}#action{left:8px;right:8px;bottom:108px;width:auto;z-index:25}#progress{right:7px;bottom:111px}#game:has(#action.visible) #progress{bottom:309px}#toast{top:94px}#rewardBubble{top:30%;left:20%}}
 @media(max-width:370px){#top .brand b{font-size:11px!important}#top .clock{gap:1px}.mini{min-width:21px!important}#family .person-card .avatar{width:29px}}
 @media(prefers-reduced-motion:reduce){#room{transition:none}#steam.on path{animation:none}}
+
+/* RETRO ISOMETRIC 1970s miniatures — actual SVG material update */
+:root{--ui-surface:rgba(251,247,230,.955);--ui-border:rgba(94,96,69,.32);--ui-cream:#f7f0d9;--ui-green:#536943}
+#game{background:#b3b98a}
+#room{filter:saturate(.98) contrast(1.015) drop-shadow(0 3px 4px rgba(72,65,47,.08))}
+#top .brand,#top .clock,#top .stats,#tasks,#goalCard,#family,#levelWidget,#action,#progress,#queuePanel{background:rgba(248,243,223,.95);border-color:rgba(105,112,83,.32)}
+#top .brand .back{background:#d5ddb6;color:#4e6540}
+#top .clock .mini.on,.task-filters button.active{background:#536c48}
+#top .stat strong{color:#506749}
+#openNotebook{background:#58734d}
+#tasks .task-filters button:not(.active){background:#ebe7d3}
+#tasks .job .emoji{background:#e8e6d1}
+#family .person-card.selected{background:#e1e9d2;box-shadow:inset 0 0 0 1px #82946f}
+#levelFlag{background:#e1e8cf;color:#526a49}
+#room .halo{fill:#647a5799}
+#room .hotspot .spot-label{stroke:#4a5d40}
+#room .hotspot:hover .halo{fill:#b6784e}
+#game.evening #sceneShade{background:linear-gradient(180deg,rgba(243,174,102,.14),rgba(85,57,29,.18))}
+#game.night #sceneShade{background:linear-gradient(180deg,rgba(66,66,91,.16),rgba(27,39,46,.37))}
 </style>
 </head>
 <body>
 <div id="game">
 <svg id="room" viewBox="0 0 1400 900" role="img" aria-label="İzometrik mutfak, aile üyeleri ve yapılacak işler">
 <defs>
-<pattern id="tiles" patternUnits="userSpaceOnUse" width="80" height="80"><rect width="80" height="80" fill="#ebe9e3"/><rect width="40" height="40" fill="#282827"/><rect x="40" y="40" width="40" height="40" fill="#282827"/></pattern>
-<pattern id="grain" patternUnits="userSpaceOnUse" width="34" height="34"><circle cx="3" cy="5" r=".55" fill="#fff" opacity=".3"/><circle cx="19" cy="28" r=".6" fill="#242424" opacity=".2"/></pattern>
-<linearGradient id="floorGlow" x1="0" x2="1" y1="0" y2=".4"><stop stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
-<linearGradient id="wall" x1="0" x2="1"><stop stop-color="#fafaf5"/><stop offset="1" stop-color="#e3dfd4"/></linearGradient>
-<linearGradient id="wood" x1="0" x2=".8" y1="0" y2="1"><stop stop-color="#b8794a"/><stop offset=".6" stop-color="#995b35"/><stop offset="1" stop-color="#744224"/></linearGradient>
-<linearGradient id="glass" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#91b266"/><stop offset=".65" stop-color="#547a3f"/><stop offset="1" stop-color="#8b9e54"/></linearGradient>
-<filter id="shadow"><feGaussianBlur stdDeviation="14"/></filter>
-<linearGradient id="newSun" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff9d9" stop-opacity=".62"/><stop offset=".7" stop-color="#fff9d9" stop-opacity="0"/></linearGradient>
-<linearGradient id="windowReflect" x1="0" y1="0" x2=".75" y2="1"><stop stop-color="#f3fff0" stop-opacity=".26"/><stop offset=".7" stop-color="#f3fff0" stop-opacity=".02"/></linearGradient>
-<linearGradient id="woodPolish" x1="0" y1="0" x2="1" y2=".8"><stop stop-color="#f4bd82" stop-opacity=".3"/><stop offset=".5" stop-color="#f8c486" stop-opacity=".04"/><stop offset="1" stop-color="#3a2316" stop-opacity=".22"/></linearGradient>
-<radialGradient id="lampGlow"><stop stop-color="#fff1c4" stop-opacity=".5"/><stop offset="1" stop-color="#fff1c4" stop-opacity="0"/></radialGradient>
-<filter id="softShadows"><feGaussianBlur stdDeviation="7"/></filter>
+<linearGradient id="retroWall" x1="0" y1="0" x2="1" y2=".65"><stop stop-color="#b7bd88"/><stop offset=".5" stop-color="#a2ac76"/><stop offset="1" stop-color="#8d9a6b"/></linearGradient>
+<linearGradient id="retroSide" x1="0" y1="0" x2=".9" y2=".8"><stop stop-color="#879669"/><stop offset="1" stop-color="#b6bc86"/></linearGradient>
+<linearGradient id="retroFloor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6efcf"/><stop offset=".7" stop-color="#e8dfbf"/><stop offset="1" stop-color="#c8c6a8"/></linearGradient>
+<linearGradient id="retroWood" x1="0" y1="0" x2="1" y2=".75"><stop stop-color="#d9a56a"/><stop offset=".45" stop-color="#b87e4f"/><stop offset="1" stop-color="#91603d"/></linearGradient>
+<linearGradient id="retroCabinet" x1="0" y1="0" x2="1" y2=".8"><stop stop-color="#c2ca91"/><stop offset=".45" stop-color="#9da86f"/><stop offset="1" stop-color="#718257"/></linearGradient>
+<linearGradient id="retroCeramic" x1="0" y1="0" x2=".75" y2="1"><stop stop-color="#cbd3a0"/><stop offset=".45" stop-color="#a0b17b"/><stop offset="1" stop-color="#698158"/></linearGradient>
+<linearGradient id="retroChrome" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fcfaf0"/><stop offset=".22" stop-color="#a7aba0"/><stop offset=".53" stop-color="#f9f6ea"/><stop offset="1" stop-color="#727e77"/></linearGradient>
+<linearGradient id="retroWindow" x1="0" y1="0" x2="1" y2=".8"><stop stop-color="#eef0bf"/><stop offset=".5" stop-color="#c1ce94"/><stop offset="1" stop-color="#79965b"/></linearGradient>
+<linearGradient id="retroCurtain" x1="0" y1="0" x2="1" y2=".3"><stop stop-color="#a85b36"/><stop offset=".22" stop-color="#e1a071"/><stop offset=".48" stop-color="#c77746"/><stop offset=".68" stop-color="#e1a06e"/><stop offset="1" stop-color="#a85839"/></linearGradient>
+<linearGradient id="retroRug" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c5c98d"/><stop offset="1" stop-color="#899d6b"/></linearGradient>
+<radialGradient id="retroSun" cx=".05" cy=".05" r=".99"><stop stop-color="#fff5c9" stop-opacity=".9"/><stop offset="1" stop-color="#f0eab4" stop-opacity="0"/></radialGradient>
+<radialGradient id="retroGlow"><stop stop-color="#fff1bb" stop-opacity=".8"/><stop offset="1" stop-color="#fff1bb" stop-opacity="0"/></radialGradient>
+<linearGradient id="shirtOrange" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#eba071"/><stop offset=".5" stop-color="#c87751"/><stop offset="1" stop-color="#985c40"/></linearGradient>
+<linearGradient id="shirtLilac" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d3bdc0"/><stop offset="1" stop-color="#927b88"/></linearGradient>
+<linearGradient id="skinWarm" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dcb28d"/><stop offset=".7" stop-color="#b77e5e"/><stop offset="1" stop-color="#8f5b45"/></linearGradient>
+<linearGradient id="skinDark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ae7959"/><stop offset="1" stop-color="#694c38"/></linearGradient>
+<pattern id="tiles" patternUnits="userSpaceOnUse" width="58" height="58"><rect width="58" height="58" fill="url(#retroFloor)"/><path d="M0 0H58V58H0Z" fill="none" stroke="#c3bea0" stroke-width="1.4"/><path d="M25 0H33L58 25V33L33 58H25L0 33V25Z" fill="none" stroke="#d0caae" stroke-width=".9"/><rect x="25" y="25" width="8" height="8" transform="rotate(45 29 29)" fill="#5e6e53" opacity=".8"/></pattern>
+<pattern id="wallTiles" patternUnits="userSpaceOnUse" width="44" height="44"><rect width="44" height="44" fill="none"/><path d="M0 .7H44V44" fill="none" stroke="#64764d" stroke-width="1.4" opacity=".62"/><path d="M2 1H41M1 1V42" fill="none" stroke="#e4e7b5" stroke-width="1.3" opacity=".27"/></pattern>
+<pattern id="curtainPrint" width="32" height="36" patternUnits="userSpaceOnUse"><path d="M9 2Q17 13 12 20M26 8Q16 18 22 32M4 27q7 2 10 7M27 3l-8 8" stroke="#f3d9a7" stroke-width="1.3" fill="none" opacity=".75"/><ellipse cx="13" cy="11" rx="2.2" ry="4" fill="#f4d49d" opacity=".48"/><ellipse cx="22" cy="25" rx="3" ry="2" fill="#fff0c5" opacity=".53"/></pattern>
+<pattern id="woodPores" width="71" height="38" patternUnits="userSpaceOnUse"><path d="M0 9Q38 7 71 12M3 30Q39 23 71 27" stroke="#634b32" stroke-width=".85" fill="none" opacity=".19"/></pattern>
+<pattern id="vintageWallPaper" width="17" height="18" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".8" fill="#fff0c6" opacity=".27"/><circle cx="12" cy="11" r=".7" fill="#63744f" opacity=".26"/></pattern>
+<filter id="shadow"><feGaussianBlur stdDeviation="13"/></filter>
+<filter id="retroSoft"><feGaussianBlur stdDeviation="5"/></filter>
+<filter id="sceneGrain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".26" numOctaves="1" seed="7" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g"><feFuncA type="linear" slope=".04"/></feComponentTransfer></filter>
+<clipPath id="floorClip"><path d="M0 327L1082 403L1400 371V900H0Z"/></clipPath>
+<clipPath id="windowClip"><rect x="62" y="40" width="480" height="260" rx="4"/></clipPath>
 </defs>
-<rect width="1400" height="900" fill="#eeeae2"/>
-<path d="M0 0H1400V398L1120 440L0 325Z" fill="url(#wall)"/>
-<path d="M0 325L1120 440L1400 398V900H0Z" fill="url(#tiles)"/>
-<path d="M0 325L1120 440L1400 398V900H0Z" fill="url(#floorGlow)"/>
-<path d="M0 325L1120 440L1400 398" fill="none" stroke="#9b9992" stroke-width="7"/>
-<path d="M760 0V375M1135 0V425" stroke="#ddd9d1" stroke-width="10"/>
-<!-- window -->
-<path d="M75 68H620V304H75Z" fill="#fafafa" stroke="#c8c9c2" stroke-width="14"/>
-<path d="M95 84H604V287H95Z" fill="url(#glass)"/>
-<path d="M95 252Q180 164 254 218Q354 121 431 193Q510 145 604 217V287H95" fill="#8caa57"/>
-<path d="M95 196Q172 149 243 173Q335 128 431 162Q520 116 604 171" fill="none" stroke="#718f49" stroke-width="28" stroke-linecap="round" stroke-dasharray="2 8" opacity=".8"/>
-<path d="M345 77V299" stroke="#fafafa" stroke-width="14"/><path d="M75 295H620" stroke="#fff" stroke-width="17"/>
-<path d="M75 316H640L612 337H50Z" fill="#dfddd4"/>
-<rect x="527" y="275" width="36" height="45" rx="6" fill="#55a149"/><path d="M546 280Q532 238 543 212M548 272Q572 239 562 210" fill="none" stroke="#397b49" stroke-width="6"/>
-<!-- sun through window; warm reflections across furniture -->
-<path d="M74 86L616 86L792 645L400 554Z" fill="url(#newSun)" pointer-events="none" opacity=".26"/>
-<path d="M350 274L400 274L785 900H665Z" fill="#fff3c8" opacity=".13" pointer-events="none"/>
-<!-- minimalist wall art -->
-<path d="M862 55H1067V285H862Z" fill="#f8f7f3" stroke="#1c1c1c" stroke-width="8"/>
-<circle cx="937" cy="118" r="42" fill="#262625"/><circle cx="1006" cy="108" r="39" fill="#262625"/><path d="M879 185L930 154L986 208L1048 154V269H879Z" fill="#262625"/><path d="M883 225L937 165L998 265M939 165L945 274M992 152L1017 274" fill="none" stroke="#f8f7f3" stroke-width="16"/>
-<!-- long counter -->
-<path d="M1098 310L1351 298L1397 348L1153 372Z" fill="#c6b9a4"/><path d="M1153 372L1397 348V770L1153 800Z" fill="#d5d0c6" stroke="#817e74" stroke-width="3"/>
-<path d="M1153 372L1397 348" stroke="#9b9182" stroke-width="9"/>
-<path d="M1190 414L1371 400M1190 536L1371 524M1190 658L1371 647" stroke="#a29e95" stroke-width="3"/>
-<rect x="1230" y="477" width="20" height="5" rx="2" fill="#7c746b"/><rect x="1230" y="597" width="20" height="5" rx="2" fill="#7c746b"/>
-<!-- stovetop -->
-<path d="M1124 309L1287 303L1335 328L1176 345Z" fill="#252524"/><ellipse cx="1199" cy="322" rx="23" ry="8" fill="#777870"/><ellipse cx="1273" cy="320" rx="23" ry="8" fill="#777870"/><ellipse cx="1199" cy="322" rx="14" ry="5" fill="#313232"/>
-<!-- sink -->
-<path d="M1241 367L1362 355L1381 382L1262 394Z" fill="#777b7a"/><path d="M1260 374L1350 366L1364 382L1271 390Z" fill="#b0bec0"/><path d="M1296 362Q1295 333 1323 339" stroke="#727779" stroke-width="9" fill="none" stroke-linecap="round"/>
-<!-- cabinet countertop food -->
-<path d="M1105 318L1176 343L1175 390L1103 374Z" fill="#d5c1a8"/><ellipse cx="1148" cy="350" rx="23" ry="11" fill="#f6e8c9"/><path d="M1135 350Q1146 319 1162 348" fill="#e7b747"/>
-<!-- bench & shelf -->
-<path d="M690 310L790 280L851 309L740 344Z" fill="#806043"/><path d="M736 342V477M844 310V437" stroke="#78563a" stroke-width="13"/><path d="M705 285H832" stroke="#a8a094" stroke-width="7"/><path d="M738 271H806L812 302H747Z" fill="#3b3c40" stroke="#222" stroke-width="4"/>
-<!-- table shadow and legs -->
-<ellipse cx="694" cy="671" rx="433" ry="120" fill="#171717" opacity=".20" filter="url(#shadow)"/>
-<path d="M337 513L986 428L1143 562L482 686Z" fill="url(#wood)" stroke="#704025" stroke-width="7"/>
-<path d="M482 686V761L516 750V694M1109 559V695L1136 684V563" stroke="#6a3b27" stroke-width="18"/>
-<path d="M337 513L482 686L1143 562" fill="none" stroke="#b4754c" stroke-width="8"/>
-<!-- woodgrain -->
-<path d="M417 522L984 454M491 559L1024 484M554 614L1080 523" stroke="#d39a6a" stroke-opacity=".24" stroke-width="5"/>
-<!-- paperwork / laptop -->
-<path d="M815 466L911 455L967 495L867 511Z" fill="#deddd7" stroke="#545450" stroke-width="3"/>
-<path d="M827 458L825 408L909 409L911 455Z" fill="#7d8587" stroke="#444" stroke-width="4"/>
-<path d="M839 417L902 420L901 448L842 449Z" fill="#d5e7dd"/>
-<path d="M869 482L937 474M877 490L941 482" stroke="#8e9997" stroke-width="2"/>
-<path d="M618 567L703 549L744 582L648 606Z" fill="#f0eee5" stroke="#8b8e83" stroke-width="3"/>
-<path d="M642 575L702 564M649 587L717 573" stroke="#898f91" stroke-width="3"/>
-<!-- dishes -->
-<ellipse cx="503" cy="574" rx="45" ry="20" fill="#eee9dc" stroke="#c6c3b8" stroke-width="5"/>
-<ellipse cx="545" cy="611" rx="36" ry="14" fill="#deddd4" stroke="#a7a69b" stroke-width="4"/>
-<ellipse cx="1040" cy="541" rx="33" ry="14" fill="#e4e3dc" stroke="#aaa99f" stroke-width="3"/>
-<path d="M481 565L505 539L531 561L508 578Z" fill="#edbb57"/><path d="M480 565L511 564L504 574Z" fill="#ae5a38"/>
-<!-- chair silhouettes -->
-<path d="M314 585L368 570L414 626L355 663Z" fill="#9d9780" stroke="#4e4c44" stroke-width="4"/>
-<path d="M353 640L354 744M407 634L415 728" stroke="#7e7a68" stroke-width="12"/>
-<path d="M712 679L780 655L834 703L754 742Z" fill="#c8bd9d" stroke="#7d715c" stroke-width="4"/>
-<path d="M753 733L744 837M824 718L843 815" stroke="#8c826d" stroke-width="13"/>
+<!-- 1970s miniature set — avocado glazed ceramics, molded furnishings, warm studio light -->
+<rect width="1400" height="900" fill="#afba86"/>
+<!-- walls and their rounded tile glazes -->
+<path d="M0 0H1400V372L1082 402L0 328Z" fill="url(#retroWall)"/>
+<path d="M0 0H1400V372L1082 402L0 328Z" fill="url(#wallTiles)"/>
+<path d="M0 0H1400V372L1082 402L0 328Z" fill="url(#vintageWallPaper)" opacity=".35"/>
+<path d="M0 0L120 0V343L0 326Z" fill="url(#retroSide)" opacity=".48"/>
+<path d="M1080 0L1400 0V375L1080 402Z" fill="#7d8e5f" opacity=".2"/>
+<path d="M1080 0V399M0 328L1080 403L1400 372" fill="none" stroke="#59684e" stroke-width="5" opacity=".5"/>
+<!-- high-angle tile floor; small diamond joint details -->
+<path d="M0 327L1082 403L1400 371V900H0Z" fill="url(#tiles)"/>
+<g clip-path="url(#floorClip)" opacity=".20"><path d="M0 357L1385 442M0 534L1385 619M0 711L1385 796" stroke="#fffbe4" stroke-width="16"/><path d="M210 326L400 900M734 359L930 900M1230 384L1389 899" stroke="#656b4e" stroke-width="11" opacity=".14"/></g>
+<!-- extended natural sun casting from the window -->
+<path d="M65 41H554L783 740L443 643Z" fill="url(#retroSun)" opacity=".32"/>
+<!-- oversized white painted window -->
+<path d="M39 21L563 21L563 322L39 313Z" fill="#d9ddbc" stroke="#6b775c" stroke-width="10"/>
+<rect x="61" y="42" width="485" height="262" fill="url(#retroWindow)" stroke="#ececce" stroke-width="12"/>
+<g clip-path="url(#windowClip)">
+<path d="M55 260Q170 175 276 217Q379 146 561 210V320H55Z" fill="#829d64"/>
+<path d="M50 195Q167 117 255 167Q381 115 554 164" stroke="#718f59" stroke-width="28" fill="none" stroke-dasharray="2 10" stroke-linecap="round"/>
+<path d="M50 245Q188 140 315 198Q425 150 562 192" stroke="#97aa6a" stroke-width="20" fill="none" opacity=".85"/>
+<path d="M67 69L328 44L469 305L245 305Z" fill="#f6f3d1" opacity=".1"/>
+</g>
+<path d="M286 40V303M52 169H550" stroke="#ede9d0" stroke-width="15"/>
+<path d="M24 313L564 319L548 349L8 336Z" fill="#d8d7b9" stroke="#768164" stroke-width="4"/>
+<path d="M35 321L551 329" stroke="#f1efd7" stroke-width="6" opacity=".65"/>
+<!-- terracotta plant pots on ledge -->
+<g><path d="M110 292H149L143 322H115Z" fill="#c8835e" stroke="#9b5c44" stroke-width="3"/><path d="M126 291Q102 266 104 243M128 289Q151 267 144 239M125 287V233" fill="none" stroke="#5d7950" stroke-width="4"/><path d="M110 255Q90 240 100 227Q116 226 113 255M145 251Q160 238 151 225Q136 231 145 251M118 245Q110 222 124 216Q136 223 118 245" fill="#6a945b"/></g>
+<g><path d="M390 293H428L422 326H397Z" fill="#b87350" stroke="#945c43" stroke-width="3"/><path d="M408 292L405 234M409 278Q388 264 385 253M412 267Q429 244 434 242" stroke="#507a51" stroke-width="5" fill="none"/><ellipse cx="390" cy="247" rx="17" ry="8" transform="rotate(35 390 247)" fill="#74965b"/><ellipse cx="432" cy="246" rx="17" ry="9" transform="rotate(-35 432 246)" fill="#638b54"/></g>
+<!-- botanical orange floral curtain, characteristic of the reference -->
+<path d="M548 0H664V330Q654 343 640 335Q623 344 609 333Q592 341 581 330Q563 342 547 331Z" fill="url(#retroCurtain)" stroke="#985c3d" stroke-width="3"/>
+<path d="M548 0H664V330Q654 343 640 335Q623 344 609 333Q592 341 581 330Q563 342 547 331Z" fill="url(#curtainPrint)" opacity=".8"/>
+<path d="M557 0Q568 152 563 330M585 0Q582 165 591 332M622 0Q614 159 633 334M651 0Q648 180 656 333" stroke="#a76140" stroke-width="7" opacity=".67" fill="none"/>
+<path d="M552 0H664" stroke="#eab487" stroke-width="7"/>
+<!-- top molding and ceiling lamp -->
+<path d="M718 0V140" stroke="#6d765e" stroke-width="5"/>
+<ellipse cx="718" cy="141" rx="15" ry="7" fill="#485b47"/>
+<path d="M681 142Q684 161 656 198Q713 222 780 198Q752 160 752 141Z" fill="url(#retroCabinet)" stroke="#647454" stroke-width="4"/>
+<path d="M661 197Q718 215 778 198" fill="none" stroke="#e8e6c5" stroke-width="5" opacity=".68"/>
+<ellipse cx="717" cy="222" rx="92" ry="35" fill="url(#retroGlow)" opacity=".5"/>
+<!-- framed vintage print -->
+<path d="M869 53L1046 53V291L869 300Z" fill="#dbcbaa" stroke="#434b3c" stroke-width="8"/>
+<path d="M884 68H1030V273L883 282Z" fill="#eee3c4"/>
+<path d="M896 91Q950 39 1008 106L1012 197L910 205Z" fill="#3c533f"/>
+<path d="M908 113L944 155L966 104L1016 159M901 219H1014" fill="none" stroke="#d7d0b2" stroke-width="15"/>
+<circle cx="958" cy="102" r="18" fill="#d7d0b2"/><circle cx="949" cy="102" r="6" fill="#4c5a45"/>
+<!-- wall shelves / cups -->
+<path d="M1127 104L1379 97L1386 115L1133 128Z" fill="#926c4b" stroke="#715438" stroke-width="3"/>
+<path d="M1139 110H1384" stroke="#dfb783" stroke-width="5" opacity=".45"/>
+<g fill="#e0d8b9" stroke="#837e64" stroke-width="2"><ellipse cx="1190" cy="98" rx="18" ry="6"/><path d="M1172 72H1208V99H1172Z"/><ellipse cx="1241" cy="93" rx="15" ry="6"/><path d="M1226 70H1256V94H1226Z"/><ellipse cx="1294" cy="93" rx="20" ry="7"/><path d="M1274 73H1314V94H1274Z"/></g>
+<!-- rounded 70s avocado kitchen cabinets -->
+<path d="M1065 314L1369 300L1400 348L1106 365Z" fill="url(#retroWood)" stroke="#735b41" stroke-width="4"/>
+<path d="M1106 365L1400 347V777L1110 813Z" fill="url(#retroCabinet)" stroke="#617350" stroke-width="5"/>
+<path d="M1111 412L1396 389M1110 524L1398 504M1110 659L1395 637" stroke="#849365" stroke-width="4"/>
+<path d="M1244 354L1260 783M1330 351L1343 775" fill="none" stroke="#879a70" stroke-width="4"/>
+<path d="M1142 452L1180 448M1281 436L1324 433M1151 570L1188 567M1301 558L1333 555M1162 706L1195 704" stroke="url(#retroChrome)" stroke-width="8" stroke-linecap="round"/>
+<!-- cooker with cast-iron pot -->
+<path d="M1118 299L1281 295L1324 318L1163 341Z" fill="#3c3e38" stroke="#656954" stroke-width="4"/>
+<ellipse cx="1210" cy="317" rx="29" ry="12" fill="#242e2b"/><ellipse cx="1278" cy="311" rx="22" ry="10" fill="#26332a"/>
+<path d="M1178 291Q1209 277 1242 295L1235 317Q1208 327 1183 314Z" fill="url(#retroCeramic)" stroke="#576d55" stroke-width="3"/>
+<ellipse cx="1210" cy="291" rx="33" ry="13" fill="#a3b682" stroke="#617458" stroke-width="3"/><ellipse cx="1210" cy="287" rx="8" ry="4" fill="#d6d9ad"/>
+<!-- antique curved sink and chrome taps -->
+<path d="M1258 356L1364 346L1385 368L1279 386Z" fill="#a6b783" stroke="#61755a" stroke-width="4"/>
+<path d="M1271 360L1359 352L1370 367L1283 377Z" fill="#7a9569" stroke="#d0d6a5" stroke-width="3"/>
+<path d="M1314 351Q1310 328 1327 327Q1353 329 1343 353" fill="none" stroke="url(#retroChrome)" stroke-width="9" stroke-linecap="round"/>
+<path d="M1304 341H1322M1345 341H1360" stroke="url(#retroChrome)" stroke-width="7" stroke-linecap="round"/>
+<!-- utensil holder and cutting board -->
+<path d="M1106 339L1149 358L1150 376L1104 355Z" fill="#d6a472"/><ellipse cx="1130" cy="349" rx="18" ry="7" fill="#edd1aa"/>
+<path d="M1115 349L1145 359" stroke="#788054" stroke-width="5"/><circle cx="1124" cy="354" r="5" fill="#c76b4e"/>
+<!-- under cabinet dark creases / highlights -->
+<path d="M1115 367L1119 812M1396 351V779" stroke="#e2dfbd" stroke-width="6" opacity=".45"/>
+<path d="M1108 368L1400 348" stroke="#e4c197" stroke-width="8" opacity=".55"/>
+<!-- yellowed cream range on the side -->
+<path d="M143 316L269 310L320 345L197 371Z" fill="#e8dfc2"/>
+<path d="M195 371L317 349V542L196 566Z" fill="url(#retroCeramic)" stroke="#72805e" stroke-width="4"/>
+<path d="M215 405L300 390M216 486L300 474" stroke="#e8e9bd" stroke-width="4"/>
+<!-- vintage terracotta colored stool -->
+<path d="M152 424L226 397L276 431L198 464Z" fill="#cf895c" stroke="#865a45" stroke-width="4"/>
+<path d="M197 452L196 639M260 436L260 615" stroke="#8b6248" stroke-width="12"/>
+<!-- atmospheric rug -->
+<path d="M272 796Q333 747 432 751Q554 767 577 856Q532 914 414 900L271 900Q233 844 272 796Z" fill="url(#retroRug)" stroke="#d4d5a5" stroke-width="6"/>
+<path d="M294 804Q357 770 436 778Q526 791 554 853Q524 890 444 891L297 890Q267 844 294 804Z" fill="none" stroke="#f4edcf" stroke-width="4"/>
+<!-- chair shadows and sculpted legs -->
+<ellipse cx="684" cy="685" rx="459" ry="105" fill="#394333" opacity=".22" filter="url(#shadow)"/>
+<path d="M335 511L997 427L1154 560L481 677Z" fill="url(#retroWood)" stroke="#81553c" stroke-width="5"/>
+<path d="M335 511L997 427L1154 560L481 677Z" fill="url(#woodPores)" opacity=".75"/>
+<path d="M331 511L484 682L1154 560" fill="none" stroke="#f6d7a1" stroke-width="7" opacity=".64"/>
+<path d="M485 678L485 788L506 779L514 686M1122 557V700L1142 694V560" fill="#80573d" stroke="#82583e" stroke-width="8"/>
+<path d="M511 690L1115 568" stroke="#573c2e" stroke-width="6" opacity=".37"/>
+<!-- table settings in period proportions -->
+<path d="M801 452L892 442L949 480L852 495Z" fill="#515c51" stroke="#414a42" stroke-width="3"/>
+<path d="M818 452L817 404L893 407L895 447Z" fill="#8b988c" stroke="#41443b" stroke-width="3"/>
+<path d="M828 413L884 415L883 440L829 438Z" fill="#c9d4be"/>
+<path d="M846 471L918 462M858 479L925 471" stroke="#aab4a4" stroke-width="2"/>
+<path d="M652 563L728 548L763 571L687 593Z" fill="#f1e6cb" stroke="#c7b9a2" stroke-width="2"/>
+<path d="M668 568L722 558M672 578L742 563" stroke="#77968a" stroke-width="2"/>
+<ellipse cx="551" cy="574" rx="39" ry="18" fill="#e9dabc" stroke="#a39b82" stroke-width="4"/>
+<ellipse cx="558" cy="577" rx="19" ry="8" fill="#dc8659"/><ellipse cx="567" cy="568" rx="10" ry="7" fill="#edbd57"/>
+<ellipse cx="1028" cy="533" rx="26" ry="12" fill="#eee3c5" stroke="#a8a189" stroke-width="3"/>
+<path d="M1013 520Q1024 510 1037 523L1034 537H1016Z" fill="#b3c185" stroke="#647858" stroke-width="2"/>
+<!-- ceramic mug -->
+<path d="M600 544L633 537L636 554Q622 567 604 560Z" fill="#b6c586" stroke="#697d61" stroke-width="2"/>
+<path d="M635 539Q650 536 647 546Q645 553 637 552" fill="none" stroke="#82946f" stroke-width="4"/>
+<!-- floor chair -->
+<path d="M348 572L402 560L448 619L389 651Z" fill="url(#retroCabinet)" stroke="#5d6b50" stroke-width="4"/>
+<path d="M387 642V752M444 625L457 732" stroke="#79885f" stroke-width="14"/>
+<path d="M716 683L787 650L837 700L760 741Z" fill="#c2b89d" stroke="#7c7d5d" stroke-width="4"/>
+<path d="M751 739L747 825M831 710L848 800" stroke="#8b8168" stroke-width="13"/>
+<!-- floor puddles/props -->
+<ellipse cx="1016" cy="832" rx="29" ry="12" fill="#d4836b"/><ellipse cx="1016" cy="829" rx="20" ry="6" fill="#745443"/>
+<path d="M92 810L135 795L157 814L116 836Z" fill="#f4ebd5" stroke="#b4ac97" stroke-width="2"/>
 <!-- family silhouettes -->
 <g class="person selectable" id="elderActor" data-person="elder" role="button" tabindex="0" aria-label="Aile büyüğü" transform="translate(422 490)"><ellipse cx="0" cy="84" rx="38" ry="13" fill="#15151522"/><path d="M-36 4Q0 -22 35 5L43 71L-33 76Z" fill="#827e93" stroke="#55515d" stroke-width="4"/><rect x="-26" y="59" width="20" height="67" rx="9" fill="#716b55"/><rect x="9" y="59" width="20" height="67" rx="9" fill="#716b55"/><circle cy="-14" r="25" fill="#775441"/><path d="M-24 -15Q-17 -54 0 -42Q22 -45 26 -11" fill="#2d2d28"/><path d="M-23 29L-57 56M26 29L61 49" stroke="#775441" stroke-width="15" stroke-linecap="round"/><path d="M-21 -9H-1M3 -9H21" stroke="#222" stroke-width="4"/><path d="M-1 -9H3" stroke="#222" stroke-width="3"/></g>
 <g class="person selectable" id="partnerActor" data-person="partner" role="button" tabindex="0" aria-label="Eşin" transform="translate(885 351)"><ellipse cx="0" cy="142" rx="46" ry="15" fill="#17171722"/><path d="M-28 13Q12 -8 41 18L46 87L-40 94Z" fill="#e4e0d7" stroke="#333" stroke-width="4"/><path d="M-28 86V137M22 85V135" stroke="#343638" stroke-width="27" stroke-linecap="round"/><path d="M-26 15L-63 71M40 21L73 53" stroke="#c09a76" stroke-width="16" stroke-linecap="round"/><circle cx="0" cy="-8" r="27" fill="#c69d78"/><path d="M-28 -13Q-20 -48 10 -40Q35 -34 27 -2L14 -20L-3 -14Z" fill="#3b3028"/><path d="M-20 -6L-3 -3M4 -4L24 -7" stroke="#31302b" stroke-width="4"/></g>
