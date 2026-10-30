@@ -289,7 +289,10 @@ html,body{height:100%;overflow:hidden;background:#08140f;color:#f3f5ef}
       person("support-3",X(Math.max(10,scenario.def-25)),230,def.ink,8),
       person("support-4",X(Math.max(12,scenario.ball-23)),185,atk.ink,7)
     ].join("");
-    return `<svg id="pitch" class="pitch" viewBox="0 0 900 440" preserveAspectRatio="xMaxYMid slice" role="img" aria-label="Yayın kamerası açısında ofsayt pozisyonu. Kaydırma çubuğundan pas anına geri dön.">
+    const boxWidth=window.innerWidth<=700?560:900;
+    const center=(ax+bx+dx)/3;
+    const left=boxWidth===900?0:Math.max(0,Math.min(900-boxWidth,center-boxWidth/2));
+    return `<svg id="pitch" class="pitch" viewBox="${left.toFixed(1)} 0 ${boxWidth} 440" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Yayın kamerası açısında ofsayt pozisyonu. Kaydırma çubuğundan pas anına geri dön.">
       <defs>
        <linearGradient id="pitchLight" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#80a868"/><stop offset=".5" stop-color="#54894d"/><stop offset="1" stop-color="#3e7645"/></linearGradient>
        <pattern id="stripes" width="120" height="440" patternUnits="userSpaceOnUse"><rect width="120" height="440" fill="url(#pitchLight)"/><rect width="60" height="440" fill="#1e4a24" opacity=".12"/></pattern>
