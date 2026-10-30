@@ -284,7 +284,7 @@ function enterCityState(cycle){
  }
 }
 function updateCityEvents(dt){
- const cycle=spawnCount<8?-1:Math.floor((spawnCount-8)/9);
+ const cycle=Math.floor(spawnCount/9);
  if(cycle!==cityPhase)enterCityState(cycle);
  if(cityEventTime>0){
   cityEventTime-=dt;
@@ -423,7 +423,7 @@ function reset(){
  run=true;paused=false;gameOver=false;elapsed=0;distance=0;score=0;speed=(W<590?270:340);lives=3;streak=0;invuln=0;shake=0;spawnLeft=W<600?500:630;obstacles=[];effects=[];previous='';zone=-1;hudTick=0;nearCount=0;crashReason='';cityStateIndex=-1;cityPhase=-1;cityEventTime=0;incidentCount=0;visualTick=0;metTarget=false;missionIndex=0;missionProgress=0;missionStartMeters=0;missionDoneTimer=0;spawnCount=0;nearMax=0;tricks=0;cleared=0;maxCombo=0;passedRecord=false;
  Object.assign(player,{y:0,vy:0,onGround:true,charge:0,charging:false,trick:false,spin:0,landCount:0,landing:0,buffer:0,bufferPower:0,airTrickTime:0,airClears:0});
  $('overlay').hidden=true;$('pauseOverlay').hidden=true;$('pause').hidden=false;$('share').textContent='ARKADAŞINA MEYDAN OKU ↗';$('combo').hidden=true;
- missionPanel();updateStreetLabel();$('cityEvent').classList.remove('on');
+ missionPanel();$('cityEvent').classList.remove('on');enterCityState(0);
  $('controlLabel').textContent='ZIPLA';$('charge').classList.remove('on');$('control').classList.remove('pressed');$('tip').classList.remove('on');last=performance.now();updateHud();toast('BASILI TUT → BIRAKINCA ZIPLA');
 }
 function finish(){
@@ -433,7 +433,7 @@ function finish(){
  if(meters>best){best=meters;writeBest(meters)}
  const isRecord=meters>startedBest,beatFriend=mode==='duel'&&targetMeters>0&&meters>targetMeters;
  $('panelTitle').innerHTML=isRecord&&meters>50?'Yeni<br>rekor.':meters>160?'Kaldırım<br>yine bitti.':'Bir daha<br>denersin.';
- $('panelText').textContent=moodLabel(meters)+' '+(mode==='daily'?'Günün rotası: '+dailyStamp+'.':mode==='duel'?'Arkadaş rotası.':'İstanbul asfaltında.')
+ $('panelText').textContent=moodLabel(meters)+' '+(mode==='daily'?'Günün rotası: '+dailyStamp+'.':mode==='duel'?'Arkadaş rotası.':'İstanbul asfaltında.');
  $('resultReason').textContent=crashReason||'Yol biraz kalabalıktı.';
  $('resultAchievement').hidden=false;
  $('resultAchievement').textContent=(beatFriend?'ARKADAŞINI GEÇTİN. · ':mode==='duel'?'MEYDAN OKUMA · '+targetMeters+' m hedef · ':mode==='daily'?'GÜNÜN ROTASI · ':isRecord?'YENİ REKOR · ':'')+
