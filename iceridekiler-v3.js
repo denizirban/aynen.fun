@@ -118,7 +118,7 @@ function renderUpgrades(){const key=JSON.stringify([state.points,state.phase,sta
  upgrades.forEach(u=>{const type=u[0],lvl=state.levels[type]||0,cost=u[3]+lvl*3,locked=(type==='tcell'||type==='bcell')&&state.chapter<2;
  const div=document.createElement('div');div.className='unit-row';
  const icon=document.createElement('span');icon.className='unit-swatch';icon.style.background=types[type].color;
- const info=document.createElement('div');const title=document.createElement('strong');title.textContent=u[1]+' · '+lvl;const desc=document.createElement('small');desc.textContent=u[2];info.append(title,desc);
+ const info=document.createElement('div');const title=document.createElement('strong');title.textContent=u[1]+' · '+lvl;const desc=document.createElement('small');desc.textContent=u[2]+' · '+(lvl?'eğitim +'+Math.min(72,lvl*9)+'%':'temel');info.append(title,desc);
  const button=document.createElement('button');button.className='upgrade';button.textContent=locked?'KİLİTLİ':'+'+cost+' AR';button.disabled=locked||state.points<cost||state.phase==='intro'||state.phase==='finished';button.onclick=()=>upgrade(type);
  div.append(icon,info,button);root.append(div);});
 }
@@ -207,6 +207,7 @@ function stepAgents(dt){
  const w=wave();for(let i=agents.length-1;i>=0;i--){const a=agents[i],type=a.type;a.age+=dt;a.hit=Math.max(0,a.hit-dt);
  if(a.age>a.life){agents.splice(i,1);continue;}
  const target=state.phase==='active'?pickTarget(a):null;
+  const trained=1+Math.min(8,state.levels[type]||0)*.09;
  let aim=target?target.obj:null;
  // Recruitment gradients bring newly summoned cells to the chosen region, while
  // close-range phagocytosis and cytotoxicity still take precedence.
@@ -220,13 +221,13 @@ function stepAgents(dt){
  if(!aim&&type==='treg'&&state.inflam>28)aim=state.focus;
  follow(a,aim,dt);
  if(target&&distance(a,target.obj)<target.range){
-  if(target.kind==='bug'){target.obj.hp-=types[type].dps*dt*(1+state.antibody*.012);a.hit=.3;if(type==='dend')state.presentation=clamp(state.presentation+dt*6,0,100);if(type==='neutro')state.inflam+=dt*.55;}
-  if(target.kind==='debris'){target.obj.hp-=types[type].dps*dt;a.hit=.3;}
-  if(target.kind==='host'){target.obj.infect-=types[type].dps*dt*(type==='tcell'?1+.25*state.activation/100:1);a.hit=.3;state.inflam+=dt*.13;if(target.obj.infect<=0){target.obj.infect=0;target.obj.dead=true;target.obj.heal=11;state.tissue-=.38;if(debris.length<55)debris.push({id:++maxId,x:target.obj.x,y:target.obj.y,hp:1.5});pop(target.obj.x,target.obj.y,'#9fc4d2')}}
+  if(target.kind==='bug'){target.obj.hp-=types[type].dps*dt*trained*(1+state.antibody*.012);a.hit=.3;if(type==='dend')state.presentation=clamp(state.presentation+dt*6,0,100);if(type==='neutro')state.inflam+=dt*.55;}
+  if(target.kind==='debris'){target.obj.hp-=types[type].dps*dt*trained;a.hit=.3;}
+  if(target.kind==='host'){target.obj.infect-=types[type].dps*dt*trained*(type==='tcell'?1+.25*state.activation/100:1);a.hit=.3;state.inflam+=dt*.13;if(target.obj.infect<=0){target.obj.infect=0;target.obj.dead=true;target.obj.heal=11;state.tissue-=.38;if(debris.length<55)debris.push({id:++maxId,x:target.obj.x,y:target.obj.y,hp:1.5});pop(target.obj.x,target.obj.y,'#9fc4d2')}}
  }
- if(type==='dend'&&w.antigen&&state.phase==='active'&&state.chapterTime>3){state.presentation=clamp(state.presentation+dt*(.35+.12*Math.min(8,particles.length)),0,100);}
- if(type==='fibro'&&state.phase==='active'&&w.kind==='debris'){state.tissue=Math.min(100,state.tissue+dt*.4)}
- if(type==='treg'&&state.phase==='active'&&state.inflam>9){state.inflam=Math.max(6,state.inflam-dt*.22)}
+ if(type==='dend'&&w.antigen&&state.phase==='active'&&state.chapterTime>3){state.presentation=clamp(state.presentation+dt*(.35+.12*Math.min(8,particles.length))*trained,0,100);}
+ if(type==='fibro'&&state.phase==='active'&&w.kind==='debris'){state.tissue=Math.min(100,state.tissue+dt*.4*trained)}
+ if(type==='treg'&&state.phase==='active'&&state.inflam>9){state.inflam=Math.max(6,state.inflam-dt*.22*trained)}
  }}
 function stepThreat(dt){
  const w=wave();for(let i=particles.length-1;i>=0;i--){let b=particles[i];b.age+=dt;b.angle+=dt*.7;
@@ -237,7 +238,7 @@ function stepThreat(dt){
  if(b.hp<=0){if(b.type==='bacteria')state.kills++;state.points+=b.type==='bacteria'&&Math.random()<.25?1:0;pop(b.x,b.y,b.type==='virus'?'#b48cc2':'#85ad9a');particles.splice(i,1);}
  }
  for(let i=debris.length-1;i>=0;i--){if(debris[i].hp<=0){pop(debris[i].x,debris[i].y,'#d6a985');debris.splice(i,1)}}
- for(const h of hosts){if(h.dead){const nearFibro=agents.some(a=>a.type==='fibro'&&distance(a,h)<90);h.heal=Math.max(0,h.heal-dt*(nearFibro?1.7:1));if(h.heal<=0){h.dead=false;h.heal=0;}continue;}
+ for(const h of hosts){if(h.dead){const nearFibro=agents.some(a=>a.type==='fibro'&&distance(a,h)<90);h.heal=Math.max(0,h.heal-dt*(nearFibro?1.7+Math.min(8,state.levels.fibro||0)*.10:1));if(h.heal<=0){h.dead=false;h.heal=0;}continue;}
  if(h.infect>0){h.infect+=dt*.08;state.tissue-=dt*.035;if(h.infect>=9){h.infect=0;h.dead=true;h.heal=12;state.tissue-=.8;if(debris.length<55)debris.push({id:++maxId,x:h.x,y:h.y,hp:1.5});for(let i=0;i<2;i++)addParticle('virus',h.x,h.y,w.antigen);pop(h.x,h.y,'#c57991');}}}
  if(w.kind==='bacteria'&&state.chapterTime>5&&particles.length>0){state.replication=(state.replication||0)+dt;if(state.replication>8.8){state.replication=0;let b=particles[Math.floor(Math.random()*particles.length)];if(b&&particles.length<28)addParticle('bacteria',b.x,b.y,w.antigen);}}
  if(w.kind==='virus'&&state.chapterTime>8){state.replication=(state.replication||0)+dt;if(state.replication>9.8){state.replication=0;const inf=hosts.filter(h=>h.infect>0);if(inf.length){const h=inf[0];addParticle('virus',h.x,h.y,w.antigen);}}}
@@ -255,7 +256,7 @@ function step(dt){state.clock+=dt;stepSignals(dt);
  else state.tissue-=dt*(w.kind==='debris'? .025:danger*.035)+(state.inflam>48?dt*(state.inflam-48)*.019:0);
  if(w.antigen&&state.presentation>8){state.activation=clamp(state.activation+dt*(1.1+state.presentation*.045),0,100)}
  if(w.antigen&&state.memories[w.antigen]>18){state.activation=clamp(state.activation+dt*.4,0,100)}
- if(w.antigen&&state.activation>30){const b=agents.filter(a=>a.type==='bcell').length;if(b>0)state.antibody=clamp(state.antibody+dt*(b*.12+state.activation*.003),0,25);
+ if(w.antigen&&state.activation>30){const b=agents.filter(a=>a.type==='bcell').length;if(b>0)state.antibody=clamp(state.antibody+dt*(b*.12+state.activation*.003)*(1+Math.min(8,state.levels.bcell||0)*.10),0,25);
  if(w.kind==='virus'&&!agents.some(a=>a.type==='tcell')&&state.chapterTime>12)addAgent('tcell');
  if(w.kind==='bacteria'&&!agents.some(a=>a.type==='bcell')&&state.chapterTime>15)addAgent('bcell');
  }
