@@ -210,9 +210,9 @@ function showTutorial(msg,ttl){
 function hideTutorial(){tutorialEl.classList.remove("on");tutorialClock=0}
 function start(){
 activeCar=runMode==="daily"?"sahin":selectedCar;
-g={score:0,time:75,speed:130,distance:0,lane:0,hearts:activeCar==="toros"?4:3,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,halay:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
+g={score:0,time:75,speed:130,distance:0,lane:0,hearts:activeCar==="toros"?4:3,introSpawned:false,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,halay:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
 dailyKey=trDay();runRng=runMode==="daily"?seededRandom(stringHash("dugun-gp-v4-"+dailyKey)):null;attempts++;tutorialStage=0;hadHorn=false;runEvents=[];
-lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];rivalEventDone=false;comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=(runMode==="daily"?stringHash("scene-"+dailyKey):Math.random()*10000);flash=0;mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";gesture.active=false;gesture.id=null;last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",1.7);missionStrip.style.display="flex";progressTrack.style.display="block";updateHud();showTutorial("← → YÖNLENDİR · + GELİNCE KORNA ÇAL",3.3);
+lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];rivalEventDone=false;comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;runSeed=(runMode==="daily"?stringHash("scene-"+dailyKey):Math.random()*10000);flash=0;mode="playing";g.invuln=4.6;overlay.hidden=true;pauseBtn.textContent="Ⅱ";gesture.active=false;gesture.id=null;last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("GELİN ALINDI · KONVOY HAREKET ETTİ",1.7);missionStrip.style.display="flex";progressTrack.style.display="block";updateHud();showTutorial("← → YÖNLENDİR · + GELİNCE KORNA ÇAL",3.3);
 }
 function bestScore(){try{return Number(localStorage.getItem("dugun-gp-best")||0)}catch(e){return 0}}
 function saveBest(){try{if(g.score>bestScore())localStorage.setItem("dugun-gp-best",String(g.score))}catch(e){}}
@@ -360,10 +360,11 @@ dortluBtn.addEventListener("pointerdown",e=>{e.preventDefault();dortlu()});
 
 function spawn(){
  const lanes=[-.73,0,.73],r=gameRandom(),guestChance=g.lap===1?.59:g.lap===2?.47:.38;
- let type=r<guestChance?"guest":r<guestChance+.34?"rival":"obstacle";
+ const intro=!g.introSpawned;if(intro)g.introSpawned=true;
+ let type=intro?"guest":r<guestChance?"guest":r<guestChance+.34?"rival":"obstacle";
  if(g.distance<145&&type==="obstacle")type="guest";
- let lane=lanes[Math.floor(gameRange(0,lanes.length))];
- if(objects.some(o=>o.z>.65&&o.z<1.1&&Math.abs(o.lane-lane)<.25))
+ let lane=intro?0:lanes[Math.floor(gameRange(0,lanes.length))];
+ if(!intro&&objects.some(o=>o.z>.65&&o.z<1.1&&Math.abs(o.lane-lane)<.25))
    lane=lanes[(lanes.indexOf(lane)+1)%3];
  const variant=Math.floor(gameRange(0,6));
  objects.push({id:nextId++,z:1.05,lane,originalLane:lane,type,variant,joined:false,passed:false,wobble:gameRange(0,6.28),speed:gameRange(.85,1.08)});
@@ -451,7 +452,7 @@ function update(dt){
  }
  objects=objects.filter(o=>o.z>-.14);
  if(Math.abs(g.lane)>.94){g.speed=Math.max(46,g.speed-dt*31);g.chaos=Math.min(100,g.chaos+dt*.7)}
- if(!helpShown&&seconds>3&&objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.72&&o.z>.19)){
+ if(!helpShown&&seconds>1.3&&objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.72&&o.z>.19)){
    helpShown=true;showTutorial("ŞİMDİ KORNA!  + ARACI KONVOYA KAT",2.3);
  }
  for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=54*dt;p.life-=dt}
@@ -804,12 +805,33 @@ function roadblockSprite(x,y,w){
  c.restore();
 }
 function vehicles(){
+const eligible=objects.filter(o=>o.type==="guest"&&!o.joined&&o.z<.76&&o.z>.13&&Math.abs(o.lane-g.lane)<(activeCar==="doblo"?.9:.7));
+let target=null;
+if(eligible.length)target=eligible.reduce((best,o)=>!best||o.z<best.z?o:best,null);
 const sorted=objects.slice().sort((a,b)=>b.z-a.z);
 for(const o of sorted){
 if(o.z>1||o.z<-.13)continue;
 const y=roadY(o.z),half=roadHalf(y),center=roadCenter(y),x=center+o.lane*half*.83;
 const width=5+46*Math.pow(1-clamp(o.z,0,1),1.5);
 if(o.type==="roadblock")roadblockSprite(x,y,width);else carSprite(x,y,width,o.type,o.variant,o.joined,false);
+if(o===target&&g.hornCD===0){
+ c.save();c.setTransform(1,0,0,1,0,0);
+ const xx=x*2,yy=y*2-width*.9;
+ const t=1+.08*Math.sin(seconds*6),rad=Math.max(22,width*1.24)*t;
+ c.strokeStyle="#ffe97b";c.lineWidth=3;c.beginPath();c.ellipse(xx,yy,rad,rad*.54,0,0,Math.PI*2);c.stroke();
+ rect(xx-33,yy-rad*.55-21,66,17,"#20304a");
+ rect(xx-30,yy-rad*.55-18,60,11,"#ffedaa");
+ txt("KORNA!",xx,yy-rad*.55-9,10,"#7b3541","center");
+ c.restore();
+}
+if(o.type==="roadblock"&&o.z<.55&&o.z>.17){
+ const danger=Math.abs(o.lane-g.lane)<.49;
+ if(danger&&g.speed>106){c.save();c.setTransform(1,0,0,1,0,0);
+  rect(x*2-37,y*2-width*.85-19,74,17,"#ad304b");
+  txt("FREN!",x*2,y*2-width*.85-7,12,"#fff2be","center");
+  c.restore();
+ }
+}
 if(o.joined&&o.z<.55&&o.z>0&&(o.pop>0||Math.sin(seconds*9+o.id)>0.95))txt("♪",x,y-width*.9,Math.max(6,width*.24),"#ffeabf","center");
 }
 }
