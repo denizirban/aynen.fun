@@ -1,29 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="İzometrik meydan ve şüpheliler">
-<defs><linearGradient id="floor" x2=".8" y2="1"><stop stop-color="#f4f1e9"/><stop offset="1" stop-color="#d1d1c5"/></linearGradient><linearGradient id="wall" x2="1" y2="1"><stop stop-color="#f2a09a"/><stop offset="1" stop-color="#b66b66"/></linearGradient></defs>
-<path d="M12 59 216 13 305 62 291 184 108 214 12 159Z" fill="url(#floor)" stroke="#a4a59a" stroke-width="2"/>
-<path d="M219 15 304 59 304 159 219 123Z" fill="url(#wall)"/>
-<path d="M24 79 215 34M18 102 216 58M16 128 217 82M30 154 217 108M62 181 265 144M97 205 285 167" stroke="#a4a59a" stroke-opacity=".33" stroke-width="1"/>
-<path d="M42 58 105 45 106 93 39 110Z" fill="#91948b" fill-opacity=".45"/>
-<path d="M231 59 252 69 259 82 237 73M261 89l17 8-10 15-15-6" stroke="#826d70" stroke-width="2" fill="none"/>
-<ellipse cx="98" cy="140" rx="20" ry="7" fill="#4a4e4660"/>
-<ellipse cx="160" cy="163" rx="19" ry="7" fill="#4a4e4660"/>
-<ellipse cx="226" cy="132" rx="18" ry="6" fill="#4a4e4660"/>
-<g stroke="#343b36" stroke-width="2.5">
-<path d="M91 113 88 139M101 113 108 139" fill="none"/>
-<path d="M88 89 103 89 107 119 86 119Z" fill="#5e8377"/>
-<path d="M91 92 79 109M102 95 111 108" fill="none"/>
-<circle cx="95" cy="78" r="12" fill="#dca881"/><path d="M85 77q8-18 21-4l-5 4" fill="#4c3c31"/>
-<path d="M155 134 151 163M165 134 169 162" fill="none"/>
-<path d="M153 108 170 108 176 141 151 140Z" fill="#e5be70"/>
-<path d="M153 110 143 131M171 112 181 124" fill="none"/>
-<circle cx="161" cy="96" r="12" fill="#d4a382"/><path d="M151 93q9-20 22-4" fill="#39312b"/>
-<path d="M222 107 216 132M231 107 234 132" fill="none"/>
-<path d="M218 83 232 84 235 114 214 114Z" fill="#d4a5a3"/>
-<path d="M218 88 208 103M232 89 244 104" fill="none"/>
-<circle cx="225" cy="71" r="12" fill="#dca881"/><path d="M214 71q7-17 21-7" fill="#42342e"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Üç kişinin zincirleme hareketi ve ilk hareketi yapan kişinin kırmızı bir halka ile işaretlendiği sahne">
+<defs><linearGradient id="square" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8f5eb"/><stop offset="1" stop-color="#e1e9e2"/></linearGradient></defs>
+<path d="M17 72Q23 37 83 27L237 21Q291 34 296 85L294 171Q283 197 248 198L59 195Q16 184 17 145Z" fill="url(#square)"/>
+<path d="M40 172L128 121L272 165L176 210Z" fill="#dde5dc" stroke="#c2cbbd" stroke-width="1.5"/>
+<path d="M72 175L157 127M110 185L194 137M145 196L234 149M81 153L218 192" stroke="#c1cdc2" stroke-width="1" opacity=".75"/>
+<ellipse cx="91" cy="159" rx="29" ry="7" fill="#a2b3a6" opacity=".4"/>
+<ellipse cx="175" cy="176" rx="30" ry="7" fill="#a2b3a6" opacity=".38"/>
+<ellipse cx="260" cy="176" rx="29" ry="7" fill="#a2b3a6" opacity=".35"/>
+<!-- left first mover with red echo circle -->
+<circle cx="94" cy="103" r="39" fill="#f3d8d4" stroke="#d26456" stroke-width="3"/>
+<circle cx="94" cy="103" r="49" fill="none" stroke="#dd8275" stroke-dasharray="3 8" stroke-width="2" opacity=".9"/>
+<path d="M86 122Q95 120 103 126L113 150L74 154Z" fill="#344943" stroke="#273a36" stroke-width="2.2"/>
+<circle cx="93" cy="108" r="12" fill="#c99875" stroke="#273a36" stroke-width="2"/>
+<path d="M82 104Q82 92 93 92Q105 90 105 102L98 98Z" fill="#303331"/>
+<path d="M83 133L67 147M106 133L132 127M87 152L83 171M105 152L116 170" stroke="#303b37" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+<path d="M110 130L129 124" stroke="#d3a17e" stroke-width="5" stroke-linecap="round"/>
+<!-- yellow spark: first contact -->
+<path d="M135 119l8-9M139 127l12-3M134 133l7 7" stroke="#d35c48" stroke-width="3.4" stroke-linecap="round"/>
+<!-- person two tilting -->
+<g transform="rotate(19 179 139)">
+<path d="M167 124Q183 117 196 126L193 156L164 157Z" fill="#688d8b" stroke="#314543" stroke-width="2.5"/>
+<circle cx="181" cy="113" r="12" fill="#d9a584" stroke="#314543" stroke-width="2"/>
+<path d="M170 110Q171 98 183 100L192 108Z" fill="#303936"/>
+<path d="M165 131L150 142M195 131L211 142M169 157L164 177M187 157L197 176" stroke="#30413c" stroke-width="7" stroke-linecap="round" fill="none"/>
 </g>
-<path d="M117 160q21-16 31-1" stroke="#285bd7" stroke-width="3" fill="none" stroke-dasharray="3 5"/>
-<path d="M120 158l-6 8 10 1" stroke="#285bd7" stroke-width="3" stroke-linecap="round" fill="none"/>
-<circle cx="100" cy="57" r="17" fill="#fffefb" stroke="#285bd7" stroke-width="3"/><text x="100" y="65" font-family="Arial" font-size="24" text-anchor="middle" fill="#285bd7" font-weight="bold">?</text>
-<circle cx="273" cy="44" r="19" fill="#fffefb" stroke="#252a26" stroke-width="3"/><path d="m286 58 20 17" stroke="#252a26" stroke-width="7" stroke-linecap="round"/>
+<!-- person three almost falling -->
+<g transform="rotate(54 252 142)">
+<path d="M239 130Q250 125 264 132L264 161L238 161Z" fill="#d2aa65" stroke="#423d35" stroke-width="2.5"/>
+<circle cx="250" cy="118" r="12" fill="#d1a07e" stroke="#3f3a34" stroke-width="2"/>
+<path d="M241 112Q245 100 258 109" stroke="#393630" stroke-width="5" fill="none" stroke-linecap="round"/>
+<path d="M241 137L222 151M264 137L280 151M245 158L239 180M257 158L266 179" stroke="#4b4439" stroke-width="7" stroke-linecap="round" fill="none"/>
+</g>
+<!-- visual incident trail -->
+<path d="M125 90Q167 73 199 97Q226 114 239 111" stroke="#cb6258" stroke-width="2.4" fill="none" stroke-dasharray="4 7" stroke-linecap="round"/>
+<path d="M233 103L242 112L230 115" stroke="#cb6258" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- magnified mystery stamp -->
+<circle cx="255" cy="47" r="24" fill="#fffdf7" stroke="#304039" stroke-width="3"/>
+<text x="255" y="58" text-anchor="middle" fill="#304039" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="900">?</text>
+<path d="M274 65L289 81" stroke="#304039" stroke-width="7" stroke-linecap="round"/>
 </svg>
