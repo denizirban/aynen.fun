@@ -1,317 +1,460 @@
-/* BIO ROBOT / aynen.fun — deterministic toy hydrodynamics, not a biological prediction model */
-(function(){
+/* BIO ROBOT / aynen.fun — playable abstract biohybrid-inspired physics game.
+   Mechanic cells and values are fictional, not a validated biological model. */
+(()=>{
 'use strict';
-const $=id=>document.getElementById(id);
-const canvas=$('field'), ctx=canvas.getContext('2d',{alpha:false});
-const MAX=24, LIMIT=24, STORAGE='aynen-bio-robot-v1';
-const cellInfo={
- core:{color:'#a5cdb6',outline:'#5b967a',nucleus:'#6eae92',label:'Destek'},
- muscle:{color:'#ecabb2',outline:'#cb7f8f',nucleus:'#d28691',label:'Kas'},
- sensor:{color:'#a1d1de',outline:'#689eac',nucleus:'#69adbb',label:'Duyu'},
- energy:{color:'#ecd19a',outline:'#c4a365',nucleus:'#cba962',label:'Enerji'}
-};
+const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
+const PI=Math.PI,TWO=PI*2,MAX=24,KEY='aynen_biorobot_neon_v2',BEST='aynen_biorobot_best_v2';
+const COLORS={core:{a:'#baff77',b:'#67bd56',c:'#d8ffad',label:'YAPI HÜCRESİ',info:'Gövdenin iskeleti. Daha çok kütle, daha fazla direnç.'},muscle:{a:'#ff51ac',b:'#a82173',c:'#ffc1df',label:'KAS HÜCRESİ',info:'İtki üretir. Konumuna göre yön ve dönüş değişir.'},sensor:{a:'#9ff7e5',b:'#379f9d',c:'#dcfff6',label:'DUYU HÜCRESİ',info:'Hedefi ve engelleri algılar, yön düzeltir.'},energy:{a:'#eafc86',b:'#b1aa51',c:'#fff9b8',label:'ENERJİ HÜCRESİ',info:'Hareket için daha fazla enerji rezervi sağlar.'}};
 const MISSIONS=[
- {name:'Hareket et',desc:'Hedef çizgisine ulaş. Düz gidebilmek sandığından zor.',hint:'Kas hücresini merkezin üstüne ve altına dengeli yerleştirerek dönüşü azaltabilirsin.'},
- {name:'Engelden kaç',desc:'Jel havuzundaki iki engele çarpmadan bitişe git.',hint:'Duyu hücresi ön taraftaysa engellere yaklaşırken rotayı daha iyi düzeltebilir.'},
- {name:'Işığı bul',desc:'Işık yukarıda. Robotun hedefe yönelmesi gerekiyor.',hint:'Işık kaynağına yönelmek için duyu hücresini öne, itki hücrelerini dengeli yerleştir.'}
+ {name:'İLK HAREKET',description:'Robotunu canlandır. Karşıdaki parlak çekirdeğe ulaş.',short:'Hedefe doğru ilerle.',limit:24,target:[.82,.62],start:[.18,.62],blocks:[],check:[]},
+ {name:'ENGELDEN KAÇ',description:'Yolu kapatan kristallere takılmadan çekirdeğe ulaş.',short:'Kristallerin arasından geç.',limit:29,target:[.83,.60],start:[.17,.60],blocks:[[.49,.60,.074],[.67,.40,.055]],check:[]},
+ {name:'IŞIĞI BUL',description:'Işık yukarıda. Duyu hücrelerin yönü değiştirebilir.',short:'Işığı bul ve ona ulaş.',limit:30,target:[.80,.34],start:[.17,.68],blocks:[[.45,.62,.071],[.63,.48,.060]],check:[]},
+ {name:'YAŞAYAN KÖPRÜ',description:'Önce iki ışıklı duraktan geç, sonra ana çekirdeğe ulaş.',short:'İki durağı ve son hedefi bul.',limit:37,target:[.83,.38],start:[.18,.70],blocks:[[.46,.47,.067],[.65,.66,.063]],check:[[.38,.71],[.64,.40]]}
 ];
-let cells=defaultCells(),selected='muscle',mirror=false,level=0,version=1,saved=null,history=[],mode='build',sim=null,report=null;
-let w=700,h=438,dpr=1,unit=39,last=0,frameTime=0,painted='',lastToast=0,toastTimer=null;
-const dots=Array.from({length:42},(_,i)=>({x:((i*83.71)%97)/100,y:((i*39.47)%91)/100,r:.8+(i%4)*.48,phase:i*.73}));
-function defaultCells(){return [{x:0,y:0,type:'core'},{x:-1,y:0,type:'muscle'},{x:0,y:1,type:'energy'},{x:1,y:0,type:'sensor'}]}
-function key(x,y){return x+','+y}
-function get(x,y){return cells.find(c=>c.x===x&&c.y===y)}
-function clone(){return cells.map(c=>({x:c.x,y:c.y,type:c.type}))}
-function count(type){return cells.filter(c=>c.type===type).length}
-function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
-function norm(a){while(a>Math.PI)a-=Math.PI*2;while(a< -Math.PI)a+=Math.PI*2;return a}
-function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-function accessible(el,val){el.setAttribute('aria-pressed',String(!!val))}
-function toast(s){const el=$('toast');el.textContent=s;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2300)}
-function readSaved(){try{const s=JSON.parse(localStorage.getItem(STORAGE)||'null');if(s&&Array.isArray(s.cells)&&s.cells.length&&s.cells.length<=MAX&&s.cells.some(c=>c.x===0&&c.y===0)){const items=s.cells.filter(c=>Number.isInteger(c.x)&&Number.isInteger(c.y)&&Math.abs(c.x)<=5&&Math.abs(c.y)<=4&&cellInfo[c.type]);if(items.length===s.cells.length&&new Set(items.map(c=>key(c.x,c.y))).size===items.length&&connected(items)){saved=items.map(c=>({...c}));cells=cloneSaved(saved);version=clamp(Number(s.version)||1,1,999);}}}catch(e){}}
-function cloneSaved(s){return s.map(c=>({x:c.x,y:c.y,type:c.type}))}
-function connected(arr){const todo=[arr.find(c=>c.x===0&&c.y===0)].filter(Boolean);const seen=new Set(todo.map(c=>key(c.x,c.y)));while(todo.length){const a=todo.pop();arr.forEach(c=>{let k=key(c.x,c.y);if(!seen.has(k)&&Math.abs(c.x-a.x)<=1&&Math.abs(c.y-a.y)<=1){seen.add(k);todo.push(c)}})}return seen.size===arr.length}
-function save(){try{saved=clone();localStorage.setItem(STORAGE,JSON.stringify({cells:saved,version:version}));$('savedLabel').textContent='SÜRÜM '+version+' KAYDEDİLDİ';toast('Robot v'+version+' kaydedildi.');version=Math.min(999,version+1)}catch(e){toast('Tarayıcıda kayıt yapılamadı.')}}
-function restore(){if(!saved){toast('Henüz kaydedilmiş tasarım yok.');return}history.push(clone());cells=cloneSaved(saved);stopToBuild();refresh();toast('Son kayıt geri yüklendi.')}
-function undo(){if(mode!=='build'){stopToBuild();return}if(!history.length){toast('Geri alınacak değişiklik yok.');return}cells=history.pop();refresh()}
-function available(x,y){if(x===0&&y===0)return false;if(Math.abs(x)>5||Math.abs(y)>4)return false;return cells.some(c=>Math.abs(c.x-x)<=1&&Math.abs(c.y-y)<=1)}
-function modify(x,y,quiet){
- if(mode!=='build')return false;
- if(!Number.isInteger(x)||!Number.isInteger(y)||Math.abs(x)>5||Math.abs(y)>4)return false;
- const current=get(x,y);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),hypot=Math.hypot;
+const rand=(seed)=>{let x=Math.sin(seed*127.1+seed*seed*.017)*43758.5453;return x-Math.floor(x)};
+let cells=starter(),undoStack=[],savedCells=null,version=1,completed=[],best=[],level=0,selected='muscle',mirror=false;
+let mode='build',paused=false,model=null,results=null,drawerType='',audio=false,ambient=true,precision=true;
+let W=1200,H=720,dpr=1,unit=52,baseX=600,baseY=405,hover=null,pointerId=-1,painted='',last=0,t=0,toastTimer=null;
+let stars=Array.from({length:180},(_,i)=>({x:rand(i+31),y:rand(i*2+147),r:.4+rand(i*3+77)*1.1,t:rand(i*5+199)*TWO}));
+const cellKey=(c)=>c.x+','+c.y,find=(x,y)=>cells.find(c=>c.x===x&&c.y===y),copy=(a)=>a.map(c=>({x:c.x,y:c.y,type:c.type}));
+function starter(){return[{x:0,y:0,type:'core'},{x:-1,y:-1,type:'muscle'},{x:-1,y:1,type:'muscle'},{x:0,y:1,type:'energy'},{x:1,y:0,type:'sensor'}]}
+function counts(){const o={core:0,muscle:0,sensor:0,energy:0};cells.forEach(c=>o[c.type]++);return o}
+function cohesive(a){
+ if(!a.some(c=>c.x===0&&c.y===0))return false;
+ const q=[a.find(c=>c.x===0&&c.y===0)],seen=new Set(['0,0']);
+ for(let n=0;n<q.length;n++)a.forEach(c=>{if(!seen.has(cellKey(c))&&Math.max(Math.abs(q[n].x-c.x),Math.abs(q[n].y-c.y))===1){seen.add(cellKey(c));q.push(c)}});
+ return seen.size===a.length;
+}
+function validArray(a){
+ return Array.isArray(a)&&a.length>0&&a.length<=MAX&&a.every(c=>c&&Number.isInteger(c.x)&&Number.isInteger(c.y)&&Math.abs(c.x)<=4&&Math.abs(c.y)<=3&&COLORS[c.type])&&new Set(a.map(cellKey)).size===a.length&&a.some(c=>c.x===0&&c.y===0&&c.type==='core')&&cohesive(a);
+}
+function load(){
+ try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d&&validArray(d.cells)){cells=copy(d.cells);savedCells=copy(d.cells);version=clamp(Number(d.version)||1,1,999)}const b=JSON.parse(localStorage.getItem(BEST)||'null');if(b&&Array.isArray(b.completed)){completed=b.completed.filter(n=>Number.isInteger(n)&&n>=0&&n<=3);best=Array.isArray(b.best)?b.best:[]}}catch(e){}
+}
+function save(){try{savedCells=copy(cells);localStorage.setItem(KEY,JSON.stringify({cells:savedCells,version}));notice('TASARIM KAYDEDİLDİ — V'+version);sound('save')}catch(e){notice('KAYIT İZNİ YOK')}}
+function loadSaved(){if(!savedCells){notice('HENÜZ KAYIT YOK');return}history();cells=copy(savedCells);enterBuild();update();notice('SON KAYIT YÜKLENDİ')}
+function history(){undoStack.push(copy(cells));if(undoStack.length>40)undoStack.shift()}
+function undo(){if(mode!=='build')enterBuild();if(undoStack.length){cells=undoStack.pop();update();sound('tap')}else notice('GERİ ALINACAK DEĞİŞİKLİK YOK')}
+function notice(txt){const n=$('toast');n.textContent=txt;n.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>n.classList.remove('show'),2100)}
+function sound(type){
+ if(!audio)return;
+ try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!sound.ctx)sound.ctx=new AC();const ac=sound.ctx;if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain(),when=ac.currentTime;o.type='sine';o.frequency.setValueAtTime(type==='win'?520:type==='error'?140:270,when);o.frequency.exponentialRampToValueAtTime(type==='win'?780:type==='error'?110:390,when+.12);g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(.045,when+.018);g.gain.exponentialRampToValueAtTime(.0001,when+.19);o.connect(g).connect(ac.destination);o.start(when);o.stop(when+.2)}catch(e){}
+}
+function getStats(){
+ const n=cells.length,q=counts(),mx=cells.reduce((s,c)=>s+c.x,0)/n,my=cells.reduce((s,c)=>s+c.y,0)/n;
+ let torque=cells.filter(c=>c.type==='muscle').reduce((s,c)=>s+(c.y-my),0);
+ let inertia=cells.reduce((s,c)=>s+Math.pow(c.x-mx,2)+Math.pow(c.y-my,2),1)/n;
+ const balance=Math.round(clamp(100-Math.abs(torque)*21-Math.max(0,inertia-4)*5,8,100));
+ const thrust=Math.round(clamp(q.muscle*28/(1+n*.043),0,100));
+ const capacity=88+q.energy*46,consumption=1.65+q.muscle*.99+q.sensor*.23+n*.22;
+ return {n,q,mx,my,torque,inertia,balance,thrust,capacity,consumption};
+}
+function update(){
+ const s=getStats();let en=model?Math.round(100*model.energy/model.energyMax):100;
+ $('statEnergy').textContent=en+' / 100';$('statBalance').textContent=s.balance+' / 100';$('statThrust').textContent=s.thrust+' / 100';
+ $('barEnergy').style.width=en+'%';$('barBalance').style.width=s.balance+'%';$('barThrust').style.width=s.thrust+'%';
+ $('cellCounter').textContent=String(cells.length).padStart(2,'0')+' / '+MAX;
+ $('selectedName').textContent=selected==='erase'?'SİLME ARACI':COLORS[selected].label;
+ $('selectedDesc').textContent=selected==='erase'?'Bir hücreye dokunarak çıkar.':' '+COLORS[selected].info;
+ document.querySelectorAll('[data-cell]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.cell===selected)));
+ $('eraseBtn').setAttribute('aria-pressed',String(selected==='erase'));
+ $('mirrorBtn').setAttribute('aria-pressed',String(mirror));
+ const art=$('selectedArt'),source=document.querySelector('[data-cell="'+(selected==='erase'?'core':selected)+'"] svg');
+ if(source)art.innerHTML=source.outerHTML;
+ const m=MISSIONS[level];$('missionId').textContent='GÖREV '+String(level+1).padStart(2,'0');$('missionName').textContent=m.name;$('missionHint').textContent=m.description;
+ $('missionPercent').textContent=(model?Math.round(model.progress*100):0)+'%';
+ $('missionProgress').style.width=(model?Math.round(model.progress*100):0)+'%';
+ $('missionStatus').textContent=mode==='build'?'HAZIR / TASARIM':mode==='running'?(paused?'DURAKLATILDI':'CANLI SİMÜLASYON'):'DENEY SONUCU';
+ $('clock').textContent=model?timeFormat(model.time):'00:00';
+ $('modeLabel').textContent=mode==='build'?'BUILD MODE / TAP TO PLACE':mode==='running'?(paused?'PAUSED / RESUME':'TEST MODE / LIVE'):'RESULT / EDIT TO IMPROVE';
+ $('stageCaption').textContent=mode==='build'?'BİR HÜCRE SEÇ • YEŞİL YUVALARA DOKUN • CANLANDIR':mode==='running'?(paused?'DENEY DURAKLATILDI':'İTİŞ · DÖNÜŞ · SÜRTÜNME · ENERJİ'):'SONUÇLAR HAZIR';
+ $('runLabel').textContent=mode==='build'?'CANLANDIR':mode==='running'?(paused?'DEVAM ET':'DURAKLAT'):'YENİDEN DENE';
+ $('runSubtitle').textContent=mode==='build'?'SİMÜLASYONU BAŞLAT':mode==='running'?(paused?'SİMÜLASYONA DÖN':'SİMÜLASYONU DURDUR'):'AYNI GÖVDE';
+ $('runGlyph').innerHTML='<use href="#'+(mode==='running'&&!paused?'i-pause':'i-play')+'"/>';
+ $('runBtn').disabled=mode==='build'&&!s.q.muscle;
+ if(drawerType==='analysis')renderDrawer();
+}
+function timeFormat(v){const n=Math.floor(v);return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+function selectCell(type){if(mode==='running'){notice('DENEYİ DURAKLATIP DÜZENLE');return}if(mode==='result')enterBuild();selected=type;update();sound('tap')}
+function canPlace(x,y){return Math.abs(x)<=4&&Math.abs(y)<=3&&!find(x,y)&&cells.some(c=>Math.max(Math.abs(c.x-x),Math.abs(c.y-y))===1)}
+function mutate(x,y,quiet=false){
+ if(mode!=='build'||!Number.isInteger(x)||!Number.isInteger(y)||Math.abs(x)>4||Math.abs(y)>3)return false;
+ const old=find(x,y);
  if(selected==='erase'){
-  if(!current||x===0&&y===0)return false;
-  const next=cells.filter(c=>c!==current);
-  if(!connected(next)){if(!quiet)toast('Gövdeyi koparamazsın. Önce uçtaki hücreyi sil.');return false}
-  history.push(clone());cells=next;return true;
+  if(!old||x===0&&y===0){if(!quiet)notice('MERKEZ SİLİNEMEZ');return false}
+  const next=cells.filter(c=>c!==old);if(!cohesive(next)){if(!quiet)notice('GÖVDEYİ KOPARAMAZSIN');return false}
+  history();cells=next;return true;
  }
- if(current||cells.length>=MAX||!available(x,y)){if(cells.length>=MAX&&!quiet)toast('En fazla 24 hücre kullanabilirsin.');return false}
- history.push(clone());cells.push({x,y,type:selected});return true;
+ if(old){if(x===0&&y===0||old.type===selected)return false;history();old.type=selected;return true}
+ if(!canPlace(x,y)){if(!quiet)notice('BİTİŞİK BİR YUVA SEÇ');return false}
+ if(cells.length>=MAX){if(!quiet)notice('24 HÜCRE SINIRINA ULAŞTIN');return false}
+ history();cells.push({x,y,type:selected});return true;
 }
 function edit(x,y){
- let changed=modify(x,y,false);
- if(mirror&&y!==0&&selected!=='erase'&&cells.length<MAX)changed=modify(x,-y,true)||changed;
- if(mirror&&y!==0&&selected==='erase')changed=modify(x,-y,true)||changed;
- if(changed)refresh();
+ let did=mutate(x,y,false);
+ if(mirror&&y!==0) did=mutate(x,-y,true)||did;
+ if(did){update();sound('tap')}
 }
-function setSelected(v){
- if(mode!=='build')stopToBuild();
- selected=v;
- document.querySelectorAll('[data-cell]').forEach(btn=>accessible(btn,btn.dataset.cell===v));
- $('field').style.cursor=v==='erase'?'cell':'crosshair';
- $('worldSubtitle').textContent=v==='erase'?'HÜCREYİ SİLMEK İÇİN DOKUN':'DOKUNARAK YERLEŞTİR • SÜRÜKLEYEREK ÇİZ';
+function makePreset(){
+ if(mode==='running')return;
+ history();let n=counts().muscle;
+ if(n<=1)cells=starter();
+ else if(counts().sensor<2)cells=[{x:0,y:0,type:'core'},{x:-1,y:-1,type:'muscle'},{x:-1,y:1,type:'muscle'},{x:-2,y:0,type:'energy'},{x:1,y:-1,type:'sensor'},{x:1,y:1,type:'sensor'},{x:0,y:-1,type:'core'}];
+ else cells=[{x:0,y:0,type:'core'},{x:-1,y:-1,type:'muscle'},{x:-1,y:1,type:'muscle'},{x:1,y:0,type:'sensor'},{x:0,y:1,type:'energy'}];
+ enterBuild();update();notice('YENİ BİYO-TASARIM YÜKLENDİ');
 }
-function setLevel(n){if(!Number.isInteger(n)||n<0||n>2)return;level=n;stopToBuild();document.querySelectorAll('.mission').forEach(b=>b.classList.toggle('active',Number(b.dataset.level)===n));refresh()}
-function preset(){
- history.push(clone());
- if(count('muscle')<=1){cells=[{x:0,y:0,type:'core'},{x:-1,y:-1,type:'muscle'},{x:-1,y:1,type:'muscle'},{x:1,y:0,type:'sensor'},{x:0,y:1,type:'energy'},{x:0,y:-1,type:'core'}];toast('Dengeli tasarım yüklendi.')}
- else if(count('sensor')===0){cells=[{x:0,y:0,type:'core'},{x:-1,y:-1,type:'muscle'},{x:-1,y:1,type:'muscle'},{x:1,y:0,type:'sensor'},{x:0,y:1,type:'energy'},{x:0,y:-1,type:'core'}];toast('Dengeli tasarım yüklendi.')}
- else{cells=[{x:0,y:0,type:'core'},{x:-1,y:-1,type:'muscle'},{x:-2,y:-1,type:'muscle'},{x:-1,y:1,type:'muscle'},{x:1,y:-1,type:'sensor'},{x:1,y:0,type:'sensor'},{x:0,y:1,type:'energy'}];toast('Asimetrik tasarım yüklendi.')}
- stopToBuild();refresh()
+function enterBuild(){mode='build';paused=false;model=null;results=null;$('resultScrim').classList.remove('open');update()}
+function setLevel(n){if(n<0||n>=MISSIONS.length)return;level=n;closeDrawer();enterBuild();update();notice('GÖREV '+String(n+1).padStart(2,'0')+' / '+MISSIONS[n].name)}
+function stepButton(){if(mode==='build'||mode==='result'){run();return}paused=!paused;update();sound('tap')}
+function startModel(){
+ const s=getStats(),mission=MISSIONS[level];
+ if(!s.q.muscle){notice('ÖNCE KAS HÜCRESİ EKLE');sound('error');return}
+ model={x:mission.start[0],y:mission.start[1],vx:0,vy:0,angle:0,omega:0,time:0,energy:s.capacity,energyMax:s.capacity,s,trail:[],progress:0,checkIndex:0,collisions:0,lastHit:-5,active:true,goodTime:0};
+ mode='running';paused=false;$('resultScrim').classList.remove('open');closeDrawer();update();sound('save');
 }
-function stats(){
- const n=cells.length,m=count('muscle'),s=count('sensor'),e=count('energy');
- const cy=cells.reduce((a,c)=>a+c.y,0)/n;
- const moment=cells.filter(c=>c.type==='muscle').reduce((a,c)=>a+(c.y-cy),0);
- const balance=clamp(Math.round(100-Math.abs(moment)*23- Math.max(0,n-13)*1.2),7,100);
- const thrust=m?Math.round((m*1.4/(.7+n*.15))*10)/10:0;
- const capacity=80+e*46;
- const consumption=2.7+n*.24+m*1.15+s*.18;
- return {n,m,s,e,cy,moment,balance,thrust,capacity,consumption}
+function run(){startModel()}
+function currentTarget(){
+ const m=MISSIONS[level];return model&&model.checkIndex<m.check.length?m.check[model.checkIndex]:m.target;
 }
-function refresh(){
- const z=stats();
- $('robotName').textContent='Robot v'+version;
- $('missionDesc').textContent=MISSIONS[level].desc;
- $('countValue').textContent=z.n+' / '+MAX;$('countBar').style.width=(z.n/MAX*100)+'%';
- $('thrustValue').textContent=z.thrust.toFixed(1);$('thrustBar').style.width=Math.min(100,z.thrust*20)+'%';
- $('balanceValue').textContent=z.balance+'%';$('balanceBar').style.width=z.balance+'%';
- const energyPct=sim&&mode==='running'?Math.round(sim.energy/sim.capacity*100):100;
- $('energyValue').textContent=energyPct+'%';$('energyBar').style.width=energyPct+'%';
- $('composition').textContent=z.m+' kas · '+z.s+' duyu · '+z.e+' enerji · '+count('core')+' destek';
- let txt=MISSIONS[level].hint;
- if(!z.m)txt='Kas hücresi olmadan robot hareket edemez.';
- else if(!z.e)txt='Enerji hücresi olmadan da çalışır; fakat daha erken durur.';
- else if(z.balance<50)txt='Kas hücreleri dengesiz dağıldığı için robot kendi etrafında dönebilir.';
- else if(level>0&&!z.s)txt='Bu görevde duyu hücresi hareketi ciddi şekilde kolaylaştırır.';
- $('tipText').textContent=txt;
- $('runBtn').disabled=z.m===0&&mode==='build';
- if(mode==='build'){$('worldTitle').textContent='HÜCRE DÜZENİ';$('worldState').textContent='READY TO BUILD';$('phase').textContent='● TASARIM';$('worldSubtitle').textContent='DOKUNARAK YERLEŞTİR • SÜRÜKLEYEREK ÇİZ';$('runBtn').innerHTML='CANLANDIR <span>↗</span>'}
+function pixelD(ax,ay,bx,by){return Math.hypot((ax-bx)*W,(ay-by)*H)}
+function finish(success,reason){
+ if(!model)return;
+ mode='result';paused=false;const s=model;
+ let progress=success?1:s.progress;
+ results={success,reason,progress,energy:Math.max(0,Math.round(s.energy/s.energyMax*100)),time:s.time,collisions:s.collisions};
+ if(success){if(!completed.includes(level))completed.push(level);let curr=best[level];if(!curr||s.time<curr.time)best[level]={time:s.time,energy:results.energy};try{localStorage.setItem(BEST,JSON.stringify({completed,best}))}catch(e){}sound('win')}else sound('error');
+ $('resultKicker').textContent=success?'DENEY BAŞARILI / GÖREV '+(level+1):'DENEY SONA ERDİ / GÖREV '+(level+1);
+ $('resultTitle').textContent=success?'HEDEF BULUNDU.':reason==='energy'?'ENERJİ BİTTİ.':reason==='timeout'?'SÜRE DOLDU.':'DENEY DURDU.';
+ let msg='';
+ if(success)msg='Tasarımın çekirdeğe ulaştı. Daha az hücre veya daha az enerjiyle aynı yolu deneyebilirsin.';
+ else if(reason==='energy')msg='Gövden yolculuğu bitirmeden enerjisini tüketti. Bir enerji hücresi eklemeyi veya yükü azaltmayı dene.';
+ else if(s.s.balance<60)msg='Kasların dengesiz dağılımı robotu döndürdü. Bir kas hücresinin konumunu değiştir.';
+ else if(level>0&&s.s.q.sensor===0)msg='Duyu hücresi olmadan yönünü düzeltmek zor. Ön tarafa bir duyu hücresi ekle.';
+ else msg='Robot henüz hedefe ulaşamadı. Hücre konumlarını ve enerji rezervini değiştir.';
+ $('resultText').textContent=msg;
+ $('resultProgress').textContent=Math.round(progress*100)+'%';$('resultEnergy').textContent=results.energy+'%';$('resultTime').textContent=s.time.toFixed(1)+'s';
+ $('resultScrim').classList.add('open');update();
 }
-function resize(){
- const r=canvas.getBoundingClientRect();
- w=Math.max(300,r.width);h=Math.max(270,r.height);
- dpr=Math.min(window.devicePixelRatio||1,2);
- canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
- unit=clamp(Math.min((w-40)/12,(h-95)/10),18,39);
- if(mode==='running'&&sim)sim.geometry=geometry();
-}
-function worldCell(x,y){return{x:w*.5+x*unit,y:h*.52+y*unit}}
-function toGrid(event){const r=canvas.getBoundingClientRect(),p={x:event.clientX-r.left,y:event.clientY-r.top};let x=Math.round((p.x-w*.5)/unit),y=Math.round((p.y-h*.52)/unit);const q=worldCell(x,y);if(Math.hypot(p.x-q.x,p.y-q.y)>unit*.63)return null;return {x,y}}
-function tryPaint(e){const p=toGrid(e);if(!p)return;const k=key(p.x,p.y);if(k===painted)return;painted=k;edit(p.x,p.y)}
-canvas.addEventListener('pointerdown',e=>{if(mode!=='build')return;if(e.button!==0&&e.pointerType==='mouse')return;canvas.setPointerCapture(e.pointerId);painted='';tryPaint(e)});
-canvas.addEventListener('pointermove',e=>{if(mode==='build'&&e.buttons&&canvas.hasPointerCapture(e.pointerId))tryPaint(e)});
-canvas.addEventListener('pointerup',()=>painted='');
-canvas.addEventListener('pointercancel',()=>painted='');
-canvas.addEventListener('contextmenu',e=>{e.preventDefault();if(mode==='build'){const p=toGrid(e);if(p){const sel=selected;selected='erase';edit(p.x,p.y);selected=sel}}});
-canvas.addEventListener('keydown',e=>{if(mode!=='build')return;if(e.key==='Enter'||e.key===' '){e.preventDefault();const p={x:1,y:0};edit(p.x,p.y)}});
-function disk(x,y,r,a,b,alpha){ctx.beginPath();ctx.fillStyle=a;ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();if(b){ctx.strokeStyle=b;ctx.lineWidth=1.2;ctx.stroke()}}
-function bg(t){
- ctx.fillStyle='#f2f6f1';ctx.fillRect(0,0,w,h);
- const g=ctx.createRadialGradient(w*.47,h*.48,30,w*.47,h*.48,w*.73);g.addColorStop(0,'#fcfefb');g.addColorStop(1,'#ebf2ec');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
- dots.forEach(d=>{let x=d.x*w+Math.sin(t*.00018+d.phase)*5,y=d.y*h+Math.cos(t*.0002+d.phase)*6;disk(x,y,d.r,'rgba(112,151,139,.16)')});
-}
-function cell(x,y,r,type,t,idx,active){
- const info=cellInfo[type],wave=1+Math.sin(t*.0025+idx*2.3)*.045;
- r*=wave;
- ctx.save();ctx.shadowBlur=active?18:10;ctx.shadowColor=info.color+'78';
- const gradient=ctx.createRadialGradient(x-r*.34,y-r*.4,r*.05,x,y,r*1.16);
- gradient.addColorStop(0,'#ffffff');gradient.addColorStop(.26,info.color);gradient.addColorStop(.79,info.color);gradient.addColorStop(1,info.outline);
- disk(x,y,r,gradient,info.outline);
- ctx.shadowBlur=0;
- ctx.lineWidth=.8;ctx.strokeStyle='#ffffff99';
- ctx.beginPath();ctx.ellipse(x-r*.2,y-r*.18,r*.63,r*.39,-.7,Math.PI*.18,Math.PI*1.53);ctx.stroke();
- disk(x+Math.sin(idx*2)*r*.13,y+Math.cos(idx*2)*r*.12,r*.27,info.nucleus,info.outline);
- disk(x+Math.sin(idx*2)*r*.1-r*.07,y+Math.cos(idx*2)*r*.12-r*.07,r*.09,'#ffffff77');
- if(type==='muscle'){ctx.strokeStyle='#a65e73aa';ctx.lineWidth=1.7;for(let i=-1;i<=1;i++){ctx.beginPath();ctx.moveTo(x-r*.62,y+i*r*.24);ctx.lineTo(x+r*.55,y+i*r*.24);ctx.stroke()}}
- if(type==='sensor'){ctx.strokeStyle='#539ca688';ctx.lineWidth=1;for(let i=0;i<5;i++){let ang=(i*72-30)*Math.PI/180;ctx.beginPath();ctx.moveTo(x+Math.cos(ang)*r*.6,y+Math.sin(ang)*r*.6);ctx.lineTo(x+Math.cos(ang)*r*.88,y+Math.sin(ang)*r*.88);ctx.stroke()}}
- if(type==='energy'){for(let i=0;i<4;i++){disk(x+Math.cos(i*1.57)*r*.58,y+Math.sin(i*1.57)*r*.58,r*.068,'#fff3c5')}}
- ctx.restore();
-}
-function drawBuild(t){
- const cs=unit;
- ctx.save();ctx.strokeStyle='rgba(78,114,95,.09)';ctx.lineWidth=1;
- for(let x=-5;x<=5;x++)for(let y=-4;y<=4;y++){const p=worldCell(x,y);disk(p.x,p.y,1.25,'#a7c2b1');if(!get(x,y)&&available(x,y)){ctx.beginPath();ctx.arc(p.x,p.y,cs*.38,0,Math.PI*2);ctx.strokeStyle='#a7bcab55';ctx.stroke()}}
- ctx.strokeStyle='#8bac9860';ctx.setLineDash([4,7]);ctx.beginPath();ctx.moveTo(w*.5-6*cs,h*.52);ctx.lineTo(w*.5+6*cs,h*.52);ctx.stroke();ctx.setLineDash([]);
- ctx.fillStyle='#93a69b';ctx.font='10px DM Mono,monospace';ctx.fillText('FRONT →',Math.min(w-87,w*.5+4*cs),h*.52-11);
- cells.forEach((c,i)=>{for(const d of [[1,0],[0,1]]){const k=get(c.x+d[0],c.y+d[1]);if(k){const a=worldCell(c.x,c.y),b=worldCell(k.x,k.y);ctx.lineWidth=cs*.43;ctx.strokeStyle='#aac6b4b9';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}}});
- cells.forEach((c,i)=>{const p=worldCell(c.x,c.y);cell(p.x,p.y,cs*.42,c.type,t,i,false)});
- ctx.restore();
-}
-function geometry(){
- const radius=clamp(14+Math.sqrt(cells.length)*2.5,19,38);
- const obstacles=level===0?[]:level===1?[{x:w*.46,y:h*.51,r:Math.min(38,h*.105)},{x:w*.69,y:h*.67,r:Math.min(30,h*.08)}]:[{x:w*.43,y:h*.46,r:Math.min(33,h*.085)},{x:w*.66,y:h*.59,r:Math.min(36,h*.095)}];
- return {radius,obstacles,target:{x:w*.84,y:level===2?h*.27:h*.52,r:Math.min(26,h*.074)},start:{x:w*.14,y:level===2?h*.75:h*.52}};
-}
-function start(){
- if(mode==='running'){finish(false,'stopped');return}
- const z=stats();
- if(!z.m){toast('Hareket için en az bir kas hücresi ekle.');return}
- $('result').classList.remove('show');report=null;
- const geo=geometry();
- sim={x:geo.start.x,y:geo.start.y,angle:0,vx:0,vy:0,omega:0,t:0,energy:z.capacity,capacity:z.capacity,stats:z,geometry:geo,hit:0,trail:[],progress:0,reason:null};
- mode='running';$('phase').textContent='● CANLI DENEY';$('worldTitle').textContent='MİKRO HAVUZ';$('worldSubtitle').textContent='HAREKET GERÇEK ZAMANLI HESAPLANIYOR';$('worldState').textContent='SIMULATION / LIVE';$('runBtn').innerHTML='DURDUR ■';$('runBtn').disabled=false;document.querySelectorAll('[data-cell]').forEach(b=>b.disabled=true);
-}
-function stopToBuild(){
- mode='build';sim=null;report=null;$('result').classList.remove('show');
- document.querySelectorAll('[data-cell]').forEach(b=>b.disabled=false);
- refresh();
-}
-function collide(c,r,o){
- let dx=c.x-o.x,dy=c.y-o.y,d=Math.hypot(dx,dy)||.0001;
- if(d<r+o.r){let nx=dx/d,ny=dy/d,depth=r+o.r-d;c.x+=nx*depth;c.y+=ny*depth;return {nx,ny}}return null
-}
-function step(dt){
- const s=sim,z=s.stats,g=s.geometry,target=g.target,motors=cells.filter(c=>c.type==='muscle'),sensors=cells.filter(c=>c.type==='sensor');
- const mass=.76+z.n*.13;
- let fx=0,fy=0,torque=0;
- const dir={x:Math.cos(s.angle),y:Math.sin(s.angle)};
- const cx=cells.reduce((a,c)=>a+c.x,0)/z.n;
- const cy=cells.reduce((a,c)=>a+c.y,0)/z.n;
- motors.forEach(c=>{
-  const power=122/mass;
-  fx+=dir.x*power;fy+=dir.y*power;
-  torque+=-(c.y-cy)*.93; // motor off-axis force -> turning moment
- });
- if(sensors.length){
-  let desired=Math.atan2(target.y-s.y,target.x-s.x);
-  const senseBonus=sensors.reduce((a,c)=>a+(c.x>=cx?1:.65),0);
-  let avoid=0,nearest=Infinity;
-  for(const o of g.obstacles){
-   const d=dist(s,o),a=norm(Math.atan2(o.y-s.y,o.x-s.x)-s.angle);
-   if(d<155&&Math.abs(a)<1.32&&d<nearest){nearest=d;
-    const relativeY=Math.sin(-s.angle)*(o.x-s.x)+Math.cos(-s.angle)*(o.y-s.y);
-    const turn=relativeY>=0?-1:1;
-    avoid=turn*(1-d/170)*2.15;
+function simulate(dt){
+ const a=model,m=MISSIONS[level],s=a.s,target=currentTarget(),N=s.q.muscle,steer=s.q.sensor;
+ a.time+=dt;
+ const thrust=.23*N/(1+s.n*.09),dirX=Math.cos(a.angle),dirY=Math.sin(a.angle);
+ const wanted=Math.atan2((target[1]-a.y)*H,(target[0]-a.x)*W);
+ const angleError=wrap(wanted-a.angle);
+ let turning=-s.torque*.66/(1+s.inertia*.16);
+ if(steer) turning+=clamp(angleError*2.5,-2.9,2.9)*Math.min(1.7,steer*.7);
+ for(const b of m.blocks){
+  const d=pixelD(a.x,a.y,b[0],b[1]),R=b[2]*Math.min(W,H);
+  if(steer&&d<R+Math.min(W,H)*.26){
+   const angle=Math.atan2((b[1]-a.y)*H,(b[0]-a.x)*W);
+   const rel=wrap(angle-a.angle);
+   if(Math.abs(rel)<1.2){
+    const sign=Math.sin(rel)>=0?-1:1;
+    turning+=sign*Math.min(3,(R+Math.min(W,H)*.26-d)/Math.min(W,H)*7)*Math.min(1.5,steer*.72);
    }
   }
-  const error=norm(desired-s.angle);
-  torque+=clamp(error*1.9,-1.45,1.45)*Math.min(2.1,senseBonus)*.95+avoid*Math.min(1.9,senseBonus);
  }
- s.omega+=clamp(torque,-3.4,3.4)*dt;
- s.omega*=Math.exp(-2.5*dt);s.omega=clamp(s.omega,-2.35,2.35);
- s.angle=norm(s.angle+s.omega*dt);
- // Fluid resistance, cell-derived force and weak laminar current.
- fx+=Math.sin(s.t*.43+level)*2.1;fy+=Math.sin(s.t*.63+s.x*.012)*5.5;
- s.vx=(s.vx+fx*dt)*Math.exp(-1.85*dt);
- s.vy=(s.vy+fy*dt)*Math.exp(-1.85*dt);
- const speed=Math.hypot(s.vx,s.vy);
- if(speed>156){s.vx*=156/speed;s.vy*=156/speed}
- s.x+=s.vx*dt;s.y+=s.vy*dt;s.t+=dt;
- const r=g.radius;
- for(const o of g.obstacles){
-  const hit=collide(s,r,o);
-  if(hit){const toward=s.vx*hit.nx+s.vy*hit.ny;if(toward<0){s.vx-=toward*1.6*hit.nx;s.vy-=toward*1.6*hit.ny}if(s.t-s.hit>.32){s.energy=Math.max(0,s.energy-8);s.hit=s.t}}
+ a.omega+=clamp(turning,-5,5)*dt;
+ a.omega*=Math.exp(-2.6*dt);a.omega=clamp(a.omega,-2.4,2.4);a.angle=wrap(a.angle+a.omega*dt);
+ const accel=thrust/(1+.3*s.inertia);
+ a.vx+=(Math.cos(a.angle)*accel+.006*Math.sin(a.time*.6))*dt;
+ a.vy+=(Math.sin(a.angle)*accel*W/H+.004*Math.sin(a.time*.9+a.x*5))*dt;
+ a.vx*=Math.exp(-2.25*dt);a.vy*=Math.exp(-2.25*dt);
+ const speed=Math.hypot(a.vx,a.vy*H/W),cap=.16;
+ if(speed>cap){a.vx*=cap/speed;a.vy*=cap/speed}
+ a.x+=a.vx*dt;a.y+=a.vy*dt;
+ const rad=Math.min(W,H)*.039;
+ for(const b of m.blocks){
+  let dx=(a.x-b[0])*W,dy=(a.y-b[1])*H,d=Math.hypot(dx,dy)||1,lim=rad+b[2]*Math.min(W,H);
+  if(d<lim){const nx=dx/d,ny=dy/d,push=lim-d+1;a.x+=push*nx/W;a.y+=push*ny/H;const vn=a.vx*W*nx+a.vy*H*ny;if(vn<0){a.vx-=vn*nx*1.45/W;a.vy-=vn*ny*1.45/H}a.angle+=.06*nx;if(a.time-a.lastHit>.4){a.lastHit=a.time;a.collisions++;a.energy=Math.max(0,a.energy-6)}}
  }
- if(s.x<r+8){s.x=r+8;s.vx=Math.abs(s.vx)*.25}
- if(s.y<r+9){s.y=r+9;s.vy=Math.abs(s.vy)*.35}
- if(s.y>h-r-9){s.y=h-r-9;s.vy=-Math.abs(s.vy)*.35}
- if(s.x>w-r-8){s.x=w-r-8;s.vx=-Math.abs(s.vx)*.25}
- s.energy=Math.max(0,s.energy-z.consumption*dt*(1+.08*z.m));
- s.progress=clamp((s.x-g.start.x)/(g.target.x-g.start.x),0,1);
- if(!s.trail.length||Math.hypot(s.x-s.trail[s.trail.length-1].x,s.y-s.trail[s.trail.length-1].y)>3){s.trail.push({x:s.x,y:s.y});if(s.trail.length>390)s.trail.shift()}
- if(dist(s,target)<r+target.r){finish(true,'success');return}
- if(s.energy<=0||s.t>=LIMIT)finish(false,s.energy<=0?'energy':'time');
+ if(a.x<.038){a.x=.038;a.vx=Math.abs(a.vx)*.3}if(a.x>.96){a.x=.96;a.vx=-Math.abs(a.vx)*.4}
+ if(a.y<.13){a.y=.13;a.vy=Math.abs(a.vy)*.3}if(a.y>.88){a.y=.88;a.vy=-Math.abs(a.vy)*.3}
+ a.energy=Math.max(0,a.energy-s.consumption*dt*(1+.12*N));
+ if(!a.trail.length||pixelD(a.x,a.y,a.trail[a.trail.length-1][0],a.trail[a.trail.length-1][1])>4){a.trail.push([a.x,a.y]);if(a.trail.length>520)a.trail.shift()}
+ const checkpointTotal=m.check.length+1,segmentStart=a.checkIndex?m.check[a.checkIndex-1]:m.start;
+ const travel=pixelD(a.x,a.y,segmentStart[0],segmentStart[1]),segLength=pixelD(target[0],target[1],segmentStart[0],segmentStart[1]);
+ a.progress=clamp((a.checkIndex+clamp(travel/Math.max(segLength,1),0,1))/checkpointTotal,0,.995);
+ if(pixelD(a.x,a.y,target[0],target[1])<Math.min(W,H)*.083){
+  if(a.checkIndex<m.check.length){a.checkIndex++;notice('IŞIK NOKTASI '+a.checkIndex+' / '+m.check.length);sound('save');a.progress=a.checkIndex/checkpointTotal}
+  else{a.progress=1;finish(true,'success');return}
+ }
+ if(a.energy<=0)finish(false,'energy');else if(a.time>=m.limit)finish(false,'timeout');
 }
-function finish(ok,reason){
- if(!sim)return;const s=sim;
- const reached=ok?100:Math.round(s.progress*100);
- report={success:ok,progress:reached,energy:Math.round(s.energy/s.capacity*100),time:s.t.toFixed(1),hits:s.hit?1:0};
- mode='finished';$('phase').textContent=ok?'● HEDEFE ULAŞTI':'● DENEY BİTTİ';
- $('worldState').textContent=ok?'MISSION COMPLETE':'SIMULATION / ENDED';
- $('resultKicker').textContent='DENEY '+(ok?'TAMAMLANDI':'SONLANDI');
- $('resultTitle').textContent=ok?'Hareket etti.':'Tekrar dene.';
- let desc='';
- if(ok)desc='Bu gövde hedefe ulaştı. Aynı işi daha az hücreyle veya daha az enerjiyle yapabilir misin?';
- else if(reason==='energy')desc='Enerjisi bitti. Enerji hücresi ekle, gövdeyi hafiflet veya kaslarının yerini değiştir.';
- else if(reason==='time')desc='Süre doldu. Robotunun yönü ve itki dağılımını değiştir.';
- else desc='Deneyi durdurdun. Tasarımı değiştirip yeniden deneyebilirsin.';
- if(!ok&&Math.abs(s.stats.moment)>1.2)desc='Robot dönmeye çok zaman harcadı. Kasları gövdenin iki yanına daha dengeli dağıt.';
- if(!ok&&level>0&&s.stats.s===0)desc='Hedefe yönelmek zor. Öne bir duyu hücresi yerleştirerek tekrar dene.';
- $('resultDescription').textContent=desc;
- $('metricDist').textContent=reached+'%';$('metricEnergy').textContent=report.energy+'%';$('metricTime').textContent=report.time+'s';
- $('result').classList.add('show');$('runBtn').innerHTML='DÜZENLE ↗';$('runBtn').disabled=false;
- $('energyValue').textContent=report.energy+'%';$('energyBar').style.width=report.energy+'%';
- try{const k='aynen-bio-best-'+level;const best=JSON.parse(localStorage.getItem(k)||'null');if(!best||report.success&&!best.success||report.success===best.success&&report.progress>best.progress)localStorage.setItem(k,JSON.stringify(report))}catch(e){}
+function wrap(a){while(a>PI)a-=TWO;while(a< -PI)a+=TWO;return a}
+function resize(){
+ W=window.innerWidth;H=window.innerHeight;dpr=Math.min(window.devicePixelRatio||1,1.7);
+ canvas.width=Math.max(2,Math.floor(W*dpr));canvas.height=Math.max(2,Math.floor(H*dpr));canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
+ unit=clamp(Math.min(W*.055,H*.095),18,65);
+ baseX=W*(W<760?.52:.48);baseY=H*(W<760?.54:.54);
 }
-function drawRun(t){
- const s=sim;if(!s)return;const g=s.geometry,goal=g.target;
- ctx.save();
- // Moving fluid streamlines
- ctx.strokeStyle='#90bcb022';ctx.lineWidth=1;
- for(let j=0;j<7;j++){const y=h*(.16+j*.115);ctx.beginPath();for(let x=-10;x<=w+10;x+=12){let yy=y+Math.sin(x*.017+t*.0003+j)*9;if(x===-10)ctx.moveTo(x,yy);else ctx.lineTo(x,yy)}ctx.stroke()}
- // target halo
- const halo=ctx.createRadialGradient(goal.x,goal.y,4,goal.x,goal.y,75);halo.addColorStop(0,level===2?'#e7d59c88':'#a0caba77');halo.addColorStop(1,'#a0caba00');ctx.fillStyle=halo;ctx.beginPath();ctx.arc(goal.x,goal.y,75,0,Math.PI*2);ctx.fill();
- disk(goal.x,goal.y,goal.r+11,'#ffffff00','#81b399');
- ctx.setLineDash([4,5]);ctx.beginPath();ctx.strokeStyle='#6f9b83aa';ctx.lineWidth=1;ctx.arc(goal.x,goal.y,goal.r+7,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
- disk(goal.x,goal.y,goal.r,level===2?'#f4e2a48a':'#b7dfbd93','#8cb8a1');
- disk(goal.x,goal.y,7,level===2?'#d9b65c':'#79b18c');
- ctx.font='10px DM Mono,monospace';ctx.fillStyle='#698873';ctx.textAlign='center';ctx.fillText(level===2?'IŞIK':'HEDEF',goal.x,goal.y-goal.r-21);
- for(const o of g.obstacles){disk(o.x,o.y,o.r+6,'#ffffff00','#9dbab0');const grd=ctx.createRadialGradient(o.x-o.r*.3,o.y-o.r*.3,2,o.x,o.y,o.r);grd.addColorStop(0,'#c8d6cf');grd.addColorStop(1,'#9cb9ac');disk(o.x,o.y,o.r,grd,'#81a597');disk(o.x-o.r*.24,o.y-o.r*.24,o.r*.28,'#d9e8dc88')}
- if(s.trail.length>1){ctx.beginPath();ctx.moveTo(s.trail[0].x,s.trail[0].y);s.trail.forEach(p=>ctx.lineTo(p.x,p.y));ctx.strokeStyle='#7da99866';ctx.lineWidth=1.5;ctx.stroke()}
- ctx.translate(s.x,s.y);ctx.rotate(s.angle);
- const scale=clamp(g.radius/30,.68,1.22)*.7;
- const rr=Math.max(10,Math.min(18,w/50));
- const centerX=cells.reduce((a,c)=>a+c.x,0)/cells.length,centerY=cells.reduce((a,c)=>a+c.y,0)/cells.length;
- ctx.strokeStyle='#80b89c99';ctx.lineWidth=rr*.7*scale;ctx.lineCap='round';
- for(let i=0;i<cells.length;i++){const c=cells[i];for(const other of cells){if((other.x===c.x+1&&other.y===c.y)||(other.x===c.x&&other.y===c.y+1)){ctx.beginPath();ctx.moveTo((c.x-centerX)*rr*1.45*scale,(c.y-centerY)*rr*1.45*scale);ctx.lineTo((other.x-centerX)*rr*1.45*scale,(other.y-centerY)*rr*1.45*scale);ctx.stroke()}}}
- cells.forEach((c,i)=>cell((c.x-centerX)*rr*1.45*scale,(c.y-centerY)*rr*1.45*scale,rr*.7*scale,c.type,t,i,true));
+function poly(points,color,stroke,lw=1){
+ ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();
+ ctx.fillStyle=color;ctx.fill();
+ if(stroke){ctx.lineWidth=lw;ctx.strokeStyle=stroke;ctx.stroke()}
+}
+function circle(x,y,r,color,stroke=null,lw=1){ctx.beginPath();ctx.arc(x,y,r,0,TWO);ctx.fillStyle=color;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke()}}
+function line(x,y,X,Y,color,lw=1){ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(X,Y);ctx.stroke()}
+function glow(x,y,r,color){
+ const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,color);g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2)
+}
+function drawBackground(time){
+ ctx.fillStyle='#040706';ctx.fillRect(0,0,W,H);
+ const g=ctx.createRadialGradient(W*.52,H*.46,0,W*.52,H*.52,Math.max(W,H)*.78);
+ g.addColorStop(0,'#15281b');g.addColorStop(.38,'#07120d');g.addColorStop(1,'#020403');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ glow(W*.50,H*.55,Math.min(W*.56,710),'#83fe3a15');
+ if(ambient){
+  stars.forEach((p,i)=>{const x=p.x*W,y=p.y*H;if(x>W*.23&&x<W*.78&&y>H*.10&&y<H*.87||i%3===0)circle(x+Math.sin(time*.00019+p.t)*4,y+Math.cos(time*.00022+p.t)*4,p.r,'rgba(174,252,160,'+(.07+.1*(1+Math.sin(time*.0015+p.t))/2)+')')});
+  ctx.strokeStyle='#9bdd8b0c';ctx.lineWidth=.6;for(let i=0;i<22;i++){let x=(i+1)*W/23;line(x,0,x,H,'#70a47508',.5)}
+  for(let i=0;i<10;i++)line(0,i*H/9,W,i*H/9,'#74b27c08',.5);
+ }
+ // Architectural sci-fi silhouettes in the background
+ const blocks=[[.20,.78,31,100],[.26,.71,17,60],[.80,.73,26,125],[.90,.63,17,140],[.34,.32,16,70],[.73,.32,16,84]];
+ if(ambient)blocks.forEach((b,i)=>drawBlock(b[0]*W,b[1]*H,b[2]*Math.min(W,H)/720,b[3]*Math.min(W,H)/720,i%2?'sensor':'muscle',time,i,.19));
+}
+function crystalColors(type){return COLORS[type]||COLORS.core}
+function drawBlock(px,py,size,height,type,time,index,alpha=1){
+ const C=crystalColors(type),wid=size*1.25,dep=size*.56,top=py-height;
+ ctx.save();ctx.globalAlpha=alpha;
+ let shimmer=Math.sin(time*.0015+index*.74);
+ if(alpha>.4){ctx.shadowColor=C.a;ctx.shadowBlur=7+shimmer*2}
+ const N=[px,top-dep/2],E=[px+wid/2,top],S=[px,top+dep/2],L=[px-wid/2,top];
+ const n=[N[0],N[1]+height],e=[E[0],E[1]+height],s=[S[0],S[1]+height],l=[L[0],L[1]+height];
+ poly([N,E,e,n],C.b+'78',C.a+'85');
+ poly([L,S,s,l],C.a+'9c',C.c+'c8');
+ poly([S,E,e,s],C.b+'dc',C.c+'cc');
+ poly([N,E,S,L],C.a+'c4',C.c,1.45);
+ ctx.shadowBlur=0;
+ line(N[0],N[1],n[0],n[1],C.c+'98',.7);
+ line(px,top+dep/2,px,py+dep/2,C.c+'b5',1);
+ ctx.strokeStyle=C.c+'70';
+ if(type==='core'){ // pixel-cut architecture
+  poly([[px-wid*.29,top+height*.17],[px-wid*.13,top+height*.13],[px-wid*.13,top+height*.33],[px-wid*.29,top+height*.36]],'#f74da9b1');
+  poly([[px+wid*.13,top+height*.39],[px+wid*.31,top+height*.43],[px+wid*.31,top+height*.55],[px+wid*.13,top+height*.51]],'#f74da9a0');
+ }else if(type==='muscle'){
+  for(let i=0;i<3;i++)line(px-wid*.26,top+height*(.28+i*.19),px-wid*.07,top+height*(.31+i*.19),'#ffe1f1b0',1);
+ }else if(type==='energy'){
+  glow(px,top+height*.5,size*.85,'#efff6875');
+  line(px-wid*.2,top+height*.23,px+wid*.02,top+height*.44,C.c,2);
+  line(px+wid*.02,top+height*.44,px-wid*.14,top+height*.69,C.c,2);
+ }else if(type==='sensor'){
+  poly([[px,top-height*.03],[px+wid*.2,top+height*.1],[px,top+height*.23],[px-wid*.2,top+height*.1]],'#e7fffab8',C.c,1);
+ }
+ // subtle internal facets
+ line(px-wid*.35,top+height*.12,px-wid*.35,top+height*.82,C.c+'50',1);
  ctx.restore();
- // Timer and live energy track
- ctx.fillStyle='#5b8272';ctx.font='11px DM Mono,monospace';ctx.textAlign='right';ctx.fillText(s.t.toFixed(1)+' s / '+LIMIT+' s',w-23,28);
- ctx.fillStyle='#dce8dd';ctx.fillRect(w-125,39,101,4);ctx.fillStyle='#76a88c';ctx.fillRect(w-125,39,101*s.energy/s.capacity,4);
 }
-function drawFinished(t){drawRun(t)}
-function render(t){
- if(!last)last=t;const dt=Math.min(.033,(t-last)/1000);last=t;frameTime=t;
- if(mode==='running'&&sim)step(dt);
- bg(t);
- if(mode==='build')drawBuild(t);
- else if(sim)drawRun(t);
- if(mode==='running'&&sim&&Math.floor(t/150)!==Math.floor((t-dt*1000)/150))refreshLive();
+function baseOf(x,y){return{x:baseX+(x-y)*unit*.9,y:baseY+(x+y)*unit*.40}}
+function drawLabRings(time,cx,cy,r){
+ ctx.save();const S=r;
+ for(let i=0;i<4;i++){
+  ctx.beginPath();ctx.ellipse(cx,cy,S*(.7+i*.34),S*(.16+i*.085),-.04,0,TWO);
+  ctx.strokeStyle=i===0?'#b6ff7180':'#b3eab333';ctx.lineWidth=i===0?1.5:1;ctx.stroke();
+ }
+ glow(cx,cy,S*1.14,'#b3ff3640');
+ circle(cx,cy,3,'#c9ff9b');
+ for(let i=0;i<16;i++){
+  const a=i*TWO/16+time*.00018,x=cx+Math.cos(a)*S*1.4,y=cy+Math.sin(a)*S*.35;
+  circle(x,y,1.5,i%2?'#b2ff7565':'#fa5ba96e');
+ }
+ ctx.restore();
+}
+function drawBuild(time){
+ const C=baseX,Y=baseY+unit*1.9;
+ drawLabRings(time,C,Y,unit*3.15);
+ // matrix of permitted placement slots, in isometric perspective
+ for(let x=-4;x<=4;x++)for(let y=-3;y<=3;y++){
+  if(!canPlace(x,y))continue;
+  const p=baseOf(x,y);const sz=unit*.26;
+  const flashing=hover&&hover.x===x&&hover.y===y;
+  poly([[p.x,p.y-sz*.65],[p.x+sz,p.y],[p.x,p.y+sz*.65],[p.x-sz,p.y]],flashing?'#baff4c3c':'#b0ef8312',flashing?'#c5ff7b':'#9dec856a',1);
+  line(p.x-3,p.y,p.x+3,p.y,flashing?'#eaffba':'#addf8b90');
+  line(p.x,p.y-3,p.x,p.y+3,flashing?'#eaffba':'#addf8b90');
+ }
+ // faint ground wires linking adjacent modules
+ for(const c of cells){const a=baseOf(c.x,c.y);
+  for(const o of cells)if(Math.abs(o.x-c.x)+Math.abs(o.y-c.y)===1){const b=baseOf(o.x,o.y);line(a.x,a.y,b.x,b.y,'#adf69440',3)}}
+ const ordered=cells.slice().sort((a,b)=>(a.x+a.y)-(b.x+b.y));
+ ordered.forEach((c,i)=>{
+  const p=baseOf(c.x,c.y),ht=unit*(c.type==='muscle'?1.8:c.type==='sensor'?1.35:c.type==='energy'?1.12:1.7);
+  drawBlock(p.x,p.y,unit*.91,ht,c.type,time,i,1);
+ });
+ // floating labels, not blocking game area
+ if(W>760){
+  ctx.textAlign='center';ctx.font='10px DM Mono,monospace';ctx.fillStyle='#a5caab99';
+  ctx.fillText('LIVING STRUCTURE / '+String(cells.length).padStart(2,'0')+' UNITS',C,Y+unit*2.05);
+ }
+}
+function drawTarget(cx,cy,r,time,label,passed=false){
+ const v=passed?'#97b5a8':'#f65bb7';glow(cx,cy,r*4,passed?'#78ffd624':'#ff309e1f');
+ ctx.save();ctx.translate(cx,cy);ctx.rotate(PI/4+Math.sin(time*.001)*.08);poly([[0,-r],[r,0],[0,r],[-r,0]],'#ff4cb340',v,1.5);poly([[0,-r*.55],[r*.55,0],[0,r*.55],[-r*.55,0]],v+'aa','#ffd7eb',.8);ctx.restore();
+ ctx.beginPath();ctx.ellipse(cx,cy+23,r*1.35,r*.4,0,0,TWO);ctx.strokeStyle='#ed6fac77';ctx.stroke();
+ if(label){ctx.font='10px DM Mono,monospace';ctx.fillStyle='#eebddd';ctx.textAlign='center';ctx.fillText(label,cx,cy-r-19)}
+}
+function drawObstacle(x,y,r,time,index){
+ glow(x,y,r*2,'#d653ae18');
+ drawBlock(x,y+r*.32,r*1.15,r*1.8,index%2?'sensor':'core',time,index,.68);
+ circle(x,y,r,'#08170d40','#d5ffa75e');
+ ctx.setLineDash([3,7]);ctx.beginPath();ctx.arc(x,y,r+6,0,TWO);ctx.strokeStyle='#c2efb55a';ctx.stroke();ctx.setLineDash([]);
+}
+function drawMiniRobot(x,y,angle,time){
+ ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+ const s=Math.min(W,H)*.0188;
+ ctx.beginPath();ctx.ellipse(0,s*1.2,s*4.7,s*2.1,0,0,TWO);ctx.fillStyle='#a1fa7b13';ctx.fill();
+ const mx=cells.reduce((p,c)=>p+c.x,0)/cells.length,my=cells.reduce((p,c)=>p+c.y,0)/cells.length;
+ const ordered=cells.slice().sort((a,b)=>(a.x+a.y)-(b.x+b.y));
+ for(let i=0;i<ordered.length;i++){
+  const c=ordered[i],px=(c.x-mx)*s*1.2,py=(c.y-my)*s*.75;
+  drawBlock(px,py,s*.91,s*(c.type==='muscle'?1.8:1.5),c.type,time,i,1);
+ }
+ // moving small wave front
+ ctx.strokeStyle='#adff8a78';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(0,0,s*3.5,s*1.2,0,0,TWO);ctx.stroke();ctx.restore();
+}
+function drawArena(time){
+ const m=MISSIONS[level],s=model;
+ // animated dotted longitudinal motion graph
+ ctx.save();for(let i=0;i<12;i++){
+  let y=H*(.20+i*.062);
+  ctx.beginPath();for(let x=0;x<=W;x+=22){let dy=Math.sin(x*.015+time*.0002+i*.81)*5;if(x===0)ctx.moveTo(x,y+dy);else ctx.lineTo(x,y+dy)}
+  ctx.strokeStyle='#83d7870d';ctx.lineWidth=1;ctx.stroke();
+ }
+ // start beam
+ glow(m.start[0]*W,m.start[1]*H,Math.min(W,H)*.16,'#baff721f');
+ circle(m.start[0]*W,m.start[1]*H,3,'#baff8b');
+ const target=currentTarget();
+ drawTarget(m.target[0]*W,m.target[1]*H,Math.min(W,H)*.032,time,'HEDEF',false);
+ m.check.forEach((p,i)=>drawTarget(p[0]*W,p[1]*H,Math.min(W,H)*.025,time,'DURAK '+(i+1),s.checkIndex>i));
+ m.blocks.forEach((p,i)=>drawObstacle(p[0]*W,p[1]*H,p[2]*Math.min(W,H),time,i));
+ if(s.trail.length>1){ctx.beginPath();ctx.moveTo(s.trail[0][0]*W,s.trail[0][1]*H);s.trail.forEach(p=>ctx.lineTo(p[0]*W,p[1]*H));ctx.strokeStyle='#b3ff807f';ctx.lineWidth=1.7;ctx.stroke()}
+ // target vector connection for sensing
+ if(s.s.q.sensor){ctx.setLineDash([2,7]);line(s.x*W,s.y*H,target[0]*W,target[1]*H,'#a8ff7472');ctx.setLineDash([])}
+ drawMiniRobot(s.x*W,s.y*H,s.angle,time);
+ ctx.restore();
+}
+function render(time){
+ if(!last)last=time;let dt=Math.min((time-last)/1000,.033);last=time;t=time;
+ if(mode==='running'&&!paused&&model)simulate(dt);
+ drawBackground(time);
+ if(mode==='build')drawBuild(time);else if(model)drawArena(time);
+ // Abstract orbital overlays
+ if(ambient){ctx.save();ctx.lineWidth=.8;ctx.strokeStyle='#a4e89812';ctx.beginPath();ctx.ellipse(W*.52,H*.58,Math.min(W*.4,360),Math.min(H*.28,180),-.08,0,TWO);ctx.stroke();ctx.restore()}
+ if((Math.floor(time/120)!==Math.floor((time-dt*1000)/120))&&mode==='running')updateLive();
  requestAnimationFrame(render);
 }
-function refreshLive(){
- if(!sim)return;const q=Math.round(sim.energy/sim.capacity*100);
- $('energyValue').textContent=q+'%';$('energyBar').style.width=q+'%';
- $('worldState').textContent=Math.round(sim.progress*100)+'% / HEDEFE';
+function updateLive(){if(!model)return;let en=Math.round(model.energy/model.energyMax*100);$('statEnergy').textContent=en+' / 100';$('barEnergy').style.width=en+'%';$('clock').textContent=timeFormat(model.time);$('missionPercent').textContent=Math.round(model.progress*100)+'%';$('missionProgress').style.width=(model.progress*100)+'%'}
+function pick(x,y){
+ // inspect top-center of each cell first, then available slots
+ let choices=[];
+ for(let gx=-4;gx<=4;gx++)for(let gy=-3;gy<=3;gy++){
+  if(!canPlace(gx,gy)&&!find(gx,gy))continue;
+  const p=baseOf(gx,gy),occupied=find(gx,gy),height=occupied?unit*.92:0;
+  const d=Math.hypot((p.x-x)*1.05,(p.y-height*.52-y)*.94);
+  choices.push({gx,gy,d,occupied:!!occupied});
+ }
+ choices.sort((a,b)=>a.d-b.d);
+ let nearest=choices[0];return nearest&&nearest.d<unit*.62?{x:nearest.gx,y:nearest.gy}:null;
 }
+function point(e){const r=canvas.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}
+function paint(e){const q=point(e),p=pick(q.x,q.y);if(!p)return;const k=p.x+','+p.y;if(k===painted)return;painted=k;edit(p.x,p.y)}
+canvas.addEventListener('pointerdown',e=>{if(mode!=='build'||e.button!==0)return;pointerId=e.pointerId;canvas.setPointerCapture(e.pointerId);painted='';paint(e)});
+canvas.addEventListener('pointermove',e=>{if(mode!=='build')return;const q=point(e);hover=pick(q.x,q.y);if(pointerId===e.pointerId&&e.buttons)paint(e)});
+canvas.addEventListener('pointerup',e=>{if(pointerId===e.pointerId){pointerId=-1;painted=''}});
+canvas.addEventListener('pointercancel',()=>{pointerId=-1;painted=''});
+canvas.addEventListener('pointerleave',()=>{hover=null});
+canvas.addEventListener('contextmenu',e=>{e.preventDefault();if(mode!=='build')return;const q=point(e),p=pick(q.x,q.y);if(p){let prev=selected;selected='erase';edit(p.x,p.y);selected=prev;update()}});
+function panelHTML(type){
+ const s=getStats(),c=s.q;
+ if(type==='missions'){
+  return '<p>Hücreleri farklı ortamlarda test et. Her görev, farklı bir tasarımı ödüllendirir.</p>'+MISSIONS.map((m,i)=>'<button class="mission-choice '+(level===i?'active':'')+'" data-level="'+i+'"><div><b>'+String(i+1).padStart(2,'0')+' / '+m.name+'</b><small>'+m.short+'</small></div><span class="mono '+(completed.includes(i)?'acid':'')+'">'+(completed.includes(i)?'✓':i===level?'●':'↗')+'</span></button>').join('')+'<p class="mono tiny">BİR GÖREVİ TAMAMLADIĞINDA SONUÇ TARAYICINDA SAKLANIR.</p>';
+ }
+ if(type==='biology'){
+  return '<p>Bir hücreye basarak seç. Robot gövdesine dokunarak ekle, aynı yere yeniden dokunarak türünü değiştir.</p>'+
+  Object.keys(COLORS).map(k=>'<button class="mission-choice" data-choose="'+k+'"><span><b style="color:'+COLORS[k].a+'">'+COLORS[k].label+'</b><small>'+COLORS[k].info+'</small></span><span style="font-size:21px;color:'+COLORS[k].a+'">◆</span></button>').join('')+
+  '<div class="action-row"><button class="mini-btn" data-action="preset">ÖRNEK TASARIM</button><button class="mini-btn" data-action="reset">BAŞTAN KUR</button></div>';
+ }
+ if(type==='analysis'){
+  return '<p>Bu göstergeler gerçek biyolojik ölçüm değil; oynanabilir hareket modelinin hesaplarıdır.</p>'+
+  [['Hücre sayısı',s.n+' / 24'],['Kas / sensör / enerji',c.muscle+' / '+c.sensor+' / '+c.energy],['Denge',s.balance+'%'],['İtici güç',s.thrust+'%'],['Dönüş momenti',s.torque.toFixed(2)],['Enerji kapasitesi',Math.round(s.capacity)],['Saniyelik tüketim',s.consumption.toFixed(1)],['En iyi süre',best[level]?best[level].time.toFixed(1)+' s':'—']].map(p=>'<div class="datalist"><span>'+p[0]+'</span><b>'+p[1]+'</b></div>').join('')+
+  '<div class="action-row"><button class="mini-btn strong" data-action="save">SÜRÜMÜ KAYDET</button><button class="mini-btn" data-action="restore">SON KAYDI YÜKLE</button></div>';
+ }
+ if(type==='settings'){
+  return '<p>Görselliği ve oynanışı buradan ayarlayabilirsin.</p>'+
+  '<label class="toggle">Kısa etkileşim sesleri<input type="checkbox" id="audioToggle" '+(audio?'checked':'')+'></label>'+
+  '<label class="toggle">Ortam parçacıkları<input type="checkbox" id="ambientToggle" '+(ambient?'checked':'')+'></label>'+
+  '<label class="toggle">Hassas hareket<input type="checkbox" id="precisionToggle" '+(precision?'checked':'')+'></label>'+
+  '<div class="action-row"><button class="mini-btn" data-action="save">TASARIMI KAYDET</button><button class="mini-btn" data-action="restore">KAYDI YÜKLE</button><button class="mini-btn" data-action="fullscreen">TAM EKRAN</button></div>';
+ }
+ return '<p><strong>1.</strong> Alt menüden hücre seç; ortadaki yeşil yuvalara dokunarak robotuna ekle. Yeşil ana hücre sabittir.</p>'+
+ '<p><strong>2.</strong> Kas hücreleri ileri itki sağlar. Yerlerini dengeli tutmazsan robot döner.</p>'+
+ '<p><strong>3.</strong> Duyu hücresi ışığa ve yakındaki engellere yönelmeyi kolaylaştırır. Enerji hücresi hareket süresini uzatır.</p>'+
+ '<p><strong>4.</strong> Canlandır tuşuna bas. Başarısız olursa düzenle ve yeniden dene. Klavye: 1–4 hücre, X sil, R çalıştır, Z geri al.</p>'+
+ '<p><strong>Bilimsel not:</strong> Xenobot ve biyohibrit robot araştırmalarından esinlenen bu oyun, soyut bir fizik modelidir. Gerçek hücre davranışını veya biyolojik deney sonucunu tahmin etmez.</p>'+
+ '<div class="action-row"><button class="mini-btn strong" data-action="close">OYUNA DÖN</button><a class="mini-btn" href="https://wyss.harvard.edu/technology/xenobots/" target="_blank" rel="noopener noreferrer">ARAŞTIRMA ↗</a></div>';
+}
+function renderDrawer(){
+ if(!drawerType)return;const titles={missions:'GÖREVLER',biology:'HÜCRE LABORATUVARI',analysis:'CANLI ANALİZ',settings:'AYARLAR',help:'NASIL OYNANIR'};
+ $('drawer').innerHTML='<header class="drawer-head"><div><div class="mono tiny acid">BIO ROBOT / LAB 001</div><h2>'+titles[drawerType]+'</h2></div><button class="xbtn" data-action="close" aria-label="Menüyü kapat">×</button></header>'+panelHTML(drawerType);
+ $('drawer').classList.add('open');
+}
+function openDrawer(type){
+ if(drawerType===type){closeDrawer();return}
+ drawerType=type;document.querySelectorAll('[data-panel]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.panel===type)));renderDrawer();
+}
+function closeDrawer(){
+ drawerType='';$('drawer').classList.remove('open');document.querySelectorAll('[data-panel]').forEach(el=>el.setAttribute('aria-pressed','false'));
+}
+function reset(){
+ if(mode==='running'){notice('ÖNCE DENEYİ DURDUR');return}
+ history();cells=[{x:0,y:0,type:'core'}];enterBuild();update();notice('GÖVDE TEMİZLENDİ');
+}
+function fullscreen(){try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen?.().catch(()=>notice('TAM EKRAN KULLANILAMIYOR'))}catch(e){notice('TAM EKRAN KULLANILAMIYOR')}}
 function share(){
- let text='BIO ROBOT — '+MISSIONS[level].name+'. ';
- if(report)text+=report.progress+'% ilerleme, '+report.energy+'% enerji. ';
- text+='Benim robotumu geçebilir misin?';
- const url=location.origin+'/bio-robot.html?level='+(level+1);
- if(navigator.share)navigator.share({title:'BIO ROBOT / aynen.fun',text,url}).catch(()=>{});
- else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text+' '+url).then(()=>toast('Bağlantı kopyalandı.')).catch(()=>toast('Paylaşım desteklenmiyor.'));
- else{const a=document.createElement('textarea');a.value=text+' '+url;document.body.append(a);a.select();try{document.execCommand('copy');toast('Bağlantı kopyalandı.')}catch(e){toast(url)}a.remove()}
+ const txt='BIO ROBOT / aynen.fun — '+MISSIONS[level].name+' '+(results?Math.round(results.progress*100)+'% ilerleme, '+results.energy+'% enerji. ':'')+'Benim robotumu geçebilir misin?';
+ const u=location.origin+'/bio-robot.html?level='+(level+1);
+ if(navigator.share){navigator.share({title:'BIO ROBOT',text:txt,url:u}).catch(()=>{})}
+ else if(navigator.clipboard)navigator.clipboard.writeText(txt+' '+u).then(()=>notice('PAYLAŞIM BAĞLANTISI KOPYALANDI')).catch(()=>notice('KOPYALAMA ENGELLENDİ'));
+ else notice('BAĞLANTI: '+u);
 }
-document.querySelectorAll('[data-cell]').forEach(btn=>btn.addEventListener('click',()=>setSelected(btn.dataset.cell)));
-document.querySelectorAll('[data-level]').forEach(btn=>btn.addEventListener('click',()=>setLevel(Number(btn.dataset.level))));
-$('runBtn').addEventListener('click',()=>mode==='finished'?stopToBuild():start());
-$('retryBtn').addEventListener('click',stopToBuild);
-$('resultClose').addEventListener('click',()=>{$('result').classList.remove('show')});
-$('shareBtn').addEventListener('click',share);
+$('drawer').addEventListener('click',e=>{
+ const act=e.target.closest('[data-action]'),lv=e.target.closest('[data-level]'),choose=e.target.closest('[data-choose]');
+ if(lv)setLevel(Number(lv.dataset.level));
+ else if(choose){selectCell(choose.dataset.choose);closeDrawer()}
+ else if(act){
+  switch(act.dataset.action){
+   case 'close':closeDrawer();break;
+   case 'preset':makePreset();closeDrawer();break;
+   case 'reset':reset();closeDrawer();break;
+   case 'save':save();break;
+   case 'restore':loadSaved();break;
+   case 'fullscreen':fullscreen();break;
+  }
+ }
+});
+$('drawer').addEventListener('change',e=>{if(e.target.id==='audioToggle')audio=e.target.checked;else if(e.target.id==='ambientToggle')ambient=e.target.checked;else if(e.target.id==='precisionToggle')precision=e.target.checked});
+document.querySelectorAll('[data-panel]').forEach(el=>el.addEventListener('click',()=>openDrawer(el.dataset.panel)));
+document.querySelectorAll('[data-cell]').forEach(el=>el.addEventListener('click',()=>selectCell(el.dataset.cell)));
+$('eraseBtn').addEventListener('click',()=>selectCell(selected==='erase'?'muscle':'erase'));
 $('undoBtn').addEventListener('click',undo);
-$('presetBtn').addEventListener('click',preset);
-$('saveBtn').addEventListener('click',save);
-$('restoreBtn').addEventListener('click',restore);
-$('mirrorBtn').addEventListener('click',()=>{mirror=!mirror;accessible($('mirrorBtn'),mirror);$('mirrorBtn').textContent='◇ Simetri: '+(mirror?'Açık':'Kapalı');$('mirrorBtn').classList.toggle('selected',mirror);toast(mirror?'Simetrik yerleştirme açık.':'Simetrik yerleştirme kapalı.')});
-const openHelp=()=>{$('helpOverlay').classList.add('show');$('helpClose').focus()};
-const closeHelp=()=>{$('helpOverlay').classList.remove('show');$('helpBtn').focus()};
-$('helpBtn').addEventListener('click',openHelp);$('helpClose').addEventListener('click',closeHelp);$('helpDone').addEventListener('click',closeHelp);
-$('helpOverlay').addEventListener('click',e=>{if(e.target===$('helpOverlay'))closeHelp()});
-window.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('helpOverlay').classList.contains('show'))closeHelp();if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo()}});
-try{const qs=new URLSearchParams(location.search),n=Number(qs.get('level'));if(n>=1&&n<=3)level=n-1}catch(e){}
-readSaved();resize();setSelected(selected);setLevel(level);refresh();requestAnimationFrame(render);
-if('ResizeObserver'in window)new ResizeObserver(resize).observe(canvas);else window.addEventListener('resize',resize);
+$('mirrorBtn').addEventListener('click',()=>{mirror=!mirror;update();notice(mirror?'SİMETRİ AÇIK':'SİMETRİ KAPALI')});
+$('runBtn').addEventListener('click',stepButton);
+$('fullscreenBtn').addEventListener('click',fullscreen);
+$('closeResult').addEventListener('click',()=>{$('resultScrim').classList.remove('open')});
+$('retryBtn').addEventListener('click',()=>run());
+$('editBtn').addEventListener('click',enterBuild);
+$('shareBtn').addEventListener('click',share);
+$('resultScrim').addEventListener('click',e=>{if(e.target===$('resultScrim'))$('resultScrim').classList.remove('open')});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){$('resultScrim').classList.remove('open');closeDrawer();return}
+ if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+ if(e.key>='1'&&e.key<='4'){selectCell(['core','muscle','sensor','energy'][Number(e.key)-1]);return}
+ if(e.key.toLowerCase()==='x'){selectCell('erase');return}
+ if(e.key.toLowerCase()==='r'){stepButton();return}
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo()}
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='running'){paused=true;update()}last=performance.now()});
+load();try{const q=new URLSearchParams(location.search),lv=Number(q.get('level'));if(lv>=1&&lv<=4)level=lv-1}catch(e){}
+resize();window.addEventListener('resize',resize,{passive:true});update();
+if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)ambient=false;
+requestAnimationFrame(render);
 })();
