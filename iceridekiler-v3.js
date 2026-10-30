@@ -198,13 +198,47 @@ function updateUi(force){const w=wave();['tissue','energy','inflam','memory'].fo
  btn.disabled=state.phase!=='active'||state.energy<costs[act]||remaining>0||(act==='target'&&!w.antigen);
  const small=btn.querySelector('small');if(small)small.textContent=remaining>0?remaining+' sn bekle':'−'+costs[act]+' enerji';});
  renderUpgrades();drawLogs();renderHistory();refreshThreat();}
+
+/* Spatial chemotaxis: each cell reads a local gradient rather than knowing the
+   entire map. This is a stylized gameplay abstraction of recruitment signals. */
+const LYMPH={x:710,y:106};
+function chemoStrength(x,y,kind){
+ let value=0;
+ const add=(tx,ty,amp,radius)=>{
+  const dx=x-tx,dy=y-ty;
+  value+=amp*Math.exp(-(dx*dx+dy*dy)/(2*radius*radius));
+ };
+ for(const p of particles){
+  if(p.type==='allergen')continue;
+  add(p.x,p.y,kind==='dend'?1.2:1.1,125);
+ }
+ for(const h of hosts)if(h.infect>0&&!h.dead)add(h.x,h.y,kind==='dend'?2:1.5,140);
+ for(const d of debris)add(d.x,d.y,kind==='macro'?1.15:.38,105);
+ for(const sig of signals){
+  const life=clamp(1-sig.age/13,0,1);
+  if(life<=0)continue;
+  if(sig.kind==='alarm')add(sig.x,sig.y,2.3*life,170);
+  else if(sig.kind==='rally')add(sig.x,sig.y,2.7*life,148);
+ }
+ return value;
+}
+function chemoDirection(a){
+ const epsilon=22,
+ dx=chemoStrength(a.x+epsilon,a.y,a.type)-chemoStrength(a.x-epsilon,a.y,a.type),
+ dy=chemoStrength(a.x,a.y+epsilon,a.type)-chemoStrength(a.x,a.y-epsilon,a.type);
+ const mag=Math.hypot(dx,dy);
+ if(mag<.012)return null;
+ return {x:clamp(a.x+dx/mag*90,25,W-25),y:clamp(a.y+dy/mag*90,25,H-25)};
+}
+
 function pickTarget(a){const kind=wave().kind;let pick=null,best=Infinity;
  const priority=(t)=>distance(a,t)-(state.focusSet&&distance(t,state.focus)<165?Math.min(65,types[a.type].speed*1.1):0);
  if(a.type==='fibro'||a.type==='treg'||a.type==='bcell'){return null;}
- if((a.type==='nk'||a.type==='tcell')&&kind==='virus'){for(const h of hosts){if(h.infect<=0||h.dead)continue;const d=priority(h);if(d<best){best=d;pick={obj:h,kind:'host',range:40}}}return pick;}
+ if((a.type==='nk'||a.type==='tcell')&&kind==='virus'){for(const h of hosts){if(h.infect<=0||h.dead)continue;const d=priority(h);if(d<best){best=d;pick={obj:h,kind:'host',range:40}}}return best<190?pick:null;}
+ if(kind==='virus'&&a.type==='dend'&&!a.carrying){for(const h of hosts){if(h.infect<=0||h.dead)continue;const d=priority(h);if(d<best){best=d;pick={obj:h,kind:'sample',range:46}}}}
  if(kind==='bacteria'&&['macro','neutro','dend'].includes(a.type)){for(const b of particles){if(b.type!=='bacteria')continue;const d=priority(b);if(d<best){best=d;pick={obj:b,kind:'bug',range:39}}}}
  if((kind==='debris'||kind==='virus')&&['macro','neutro','dend'].includes(a.type)){for(const b of debris){const d=priority(b);if(d<best){best=d;pick={obj:b,kind:'debris',range:39}}}}
- return pick;}
+ return best<(a.type==='neutro'?170:145)?pick:null;}
 function follow(a,aim,dt){const d=types[a.type];let x=0,y=0;
  if(aim){const dx=aim.x-a.x,dy=aim.y-a.y,length=Math.max(1,Math.hypot(dx,dy));x=dx/length;y=dy/length;}
  else if(Math.random()<dt*.7){a.vx=rnd(-1,1);a.vy=rnd(-1,1)}
@@ -216,26 +250,43 @@ function follow(a,aim,dt){const d=types[a.type];let x=0,y=0;
 function stepAgents(dt){
  const w=wave();for(let i=agents.length-1;i>=0;i--){const a=agents[i],type=a.type;a.age+=dt;a.hit=Math.max(0,a.hit-dt);
  if(a.age>a.life){agents.splice(i,1);continue;}
- const target=state.phase==='active'?pickTarget(a):null;
-  const trained=1+Math.min(8,state.levels[type]||0)*.09;
- let aim=target?target.obj:null;
+ const transport=type==='dend'&&a.carrying;
+ const target=state.phase==='active'&&!transport?pickTarget(a):null;
+ const trained=1+Math.min(8,state.levels[type]||0)*.09;
+ let aim=transport?LYMPH:target?target.obj:null;
+ if(transport&&distance(a,LYMPH)<48){
+  a.carrying=false;a.delivered=true;a.readyAt=state.clock+16;
+  state.presentation=clamp(state.presentation+22*trained,0,100);
+  state.activation=clamp(state.activation+7,0,100);
+  pop(LYMPH.x,LYMPH.y,'#c9a4ff');
+  addSignal(LYMPH.x,LYMPH.y,16,'adaptive');
+  event('Dendritik hücre antijen bilgisini lenf düğümüne taşıdı.');
+  aim=null;
+ }
+ if(!aim&&state.phase==='active'&&type!=='fibro'&&type!=='treg'&&type!=='bcell')aim=chemoDirection(a);
  // Recruitment gradients bring newly summoned cells to the chosen region, while
  // close-range phagocytosis and cytotoxicity still take precedence.
  if(state.phase==='active'&&['neutro','macro','dend','nk','tcell'].includes(type)){
    const rally=signals.filter(q=>q.kind==='rally').slice(-1)[0];
-   if(rally&&rally.age<9&&distance(a,rally)>65&&(!target||distance(a,target.obj)>155))aim=rally;
+   if(rally&&rally.age<9&&distance(a,rally)>65&&(!target||distance(a,target.obj)>155)&&!transport)aim=rally;
  }
- if(!aim&&state.phase==='active'&&['neutro','macro','dend'].includes(type)&&w.kind!=='allergen'){
+ if(!aim&&state.phase==='active'&&['neutro','macro','dend'].includes(type)&&w.kind!=='allergen'&&!transport){
   const sig=signals.filter(v=>v.kind==='alarm').sort((p,q)=>distance(a,p)-distance(a,q))[0];if(sig)aim=sig;else aim=state.focus;}
  if(!aim&&type==='fibro'&&state.tissue<92)aim=state.focus;
  if(!aim&&type==='treg'&&state.inflam>28)aim=state.focus;
  follow(a,aim,dt);
  if(target&&distance(a,target.obj)<target.range){
+  if(type==='dend'&&w.antigen&&!a.carrying&&state.clock>(a.readyAt||0)){
+   a.carrying=true;a.carryingAntigen=w.antigen;a.hit=.75;
+   pop(a.x,a.y,'#a6e9db');
+   // Sampling is not killing a virus-infected cell.
+  }
+  if(target.kind==='sample'){continue;}
   if(target.kind==='bug'){target.obj.hp-=types[type].dps*dt*trained*(1+state.antibody*.012);a.hit=.3;if(type==='dend')state.presentation=clamp(state.presentation+dt*6,0,100);if(type==='neutro')state.inflam+=dt*.55;}
   if(target.kind==='debris'){target.obj.hp-=types[type].dps*dt*trained;a.hit=.3;}
   if(target.kind==='host'){target.obj.infect-=types[type].dps*dt*trained*(type==='tcell'?1+.25*state.activation/100:1);a.hit=.3;state.inflam+=dt*.13;if(target.obj.infect<=0){target.obj.infect=0;target.obj.dead=true;target.obj.heal=11;state.tissue-=.38;if(debris.length<55)debris.push({id:++maxId,x:target.obj.x,y:target.obj.y,hp:1.5});pop(target.obj.x,target.obj.y,'#9fc4d2')}}
  }
- if(type==='dend'&&w.antigen&&state.phase==='active'&&state.chapterTime>3){state.presentation=clamp(state.presentation+dt*(.35+.12*Math.min(8,particles.length))*trained,0,100);}
+ if(type==='dend'&&w.antigen&&state.phase==='active'&&state.chapterTime>3&&!transport){state.presentation=clamp(state.presentation+dt*.075*trained,0,100);}
  if(type==='fibro'&&state.phase==='active'&&w.kind==='debris'){state.tissue=Math.min(100,state.tissue+dt*.4*trained)}
  if(type==='treg'&&state.phase==='active'&&state.inflam>9){state.inflam=Math.max(6,state.inflam-dt*.22*trained)}
  }}
@@ -424,9 +475,14 @@ function paintAgent(u,t){
  // Soft jelly halo with subtle cyan/red aberration, like the second reference.
  c.shadowColor=info.glow;c.shadowBlur=state.fx?32:5;
  const R=d.r*1.1;
+ if(u.type==='neutro'&&u.hit>0){c.strokeStyle='rgba(255,168,189,.38)';c.lineWidth=2;c.beginPath();c.moveTo(-R*.8,R*.65);c.lineTo(-R*1.8,R*.95);c.moveTo(-R*.4,R*.8);c.lineTo(-R*1.4,R*1.2);c.stroke();}
  const headY=(u.type==='macro'?-3:0);
  // Character limbs and morphology silhouette.
  c.strokeStyle=info.edge;c.lineWidth=4.6;c.lineCap='round';
+ if(info.person==='guardian'&&u.hit>0){
+    c.strokeStyle='#ffd2a5';c.lineWidth=3;
+    for(let k=0;k<3;k++){const ang=-Math.PI*.8+k*.8;c.beginPath();c.moveTo(Math.cos(ang)*R*.7,Math.sin(ang)*R*.7);c.quadraticCurveTo(Math.cos(ang)*R*1.3,Math.sin(ang)*R*1.55,Math.cos(ang)*R*1.7,Math.sin(ang)*R*1.3);c.stroke();}
+ }
  if(info.person==='guardian'){ // small feet, stout watchman
    c.beginPath();c.moveTo(-R*.48,R*.60);c.lineTo(-R*.45,R*1.09);c.moveTo(R*.42,R*.6);c.lineTo(R*.44,R*1.08);c.stroke();
  }else if(info.person==='antenna'){ // dendritic spines
@@ -461,6 +517,9 @@ function paintAgent(u,t){
  c.beginPath();c.ellipse(-R*.19,eyeY,eyeR,eyeR*1.35,0,0,TWO);
  c.ellipse(R*.18,eyeY,eyeR,eyeR*1.35,0,0,TWO);c.fill();
  if(info.person==='guardian'){c.strokeStyle='#fff8d477';c.lineWidth=1.5;c.beginPath();c.arc(-R*.28,-R*.35,R*.34,Math.PI*1.14,Math.PI*1.9);c.stroke();}
+ if(u.type==='dend'&&u.carrying){
+    c.fillStyle='#a5fff0';c.shadowColor='#88eefa';c.shadowBlur=11;c.beginPath();c.arc(R*.7,-R*.8,4.5,0,TWO);c.fill();c.shadowBlur=0;
+ }
  if(u.hit>0){c.strokeStyle='#fff0d0';c.lineWidth=1.2;c.beginPath();c.arc(0,0,R*1.24,0,TWO);c.stroke();}
  c.restore();
 }
