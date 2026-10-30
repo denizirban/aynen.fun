@@ -23,6 +23,7 @@ if(api){
   light(0xba81ff,7500,260,180,60);
   const cells=new Map(), microbes=new Map(), tissues=new Map();
   const captures=new Map(),lastInfected=new Map(),interactions=[];
+  const ingestion=new Map();
   const v3=new THREE.Vector3();
   let previousFrame=0,quality=1,slowFrames=0,fastFrames=0,active=true;
   const colors={
@@ -81,7 +82,17 @@ if(api){
      p.position.set(Math.sin(i*2.37)*.48,Math.cos(i*2.57)*.55,.37+(i%2)*.05);
      group.add(p);organelles.push(p);
    }
-   group.userData={type,seed:id*1.93,body,glow,nucleus,material,morph,organelles};
+   const arms=[];
+   if(type==='macro'){
+     const armMaterial=material.clone();
+     for(let i=0;i<3;i++){
+       const limb=new THREE.Mesh(new THREE.CapsuleGeometry(.105,.56,5,8),armMaterial);
+       limb.position.set(Math.cos(i*2.094)*.74,Math.sin(i*2.094)*.72,.15);
+       limb.rotation.z=i*2.094-Math.PI/2;
+       group.add(limb);arms.push(limb);
+     }
+   }
+   group.userData={type,seed:id*1.93,body,glow,nucleus,material,morph,organelles,arms};
    scene.add(group);return group;
   };
   const microMat={
@@ -164,6 +175,19 @@ if(api){
     mesh.scale.set(r*pulse,r*(1+Math.sin(phase*.65)*.035),r);
     mesh.rotation.z=Math.sin(phase*.62)*.07;
     mesh.userData.material.emissiveIntensity=a.hit>0?.66:.22;
+    if(mesh.userData.arms.length){
+      const food=d.particles.filter(p=>p.type==='bacteria').sort((p,q)=>Math.hypot(p.x-a.x,p.y-a.y)-Math.hypot(q.x-a.x,q.y-a.y))[0];
+      const dd=food?Math.hypot(food.x-a.x,food.y-a.y):Infinity;
+      const engage=dd<48?Math.max(0,1-dd/48):0;
+      const direction=food?Math.atan2(a.y-food.y,food.x-a.x):0;
+      mesh.userData.arms.forEach((arm,i)=>{
+        const theta=direction+(i-1)*.43;
+        const len=1+engage*(i===1?.88:.54);
+        arm.rotation.z=theta-Math.PI/2;
+        arm.position.set(Math.cos(theta)*(.78+engage*.13),Math.sin(theta)*(.78+engage*.13),.20);
+        arm.scale.y=len;arm.material.emissiveIntensity=.2+engage*.35;
+      });
+    }
     const user=mesh.userData;
     if(user.morph.shader){
       user.morph.shader.uniforms.uCellTime.value=phase;
@@ -195,7 +219,11 @@ if(api){
        mesh.scale.multiplyScalar(1-f*.38);
        mesh.position.x+=(nearest.x-a.x)*f*.18;
        mesh.position.y-=(nearest.y-a.y)*f*.18;
-       if(!captures.has(a.id)&&dist<17){captures.set(a.id,{x:a.x,y:a.y,t:time});burst(a.x-450,262.5-a.y,32,'clear');}
+       if(!captures.has(a.id)&&dist<17){
+         captures.set(a.id,{x:a.x,y:a.y,t:time,owner:nearest.id});
+         ingestion.set(a.id,{x:a.x,y:a.y,owner:nearest.id,t:time});
+         burst(a.x-450,262.5-a.y,32,'clear');
+       }
       }else captures.delete(a.id);
      }
    },now);
@@ -211,6 +239,18 @@ if(api){
      const m=mesh.material;if(h.infect>0){m.color.setHex(0xf0a4bc);m.emissive.setHex(0xff638f);m.opacity=.37;}
      else if(h.dead){m.opacity=.08;}else{m.color.setHex(0x8bdacf);m.emissive.setHex(0x3d9e8d);m.opacity=lastW<700?.105:.15;}
    },now);
+   for(const [id,capture] of ingestion){
+     const age=(now-capture.t)/1000;
+     if(age>.85){ingestion.delete(id);continue;}
+     const host=d.agents.find(a=>a.id===capture.owner);
+     if(!host)continue;
+     const tip=age/.85;
+     const pmesh=microbes.get(id);
+     if(pmesh){
+       pmesh.position.set((capture.x+(host.x-capture.x)*tip)-450,262.5-(capture.y+(host.y-capture.y)*tip),33+5*Math.sin(tip*Math.PI));
+       pmesh.scale.multiplyScalar(Math.max(.05,1-tip*.72));
+     }
+   }
    animateInteractions(now);
    for(const b of bg)b.material.opacity=state.phase==='active'?.055:.03;
    try{renderer.render(scene,camera)}catch(error){
