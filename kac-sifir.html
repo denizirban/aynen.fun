@@ -118,63 +118,153 @@ footer{font-size:8px;margin-top:20px}
 }
 @media(max-width:390px){.between-actions button{font-size:9px;padding:10px 6px}.topright{display:none}}
 
+
+/* Single-viewport explorer */
+html,body{height:100%;width:100%;overflow:hidden}
+body{min-height:0}
+.page{height:100dvh;min-height:0;max-width:1100px;padding:clamp(8px,1.5vh,18px) clamp(12px,3vw,32px);margin:0 auto;display:grid;grid-template-rows:28px minmax(110px,1fr) auto minmax(174px,28vh) 15px;gap:clamp(5px,1vh,11px);overflow:hidden}
+.mast{height:28px;display:flex;align-items:center;gap:10px}
+.mast .topright{margin-left:auto}
+.mast .share{font-size:9px;min-height:26px;padding:5px 10px}
+.hero{min-height:0;min-width:0;padding:0;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.hero .eyebrow{font-size:9px}
+.hero h1{font-size:clamp(19px,3vh,28px);margin:4px 0 6px}
+.power{font-size:clamp(64px,16vh,155px);line-height:.92}
+.name{font-size:clamp(21px,4.5vh,40px);margin-top:5px;min-height:0;line-height:1}
+.explanation{font-size:clamp(10px,1.5vh,12px);line-height:1.24;margin-top:6px;min-height:0}
+.zeros-wrap{min-height:0;width:min(100%,640px);margin:9px auto 0;padding:5px 0 0}
+.zeros-head{font-size:8px;margin:0 0 2px}
+.zeros{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35;max-height:15px;word-break:normal}
+.controls{padding:0;margin:0 auto;width:min(100%,800px)}
+.scale-labels{font-size:9px}
+.track-row{gap:11px;margin:5px 0 3px}
+.step{width:40px;height:40px;font-size:22px}
+.undertrack{min-height:18px}
+.multiplier,.skip button{font-size:9px}
+.skip button{padding:3px 2px}
+.discovery{min-height:0;min-width:0;border:1px solid #e0e0db;background:white;display:flex;flex-direction:column;overflow:hidden}
+.disc-tabs{height:34px;flex:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:#fafaf8;border-bottom:1px solid #e4e4df}
+.disc-tab{background:transparent;border:0;border-right:1px solid #e4e4df;font:700 10px "Courier New",monospace;color:#888;letter-spacing:.01em;white-space:nowrap;padding:0 4px}
+.disc-tab:last-child{border-right:0}
+.disc-tab.active{color:#111;background:white;box-shadow:inset 0 -2px #111}
+.disc-body{min-height:0;flex:1}
+.disc-pane{display:none;height:100%;min-height:0;min-width:0}
+.disc-pane.active{display:flex}
+.disc-pane[hidden]{display:none!important}
+#pane-idea,#pane-buy{padding:10px 14px;gap:18px;align-items:stretch}
+.sketch{width:130px;flex:none;min-width:0;border:1px solid #ebebe6;background:#f7f7f4;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.idea-symbol>span{font:400 clamp(45px,7vw,78px)/1 Georgia,serif;letter-spacing:-.09em}
+.idea-symbol small{font:9px "Courier New",monospace;color:#888;margin-top:4px}
+.idea-copy,.buy-content{min-height:0;min-width:0;flex:1;display:flex;flex-direction:column;justify-content:center;gap:5px}
+.tiny{font:9px "Courier New",monospace;color:#777}
+.idea-copy h2,.buy-result{font-size:clamp(16px,2.2vw,22px);line-height:1.1;letter-spacing:-.05em;margin:0;font-weight:800}
+.idea-copy p{font-size:clamp(11px,1.3vw,13px);line-height:1.38;color:#555;margin:0}
+.idea-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto}
+.idea-bottom>span{font:10px "Courier New",monospace;color:#777}
+.idea-nav{display:flex;gap:6px}
+.idea-nav button{background:white;border:1px solid #deded9;min-width:37px;height:27px;font-size:15px}
+.idea-nav button:hover,.buy-select button:hover{background:#111;color:white}
+#pane-between .between{width:100%;padding:10px 15px;margin:0;border:0;display:flex;flex-direction:column;gap:4px}
+.between .eyebrow{font-size:9px}
+.between h2{font-size:clamp(16px,2.1vw,22px);margin:2px 0 0}
+.between-intro{font-size:11px;margin:0;line-height:1.2}
+.interval-labels{font-size:11px;line-height:1.15;margin-top:3px}
+.interval-track{height:12px;min-height:12px}
+.interval-track:after{display:none}
+.between-actions{margin-top:0;gap:8px}
+.between-actions button{min-height:31px;padding:4px;font-size:10px}
+.interval-footer{margin-top:0;font-size:9px}
+.between-thought{margin:0;font-size:10px;line-height:1.15}
+.buy-sketch svg{width:100%;height:100%;max-height:125px}
+.buy-result{font-size:clamp(17px,2.5vw,27px);overflow-wrap:anywhere}
+.buy-context{font-size:11px;color:#666;margin:0;line-height:1.3}
+.buy-select{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto}
+.buy-select button{background:#fff;border:1px solid #ddd;font:9px "Courier New",monospace;min-height:27px;padding:5px 8px}
+.buy-select button.chosen{background:#111;border-color:#111;color:white}
+.buy-disclaimer{font:9px/1.2 "Courier New",monospace;color:#999}
+.legacy{display:none!important}
+footer{margin:0;height:15px;min-height:0;display:flex;align-items:center;gap:10px;font:8px/1.1 "Courier New",monospace;white-space:nowrap;overflow:hidden}
+footer .sources{margin-left:auto;flex:none}
+@media(max-width:600px){
+.page{grid-template-rows:25px minmax(90px,1fr) auto minmax(178px,31vh) 13px;gap:6px;padding:9px 11px 8px}
+.mast{height:25px}.mast .topright{display:none}.mast .share{margin-left:auto;min-height:24px;padding:4px 8px}
+.back{font-size:11px}.back span{font-size:9px;margin-left:4px}
+.hero .eyebrow{font-size:8px}.hero h1{font-size:20px;margin:3px 0}
+.power{font-size:clamp(66px,15vh,120px)}.name{font-size:clamp(21px,4vh,30px)}.explanation{font-size:10px;margin-top:4px}
+.zeros-wrap{margin-top:5px}
+.controls .step{height:35px;width:35px;font-size:19px}.track-row{margin:3px 0 2px}.scale-labels{font-size:8px}
+.multiplier,.skip button{font-size:8px}
+.disc-tabs{height:30px}.disc-tab{font-size:9px;letter-spacing:-.04em}
+#pane-idea,#pane-buy{padding:9px;gap:9px}.sketch{width:75px}
+.idea-symbol>span{font-size:46px}.idea-symbol small{font-size:7px}
+.idea-copy h2{font-size:15px}.idea-copy p{font-size:11px;line-height:1.27}.tiny{font-size:8px}
+.idea-bottom>span{font-size:9px}.idea-nav button{min-width:29px;height:24px}
+#pane-between .between{padding:8px 10px;gap:3px}.between .eyebrow{font-size:7px}.between h2{font-size:17px}.between-intro{font-size:10px}.between-actions button{min-height:28px}
+.between-thought{font-size:9px}
+.buy-result{font-size:18px}.buy-context{font-size:10px}.buy-select{gap:4px}.buy-select button{font-size:8px;min-height:25px;padding:5px}
+.buy-disclaimer{font-size:8px}
+footer{font-size:7px}footer>span:first-child{min-width:0;text-overflow:ellipsis;overflow:hidden}
+}
+@media(max-height:710px){
+.page{grid-template-rows:25px minmax(70px,1fr) auto minmax(164px,30vh) 13px;gap:5px}
+.hero .eyebrow{display:none}.power{font-size:clamp(58px,13.2vh,112px)}.name{margin-top:3px}.zeros-wrap{margin-top:2px}
+.disc-tabs{height:28px}#pane-idea,#pane-buy{padding-top:7px;padding-bottom:7px}
+}
+@media(max-height:570px){
+.page{grid-template-rows:22px minmax(65px,1fr) auto minmax(142px,29vh) 0px;gap:3px;padding-top:5px;padding-bottom:5px}
+.hero h1{font-size:16px}.power{font-size:clamp(52px,11vh,88px)}.name{font-size:20px}.explanation{font-size:9px}
+.zeros-wrap{display:none}footer{display:none}
+.controls .step{width:30px;height:30px}.disc-tabs{height:25px}
+.idea-copy p{font-size:10px;line-height:1.2}.idea-symbol>span{font-size:38px}.between-thought,.buy-disclaimer{display:none}
+}
+
 </style>
 </head>
 <body>
 <div class="page" id="page">
-<header>
-<a class="back" href="/">aynen.fun <span>← OYUNLAR</span></a>
-<span class="topright">SIFIRDAN SONSUZLUĞA. İKİ YÖNDE.</span>
-</header>
-<main class="hero" aria-label="Sayı ölçeği simülasyonu">
-<div class="eyebrow">HİÇBİRDEN SONSUZLUĞA BİR SAYI DOĞRUSU</div>
-<h1>Kaç Sıfır?</h1>
-<div class="power zero-case" id="power" aria-label="Sıfır">0<sup id="exp">0</sup></div>
+<header class="mast"><a class="back" href="/">aynen.fun <span>← OYUNLAR</span></a><span class="topright">BİR SAYININ İKİ TARAFI VAR.</span><button class="share" id="share" type="button">PAYLAŞ ↗</button></header>
+<main class="hero" aria-label="Sayı büyüklüğü">
+<div class="eyebrow">SIFIRDAN SONSUZLUĞA</div><h1>Kaç Sıfır?</h1>
+<div class="power zero-case" id="power" aria-label="Sıfır">0<sup id="exp"></sup></div>
 <div class="name" id="name" aria-live="polite" aria-atomic="true">Sıfır</div>
-<div class="explanation" id="explanation">Ne pozitif ne negatif. Ama sayı doğrusunun tam ortasında.</div>
-<div class="zeros-wrap">
-<div class="zeros-head"><span id="number-caption">SAYININ TAM YAZILIŞI</span><span id="zeros-count">BAŞLANGIÇ NOKTASI</span></div>
-<div class="zeros" id="zeros">0</div>
-</div>
+<div class="explanation" id="explanation">Ne pozitif ne negatif. Sayıların tam ortasında.</div>
+<div class="zeros-wrap"><div class="zeros-head"><span id="number-caption">SAYININ TAM YAZILIŞI</span><span id="zeros-count">BAŞLANGIÇ NOKTASI</span></div><div class="zeros" id="zeros">0</div></div>
 </main>
-<div class="controls">
-<div class="scale-labels"><span>← NEGATİF</span><span class="center-tick" aria-hidden="true">0</span><span>POZİTİF →</span></div>
-<div class="track-row">
-<button class="step" type="button" id="smaller" aria-label="Sayıyı ona böl">÷10</button>
-<input class="slider" type="range" min="-101" max="101" value="0" step="1" id="scale" aria-label="Sayı doğrusu: negatif sayılardan sıfıra ve pozitif sayılara">
-<button class="step" type="button" id="bigger" aria-label="Sayıyı onla çarp">×10</button>
-</div>
-<div class="undertrack">
-<span class="multiplier" id="hint">0’DAN SONRA HER ADIMDA 10 KAT.</span>
-<div class="skip"><button type="button" id="previous">← ÖNCEKİ İSİM</button><button type="button" id="next">SONRAKİ İSİM →</button></div>
-</div>
-</div>
-<div class="fact">
-<div class="fact-left"><div class="fact-label" id="fact-label">SIFIR HAKKINDA</div><div class="fact-text" id="fact">Sıfır, yokluğu temsil eder; yine de toplama işleminin etkisiz elemanıdır: x + 0 = x.</div><button id="zero-more" class="zero-more" type="button">BİR BİLGİ DAHA →</button></div>
-<button class="share" id="share" type="button">PAYLAŞ ↗</button>
-</div>
-
-<section class="between" aria-label="Sıfır ve bir arasındaki sonsuz sayı keşfi">
-  <div class="between-top">
-    <div><div class="eyebrow">SONSUZLUK, EN KÜÇÜK ARALIKTA BİLE</div><h2>0 ile 1 arasına gir.</h2></div>
-    <button class="reset-between" id="reset-between" type="button">BAŞA DÖN ↺</button>
-  </div>
-  <p class="between-intro">İki sayı arasını ikiye böl. Sonra bir yarısını seç. Kaç kez bölersen böl, arada yine bir sayı kalır.</p>
-  <div class="interval-labels" aria-label="Seçili sayı aralığı">
-    <span id="interval-left">0</span><span id="interval-mid">0,5</span><span id="interval-right">1</span>
-  </div>
-  <div class="interval-track" aria-hidden="true"><span class="interval-dot"></span></div>
-  <div class="between-actions">
-    <button type="button" id="between-left" aria-label="Sol yarıyı seç, aralığı ikiye böl">← SOL YARIYA GİR</button>
-    <button type="button" id="between-right" aria-label="Sağ yarıyı seç, aralığı ikiye böl">SAĞ YARIYA GİR →</button>
-  </div>
-  <div class="interval-footer"><span id="between-step">0. BÖLÜNME</span><span id="between-width">ARALIK: 1</span></div>
-  <div class="between-thought" id="between-thought">Buradaki sayılar yalnızca kesirlerden ibaret değil. √2/2 ve π/4 gibi irrasyonel sayılar da 0 ile 1 arasında.</div>
+<section class="controls" aria-label="Sayıyı değiştir">
+<div class="scale-labels"><span>← NEGATİF</span><span class="center-tick">0</span><span>POZİTİF →</span></div>
+<div class="track-row"><button class="step" type="button" id="smaller" aria-label="Önceki sayı büyüklüğü">−</button><input class="slider" type="range" min="-101" max="101" value="0" step="1" id="scale" aria-label="Negatif büyüklüklerden sıfıra, sonra pozitif büyüklüklere"><button class="step" type="button" id="bigger" aria-label="Sonraki sayı büyüklüğü">+</button></div>
+<div class="undertrack"><span class="multiplier" id="hint">SIFIR: NE POZİTİF NE NEGATİF</span><div class="skip"><button type="button" id="previous">← ÖNCEKİ İSİM</button><button type="button" id="next">SONRAKİ İSİM →</button></div></div>
 </section>
-<footer>
-<span>10⁰ = 1. SIFIR ≠ 10⁰. 0 İLE 1 ARASINDA SONSUZ REEL SAYI VAR.</span>
-<a href="https://mathshistory.st-andrews.ac.uk/HistTopics/Zero/" target="_blank" rel="noopener noreferrer">SIFIRIN TARİHİ / MACTUTOR ↗</a>
-</footer>
+<section class="discovery" aria-label="Sayıları keşfet">
+<nav class="disc-tabs" role="tablist" aria-label="Keşif türü">
+<button class="disc-tab active" type="button" data-pane="idea" id="tab-idea" role="tab" aria-controls="pane-idea" aria-selected="true">SIFIRIN FİKRİ</button>
+<button class="disc-tab" type="button" data-pane="between" id="tab-between" role="tab" aria-controls="pane-between" aria-selected="false">0–1 ARASI ∞</button>
+<button class="disc-tab" type="button" data-pane="buy" id="tab-buy" role="tab" aria-controls="pane-buy" aria-selected="false">NE ALINIR?</button>
+</nav>
+<div class="disc-body">
+<div class="disc-pane active" id="pane-idea" role="tabpanel" aria-labelledby="tab-idea">
+<div class="sketch idea-symbol" aria-hidden="true"><span id="idea-symbol">∅</span><small id="idea-tag">FELSEFE</small></div>
+<div class="idea-copy"><div class="tiny" id="idea-step">01 / 12</div><h2 id="idea-title">Hiçlik, sıfır değildir.</h2><p id="idea-text">Bir odada sıfır insan bulunması, odanın yok olduğu anlamına gelmez.</p><div class="idea-bottom"><span id="idea-formula">0 insan ≠ olmayan oda</span><div class="idea-nav"><button type="button" id="idea-prev" aria-label="Önceki fikir">←</button><button type="button" id="idea-next" aria-label="Sonraki fikir">→</button></div></div></div>
+</div>
+<div class="disc-pane" id="pane-between" role="tabpanel" aria-labelledby="tab-between" hidden>
+<section class="between" aria-label="Sıfır ve bir arasındaki sonsuz sayı keşfi">
+<div class="between-top"><div><div class="eyebrow">HER ARALIKTA YENİ BİR ARALIK</div><h2>İki sayı. Sonsuz ara.</h2></div><button class="reset-between" id="reset-between" type="button">BAŞA DÖN ↺</button></div>
+<p class="between-intro">Sol veya sağ yarıyı seç. Sonra bir daha böl.</p>
+<div class="interval-labels"><span id="interval-left">0</span><span id="interval-mid">0,5</span><span id="interval-right">1</span></div>
+<div class="interval-track" aria-hidden="true"><span class="interval-dot"></span></div>
+<div class="between-actions"><button type="button" id="between-left">← SOL YARI</button><button type="button" id="between-right">SAĞ YARI →</button></div>
+<div class="interval-footer"><span id="between-step">0. BÖLÜNME</span><span id="between-width">ARALIK: 1</span></div>
+<div class="between-thought" id="between-thought">İki reel sayı arasında sonsuz reel sayı bulunur.</div>
+</section></div>
+<div class="disc-pane" id="pane-buy" role="tabpanel" aria-labelledby="tab-buy" hidden>
+<div class="sketch buy-sketch" aria-hidden="true"><svg id="buy-art" viewBox="0 0 168 126" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div class="buy-content"><div class="tiny" id="buy-label">SAYIYLA NE ALINIR?</div><h2 class="buy-result" id="buy-result">0 TL = boş sepet</h2><p class="buy-context" id="buy-context">Örnek alışveriş hesabı.</p>
+<div class="buy-select" role="group" aria-label="Nesneyi değiştir"><button data-thing="simit" class="chosen" type="button">SİMİT</button><button data-thing="bisiklet" type="button">BİSİKLET</button><button data-thing="araba" type="button">ARABA</button><button data-thing="ev" type="button">EV</button></div>
+<div class="buy-disclaimer">Oyun fiyatları varsayımsal ve sabit; güncel fiyat değil.</div></div>
+</div>
+</div></section>
+<div class="legacy" aria-hidden="true"><span id="fact-label"></span><span id="fact"></span><button id="zero-more" type="button" hidden>+</button></div>
+<footer><span>0 ≠ 10⁰ · İKİ REEL SAYI ARASINDA SONSUZ REEL SAYI VAR.</span><div class="sources"><a href="https://mathshistory.st-andrews.ac.uk/HistTopics/Zero/" target="_blank" rel="noopener noreferrer">MACTUTOR</a> · <a href="https://plato.stanford.edu/entries/nothingness/" target="_blank" rel="noopener noreferrer">FELSEFE</a></div></footer>
 </div>
 <script>
 (function(){
@@ -277,6 +367,7 @@ function setIndex(n,animate){
  el.fact.textContent=zero?zeroFacts[zeroFactIndex]:factFor(k,negative);
  el.zeroMore.hidden=!zero;
  el.hint.textContent=zero?'SIFIR: NE POZİTİF NE NEGATİF':Math.abs(idx)===1?'SIFIRDAN SONRA İLK ADIM':(negative?'SOLA':'SAĞA')+' HER ADIMDA 10 KAT';
+ if(typeof window.aynenNumberChanged==='function')window.aynenNumberChanged(idx);
  if(animate&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches){
   var p=document.getElementById('page');p.classList.remove('motion');void p.offsetWidth;p.classList.add('motion');
  }
@@ -363,5 +454,65 @@ if(Number.isInteger(d)&&d>=0&&d<=200&&a!==null&&/^\d{1,61}$/.test(a)){
 setIndex(idx,false);updateBetween();
 })();
 </script>
-</body>
+<script>
+(function(){
+'use strict';
+var ideas=[
+['Hiçlik, sıfır değildir.','FELSEFE','∅','Bir odada sıfır insan bulunması, odanın yok olduğu anlamına gelmez. Sıfır belirli bir şeyin sayıca yokluğunu anlatır; varlığın tümden yokluğunu değil.','0 insan ≠ olmayan oda'],
+['Boş kümede kaç şey var?','KÜME KURAMI','{}','Boş küme hiçbir eleman içermez. Ama yalnızca 0 sayısını içeren kümede bir eleman vardır. Yokluk ve yokluğu simgeleyen nesne, aynı şey değildir.','|∅| = 0   ·   |{0}| = 1'],
+['Hiçbir şey eklemek bir işlemdir.','CEBİR','0','Bir sayıya sıfır eklediğinde sayı değişmez. Sıfır, toplamanın etkisiz elemanıdır. Matematikte “hiçbir şey yapmamak” bile kesin bir kurala dönüşür.','a + 0 = a'],
+['Sıfır olmadan 205 yaz.','BASAMAK','205','205’te ortadaki sıfır, hiç onluk olmadığını bildirir. Sıfırı çıkarırsan 25 kalır. 0, hem sayı hem de yer tutucu olarak iş görür.','205 ≠ 25'],
+['Sıfıra neden bölemeyiz?','MATEMATİK','÷0','1 ÷ 0 = x olsaydı, x × 0 = 1 gerekirdi. Oysa hiçbir reel sayı bunu sağlayamaz. Bu nedenle reel aritmetikte sıfıra bölme tanımsızdır.','1 / 0 tanımsız'],
+['Sıfıra en yakın pozitif sayı?','REEL SAYILAR','½','Böyle bir sayı yoktur. Sıfırdan büyük hangi sayıyı seçersen seç, yarısı daha küçüktür ve hâlâ pozitiftir. 0 ile 1 arası bu nedenle sonsuzca bölünebilir.','0 < x/2 < x'],
+['Sonsuz adım, sonlu yol.','ZENON','∞','Bir yolun önce yarısını, sonra kalanın yarısını al. Sonsuza kadar yeni parça tanımlayabilirsin; hepsinin toplamı yine sonlu bir uzunluğa yaklaşır.','½ + ¼ + ⅛ + … = 1'],
+['0⁰ kaçtır?','BAĞLAM','0⁰','Her durumda tek bir cevap kullanılmaz. Kombinatorikte 0⁰ çoğu kez 1 tanımlanır. Limit problemlerinde “0⁰ biçimi” tek başına sonucu söylemez.','Bağlam önemlidir.'],
+['Eksi sıfır gerçekten var mı?','BİLGİSAYAR','−0','Reel sayılar için −0 = 0. Fakat yaygın kayan nokta biçimlerinde bilgisayarlar pozitif ve negatif sıfırı farklı bitlerle tutabilir.','−0 = 0 (reel sayılarda)'],
+['Sıfır bir mantık fikridir.','FREGE','?','Gottlob Frege, sıfırı “kendisiyle özdeş olmayan nesneler” kavramının sayısı olarak ele aldı. Böyle bir nesne bulunmaz. Sayma fikrini mantıkla ilişkilendirdi.','Hiç örneği olmayan bir kavram'],
+['Sıfırın tek mucidi yok.','TARİH','0','Boş basamağı belirtmekle sıfırı sayı olarak kullanmak farklı gelişmelerdir. Babil ve Maya geleneklerinde yer tutucular; Hint matematiğinde sıfırla işlem kuralları gelişti.','Brahmagupta · MS 628'],
+['Hiçlik bir sayı olabilir mi?','ONTOLOJİ','∅','“Neden hiçlik yerine bir şey var?” sorusu felsefenin klasik problemlerindendir. Matematiksel 0 kesin tanımlıdır; felsefedeki mutlak hiçlik aynı kavram değildir.','0 sayısı ≠ mutlak hiçlik']
+];
+var num=0,view='idea',touched=false,index=0,chosen='simit';
+var E=function(x){return document.getElementById(x)};
+function renderIdea(){var q=ideas[num];E('idea-title').textContent=q[0];E('idea-tag').textContent=q[1];E('idea-symbol').textContent=q[2];E('idea-text').textContent=q[3];E('idea-formula').textContent=q[4];E('idea-step').textContent=String(num+1).padStart(2,'0')+' / '+ideas.length}
+E('idea-prev').addEventListener('click',function(){num=(num+ideas.length-1)%ideas.length;renderIdea()});
+E('idea-next').addEventListener('click',function(){num=(num+1)%ideas.length;renderIdea()});
+function showPane(x,manual){
+ view=x;if(manual)touched=true;
+ document.querySelectorAll('.disc-tab').forEach(function(b){var yes=b.dataset.pane===x;b.classList.toggle('active',yes);b.setAttribute('aria-selected',String(yes));b.tabIndex=yes?0:-1});
+ document.querySelectorAll('.disc-pane').forEach(function(p){var yes=p.id==='pane-'+x;p.hidden=!yes;p.classList.toggle('active',yes)});
+}
+document.querySelectorAll('.disc-tab').forEach(function(b){
+ b.addEventListener('click',function(){showPane(b.dataset.pane,true)});
+ b.addEventListener('keydown',function(e){if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;e.preventDefault();var a=['idea','between','buy'],next=a[(a.indexOf(view)+(e.key==='ArrowRight'?1:2))%3];showPane(next,true);E('tab-'+next).focus()});
+});
+var items={
+simit:{price:20,title:'simit',unit:'20 TL',art:'<ellipse cx="84" cy="66" rx="48" ry="38" fill="#d6a96e" stroke="#111" stroke-width="3"/><ellipse cx="84" cy="66" rx="24" ry="17" fill="#f7f7f4" stroke="#111" stroke-width="3"/><g stroke="#f7e8c7" stroke-width="3.2" stroke-linecap="round"><path d="M51 49l6 6M70 35l4 9M99 36l-3 9M114 49l-6 6M123 70l-8-2M111 86l-7-7M82 95l2-9M53 82l8-5M42 66l8 2M68 90l5-8M99 92l4-8"/></g>'},
+bisiklet:{price:25000,title:'bisiklet',unit:'25.000 TL',art:'<g stroke="#111" stroke-width="3.7" fill="none" stroke-linejoin="round" stroke-linecap="round"><circle cx="41" cy="93" r="25"/><circle cx="128" cy="93" r="25"/><path d="M41 93l30-48 25 48H41l40-34 47 34-18-52M70 45H58M109 41h15M91 93l13 0"/></g>'},
+araba:{price:1000000,title:'otomobil',unit:'1.000.000 TL',art:'<path d="M23 78l12-24 24-14h48l25 25 14 10 4 21H18z" fill="#dbe5e9" stroke="#111" stroke-width="3"/><path d="M51 47L38 68h87l-18-21z" fill="#fff" stroke="#111" stroke-width="2.5"/><circle cx="48" cy="96" r="14" fill="#fff" stroke="#111" stroke-width="4"/><circle cx="120" cy="96" r="14" fill="#fff" stroke="#111" stroke-width="4"/>'},
+ev:{price:10000000,title:'ev',unit:'10.000.000 TL',art:'<path d="M29 58L84 17l55 41v60H29z" fill="#e5dfd4" stroke="#111" stroke-width="3"/><path d="M19 62l65-52 65 52" fill="none" stroke="#111" stroke-width="4"/><rect x="70" y="73" width="27" height="45" fill="#fff" stroke="#111" stroke-width="3"/><rect x="40" y="68" width="19" height="21" fill="#fff" stroke="#111" stroke-width="2.5"/><rect x="109" y="68" width="19" height="21" fill="#fff" stroke="#111" stroke-width="2.5"/>'}
+};
+function count(k,p){
+ var n=10n**BigInt(k),d=BigInt(p);
+ if(n<d){var val=Number(n)/p;return val>=.0001?val.toLocaleString('tr-TR',{maximumFractionDigits:8}):val.toExponential(1).replace('.',',')}
+ var q=(n/d).toString();if(q.length<=12)return Number(q).toLocaleString('tr-TR');
+ var exponent=q.length-1,lead=q[0]+(q[1]!=='0'?','+q[1]:'');
+ return lead+' × 10^'+exponent;
+}
+function renderBuy(){
+ var x=items[chosen],k=Math.abs(index)-1,Ey=E('buy-label'),Er=E('buy-result'),Ec=E('buy-context');
+ E('buy-art').innerHTML=x.art;
+ if(index===0){Ey.textContent='SIFIR TL';Er.textContent='0 TL = boş sepet';Ec.textContent=x.title+' için varsayımsal fiyat: '+x.unit}
+ else{
+  var neg=index<0;Ey.textContent=(neg?'BORÇ · ':'BÜTÇE · ')+(k<=9?(10**k).toLocaleString('tr-TR'):'10^'+k)+' TL';
+  Er.textContent=(neg?'− ':'')+count(k,x.price)+' '+x.title;
+  Ec.textContent=neg?'Borç karşılığı; satın alma gücü değil.':'Teorik karşılık; gerçek stok bu kadar olmayabilir.';
+ }
+}
+document.querySelectorAll('[data-thing]').forEach(function(b){
+ b.addEventListener('click',function(){chosen=b.dataset.thing;document.querySelectorAll('[data-thing]').forEach(function(bb){bb.classList.toggle('chosen',bb===b)});renderBuy()});
+});
+window.aynenNumberChanged=function(next){index=next;renderBuy();if(!touched)showPane(index===0?'idea':'buy',false)};
+renderIdea();window.aynenNumberChanged(Number(E('scale').value));
+})();
+</script></body>
 </html><script src="/share-kit.js?v=1" defer></script>
