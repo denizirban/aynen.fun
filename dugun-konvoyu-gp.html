@@ -399,11 +399,11 @@ function decorations(){
 
 function playerCar(){
 const portrait=window.innerHeight>window.innerWidth,shift=portrait?90:116;
-const x=240+g.lane*shift+Math.sin(g.distance*.0033)*32,vy=253,shake=flash>0?rand(-3,3):0;
+const x=240+g.lane*shift+Math.sin(g.distance*.0033)*32,vy=240,shake=flash>0?rand(-3,3):0;
 if(g.invuln>0&&Math.floor(seconds*12)%2===0)return;
-rect(x-32+shake,255,64,3,"#202d32");
+rect(x-32+shake,242,64,3,"#202d32");
 carSprite(x+shake,vy,70,"player",0,false,true);
-if(input.brake){rect(x-25+shake,248,11,5,"#ffdd68");rect(x+14+shake,248,11,5,"#ffdd68")}
+if(input.brake){rect(x-25+shake,236,11,5,"#ffdd68");rect(x+14+shake,236,11,5,"#ffdd68")}
 }
 
 function draw(){
