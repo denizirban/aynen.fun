@@ -437,10 +437,29 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
  #family.mobile-open,#tasks:not(.collapsed){bottom:156px;max-height:44dvh}
  #helpPanel{bottom:164px;max-height:54dvh}
 }
+
+/* Real-time 3D scene: the SVG original is a safe fallback, not a screenshot. */
+#kitchen3d{position:absolute;inset:0;z-index:1;overflow:hidden;visibility:hidden;pointer-events:none;background:#dfe5d7}
+#kitchen3d.is-ready{visibility:visible;pointer-events:auto}
+#kitchen3d canvas{display:block;width:100%!important;height:100%!important;outline:0;cursor:grab}
+#kitchen3d canvas:active{cursor:grabbing}
+#game.scene-3d-ready #room{opacity:0;visibility:hidden;pointer-events:none}
+#game.scene-3d-ready .stage-vignette{opacity:.2}
+#game.scene-3d-ready #sceneShade{opacity:.15}
+#game.scene-3d-ready #hint{display:none}
+#game.scene-3d-ready .scene-caption{z-index:5;background:#f8f5e3b8}
+#game.scene-3d-ready #cameraTools{z-index:14}
+#game.scene-3d-ready #findHint{z-index:30}
+#game.scene-3d-ready #kitchen3d canvas{touch-action:none}
+@media(max-width:650px){
+#game.scene-3d-ready .scene-caption{display:none}
+#kitchen3d{height:100dvh}
+}
 </style>
 </head>
 <body>
 <div id="game">
+<div id="kitchen3d" aria-label="Üç boyutlu izometrik mutfak sahnesi" data-status="loading"></div>
 <svg id="room" viewBox="0 0 1400 900" role="img" aria-label="İzometrik mutfak, aile üyeleri ve yapılacak işler">
 <defs>
 <linearGradient id="retroWall" x1="0" y1="0" x2="1" y2=".65"><stop stop-color="#b7bd88"/><stop offset=".5" stop-color="#a2ac76"/><stop offset="1" stop-color="#8d9a6b"/></linearGradient>
@@ -1120,6 +1139,7 @@ var taskBeingFound=null;
 function updateTaskObjects(){document.querySelectorAll('[data-item]').forEach(function(el){el.style.display=jobs.some(function(j){return j.key===el.dataset.item&&j.remaining>0})?'':'none'})}
 function showTaskTarget(j){
  if(!j)return;
+ if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.select(j.spot);
  taskBeingFound=j.id;
  var xy=taskLocations[j.key]||stationLocations[j.spot]||[730,510];
  $('#focusTarget').setAttribute('transform','translate('+xy[0]+' '+xy[1]+')');
@@ -1128,11 +1148,12 @@ function showTaskTarget(j){
  $('#findHintText').textContent='BULUNDU · '+j.name+(j.key==='charger'?' · laptopun yanında':'');
  $('#findHint').classList.remove('hidden');$('#game').classList.add('finding');
 }
-function clearTaskTarget(){taskBeingFound=null;$('#focusTarget').setAttribute('visibility','hidden');$('#findHint').classList.add('hidden');$('#game').classList.remove('finding')}
+function clearTaskTarget(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.reset();taskBeingFound=null;$('#focusTarget').setAttribute('visibility','hidden');$('#findHint').classList.add('hidden');$('#game').classList.remove('finding')}
 function locateJob(j){
  if(!j||!started||ended)return;
  choose(j);showTaskTarget(j);
  setTasksOpen(false);
+ if(window.Evin3D&&window.Evin3D.isReady){window.Evin3D.focus(j.spot);return}
  setCamera(Math.max(1.08,Math.min(1.21,cameraScale)));
  $('#room').style.setProperty('--cam-x','0px');$('#room').style.setProperty('--cam-y','0px');cameraX=0;cameraY=0;
  var obj=document.querySelector('[data-item="'+j.key+'"]')||document.querySelector('[data-station="'+j.spot+'"]');
@@ -1267,9 +1288,9 @@ $('#room').addEventListener('click',function(e){
 window.addEventListener('pagehide',saveGame);
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'&&started&&!ended){paused=true;$('#pause').textContent='▶';saveGame()}});
 document.querySelectorAll('[data-task-filter]').forEach(function(b){b.addEventListener('click',function(){setFilter(b.dataset.taskFilter)})});
-$('#cameraIn').onclick=function(){setCamera(cameraScale+.14)};
-$('#cameraOut').onclick=function(){setCamera(cameraScale-.14)};
-$('#cameraReset').onclick=function(){resetCameraView();clearTaskTarget()};
+$('#cameraIn').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.zoom(.14);else setCamera(cameraScale+.14)};
+$('#cameraOut').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.zoom(-.14);else setCamera(cameraScale-.14)};
+$('#cameraReset').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.reset();resetCameraView();clearTaskTarget()};
 $('#room').addEventListener('wheel',function(e){if(!started||ended)return;e.preventDefault();setCamera(cameraScale+(e.deltaY<0?.075:-.075))},{passive:false});
 $('#openNotebook').onclick=function(){openNote('upgrades')};$('#familySettings').onclick=function(){openNote('family')};$('#storyButton').onclick=function(){openNote('roadmap')};
 $('#goalMore').onclick=function(){openNote('goals')};
@@ -1277,9 +1298,32 @@ $('#closeNotebook').onclick=closeNote;$('#noteShade').onclick=closeNote;
 document.querySelectorAll('[data-tab]').forEach(function(b){b.addEventListener('click',function(){noteTab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(function(k){k.classList.toggle('active',k===b)});notebookHtml()})});
 $('#noteBody').addEventListener('click',function(e){var b=e.target.closest('[data-buy]');if(b){buyUpgrade(b.dataset.buy);return}familySettingsChange(e.target)});
 window.addEventListener('keydown',function(e){if(e.key==='Escape')closeNote()});
-registerAvatars();syncAvatars();showSavePreview();goals=makeGoals();templates.forEach(function(t){add(t)});render();requestAnimationFrame(frame)
+registerAvatars();syncAvatars();showSavePreview();goals=makeGoals();templates.forEach(function(t){add(t)});render();
+/* 3D scene bridge: authoritative simulation and save state remain here. */
+window.EvinKitchenBridge={
+ getState:function(){return {
+   time:time,day:day,owned:owned.slice(),started:started,paused:paused,ended:ended,
+   currentSpot:current&&current.spot||null,partnerSpot:helper&&helper.spot||null,
+   kidSpot:childTask&&childTask.spot||null,
+   avatarSelf:avatarSelf,avatarPartner:avatarPartner,
+   focusSpot:selected&&find(selected)&&find(selected).spot||null
+ }},
+ selectStation:function(spot){
+   if(!started||ended){message('Başlamak için Eve Gir seç.');return}
+   var list=jobs.filter(function(j){return j.remaining>0&&j.spot===spot}).sort(function(a,b){return a.due-b.due});
+   if(list.length)choose(list[0]);else message('Burada henüz yapılacak iş yok.')
+ },
+ selectPerson:function(who){
+   if(!started||ended)return;
+   if(who==='elder')who='elder';else if(who==='self')who='self';
+   else if(who==='partner')who='partner';else if(who==='kid')who='kid';
+   openCare(who)
+ }
+};
+requestAnimationFrame(frame)
 })();
 </script>
 <script src="/share-kit.js?v=1" defer></script>
+<script type="module" src="/evin-patronu-3d.js?v=1"></script>
 </body>
 </html>
