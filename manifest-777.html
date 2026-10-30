@@ -349,9 +349,9 @@ function updateMeters(){
  $("timeTrack").style.width=(state.time===undefined?90:state.time)+"%";
  $("energyRing").style.strokeDasharray=String(14+Math.round(state.vibe*.36))+" 12";
  $("mailNotice").style.opacity=state.progress>15?"1":".2";
- $("connection").textContent=state.progress>65?"İŞLEM İLERLİYOR":state.vibe>70?"YÜKSEK TİTREŞİM":"KISMEN MEVCUT";
- $("screenText").textContent=state.progress>72?"DOSYA İLERLİYOR":state.time<=20?"SÜRE DARALIYOR":state.progress>28?"EVRAK İŞLENİYOR":"TALEP: BEKLEMEDE";
- $("queueCount").textContent=String(777+state.signs*4+state.hidden).padStart(4,"0");
+ $("connection").textContent=state.progress>65?"GÖRÜNÜR DEĞİŞİM":state.vibe>70?"YÜKSEK FREKANS":"AKIŞTA";
+ $("screenText").textContent=state.progress>72?"NİYET: SOMUTLAŞIYOR":state.time<=20?"DÖNGÜ TAMAMLANIYOR":state.progress>28?"NİYET: GELİŞİYOR":"NİYET: ODAKLAN";
+ $("queueCount").textContent=String(state.signs+state.hidden).padStart(2,"0");
  $("formCount").textContent=String(state.actions+(state.deskActions||0)).padStart(2,"0");
  $("sceneWish").textContent=(state.label||"BEKLENİYOR").toLocaleUpperCase("tr").slice(0,18);
  const p=$("paperPile");
@@ -373,7 +373,7 @@ viral:{action:"Dünkü paylaşımın yeni bir geri bildirim bıraktı.",ritual:"
 peace:{action:"Dünkü tercihin bugün biraz daha fazla alan açmış olabilir.",ritual:"Kendinle kalmaya zaman ayırdın.",risk:"Dünkü kararının sende nasıl bir etki bıraktığını gözlemliyorsun."},
 custom:{action:"Dünkü küçük adım yeni bir olasılık yarattı.",ritual:"Niyetin aklında daha fazla yer kaplıyor.",risk:"Dünkü kararın sonucu henüz kesinleşmedi."}
 };
-function clockLabel(){return state.time<=22?"VAKİT DARALIYOR":state.time<=48?"ZAMAN AZALIYOR":"BAŞVURU AÇIK"}
+function clockLabel(){return state.time<=22?"DÖNGÜ TAMAMLANIYOR":state.time<=48?"AKIŞ DEVAM EDİYOR":"NİYET AKIŞTA"}
 
 function selectWish(){
  let selected=null,daily=false;
@@ -383,9 +383,9 @@ function selectWish(){
  input.addEventListener("input",()=>{if(daily)return;selected=null;document.querySelectorAll("[data-wish]").forEach(b=>b.classList.remove("active"));start.disabled=!input.value.trim()});
  function setMode(d){daily=d;state.daily=d;input.disabled=d;document.querySelectorAll("[data-wish]").forEach(b=>b.disabled=d);
   $("freeMode").classList.toggle("selected",!d);$("dailyMode").classList.toggle("selected",d);
-  $("modeDescription").textContent=d?"Herkese aynı dilek, aynı başlangıç. Sonuçlar kararlarına bağlı.":"Dileğini seç. Yedi gün boyunca küçük bir hayat simülasyonu.";
-  if(d){const names=Object.keys(THEMES);choose(names[hashSeed(dateKey())%names.length]);start.firstChild.textContent="GÜNÜN KADERİNE GİR ";}
-  else{selected=null;input.value="";start.disabled=true;start.firstChild.textContent="EVRENE GÖNDER ";document.querySelectorAll("[data-wish]").forEach(b=>b.classList.remove("active"))}
+  $("modeDescription").textContent=d?"Herkes aynı niyetle başlar; seçimlerin farklı yollar açar.":"Bir niyet seç ve yedi gün boyunca ona odaklan.";
+  if(d){const names=Object.keys(THEMES);choose(names[hashSeed(dateKey())%names.length]);start.firstChild.textContent="GÜNLÜK ÇALIŞMAYA BAŞLA ";}
+  else{selected=null;input.value="";start.disabled=true;start.firstChild.textContent="NİYETİ BELİRLE ";document.querySelectorAll("[data-wish]").forEach(b=>b.classList.remove("active"))}
  }
  $("freeMode").onclick=()=>setMode(false);$("dailyMode").onclick=()=>setMode(true);
  start.onclick=()=>{
@@ -396,8 +396,8 @@ function selectWish(){
   state.rng=daily?hashSeed("manifest777:"+state.date):hashSeed(String(Date.now())+":"+String(Math.random()));
   state.order=randomOrder([0,1,2,3,4,5,6]);
   $("ticketNo").textContent="777-"+String(Math.floor(100+roll()*899));
-  $("universe").dataset.mood="idle";status("BAŞVURU ALINDI. GERÇEKLİK DEPARTMANI İNCELEMEDE.");
-  stamp("DOSYA AÇILDI");particles(8);$("deskAction").hidden=false;screens("playScreen");renderRound();
+  $("universe").dataset.mood="idle";status("NİYETİN BELİRLENDİ. ŞİMDİ SÜRECE ODAKLAN.");
+  stamp("NİYET BELİRLENDİ");particles(8);$("deskAction").hidden=false;screens("playScreen");renderRound();
  };
  const requested=new URLSearchParams(location.search).get("daily");
  if(requested===dateKey())setMode(true);else setMode(false);
@@ -417,11 +417,11 @@ function renderRound(){
  if(state.day>=7||state.time<=0){finish();return}
  const row=THEMES[themeName()][state.order[state.day]];showSceneEvent(state.day);
  const prior=state.lastMsg;
- $("roundLabel").textContent=(state.daily?"GÜNÜN KADERİ · ":"KOZMİK GÜN ")+String(state.day+1).padStart(2,"0")+" / 07";
+ $("roundLabel").textContent=(state.daily?"GÜNLÜK NİYET · ":"GÜN ")+String(state.day+1).padStart(2,"0")+" / 07";
  $("eventTag").textContent=row[0];$("eventTitle").textContent=row[1];
  $("eventDesc").textContent=row[2]+(state.lastKind&&state.day%2===0?" "+FOLLOWUPS[themeName()][state.lastKind]:"");
  $("eventEcho").hidden=!prior;
- if(prior)$("eventEcho").textContent="ÖNCEKİ KARARIN → "+prior;
+ if(prior)$("eventEcho").textContent="ÖNCEKİ GÜNDEN → "+prior;
  const bar=$("roundProgress");bar.replaceChildren();
  for(let i=0;i<7;i++){let el=document.createElement("i");if(i<=state.day)el.className="on";bar.append(el)}
  const choices=[{text:row[3],kind:"action"},{text:row[4],kind:"ritual"},{text:row[5],kind:"risk"}];
@@ -433,7 +433,7 @@ function renderRound(){
   const arrow=document.createElement("span");arrow.textContent="↗";b.append(label,arrow);b.addEventListener("click",()=>answer(i));$("answers").append(b);
  });
  $("universe").dataset.mood="idle";
- status("KARAR BEKLENİYOR · "+clockLabel());
+ status("BİR SONRAKİ ADIMINI SEÇ · "+clockLabel());
  updateMeters();
 }
 
@@ -444,20 +444,20 @@ function answer(i){
  if(o.kind==="action"){
   state.actions++;state.time=clamp(state.time-12,0,100);state.vibe=clamp(state.vibe-7,0,100);
   const chance=.53+state.vibe/300+state.time/600;
-  if(roll()<chance){delta=12+Math.floor(roll()*10);result="Somut adım işe yaradı. Gerçek ilerleme: +"+delta+".";}
-  else{delta=3+Math.floor(roll()*6);result="Sonuç hemen gelmedi. Ama bir şey öğrendin. +"+delta+" ilerleme.";}
+  if(roll()<chance){delta=12+Math.floor(roll()*10);result="Attığın adımın olumlu bir karşılığını gördün.";}
+  else{delta=3+Math.floor(roll()*6);result="Sonuç henüz netleşmedi; yeni bir deneyim kazandın.";}
   state.progress=clamp(state.progress+delta,0,100);$("universe").dataset.mood="action";particles(4);
  }else if(o.kind==="ritual"){
   state.ritual++;state.signs++;state.time=clamp(state.time-6,0,100);state.vibe=clamp(state.vibe+16,0,100);
-  result="Moral yükseldi. Hedef hâlâ kendi kendine ilerlemiyor.";
-  if(roll()<.16){state.progress=clamp(state.progress+4,0,100);result="İşaret sana bir fikir verdi. +4 ilerleme.";}
+  result="Olumlamaya odaklandın. Niyetin zihninde daha belirgin.";
+  if(roll()<.16){state.progress=clamp(state.progress+4,0,100);result="Bu çalışma aklına yeni bir yaklaşım getirdi.";}
   $("universe").dataset.mood="ritual";particles(6);
  }else{
   state.risk++;state.signs++;state.time=clamp(state.time-11,0,100);state.vibe=clamp(state.vibe-5,0,100);
   const z=roll();
-  if(z<.29){delta=24+Math.floor(roll()*9);state.lucky++;result="Kestirme şaşırtıcı şekilde işe yaradı. +"+delta+" ilerleme.";}
-  else if(z<.61){delta=2;result="Beklenmedik bir şey olmadı. +2 ilerleme.";}
-  else{delta=-9;state.time=clamp(state.time-8,0,100);result="Kestirme yeni sorun çıkardı. 9 ilerleme kaybettin.";}
+  if(z<.29){delta=24+Math.floor(roll()*9);state.lucky++;result="Beklemediğin olumlu bir gelişme yaşandı.";}
+  else if(z<.61){delta=2;result="Bu kararın etkisi şu an sınırlı görünüyor.";}
+  else{delta=-9;state.time=clamp(state.time-8,0,100);result="Beklediğinden farklı bir sonuç ortaya çıktı. Yönünü yeniden değerlendirebilirsin.";}
   state.progress=clamp(state.progress+delta,0,100);$("universe").dataset.mood="neutral";particles(4);
  }
  state.lastMsg=result;state.lastKind=o.kind;
@@ -494,15 +494,15 @@ function finish(){
  $("resultTitle").textContent=v[0];$("resultQuote").textContent=v[1];
  $("resultArchetype").textContent=state.endingTag;
  $("rvibe").textContent="%"+state.vibe;$("rsigns").textContent=state.signs;$("rprogress").textContent="%"+state.progress;
- $("receiptWish").textContent="DİLEK: "+state.label+" · "+state.day+" GÜN · "+state.actions+" SOMUT ADIM · "+state.risk+" KESTİRME";
+ $("receiptWish").textContent="NİYET: "+state.label+" · "+state.day+" GÜN · "+state.actions+" ADIM · "+state.ritual+" OLUMLAMA";
  $("deskAction").hidden=true;
  const score=clamp(Math.round(state.progress*.78+state.vibe*.12+state.time*.10),0,100);
- $("resultScore").textContent="KOZMİK ETKİ: "+score+" / 100";
+ $("resultScore").textContent="ÇALIŞMA PUANI: "+score+" / 100";
  try{let key="manifest777_best_"+(state.daily?"daily":"free"),old=Number(localStorage.getItem(key)||0);if(score>old)localStorage.setItem(key,String(score));$("bestResult").textContent="EN İYİ SKOR: "+Math.max(old,score)}catch(e){$("bestResult").textContent=""}
  const dest="https://aynen.fun/manifest-777.html"+(state.daily?"?daily="+encodeURIComponent(state.date):"");
- window.AynenShareResult={title:"Manifest 777 — aynen.fun",text:"Benim kaderim: "+v[0]+" · "+state.progress+"% ilerleme · "+state.signs+" işaret · "+score+"/100. Seninki ne çıkacak?",url:dest};
- status("DOSYA KAPANDI · EVREN SONUCU ÜSTLENMEDİ.");
- particles(15);stamp("DOSYA KAPANDI");updateMeters();
+ window.AynenShareResult={title:"Manifest 777 — aynen.fun",text:"Yedi günlük niyet çalışmam: "+v[0]+" · "+state.progress+"% görünür sonuç · "+state.signs+" işaret. Senin çalışman nasıl ilerler?",url:dest};
+ status("YEDİ GÜNLÜK NİYET ÇALIŞMASI TAMAMLANDI.");
+ particles(15);stamp("DÖNGÜ TAMAMLANDI");updateMeters();
 }
 
 function shareText(){
@@ -524,24 +524,24 @@ $("save").onclick=()=>{
  g.fillStyle="#111";g.fillRect(52,52,976,1246);
  g.fillStyle="#f5f1e9";g.fillRect(67,67,946,1216);
  g.fillStyle="#111";g.font="bold 34px Arial";g.fillText("MANIFEST 777",115,137);
- g.font="24px monospace";g.fillText("KOZMİK İŞLEM FİŞİ  /  07:07",115,187);
+ g.font="24px monospace";g.fillText("7 GÜNLÜK NİYET KAYDI  /  07:07",115,187);
  g.fillRect(115,214,850,3);
  g.font="italic bold 105px Georgia";g.fillText("777",120,380);
  g.font="bold 72px Arial";let y=520;wrap(g,summary[0],810).forEach(l=>{g.fillText(l,115,y);y+=80;});
  y+=35;g.font="italic 39px Georgia";wrap(g,summary[1],805).forEach(l=>{g.fillText(l,115,y);y+=57;});
  g.fillRect(115,990,850,3);
- const values=[["%"+state.vibe,"TİTREŞİM"],[String(state.signs),"İŞARET"],["%"+state.progress,"İLERLEME"]];
+ const values=[["%"+state.vibe,"ENERJİ"],[String(state.signs),"İŞARET"],["%"+state.progress,"İLERLEME"]];
  values.forEach((a,i)=>{let x=115+i*288;g.font="bold 69px Arial";g.fillText(a[0],x,1090);g.font="19px monospace";g.fillText(a[1],x,1130);});
- g.font="22px monospace";g.fillText("DİLEK: "+state.label.slice(0,45),115,1194);g.fillText("aynen.fun / evren henüz cevap vermedi.",115,1249);
+ g.font="22px monospace";g.fillText("NİYET: "+state.label.slice(0,45),115,1194);g.fillText("aynen.fun / manifest 777",115,1249);
  function download(blob){if(!blob)return;let url=URL.createObjectURL(blob);let a=document.createElement("a");a.href=url;a.download="manifest-777-sonuc.png";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);}
  if(can.toBlob)can.toBlob(download,"image/png");else{let a=document.createElement("a");a.href=can.toDataURL("image/png");a.download="manifest-777-sonuc.png";a.click();}
 };
-$("again").onclick=()=>{$("eventVisual").replaceChildren();$("deskAction").hidden=true;$("freeMode").click();screens("chooseScreen");$("universe").dataset.mood="idle";status("YENİ BİR DİLEK DOSYASI AÇILABİLİR.");};
+$("again").onclick=()=>{$("eventVisual").replaceChildren();$("deskAction").hidden=true;$("freeMode").click();screens("chooseScreen");$("universe").dataset.mood="idle";status("YENİ BİR NİYET BELİRLEYEBİLİRSİN.");};
 $("deskAction").onclick=()=>{
  if(state.ended||!state.wish||state.day>=7||state.time<10||state.deskDay===state.day)return;
  state.deskDay=state.day;state.deskActions++;state.time=clamp(state.time-9,0,100);
  state.vibe=clamp(state.vibe-2,0,100);state.progress=clamp(state.progress+4,0,100);
- status("BİR GERÇEK EVRAK İŞLENDİ · +4 İLERLEME · -9 ZAMAN");stamp("EVRAK TAMAMLANDI");
+ status("NİYETİNLE UYUMLU KÜÇÜK BİR ADIM ATTIN.");stamp("BİR ADIM ATTIN");
  particles(3);updateMeters();if(state.time<=0)finish();
 };
 $("office").addEventListener("click",()=>{if(!$("deskAction").hidden)$("deskAction").click()});
@@ -550,8 +550,8 @@ $("orb").addEventListener("click",()=>{$("orbitButton").click()});
 $("orbitButton").onclick=()=>{
  if(state.ended)return;
  state.hidden++;particles(5);
- stamp(state.hidden%7===0?"HAT DOLU · 777":"KOZMİK SİNYAL");
- status(state.hidden%7===0?"777 NUMARASINI 7 KEZ ARADIN. OPERATÖR YOK.":"İŞARET TESPİT EDİLDİ. HUKUKEN GEÇERSİZ.");
+ stamp(state.hidden%7===0?"777 · EŞZAMANLILIK":"İŞARETİ FARK ETTİN");
+ status(state.hidden%7===0?"777 SAYISIYLA YEDİNCİ KEZ KARŞILAŞTIN.":"BU ANI NİYETİNLE BİRLİKTE NOT ETTİN.");
  if(!state.wish)return;
  state.signs++;state.vibe=clamp(state.vibe+1,0,100);updateMeters();
 };
