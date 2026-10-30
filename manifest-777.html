@@ -123,7 +123,7 @@ a{color:inherit;text-decoration:none}
 #universe[data-mood="ritual"] #orb{filter:drop-shadow(0 0 10px #cbb2f555)}
 @media(max-width:780px){#eventVisual{left:11px;bottom:64px;max-width:32%}#eventVisual .signal{font-size:16px;padding:6px 8px}#eventVisual .signal small{font-size:7px}}
 </style>
-<link rel="stylesheet" href="/manifest-777-v2.css?v=3">
+<link rel="stylesheet" href="/manifest-777-v2.css?v=4">
 </head>
 <body>
 <div class="shell">
@@ -133,6 +133,11 @@ a{color:inherit;text-decoration:none}
     <section class="universe" id="universe" data-mood="idle" aria-label="Animasyonlu evren simülasyonu">
       <div class="scene-head"><span>NİYET ÇALIŞMASI<br>SEKANS: <b id="ticketNo">777-000</b></span><span>AKIŞ DURUMU<br><b id="connection">AÇIK</b></span></div>
       <div id="stars"></div>
+      <div id="endingScene" class="ending-scene" hidden aria-label="Manifest sonucunun görsel sahnesi">
+        <div class="ending-scene-header"><span>SONUÇ / 07</span><span id="endingSceneWish">NİYETİN</span></div>
+        <div id="endingSceneVisual" class="ending-scene-visual"></div>
+        <div class="ending-scene-footer"><span>MANIFEST 777</span><span>aynen.fun</span></div>
+      </div>
       <div class="world-tags"><span class="wt">NİYET <b id="sceneWish">BELİRLENMEDİ</b></span><span class="wt">FARK EDİLEN İŞARET <b id="queueCount">0000</b></span><span class="wt">ATILAN ADIM <b id="formCount">00</b></span></div>
       <svg id="universeSvg" viewBox="0 0 720 480" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         <defs>
@@ -223,29 +228,34 @@ a{color:inherit;text-decoration:none}
         </div></div>
       </div>
       <div id="endScreen">
-        <div class="eyebrow">NİYET DÖNGÜSÜ / SONUÇ</div>
-        <h2>Niyetinin yedi günü.</h2>
-        <p>Seçimlerinin, karşılaşmalarının ve zamanlamanın birlikte oluşturduğu sonuç.</p>
-        <div class="receipt" id="receipt" aria-label="Paylaşılabilir sonuç kartı">
-          <div class="receipt-brand"><b>MANIFEST 777</b><span>NİYET KAYDI · 07 / 07</span></div>
-          <div class="result-archetype" id="resultArchetype"></div><div class="receipt-title" id="resultTitle"></div>
+        <div class="eyebrow">07 / NİYETİN SONUCU</div>
+        <p class="ending-intro">Yedi gün önce bir niyet belirledin. İşte yaşananlar.</p>
+        <div class="receipt" id="receipt" aria-label="Paylaşılabilir absürt sonuç">
+          <div class="receipt-brand"><b>MANIFEST 777</b><span>SONUÇ / 07</span></div>
+          <div class="result-archetype" id="resultArchetype"></div>
+          <h2 class="receipt-title" id="resultTitle"></h2>
+          <div class="result-punch" id="resultLine"></div>
           <div class="receipt-quote" id="resultQuote"></div>
+          <div class="smallprint" id="receiptWish"></div>
+        </div>
+        <div class="ending-technical">
           <div class="receipt-metrics">
             <div><span id="rvibe">0</span><small>ENERJİ</small></div>
             <div><span id="rsigns">0</span><small>İŞARET</small></div>
-            <div><span id="rprogress">0</span><small>İLERLEME</small></div>
+            <div><span id="rprogress">0</span><small>GÖRÜNÜR SONUÇ</small></div>
           </div>
-          <div class="smallprint" id="receiptWish"></div>
+          <div id="resultScore"></div><div id="bestResult"></div>
         </div>
-        <div id="resultScore"></div><div id="bestResult"></div><div class="buttons-end"><button type="button" class="primary" id="share">PAYLAŞ <span>↗</span></button><button type="button" class="secondary" id="save">KARTI PNG KAYDET ↓</button></div>
-        <button type="button" class="secondary" style="margin-top:7px" id="again">YENİ BİR NİYET BELİRLE ↻</button>
-        <div class="whisper">Bu deneyim bir simülasyondur. İşaretler ve olumlamalar gerçek yaşamda sonuç garantisi sunmaz.</div>
+        <div class="buttons-end"><button type="button" class="primary" id="share">SONUCU PAYLAŞ <span>↗</span></button><button type="button" class="secondary" id="save">GÖRSELİ KAYDET ↓</button></div>
+        <button type="button" class="secondary ending-restart" id="again">YENİDEN MANİFEST ET ↻</button>
+        <div class="whisper">Bu sonuçlar kurmaca oyun senaryolarıdır. Gerçek yaşamda bir tahmin veya garanti değildir.</div>
       </div>
     </section>
   </main>
   <footer class="footer">MANIFEST 777 · Niyet, seçimler ve olasılıklar üzerine kurulu bir oyun. Sonuçlar gerçek tahmin veya finansal tavsiye değildir.</footer>
   <div id="live" role="status" aria-live="polite"></div>
 </div>
+<script src="/manifest-777-endings.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -393,7 +403,7 @@ function selectWish(){
  start.onclick=()=>{
   const custom=input.value.trim();if(!selected&&!custom)return;
   state.wish=selected||"custom";state.label=selected?W[selected].label:custom.slice(0,65);
-  state.day=0;state.vibe=49;state.signs=0;state.progress=0;state.time=90;state.ritual=0;state.actions=0;state.hidden=0;state.risk=0;state.lucky=0;state.deskActions=0;state.deskDay=-1;state.lastMsg="";state.lastKind=null;state.history=[];state.ended=false;
+  $("endingScene").hidden=true;state.day=0;state.vibe=49;state.signs=0;state.progress=0;state.time=90;state.ritual=0;state.actions=0;state.hidden=0;state.risk=0;state.lucky=0;state.deskActions=0;state.deskDay=-1;state.lastMsg="";state.lastKind=null;state.history=[];state.ended=false;
   state.daily=daily;state.date=dateKey();
   state.rng=daily?hashSeed("manifest777:"+state.date):hashSeed(String(Date.now())+":"+String(Math.random()));
   state.order=randomOrder([0,1,2,3,4,5,6]);
@@ -468,77 +478,102 @@ function answer(i){
  if(state.day>=7||state.time<=0)finish();else renderRound();
 }
 
-function verdict(){
- const subject={
- money:["Bolluğa alan açıyorsun.","Niyetin belirginleşti. Maddi karşılık henüz görünür değil."],
- love:["Kalbinde yeni bir alana yer açtın.","Karşılaşmaların anlamını keşfediyorsun. Bağın yönü henüz belirsiz."],
- career:["Kendini bir sonraki aşamaya hazırlıyorsun.","Yeni bir rolün ihtimali zihninde netleşti. Süreç devam ediyor."],
- home:["Yeni yaşam alanın daha belirgin.","Hayal ettiğin mekânı netleştirdin. Henüz bütün koşullar oluşmadı."],
- viral:["Görünür olmaya alan açıyorsun.","Niyetini sürdürdün. Görünür sonuçlar şimdilik sınırlı."],
- peace:["İçsel alanını yeniden düzenliyorsun.","Sakinlik niyetin güçlü. Günlük ritmini değiştirmek zaman alıyor."],
- custom:["Niyetini daha açık duyuyorsun.","Seçimlerinin karşılığı henüz şekilleniyor."]
- };
- const base=subject[themeName()];
- if(state.hidden>=7&&state.progress<48){state.endingTag="YOĞUN EŞZAMANLILIK";return ["İşaretler çoğaldı.","777 sayısıyla tekrar tekrar karşılaştın. Niyetin zihninde canlı; görünür değişim henüz sınırlı."];}
- if(state.lucky>=2){state.endingTag="BEKLENMEDİK AÇILIM";return ["Beklenmedik kapılar açıldı.","Bazı kararlarının olumlu karşılıkları oldu. Bu gelişmelerin zamanlaması seni şaşırtmış olabilir."];}
- if(state.progress>=82){state.endingTag="GÖRÜNÜR SONUÇ";return [base[0],"Niyetine eşlik eden somut gelişmeler yaşadın. Sürecin bundan sonra nasıl ilerleyeceği hâlâ açık."];}
- if(state.progress>=54){state.endingTag="HAREKETE GEÇİŞ";return ["Niyetin harekete dönüştü.","Birden fazla adım attın. Bazı gelişmeler karşılık buldu; bazıları henüz tamamlanmadı."];}
- if(state.risk>=4&&state.progress<50){state.endingTag="YENİDEN HİZALANMA";return ["Yönünü yeniden belirliyorsun.","Hızlı ilerlemek istediğin anlar oldu. Hangi seçimin sana iyi geldiğini yeniden değerlendirebilirsin."];}
- if(state.ritual>=4){state.endingTag="NİYET GÜÇLENİYOR";return [base[1],"Olumlamalara ve işaretlere odaklandın. Somut gelişmelerin zamanlaması henüz belirsiz."];}
- if(state.time===0){state.endingTag="DÖNGÜ TAMAMLANDI";return ["Bugünkü çalışma tamamlandı.","Zamanını hangi alanlara ayırdığın da bu sürecin bir parçasıydı."];}
- state.endingTag="AÇIK OLASILIK";return [base[0],"Yedi gün boyunca farklı kararlar aldın. Bu sürecin her kısmı henüz görünür bir sonuç vermedi."];
-}
 let summary=null;
 function finish(){
- $("eventVisual").replaceChildren();state.ended=true;screens("endScreen");
- $("universe").dataset.mood=state.progress>50?"action":"ritual";
- const v=verdict();summary=v;
- $("resultTitle").textContent=v[0];$("resultQuote").textContent=v[1];
- $("resultArchetype").textContent=state.endingTag;
- $("rvibe").textContent="%"+state.vibe;$("rsigns").textContent=state.signs;$("rprogress").textContent="%"+state.progress;
- $("receiptWish").textContent="NİYET: "+state.label+" · "+state.day+" GÜN · "+state.actions+" ADIM · "+state.ritual+" OLUMLAMA";
+ $("eventVisual").replaceChildren();state.ended=true;
+ screens("endScreen");
+ const result=window.Manifest777Ending.resolve(state,themeName());
+ summary=result;state.endingTag=result.profileLabel;
+ $("resultTitle").textContent=result.title;
+ $("resultLine").textContent=result.line;
+ $("resultQuote").textContent=result.sub;
+ $("resultArchetype").textContent=result.profileLabel.toLocaleUpperCase("tr");
+ $("rvibe").textContent="%"+state.vibe;
+ $("rsigns").textContent=state.signs;
+ $("rprogress").textContent="%"+state.progress;
+ $("receiptWish").textContent="NİYET: "+state.label;
  $("deskAction").hidden=true;
+ $("endingScene").hidden=false;
+ $("endingSceneWish").textContent=state.label.toLocaleUpperCase("tr").slice(0,35);
+ $("endingSceneVisual").innerHTML=window.Manifest777Ending.svgMarkup(result.scene);
+ $("universe").dataset.mood="ending";
  const score=clamp(Math.round(state.progress*.78+state.vibe*.12+state.time*.10),0,100);
- $("resultScore").textContent="ÇALIŞMA PUANI: "+score+" / 100";
- try{let key="manifest777_best_"+(state.daily?"daily":"free"),old=Number(localStorage.getItem(key)||0);if(score>old)localStorage.setItem(key,String(score));$("bestResult").textContent="EN İYİ SKOR: "+Math.max(old,score)}catch(e){$("bestResult").textContent=""}
+ $("resultScore").textContent="ÇALIŞMA PUANI · "+score+" / 100";
+ try{const key="manifest777_best_"+(state.daily?"daily":"free");
+ let old=Number(localStorage.getItem(key)||0);
+ if(score>old)localStorage.setItem(key,String(score));
+ $("bestResult").textContent="ÖNCEKİ EN İYİ PUAN · "+Math.max(old,score);
+ }catch(e){$("bestResult").textContent=""}
  const dest="https://aynen.fun/manifest-777.html"+(state.daily?"?daily="+encodeURIComponent(state.date):"");
- window.AynenShareResult={title:"Manifest 777 — aynen.fun",text:"Yedi günlük niyet çalışmam: "+v[0]+" · "+state.progress+"% görünür sonuç · "+state.signs+" işaret. Senin çalışman nasıl ilerler?",url:dest};
- status(state.day<7?"BUGÜN İÇİN AYIRDIĞIN SÜRE TAMAMLANDI.":"YEDİ GÜNLÜK NİYET ÇALIŞMASI TAMAMLANDI.");
- particles(15);stamp("DÖNGÜ TAMAMLANDI");updateMeters();
+ window.AynenShareResult={title:"Manifest 777 — "+result.title,
+ text:"Manifest 777 oynadım. Niyetim: "+state.label+".\n"+result.title+"\n"+result.line+"\n"+result.sub+"\nSenin sonucun ne çıkacak?",
+ url:dest};
+ status("NİYET ÇALIŞMASI TAMAMLANDI.");
+ updateMeters();
 }
 
 function shareText(){
- return "MANIFEST 777 — "+summary[0]+"\nDilek: "+state.label+"\nMotivasyon: %"+state.vibe+" · İşaret: "+state.signs+" · Gerçek ilerleme: %"+state.progress+"\n"+summary[1]+"\nhttps://aynen.fun/manifest-777.html"+(state.daily?"?daily="+encodeURIComponent(state.date):"");
+ if(!summary)return "";
+ const url="https://aynen.fun/manifest-777.html"+(state.daily?"?daily="+encodeURIComponent(state.date):"");
+ return "MANIFEST 777\nNiyetim: "+state.label+"\n"+summary.title+"\n"+summary.line+"\n"+summary.sub+"\n"+url;
 }
-
 $("share").onclick=async()=>{
- const txt=shareText();
- try{if(navigator.share){await navigator.share({title:"Manifest 777",text:txt,url:"https://aynen.fun/manifest-777.html"});return;}
- if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(txt);$("share").firstChild.textContent="KOPYALANDI ";return;}}
- catch(e){if(e.name==="AbortError")return;}
- window.prompt("SONUCUNU KOPYALA",txt);
+ const data=window.AynenShareResult;
+ if(!data)return;
+ if(window.AynenShare&&typeof window.AynenShare.open==="function"){window.AynenShare.open(data);return;}
+ try{
+  if(navigator.share){await navigator.share(data);return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(shareText());$("share").firstChild.textContent="KOPYALANDI ";return;}
+ }catch(e){if(e&&e.name==="AbortError")return;}
+ window.prompt("SONUCU KOPYALA",shareText());
 };
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,h,r):(ctx.rect(x,y,w,h));ctx.fill();}
 function wrap(ctx,text,maxW){const words=text.split(/\s+/);const lines=[];let line="";for(const word of words){const candidate=line?line+" "+word:word;if(ctx.measureText(candidate).width>maxW&&line){lines.push(line);line=word;}else line=candidate;}if(line)lines.push(line);return lines;}
-$("save").onclick=()=>{
- const can=document.createElement("canvas");can.width=1080;can.height=1350;const g=can.getContext("2d");
- g.fillStyle="#f8f7f3";g.fillRect(0,0,1080,1350);
- g.fillStyle="#111";g.fillRect(52,52,976,1246);
- g.fillStyle="#f5f1e9";g.fillRect(67,67,946,1216);
- g.fillStyle="#111";g.font="bold 34px Arial";g.fillText("MANIFEST 777",115,137);
- g.font="24px monospace";g.fillText("7 GÜNLÜK NİYET KAYDI  /  07:07",115,187);
- g.fillRect(115,214,850,3);
- g.font="italic bold 105px Georgia";g.fillText("777",120,380);
- g.font="bold 72px Arial";let y=520;wrap(g,summary[0],810).forEach(l=>{g.fillText(l,115,y);y+=80;});
- y+=35;g.font="italic 39px Georgia";wrap(g,summary[1],805).forEach(l=>{g.fillText(l,115,y);y+=57;});
- g.fillRect(115,990,850,3);
- const values=[["%"+state.vibe,"ENERJİ"],[String(state.signs),"İŞARET"],["%"+state.progress,"İLERLEME"]];
- values.forEach((a,i)=>{let x=115+i*288;g.font="bold 69px Arial";g.fillText(a[0],x,1090);g.font="19px monospace";g.fillText(a[1],x,1130);});
- g.font="22px monospace";g.fillText("NİYET: "+state.label.slice(0,45),115,1194);g.fillText("aynen.fun / manifest 777",115,1249);
- function download(blob){if(!blob)return;let url=URL.createObjectURL(blob);let a=document.createElement("a");a.href=url;a.download="manifest-777-sonuc.png";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);}
- if(can.toBlob)can.toBlob(download,"image/png");else{let a=document.createElement("a");a.href=can.toDataURL("image/png");a.download="manifest-777-sonuc.png";a.click();}
+$("save").onclick=async()=>{
+ if(!summary)return;
+ const canvas=document.createElement("canvas");canvas.width=1080;canvas.height=1350;
+ const g=canvas.getContext("2d");if(!g)return;
+ g.fillStyle="#f7f4f0";g.fillRect(0,0,1080,1350);
+ g.fillStyle="#26232a";g.font="bold 35px Arial";g.fillText("manifest 777.",76,104);
+ g.textAlign="right";g.font="21px monospace";g.fillText("SONUÇ / 07",1003,101);g.textAlign="left";
+ const svg=window.Manifest777Ending.svgMarkup(summary.scene);
+ const sceneURL=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}));
+ try{
+  await new Promise((resolve,reject)=>{
+   const img=new Image();
+   img.onload=()=>{try{g.drawImage(img,76,140,927,562);resolve()}catch(e){reject(e)}};
+   img.onerror=reject;img.src=sceneURL;
+  });
+ }catch(e){
+  g.fillStyle="#ece1e6";g.fillRect(76,140,927,562);
+ }finally{URL.revokeObjectURL(sceneURL)}
+ g.fillStyle="#625768";g.font="bold 22px Arial";g.fillText("NİYET: "+state.label.slice(0,44),78,773);
+ const wrapLine=(str,maxWidth,font,limit=8)=>{
+  g.font=font;const words=str.split(/\s+/),lines=[];let line="";
+  words.forEach(w=>{const candidate=line?line+" "+w:w;if(g.measureText(candidate).width>maxWidth&&line){lines.push(line);line=w;}else line=candidate});
+  if(line)lines.push(line);return lines.slice(0,limit);
+ };
+ let y=834;g.fillStyle="#27232a";
+ g.font="bold 56px Arial";for(const l of wrapLine(summary.title,904,"bold 56px Arial",3)){g.fillText(l,78,y);y+=66}
+ y+=18;g.fillStyle="#17151b";
+ g.font="bold 46px Arial";for(const l of wrapLine(summary.line,904,"bold 46px Arial",4)){g.fillText(l,78,y);y+=55}
+ y+=14;g.fillStyle="#706675";
+ g.font="28px Arial";for(const l of wrapLine(summary.sub,901,"28px Arial",3)){g.fillText(l,78,y);y+=37}
+ g.fillStyle="#d5ccd6";g.fillRect(78,1232,925,2);
+ g.fillStyle="#57485c";g.font="20px monospace";g.fillText(summary.profileLabel.toLocaleUpperCase("tr"),78,1274);
+ g.textAlign="right";g.fillText("AYNEN.FUN",1003,1274);g.textAlign="left";
+ function download(blob){
+  if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="manifest-777-"+summary.category+"-sonuc.png";document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+ }
+ if(canvas.toBlob)canvas.toBlob(download,"image/png");else{
+  const a=document.createElement("a");a.href=canvas.toDataURL("image/png");
+  a.download="manifest-777-sonuc.png";a.click();
+ }
 };
-$("again").onclick=()=>{$("eventVisual").replaceChildren();$("deskAction").hidden=true;$("freeMode").click();screens("chooseScreen");$("universe").dataset.mood="idle";status("YENİ BİR NİYET BELİRLEYEBİLİRSİN.");};
+
+$("again").onclick=()=>{$("eventVisual").replaceChildren();$("endingScene").hidden=true;$("endingSceneVisual").replaceChildren();$("deskAction").hidden=true;$("freeMode").click();screens("chooseScreen");$("universe").dataset.mood="idle";status("YENİ BİR NİYET BELİRLEYEBİLİRSİN.");};
 $("deskAction").onclick=()=>{
  if(state.ended||!state.wish||state.day>=7||state.time<10||state.deskDay===state.day)return;
  state.deskDay=state.day;state.deskActions++;state.time=clamp(state.time-9,0,100);
