@@ -162,12 +162,14 @@ function finish(success,reason){
  $('resultKicker').textContent=success?'DENEY BAŞARILI / GÖREV '+(level+1):'DENEY SONA ERDİ / GÖREV '+(level+1);
  $('resultTitle').textContent=success?'HEDEF BULUNDU.':reason==='energy'?'ENERJİ BİTTİ.':reason==='timeout'?'SÜRE DOLDU.':'DENEY DURDU.';
  let msg='';
- if(success)msg='Robot hedefe ulaştı. Şimdi bir hücreyi değiştirip tekrar dene: Daha hızlı veya daha az enerjiyle gidebilir misin?';
+ if(success)msg='Hazır robot hedefe ulaştı. Şimdi bir hücreyi değiştirip tekrar dene. Daha hızlı veya daha az enerjiyle gidebilir mi?';
  else if(reason==='energy')msg='Gövden yolculuğu bitirmeden enerjisini tüketti. Bir enerji hücresi eklemeyi veya yükü azaltmayı dene.';
  else if(s.s.balance<60)msg='Kasların dengesiz dağılımı robotu döndürdü. Bir kas hücresinin konumunu değiştir.';
  else if(level>0&&s.s.q.sensor===0)msg='Duyu hücresi olmadan yönünü düzeltmek zor. Ön tarafa bir duyu hücresi ekle.';
  else msg='Robot henüz hedefe ulaşamadı. Hücre konumlarını ve enerji rezervini değiştir.';
  $('resultText').textContent=msg;
+ $('resultTitle').textContent=success?'İŞE YARADI!':$('resultTitle').textContent;
+ $('nextMissionBtn').hidden=!success||level>=MISSIONS.length-1;
  $('resultProgress').textContent=Math.round(progress*100)+'%';$('resultEnergy').textContent=results.energy+'%';$('resultTime').textContent=s.time.toFixed(1)+'s';
  $('resultScrim').classList.add('open');update();
 }
@@ -487,7 +489,8 @@ function panelHTML(type){
   '<label class="toggle">Hassas hareket<input type="checkbox" id="precisionToggle" '+(precision?'checked':'')+'></label>'+
   '<div class="action-row"><button class="mini-btn" data-action="save">TASARIMI KAYDET</button><button class="mini-btn" data-action="restore">KAYDI YÜKLE</button><button class="mini-btn" data-action="fullscreen">TAM EKRAN</button></div>';
  }
- return '<p><strong>1.</strong> Alt menüden hücre seç; ortadaki yeşil yuvalara dokunarak robotuna ekle. Yeşil ana hücre sabittir.</p>'+
+ return '<p><strong>Başlamak çok kolay:</strong> Önce hazır robotu çalıştırıp ne olduğunu izle. Sonra bir hücre değiştirip yeniden dene.</p>'+
+ '<p><strong>1.</strong> Alttan bir hücre seç. Robotun çevresinde parlayan + yuvalarına dokunarak ekle. Merkezdeki destek hücresi sabittir.</p>'+
  '<p><strong>2.</strong> Kas hücreleri ileri itki sağlar. Yerlerini dengeli tutmazsan robot döner.</p>'+
  '<p><strong>3.</strong> Duyu hücresi ışığa ve yakındaki engellere yönelmeyi kolaylaştırır. Enerji hücresi hareket süresini uzatır.</p>'+
  '<p><strong>4.</strong> Canlandır tuşuna bas. Başarısız olursa düzenle ve yeniden dene. Klavye: 1–4 hücre, X sil, R çalıştır, Z geri al.</p>'+
@@ -560,6 +563,7 @@ $('closeResult').addEventListener('click',()=>{$('resultScrim').classList.remove
 $('retryBtn').addEventListener('click',()=>run());
 $('editBtn').addEventListener('click',enterBuild);
 $('shareBtn').addEventListener('click',share);
+$('nextMissionBtn').addEventListener('click',()=>{if(level<MISSIONS.length-1){setLevel(level+1);nextTipDismissed=false;update()}});
 $('resultScrim').addEventListener('click',e=>{if(e.target===$('resultScrim'))$('resultScrim').classList.remove('open')});
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape'){$('resultScrim').classList.remove('open');closeDrawer();return}
