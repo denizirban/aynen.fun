@@ -137,7 +137,7 @@ if(mode!=="playing"||g.hornCD>0)return;
 g.hornCD=1.25;g.horns++;tone(350,.16,"sawtooth",.065);setTimeout(()=>tone(425,.14,"sawtooth",.05),115);
 let gathered=0;
 for(const o of objects){if(o.type==="guest"&&!o.joined&&!o.passed&&o.z<.75&&o.z>.08&&Math.abs(o.lane-g.lane)<.67){
-o.joined=true;gathered++;g.joined++;g.convoy++;g.combo++;g.score+=150+Math.min(g.combo,8)*30;g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
+o.joined=true;o.pop=1;gathered++;g.joined++;g.convoy++;g.combo++;g.score+=150+Math.min(g.combo,8)*30;g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
 }}
 if(gathered)announce(gathered>1?gathered+" ARAÇ DAHA KATILDI!":["DAYININ ARKADAŞI DA GELDİ","KONVOYA +1 ARAÇ","HALA OĞLU YETİŞTİ","KORNAYI DUYUP GELDİ"][Math.floor(rand(0,4))],1.3);
 else{g.combo=0;announce("KORNA ÇALINDI. DUYAN YOK.",.65)}
@@ -155,7 +155,7 @@ function update(dt){
 seconds+=dt;g.hornCD=Math.max(0,g.hornCD-dt);g.invuln=Math.max(0,g.invuln-dt);noticeTimer-=dt;
 if(noticeTimer<=0)banner.classList.remove("show");flash=Math.max(0,flash-dt);
 const steer=(Number(input.right)-Number(input.left))*dt*(input.brake?1.55:1.08);
-g.lane=clamp(g.lane+steer,-1.05,1.05);
+g.lane=clamp(g.lane+steer,innerHeight>innerWidth?-.55:-1.05,innerHeight>innerWidth?.55:1.05);
 const targetSpeed=input.brake?72:input.boost?170:137;
 g.speed+=(targetSpeed-g.speed)*Math.min(1,dt*(input.brake?2.3:.7));
 g.distance+=g.speed*dt*.315;g.time-=dt;
@@ -166,7 +166,7 @@ if(g.time<=0){finish(false);return}
 spawnTimer-=dt;
 if(spawnTimer<=0){spawn();spawnTimer=clamp(rand(.96,1.44)-g.chaos*.0035,.62,1.4)}
 for(const o of objects){
-o.z-=dt*(.14+g.speed*.00143)*o.speed;
+o.z-=dt*(.14+g.speed*.00143)*o.speed;if(o.pop>0)o.pop-=dt;
 if(o.type==="rival")o.lane=clamp(o.originalLane+Math.sin(seconds*2.6+o.wobble)*(.08+g.chaos*.0015),-.94,.94);
 if(o.z<.12&&!o.passed){
 o.passed=true;
@@ -195,28 +195,46 @@ function roadHalf(y){const t=clamp((y-93)/177,0,1);return 9+191*Math.pow(t,1.18)
 function roadY(z){return 94+176*Math.pow(clamp(1-z,0,1),1.55)}
 function seeded(i){const x=Math.sin(i*127.1+runSeed*.02)*43758.5453;return x-Math.floor(x)}
 function cloud(x,y){rect(x,y+5,32,7,"#e9f8fd");rect(x+5,y,19,6,"#fffdfa");rect(x+23,y+2,10,8,"#f8faff");rect(x-4,y+8,43,4,"#8dd6f2")}
+
 function background(){
 const stage=g.lap;
-rect(0,0,W,270,"#2a7df2");rect(0,42,W,56,"#2173ed");rect(0,85,W,15,"#388ce9");
-const offset=(g.distance*.023)%540;
-for(let i=0;i<5;i++)cloud(((i*151-offset*.24+550)%550)-40,25+(i%3)*13);
+rect(0,0,W,H,stage===3?"#f4a878":"#3e94f1");
+rect(0,35,W,64,stage===3?"#f9c092":"#217ee3");
+rect(0,83,W,14,stage===3?"#fcd2a6":"#66b5dc");
+const offset=(g.distance*.028)%570;
+for(let i=0;i<5;i++)cloud(((i*143-offset*.24+570)%570)-40,30+(i%3)*9);
 if(stage===1){
-rect(0,93,480,15,"#3d9bbd");rect(0,107,480,17,"#126fbb");
-for(let i=0;i<74;i++)rect((i*43+runSeed)%480,105+Math.floor(seeded(i*7)*17),8,2,i%2?"#a0e6ef":"#4badeb");
-for(let i=0;i<75;i++){let x=i*7-4;let h=5+Math.floor(seeded(i)*21);rect(x,103-h,5,h,i%4===0?"#bdc4a3":"#55657a");}
-rect(0,110,480,7,"#2f6d5e");
-rect(27,77,2,39,"#243e6d");rect(103,69,2,47,"#243e6d");
-for(let k=0;k<12;k++){let x=27+k*7;let mid=65+Math.abs(k-5)*3;rect(x,mid,1,112-mid,"#334b74")}
-poly([15,85,27,77,103,69,144,90,144,93,104,73,26,81],"#344b75");
+  // Turkish mahalle: apartments, balcony rugs, shopfronts, bunting.
+  for(let i=0;i<36;i++){
+    let x=i*16-3,h=14+Math.floor(seeded(i+32)*29),col=["#f3d4af","#f2c3aa","#d9cfb8","#dca8a4","#f0dcb7"][i%5];
+    rect(x,109-h,15,h,col);rect(x,109-h,15,2,i%2?"#e9a198":"#e6bd83");
+    for(let row=0;row<3;row++)for(let j=0;j<2;j++){
+      let yy=112-h+row*9;if(yy+4<109){rect(x+2+j*7,yy,4,5,"#577e9a");rect(x+1+j*7,yy+5,6,1,"#ac8376");}
+    }
+    if(i%5===0){rect(x+9,97,6,3,"#b5383f");rect(x+9,100,6,2,"#fff2d4")}
+    if(i%8===2){rect(x,102,15,7,"#b53a4b");rect(x+2,104,9,3,"#f9e4a0")}
+  }
+  rect(0,111,W,7,"#4d8475");
+  for(let i=0;i<14;i++){const x=i*38+(i%2)*10;rect(x,84,1,7,"#f1e5bf");poly([x,88,x+4,89,x+2,94],["#f14d68","#ffe88f","#a9e8e5"][i%3])}
 }else if(stage===2){
-poly([0,113,0,90,26,80,51,94,82,71,123,97,157,80,198,105,243,76,290,109,337,83,399,112,446,79,480,91,480,125],"#61727b");
-for(let i=0;i<18;i++){const x=i*31+Math.floor(seeded(i+42)*11),h=9+seeded(i+66)*11;rect(x,105-h,16,h,i%3===0?"#f0c197":"#d0cab3");rect(x+3,106-h,5,3,"#b8514b")}
+  rect(0,100,W,19,"#209bc2");rect(0,107,W,7,"#0c76b3");
+  for(let i=0;i<90;i++)rect((i*31+Math.floor(runSeed))%480,109+(i%3)*3,5,1,i%2?"#c2f0f7":"#72c6e4");
+  poly([0,103,28,94,72,102,109,93,153,102,203,95,245,105,291,91,339,101,399,94,460,106,480,101,480,112,0,112],"#738c8a");
+  for(let i=0;i<38;i++){let x=i*13,h=5+Math.floor(seeded(i+76)*23);rect(x,108-h,11,h,["#d4c59c","#eee4d0","#d9aba5","#7a858f"][i%4]);rect(x+2,109-h,3,3,"#426f88")}
+  rect(15,77,4,35,"#344a6d");rect(122,69,4,43,"#344a6d");
+  for(let i=0;i<13;i++){let x=19+i*8;rect(x,79+Math.abs(i-6)*2.6,1,29,"#576784")}
+  poly([0,99,18,80,123,72,166,100,166,103,123,77,20,85,0,105],"#334c6f");
 }else{
-rect(0,99,480,19,"#afd8de");for(let i=0;i<23;i++){const x=i*23;rect(x,99-(i%3)*5,16,18,"#dbc8a1");rect(x+5,92-(i%3)*5,6,5,"#a34b43")}
-rect(5,68,55,34,"#f4ecce");rect(4,66,57,5,"#b84d53");txt("SALON",32,84,10,"#8d3343","center");
+  rect(0,103,W,14,"#a0c6bb");
+  for(let i=0;i<29;i++){let x=i*18-6,h=8+i%4*6;rect(x,110-h,17,h,i%3?"#ebcba8":"#dfa48d");rect(x,109-h,17,3,i%2?"#ae5462":"#b96b55");rect(x+5,106-h,4,6,"#8a9a98")}
+  // Large distant venue.
+  rect(8,66,72,47,"#fff4d8");rect(5,63,77,6,"#a33c51");rect(18,89,14,24,"#9a534a");rect(38,89,14,24,"#9a534a");rect(57,89,14,24,"#9a534a");
+  rect(8,74,72,12,"#b3374f");txt("DÜĞÜN SALONU",44,82,6,"#fff1c8","center");
+  for(let i=0;i<9;i++){rect(5+i*9,60,2,7,"#e0d6b0");rect(5+i*9,60,2,2,"#fff5a2")}
+  for(let i=0;i<18;i++){let x=130+i*19;poly([x,70,x+9,77,x,82],["#e15264","#f1cd64","#f2e8cf"][i%3])}
 }
-rect(0,114,480,156,stage===2?"#6bab33":"#35921d");
-for(let y=115;y<270;y+=11)rect(0,y,480,1,y%3?"#4ca32c":"#69a833");
+rect(0,114,W,156,stage===2?"#57952a":"#4e9a31");
+for(let y=115;y<270;y+=12)rect(0,y,W,2,(Math.floor(y/12)%2)?"#4f972b":"#6eaf3c");
 }
 function road(){
 for(let y=93;y<270;y+=2){
@@ -231,47 +249,131 @@ rect(cx+half-6*t,y,Math.max(1,1+t*1.4),2,"#f4f0d2");
 if(wig%3!==0){const lineW=Math.max(1,t*2.8);rect(cx-half/3,y,lineW,2,"#d6dcd4");rect(cx+half/3,y,lineW,2,"#d6dcd4")}
 }
 }
+
 function foliage(){
-for(let i=0;i<24;i++){
-const z=((i/24+g.distance*.00016)%1);
-const y=roadY(z),half=roadHalf(y),cx=roadCenter(y),size=3+24*Math.pow(1-z,1.7);
-const side=i%2===0?1:-1,x=cx+side*(half+16+size*.2),yy=y;
-if(size<4)continue;
-rect(x-size*.11,yy-size*.6,size*.23,size*.62,"#594c31");
-poly([x,yy-size*1.55,x-size*.53,yy-size*.46,x+size*.53,yy-size*.46],"#174e2e");
-poly([x,yy-size*1.1,x-size*.65,yy-size*.17,x+size*.65,yy-size*.17],"#216c36");
-rect(x-size*.24,yy-size*.51,size*.49,size*.16,"#309a3e");
+for(let i=0;i<30;i++){
+ const z=((i/30+g.distance*.00019)%1);
+ const y=roadY(z),half=roadHalf(y),cx=roadCenter(y),size=3+26*Math.pow(1-z,1.7),side=i%2===0?1:-1,x=cx+side*(half+13+size*.26);
+ if(size<3.6)continue;
+ if(g.lap===1 && i%3===0){
+   rect(x-size*.13,y-size*1.36,size*.24,size*1.39,"#65605b");
+   rect(x-size*.5,y-size*1.5,size,size*.62,["#a86f60","#d3c4a0","#a66579"][i%3]);
+   rect(x-size*.36,y-size*1.35,size*.16,size*.19,"#789baa");
+   rect(x+size*.07,y-size*1.35,size*.16,size*.19,"#789baa");
+   rect(x-size*.2,y-size*.87,size*.37,size*.17,"#a74448");
+ }else if(i%4===0){
+   rect(x-size*.09,y-size*.85,size*.18,size*.9,"#5b513a");
+   rect(x-size*.1,y-size*1.55,size*.22,size*.78,"#327f35");
+   poly([x,y-size*1.9,x-size*.48,y-size*.86,x+size*.48,y-size*.86],"#196438");
+   rect(x-size*.3,y-size*.91,size*.6,size*.14,"#44a748");
+ }else{
+   rect(x-size*.11,y-size*.64,size*.23,size*.67,"#5d4933");
+   poly([x,y-size*1.53,x-size*.57,y-size*.44,x+size*.57,y-size*.44],"#185d3b");
+   poly([x,y-size*1.1,x-size*.64,y-size*.19,x+size*.64,y-size*.19],"#2d873e");
+ }
 }
 }
+
+function flag(x,y,s){
+rect(x,y-s*1.7,Math.max(1,s*.08),s*1.78,"#ddd0b4");
+rect(x+s*.07,y-s*1.62,s*.89,s*.56,"#d72b40");
+c.fillStyle="#fff8e2";c.beginPath();c.arc(x+s*.43,y-s*1.33,s*.17,0,Math.PI*2);c.fill();
+c.fillStyle="#d72b40";c.beginPath();c.arc(x+s*.50,y-s*1.36,s*.14,0,Math.PI*2);c.fill();
+rect(x+s*.64,y-s*1.36,Math.max(1,s*.07),Math.max(1,s*.07),"#ffede0");
+}
+function guestPerson(x,y,s,style){
+const head=style===2?"#b97b53":"#e2a576";
+rect(x-s*.1,y-s*1.3,s*.2,s*.3,head);
+rect(x-s*.22,y-s*.99,s*.45,s*.55,style===1?"#dc4590":style===2?"#d0e1db":"#282e4b");
+rect(x-s*.18,y-s*.4,s*.13,s*.4,"#323342");rect(x+s*.06,y-s*.4,s*.13,s*.4,"#323342");
+if(style===2){rect(x+s*.14,y-s*.83,s*.37,s*.43,"#dfbb75");rect(x+s*.28,y-s*.76,s*.09,s*.29,"#804633");rect(x+s*.2,y-s*.6,s*.08,s*.12,"#a84b52")}
+if(style===0){rect(x-s*.45,y-s*.94,s*.24,s*.13,head);rect(x+s*.22,y-s*1.06,s*.3,s*.12,head)}
+}
+function weddingRoadside(){
+for(let i=0;i<17;i++){
+ const z=((i/17+g.distance*.00022)%1);
+ if(z>.95)continue;
+ const y=roadY(z),half=roadHalf(y),cx=roadCenter(y),size=3+32*Math.pow(1-z,1.6);
+ const side=i%2===0?1:-1,x=cx+side*(half+13+size*.3);
+ if(size<5)continue;
+ if(i%4===0){flag(x,y,size*.88)}
+ else if(i%4===1){guestPerson(x,y,size*.66,(i+g.lap)%3)}
+ else if(i%4===2){
+    rect(x-size*.49,y-size*1.16,size*.98,size*.75,"#ecdbb0");
+    rect(x-size*.49,y-size*1.16,size*.98,size*.14,"#bd4055");
+    rect(x-size*.28,y-size*.81,size*.52,size*.12,"#d84d49");
+    if(size>13)txt(g.lap===3?"DÜĞÜN":g.lap===2?"E-5":"HAYIRLI",x,y-size*.55,Math.max(4,Math.floor(size*.19)),"#793c37","center");
+ }else{
+    rect(x-size*.05,y-size*.83,size*.1,size*.84,"#667886");
+    rect(x-size*.32,y-size*1.12,size*.64,size*.33,"#365f9c");
+    if(size>14)txt(g.lap===3?"SALON":g.lap===2?"DÜĞÜN":"GELİN",x,y-size*.89,Math.max(5,Math.floor(size*.17)),"#fff2df","center");
+ }
+}
+}
+
+
 function bannerArch(){
-if(g.distance>160)return;
-const z=clamp(.65-g.distance/520,0,1),y=roadY(z),half=roadHalf(y)*1.4,cx=roadCenter(y);
-if(z===0)return;
-const h=11+(1-z)*33;
-rect(cx-half,y-h,4,h+2,"#4ca6d4");rect(cx+half-4,y-h,4,h+2,"#4ca6d4");rect(cx-half,y-h,half*2,8,"#ffe9ac");
-rect(cx-half+5,y-h+1,half*2-10,6,"#e6c56e");txt("DÜĞÜN KONVOYU",cx,y-h+6,Math.max(4,Math.floor(3+(1-z)*6)),"#be3440","center");
+if(g.distance>210)return;
+const z=clamp(.38-g.distance/540,0,1),y=roadY(z),half=roadHalf(y)*1.16,cx=roadCenter(y),h=17+(1-z)*27;
+if(z<.01)return;
+rect(cx-half,y-h,5,h+3,"#a94c56");rect(cx+half-5,y-h,5,h+3,"#a94c56");
+rect(cx-half,y-h,half*2,14,"#f8edd3");rect(cx-half,y-h,half*2,3,"#cf4158");
+rect(cx-half,y-h+12,half*2,3,"#c94554");
+rect(cx-half+5,y-h-4,10,8,"#f195ae");rect(cx+half-15,y-h-4,10,8,"#f195ae");
+rect(cx-half+16,y-h-2,half*2-32,3,"#3a9347");
+txt("GELİN ALMA KONVOYU",cx,y-h+10,Math.max(6,Math.floor(4+(1-z)*7)),"#a43146","center");
 }
+
 function carSprite(cx,y,w,type,variant,joined,player){
-w=Math.max(4,w);const h=w*.69,bodyY=y-h;
-const palette=player?"#e74739":type==="guest"?"#dbd6b5":type==="rival"?(variant%2?"#8a3991":"#c6a1c5"):(variant%2?"#e0a54b":"#7b889a");
-rect(cx-w*.48,bodyY+h*.72,w*.2,h*.33,"#161c29");rect(cx+w*.28,bodyY+h*.72,w*.2,h*.33,"#161c29");
-rect(cx-w*.43,bodyY+h*.29,w*.86,h*.63,"#17202a");
-rect(cx-w*.47,bodyY+h*.32,w*.94,h*.46,palette);
-poly([cx-w*.32,bodyY+h*.31,cx-w*.21,bodyY+h*.04,cx+w*.22,bodyY+h*.04,cx+w*.34,bodyY+h*.31],"#162939");
-rect(cx-w*.19,bodyY+h*.08,w*.38,h*.18,"#4bb2c5");
-rect(cx-w*.36,bodyY+h*.74,w*.17,h*.11,"#f8aa5f");rect(cx+w*.19,bodyY+h*.74,w*.17,h*.11,"#f8aa5f");
-rect(cx-w*.17,bodyY+h*.75,w*.34,h*.14,"#29313c");
-if(player||type==="rival"||joined){
-const bow=player?"#f3f5ec":joined?"#f8e1bb":"#ff84b7";
-poly([cx,bodyY+h*.6,cx-w*.18,bodyY+h*.46,cx-w*.19,bodyY+h*.72],"#ffffff");
-poly([cx,bodyY+h*.6,cx+w*.18,bodyY+h*.46,cx+w*.19,bodyY+h*.72],bow);
-rect(cx-w*.03,bodyY+h*.56,w*.06,h*.11,player?"#eee":"#ff5fa1");
-if(player){rect(cx-w*.21,bodyY+h*.82,w*.06,h*.24,"#f6e8ed");rect(cx+w*.12,bodyY+h*.82,w*.06,h*.24,"#f6e8ed")}
+w=Math.max(4,w);const h=w*.70,bodyY=y-h;
+const palette=player?"#e53e36":type==="lead"?"#fff1dd":type==="guest"?"#c9ccad":type==="escort"?["#b32a3e","#dcc79a","#394461"][variant%3]:type==="rival"?(variant%2?"#7a3780":"#d2a3c3"):(variant%2?"#e0a54b":"#75899d");
+const large=w>17;
+rect(cx-w*.49,bodyY+h*.69,w*.21,h*.34,"#151a27");rect(cx+w*.28,bodyY+h*.69,w*.21,h*.34,"#151a27");
+rect(cx-w*.46,bodyY+h*.35,w*.92,h*.53,"#17232e");
+rect(cx-w*.46,bodyY+h*.33,w*.92,h*.47,palette);
+rect(cx-w*.4,bodyY+h*.75,w*.8,h*.12,"#273240");
+poly([cx-w*.34,bodyY+h*.35,cx-w*.22,bodyY+h*.06,cx+w*.23,bodyY+h*.06,cx+w*.34,bodyY+h*.35],"#1c313b");
+rect(cx-w*.2,bodyY+h*.1,w*.4,h*.2,"#7ac8ce");
+rect(cx-w*.4,bodyY+h*.67,w*.17,h*.12,player?"#ffe16e":"#f5b46c");rect(cx+w*.23,bodyY+h*.67,w*.17,h*.12,player?"#ffe16e":"#f5b46c");
+rect(cx-w*.19,bodyY+h*.71,w*.38,h*.1,"#d5d9db");
+if(large)txt(player?"34 DGN":type==="lead"?"GELİN":"34",cx,bodyY+h*.79,Math.max(4,Math.floor(w*.1)),"#1b3b55","center");
+if(player||type==="escort"||type==="lead"||type==="rival"||joined){
+ const bow=player?"#f7f3e7":type==="lead"?"#fa9ab9":type==="rival"?"#ffcae0":"#ffe1dc";
+ // Bow with long white tulle streamers and a flower centre.
+ poly([cx,bodyY+h*.57,cx-w*.19,bodyY+h*.42,cx-w*.2,bodyY+h*.72],bow);
+ poly([cx,bodyY+h*.57,cx+w*.19,bodyY+h*.42,cx+w*.2,bodyY+h*.72],bow);
+ rect(cx-w*.034,bodyY+h*.51,w*.068,h*.18,player?"#eacbc1":"#f45994");
+ rect(cx-w*.25,bodyY+h*.84,w*.052,h*.21,"#fce6e9");rect(cx+w*.17,bodyY+h*.84,w*.052,h*.21,"#fce6e9");
+ if(large){rect(cx-w*.39,bodyY+h*.49,w*.08,h*.19,"#f4bed1");rect(cx+w*.31,bodyY+h*.49,w*.08,h*.19,"#f4bed1")}
+ if(type==="lead"){for(let k=0;k<5;k++){const dx=(k-2)*w*.08;rect(cx+dx,bodyY-h*.02+Math.abs(k-2)*w*.025,Math.max(1,w*.065),Math.max(1,w*.09),["#dd4c6b","#f6dfac","#db7198"][k%3])}}
+ if(large&&type!=="rival"){
+  // Rear-window Turkish flags and a little passenger waving from the side.
+  rect(cx-w*.31,bodyY+h*.25,w*.14,h*.09,"#e72b42");rect(cx-w*.28,bodyY+h*.27,Math.max(1,w*.025),Math.max(1,w*.025),"#fff");
+  if(w>28){rect(cx+w*.45,bodyY+h*.31,w*.22,h*.07,"#deb08c");rect(cx+w*.59,bodyY+h*.17,w*.065,h*.15,"#deb08c")}
+ }
+ if(player){
+  for(let i=0;i<3;i++){let dx=(i-1)*w*.29;rect(cx+dx-w*.06,y+4+i%2*2,w*.11,h*.1,"#b7d5df");rect(cx+dx-w*.045,y+4+i%2*2,w*.09,h*.048,"#db5158")}
+ }
 }
-if(type==="guest"&&!joined&&w>10){rect(cx-w*.18,bodyY-h*.28,w*.36,h*.24,"#fff1b2");txt("+",cx,bodyY-h*.07,Math.max(5,Math.floor(w*.27)),"#a83828","center")}
-if(joined&&w>7){txt("♥",cx,bodyY-h*.29,Math.max(5,Math.floor(w*.28)),"#f6eff5","center")}
-if(type==="obstacle"&&w>11){rect(cx-w*.27,bodyY+h*.3,w*.54,h*.24,"#4c5b65");rect(cx-w*.32,bodyY+h*.09,w*.63,h*.13,"#e8b55d")}
+if(type==="guest"&&!joined&&w>9){
+ rect(cx-w*.28,bodyY-h*.33,w*.56,h*.29,"#fff6ce");
+ txt(" + ",cx,bodyY-h*.1,Math.max(6,Math.floor(w*.29)),"#ae4b3e","center");
 }
+if(joined&&w>8)txt("♥",cx,bodyY-h*.29,Math.max(6,Math.floor(w*.26)),"#fff0f2","center");
+if(type==="rival"&&w>24)txt("YANLIŞ",cx,bodyY-h*.2,Math.max(5,Math.floor(w*.17)),"#fff1bd","center");
+if(type==="obstacle"&&large){rect(cx-w*.37,bodyY+h*.26,w*.74,h*.17,"#a87745");rect(cx-w*.27,bodyY+h*.05,w*.54,h*.21,"#5d6c72")}
+}
+
+
+function leadCar(){
+ // Wedding car stays in the distance as the visual target, with the family convoy around it.
+ const z=.44+.02*Math.sin(seconds*.5),y=roadY(z),half=roadHalf(y),cx=roadCenter(y);
+ const x=cx+Math.sin(g.distance*.0019)*half*.16,w=32;
+ rect(x-15,y+2,30,2,"#273f36");
+ carSprite(x,y,w,"lead",0,true,false);
+ if(mode==="playing"&&Math.sin(seconds*4)>-.25){txt("♥",x+19,y-29,9,"#ffe1e7","center");txt("♪",x-18,y-16,8,"#fff2b8","center")}
+}
+
 function vehicles(){
 const sorted=objects.slice().sort((a,b)=>b.z-a.z);
 for(const o of sorted){
@@ -279,35 +381,31 @@ if(o.z>1||o.z<-.13)continue;
 const y=roadY(o.z),half=roadHalf(y),center=roadCenter(y),x=center+o.lane*half*.83;
 const width=5+46*Math.pow(1-clamp(o.z,0,1),1.5);
 carSprite(x,y,width,o.type,o.variant,o.joined,false);
+if(o.joined&&o.z<.55&&o.z>0&&(o.pop>0||Math.sin(seconds*9+o.id)>0.95))txt("♪",x,y-width*.9,Math.max(6,width*.24),"#ffeabf","center");
 }
 }
+
 function decorations(){
-if(g.lap!==3)return;
-const z=((g.distance-1520)%600)/600,y=roadY(1-z);
-if(y<100)return;
-const cx=roadCenter(y),hw=roadHalf(y)*1.15;
-rect(cx-hw,y-32,3,38,"#f0d5ae");rect(cx+hw-3,y-32,3,38,"#f0d5ae");
-rect(cx-hw,y-32,hw*2,8,"#f8e3b7");txt("DÜĞÜN SALONU",cx,y-25,8,"#ad3e3b","center");
+ if(g.lap===3){
+ const z=((g.distance-1510)%430)/430,y=roadY(1-z);
+ if(y>115){const cx=roadCenter(y),hw=roadHalf(y)*1.15;
+ rect(cx-hw,y-42,5,44,"#c53e58");rect(cx+hw-5,y-42,5,44,"#c53e58");
+ rect(cx-hw,y-42,hw*2,12,"#fff0d4");rect(cx-hw,y-42,hw*2,3,"#d24c63");
+ txt("DÜĞÜN SALONU",cx,y-33,Math.max(5,Math.min(10,7+z*4)),"#a33e4d","center");
+ for(let k=0;k<9;k++)rect(cx-hw+k*hw/4.5,y-46+(k%2)*2,4,4,k%2?"#e7d578":"#f4abbf");
+ }
+ }
 }
+
 function playerCar(){
-const x=240+g.lane*116+Math.sin(g.distance*.0033)*32,vy=255,shake=flash>0?rand(-3,3):0;
+const portrait=window.innerHeight>window.innerWidth,shift=portrait?90:116;
+const x=240+g.lane*shift+Math.sin(g.distance*.0033)*32,vy=253,shake=flash>0?rand(-3,3):0;
 if(g.invuln>0&&Math.floor(seconds*12)%2===0)return;
-rect(x-21+shake,258,44,3,"#1a2d2f");
-carSprite(x+shake,vy,66,"player",0,false,true);
-if(input.brake){rect(x-23+shake,247,10,5,"#ffec73");rect(x+13+shake,247,10,5,"#ffec73")}
+rect(x-32+shake,255,64,3,"#202d32");
+carSprite(x+shake,vy,70,"player",0,false,true);
+if(input.brake){rect(x-25+shake,248,11,5,"#ffdd68");rect(x+14+shake,248,11,5,"#ffdd68")}
 }
-function oldHudUnused(){
-rect(0,0,480,38,"#184bcd");rect(0,36,480,2,"#123d92");
-txt("SCORE",10,14,11,"#f6eee4");txt(String(g.score).padStart(6,"0"),10,29,11,"#fff4a2");
-txt("TIME",135,14,11,"#ffe36d");txt(String(Math.max(0,Math.ceil(g.time))).padStart(2,"0"),147,29,11,"#ffec91");
-txt("LAP",223,14,11,"#91f18e");txt(g.lap+"/3",231,29,11,"#b8efba");
-txt("SPEED",290,14,11,"#fff");txt(Math.round(g.speed)+"km",300,29,11,"#fff0cc");
-txt("♥".repeat(g.hearts),466,14,13,"#ffacc0","right");
-txt("KONVOY "+String(g.convoy).padStart(2,"0"),466,29,9,"#ffdc75","right");
-rect(4,39,93,8,"#1b2447");rect(5,40,Math.round(g.chaos*.91),6,"#ed5b6c");txt("KAOS",100,46,7,"#fff3bd");
-if(g.hornCD>0){rect(382,40,92,7,"#142555");rect(382,40,92*(1-g.hornCD/1.25),7,"#f9cc5a")}
-else txt("KORNA HAZIR",474,46,8,"#fbedad","right");
-}
+
 function draw(){
 background();road();foliage();weddingRoadside();bannerArch();decorations();leadCar();vehicles();playerCar();
 if(mode==="menu"){rect(162,65,156,18,"#ffedab");txt("DÜĞÜN KONVOYU GP",240,78,10,"#ad3242","center")}
