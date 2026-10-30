@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#030303"><meta name="description" content="İçeridekiler — yaşayan bağışıklık evrenini yönet. Tam ekran biyolojik simülasyon.">
 <link rel="icon" href="/favicon.ico"><title>İçeridekiler — aynen.fun</title>
-<link rel="stylesheet" href="/iceridekiler-v3.css?v=3">
+<link rel="stylesheet" href="/iceridekiler-v3.css?v=4">
 </head>
 <body>
 <div class="game" id="stage">
@@ -29,6 +29,11 @@
  <div class="scene-tag mono"><i id="pulse" class="pulse"></i><span id="scene-label">DOKU / GÖZETİM</span></div>
  <div class="scene-time mono" id="clock">00:00 / 1. OLAY</div>
 </div>
+<div class="threat-hud" id="threat-hud" role="status" aria-live="off">
+  <div class="threat-caption"><span class="threat-dot" id="threat-dot"></span><strong id="threat-label">TEHDİT YOK</strong><span id="threat-count">0 ETKEN</span></div>
+  <div class="threat-track"><span id="threat-bar"></span></div>
+  <div class="threat-fact" id="threat-fact">Hücreler rutin devriyede.</div>
+</div>
 <div class="left-rail">
   <div class="stage-label mono">CANLI SİSTEM / 01</div>
   <div class="episode" role="region" aria-label="Güncel olay">
@@ -37,6 +42,7 @@
     <h2 id="episode-title">Deri bariyeri açıldı</h2>
     <p id="episode-desc">Küçük bir kesik. Bakteriler dokuya ulaşıyor.</p>
     <p class="goal" id="goal">Bakteri yükünü azalt; dokuyu koru.</p>
+    <div class="action-advisor"><span id="advisor-icon">◉</span><span id="advisor">Önce olayı başlat.</span></div>
     <button type="button" class="next" id="next" disabled>OLAYI BAŞLAT <span>↗</span></button>
   </div>
   <div class="live-brief mono"><span id="population">8 HÜCRE / 0 PATOJEN</span><span id="focus-info">ODAK 50% / 50%</span></div>
@@ -53,8 +59,8 @@
  <section class="drawer-section" data-section="laboratory"><div class="section-row"><strong>Hücre laboratuvarı</strong><span id="points" class="mono">9 ARAŞTIRMA</span></div><p class="panel-note">Kalıcı hücre geliştirmeleri. Her hücrenin görevi farklıdır.</p><div id="upgrades"></div></section>
  <section class="drawer-section" data-section="events" hidden><div class="section-row"><strong>Bugün içeride</strong><span id="event-count" class="mono">0 KAYIT</span></div><div id="log" class="log" aria-live="polite"></div></section>
  <section class="drawer-section" data-section="history" hidden><div class="section-row"><strong>Doku geçmişi</strong><span class="mono">KALICI GELİŞİM</span></div><div id="history" class="history-panel">İlk olaydan sonra grafik oluşur.</div></section>
- <section class="drawer-section" data-section="inspect" hidden><div class="section-row"><strong>Seçili hücre</strong><span class="mono">MİKRO DÜNYA</span></div><div id="detail">Hücrelerden birine dokun. Her türün kendine özgü görevi vardır.</div><p id="immune-readout" class="panel-kicker">Antijen sunumu bekleniyor.</p><div class="bio-key"><span style="--dot:#ebbd68"><i></i>Makrofaj</span><span style="--dot:#efad9a"><i></i>Nötrofil</span><span style="--dot:#a2b8ed"><i></i>T hücresi</span><span style="--dot:#debc7d"><i></i>B hücresi</span><span style="--dot:#cbb6ad"><i></i>Fibroblast</span></div></section>
- <section class="drawer-section" data-section="about" hidden><div class="section-row"><strong>Nasıl çalışır?</strong><span class="mono">MİKRO BİYOLOJİ</span></div><p class="panel-note">Hücreler otonom hareket eder. Boş bir noktaya dokunarak müdahale odağını değiştir, alttaki simgelerden karar ver.</p><div id="science" class="science"></div><p class="panel-note">Antijen sunumu, enfeksiyon ve inflamasyon gerçek biyolojik kavramlardır ancak burada hızları ve davranışları oyun için basitleştirilmiştir. Sağlık değerlendirmesi değildir.</p><p class="panel-note"><a href="https://www.ncbi.nlm.nih.gov/books/NBK27090/" target="_blank" rel="noopener noreferrer">Bağışıklık sistemi hakkında oku ↗</a></p></section>
+ <section class="drawer-section" data-section="inspect" hidden><div class="section-row"><strong>Seçili hücre</strong><span class="mono">MİKRO DÜNYA</span></div><div class="cell-portrait" id="cell-portrait" aria-hidden="true"><div class="portrait-organism"></div><div class="portrait-ring"></div></div><div id="detail">Hücrelerden birine dokun. Her türün kendine özgü görevi vardır.</div><p id="immune-readout" class="panel-kicker">Antijen sunumu bekleniyor.</p><div class="bio-key"><span style="--dot:#ebbd68"><i></i>Makrofaj</span><span style="--dot:#efad9a"><i></i>Nötrofil</span><span style="--dot:#a2b8ed"><i></i>T hücresi</span><span style="--dot:#debc7d"><i></i>B hücresi</span><span style="--dot:#cbb6ad"><i></i>Fibroblast</span></div></section>
+ <section class="drawer-section" data-section="about" hidden><div class="section-row"><strong>Nasıl çalışır?</strong><span class="mono">MİKRO BİYOLOJİ</span></div><p class="panel-note">Hücreler otonom hareket eder. Boş bir noktaya dokunarak müdahale odağını değiştir, alttaki simgelerden karar ver.</p><div id="science" class="science"></div><p class="panel-note">Antijen sunumu, enfeksiyon ve inflamasyon gerçek biyolojik kavramlardır ancak burada hızları ve davranışları oyun için basitleştirilmiştir. Sağlık değerlendirmesi değildir.</p><button type="button" id="effects" class="effects-btn" aria-pressed="true">GÖRSEL EFEKTLER <span id="effects-label">AÇIK</span></button><p class="panel-note"><a href="https://www.ncbi.nlm.nih.gov/books/NBK27090/" target="_blank" rel="noopener noreferrer">Bağışıklık sistemi hakkında oku ↗</a></p></section>
 </aside>
 <div class="bottom-dock" role="region" aria-label="Bağışıklık yönetimi">
  <div class="dock-caption"><span class="mono">MÜDAHALELER</span><span id="selection" class="selection">Hücreye dokun · Boşluğa dokunarak odak seç</span></div>
@@ -68,8 +74,8 @@
  </div>
 <div class="mobile-menu"><button type="button" class="rail-btn" data-drawer="laboratory" title="Laboratuvar" aria-label="Laboratuvar">✳</button><button type="button" class="rail-btn" data-drawer="events" title="Olaylar" aria-label="Olaylar">≡</button><button type="button" class="rail-btn" data-drawer="history" title="Grafik" aria-label="Grafik">⌁</button><button type="button" class="rail-btn" data-drawer="inspect" title="İncele" aria-label="İncele">◎</button><button type="button" class="rail-btn" data-drawer="about" title="Bilgi" aria-label="Bilgi">?</button></div>
 <div class="bottom-system mono"><span>SIMULATION 01</span><span>OYUN MODELİ · KLİNİK ÖLÇÜM DEĞİL</span></div>
-<div class="scrim" id="overlay"><div class="welcome" id="overlay-content"><div class="intro-orb" aria-hidden="true"><span class="orb-eye one"></span><span class="orb-eye two"></span></div><span class="stamp mono">CANLI SİSTEM / 001</span><h2>Sen uyurken<br>onlar çalışıyor.</h2><p>İçinde yaşayan küçük bir savunma dünyası. Hücreleri yönet, altı biyolojik olayı atlat, dokunu koru.</p><button type="button" class="solid wide" id="start">SİSTEMİ BAŞLAT ↗</button><div class="smallprint">Gerçek biyolojiden esinlenen oyun modeli. Otomatik kayıt açık.</div></div></div>
-<div class="toast" id="toast" role="status"></div>
+<div class="scrim" id="overlay"><div class="welcome" id="overlay-content"><div class="intro-orb" aria-hidden="true"><span class="orb-eye one"></span><span class="orb-eye two"></span></div><span class="stamp mono">CANLI SİSTEM / 001</span><h2>Sen uyurken<br>onlar çalışıyor.</h2><p>İçinde yaşayan küçük bir savunma dünyası. Hücreleri yönet, altı biyolojik olayı atlat, dokunu koru.</p><div class="intro-steps"><span><b>01</b> Hücreyi incele</span><span><b>02</b> Bir bölge seç</span><span><b>03</b> Müdahale et</span></div><button type="button" class="solid wide" id="start">SİSTEMİ BAŞLAT ↗</button><div class="smallprint">Gerçek biyolojiden esinlenen oyun modeli. Otomatik kayıt açık.</div></div></div>
+<div class="field-flash" id="field-flash" aria-hidden="true"></div><div class="toast" id="toast" role="status"></div>
 </div>
-<script src="/iceridekiler-v3.js?v=3" defer></script>
+<script src="/iceridekiler-v3.js?v=4" defer></script>
 </body></html>
