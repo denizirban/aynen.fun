@@ -160,6 +160,16 @@
  .mission{min-width:0}.mission h2{font-size:14px}.metric{min-width:0}
  .stage-note{bottom:calc(140px + env(safe-area-inset-bottom))}
 }
+
+/* Experiment cockpit: tiny purposeful controls, readable on iPhone */
+.lab-camera{position:absolute;z-index:4;left:50%;bottom:clamp(168px,24vh,205px);transform:translateX(-50%);display:flex;align-items:center;gap:6px;border:1px solid #fff;background:linear-gradient(125deg,#ffffffdb,#f3f8fbd8);box-shadow:0 7px 29px #3b688422;backdrop-filter:blur(19px);border-radius:20px;padding:5px}
+.lab-camera button{background:#f7fbff;border:1px solid #dae7ed;color:#40628e;border-radius:13px;width:38px;height:35px;font-weight:700;display:grid;place-items:center;font-size:18px}
+.lab-camera button:hover{background:#e9f0fc}.lab-camera .zoom-label{font:500 10px 'DM Mono',monospace;color:#657e8e;min-width:57px;text-align:center}
+.live-insight{position:absolute;z-index:4;bottom:clamp(235px,33vh,285px);left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:9px;background:#fffc;border:1px solid #fff;box-shadow:0 8px 33px #34608119;padding:10px 15px;border-radius:16px;color:#496579;font-size:11px;max-width:330px;text-align:center;pointer-events:none}
+.live-insight .spark{width:7px;height:7px;background:#74b5ba;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 4px #74b5ba21}
+#resultSuggestion{background:#eaf3f8;border:1px solid #d5e6ef;border-radius:12px;padding:12px;color:#3f6180;font-size:12px;line-height:1.6;margin:13px 0 17px}
+#resultSuggestion strong{color:#294b72}
+@media(max-width:800px){.lab-camera{bottom:calc(149px + env(safe-area-inset-bottom))}.lab-camera button{height:28px;width:34px;font-size:15px}.live-insight{bottom:calc(199px + env(safe-area-inset-bottom));max-width:270px;font-size:10px;padding:7px 10px}.stage-note{display:none}}
 </style>
 </head><body>
 <div id="game">
@@ -220,6 +230,8 @@
 <button type="button" id="tipClose">Anladım ×</button>
 </section>
 <section id="pauseActions" class="pause-actions" hidden aria-label="Deney duraklatıldı"><strong>Deney duraklatıldı</strong><button id="resumeBtn" type="button">▶ Devam et</button><button id="pauseEditBtn" type="button">← Robotu düzenle</button></section>
+<section class="live-insight" aria-live="polite"><i class="spark"></i><span id="insightText">Dengeli kaslar robotu daha düz ilerletir.</span></section>
+<div class="lab-camera" aria-label="Yakınlaştırma kontrolleri"><button type="button" id="zoomOut" aria-label="Uzaklaştır">−</button><span class="zoom-label" id="zoomValue">100%</span><button type="button" id="zoomIn" aria-label="Yakınlaştır">+</button><button type="button" id="zoomReset" aria-label="Yakınlaştırmayı sıfırla" style="font-size:12px">⟲</button></div>
 <div class="stage-note" id="stageCaption"><i></i> Renkli yuvalara dokunarak hücre ekle</div>
 <footer class="dock" aria-label="Robot yapım araçları">
 <div class="selected-info"><span class="selected-art" id="selectedArt"></span><div><span class="mono muted">SEÇİLİ HÜCRE</span><strong class="name" id="selectedName">Kas</strong><p id="selectedDesc">Robotu hareket ettirir.</p></div></div>
@@ -243,9 +255,9 @@
 <div class="dialog"><button class="xbtn" id="closeResult" type="button" aria-label="Kapat" style="position:absolute;right:16px;top:14px">×</button>
 <span class="dialog-kicker mono" id="resultKicker">DENEY SONUCU</span><h2 id="resultTitle">Deney tamamlandı.</h2><p id="resultText"></p>
 <div class="results"><div><strong id="resultProgress">0%</strong><span>İLERLEME</span></div><div><strong id="resultEnergy">0%</strong><span>KALAN ENERJİ</span></div><div><strong id="resultTime">0s</strong><span>SÜRE</span></div></div>
-<div class="dialog-buttons"><button id="retryBtn" type="button">Tekrar dene</button><button class="strong" id="editBtn" type="button">Robotu geliştir →</button><button id="shareBtn" type="button">Paylaş ↗</button></div><button type="button" id="nextMissionBtn" class="next-mission" hidden>Sonraki göreve geç →</button>
+<div id="resultSuggestion" role="status"></div><div class="dialog-buttons"><button id="retryBtn" type="button">Tekrar dene</button><button class="strong" id="editBtn" type="button">Robotu geliştir →</button><button id="shareBtn" type="button">Paylaş ↗</button></div><button type="button" id="nextMissionBtn" class="next-mission" hidden>Sonraki göreve geç →</button>
 </div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </div>
-<script src="/bio-robot.js?v=5" defer></script>
+<script src="/bio-robot.js?v=6" defer></script>
 </body></html>
