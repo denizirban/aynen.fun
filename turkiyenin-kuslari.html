@@ -90,8 +90,8 @@ function choose(i,playWhenReady){
  if(cached&&cached.url){showStatus('Gerçek doğa kaydı · dinlemeye hazır');applySource(cached)}
  else{showStatus('Ses kaydı aranıyor…');setButton('… Ses aranıyor',true)}
  if(playWhenReady){if(cached&&cached.url){startAudio(cached)}else{
-   // Safari'de kullanıcı etkileşimi dışında otomatik ses başlatılmaz: ses hazır olunca yeniden dokunulabilir.
-   resolveSound(b).then(r=>{if(activeIndex!==i)return;if(r){showStatus('Kayıt hazır · oynatmak için ▶');setButton('▶ Sesi dinle',false);applySource(r)}else{showStatus('Bu tür için oynatılabilir kayıt bulunamadı');setButton('Kayda ulaşılamadı',true)}})
+   // Önce otomatik başlatmayı dene; Safari etkileşim isteyebilir, bu durumda ikinci dokunuş sunulur.
+   resolveSound(b).then(r=>{if(activeIndex!==i)return;if(r){setButton('▶ Sesi dinle',false);applySource(r);startAudio(r)}else{showStatus('Bu tür için oynatılabilir kayıt bulunamadı');setButton('Kayda ulaşılamadı',true)}})
  }}
  else if(!cached)resolveSound(b).then(r=>{if(activeIndex===i){if(r){showStatus('Kayıt hazır');setButton('▶ Sesi dinle',false);applySource(r)}else{showStatus('Kayıt bulunamadı');setButton('Kayda ulaşılamadı',true)}}});
 }
@@ -138,10 +138,22 @@ async function soundSearch(latin,wide){
  });
  const x=candidates[0];return x?{url:x.info.url,page:x.info.descriptionurl||'https://commons.wikimedia.org/wiki/'+encodeURIComponent(x.title.replace(' ','_')),license:x.info.extmetadata&&x.info.extmetadata.LicenseShortName&&x.info.extmetadata.LicenseShortName.value||''}:null;
 }
+async function categorySound(latin){
+ const url=api+'?'+params({generator:'categorymembers',gcmtitle:'Category:Audio files of '+latin,gcmnamespace:6,gcmlimit:30,prop:'imageinfo',iiprop:'url|mime|size|extmetadata',iiextmetadatafilter:'LicenseShortName'});
+ const data=await getJSON(url);
+ const choices=(data.query&&data.query.pages||[]).map(p=>({title:p.title,info:p.imageinfo&&p.imageinfo[0]})).filter(x=>x.info&&canUse(x.info.mime,x.info.url));
+ choices.sort((a,b)=>{const mp3a=/\.mp3$/i.test(a.info.url)?0:1,mp3b=/\.mp3$/i.test(b.info.url)?0:1;if(mp3a!==mp3b)return mp3a-mp3b;return (a.info.size||10000000)-(b.info.size||10000000)});
+ const x=choices[0];return x?{url:x.info.url,page:x.info.descriptionurl||'https://commons.wikimedia.org/wiki/'+encodeURIComponent(x.title.replace(' ','_')),license:x.info.extmetadata&&x.info.extmetadata.LicenseShortName&&x.info.extmetadata.LicenseShortName.value||''}:null;
+}
 function resolveSound(b){
  if(tuneCache[b.latin])return Promise.resolve(tuneCache[b.latin]);
  if(b.soundPromise)return b.soundPromise;
- b.soundPromise=(async()=>{try{let r=await soundSearch(b.latin,false);if(!r)r=await soundSearch(b.latin,true);tuneCache[b.latin]=r||{url:null};return r}catch(e){tuneCache[b.latin]={url:null};return null}})();
+ b.soundPromise=(async()=>{let r=null;
+   try{r=await categorySound(b.latin)}catch(e){}
+   if(!r){try{r=await soundSearch(b.latin,false)}catch(e){}}
+   if(!r){try{r=await soundSearch(b.latin,true)}catch(e){}}
+   tuneCache[b.latin]=r||{url:null};return r;
+ })();
  return b.soundPromise;
 }
 async function loadPhotos(){
