@@ -374,6 +374,20 @@ body{background:#f5f5f1;color:#151c20}
 }
 @media(prefers-reduced-motion:reduce){#catalogue .fish-card{transition:none!important}}
 
+
+.taste-panel{margin:15px 0;padding:16px;background:#f9eedf;border:1px solid #dbc9b3;color:#433629}
+.taste-header{display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-bottom:1px solid #d8c6b1;padding-bottom:10px}
+.taste-header>span,.taste-words small,.taste-near small{font:9px 'DM Mono',monospace;color:#8e6f52;letter-spacing:.06em}
+.taste-header h3{font-size:20px;line-height:1;margin:0;letter-spacing:-.06em}
+.taste-words{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 0}
+.taste-words small{display:block;margin-bottom:5px}.taste-words strong{font-size:12px;line-height:1.35;display:block;font-weight:600}
+.taste-meters{display:grid;gap:9px;border-block:1px solid #d8c6b1;padding:12px 0}
+.taste-meter>div:first-child{display:flex;justify-content:space-between;font:10px 'DM Mono',monospace;gap:8px}.taste-meter b{font-weight:500}
+.taste-bars{display:flex;gap:4px;margin-top:5px}.taste-bars i{height:7px;flex:1;background:#e7dac8}.taste-bars i.on{background:#bb825d}
+.taste-near{margin-top:13px}.taste-near>div{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.taste-near button{font:10px 'DM Mono',monospace;background:#fffaf1;border:1px solid #ac8b6b;padding:9px 11px;color:#433629;cursor:pointer}
+.taste-near button:hover{background:#ead8bd}.taste-panel p{margin:12px 0 0!important;font:9px/1.6 'DM Mono',monospace!important;color:#8e7564!important}
+@media(max-width:760px){.taste-panel{padding:12px;margin:12px 0}.taste-header h3{font-size:19px}.taste-words strong{font-size:11px}}
 </style></head><body>
 <div class="shell">
 <header class="top"><a class="back" href="/">← aynen.fun</a><div class="top-center">DENİZ ATLASI / TÜRKİYE</div><div class="top-right"><span class="dot-live"></span><span>12 AY · 4 DENİZ</span></div></header>
@@ -508,11 +522,24 @@ function renderCalendar(data){
  el('calendar-wrap').innerHTML=data.length?'<table class="calendar"><thead><tr><th scope="col">BALIK / AY</th>'+cols+'</tr></thead><tbody>'+rows+'</tbody></table>':'<p class="empty">Bu filtrede kayıt yok.</p>';
 }
 function rerender(){renderMonths();renderSeas();renderGrid();updateUrl();}
+
+var TASTING=[["4","4","2","Yoğun umami","Narin","Denizsi"],["4","4","4","Doygun etsi","Sıkı","Belirgin denizsi"],["5","4","4","Güçlü karakterli","Sıkı ve sulu","Yoğun denizsi"],["3","3","3","Dengeli tatlımsı","Orta sıkılık","Hafif denizsi"],["4","5","4","Yağlı dolgun","Sıkı katmanlı","Belirgin denizsi"],["4","4","2","Doygun tatlımsı","Narin","Denizsi"],["3","3","4","Tatlımsı dengeli","Sıkı beyaz et","Hafif mineral"],["3","2","4","Hafif temiz","Sıkı iri lifli","Hafif denizsi"],["3","2","4","Yumuşak tatlımsı","Sıkı beyaz et","Nötr"],["2","2","2","Hafif zarif","Narin","İnce denizsi"],["4","2","3","Tatlımsı belirgin","İnce sıkı","Hafif kabuksu"],["4","2","3","Tatlımsı yoğun","İnce sıkı","Denizsi"],["3","3","3","Hafif dengeli","Orta sıkılık","Hafif denizsi"],["4","3","4","Dolgun tatlımsı","Sıkı","Hafif mineral"],["3","2","4","Hafif tatlımsı","Sıkı","Hafif denizsi"],["4","2","5","Doygun zarif","İri lifli","Hafif mineral"],["4","3","5","Etli belirgin","Sıkı iri lifli","Denizsi"],["3","2","3","Hafif karakterli","İnce sıkı","Denizsi"],["4","2","3","Doygun tatlımsı","Orta sıkılık","Denizsi"],["4","2","3","Karakterli yoğun","Sıkı lifli","Belirgin denizsi"],["3","2","2","Hafif tatlımsı","Narin","Hafif denizsi"],["4","5","4","Yağlı belirgin","Sıkı katmanlı","Güçlü denizsi"],["3","2","4","Hafif tatlımsı","Sıkı","Hafif mineral"],["2","1","2","Çok hafif","Narin","Hafif denizsi"],["3","3","3","Hafif yağlı","Orta sıkılık","Denizsi"],["3","2","3","Hafif dengeli","Orta sıkılık","Hafif denizsi"],["3","2","3","Otumsu hafif","Orta sıkılık","Bitkisel denizsi"],["3","2","4","Tatlımsı narin","Sıkı","Hafif mineral"],["4","2","4","Dolgun belirgin","Sıkı tok","Denizsi"],["3","4","2","Yağlı belirgin","Narin","Denizsi"],["4","3","5","Doygun tatlımsı","Çok sıkı","Hafif mineral"],["3","2","3","Hafif dengeli","Orta sıkılık","Hafif denizsi"]];
+function tastingHTML(f){
+ var t=TASTING[f.id];if(!t)return '';
+ function meter(label,n){return '<div class="taste-meter"><div><span>'+label+'</span><b>'+n+'/5</b></div><div class="taste-bars" role="meter" aria-label="'+label+'" aria-valuemin="1" aria-valuemax="5" aria-valuenow="'+n+'">'+Array.from({length:5},function(_,i){return '<i'+(i<n?' class="on"':'')+'></i>';}).join('')+'</div></div>';}
+ var similar=TASTING.map(function(x,i){return {i:i,d:Math.abs(x[0]-t[0])+Math.abs(x[1]-t[1])+Math.abs(x[2]-t[2])};}).filter(function(x){return x.i!==f.id;}).sort(function(a,b){return a.d-b.d||a.i-b.i;}).slice(0,2);
+ return '<section class="taste-panel" aria-label="Tadım notları"><div class="taste-header"><span>DAMAK ATLASI / '+('00'+(f.id+1)).slice(-3)+'</span><h3>Tadım notları</h3></div>'
+ +'<div class="taste-words"><div><small>LEZZET</small><strong>'+esc(t[3])+'</strong></div><div><small>DOKU</small><strong>'+esc(t[4])+'</strong></div><div><small>AROMA</small><strong>'+esc(t[5])+'</strong></div><div><small>ÖNERİLEN PİŞİRME</small><strong>'+esc(f.cook.split(',')[0])+'</strong></div></div>'
+ +'<div class="taste-meters">'+meter('Lezzet yoğunluğu',t[0])+meter('Yağlılık',t[1])+meter('Doku sıkılığı',t[2])+'</div>'
+ +'<div class="taste-near"><small>BENZER DAMAK PROFİLİ</small><div>'+similar.map(function(x){return '<button type="button" data-taste-fish="'+x.i+'">'+esc(FISH[x.i].name)+' ↗</button>';}).join('')+'</div></div>'
+ +'<p>Yaklaşık duyusal profil; bilimsel ölçüm değildir. Mevsim, tazelik, balığın boyu ve pişirme yöntemi lezzeti değiştirir.</p></section>';
+}
+
 function openDetail(id){
  var f=FISH[id];if(!f)return;if(!el('modal').classList.contains('open'))lastFocused=document.activeElement;activeId=id;
  var monthRow=MONTHS.map(function(m,i){return '<span class="'+(f.months.indexOf(i+1)>=0?'peak ':'')+(month===i+1?'selected':'')+'" title="'+m+'">'+m.slice(0,2).toUpperCase()+'</span>';}).join('');
  var check=seen.indexOf(f.id)>=0;
- el('detail').innerHTML='<div class="detail-top"><span>AYNEN / BALIK ATLASI / '+('0'+(f.id+1)).slice(-2)+'</span><button id="modal-close" type="button" aria-label="Kapat">×</button></div><div class="detail-layout"><div class="detail-pic">'+fishSvg(f)+'<small>STİLİZE İLLÜSTRASYON · '+esc(f.latin)+'</small></div><div class="detail-text"><div class="detail-label">'+(includesMonth(f)?'● '+MONTHS[month-1].toLocaleUpperCase('tr')+' AYINDA ÖNE ÇIKAR':'○ '+MONTHS[month-1].toLocaleUpperCase('tr')+' DIŞINDA')+'</div><h2 id="detail-name">'+esc(f.name)+'</h2><div class="latin">'+esc(f.latin)+'</div><p>'+esc(f.description)+'</p><div class="fact"><span class="detail-label">BİLİYOR MUYDUN?</span><div style="margin-top:7px">'+esc(f.fact)+'</div></div><div class="detail-label">HANGİ AYLARDA?</div><div class="detail-months">'+monthRow+'</div><div class="detail-label">HANGİ DENİZLERDE?</div><div class="detail-seas">'+f.seas.split('').map(function(s){return SEA[s];}).join(' · ')+'</div><div class="detail-label">MUTFAKTA</div><div class="detail-seas">'+esc(f.cook)+'</div><div class="detail-actions"><button id="collect" type="button">'+(check?'✓ KOLEKSİYONDA':'＋ KOLEKSİYONUMA EKLE')+'</button><button class="secondary" id="share" type="button">↗ PAYLAŞ</button><button class="secondary" id="next" type="button">RASTGELE BALIK →</button></div><small class="detail-note">Lezzet ayları yasal av izni anlamına gelmez. Fotoğrafın tamamı görüntülenir; kaynak bağlantısı soldadır.</small></div></div>';
+ el('detail').innerHTML='<div class="detail-top"><span>AYNEN / BALIK ATLASI / '+('0'+(f.id+1)).slice(-2)+'</span><button id="modal-close" type="button" aria-label="Kapat">×</button></div><div class="detail-layout"><div class="detail-pic">'+fishSvg(f)+'<small>STİLİZE İLLÜSTRASYON · '+esc(f.latin)+'</small></div><div class="detail-text"><div class="detail-label">'+(includesMonth(f)?'● '+MONTHS[month-1].toLocaleUpperCase('tr')+' AYINDA ÖNE ÇIKAR':'○ '+MONTHS[month-1].toLocaleUpperCase('tr')+' DIŞINDA')+'</div><h2 id="detail-name">'+esc(f.name)+'</h2><div class="latin">'+esc(f.latin)+'</div><p>'+esc(f.description)+'</p><div class="fact"><span class="detail-label">BİLİYOR MUYDUN?</span><div style="margin-top:7px">'+esc(f.fact)+'</div></div>'+tastingHTML(f)+'<div class="detail-label">HANGİ AYLARDA?</div><div class="detail-months">'+monthRow+'</div><div class="detail-label">HANGİ DENİZLERDE?</div><div class="detail-seas">'+f.seas.split('').map(function(s){return SEA[s];}).join(' · ')+'</div><div class="detail-label">MUTFAKTA</div><div class="detail-seas">'+esc(f.cook)+'</div><div class="detail-actions"><button id="collect" type="button">'+(check?'✓ KOLEKSİYONDA':'＋ KOLEKSİYONUMA EKLE')+'</button><button class="secondary" id="share" type="button">↗ PAYLAŞ</button><button class="secondary" id="next" type="button">RASTGELE BALIK →</button></div><small class="detail-note">Lezzet ayları yasal av izni anlamına gelmez. Fotoğrafın tamamı görüntülenir; kaynak bağlantısı soldadır.</small></div></div>';
  el('modal').classList.add('open');document.body.style.overflow='hidden';el('detail').focus();
 }
 function closeDetail(){el('modal').classList.remove('open');document.body.style.overflow='';activeId=null;if(lastFocused&&typeof lastFocused.focus==='function')lastFocused.focus();}
@@ -535,7 +562,7 @@ el('random').onclick=randomFish;
 el('grid').addEventListener('click',function(e){var a=e.target.closest('[data-fish]');if(a)openDetail(Number(a.dataset.fish));else if(e.target.id==='empty-reset'){showAll=true;search='';el('search').value='';rerender();}});
 el('calendar-wrap').addEventListener('click',function(e){var row=e.target.closest('tr[data-fish]');if(row)openDetail(Number(row.dataset.fish));});
 el('calendar-wrap').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){var row=e.target.closest('tr[data-fish]');if(row){e.preventDefault();openDetail(Number(row.dataset.fish));}}});
-el('modal').addEventListener('click',function(e){if(e.target===el('modal')||e.target.closest('#modal-close'))closeDetail();else if(e.target.closest('#collect'))collect();else if(e.target.closest('#share'))share();else if(e.target.closest('#next'))randomFish();});
+el('modal').addEventListener('click',function(e){if(e.target===el('modal')||e.target.closest('#modal-close'))closeDetail();else if(e.target.closest('#collect'))collect();else if(e.target.closest('#share'))share();else if(e.target.closest('[data-taste-fish]'))openDetail(Number(e.target.closest('[data-taste-fish]').dataset.tasteFish));else if(e.target.closest('#next'))randomFish();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&activeId!==null)closeDetail();});
 rerender();
 var requested=Number(qp.get('balik'));if(requested>=1&&requested<=FISH.length)openDetail(requested-1);
