@@ -24,6 +24,7 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* English edition — same original minimal game canvas and layout */
+.challenge-note{border:1px solid #111;background:#f3eddc;padding:8px 10px;margin:6px 0 10px;font:700 11px/1.35 ui-monospace,monospace}.record-note{font:10px/1.4 ui-monospace,monospace;color:#585858;margin:9px 0 0}.car-option .toros-tag{font:700 8px ui-monospace,monospace;border:1px solid #222;padding:3px 4px;display:inline-block;align-self:flex-start;background:#111;color:white}
 .top{gap:12px}.top .languages{display:flex;gap:5px;align-items:center}.top .languages a{border:1px solid #222;padding:5px 8px}.top .languages .active{background:#111;color:white}
 .card.selection-card{width:min(100%,768px);padding:17px 18px;max-height:min(94dvh,760px);overflow:auto}
 .selection-card h2{font-size:clamp(27px,4vw,40px);margin:7px 0 5px}
@@ -45,21 +46,21 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 @media(max-width:720px){.car-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card.selection-card{padding:12px;max-height:94dvh}.car-option{min-height:156px;padding:7px!important}.car-option svg{height:38px}.car-option .fact{font-size:9px}.car-option .car-name{font-size:13px}.car-option .stat{font-size:8px}.selection-card h2{font-size:27px}}
 @media(max-width:360px){.card.selection-card{padding:10px}.car-grid{gap:5px}.car-option{min-height:150px}.car-option .fact{line-height:1.25}}
 </style></head><body><main>
-<div class="top"><a href="/">← aynen.fun</a><span class="languages"><a href="/toros.html">TR</a><a href="/still-runs.html" class="active" aria-current="page">EN</a></span><span class="badge">WORLD'S MOST STUBBORN CARS / 1997*</span></div>
-<div class="heading"><h1>still runs.</h1><p>The road ends. The car refuses.<br>One pedal. Four legends. No finish line.</p></div>
+<div class="top"><a href="/">← aynen.fun</a><span class="languages"><a href="/toros.html">TR</a><a href="/still-runs.html" class="active" aria-current="page">EN</a></span><span class="badge">FOUR CARS. NO WARRANTIES. / 1997*</span></div>
+<div class="heading"><h1>still runs.</h1><p>One pedal. Four aging legends.<br>The road is not consulted.</p></div>
 <div class="hud"><div class="metric"><small>DISTANCE</small><b id="distance">0 m</b></div><div class="metric"><small>SPEED</small><b id="speed">0</b></div><div class="metric"><small>CONDITION</small><b id="health">100%</b></div><div class="metric"><small>TERRAINS</small><b id="regions">0 / ∞</b></div></div>
-<div class="frame" id="frame"><canvas id="scene" aria-label="Renault 12 Toros tarzı bir otomobille tepelerden geçilen 2D sürüş oyunu"></canvas><div id="toast" aria-live="polite"></div>
+<div class="frame" id="frame"><canvas id="scene" aria-label="A side-scrolling driving game with four classic cars and increasingly difficult terrain"></canvas><div id="toast" aria-live="polite"></div>
 <div class="overlay" id="overlay"><div class="card selection-card">
-<small id="kicker">PICK YOUR UNLIKELY SURVIVOR / 01</small>
-<h2 id="cardTitle">Choose your survivor.</h2>
-<p id="cardText" class="lead">Four real-world cult cars. Different strengths, different physics. How far can yours go?</p>
-<div id="chooser"><div class="car-grid" id="carGrid" aria-label="Choose a vehicle"></div><p class="chooser-tip">GAME STATS ARE PLAYFUL INTERPRETATIONS, NOT REAL PERFORMANCE TESTS.</p></div>
+<small id="kicker">VEHICLE SELECTION / NO REFUNDS</small>
+<h2 id="cardTitle">Choose a car.</h2>
+<p id="cardText" class="lead">Pick a classic. The road has not agreed to this.</p>
+<div id="chooser"><div id="challenge" class="challenge-note" hidden></div><div class="car-grid" id="carGrid" aria-label="Choose a vehicle"></div><p class="chooser-tip">REAL CARS. ENTIRELY FICTIONAL ARCADE STATS. NOT A BUYING GUIDE.</p></div>
 <button id="start" type="button">START THE ENGINE →</button>
 <button id="share" type="button" class="secondary" hidden>SHARE YOUR RUN ↗</button>
-<div class="results" id="results" hidden><div><strong id="resultDistance">0 m</strong><span>DISTANCE</span></div><div><strong id="resultLands">0</strong><span>TERRAINS REACHED</span></div></div>
+<div class="results" id="results" hidden><div><strong id="resultDistance">0 m</strong><span>DISTANCE</span></div><div><strong id="resultLands">0</strong><span>TERRAINS REACHED</span></div></div><p id="recordNote" class="record-note" hidden></p>
 </div></div></div>
 <div class="controls"><div class="instruction">HOLD → ACCELERATE<br>RELEASE → SLOW DOWN / LEVEL OUT<br>KEYBOARD: SPACE / ↑</div><button id="gas" type="button" aria-label="Press the accelerator">ACCELERATE ↗</button></div>
-<p class="smallnote">*1997-inspired visual style. Real cars and automotive history; intentionally exaggerated arcade physics. Unofficial fan-made vehicle interpretations, not endorsed by manufacturers.</p>
+<p class="smallnote">*1997-inspired look. Fictional arcade physics and vehicle rankings. Unofficial, not endorsed by any manufacturer. Please do not test this on Mars.</p>
 </main>
 <script>
 
@@ -68,28 +69,28 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 const $=id=>document.getElementById(id),canvas=$("scene"),ctx=canvas.getContext("2d");
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const vehicles=[
-{id:"toros",name:"Toros Wagon",origin:"TÜRKIYE · 1989–2000",fact:"A Turkish Renault 12 evolution, loved for simple repairs and a roomy wagon body.",shape:"wagon",color:"#eee9dc",accel:1.00,max:7.3,grip:.88,damage:.91,spring:1.00,clearance:31,handling:1.0,bars:[3,2,4]},
-{id:"hilux",name:"Toyota Hilux",origin:"JAPAN · SINCE 1968",fact:"The pickup survived Top Gear's notorious 2003 destruction challenges — and became a TV legend.",shape:"pickup",color:"#cb7756",accel:.94,max:7.0,grip:1.20,damage:.65,spring:1.25,clearance:35,handling:.86,bars:[3,5,5]},
-{id:"niva",name:"Lada Niva",origin:"USSR · SINCE 1977",fact:"A compact 4×4 introduced in 1977, famous for permanent all-wheel drive.",shape:"niva",color:"#89a9a0",accel:1.07,max:6.8,grip:1.32,damage:.91,spring:1.19,clearance:34,handling:1.20,bars:[2,5,3]},
-{id:"defender",name:"Land Rover 90",origin:"UNITED KINGDOM · 1984",fact:"The original Ninety became part of the Defender family; coil springs helped it master rough terrain.",shape:"defender",color:"#d0bd85",accel:.93,max:6.7,grip:1.26,damage:.72,spring:1.34,clearance:37,handling:.88,bars:[2,5,5]}
+{id:"toros",name:"Toros Wagon",origin:"TÜRKIYE · 1989–2000",fact:"A Turkish Renault 12 descendant. The retirement paperwork appears to be missing.",shape:"wagon",color:"#eee9dc",accel:1.00,max:7.3,grip:.88,damage:.48,spring:1.12,clearance:31,handling:1.0,bars:[3,2,5]},
+{id:"hilux",name:"Toyota Hilux",origin:"JAPAN · SINCE 1968",fact:"Top Gear tried to destroy one in 2003. The vehicle declined to cooperate.",shape:"pickup",color:"#cb7756",accel:.94,max:7.0,grip:1.20,damage:.86,spring:1.23,clearance:35,handling:.86,bars:[3,5,4]},
+{id:"niva",name:"Lada Niva",origin:"USSR · SINCE 1977",fact:"Permanent four-wheel drive since 1977. No particular interest in paved roads.",shape:"niva",color:"#89a9a0",accel:1.07,max:6.8,grip:1.32,damage:1.12,spring:1.19,clearance:34,handling:1.20,bars:[2,5,3]},
+{id:"defender",name:"Land Rover 90",origin:"UK · INTRODUCED 1984",fact:"The Ninety arrived with coil springs. The terrain wasn't asked for feedback.",shape:"defender",color:"#d0bd85",accel:.93,max:6.7,grip:1.26,damage:.94,spring:1.28,clearance:37,handling:.88,bars:[2,5,4]}
 ];
 const worlds=[
-["VILLAGE ROAD","Pavement was always optional.","#bad7ca","#72936c","#886949",.46],
-["HIGHLANDS","The map suggests turning around.","#bad8e4","#67936d","#75604b",.74],
-["MUD BATH","Mud has joined the conversation.","#b2c0b3","#607b62","#654d36",.95],
-["RIVERBED","It's technically a road.","#a8d0df","#557f78","#756d58",1.04],
-["QUARRY","Warranty information unavailable.","#d5d0b6","#988768","#7d6951",1.25],
-["SNOW PASS","Snow chains? Interesting idea.","#d9e9f1","#98aeb3","#7b7774",1.40],
-["THE MOON","Nobody checked the registration.","#161e32","#46516c","#626676",1.48],
-["MARS","No mechanics on Mars. Keep going.","#cc9a82","#a36f55","#80543f",1.54],
-["ASTEROID HIGHWAY","A road with a questionable address.","#242438","#65647d","#55546b",1.58],
-["EUROPA ICE","Four wheels, one frozen moon.","#c4e2ef","#94becd","#8aaebf",1.62],
-["TITAN DUNES","Saturn is in the rear-view mirror.","#cdb07d","#b68c64","#987759",1.56],
-["CRYSTAL CANYON","The suspension has questions.","#9dc2c6","#587d8f","#4d687b",1.65],
-["MAGNETIC RIDGE","Gravity is apparently negotiable.","#6b82a9","#3d517b","#53617e",1.70],
-["NEON VOID","The GPS resigned.","#241a47","#66517e","#36314c",1.60],
-["EARTH AGAIN?","Definitely not your hometown.","#c4ddca","#7b9f89","#746d55",1.72],
-["ENDLESS ROAD","No finish line. No excuses.","#c3c2b5","#8c9980","#786d60",1.76]
+["VILLAGE ROAD","Officially a road.","#bad7ca","#72936c","#886949",.46],
+["HIGHLANDS","The map has stopped giving advice.","#bad8e4","#67936d","#75604b",.74],
+["MUD BATH","Traction remains optional.","#b2c0b3","#607b62","#654d36",.95],
+["RIVERBED","The road has become a river.","#a8d0df","#557f78","#756d58",1.04],
+["QUARRY","Inspection postponed.","#d5d0b6","#988768","#7d6951",1.25],
+["SNOW PASS","The forecast was accurate.","#d9e9f1","#98aeb3","#7b7774",1.40],
+["THE MOON","Unregistered vehicle.","#161e32","#46516c","#626676",1.48],
+["MARS","Parking is free.","#cc9a82","#a36f55","#80543f",1.54],
+["ASTEROID HIGHWAY","Not maintained by the council.","#242438","#65647d","#55546b",1.58],
+["EUROPA ICE","The tyres were not consulted.","#c4e2ef","#94becd","#8aaebf",1.62],
+["TITAN DUNES","An unscheduled detour.","#cdb07d","#b68c64","#987759",1.56],
+["CRYSTAL CANYON","Probably not insured.","#9dc2c6","#587d8f","#4d687b",1.65],
+["MAGNETIC RIDGE","The compass has resigned.","#6b82a9","#3d517b","#53617e",1.70],
+["NEON VOID","No signal. No witnesses.","#241a47","#66517e","#36314c",1.60],
+["EARTH AGAIN?","This was not the planned route.","#c4ddca","#7b9f89","#746d55",1.72],
+["ENDLESS ROAD","No estimated arrival time.","#c3c2b5","#8c9980","#786d60",1.76]
 ];
 const state={running:false,over:false,gas:false,car:"toros",pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0,high:0};
 let vw=0,vh=0,dpr=1;
@@ -100,7 +101,7 @@ const glass={wagon:"M26 29H77L89 39H18Z",pickup:"M51 27H77L88 39H46Z",niva:"M26 
 return '<svg viewBox="0 0 122 74" aria-hidden="true"><path d="'+roof+'" fill="'+c.color+'" stroke="#202020" stroke-width="2.2"/><path d="'+glass+'" fill="#a9cbd1" stroke="#202020" stroke-width="1.8"/>'+(c.shape==="pickup"?'<path d="M13 40H43V29" stroke="#222" stroke-width="2" fill="none"/>':'')+'<path d="M12 47H108" stroke="#222" stroke-width="3"/><circle cx="34" cy="53" r="11" fill="#222"/><circle cx="87" cy="53" r="11" fill="#222"/><circle cx="34" cy="53" r="5.5" fill="#b9b9b9"/><circle cx="87" cy="53" r="5.5" fill="#b9b9b9"/></svg>';
 }
 function buildCards(){
-$("carGrid").innerHTML=vehicles.map(c=>'<button class="car-option" type="button" data-car="'+c.id+'" aria-pressed="false">'+carIcon(c)+'<span class="car-name">'+c.name+'</span><span class="origin">'+c.origin+'</span><span class="fact">'+c.fact+'</span>'+["Speed","Grip","Tough"].map((name,i)=>'<span class="stat"><span>'+name+'</span><span class="bar"><i style="width:'+(c.bars[i]*20)+'%"></i></span></span>').join("")+'</button>').join("");
+$("carGrid").innerHTML=vehicles.map(c=>'<button class="car-option" type="button" data-car="'+c.id+'" aria-pressed="false">'+carIcon(c)+'<span class="car-name">'+c.name+'</span>'+(c.id==="toros"?'<span class="toros-tag">MAXIMUM STUBBORNNESS</span>':"")+'<span class="origin">'+c.origin+'</span><span class="fact">'+c.fact+'</span>'+["Speed","Grip","Tough"].map((name,i)=>'<span class="stat"><span>'+name+'</span><span class="bar"><i style="width:'+(c.bars[i]*20)+'%"></i></span></span>').join("")+'</button>').join("");
 $("carGrid").addEventListener("click",e=>{const b=e.target.closest("[data-car]");if(!b)return;state.car=b.dataset.car;markCar()});
 markCar();
 }
@@ -112,15 +113,42 @@ function indexAt(x){const n=stageAt(x);return n<worlds.length?n:8+(n-worlds.leng
 function levelAt(x){const wi=indexAt(x),q=worlds[wi][5],stage=stageAt(x);let ty=Math.sin(x*.015)*20*q+Math.sin(x*.042)*11*q+Math.sin(x*.006+1)*19*q;ty+=Math.sin(x*.085)*Math.min(4,Math.max(0,stage-.3))*7*q;if(stage>=3)ty+=Math.sin(x*.065+2)*19*q;return .73*vh+ty}
 function slopeAt(x){return Math.atan2(levelAt(x+14)-levelAt(x-14),28)}
 function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>e.classList.remove("show"),1450)}
-function reset(){Object.assign(state,{running:true,over:false,gas:false,pos:24,speed:0,angle:0,angular:0,y:levelAt(24)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:0,maxDist:0,smoke:[],shakes:0,clock:0});$("overlay").hidden=true;$("share").hidden=true;$("results").hidden=true;toast("ENGINE STARTED. PROBABLY.")}
+function reset(){Object.assign(state,{running:true,over:false,gas:false,pos:24,speed:0,angle:0,angular:0,y:levelAt(24)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:0,maxDist:0,smoke:[],shakes:0,clock:0});$("overlay").hidden=true;$("share").hidden=true;$("results").hidden=true;toast(state.car==="toros"?"TOROS. NO FURTHER QUESTIONS.":"ENGINE STARTED.")}
 function finish(){
-if(state.over)return;state.over=true;state.running=false;state.gas=false;$("gas").classList.remove("down");$("overlay").hidden=false;
-const m=Math.floor(state.maxDist);$("kicker").textContent="END OF RUN / PICK A CAR AND TRY AGAIN";$("cardTitle").textContent="The road won. This time.";$("cardText").textContent=car().name+" made it "+m+" metres across "+(state.visited+1)+" terrains. Choose another car to see how far it gets.";$("start").textContent="DRIVE AGAIN →";$("share").hidden=false;$("results").hidden=false;
-$("resultDistance").textContent=m+" m";$("resultLands").textContent=String(state.visited+1);
-try{const key="still-runs-best-"+state.car;const best=Number(localStorage.getItem(key)||0);if(m>best)localStorage.setItem(key,String(m))}catch(e){}
+if(state.over)return;
+state.over=true;state.running=false;state.gas=false;$("gas").classList.remove("down");$("overlay").hidden=false;
+const m=Math.floor(state.maxDist),model=car();
+const verdict={toros:"The Toros has stopped. Under protest.",hilux:"A rare administrative setback.",niva:"The road was excessively ambitious.",defender:"An expensive place to park."};
+$("kicker").textContent="END OF RUN / FIND ANOTHER EXCUSE";
+$("cardTitle").textContent=verdict[state.car]||"The road has won.";
+$("cardText").textContent=model.name+" covered "+m.toLocaleString("en-US")+" metres and reached "+(state.visited+1)+" terrains. The road is still there.";
+$("start").textContent="TRY AGAIN →";$("share").textContent="CHALLENGE A FRIEND ↗";
+$("share").hidden=false;$("results").hidden=false;
+$("resultDistance").textContent=m.toLocaleString("en-US")+" m";$("resultLands").textContent=String(state.visited+1);
+let best=m,previous=0;
+try{const key="still-runs-best-"+state.car;previous=Number(localStorage.getItem(key)||0);best=Math.max(m,previous);if(m>previous)localStorage.setItem(key,String(m))}catch(e){}
+$("recordNote").hidden=false;
+$("recordNote").textContent=m>previous?"PERSONAL BEST. UNFORTUNATELY, NOW THERE IS A TARGET.":"PERSONAL BEST: "+best.toLocaleString("en-US")+" M. TRY AGAIN.";
 }
 $("start").addEventListener("click",reset);
-$("share").addEventListener("click",async()=>{const url="https://aynen.fun/still-runs.html";const txt="I drove the "+car().name+" for "+Math.floor(state.maxDist)+"m through "+(state.visited+1)+" terrains. Still runs? "+url;try{if(navigator.share){await navigator.share({title:"Still Runs! — aynen.fun",text:txt,url});return}if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(txt);$("share").textContent="COPIED ✓";return}}catch(e){if(e.name==="AbortError")return}window.prompt("SHARE THIS RUN",txt)});
+$("share").addEventListener("click",async()=>{
+const m=Math.floor(state.maxDist);
+const url=new URL("https://aynen.fun/still-runs.html");url.searchParams.set("beat",String(m));url.searchParams.set("car",state.car);
+const caption=m.toLocaleString("en-US")+"m in a "+car().name+". The road eventually won. Beat that.";
+try{
+if(navigator.share){await navigator.share({title:"Still Runs! — beat my distance",text:caption,url:url.toString()});return}
+if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(caption+" "+url.toString());$("share").textContent="CHALLENGE COPIED ✓";return}
+}catch(e){if(e.name==="AbortError")return}
+window.prompt("COPY YOUR CHALLENGE",caption+" "+url.toString());
+});
+const challengeParams=new URLSearchParams(location.search);
+const target=Number(challengeParams.get("beat"));
+const targetCar=vehicles.find(v=>v.id===challengeParams.get("car"));
+if(Number.isFinite(target)&&target>=1&&target<100000000&&targetCar){
+state.car=targetCar.id;
+$("challenge").textContent="SOMEONE MADE IT "+Math.floor(target).toLocaleString("en-US")+" M IN A "+targetCar.name.toUpperCase()+". APPARENTLY, THAT IS A CHALLENGE.";
+$("challenge").hidden=false;
+}
 function gas(v){state.gas=v;if(v&&!state.running)return;$("gas").classList.toggle("down",v)}
 $("gas").addEventListener("pointerdown",e=>{e.preventDefault();gas(true);try{e.currentTarget.setPointerCapture(e.pointerId)}catch(err){}});
 ["pointerup","pointercancel","lostpointercapture"].forEach(ev=>$("gas").addEventListener(ev,()=>gas(false)));
@@ -156,7 +184,7 @@ if(state.speed>4.4&&state.landed)state.health-=Math.max(0,Math.abs(angleTarget)*
 if(state.pos>old&&state.gas&&Math.random()<.2)state.smoke.push({x:state.pos-45,y:state.y+8,r:2+Math.random()*5,life:1});
 state.smoke=state.smoke.filter(p=>{p.life-=.025*dt*60;p.y-=.18*dt*60;p.r+=.13*dt*60;return p.life>0}).slice(-40);
 state.clock+=dt;state.maxDist=Math.max(state.maxDist,state.pos);state.wheelSpin+=state.speed*dt*60/14;
-const idx=stageAt(state.pos);if(idx>state.visited){state.visited=idx;toast(idx===8?"MARS WAS NOT THE END.":idx>=worlds.length?"ENDLESS ROAD · "+(idx-worlds.length+1):worlds[indexAt(state.pos)][1].toUpperCase())}
+const idx=stageAt(state.pos);if(idx>state.visited){state.visited=idx;toast(idx===8?"MARS WAS NOT THE END.":idx>=worlds.length?"STILL GOING · "+(idx-worlds.length+1):worlds[indexAt(state.pos)][1].toUpperCase())}
 if(state.health<=0||Math.abs(state.angle)>1.54){state.health=Math.max(0,state.health);finish()}
 state.shakes*=.83;
 $("distance").textContent=Math.floor(state.maxDist)+" m";$("speed").textContent=Math.floor(state.speed*15)+" km/h";$("health").textContent=Math.ceil(clamp(state.health,0,100))+"%";$("regions").textContent=(state.visited+1)+" / ∞";
