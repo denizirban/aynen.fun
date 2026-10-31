@@ -388,10 +388,15 @@ body{background:#f5f5f1;color:#151c20}
 .taste-near button{font:10px 'DM Mono',monospace;background:#fffaf1;border:1px solid #ac8b6b;padding:9px 11px;color:#433629;cursor:pointer}
 .taste-near button:hover{background:#ead8bd}.taste-panel p{margin:12px 0 0!important;font:9px/1.6 'DM Mono',monospace!important;color:#8e7564!important}
 @media(max-width:760px){.taste-panel{padding:12px;margin:12px 0}.taste-header h3{font-size:19px}.taste-words strong{font-size:11px}}
+/* Header: no clipped subtitle; editorial title stays within its row */
+.hero .hero-title{min-width:0;display:flex;flex-direction:column;justify-content:center}
+.hero .hero-copy{display:none!important}
+.hero h1{margin-bottom:0!important}
+@media(max-width:760px){.hero{display:flex;align-items:center;min-height:0}.hero-title{width:100%}.hero h1{font-size:clamp(27px,7.4vw,44px)!important;white-space:normal}}
 </style></head><body>
 <div class="shell">
 <header class="top"><a class="back" href="/">← aynen.fun</a><div class="top-center">DENİZ ATLASI / TÜRKİYE</div><div class="top-right"><span class="dot-live"></span><span>12 AY · 4 DENİZ</span></div></header>
-<section class="hero"><div class="hero-title"><div class="eyebrow">AYNEN.FUN / DENİZ ATLASI</div><h1>Türkiye'nin <em>Balıkları.</em></h1><p class="hero-copy">Ayını, denizini seç. Balıkları keşfet.</p></div><div class="hero-art" aria-hidden="true"><img id="hero-photo" alt=""><span class="hero-photolabel" id="hero-label">32 TÜR · 4 DENİZ</span></div></section>
+<section class="hero"><div class="hero-title"><div class="eyebrow">AYNEN.FUN / DENİZ ATLASI</div><h1>Türkiye'nin <em>Balıkları.</em></h1></div><div class="hero-art" aria-hidden="true"><img id="hero-photo" alt=""><span class="hero-photolabel" id="hero-label">32 TÜR · 4 DENİZ</span></div></section>
 <section class="controls" aria-label="Atlas filtreleri">
 <div class="section-meta"><div class="section-label">01 — AY SEÇ</div><div class="section-detail" id="month-label">EKİM / SONBAHAR</div></div>
 <div class="months" id="months" role="group" aria-label="Ay seçimi"></div>
