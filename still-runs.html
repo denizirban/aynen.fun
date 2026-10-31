@@ -119,7 +119,8 @@ const gravityAt=w=>({6:.63,7:.78,8:.90,9:.64,10:.85,12:.77,13:.83,14:.94,15:1.24
 const slipperyAt=w=>(w===5||w===9||w===10);
 const terrainShape=(u,c,a)=>a*Math.exp(-Math.pow((u-c)/64,2));
 
-const state={running:false,over:false,gas:false,car:"toros",pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0,high:0,sparks:[],damageSmoke:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[]};
+const replaySession={playing:false,mode:null,frames:[],elapsed:0,duration:0,origin:0,index:0,storedEnd:null,recorder:null,stream:null,chunks:[],videoBlob:null,videoType:""};
+const state={running:false,over:false,gas:false,car:"toros",pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0,high:0,sparks:[],damageSmoke:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1};
 let vw=0,vh=0,dpr=1;
 const car=()=>vehicles.find(v=>v.id===state.car)||vehicles[0];
 function carIcon(c){
@@ -154,10 +155,110 @@ return .73*vh+ty
 }
 function slopeAt(x){return Math.atan2(levelAt(x+14)-levelAt(x-14),28)}
 function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>e.classList.remove("show"),1450)}
+
+const SNAPSHOT_KEYS=["pos","speed","angle","y","health","clock","gas","landed","wheelSpin","flash","shakes"];
+function captureReplayFrame(force=false){
+if(!state.recordFrames)return;
+const t=state.recordTime;
+if(!force && state.lastSample>=0 && t-state.lastSample<1/24)return;
+state.lastSample=t;
+const snap={t};
+for(const k of SNAPSHOT_KEYS)snap[k]=state[k];
+snap.smoke=state.smoke.slice(-15).map(p=>({...p}));
+snap.damageSmoke=state.damageSmoke.slice(-32).map(p=>({...p}));
+snap.sparks=state.sparks.slice(-30).map(p=>({...p}));
+state.recordFrames.push(snap);
+while(state.recordFrames.length>1 && t-state.recordFrames[0].t>8.05)state.recordFrames.shift();
+}
+const interpolate=(a,b,t)=>a+(b-a)*t;
+function beginReplay(saveAsVideo=false){
+const frames=state.recordFrames.slice();
+if(frames.length<2 || replaySession.playing)return;
+const end=frames[frames.length-1].t;
+const first=Math.max(frames[0].t,end-8);
+const length=end-first;
+if(length<.1){$("replayNote").hidden=false;$("replayNote").textContent="NOT ENOUGH FOOTAGE. A SHORT BUT DECISIVE INCIDENT.";return}
+if(saveAsVideo && (!(canvas.captureStream&&typeof MediaRecorder!=="undefined"))){
+$("replayNote").hidden=false;$("replayNote").textContent="VIDEO EXPORT IS NOT SUPPORTED HERE. WATCH REPLAY OR SHARE THE CHALLENGE LINK.";
+return;
+}
+replaySession.playing=true;replaySession.mode=saveAsVideo?"video":"view";
+replaySession.frames=frames;replaySession.duration=length;replaySession.origin=first;
+replaySession.elapsed=0;replaySession.index=0;
+replaySession.storedEnd=Object.fromEntries([...SNAPSHOT_KEYS,"smoke","damageSmoke","sparks"].map(k=>[k,state[k]]));
+$("overlay").hidden=true;$("replayLabel").hidden=false;$("finalHint").hidden=true;
+if(saveAsVideo){
+try{
+const types=["video/mp4;codecs=avc1.42E01E","video/mp4","video/webm;codecs=vp8","video/webm"];
+const mime=types.find(x=>!MediaRecorder.isTypeSupported||MediaRecorder.isTypeSupported(x))||"";
+const stream=canvas.captureStream(30);
+const recorder=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:2500000}:{videoBitsPerSecond:2500000});
+replaySession.stream=stream;replaySession.recorder=recorder;replaySession.chunks=[];
+recorder.ondataavailable=e=>{if(e.data&&e.data.size)replaySession.chunks.push(e.data)};
+recorder.onerror=()=>{$("replayNote").hidden=false;$("replayNote").textContent="VIDEO EXPORT FAILED. THE REPLAY IS STILL AVAILABLE."};
+recorder.onstop=()=>{
+const type=recorder.mimeType||mime||"video/webm";
+if(replaySession.chunks.length){
+replaySession.videoBlob=new Blob(replaySession.chunks,{type});
+replaySession.videoType=type;
+$("saveReplay").textContent="SHARE 8s VIDEO ↗";
+$("replayNote").hidden=false;
+$("replayNote").textContent="CLIP READY. TAP SHARE TO SEND IT OR DOWNLOAD IT.";
+}else{$("replayNote").hidden=false;$("replayNote").textContent="VIDEO NOT AVAILABLE ON THIS DEVICE. YOU CAN STILL WATCH THE REPLAY."}
+stream.getTracks().forEach(t=>t.stop());
+};
+recorder.start(250);
+}catch(e){
+if(replaySession.stream)replaySession.stream.getTracks().forEach(t=>t.stop());
+replaySession.recorder=null;replaySession.mode="view";
+$("replayNote").hidden=false;$("replayNote").textContent="VIDEO EXPORT UNAVAILABLE HERE. WATCHING THE REPLAY INSTEAD.";
+}
+}
+}
+function advanceReplay(dt){
+if(!replaySession.playing)return;
+const r=replaySession;
+r.elapsed=Math.min(r.duration,r.elapsed+dt);
+const desired=r.origin+r.elapsed;
+while(r.index<r.frames.length-2 && r.frames[r.index+1].t<desired)r.index++;
+const a=r.frames[r.index],b=r.frames[Math.min(r.index+1,r.frames.length-1)];
+const blend=clamp((desired-a.t)/Math.max(.0001,b.t-a.t),0,1);
+for(const key of ["pos","speed","angle","y","health","clock","wheelSpin","flash","shakes"])state[key]=interpolate(a[key],b[key],blend);
+state.gas=a.gas;state.landed=a.landed;
+state.smoke=a.smoke;state.damageSmoke=a.damageSmoke;state.sparks=a.sparks;
+if(r.elapsed>=r.duration)endReplay();
+}
+function endReplay(){
+const r=replaySession;
+if(!r.playing)return;
+r.playing=false;
+Object.assign(state,r.storedEnd);r.storedEnd=null;
+$("overlay").hidden=false;$("replayLabel").hidden=true;
+const recorder=r.recorder;
+if(recorder && recorder.state!=="inactive"){try{recorder.requestData();recorder.stop()}catch(e){}}
+r.recorder=null;
+}
+async function shareReplayFile(){
+const blob=replaySession.videoBlob;if(!blob)return;
+const mp4=/mp4/i.test(replaySession.videoType),extension=mp4?"mp4":"webm";
+const filename="still-runs-"+state.car+"-last-8-seconds."+extension;
+try{
+const file=new File([blob],filename,{type:blob.type||replaySession.videoType});
+if(navigator.canShare?.({files:[file]}) && navigator.share){
+await navigator.share({files:[file],title:"Still Runs! — last 8 seconds",text:"The car was fine."});return;
+}
+}catch(e){if(e.name==="AbortError")return}
+const url=URL.createObjectURL(blob),a=document.createElement("a");
+a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+$("replayNote").hidden=false;$("replayNote").textContent="CLIP DOWNLOADED. SHARE IT WHEREVER YOU LIKE.";
+}
+$("watchReplay").addEventListener("click",()=>beginReplay(false));
+$("saveReplay").addEventListener("click",()=>replaySession.videoBlob?shareReplayFile():beginReplay(true));
+
 function reset(fromStage=0){
 replaySession.playing=false;replaySession.mode=null;replaySession.frames=[];replaySession.videoBlob=null;replaySession.videoType="";
 const cp=clamp(fromStage,0,worlds.length-1),startX=cp*700+24;
-Object.assign(state,{running:true,over:false,gas:false,pos:startX,speed:0,angle:0,angular:0,y:levelAt(startX)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:cp,maxDist:startX,smoke:[],damageSmoke:[],sparks:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,shakes:0,clock:0,checkpoint:cp,startedCheckpoint:cp>0,iceSkid:0,recordTime:0,recordFrames:[]});
+Object.assign(state,{running:true,over:false,gas:false,pos:startX,speed:0,angle:0,angular:0,y:levelAt(startX)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:cp,maxDist:startX,smoke:[],damageSmoke:[],sparks:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,shakes:0,clock:0,checkpoint:cp,startedCheckpoint:cp>0,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1});
 $("overlay").hidden=true;$("share").hidden=true;$("results").hidden=true;$("recordNote").hidden=true;$("replayActions").hidden=true;$("replayNote").hidden=true;$("newRun").hidden=true;$("replayLabel").hidden=true;$("finalHint").hidden=true;
 toast(cp?"CHECKPOINT "+(cp+1)+". NO COMMENT.":state.car==="toros"?"TOROS. NO FURTHER QUESTIONS.":"ENGINE STARTED.");
 }
@@ -354,7 +455,7 @@ ctx.fillStyle="#131a19bd";ctx.fillRect(12,11,Math.min(vw-24,300),49);ctx.fillSty
 ctx.fillStyle="#111";ctx.fillRect(vw-132,11,120,34);ctx.fillStyle="#fff";ctx.font="11px monospace";ctx.fillText(state.gas?"● THROTTLE":"○ COASTING",vw-122,32);
 ctx.restore();
 }
-function loop(t){const dt=Math.min(.05,Math.max(0,(t-(state.last||t))/1000));state.last=t;update(dt);render();requestAnimationFrame(loop)}
+function loop(t){const dt=Math.min(.05,Math.max(0,(t-(state.last||t))/1000));state.last=t;if(replaySession.playing)advanceReplay(dt);else update(dt);render();requestAnimationFrame(loop)}
 buildCards();requestAnimationFrame(loop);
 })();
 
