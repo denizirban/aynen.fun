@@ -1,0 +1,228 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f7f6f2"><title>Still Runs! — aynen.fun</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f7f6f2;color:#111;font-family:Arial,Helvetica,sans-serif}button{font:inherit;cursor:pointer;touch-action:none}a{color:inherit;text-decoration:none}
+main{max-width:1160px;margin:auto;min-height:100dvh;padding:14px 17px;display:flex;flex-direction:column;gap:9px}
+.top{display:flex;justify-content:space-between;align-items:center;font:10px ui-monospace,monospace}.badge{border:1px solid;padding:5px 9px}
+.heading{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:5px 0}.heading h1{font-size:clamp(46px,8vw,94px);letter-spacing:-.085em;line-height:.85;margin:0}.heading p{font-size:12px;max-width:310px;line-height:1.45;margin:0;color:#555}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.metric{border:1px solid #bbb;background:#fff;padding:8px 10px;min-width:0}.metric small{font:9px ui-monospace,monospace;color:#6b6b6b;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.metric b{font-size:clamp(18px,3.5vw,31px);letter-spacing:-.05em}
+.frame{border:2px solid #121212;background:#dce7e3;position:relative;flex:1;min-height:280px;overflow:hidden;touch-action:none}
+canvas{width:100%;height:100%;display:block;touch-action:none}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#12201bb5;padding:12px;z-index:5}
+.overlay[hidden]{display:none}
+.card{width:min(100%,440px);background:#fcfaf3;border:2px solid #111;box-shadow:7px 8px 0 #141414;padding:21px 20px;max-height:100%;overflow:auto}
+.card small{font:10px ui-monospace,monospace}.card h2{font-size:clamp(30px,5vw,49px);letter-spacing:-.07em;line-height:1.05;margin:12px 0}.card p{font:13px/1.5 Arial,sans-serif;color:#4e4e4e}.card button{background:#111;color:white;border:1px solid #111;padding:13px 17px;font-weight:800;min-height:46px;width:100%;margin-top:12px}.card button:nth-last-child(1).secondary{background:#fff;color:#111}.card button:hover{background:#393939;color:white}
+.controls{display:flex;justify-content:space-between;align-items:stretch;gap:8px}
+.instruction{flex:1;padding:9px 0;font:10px/1.5 ui-monospace,monospace;color:#666}
+.controls button{border:1px solid #111;background:#111;color:white;min-width:46%;min-height:64px;font-size:19px;font-weight:900;letter-spacing:-.04em}
+.controls button:active,.controls button.down{background:#e6e5e1;color:#111}
+.smallnote{font:9px/1.4 ui-monospace,monospace;color:#7a7a7a;margin:2px 0}
+#toast{position:absolute;z-index:3;top:17%;left:50%;transform:translateX(-50%) rotate(-3deg);font-weight:900;font-size:clamp(15px,3.5vw,32px);color:#101010;background:#f7f3da;border:2px solid;padding:8px 13px;box-shadow:4px 4px 0 #101010;opacity:0;transition:opacity .15s;max-width:85%;text-align:center;pointer-events:none}
+#toast.show{opacity:1}
+.card .results{display:grid;grid-template-columns:1fr 1fr;gap:5px;border-top:1px solid #bbb;margin-top:13px;padding-top:12px}
+.card .results strong{font-size:28px;display:block}.card .results span{font:9px ui-monospace,monospace}
+@media(max-width:650px){main{height:100dvh;min-height:0;padding:9px 9px 7px;gap:6px}.top{font-size:9px}.heading{margin:4px 0}.heading h1{font-size:53px}.heading p{font-size:9px;max-width:160px}.hud{gap:4px}.metric{padding:6px}.metric small{font-size:8px}.metric b{font-size:19px}.frame{min-height:0}.controls button{min-height:64px}.instruction{font-size:9px}.smallnote{font-size:8px}.card{padding:14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* English edition — same original minimal game canvas and layout */
+.top{gap:12px}.top .languages{display:flex;gap:5px;align-items:center}.top .languages a{border:1px solid #222;padding:5px 8px}.top .languages .active{background:#111;color:white}
+.card.selection-card{width:min(100%,768px);padding:17px 18px;max-height:min(94dvh,760px);overflow:auto}
+.selection-card h2{font-size:clamp(27px,4vw,40px);margin:7px 0 5px}
+.selection-card .lead{margin:0 0 11px;font-size:12px}
+.car-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.car-option{border:1.5px solid #bbb;background:#fff;min-width:0;padding:9px 8px!important;color:#111!important;text-align:left;display:flex;flex-direction:column;gap:5px;width:100%;margin:0!important;min-height:194px;box-shadow:none;transition:border-color .16s,background .16s}
+.car-option:hover{background:#f2f1eb!important;color:#111!important}
+.car-option.selected{border:2.5px solid #111;background:#eff2e9!important}
+.car-option svg{width:100%;height:55px;overflow:visible}
+.car-option .car-name{font-size:15px;font-weight:900;letter-spacing:-.045em;line-height:1.05}
+.car-option .origin{font:9px ui-monospace,monospace;color:#676767}
+.car-option .fact{font:10px/1.4 Arial,sans-serif;color:#3f3f3f;flex:1}
+.car-option .stat{display:grid;grid-template-columns:35px 1fr;align-items:center;gap:5px;font:9px ui-monospace,monospace;color:#555}
+.car-option .bar{height:4px;background:#ddd;overflow:hidden}.car-option .bar i{display:block;height:100%;background:#222}
+.selection-card #start{margin-top:12px}
+.selection-card .chooser-tip{margin:8px 0 0;font:9px/1.5 ui-monospace,monospace;color:#777}
+.selection-card #share{margin-top:7px}
+#results[hidden],#share[hidden],#chooser[hidden]{display:none}
+@media(max-width:720px){.car-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card.selection-card{padding:12px;max-height:94dvh}.car-option{min-height:156px;padding:7px!important}.car-option svg{height:38px}.car-option .fact{font-size:9px}.car-option .car-name{font-size:13px}.car-option .stat{font-size:8px}.selection-card h2{font-size:27px}}
+@media(max-width:360px){.card.selection-card{padding:10px}.car-grid{gap:5px}.car-option{min-height:150px}.car-option .fact{line-height:1.25}}
+</style></head><body><main>
+<div class="top"><a href="/">← aynen.fun</a><span class="languages"><a href="/toros.html">TR</a><a href="/still-runs.html" class="active" aria-current="page">EN</a></span><span class="badge">WORLD'S MOST STUBBORN CARS / 1997*</span></div>
+<div class="heading"><h1>still runs.</h1><p>The road ends. The car refuses.<br>One pedal. Four legends. No finish line.</p></div>
+<div class="hud"><div class="metric"><small>DISTANCE</small><b id="distance">0 m</b></div><div class="metric"><small>SPEED</small><b id="speed">0</b></div><div class="metric"><small>CONDITION</small><b id="health">100%</b></div><div class="metric"><small>TERRAINS</small><b id="regions">0 / ∞</b></div></div>
+<div class="frame" id="frame"><canvas id="scene" aria-label="Renault 12 Toros tarzı bir otomobille tepelerden geçilen 2D sürüş oyunu"></canvas><div id="toast" aria-live="polite"></div>
+<div class="overlay" id="overlay"><div class="card selection-card">
+<small id="kicker">PICK YOUR UNLIKELY SURVIVOR / 01</small>
+<h2 id="cardTitle">Choose your survivor.</h2>
+<p id="cardText" class="lead">Four real-world cult cars. Different strengths, different physics. How far can yours go?</p>
+<div id="chooser"><div class="car-grid" id="carGrid" aria-label="Choose a vehicle"></div><p class="chooser-tip">GAME STATS ARE PLAYFUL INTERPRETATIONS, NOT REAL PERFORMANCE TESTS.</p></div>
+<button id="start" type="button">START THE ENGINE →</button>
+<button id="share" type="button" class="secondary" hidden>SHARE YOUR RUN ↗</button>
+<div class="results" id="results" hidden><div><strong id="resultDistance">0 m</strong><span>DISTANCE</span></div><div><strong id="resultLands">0</strong><span>TERRAINS REACHED</span></div></div>
+</div></div></div>
+<div class="controls"><div class="instruction">HOLD → ACCELERATE<br>RELEASE → SLOW DOWN / LEVEL OUT<br>KEYBOARD: SPACE / ↑</div><button id="gas" type="button" aria-label="Press the accelerator">ACCELERATE ↗</button></div>
+<p class="smallnote">*1997-inspired visual style. Real cars and automotive history; intentionally exaggerated arcade physics. Unofficial fan-made vehicle interpretations, not endorsed by manufacturers.</p>
+</main>
+<script>
+
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id),canvas=$("scene"),ctx=canvas.getContext("2d");
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const vehicles=[
+{id:"toros",name:"Toros Wagon",origin:"TÜRKIYE · 1989–2000",fact:"A Turkish Renault 12 evolution, loved for simple repairs and a roomy wagon body.",shape:"wagon",color:"#eee9dc",accel:1.00,max:7.3,grip:.88,damage:.91,spring:1.00,clearance:31,handling:1.0,bars:[3,2,4]},
+{id:"hilux",name:"Toyota Hilux",origin:"JAPAN · SINCE 1968",fact:"The pickup survived Top Gear's notorious 2003 destruction challenges — and became a TV legend.",shape:"pickup",color:"#cb7756",accel:.94,max:7.0,grip:1.20,damage:.65,spring:1.25,clearance:35,handling:.86,bars:[3,5,5]},
+{id:"niva",name:"Lada Niva",origin:"USSR · SINCE 1977",fact:"A compact 4×4 introduced in 1977, famous for permanent all-wheel drive.",shape:"niva",color:"#89a9a0",accel:1.07,max:6.8,grip:1.32,damage:.91,spring:1.19,clearance:34,handling:1.20,bars:[2,5,3]},
+{id:"defender",name:"Land Rover 90",origin:"UNITED KINGDOM · 1984",fact:"The original Ninety became part of the Defender family; coil springs helped it master rough terrain.",shape:"defender",color:"#d0bd85",accel:.93,max:6.7,grip:1.26,damage:.72,spring:1.34,clearance:37,handling:.88,bars:[2,5,5]}
+];
+const worlds=[
+["VILLAGE ROAD","Pavement was always optional.","#bad7ca","#72936c","#886949",.46],
+["HIGHLANDS","The map suggests turning around.","#bad8e4","#67936d","#75604b",.74],
+["MUD BATH","Mud has joined the conversation.","#b2c0b3","#607b62","#654d36",.95],
+["RIVERBED","It's technically a road.","#a8d0df","#557f78","#756d58",1.04],
+["QUARRY","Warranty information unavailable.","#d5d0b6","#988768","#7d6951",1.25],
+["SNOW PASS","Snow chains? Interesting idea.","#d9e9f1","#98aeb3","#7b7774",1.40],
+["THE MOON","Nobody checked the registration.","#161e32","#46516c","#626676",1.48],
+["MARS","No mechanics on Mars. Keep going.","#cc9a82","#a36f55","#80543f",1.54],
+["ASTEROID HIGHWAY","A road with a questionable address.","#242438","#65647d","#55546b",1.58],
+["EUROPA ICE","Four wheels, one frozen moon.","#c4e2ef","#94becd","#8aaebf",1.62],
+["TITAN DUNES","Saturn is in the rear-view mirror.","#cdb07d","#b68c64","#987759",1.56],
+["CRYSTAL CANYON","The suspension has questions.","#9dc2c6","#587d8f","#4d687b",1.65],
+["MAGNETIC RIDGE","Gravity is apparently negotiable.","#6b82a9","#3d517b","#53617e",1.70],
+["NEON VOID","The GPS resigned.","#241a47","#66517e","#36314c",1.60],
+["EARTH AGAIN?","Definitely not your hometown.","#c4ddca","#7b9f89","#746d55",1.72],
+["ENDLESS ROAD","No finish line. No excuses.","#c3c2b5","#8c9980","#786d60",1.76]
+];
+const state={running:false,over:false,gas:false,car:"toros",pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0,high:0};
+let vw=0,vh=0,dpr=1;
+const car=()=>vehicles.find(v=>v.id===state.car)||vehicles[0];
+function carIcon(c){
+const roof={wagon:"M14 41L23 27H78L93 40H108V52H11Z",pickup:"M12 40H42L49 24H78L91 40H110V52H12Z",niva:"M15 40L24 27H79L91 39H105V52H15Z",defender:"M12 40H20V22H83L89 39H108V52H12Z"}[c.shape];
+const glass={wagon:"M26 29H77L89 39H18Z",pickup:"M51 27H77L88 39H46Z",niva:"M26 29H77L88 39H19Z",defender:"M23 25H81L85 39H23Z"}[c.shape];
+return '<svg viewBox="0 0 122 74" aria-hidden="true"><path d="'+roof+'" fill="'+c.color+'" stroke="#202020" stroke-width="2.2"/><path d="'+glass+'" fill="#a9cbd1" stroke="#202020" stroke-width="1.8"/>'+(c.shape==="pickup"?'<path d="M13 40H43V29" stroke="#222" stroke-width="2" fill="none"/>':'')+'<path d="M12 47H108" stroke="#222" stroke-width="3"/><circle cx="34" cy="53" r="11" fill="#222"/><circle cx="87" cy="53" r="11" fill="#222"/><circle cx="34" cy="53" r="5.5" fill="#b9b9b9"/><circle cx="87" cy="53" r="5.5" fill="#b9b9b9"/></svg>';
+}
+function buildCards(){
+$("carGrid").innerHTML=vehicles.map(c=>'<button class="car-option" type="button" data-car="'+c.id+'" aria-pressed="false">'+carIcon(c)+'<span class="car-name">'+c.name+'</span><span class="origin">'+c.origin+'</span><span class="fact">'+c.fact+'</span>'+["Speed","Grip","Tough"].map((name,i)=>'<span class="stat"><span>'+name+'</span><span class="bar"><i style="width:'+(c.bars[i]*20)+'%"></i></span></span>').join("")+'</button>').join("");
+$("carGrid").addEventListener("click",e=>{const b=e.target.closest("[data-car]");if(!b)return;state.car=b.dataset.car;markCar()});
+markCar();
+}
+function markCar(){document.querySelectorAll("[data-car]").forEach(b=>{const yes=b.dataset.car===state.car;b.classList.toggle("selected",yes);b.setAttribute("aria-pressed",String(yes))});$("start").textContent="DRIVE THE "+car().name.toUpperCase()+" →"}
+function resize(){const rect=canvas.getBoundingClientRect();dpr=Math.min(2,window.devicePixelRatio||1);vw=Math.max(200,rect.width);vh=Math.max(200,rect.height);canvas.width=Math.round(vw*dpr);canvas.height=Math.round(vh*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
+if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas);else window.addEventListener("resize",resize);resize();
+const stageAt=x=>Math.max(0,Math.floor(x/700));
+function indexAt(x){const n=stageAt(x);return n<worlds.length?n:8+(n-worlds.length)%8}
+function levelAt(x){const wi=indexAt(x),q=worlds[wi][5],stage=stageAt(x);let ty=Math.sin(x*.015)*20*q+Math.sin(x*.042)*11*q+Math.sin(x*.006+1)*19*q;ty+=Math.sin(x*.085)*Math.min(4,Math.max(0,stage-.3))*7*q;if(stage>=3)ty+=Math.sin(x*.065+2)*19*q;return .73*vh+ty}
+function slopeAt(x){return Math.atan2(levelAt(x+14)-levelAt(x-14),28)}
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>e.classList.remove("show"),1450)}
+function reset(){Object.assign(state,{running:true,over:false,gas:false,pos:24,speed:0,angle:0,angular:0,y:levelAt(24)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:0,maxDist:0,smoke:[],shakes:0,clock:0});$("overlay").hidden=true;$("share").hidden=true;$("results").hidden=true;toast("ENGINE STARTED. PROBABLY.")}
+function finish(){
+if(state.over)return;state.over=true;state.running=false;state.gas=false;$("gas").classList.remove("down");$("overlay").hidden=false;
+const m=Math.floor(state.maxDist);$("kicker").textContent="END OF RUN / PICK A CAR AND TRY AGAIN";$("cardTitle").textContent="The road won. This time.";$("cardText").textContent=car().name+" made it "+m+" metres across "+(state.visited+1)+" terrains. Choose another car to see how far it gets.";$("start").textContent="DRIVE AGAIN →";$("share").hidden=false;$("results").hidden=false;
+$("resultDistance").textContent=m+" m";$("resultLands").textContent=String(state.visited+1);
+try{const key="still-runs-best-"+state.car;const best=Number(localStorage.getItem(key)||0);if(m>best)localStorage.setItem(key,String(m))}catch(e){}
+}
+$("start").addEventListener("click",reset);
+$("share").addEventListener("click",async()=>{const url="https://aynen.fun/still-runs.html";const txt="I drove the "+car().name+" for "+Math.floor(state.maxDist)+"m through "+(state.visited+1)+" terrains. Still runs? "+url;try{if(navigator.share){await navigator.share({title:"Still Runs! — aynen.fun",text:txt,url});return}if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(txt);$("share").textContent="COPIED ✓";return}}catch(e){if(e.name==="AbortError")return}window.prompt("SHARE THIS RUN",txt)});
+function gas(v){state.gas=v;if(v&&!state.running)return;$("gas").classList.toggle("down",v)}
+$("gas").addEventListener("pointerdown",e=>{e.preventDefault();gas(true);try{e.currentTarget.setPointerCapture(e.pointerId)}catch(err){}});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>$("gas").addEventListener(ev,()=>gas(false)));
+window.addEventListener("keydown",e=>{if(e.code==="Space"||e.code==="ArrowUp"){if(e.repeat)return;e.preventDefault();gas(true)}});
+window.addEventListener("keyup",e=>{if(e.code==="Space"||e.code==="ArrowUp"){e.preventDefault();gas(false)}});
+window.addEventListener("blur",()=>gas(false));
+document.addEventListener("visibilitychange",()=>{if(document.hidden)gas(false)});
+function update(dt){
+if(!state.running)return;
+const v=car(),w=indexAt(state.pos),surface=(w===2||w===5||w===9||w===10)?1:0;
+const gripFactor=surface?.74+.26*v.grip:1;
+const drag=surface?.985+(v.grip-1)*.004:.991;
+const old=state.pos;
+state.speed=clamp(state.speed*drag+(state.gas?.115*v.accel*gripFactor:-.053)*dt*60,0,v.max*(surface?.84+.16*v.grip:1));
+const next=state.pos+state.speed*dt*60;
+const target=levelAt(next)-v.clearance,angleTarget=slopeAt(next);
+if(state.landed){
+state.pos=next;state.y+=clamp((target-state.y)*(.40+.06*v.spring),-22,22);
+const diff=target-state.y;
+if(state.speed>3.15&&diff>13*v.spring){state.landed=false;state.vy=-Math.min(6.5,diff*.16/v.spring);state.angular=-.014}
+state.angle+=(angleTarget-state.angle)*.16*v.handling;
+}else{
+state.pos=next;state.y+=state.vy*dt*60;state.vy+=.29*dt*60;
+state.angular+=(state.gas?-.0014:.0022)*(1.2/v.spring)*dt*60;
+state.angular=clamp(state.angular,-.042,.042);state.angle+=state.angular*dt*60;
+if(state.y>=target){
+const impact=state.vy;state.y=target;state.landed=true;state.vy=0;state.angular=0;
+state.health-=(Math.max(0,impact-2.6*v.spring)*2.3+Math.max(0,Math.abs(state.angle-angleTarget)-.18)*25)*v.damage;
+state.shakes=Math.min(9,Math.max(1,impact));state.angle+=(angleTarget-state.angle)*.36;
+}
+}
+if(state.speed>4.4&&state.landed)state.health-=Math.max(0,Math.abs(angleTarget)*state.speed-2.25)*.025*v.damage*dt*60;
+if(state.pos>old&&state.gas&&Math.random()<.2)state.smoke.push({x:state.pos-45,y:state.y+8,r:2+Math.random()*5,life:1});
+state.smoke=state.smoke.filter(p=>{p.life-=.025*dt*60;p.y-=.18*dt*60;p.r+=.13*dt*60;return p.life>0}).slice(-40);
+state.clock+=dt;state.maxDist=Math.max(state.maxDist,state.pos);state.wheelSpin+=state.speed*dt*60/14;
+const idx=stageAt(state.pos);if(idx>state.visited){state.visited=idx;toast(idx===8?"MARS WAS NOT THE END.":idx>=worlds.length?"ENDLESS ROAD · "+(idx-worlds.length+1):worlds[indexAt(state.pos)][1].toUpperCase())}
+if(state.health<=0||Math.abs(state.angle)>1.54){state.health=Math.max(0,state.health);finish()}
+state.shakes*=.83;
+$("distance").textContent=Math.floor(state.maxDist)+" m";$("speed").textContent=Math.floor(state.speed*15)+" km/h";$("health").textContent=Math.ceil(clamp(state.health,0,100))+"%";$("regions").textContent=(state.visited+1)+" / ∞";
+}
+function line(points,fill,stroke){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));if(fill){ctx.closePath();ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
+function drawCar(x,y,a){
+const v=car();ctx.save();ctx.translate(x,y);ctx.rotate(a);
+const front=clamp((levelAt(state.pos+44)-levelAt(state.pos))-slopeAt(state.pos)*44,-12,12);
+const rear=clamp((levelAt(state.pos-42)-levelAt(state.pos))+slopeAt(state.pos)*42,-12,12);
+const wobble=state.landed?Math.sin(state.clock*17)*Math.min(2,state.speed*.22)/v.spring:0;
+ctx.translate(0,-2+wobble);ctx.strokeStyle="#292929";ctx.lineWidth=4;
+for(const [wx,off] of [[-43,rear],[45,front]]){
+ctx.beginPath();ctx.moveTo(wx,-13);ctx.lineTo(wx,off+2);ctx.stroke();
+ctx.strokeStyle="#888";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(wx-5,-8);ctx.lineTo(wx+5,-3);ctx.lineTo(wx-5,2);ctx.lineTo(wx+5,7);ctx.stroke();ctx.strokeStyle="#292929";ctx.lineWidth=4;
+}
+ctx.shadowColor="#0004";ctx.shadowBlur=3;ctx.shadowOffsetY=3;
+const forms={
+wagon:[[-72,-6],[-72,-25],[-59,-29],[-43,-48],[24,-48],[43,-29],[65,-28],[73,-20],[74,-6]],
+pickup:[[-73,-6],[-73,-25],[-20,-25],[-13,-48],[25,-48],[43,-27],[66,-27],[74,-19],[74,-6]],
+niva:[[-70,-6],[-70,-27],[-55,-32],[-41,-45],[22,-45],[42,-28],[70,-24],[73,-6]],
+defender:[[-74,-6],[-74,-31],[-60,-31],[-60,-54],[38,-54],[48,-35],[72,-35],[74,-6]]
+};
+line(forms[v.shape],v.color,"#242424");ctx.shadowColor="transparent";
+if(v.shape==="pickup"){
+line([[-11,-43],[22,-43],[37,-29],[-11,-29]],"#95bac7","#242424");
+line([[-63,-27],[-22,-27],[-22,-12],[-63,-12]],v.color,"#242424");
+ctx.strokeStyle="#242424";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-17,-25);ctx.lineTo(-17,-8);ctx.stroke();
+}else if(v.shape==="defender"){
+line([[-55,-49],[-13,-49],[-13,-34],[-55,-34]],"#8eb1b9","#242424");
+line([[-8,-49],[34,-49],[43,-35],[-8,-35]],"#8eb1b9","#242424");
+}else{
+const high=v.shape==="niva"?-40:-43,base=v.shape==="niva"?-28:-29;
+line([[-39,high],[-13,high],[-13,base],[-51,base]],"#91b1b8","#292929");
+line([[-9,high],[20,high],[36,base],[-9,base]],"#91b1b8","#292929");
+}
+ctx.fillStyle="#292929";ctx.fillRect(-68,-18,139,4);ctx.fillStyle="#bbb9ae";ctx.fillRect(-72,-10,146,4);
+ctx.strokeStyle="#222";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-11,v.shape==="defender"?-50:-43);ctx.lineTo(-11,-27);ctx.moveTo(39,-28);ctx.lineTo(39,-9);ctx.stroke();
+ctx.fillStyle="#d9b978";ctx.fillRect(69,-24,5,8);ctx.fillStyle="#ad3a2b";ctx.fillRect(-73,-24,5,8);
+if(v.shape==="wagon"||v.shape==="defender"){ctx.fillStyle="#3c3c3c";const roof=v.shape==="defender"?-57:-53;ctx.fillRect(-40,roof,69,3);ctx.fillRect(-38,roof-3,3,6);ctx.fillRect(26,roof-3,3,6)}
+for(const [wx,off] of [[-43,rear],[45,front]]){
+ctx.save();ctx.translate(wx,off);ctx.rotate(state.wheelSpin);const r=(v.shape==="niva"||v.shape==="defender"||v.shape==="pickup")?17:16;
+ctx.fillStyle="#1d1e1d";ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();
+ctx.fillStyle="#bcbeb8";ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);ctx.fill();
+ctx.strokeStyle="#4b4c4b";ctx.lineWidth=2;for(let j=0;j<5;j++){let t=j*Math.PI*2/5;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(t)*8,Math.sin(t)*8);ctx.stroke()}
+ctx.fillStyle="#444";ctx.beginPath();ctx.arc(0,0,3,0,7);ctx.fill();ctx.restore();
+}
+ctx.restore();
+}
+function render(){
+ctx.clearRect(0,0,vw,vh);
+const n=stageAt(state.pos),w=indexAt(state.pos),world=worlds[w],shake=state.shakes;
+ctx.save();if(shake>1)ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
+ctx.fillStyle=world[2];ctx.fillRect(0,0,vw,vh);
+const cam=Math.max(0,state.pos-vw*.31);
+for(let j=0;j<2;j++){ctx.beginPath();ctx.moveTo(0,vh);for(let x=0;x<=vw+20;x+=15){let xx=x+cam*(j?.22:.09);let yy=vh*(j?.56:.41)+Math.sin(xx*.007+j)*vh*.095+Math.sin(xx*.017)*vh*.036;ctx.lineTo(x,yy)}ctx.lineTo(vw,vh);ctx.fillStyle=j?world[3]:world[3]+"8b";ctx.fill()}
+if(n>=6&&n!==14){for(let i=0;i<20;i++){let x=(i*137+41-cam*.06)%(vw+70);if(x<0)x+=vw+70;ctx.fillStyle="#eee7de";ctx.fillRect(x,20+i*17%(vh*.5),2,2)}}else{ctx.fillStyle="#fff8d9";ctx.beginPath();ctx.arc(vw*.83,vh*.18,Math.max(22,vh*.064),0,7);ctx.fill()}
+const ox=state.pos-cam,ground=[];for(let x=-8;x<vw+15;x+=6)ground.push([x,levelAt(cam+x)]);ground.push([vw+10,vh+10],[-10,vh+10]);line(ground,world[4],"#4e5447");
+for(let x=Math.floor(cam/80)*80;x<cam+vw+100;x+=80){const y=levelAt(x),v=x-cam;ctx.fillStyle=w>=5?"#dfe6e3":"#3e6750";if(w>=6&&w!==14)ctx.fillStyle="#86817a";ctx.fillRect(v,y-4,3,7);ctx.fillRect(v-4,y-7,11,3)}
+for(const p of state.smoke){ctx.globalAlpha=p.life*.3;ctx.fillStyle="#ddd";ctx.beginPath();ctx.arc(p.x-cam,p.y,p.r,0,7);ctx.fill()}ctx.globalAlpha=1;
+drawCar(ox,state.y,state.angle);
+ctx.fillStyle="#131a19bd";ctx.fillRect(12,11,Math.min(vw-24,280),35);ctx.fillStyle="#f3f4ec";ctx.font="bold 13px Arial";ctx.fillText(n<worlds.length?world[0]:"ENDLESS / "+(n-worlds.length+1),22,34);
+ctx.fillStyle="#111";ctx.fillRect(vw-132,11,120,34);ctx.fillStyle="#fff";ctx.font="11px monospace";ctx.fillText(state.gas?"● THROTTLE":"○ COASTING",vw-122,32);
+ctx.restore();
+}
+function loop(t){const dt=Math.min(.05,Math.max(0,(t-(state.last||t))/1000));state.last=t;update(dt);render();requestAnimationFrame(loop)}
+buildCards();requestAnimationFrame(loop);
+})();
+
+</script></body></html><script src="/share-kit.js?v=1" defer></script>
