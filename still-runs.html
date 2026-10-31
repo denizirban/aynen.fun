@@ -46,6 +46,14 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 .selection-card #start{margin-top:12px}
 .selection-card .chooser-tip{margin:8px 0 0;font:9px/1.5 ui-monospace,monospace;color:#777}
 .selection-card #share{margin-top:7px}
+.results-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.card .results-actions button{flex:1 1 150px;min-height:40px;margin:0;background:#fff;color:#111;border:1px solid #111;padding:9px;font:700 10px/1.2 ui-monospace,monospace}
+.card .results-actions button:hover{background:#ece9e2;color:#111}
+.card .new-run{margin-top:7px;background:transparent;color:#666;border:0;box-shadow:none;min-height:32px;padding:4px;font:700 10px ui-monospace,monospace}
+.card .new-run:hover{background:transparent;color:#111;text-decoration:underline}
+#replayNote{font:10px/1.4 ui-monospace,monospace;color:#666;margin:8px 0 0}
+#replayNote[hidden],#replayActions[hidden],#newRun[hidden],#replayLabel[hidden]{display:none}
+#replayLabel{position:absolute;top:55px;left:12px;z-index:4;font:700 10px ui-monospace,monospace;background:#f3eddcf2;padding:6px 9px;color:#161616;border:1px solid #111;pointer-events:none}
 #results[hidden],#share[hidden],#chooser[hidden]{display:none}
 @media(max-width:720px){.car-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card.selection-card{padding:12px;max-height:94dvh}.car-option{min-height:156px;padding:7px!important}.car-option svg{height:38px}.car-option .fact{font-size:9px}.car-option .car-name{font-size:13px}.car-option .stat{font-size:8px}.selection-card h2{font-size:27px}}
 @media(max-width:360px){.card.selection-card{padding:10px}.car-grid{gap:5px}.car-option{min-height:150px}.car-option .fact{line-height:1.25}}
@@ -53,7 +61,7 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 <div class="top"><a href="/">← aynen.fun</a><span class="languages"><a href="/toros.html">TR</a><a href="/still-runs.html" class="active" aria-current="page">EN</a></span><span class="badge">FOUR CARS. NO WARRANTIES. / 1997*</span></div>
 <div class="heading"><h1>still runs.</h1><p>One pedal. Four ageing legends.<br>Common sense has called in sick.</p></div>
 <div class="hud"><div class="metric"><small>DISTANCE</small><b id="distance">0 m</b></div><div class="metric"><small>SPEED</small><b id="speed">0</b></div><div class="metric"><small>CONDITION</small><b id="health">100%</b></div><div class="metric"><small>TERRAINS</small><b id="regions">0 / 16</b></div></div>
-<div class="frame" id="frame"><canvas id="scene" aria-label="A side-scrolling driving game with four classic cars and increasingly difficult terrain"></canvas><div id="toast" aria-live="polite"></div><div id="finalHint" hidden>EVENT HORIZON · KEEP YOUR SPEED UP TO ESCAPE</div>
+<div class="frame" id="frame"><canvas id="scene" aria-label="A side-scrolling driving game with four classic cars and increasingly difficult terrain"></canvas><div id="toast" aria-live="polite"></div><div id="finalHint" hidden>EVENT HORIZON · KEEP YOUR SPEED UP TO ESCAPE</div><div id="replayLabel" hidden>REPLAY · LAST 8 SECONDS</div>
 <div class="overlay" id="overlay"><div class="card selection-card">
 <small id="kicker">VEHICLE SELECTION / NO REFUNDS</small>
 <h2 id="cardTitle">Choose a car.</h2>
@@ -62,6 +70,8 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 <button id="start" type="button">START THE ENGINE →</button>
 <button id="share" type="button" class="secondary" hidden>SHARE YOUR RUN ↗</button>
 <div class="results" id="results" hidden><div><strong id="resultDistance">0 m</strong><span>DISTANCE</span></div><div><strong id="resultLands">0</strong><span>TERRAINS REACHED</span></div></div><p id="recordNote" class="record-note" hidden></p>
+<div class="results-actions" id="replayActions" hidden><button id="watchReplay" type="button">WATCH LAST 8s ▶</button><button id="saveReplay" type="button">SAVE 8s CLIP ↓</button></div><p id="replayNote" hidden></p>
+<button id="newRun" class="new-run" type="button" hidden>START FROM THE BEGINNING ↻</button>
 </div></div></div>
 <div class="controls"><div class="instruction">HOLD → ACCELERATE<br>RELEASE → SLOW DOWN / LEVEL OUT<br>KEYBOARD: SPACE / ↑</div><button id="gas" type="button" aria-label="Press the accelerator">ACCELERATE ↗</button></div>
 <p class="smallnote">*1997-inspired look. Fictional arcade physics and vehicle rankings. Unofficial, not endorsed by any manufacturer. Please do not test this on Mars.</p>
@@ -97,7 +107,19 @@ const worlds=[
 ["BLACK HOLE","A poor place to hesitate.","#100b22","#44325a","#2f2743",1.20]
 ];
 const BLACK_HOLE_START=15*700, BLACK_HOLE_GATE=BLACK_HOLE_START+550, ESCAPE_SPEED=4.7;
-const state={running:false,over:false,gas:false,car:"toros",pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0,high:0,sparks:[],damageSmoke:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null};
+const stageTips=[
+"GET MOVING","KEEP YOUR MOMENTUM","MUD: HOLD THE LINE","RELEASE OVER THE DIP",
+"HARD LANDINGS HURT","ICE: IT DOESN'T STOP WHEN YOU DO",
+"LOW GRAVITY: EASY ON THE GAS","THE BOUNCE IS THE PROBLEM",
+"WATCH THE CREST","LIGHT GRAVITY · LONG JUMPS",
+"SLIPPERY SURFACE","BUMPY APPROACH","AIRTIME ISN'T FREE",
+"COAST TO LAND CLEANLY","SAVE YOUR SPEED","ESCAPE OR GET PULLED IN"
+];
+const gravityAt=w=>({6:.63,7:.78,8:.90,9:.64,10:.85,12:.77,13:.83,14:.94,15:1.24}[w]||1);
+const slipperyAt=w=>(w===5||w===9||w===10);
+const terrainShape=(u,c,a)=>a*Math.exp(-Math.pow((u-c)/64,2));
+
+const state={running:false,over:false,gas:false,car:"toros",pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0,high:0,sparks:[],damageSmoke:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[]};
 let vw=0,vh=0,dpr=1;
 const car=()=>vehicles.find(v=>v.id===state.car)||vehicles[0];
 function carIcon(c){
@@ -115,28 +137,53 @@ function resize(){const rect=canvas.getBoundingClientRect();dpr=Math.min(2,windo
 if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas);else window.addEventListener("resize",resize);resize();
 const stageAt=x=>clamp(Math.floor(x/700),0,worlds.length-1);
 function indexAt(x){return stageAt(x)}
-function levelAt(x){const wi=indexAt(x),q=worlds[wi][5],stage=stageAt(x);let ty=Math.sin(x*.015)*20*q+Math.sin(x*.042)*11*q+Math.sin(x*.006+1)*19*q;ty+=Math.sin(x*.085)*Math.min(4,Math.max(0,stage-.3))*7*q;if(stage>=3)ty+=Math.sin(x*.065+2)*19*q;return .73*vh+ty}
+function levelAt(x){
+const wi=indexAt(x),q=worlds[wi][5],stage=stageAt(x),u=((x%700)+700)%700;
+let ty=Math.sin(x*.015)*20*q+Math.sin(x*.042)*11*q+Math.sin(x*.006+1)*19*q;
+ty+=Math.sin(x*.085)*Math.min(4,Math.max(0,stage-.3))*7*q;
+if(stage>=3)ty+=Math.sin(x*.065+2)*19*q;
+if(wi===3)ty+=terrainShape(u,365,24);
+if(wi===4)ty-=terrainShape(u,395,27);
+if(wi===5)ty+=terrainShape(u,440,17);
+if(wi===6)ty-=terrainShape(u,400,30);
+if(wi===8)ty+=terrainShape(u,350,18);
+if(wi===9)ty-=terrainShape(u,395,22);
+if(wi===11)ty+=terrainShape(u,330,27);
+if(wi===12)ty-=terrainShape(u,400,21);
+return .73*vh+ty
+}
 function slopeAt(x){return Math.atan2(levelAt(x+14)-levelAt(x-14),28)}
 function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>e.classList.remove("show"),1450)}
-function reset(){Object.assign(state,{running:true,over:false,gas:false,pos:24,speed:0,angle:0,angular:0,y:levelAt(24)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:0,maxDist:0,smoke:[],damageSmoke:[],sparks:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,shakes:0,clock:0});$("overlay").hidden=true;$("share").hidden=true;$("results").hidden=true;$("recordNote").hidden=true;$("finalHint").hidden=true;toast(state.car==="toros"?"TOROS. NO FURTHER QUESTIONS.":"ENGINE STARTED.")}
+function reset(fromStage=0){
+replaySession.playing=false;replaySession.mode=null;replaySession.frames=[];replaySession.videoBlob=null;replaySession.videoType="";
+const cp=clamp(fromStage,0,worlds.length-1),startX=cp*700+24;
+Object.assign(state,{running:true,over:false,gas:false,pos:startX,speed:0,angle:0,angular:0,y:levelAt(startX)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:cp,maxDist:startX,smoke:[],damageSmoke:[],sparks:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,shakes:0,clock:0,checkpoint:cp,startedCheckpoint:cp>0,iceSkid:0,recordTime:0,recordFrames:[]});
+$("overlay").hidden=true;$("share").hidden=true;$("results").hidden=true;$("recordNote").hidden=true;$("replayActions").hidden=true;$("replayNote").hidden=true;$("newRun").hidden=true;$("replayLabel").hidden=true;$("finalHint").hidden=true;
+toast(cp?"CHECKPOINT "+(cp+1)+". NO COMMENT.":state.car==="toros"?"TOROS. NO FURTHER QUESTIONS.":"ENGINE STARTED.");
+}
 function finish(ending="wreck"){
 if(state.over)return;
 state.over=true;state.running=false;state.gas=false;state.finalResult=ending;
 $("gas").classList.remove("down");$("overlay").hidden=false;$("finalHint").hidden=true;
+captureReplayFrame(true);
 const m=Math.floor(state.maxDist),model=car(),survived=ending==="escape",oops=ending==="oops";
 const verdict={toros:"The Toros has stopped. Under protest.",hilux:"A rare administrative setback.",niva:"The road was excessively ambitious.",defender:"An expensive place to park."};
 $("kicker").textContent=oops?"OOPS.":survived?"SOMEHOW / YOU MADE IT":"END OF RUN / FIND ANOTHER EXCUSE";
 $("cardTitle").textContent=oops?"The car endured. You did not.":survived?"Against all advice, you carried on.":verdict[state.car]||"The road has won.";
 $("cardText").textContent=oops?"An entirely avoidable incident. The car was willing. The driver introduced complications.":survived?"There appears to be nowhere you cannot go. Even when there is, technically, no road.":model.name+" covered "+m.toLocaleString("en-US")+" metres and reached "+(state.visited+1)+" terrains. The road is still there.";
-$("start").textContent=survived?"DO IT AGAIN →":"TRY AGAIN →";$("share").textContent="CHALLENGE A FRIEND ↗";
+$("start").textContent=survived?"DRIVE AGAIN →":oops?"RETRY THE FINALE →":state.checkpoint?"RETRY THIS STAGE →":"TRY AGAIN →";$("share").textContent="CHALLENGE A FRIEND ↗";
 $("share").hidden=false;$("results").hidden=false;
 $("resultDistance").textContent=m.toLocaleString("en-US")+" m";$("resultLands").textContent=String(Math.min(worlds.length,state.visited+1));
 let best=m,previous=0;
-try{const key="still-runs-best-"+state.car;previous=Number(localStorage.getItem(key)||0);best=Math.max(m,previous);if(m>previous)localStorage.setItem(key,String(m))}catch(e){}
+try{const key="still-runs-best-"+state.car;previous=Number(localStorage.getItem(key)||0);best=Math.max(m,previous);if(m>previous&&!state.startedCheckpoint)localStorage.setItem(key,String(m))}catch(e){}
 $("recordNote").hidden=false;
-$("recordNote").textContent=oops?"BLACK HOLE: 1. DRIVER: 0.":survived?"EVENT HORIZON CLEARED. NO RECEIPT PROVIDED.":m>previous?"PERSONAL BEST. UNFORTUNATELY, NOW THERE IS A TARGET.":"PERSONAL BEST: "+best.toLocaleString("en-US")+" M. TRY AGAIN.";
+$("recordNote").textContent=oops?"BLACK HOLE: 1. DRIVER: 0.":survived?"EVENT HORIZON CLEARED. NO RECEIPT PROVIDED.":state.startedCheckpoint?"CHECKPOINT RETRY · NOT A FULL-RUN RECORD.":m>previous?"PERSONAL BEST. UNFORTUNATELY, NOW THERE IS A TARGET.":"PERSONAL BEST: "+best.toLocaleString("en-US")+" M. TRY AGAIN.";
+$("replayActions").hidden=state.recordFrames.length<2;
+$("saveReplay").textContent="SAVE 8s CLIP ↓";$("replayNote").hidden=true;
+$("newRun").hidden=!(ending==="wreck"&&state.checkpoint>0);
 }
-$("start").addEventListener("click",reset);
+$("start").addEventListener("click",()=>reset(state.finalResult==="escape"?0:state.checkpoint));
+$("newRun").addEventListener("click",()=>reset(0));
 $("share").addEventListener("click",async()=>{
 const m=Math.floor(state.maxDist);
 const url=new URL("https://aynen.fun/still-runs.html");url.searchParams.set("beat",String(m));url.searchParams.set("car",state.car);
@@ -164,21 +211,22 @@ window.addEventListener("blur",()=>gas(false));
 document.addEventListener("visibilitychange",()=>{if(document.hidden)gas(false)});
 function update(dt){
 if(!state.running)return;
-const v=car(),w=indexAt(state.pos),surface=(w===2||w===5||w===9||w===10)?1:0;
-const gripFactor=surface?.74+.26*v.grip:1;
-const drag=surface?.985+(v.grip-1)*.004:.991;
+const v=car(),w=indexAt(state.pos),surface=(w===2||w===5||w===9||w===10)?1:0,ice=slipperyAt(w);
+const gripFactor=ice?(.45+.39*v.grip):surface?(.74+.26*v.grip):1;
+const drag=ice?.997:surface?.985+(v.grip-1)*.004:.991;
 const old=state.pos,healthBefore=state.health;
-state.speed=clamp(state.speed*drag+(state.gas?.115*v.accel*gripFactor:-.053)*dt*60,0,v.max*(surface?.84+.16*v.grip:1));
+state.iceSkid+=(ice?(state.gas?1:-.9):-.8)*dt*60;state.iceSkid=clamp(state.iceSkid,-8,12);
+state.speed=clamp(state.speed*drag+(state.gas?.115*v.accel*gripFactor:ice?-.024:-.053)*dt*60,0,v.max*(surface?.84+.16*v.grip:1));
 if(stageAt(state.pos)>=15){const pull=clamp((state.pos-BLACK_HOLE_START)/550,0,1);state.speed=Math.max(0,state.speed-(.018+.059*pull*pull)*dt*60);state.shakes=Math.max(state.shakes,pull*1.3)}
 const next=state.pos+state.speed*dt*60;
 const target=levelAt(next)-v.clearance,angleTarget=slopeAt(next);
 if(state.landed){
 state.pos=next;state.y+=clamp((target-state.y)*(.40+.06*v.spring),-22,22);
 const diff=target-state.y;
-if(state.speed>3.15&&diff>13*v.spring){state.landed=false;state.vy=-Math.min(6.5,diff*.16/v.spring);state.angular=-.014}
-state.angle+=(angleTarget-state.angle)*.16*v.handling;
+if(state.speed>3.15&&diff>13*v.spring){state.landed=false;state.vy=-Math.min(6.5,diff*.16/v.spring)/Math.sqrt(gravityAt(w));state.angular=-.014}
+state.angle+=(angleTarget-state.angle)*(ice?.095:.16)*v.handling;
 }else{
-state.pos=next;state.y+=state.vy*dt*60;state.vy+=.29*dt*60;
+state.pos=next;state.y+=state.vy*dt*60;state.vy+=.29*gravityAt(w)*dt*60;
 state.angular+=(state.gas?-.0014:.0022)*(1.2/v.spring)*dt*60;
 if(stageAt(state.pos)>=15)state.angular+=.00045*dt*60;
 state.angular=clamp(state.angular,-.042,.042);state.angle+=state.angular*dt*60;
@@ -194,7 +242,8 @@ if(state.pos>old&&state.gas&&Math.random()<.2)state.smoke.push({x:state.pos-45,y
 state.smoke=state.smoke.filter(p=>{p.life-=.025*dt*60;p.y-=.18*dt*60;p.r+=.13*dt*60;return p.life>0}).slice(-40);
 updateDamageFX(dt);const wear=healthBefore-state.health;if(wear>.04){state.wearBucket+=wear;if(state.wearBucket>=2.5){spawnImpact(Math.min(4,state.wearBucket));state.wearBucket=0}}
 state.clock+=dt;state.maxDist=Math.max(state.maxDist,state.pos);state.wheelSpin+=state.speed*dt*60/14;
-const idx=stageAt(state.pos);if(idx>state.visited){state.visited=idx;toast(idx===15?"ESCAPE VELOCITY REQUIRED.":worlds[indexAt(state.pos)][1].toUpperCase())}
+state.recordTime+=dt;captureReplayFrame(false);
+const idx=stageAt(state.pos);if(idx>state.visited){state.visited=idx;state.checkpoint=idx;toast((worlds[idx][0]+" · "+stageTips[idx]).toUpperCase())}
 if(state.health<=0||Math.abs(state.angle)>1.54){state.health=Math.max(0,state.health);finish("wreck")}
 if(state.running && state.pos>=BLACK_HOLE_GATE){finish(state.speed>=ESCAPE_SPEED?"escape":"oops")}
 $("finalHint").hidden=!state.running||stageAt(state.pos)<14;
@@ -299,8 +348,9 @@ for(const p of state.smoke){ctx.globalAlpha=p.life*.3;ctx.fillStyle="#ddd";ctx.b
 for(const p of state.damageSmoke){ctx.globalAlpha=(p.heavy?.5:p.medium?.33:.22)*p.life;ctx.fillStyle=p.heavy?"#17151b":p.medium?"#44444b":"#92979b";ctx.beginPath();ctx.arc(p.x-cam,p.y,p.r,0,Math.PI*2);ctx.fill()}
 for(const p of state.sparks){ctx.globalAlpha=p.life;ctx.fillStyle=p.life>.5?"#fff0ad":"#ff8d44";ctx.fillRect(p.x-cam,p.y,p.r,p.r)}ctx.globalAlpha=1;
 drawCar(ox,state.y,state.angle);
+if(slipperyAt(w)&&state.landed&&state.speed>3){ctx.globalAlpha=.18+Math.abs(state.iceSkid)*.016;ctx.strokeStyle="#bce8ff";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ox-48,state.y+10);ctx.lineTo(ox-69-Math.abs(state.iceSkid)*2,state.y+12);ctx.stroke();ctx.globalAlpha=1}
 if(state.flash>.01){ctx.fillStyle="rgba(255,243,203,"+(state.flash*.42)+")";ctx.fillRect(0,0,vw,vh)}
-ctx.fillStyle="#131a19bd";ctx.fillRect(12,11,Math.min(vw-24,280),35);ctx.fillStyle="#f3f4ec";ctx.font="bold 13px Arial";ctx.fillText(world[0],22,34);
+ctx.fillStyle="#131a19bd";ctx.fillRect(12,11,Math.min(vw-24,300),49);ctx.fillStyle="#f3f4ec";ctx.font="bold 13px Arial";ctx.fillText(world[0],22,30);ctx.fillStyle="#c9d4cf";ctx.font="10px monospace";ctx.fillText(stageTips[n],22,48);
 ctx.fillStyle="#111";ctx.fillRect(vw-132,11,120,34);ctx.fillStyle="#fff";ctx.font="11px monospace";ctx.fillText(state.gas?"● THROTTLE":"○ COASTING",vw-122,32);
 ctx.restore();
 }
