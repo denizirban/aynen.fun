@@ -16,11 +16,11 @@ button:focus-visible,a:focus-visible{outline:3px solid #ffdc6b;outline-offset:3p
 .top{height:27px;flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;font-weight:900;letter-spacing:.05em}
 .top a{color:#dce8ff;text-decoration:none}.top .right{display:flex;align-items:center;gap:8px}.top button{height:27px;background:#213555;color:#eaf5ff;border:1px solid #537399;padding:0 10px;border-radius:3px}
 .frame{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden;border:3px solid #070f27;box-shadow:0 0 0 2px #4e6fa5;background:#164cbd}
-canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none}
-.frame:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0px,transparent 5px,rgba(0,0,0,.018) 6px);pointer-events:none;opacity:.18}
+canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:auto;image-rendering:crisp-edges;touch-action:none}
+.frame:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0px,transparent 6px,rgba(0,0,0,.008) 7px);pointer-events:none;opacity:.11}
 @media(max-aspect-ratio:11/10){canvas{object-fit:contain}.frame{background:#18345b}}
 .banner{position:absolute;top:21%;left:50%;transform:translateX(-50%);background:#ffefb0;color:#992f38;padding:6px 12px;font-weight:900;font-size:clamp(9px,1.45vw,15px);white-space:nowrap;box-shadow:4px 4px 0 #d94b4b;pointer-events:none;display:none;text-align:center;z-index:3}.banner.show{display:block}
-.pixel-hud{position:absolute;z-index:2;top:0;left:0;right:0;padding:clamp(8px,1vw,13px) clamp(10px,2vw,24px) 7px;pointer-events:none;color:white;font-family:"DM Mono",ui-monospace,monospace;letter-spacing:.008em;background:linear-gradient(#173da4 0%,#1751c6 84%,rgba(23,81,198,0) 100%);text-shadow:0 1px 0 #18336d}
+.pixel-hud{position:absolute;z-index:2;top:0;left:0;right:0;padding:clamp(8px,1vw,13px) clamp(10px,2vw,24px) 9px;pointer-events:none;color:white;font-family:"DM Mono",ui-monospace,monospace;letter-spacing:.008em;background:linear-gradient(#092b9c 0%,#0e4ad3 89%,rgba(19,80,200,.9) 100%);text-shadow:0 1px 0 #18336d}
 .hud-main{display:grid;grid-template-columns:1.25fr .8fr .8fr 1fr 1.2fr;gap:clamp(5px,2vw,28px);align-items:start}
 .metric{display:flex;flex-direction:column;gap:3px;min-width:0}.metric-label{font-size:clamp(10px,.95vw,14px);font-weight:500;color:#d8e9ff;white-space:nowrap}.metric-value{font-size:clamp(15px,1.7vw,27px);font-weight:500;line-height:1.2;color:#fff2ad;white-space:nowrap}.metric.time .metric-label{color:#ffdd8a}.metric.lap .metric-label{color:#9ff1b4}.metric.lap .metric-value{color:#ccffcf}.metric.speed .metric-value{color:#fff}.metric.convoy .metric-value{color:#ffd5dd}
 .hud-sub{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;font-size:clamp(9px,.8vw,12px);font-weight:500;color:#dceaff;white-space:nowrap;overflow:hidden}
@@ -110,11 +110,11 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 <div class="metric speed"><span class="metric-label">HIZ</span><span class="metric-value" id="h-speed">130 km</span></div>
 <div class="metric convoy"><span class="metric-label">KONVOY</span><span class="metric-value" id="h-convoy">04 ♥♥♥</span></div>
 </div><div class="hud-sub"><span class="hud-stage" id="h-stage">GELİN ALMA · MAHALLE</span><span class="hud-goal" id="h-goal">HEDEF 7 ARAÇ</span><span class="chaos-wrap">KAOS <span class="chaos-track"><i id="h-chaos"></i></span></span><span class="hud-ready" id="h-horn">KORNA HAZIR</span></div></div>
-<div class="hud-progress" aria-hidden="true" id="progress-track" style="position:absolute;z-index:2;top:86px;left:10px;right:10px;margin-top:0;opacity:.82"><i id="h-progress"></i></div><div id="tutorial" aria-live="polite"></div><div class="mission-strip" id="mission-strip" aria-live="off"><span class="mission-chip" id="m-progress">HEDEF 4 / 7</span><span class="mission-chip" id="m-streak">SERİ 0×</span><span class="mission-chip" id="m-lap">SALONA 2.2 KM</span></div>
+<div class="hud-progress" aria-hidden="true" id="progress-track" style="position:absolute;z-index:2;top:89px;left:10px;right:10px;margin-top:0;opacity:.82"><i id="h-progress"></i></div><div id="tutorial" aria-live="polite"></div><div class="mission-strip" id="mission-strip" aria-live="off"><span class="mission-chip" id="m-progress">HEDEF 4 / 7</span><span class="mission-chip" id="m-streak">SERİ 0×</span><span class="mission-chip" id="m-lap">SALONA 2.2 KM</span></div>
 <div class="banner" id="banner" role="status" aria-live="polite"></div><div id="combo-float" aria-live="off"></div>
 <div class="overlay" id="overlay">
 <section class="card" id="menu">
-<div class="eyebrow">AYNEN.FUN / 1987 ARCADE EDITION</div>
+<div class="eyebrow">AYNEN.FUN / RETRO ARCADE</div>
 <h1>DÜĞÜN<br>KONVOYU GP</h1>
 <p>Arabayı yönlendir, <b style="color:#ffdf81">+ işaretli araca yaklaşınca korna çal</b>, konvoyu büyüt. Salona geç kalma.</p><div class="mode-options"><button type="button" class="mode-option" id="mode-quick" aria-pressed="true">HIZLI YARIŞ</button><button type="button" class="mode-option" id="mode-daily" aria-pressed="false">GÜNÜN KONVOYU</button></div><p class="mode-caption" id="mode-caption">Hemen başla. Her seferinde yeni konvoy.</p>
 <div class="garage" id="garage" aria-label="Arabanı seç">
@@ -138,6 +138,7 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixe
 <div class="group"><button id="brake" aria-label="Fren" type="button" style="font-size:12px">FREN</button><button id="dortlu" class="special" aria-label="Dörtlü flaşörleri aç" type="button">⚡ DÖRTLÜ</button><button id="horn" class="horn" aria-label="Korna çal" type="button">♪ KORNA</button></div>
 </div>
 </div>
+<script src="/dugun-gp-visuals.js?v=20261031-b"></script>
 <script>
 (function(){
 "use strict";
@@ -857,6 +858,7 @@ if(input.brake){rect(x-25+shake,236,11,5,"#ffdd68");rect(x+14+shake,236,11,5,"#f
 }
 
 function draw(){
+if(window.DugunVisuals&&window.DugunVisuals.render){window.DugunVisuals.render(c,{g,objects,mode,seconds,activeCar,flash,particles,input});return}
 background();road();foliage();fineScene();weddingRoadside();bannerArch();decorations();leadCar();followerConvoy();vehicles();playerCar();effects();
 if(mode==="menu"){rect(162,65,156,18,"#ffedab");txt("DÜĞÜN KONVOYU GP",240,78,10,"#ad3242","center")}
 if(flash>0){c.fillStyle="rgba(255,245,200,"+(flash*.65)+")";c.fillRect(0,40,W,H-40)}
