@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f7f6f2"><title>Still Runs! — aynen.fun</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f7f6f2"><title>Still Runs! — Arcade Driving Game</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f7f6f2;color:#111;font-family:Arial,Helvetica,sans-serif}button{font:inherit;cursor:pointer;touch-action:none}a{color:inherit;text-decoration:none}
 main{max-width:1160px;margin:auto;min-height:100dvh;padding:14px 17px;display:flex;flex-direction:column;gap:9px}
@@ -57,16 +57,94 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 #results[hidden],#share[hidden],#chooser[hidden]{display:none}
 @media(max-width:720px){.car-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card.selection-card{padding:12px;max-height:94dvh}.car-option{min-height:156px;padding:7px!important}.car-option svg{height:38px}.car-option .fact{font-size:9px}.car-option .car-name{font-size:13px}.car-option .stat{font-size:8px}.selection-card h2{font-size:27px}}
 @media(max-width:360px){.card.selection-card{padding:10px}.car-grid{gap:5px}.car-option{min-height:150px}.car-option .fact{line-height:1.25}}
+
+/* ARCADE GARAGE: English-only, CrazyGames-ready entry screen */
+:root{--garage-bg:#171f28;--garage-card:#24343d;--garage-lime:#dafa73}
+.top .game-mark{display:inline-flex;align-items:center;gap:7px;font-weight:900;letter-spacing:.12em}
+.top .game-mark .mark-dot{color:#859d35;font-size:9px}
+.top .badge{background:#202c32;color:#f6f7ed;border:1px solid #202c32;border-radius:3px;letter-spacing:.04em}
+.overlay{background:linear-gradient(140deg,#09131ce0,#17252fc9),repeating-linear-gradient(0deg,transparent 0 32px,#ffffff15 33px),repeating-linear-gradient(90deg,transparent 0 32px,#ffffff15 33px)}
+.overlay:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.24;background:repeating-linear-gradient(110deg,transparent 0 67px,#ffffff20 68px,transparent 69px 136px)}
+.card.selection-card{position:relative;z-index:1;width:min(100%,900px);max-height:100%;padding:clamp(12px,2.2vw,22px);overflow:auto;overscroll-behavior:contain;border:1.5px solid #70828b;border-radius:11px;background:var(--garage-bg);color:#f6f7ed;box-shadow:0 19px 55px #02060ba8}
+.card.selection-card:before{content:"";display:block;height:3px;margin:-2px 0 12px;background:linear-gradient(90deg,var(--garage-lime) 0 26%,#536972 26% 100%)}
+.card.selection-card #kicker{color:#d9eba9;font-weight:700;font-size:10px;letter-spacing:.11em}
+.selection-card h2{font-size:clamp(27px,4.2vw,50px);line-height:.97;text-transform:uppercase;font-weight:900;letter-spacing:-.068em;color:#fffef3;margin:7px 0 8px}
+.selection-card .lead{font-size:clamp(11px,1.5vw,13px);color:#c7d2d1;margin:0 0 12px}
+.car-grid{gap:10px}
+.card .car-option{position:relative;display:flex;flex-direction:column;text-align:left;gap:5px;min-height:221px;margin:0;padding:9px!important;background:var(--garage-card)!important;color:#f6f8ed!important;border:1.5px solid #51626c!important;border-radius:8px;min-width:0;transition:background .14s ease,border-color .14s ease,box-shadow .14s ease,transform .14s ease}
+.card .car-option:hover:not(.selected){background:#31444c!important;color:#fff!important;border-color:#b2c9c6!important;transform:translateY(-3px)}
+.card .car-option.selected{background:var(--garage-lime)!important;color:#15251e!important;border-color:#f8ffdb!important;box-shadow:0 0 0 2px #0f1a1b,0 0 0 4px var(--garage-lime),0 7px 0 #0005;transform:translateY(-2px)}
+.card .car-option:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.car-visual{display:grid;place-items:center;position:relative;height:75px;border-radius:5px;overflow:hidden;width:100%;background:radial-gradient(ellipse at 50% 15%,#aac9c055,transparent 68%),linear-gradient(180deg,#38515b,#223038)}
+.car-visual:before{content:"";position:absolute;inset:62% -15% -25%;transform:perspective(95px) rotateX(45deg);background:repeating-linear-gradient(90deg,transparent 0 12px,#e0f6e31b 13px 14px,transparent 15px 29px)}
+.car-visual svg{position:relative;z-index:1;height:80px;width:91%;max-width:170px;filter:drop-shadow(0 5px 4px #0005);transition:transform .15s ease}
+.car-option:hover .car-visual svg,.car-option.selected .car-visual svg{transform:translateY(-2px) scale(1.06)}
+.car-visual .car-number{position:absolute;left:7px;top:6px;z-index:2;font:700 10px ui-monospace,monospace;color:#d7e4e0}
+.car-option.selected .car-visual{background:radial-gradient(ellipse at 50% 5%,#e9f7cf,#8dab9e)}
+.car-option.selected .car-number{color:#304538}
+.car-option .car-name{color:inherit;line-height:1.07;font-size:clamp(14px,1.7vw,19px);font-weight:900;letter-spacing:-.045em;margin-top:3px}
+.car-option .car-tag{padding:4px 5px;background:#43555c;color:#f1f7e1;font:800 8px/1.25 ui-monospace,monospace;letter-spacing:.035em;border:0}
+.card .car-option.selected .car-tag{background:#1b2d25;color:var(--garage-lime)}
+.car-option .origin{color:#b7c8c7;font-size:9px;letter-spacing:.02em}
+.car-option .fact{color:#e3ebe8;font-size:11px;line-height:1.3;min-height:28px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.car-option .stat{color:#d6e1de;font-size:9px;grid-template-columns:37px 1fr}
+.car-option .bar{height:5px;border-radius:3px;background:#455862}
+.car-option .bar i{border-radius:3px;background:var(--garage-lime)}
+.car-option.selected .origin,.car-option.selected .fact,.car-option.selected .stat{color:#26382c}
+.car-option.selected .bar{background:#a4c672}
+.car-option.selected .bar i{background:#15261f}
+.card.selection-card .chooser-tip{font:9px/1.45 ui-monospace,monospace;letter-spacing:.015em;color:#9daea9;margin:10px 0 0}
+.card.selection-card #start{position:sticky;bottom:0;z-index:2;background:var(--garage-lime);color:#17241e;border:2px solid #f2ffc5;border-radius:6px;box-shadow:0 4px 0 #789451,0 7px 18px #0005;min-height:53px;margin:13px 0 4px;padding:12px;font:900 clamp(16px,2.5vw,21px)/1.15 Arial,sans-serif;letter-spacing:.06em;transition:filter .15s ease,transform .15s ease}
+.card.selection-card #start:hover{background:#edffab;color:#122017;filter:brightness(1.04);transform:translateY(-2px)}
+.card.selection-card #start:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.card.selection-card .results{border-color:#4d6367}
+.card.selection-card #share,.card.selection-card .results-actions button{border-radius:4px}
+.card.selection-card #share{background:#edf2e5;color:#17251d}
+.card.selection-card #share:hover{background:white}
+.card.selection-card .record-note,.card.selection-card #replayNote,.card.selection-card .new-run{color:#c7d8cf}
+.card.selection-card .challenge-note{background:#365248;color:#f7ffed;border-color:#9bca79}
+@media(max-width:720px){
+.overlay{padding:7px}
+.card.selection-card{padding:10px;border-radius:8px;max-height:100%}
+.card.selection-card:before{margin:0 0 7px}
+.selection-card h2{font-size:clamp(22px,6.8vw,36px);margin:5px 0}
+.selection-card .lead{margin-bottom:8px}
+.car-grid{gap:7px}
+.card .car-option{min-height:165px;padding:7px!important;gap:3px}
+.car-visual{height:52px}.car-visual svg{height:58px}
+.car-option .car-name{font-size:clamp(12px,3vw,17px);margin-top:2px}
+.car-option .car-tag{font-size:7px;padding:3px 4px;letter-spacing:0}
+.car-option .origin{font-size:8px}
+.car-option .fact{font-size:9px;line-height:1.2;min-height:22px}
+.car-option .stat{font-size:8px}.car-option .bar{height:4px}
+.card.selection-card .chooser-tip{font-size:8px;margin-top:7px}
+.card.selection-card #start{min-height:47px;font-size:16px;margin-top:10px;padding:10px}
+}
+@media(max-width:390px){
+.card .car-option{min-height:157px;padding:6px!important}
+.car-visual{height:45px}.car-visual svg{height:52px}
+.car-option .car-tag{font-size:6.5px}
+.car-option .stat{grid-template-columns:29px 1fr}
+}
+@media(max-height:610px) and (min-width:721px){
+.card.selection-card{padding:10px 16px}
+.card .car-option{min-height:184px;padding:7px!important}
+.car-visual{height:56px}.car-visual svg{height:66px}
+.selection-card .lead{margin-bottom:7px}
+.card.selection-card #start{min-height:44px;margin-top:8px}
+}
+@media(prefers-reduced-motion:reduce){.card .car-option,.car-visual svg,.card.selection-card #start{transition:none}}
+
 </style></head><body><main>
-<div class="top"><a href="/">← aynen.fun</a><span class="languages"><a href="/toros.html">TR</a><a href="/still-runs.html" class="active" aria-current="page">EN</a></span><span class="badge">FOUR CARS. NO WARRANTIES. / 1997*</span></div>
+<div class="top"><span class="game-mark">STILL RUNS! <span class="mark-dot">●</span> ARCADE</span><span class="badge">FOUR CARS. NO WARRANTIES.</span></div>
 <div class="heading"><h1>still runs.</h1><p>One pedal. Four ageing legends.<br>Common sense has called in sick.</p></div>
 <div class="hud"><div class="metric"><small>DISTANCE</small><b id="distance">0 m</b></div><div class="metric"><small>SPEED</small><b id="speed">0</b></div><div class="metric"><small>CONDITION</small><b id="health">100%</b></div><div class="metric"><small>TERRAINS</small><b id="regions">0 / 16</b></div></div>
 <div class="frame" id="frame"><canvas id="scene" aria-label="A side-scrolling driving game with four classic cars and increasingly difficult terrain"></canvas><div id="toast" aria-live="polite"></div><div id="finalHint" hidden>EVENT HORIZON · KEEP YOUR SPEED UP TO ESCAPE</div><div id="replayLabel" hidden>REPLAY · LAST 8 SECONDS</div>
 <div class="overlay" id="overlay"><div class="card selection-card">
 <small id="kicker">VEHICLE SELECTION / NO REFUNDS</small>
 <h2 id="cardTitle">Choose a car.</h2>
-<p id="cardText" class="lead">Pick a classic. The road has not agreed to this.</p>
-<div id="chooser"><div id="challenge" class="challenge-note" hidden></div><div class="car-grid" id="carGrid" aria-label="Choose a vehicle"></div><p class="chooser-tip">REAL CARS. UNSCIENTIFIC GAME STATS. THE TOROS WILL NOT BE TAKING QUESTIONS.</p></div>
+<p id="cardText" class="lead">Four classics. One poor decision.</p>
+<div id="chooser"><div id="challenge" class="challenge-note" hidden></div><div class="car-grid" id="carGrid" aria-label="Choose a vehicle"></div><p class="chooser-tip">UNSCIENTIFIC STATS. DEEPLY OPINIONATED VEHICLES.</p></div>
 <button id="start" type="button">START THE ENGINE →</button>
 <button id="share" type="button" class="secondary" hidden>SHARE YOUR RUN ↗</button>
 <div class="results" id="results" hidden><div><strong id="resultDistance">0 m</strong><span>DISTANCE</span></div><div><strong id="resultLands">0</strong><span>TERRAINS REACHED</span></div></div><p id="recordNote" class="record-note" hidden></p>
@@ -129,11 +207,11 @@ const glass={wagon:"M26 29H77L89 39H18Z",pickup:"M51 27H77L88 39H46Z",niva:"M26 
 return '<svg viewBox="0 0 122 74" aria-hidden="true"><path d="'+roof+'" fill="'+c.color+'" stroke="#202020" stroke-width="2.2"/><path d="'+glass+'" fill="#a9cbd1" stroke="#202020" stroke-width="1.8"/>'+(c.shape==="pickup"?'<path d="M13 40H43V29" stroke="#222" stroke-width="2" fill="none"/>':'')+'<path d="M12 47H108" stroke="#222" stroke-width="3"/><circle cx="34" cy="53" r="11" fill="#222"/><circle cx="87" cy="53" r="11" fill="#222"/><circle cx="34" cy="53" r="5.5" fill="#b9b9b9"/><circle cx="87" cy="53" r="5.5" fill="#b9b9b9"/></svg>';
 }
 function buildCards(){
-$("carGrid").innerHTML=vehicles.map(c=>'<button class="car-option" type="button" data-car="'+c.id+'" aria-pressed="false">'+carIcon(c)+'<span class="car-name">'+c.name+'</span>'+'<span class="car-tag">'+c.tag+'</span>'+'<span class="origin">'+c.origin+'</span><span class="fact">'+c.fact+'</span>'+["Speed","Grip","Tough"].map((name,i)=>'<span class="stat"><span>'+name+'</span><span class="bar"><i style="width:'+(c.bars[i]*20)+'%"></i></span></span>').join("")+'</button>').join("");
+$("carGrid").innerHTML=vehicles.map((c,i)=>'<button class="car-option" type="button" data-car="'+c.id+'" aria-pressed="false">'+'<span class="car-visual"><span class="car-number">0'+(i+1)+'</span>'+carIcon(c)+'</span><span class="car-name">'+c.name+'</span>'+'<span class="car-tag">'+c.tag+'</span>'+'<span class="origin">'+c.origin+'</span><span class="fact">'+c.fact+'</span>'+["Speed","Grip","Tough"].map((name,i)=>'<span class="stat"><span>'+name+'</span><span class="bar"><i style="width:'+(c.bars[i]*20)+'%"></i></span></span>').join("")+'</button>').join("");
 $("carGrid").addEventListener("click",e=>{const b=e.target.closest("[data-car]");if(!b)return;state.car=b.dataset.car;markCar()});
 markCar();
 }
-function markCar(){document.querySelectorAll("[data-car]").forEach(b=>{const yes=b.dataset.car===state.car;b.classList.toggle("selected",yes);b.setAttribute("aria-pressed",String(yes))});$("start").textContent="DRIVE THE "+car().name.toUpperCase()+" →"}
+function markCar(){document.querySelectorAll("[data-car]").forEach(b=>{const yes=b.dataset.car===state.car;b.classList.toggle("selected",yes);b.setAttribute("aria-pressed",String(yes))});$("start").textContent="START RUN →"}
 function resize(){const rect=canvas.getBoundingClientRect();dpr=Math.min(2,window.devicePixelRatio||1);vw=Math.max(200,rect.width);vh=Math.max(200,rect.height);canvas.width=Math.round(vw*dpr);canvas.height=Math.round(vh*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
 if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas);else window.addEventListener("resize",resize);resize();
 const stageAt=x=>clamp(Math.floor(x/700),0,worlds.length-1);
@@ -287,7 +365,7 @@ $("start").addEventListener("click",()=>reset(state.finalResult==="escape"?0:sta
 $("newRun").addEventListener("click",()=>reset(0));
 $("share").addEventListener("click",async()=>{
 const m=Math.floor(state.maxDist);
-const url=new URL("https://aynen.fun/still-runs.html");url.searchParams.set("beat",String(m));url.searchParams.set("car",state.car);
+const url=new URL(location.href);url.hash="";url.search="";url.searchParams.set("beat",String(m));url.searchParams.set("car",state.car);
 const caption=state.finalResult==="escape"?"Escaped a black hole in a "+car().name+". No further questions.":state.finalResult==="oops"?"The "+car().name+" survived. I fell into a black hole.":m.toLocaleString("en-US")+"m in a "+car().name+". The road eventually won. Beat that.";
 try{
 if(navigator.share){await navigator.share({title:"Still Runs! — beat my distance",text:caption,url:url.toString()});return}
