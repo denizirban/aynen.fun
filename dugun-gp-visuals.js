@@ -273,6 +273,55 @@ function confetti(c,state){
  if(g.halay>0)for(let i=0;i<18;i++){let t=seconds*1.4+i*2,x=(i*59+t*15)%960,y=310+(i*13+t*39)%240;rect(c,x,y,5,4,["#ef709d","#ffdb9c","#fff0de"][i%3])}
  if(state.input?.boost&&g.speed>145)for(let i=0;i<22;i++){let x=(i*73+seconds*120)%960,y=355+(i*43+seconds*300)%190;rect(c,x,y,2,12,"#c4d4dc")}
 }
+
+function rideMarkers(c,state){
+ const ride=state.ride;if(!ride)return;
+ const {g,seconds}=state;
+ if(ride.phase==="waiting"&&ride.z<1.03&&ride.z>-.10){
+  const z=ride.z,y=roadY(z),gr=roadGeom(y,g.distance),x=gr.cx+ride.lane*gr.half*.81;
+  const size=clamp(15+82*Math.pow(1-clamp(z,0,1),1.5),15,100);
+  const glow=1+.07*Math.sin(seconds*8);
+  c.save();c.globalAlpha=.31;c.fillStyle="#ffe47f";c.beginPath();c.ellipse(x,y-6,size*.55*glow,size*.24*glow,0,0,Math.PI*2);c.fill();c.restore();
+  rect(c,x-size*.42,y-size*.30,size*.84,Math.max(4,size*.13),"#ffe5a0");
+  rect(c,x-size*.36,y-size*.31,size*.72,Math.max(3,size*.08),"#cd7049");
+  bystander(c,x,y-size*.25,Math.max(10,size*.60),Math.floor(seconds)%3);
+  if(size>24){
+    const boxW=Math.max(49,size*1.45),by=y-size*1.4-8;
+    rect(c,x-boxW/2,by,boxW,Math.max(18,size*.23),"#ffe3a0");
+    rect(c,x-boxW/2,by+Math.max(18,size*.23)-3,boxW,3,"#d98850");
+    text(c,"↑ MİSAFİR",x,by+Math.max(13,size*.16),Math.max(9,Math.min(15,size*.19)),"#702e43");
+  }
+ }
+ if(ride.phase==="riding"){
+  const z=(ride.destinationDist-g.distance)/190;
+  if(z<=1.05&&z>=-.13){
+   const y=roadY(z),gr=roadGeom(y,g.distance),x=gr.cx+ride.destLane*gr.half*.81;
+   const size=clamp(22+115*Math.pow(1-clamp(z,0,1),1.45),22,132);
+   c.save();c.fillStyle="rgba(110,255,191,.30)";c.beginPath();c.ellipse(x,y-size*.04,size*.60,size*.23,0,0,Math.PI*2);c.fill();
+   c.strokeStyle="#a2ffd1";c.lineWidth=Math.max(2,size*.035);c.beginPath();c.ellipse(x,y-size*.04,size*.6,size*.23,0,0,Math.PI*2);c.stroke();c.restore();
+   if(size>25){
+     rect(c,x-size*.66,y-size*1.18,size*1.32,Math.max(20,size*.28),"#d6ffe4");
+     rect(c,x-size*.66,y-size*1.18,size*1.32,3,"#56be8d");
+     text(c,"↓ İNİŞ",x,y-size*1.18+Math.max(15,size*.19),Math.max(10,Math.min(16,size*.20)),"#20494f");
+     rect(c,x-3,y-size*.93,6,size*.79,"#b8f5d5");
+   }
+  }
+ }
+}
+function opponentVehicle(c,state){
+ if(!state.versus)return;
+ const {g,rival,seconds}=state,gr=roadGeom(500,g.distance),x=gr.cx+rival.lane*gr.half*.81;
+ const rocking=Math.sin(seconds*8)*1.1;
+ vehicle(c,x,495+rocking,156,"sedan","#a74284",true,true,seconds);
+ if(state.ride&&state.ride.phase==="riding"&&state.ride.owner==="p2"){
+   rect(c,x-49,371,98,24,"#f6c3ec");
+   text(c,"MİSAFİR ONDA!",x,387,12,"#66366d");
+ }else{
+   rect(c,x-35,371,70,21,"#302f60");
+   text(c,state.versus==="local"?"2. OYUNCU":"RAKİP",x,385,12,"#ffd4ed");
+ }
+}
+
 function render(c,state){
  const {g}=state;
  c.setTransform(1,0,0,1,0,0);
@@ -281,7 +330,7 @@ function render(c,state){
  road(c,g.distance,g.lap);
  // Layering: roadside before cars.
  sideDecor(c,state);lampPosts(c,state);
- distantConvoy(c,state);displayTraffic(c,state);playerVehicle(c,state);confetti(c,state);
+ distantConvoy(c,state);displayTraffic(c,state);rideMarkers(c,state);opponentVehicle(c,state);playerVehicle(c,state);confetti(c,state);
  if(state.mode==="menu"){rect(c,330,120,300,44,"#ffe4af");text(c,"DÜĞÜN KONVOYU GP",480,149,22,"#b33a53")}
  if(state.flash>0){c.fillStyle="rgba(255,240,225,"+clamp(state.flash*.8,0,.4)+")";c.fillRect(0,120,960,420)}
 }
