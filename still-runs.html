@@ -511,6 +511,26 @@ html,body,main{background:#0b1030}
  .final-head strong{font-size:9px}
 }
 
+
+/* Small arcade share panel, standalone only. CrazyGames embeds hide share entirely. */
+#miniShare[hidden]{display:none!important}
+.mini-share-mask{position:fixed;inset:0;z-index:500;background:#060b23c9;display:flex;align-items:center;justify-content:center;padding:14px}
+.mini-share{width:min(100%,370px);background:#131e46;color:#f7f0e5;border:2px solid #7189c1;box-shadow:5px 5px 0 #04081e;padding:17px 16px 12px;font-family:'Chakra Petch',Arial,sans-serif}
+.mini-share-head{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.mini-share-kicker{font:6px/1.7 'Press Start 2P',monospace;color:#55e4f5}
+.mini-share h3{font:italic 700 28px/1 'Chakra Petch',Arial,sans-serif;color:#ff7469;margin:6px 0 3px}
+.mini-share p{font:700 12px/1.4 'Chakra Petch',Arial,sans-serif;color:#bdcdec;margin:0}
+.mini-share-close{border:1px solid #5268a0;background:#1d2c5b;color:#f8e6e4;min-width:33px;min-height:33px;font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation}
+.mini-share-icons{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:17px}
+.mini-share-icon{min-width:0;height:66px;border:1px solid #4b6096;background:#1c2a57;color:#c5f5fc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;cursor:pointer;touch-action:manipulation}
+.mini-share-icon svg{display:block;width:22px;height:22px;flex:0 0 auto}
+.mini-share-icon span{font:700 8px 'Chakra Petch',Arial,sans-serif;letter-spacing:.015em}
+.mini-share-icon:hover,.mini-share-icon:focus-visible{background:#30437f;color:#fff;border-color:#71e8f2;outline-offset:2px}
+.mini-share-status{min-height:18px;margin-top:9px;color:#ffe29a;font:700 10px/1.45 'Chakra Petch',Arial,sans-serif;text-align:center}
+.card.selection-card #share{display:inline-flex;align-items:center;justify-content:center;width:auto;min-height:32px;margin:9px 0 1px;padding:6px 13px;font:700 11px 'Chakra Petch',Arial,sans-serif;letter-spacing:.03em}
+.card.selection-card #share[hidden]{display:none!important}
+@media(max-width:390px){.mini-share{padding:13px 11px}.mini-share-icon{height:61px}.mini-share-icons{gap:4px}.mini-share-icon span{font-size:7px}}
+
 </style></head><body><main>
 <div class="top"><span class="game-mark">STILL RUNS! <span class="mark-dot">✦</span> <span class="game-mark-alt">ARCADE / 001</span></span><div class="top-controls"><span class="badge">FOUR CARS. NO WARRANTIES.</span><button type="button" id="soundToggle" class="sound-toggle" aria-label="Mute arcade game sounds" aria-pressed="true" title="Toggle arcade sounds">SFX ON <span aria-hidden="true">◖))</span></button></div></div>
 <div class="heading"><h1>still runs.</h1><p>One pedal. Four ageing legends.<br>Common sense has called in sick.</p></div>
@@ -535,6 +555,24 @@ html,body,main{background:#0b1030}
 <div class="controls"><div class="instruction">HOLD → ACCELERATE<br>RELEASE → SLOW DOWN / LEVEL OUT<br>KEYBOARD: SPACE / ↑</div><button id="gas" type="button" aria-label="Press the accelerator">ACCELERATE ↗</button></div>
 <p class="smallnote">*1997-inspired look. Fictional arcade physics and vehicle rankings. Unofficial, not endorsed by any manufacturer. Please do not test this on Mars.</p>
 </main>
+
+<!-- Compact English-only sharing for the standalone build; no CrazyGames share controls -->
+<div class="mini-share-mask" id="miniShare" hidden>
+ <section class="mini-share" role="dialog" aria-modal="true" aria-label="Share your run" aria-labelledby="miniShareTitle">
+  <div class="mini-share-head">
+   <div><span class="mini-share-kicker">STILL RUNS! / SHARE</span><h3 id="miniShareTitle">YOUR RUN.</h3><p id="miniShareScore">0 m · TOROS WAGON</p></div>
+   <button class="mini-share-close" type="button" id="miniShareClose" aria-label="Close share panel">×</button>
+  </div>
+  <div class="mini-share-icons">
+   <button class="mini-share-icon" type="button" data-mini-action="x" title="Post to X" aria-label="Post to X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h4l12 18h-4zM20 3L4 21" stroke="currentColor" stroke-width="2.2" fill="none"/></svg><span>X</span></button>
+   <button class="mini-share-icon" type="button" data-mini-action="wa" title="Share to WhatsApp" aria-label="Share to WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 11.8a8.4 8.4 0 0 1-12 7.6L4 20l1.3-4a8.4 8.4 0 1 1 15.1-4.2Z" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M9 8.2c-.4 2 2.6 5.5 5.8 6.3l1.2-1.3-2.4-1.4-1.1 1-2.1-2.2.9-1.1L10 7.6z" fill="currentColor"/></svg><span>WHATSAPP</span></button>
+   <button class="mini-share-icon" type="button" data-mini-action="tg" title="Share to Telegram" aria-label="Share to Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 4-3.2 16-5.5-4.3-3.4 2 .8-5.2L3 9.7 21 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="none"/><path d="M9.7 12.5 21 4l-8.7 11.7" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><span>TELEGRAM</span></button>
+   <button class="mini-share-icon" type="button" data-mini-action="copy" title="Copy challenge link" aria-label="Copy challenge link"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="1" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 16H4V4h12v1" stroke="currentColor" stroke-width="2" fill="none"/></svg><span>COPY</span></button>
+   <button class="mini-share-icon" type="button" data-mini-action="native" title="Share using your device" aria-label="Share using your device"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M5 14v6h14v-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>SHARE</span></button>
+  </div>
+  <div class="mini-share-status" id="miniShareStatus" role="status" aria-live="polite"></div>
+ </section>
+</div>
 <script>
 
 (()=>{
@@ -912,8 +950,8 @@ $("kicker").textContent=oops?"OOPS.":survived?"COMPLETE / SOMEHOW":"RUN ENDED / 
 $("cardTitle").textContent=oops?"Not quite escape velocity.":survived?"Quite a detour.":pair[0];
 $("cardText").textContent=oops?"You crossed at "+Math.round(state.speed*15)+" km/h. The escape gate needs "+Math.ceil(ESCAPE_SPEED*15)+" km/h. Hold to build speed next time.":survived?"Black hole avoided. Carry on.":pair[1];
 $("start").textContent="PLAY AGAIN →";
-$("share").textContent="CHALLENGE A FRIEND ↗";
-$("share").hidden=false;$("results").hidden=false;$("changeCar").hidden=false;
+$("share").textContent="SHARE ↗";
+$("share").hidden=portalMode;$("results").hidden=false;$("changeCar").hidden=false;
 $("resultDistance").textContent=m.toLocaleString("en-US")+" m";
 $("resultLands").textContent=String(Math.min(worlds.length,state.visited+1));
 let best=m,previous=0;
@@ -935,16 +973,63 @@ $("changeCar").addEventListener("click",()=>{
  state.finalResult=null;
  markCar();
 });
-$("share").addEventListener("click",async()=>{
-const m=Math.floor(state.maxDist);
-const url=new URL(location.href);url.hash="";url.search="";url.searchParams.set("beat",String(m));url.searchParams.set("car",state.car);
-const caption=state.finalResult==="escape"?"Escaped a black hole in a "+car().name+". No further questions.":state.finalResult==="oops"?"The "+car().name+" survived. I fell into a black hole.":m.toLocaleString("en-US")+"m in a "+car().name+". The road eventually won. Beat that.";
-try{
-if(navigator.share){await navigator.share({title:"Still Runs! — beat my distance",text:caption,url:url.toString()});return}
-if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(caption+" "+url.toString());$("share").textContent="CHALLENGE COPIED ✓";return}
-}catch(e){if(e.name==="AbortError")return}
-window.prompt("COPY YOUR CHALLENGE",caption+" "+url.toString());
+
+const portalMode=(()=>{
+ try{
+   if(new URLSearchParams(location.search).get("platform")==="crazygames")return true;
+   if(/(^|\.)crazygames\.com$/i.test(location.hostname||""))return true;
+   if(window.self!==window.top)return true;
+   const ref=document.referrer?new URL(document.referrer).hostname:"";
+   return /(^|\.)crazygames\.com$/i.test(ref);
+ }catch(e){return true}
+})();
+let shareReturnFocus=null;
+function challengeDetails(){
+ const distance=Math.floor(state.maxDist);
+ const url=new URL(location.href);url.hash="";url.search="";
+ url.searchParams.set("beat",String(distance));url.searchParams.set("car",state.car);
+ const caption=state.finalResult==="escape"?
+   "Escaped a black hole in a "+car().name+". Apparently.":
+   distance.toLocaleString("en-US")+"m in a "+car().name+". Beat that.";
+ return {url:url.toString(),caption,distance};
+}
+function closeMiniShare(){
+ $("miniShare").hidden=true;
+ if(shareReturnFocus&&shareReturnFocus.focus)shareReturnFocus.focus();
+ shareReturnFocus=null;
+}
+$("share").addEventListener("click",()=>{
+ if(portalMode)return;
+ const data=challengeDetails();shareReturnFocus=document.activeElement;
+ $("miniShareScore").textContent=data.distance.toLocaleString("en-US")+" M · "+car().name.toUpperCase();
+ $("miniShareStatus").textContent="";
+ $("miniShare").hidden=false;$("miniShareClose").focus();
 });
+$("miniShareClose").addEventListener("click",closeMiniShare);
+$("miniShare").addEventListener("click",e=>{
+ if(e.target===$("miniShare")){closeMiniShare();return}
+ const b=e.target.closest("[data-mini-action]");
+ if(!b)return;
+ const kind=b.dataset.miniAction,d=challengeDetails(),text=d.caption+" "+d.url,enc=encodeURIComponent;
+ if(kind==="copy"||kind==="native"&&!navigator.share){
+  const copy=navigator.clipboard?.writeText?.bind(navigator.clipboard);
+  if(copy){copy(text).then(()=>$("miniShareStatus").textContent="LINK COPIED").catch(()=>$("miniShareStatus").textContent="COPY UNAVAILABLE")}
+  else{$("miniShareStatus").textContent="COPY UNAVAILABLE"}
+  return;
+ }
+ if(kind==="native"){
+  navigator.share({title:"Still Runs!",text:d.caption,url:d.url}).catch(err=>{if(err.name!=="AbortError")$("miniShareStatus").textContent="SHARE UNAVAILABLE"});
+  return;
+ }
+ const urls={
+  x:"https://twitter.com/intent/tweet?text="+enc(text),
+  wa:"https://api.whatsapp.com/send?text="+enc(text),
+  tg:"https://t.me/share/url?url="+enc(d.url)+"&text="+enc(d.caption)
+ };
+ if(urls[kind])window.open(urls[kind],"_blank","noopener,noreferrer");
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("miniShare").hidden){e.preventDefault();closeMiniShare()}});
+
 const challengeParams=new URLSearchParams(location.search);
 const target=Number(challengeParams.get("beat"));
 const targetCar=vehicles.find(v=>v.id===challengeParams.get("car"));
@@ -1141,4 +1226,4 @@ function loop(t){const dt=Math.min(.05,Math.max(0,(t-(state.last||t))/1000));sta
 buildCards();requestAnimationFrame(loop);
 })();
 
-</script></body></html><script src="/share-kit.js?v=1" defer></script>
+</script></body></html>
