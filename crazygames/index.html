@@ -679,6 +679,7 @@ html,body{font-family:Arial,Helvetica,sans-serif}
 .top .game-mark,.card.selection-card h2,.card.selection-card #start{font-style:italic}
 .card.selection-card #kicker,.top .game-mark-alt,.car-option .car-tag{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
 @media(max-width:650px){.card.selection-card #start{font-size:18px}}
+#saveReplay{display:none!important}
 </style></head><body><main>
 <div class="top"><span class="game-mark">STILL RUNS! <span class="mark-dot">✦</span> <span class="game-mark-alt">ARCADE / 001</span></span><div class="top-controls"><span class="badge">FOUR CARS. NO WARRANTIES.</span><button type="button" id="soundToggle" class="sound-toggle" aria-label="Mute arcade game sounds" aria-pressed="true" title="Toggle arcade sounds">SFX ON <span aria-hidden="true">◖))</span></button></div></div>
 <div class="heading"><h1>still runs.</h1><p>One pedal. Four ageing legends.<br>Common sense has called in sick.</p></div>
@@ -697,7 +698,7 @@ html,body{font-family:Arial,Helvetica,sans-serif}
 <button id="start" type="button">START THE ENGINE →</button>
 
 <div class="results" id="results" hidden><div><strong id="resultDistance">0 m</strong><span>DISTANCE</span></div><div><strong id="resultLands">0</strong><span>TERRAINS REACHED</span></div></div><p id="recordNote" class="record-note" hidden></p>
-<div class="results-actions" id="replayActions" hidden><button id="watchReplay" type="button">WATCH LAST 8s ▶</button></div><p id="replayNote" hidden></p>
+<div class="results-actions" id="replayActions" hidden><button id="watchReplay" type="button">WATCH LAST 8s ▶</button><button id="saveReplay" type="button" hidden aria-hidden="true" tabindex="-1"></button></div><p id="replayNote" hidden></p>
 <button id="changeCar" class="new-run" type="button" hidden>CHANGE VEHICLE ↗</button>
 </div></div></div>
 <div class="controls"><div class="instruction">HOLD → ACCELERATE<br>RELEASE → SLOW DOWN / LEVEL OUT<br>KEYBOARD: SPACE / ↑</div><button id="gas" type="button" aria-label="Press the accelerator">ACCELERATE ↗</button></div>
@@ -1005,7 +1006,7 @@ const type=recorder.mimeType||mime||"video/webm";
 if(replaySession.chunks.length){
 replaySession.videoBlob=new Blob(replaySession.chunks,{type});
 replaySession.videoType=type;
-$("saveReplay").textContent="SHARE 8s VIDEO ↗";
+$("saveReplay").textContent="";
 $("replayNote").hidden=false;
 $("replayNote").textContent="CLIP READY. TAP SHARE TO SEND IT OR DOWNLOAD IT.";
 }else{$("replayNote").hidden=false;$("replayNote").textContent="VIDEO NOT AVAILABLE ON THIS DEVICE. YOU CAN STILL WATCH THE REPLAY."}
