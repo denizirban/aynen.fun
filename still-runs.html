@@ -1110,7 +1110,7 @@ $("share").textContent="SHARE ↗";
 $("share").hidden=portalMode;$("results").hidden=false;$("changeCar").hidden=false;
 $("resultDistance").textContent=m.toLocaleString("en-US")+" m";
 $("resultLands").textContent=String(Math.min(worlds.length,state.visited+1));
-$("recordNote").dataset.points=String(state.score);
+
 let best=m,previous=0;
 try{
  const key=raceKey()+"-best";previous=Number(localStorage.getItem(key)||0);best=Math.max(m,previous);
