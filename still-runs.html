@@ -910,7 +910,7 @@ f150:[["More power than judgement.","A conventional assessment."],["Plenty of to
 const pair=verdict[state.car][(state.visited+Math.floor(m/200))%2];
 $("kicker").textContent=oops?"OOPS.":survived?"COMPLETE / SOMEHOW":"RUN ENDED / NO APPEAL";
 $("cardTitle").textContent=oops?"Not quite escape velocity.":survived?"Quite a detour.":pair[0];
-$("cardText").textContent=oops?"You crossed at "+Math.round(state.speed*15)+" km/h. The escape gate needs "+Math.ceil(ESCAPE_SPEED*15)+". Hold to build speed next time.":survived?"Black hole avoided. Carry on.":pair[1];
+$("cardText").textContent=oops?"You crossed at "+Math.round(state.speed*15)+" km/h. The escape gate needs "+Math.ceil(ESCAPE_SPEED*15)+" km/h. Hold to build speed next time.":survived?"Black hole avoided. Carry on.":pair[1];
 $("start").textContent="PLAY AGAIN →";
 $("share").textContent="CHALLENGE A FRIEND ↗";
 $("share").hidden=false;$("results").hidden=false;$("changeCar").hidden=false;
