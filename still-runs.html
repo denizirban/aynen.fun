@@ -484,11 +484,43 @@ html,body,main{background:#0b1030}
   .top-controls{gap:4px}
 }
 
+
+/* Clear final objective: compact, accessible and always visible approaching the hole. */
+#finalHint{
+ left:50%;bottom:12px;transform:translateX(-50%);
+ width:min(390px,calc(100% - 25px));max-width:none;
+ padding:9px 12px;background:#101735ed;color:#faf9e8;
+ border:2px solid #6df0fa;box-shadow:3px 3px 0 #040815;
+ font:600 10px/1.35 'Chakra Petch',Arial,sans-serif;
+ text-align:left;z-index:3;pointer-events:none;
+}
+.final-head,.final-reading{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.final-head{font:700 9px/1.25 'Chakra Petch',Arial,sans-serif;letter-spacing:.04em;color:#70eefa}
+.final-head strong{color:#ffad84;white-space:nowrap;font-size:10px}
+.final-head strong.ready{color:#9bfaaf}
+.final-instruction{margin:6px 0 7px;color:#fcf6e8;font-size:11px}
+.final-track{height:9px;border:1px solid #7594bb;background:#283458;position:relative}
+.final-track span{display:block;height:100%;width:0%;background:#fd896f;transition:width .09s linear}
+.final-track span.ready{background:#77f2b6}
+.final-reading{margin-top:4px;font:600 9px 'Chakra Petch',Arial,sans-serif;color:#acc4e9}
+.final-reading span:first-child{color:#fff2bd;font-size:11px;font-weight:700}
+@media(max-width:520px){
+ #finalHint{bottom:7px;padding:7px 9px;width:calc(100% - 18px)}
+ .final-instruction{font-size:10px;margin:4px 0 6px}
+ .final-head{font-size:8px}
+ .final-head strong{font-size:9px}
+}
+
 </style></head><body><main>
 <div class="top"><span class="game-mark">STILL RUNS! <span class="mark-dot">✦</span> <span class="game-mark-alt">ARCADE / 001</span></span><div class="top-controls"><span class="badge">FOUR CARS. NO WARRANTIES.</span><button type="button" id="soundToggle" class="sound-toggle" aria-label="Mute arcade game sounds" aria-pressed="true" title="Toggle arcade sounds">SFX ON <span aria-hidden="true">◖))</span></button></div></div>
 <div class="heading"><h1>still runs.</h1><p>One pedal. Four ageing legends.<br>Common sense has called in sick.</p></div>
 <div class="hud"><div class="metric"><small>DISTANCE</small><b id="distance">0 m</b></div><div class="metric"><small>SPEED</small><b id="speed">0</b></div><div class="metric"><small>CONDITION</small><b id="health">100%</b></div><div class="metric"><small>TERRAINS</small><b id="regions">0 / 16</b></div></div>
-<div class="frame" id="frame"><canvas id="scene" aria-label="A side-scrolling driving game with four classic cars and increasingly difficult terrain"></canvas><div id="toast" aria-live="polite"></div><div id="finalHint" hidden>EVENT HORIZON · KEEP YOUR SPEED UP TO ESCAPE</div><div id="replayLabel" hidden>REPLAY · LAST 8 SECONDS</div>
+<div class="frame" id="frame"><canvas id="scene" aria-label="A side-scrolling driving game with four classic cars and increasingly difficult terrain"></canvas><div id="toast" aria-live="polite"></div><div id="finalHint" hidden role="status" aria-live="off">
+ <div class="final-head"><span id="finalPhase">FINAL / ESCAPE</span><strong id="finalStatus">BUILD SPEED</strong></div>
+ <div id="finalInstruction" class="final-instruction">DRIVE PAST THE BLACK HOLE. DO NOT STOP.</div>
+ <div class="final-track"><span id="finalFill"></span></div>
+ <div class="final-reading"><span id="finalCurrent">0 / 71 KM/H</span><span>TARGET SPEED</span></div>
+ </div><div id="replayLabel" hidden>REPLAY · LAST 8 SECONDS</div>
 <div class="overlay" id="overlay"><div class="card selection-card">
 <small id="kicker">01 / VEHICLE SELECT · NO REFUNDS</small>
 <h2 id="cardTitle">CHOOSE A CAR.</h2>
@@ -498,7 +530,7 @@ html,body,main{background:#0b1030}
 <button id="share" type="button" class="secondary" hidden>SHARE YOUR RUN ↗</button>
 <div class="results" id="results" hidden><div><strong id="resultDistance">0 m</strong><span>DISTANCE</span></div><div><strong id="resultLands">0</strong><span>TERRAINS REACHED</span></div></div><p id="recordNote" class="record-note" hidden></p>
 <div class="results-actions" id="replayActions" hidden><button id="watchReplay" type="button">WATCH LAST 8s ▶</button><button id="saveReplay" type="button">SAVE 8s CLIP ↓</button></div><p id="replayNote" hidden></p>
-<button id="changeCar" class="new-run" type="button" hidden>CHANGE VEHICLE ↗</button><button id="newRun" class="new-run" type="button" hidden>START FROM THE BEGINNING ↻</button>
+<button id="changeCar" class="new-run" type="button" hidden>CHANGE VEHICLE ↗</button>
 </div></div></div>
 <div class="controls"><div class="instruction">HOLD → ACCELERATE<br>RELEASE → SLOW DOWN / LEVEL OUT<br>KEYBOARD: SPACE / ↑</div><button id="gas" type="button" aria-label="Press the accelerator">ACCELERATE ↗</button></div>
 <p class="smallnote">*1997-inspired look. Fictional arcade physics and vehicle rankings. Unofficial, not endorsed by any manufacturer. Please do not test this on Mars.</p>
@@ -540,7 +572,7 @@ const stageTips=[
 "LOW GRAVITY: EASY ON THE GAS","THE BOUNCE IS THE PROBLEM",
 "WATCH THE CREST","LIGHT GRAVITY · LONG JUMPS",
 "SLIPPERY SURFACE","BUMPY APPROACH","AIRTIME ISN'T FREE",
-"COAST TO LAND CLEANLY","SAVE YOUR SPEED","ESCAPE OR GET PULLED IN"
+"COAST TO LAND CLEANLY","BUILD SPEED FOR THE BLACK HOLE","DRIVE PAST THE HOLE · 71 KM/H"
 ];
 const gravityAt=w=>({6:.63,7:.78,8:.90,9:.64,10:.85,12:.77,13:.83,14:.94,15:1.24}[w]||1);
 const slipperyAt=w=>(w===5||w===9||w===10);
@@ -854,13 +886,13 @@ $("replayNote").hidden=false;$("replayNote").textContent="CLIP DOWNLOADED. SHARE
 $("watchReplay").addEventListener("click",()=>beginReplay(false));
 $("saveReplay").addEventListener("click",()=>replaySession.videoBlob?shareReplayFile():beginReplay(true));
 
-function reset(fromStage=0){
+function reset(){
 audio.start();
 replaySession.playing=false;replaySession.mode=null;replaySession.frames=[];replaySession.videoBlob=null;replaySession.videoType="";
-const cp=clamp(fromStage,0,worlds.length-1),startX=cp*700+24;
-Object.assign(state,{running:true,over:false,gas:false,pos:startX,speed:0,angle:0,angular:0,y:levelAt(startX)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:cp,maxDist:startX,smoke:[],damageSmoke:[],sparks:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,shakes:0,clock:0,checkpoint:cp,startedCheckpoint:cp>0,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1});
-$("overlay").hidden=true;$("chooser").hidden=false;$("changeCar").hidden=true;$("share").hidden=true;$("results").hidden=true;$("recordNote").hidden=true;$("replayActions").hidden=true;$("replayNote").hidden=true;$("newRun").hidden=true;$("replayLabel").hidden=true;$("finalHint").hidden=true;
-toast(cp?"CHECKPOINT "+(cp+1)+". NO COMMENT.":state.car==="toros"?"TOROS. NO FURTHER QUESTIONS.":"ENGINE STARTED.");
+const startX=24;
+Object.assign(state,{running:true,over:false,gas:false,pos:startX,speed:0,angle:0,angular:0,y:levelAt(startX)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:0,maxDist:startX,smoke:[],damageSmoke:[],sparks:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,shakes:0,clock:0,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1});
+$("overlay").hidden=true;$("chooser").hidden=false;$("changeCar").hidden=true;$("share").hidden=true;$("results").hidden=true;$("recordNote").hidden=true;$("replayActions").hidden=true;$("replayNote").hidden=true;$("replayLabel").hidden=true;$("finalHint").hidden=true;
+toast(state.car==="toros"?"TOROS. NO FURTHER QUESTIONS.":"ENGINE STARTED.");
 }
 function finish(ending="wreck"){
 if(state.over)return;
@@ -877,31 +909,30 @@ f150:[["More power than judgement.","A conventional assessment."],["Plenty of to
 };
 const pair=verdict[state.car][(state.visited+Math.floor(m/200))%2];
 $("kicker").textContent=oops?"OOPS.":survived?"COMPLETE / SOMEHOW":"RUN ENDED / NO APPEAL";
-$("cardTitle").textContent=oops?"You missed the exit.":survived?"Quite a detour.":pair[0];
-$("cardText").textContent=oops?"The car endured. You did not.":survived?"Black hole avoided. Carry on.":pair[1];
-$("start").textContent=survived?"NEW RUN →":oops?"RETRY FINALE →":state.checkpoint?"RETRY STAGE →":"TRY AGAIN →";
+$("cardTitle").textContent=oops?"Not quite escape velocity.":survived?"Quite a detour.":pair[0];
+$("cardText").textContent=oops?"You crossed at "+Math.round(state.speed*15)+" km/h. The escape gate needs "+Math.ceil(ESCAPE_SPEED*15)+". Hold to build speed next time.":survived?"Black hole avoided. Carry on.":pair[1];
+$("start").textContent="PLAY AGAIN →";
 $("share").textContent="CHALLENGE A FRIEND ↗";
 $("share").hidden=false;$("results").hidden=false;$("changeCar").hidden=false;
 $("resultDistance").textContent=m.toLocaleString("en-US")+" m";
 $("resultLands").textContent=String(Math.min(worlds.length,state.visited+1));
 let best=m,previous=0;
-try{const key="still-runs-best-"+state.car;previous=Number(localStorage.getItem(key)||0);best=Math.max(m,previous);if(m>previous&&!state.startedCheckpoint)localStorage.setItem(key,String(m))}catch(e){}
+try{const key="still-runs-best-"+state.car;previous=Number(localStorage.getItem(key)||0);best=Math.max(m,previous);if(m>previous)localStorage.setItem(key,String(m))}catch(e){}
 $("recordNote").hidden=false;
-$("recordNote").textContent=oops?"BLACK HOLE 1 — DRIVER 0":survived?"ESCAPE RECORDED. NO FURTHER ACTION.":state.startedCheckpoint?"CHECKPOINT RUN · NOT A FULL RECORD.":m>previous?"PERSONAL BEST. NOTED.":"BEST "+best.toLocaleString("en-US")+" M · STILL STANDING.";
+$("recordNote").textContent=oops?"BLACK HOLE 1 — DRIVER 0":survived?"ESCAPE RECORDED. NO FURTHER ACTION.":m>previous?"PERSONAL BEST. NOTED.":"BEST "+best.toLocaleString("en-US")+" M · STILL STANDING.";
 $("replayActions").hidden=state.recordFrames.length<2;
 $("saveReplay").textContent="SAVE 8s CLIP ↓";$("replayNote").hidden=true;
-$("newRun").hidden=!(ending==="wreck"&&state.checkpoint>0);
+
 }
-$("start").addEventListener("click",()=>reset(state.finalResult==="escape"?0:state.checkpoint));
-$("newRun").addEventListener("click",()=>reset(0));
+$("start").addEventListener("click",()=>reset());
 $("changeCar").addEventListener("click",()=>{
  $("chooser").hidden=false;$("results").hidden=true;$("recordNote").hidden=true;
  $("share").hidden=true;$("replayActions").hidden=true;$("replayNote").hidden=true;
- $("newRun").hidden=true;$("changeCar").hidden=true;
+ $("changeCar").hidden=true;
  $("kicker").textContent="01 / VEHICLE SELECT · NO REFUNDS";
  $("cardTitle").textContent="CHOOSE A CAR.";
  $("cardText").textContent="FOUR CLASSICS. ONE POOR DECISION.";
- state.checkpoint=0;state.startedCheckpoint=false;state.finalResult=null;
+ state.finalResult=null;
  markCar();
 });
 $("share").addEventListener("click",async()=>{
@@ -963,11 +994,20 @@ state.smoke=state.smoke.filter(p=>{p.life-=.025*dt*60;p.y-=.18*dt*60;p.r+=.13*dt
 updateDamageFX(dt);const wear=healthBefore-state.health;if(wear>.04){state.wearBucket+=wear;if(state.wearBucket>=2.5){spawnImpact(Math.min(4,state.wearBucket));state.wearBucket=0}}
 state.clock+=dt;state.maxDist=Math.max(state.maxDist,state.pos);state.wheelSpin+=state.speed*dt*60/14;
 state.recordTime+=dt;captureReplayFrame(false);
-const idx=stageAt(state.pos);if(idx>state.visited){state.visited=idx;state.checkpoint=idx;audio.stage(idx);toast((worlds[idx][0]+" · "+stageTips[idx]).toUpperCase())}
+const idx=stageAt(state.pos);if(idx>state.visited){state.visited=idx;audio.stage(idx);toast((worlds[idx][0]+" · "+stageTips[idx]).toUpperCase())}
 if(state.health<=0||Math.abs(state.angle)>1.54){state.health=Math.max(0,state.health);finish("wreck")}
 if(state.running && state.pos>=BLACK_HOLE_GATE){finish(state.speed>=ESCAPE_SPEED?"escape":"oops")}
 $("finalHint").hidden=!state.running||stageAt(state.pos)<14;
-if(!$("finalHint").hidden){$("finalHint").textContent=stageAt(state.pos)<15?"BLACK HOLE AHEAD · KEEP YOUR MOMENTUM":("ESCAPE SPEED "+Math.round(state.speed*15)+" / "+Math.round(ESCAPE_SPEED*15)+" km/h · HOLD TO ACCELERATE")}
+if(!$("finalHint").hidden){
+const approaching=stageAt(state.pos)<15,ready=state.speed>=ESCAPE_SPEED;
+$("finalPhase").textContent=approaching?"FINAL APPROACH":"ESCAPE THE BLACK HOLE";
+$("finalInstruction").textContent=approaching?"DRIVE PAST THE HOLE. KEEP YOUR SPEED UP.":"PASS THE CYAN EXIT GATE AT "+Math.ceil(ESCAPE_SPEED*15)+"+ KM/H.";
+$("finalStatus").textContent=ready?"SPEED READY":"HOLD TO ACCELERATE";
+$("finalStatus").classList.toggle("ready",ready);
+$("finalFill").style.width=Math.min(100,Math.max(0,state.speed/ESCAPE_SPEED*100))+"%";
+$("finalFill").classList.toggle("ready",ready);
+$("finalCurrent").textContent=Math.round(state.speed*15)+" / "+Math.ceil(ESCAPE_SPEED*15)+" KM/H";
+}
 state.shakes*=.83;
 $("distance").textContent=Math.floor(state.maxDist)+" m";$("speed").textContent=Math.floor(state.speed*15)+" km/h";$("health").textContent=Math.ceil(clamp(state.health,0,100))+"%";$("regions").textContent=Math.min(worlds.length,state.visited+1)+" / "+worlds.length;
 }
@@ -993,7 +1033,7 @@ state.damageSmoke=state.damageSmoke.filter(p=>{p.x+=p.vx*t;p.y+=p.vy*t;p.r+=.17*
 }
 function drawBlackHole(cam,n){
 if(n<14)return;
-const bx=BLACK_HOLE_START+495-cam,by=vh*.44,r=Math.min(vw*.18,vh*.28,107);
+const bx=BLACK_HOLE_START+330-cam,by=vh*.44,r=Math.min(vw*.18,vh*.28,107);
 if(bx < -r*3 || bx > vw+r*3)return;
 ctx.save();ctx.translate(bx,by);
 const phase=state.clock*.38;
@@ -1009,6 +1049,29 @@ ctx.strokeStyle="#fbe9c7";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,r*.68,0,Ma
 for(let i=0;i<26;i++){const angle=i*2.399+phase*(.6+i%3*.2),rad=r*(1.3+i%7*.22);ctx.fillStyle=i%3?"#d4bbeb99":"#ffcea699";ctx.fillRect(Math.cos(angle)*rad,Math.sin(angle)*rad*.62,1.8,1.8)}
 ctx.restore();
 }
+
+function drawEscapeGate(cam,n){
+ if(n<14)return;
+ const x=BLACK_HOLE_GATE-cam;
+ if(x<-55||x>vw+70)return;
+ const ground=levelAt(BLACK_HOLE_GATE);
+ const y=ground-118;
+ ctx.save();
+ ctx.strokeStyle="#68f0fa";ctx.lineWidth=3;
+ ctx.setLineDash([9,5]);
+ ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,ground+4);ctx.stroke();
+ ctx.setLineDash([]);
+ ctx.fillStyle="#0c1833";
+ ctx.fillRect(x-56,y-30,116,25);
+ ctx.strokeStyle="#75f1fb";ctx.lineWidth=2;
+ ctx.strokeRect(x-56,y-30,116,25);
+ ctx.fillStyle="#b8faff";ctx.font="bold 12px monospace";
+ ctx.fillText("ESCAPE EXIT →",x-49,y-13);
+ ctx.fillStyle="#68f0fa";
+ ctx.beginPath();ctx.moveTo(x,y-3);ctx.lineTo(x+10,y+7);ctx.lineTo(x-10,y+7);ctx.closePath();ctx.fill();
+ ctx.restore();
+}
+
 function line(points,fill,stroke){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));if(fill){ctx.closePath();ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
 function drawCar(x,y,a){
 const v=car();ctx.save();ctx.translate(x,y);ctx.rotate(a);
@@ -1063,7 +1126,7 @@ for(let j=0;j<2;j++){ctx.beginPath();ctx.moveTo(0,vh);for(let x=0;x<=vw+20;x+=15
 if(n>=6){for(let i=0;i<20;i++){let x=(i*137+41-cam*.06)%(vw+70);if(x<0)x+=vw+70;ctx.fillStyle="#eee7de";ctx.fillRect(x,20+i*17%(vh*.5),2,2)}}else{ctx.fillStyle="#fff8d9";ctx.beginPath();ctx.arc(vw*.83,vh*.18,Math.max(22,vh*.064),0,7);ctx.fill()}
 const ox=state.pos-cam,ground=[];for(let x=-8;x<vw+15;x+=6)ground.push([x,levelAt(cam+x)]);ground.push([vw+10,vh+10],[-10,vh+10]);line(ground,world[4],"#4e5447");
 for(let x=Math.floor(cam/80)*80;x<cam+vw+100;x+=80){const y=levelAt(x),v=x-cam;ctx.fillStyle=w>=5?"#dfe6e3":"#3e6750";if(w>=6)ctx.fillStyle="#86817a";ctx.fillRect(v,y-4,3,7);ctx.fillRect(v-4,y-7,11,3)}
-drawBlackHole(cam,n);
+drawBlackHole(cam,n);drawEscapeGate(cam,n);
 for(const p of state.smoke){ctx.globalAlpha=p.life*.3;ctx.fillStyle="#ddd";ctx.beginPath();ctx.arc(p.x-cam,p.y,p.r,0,7);ctx.fill()}
 for(const p of state.damageSmoke){ctx.globalAlpha=(p.heavy?.5:p.medium?.33:.22)*p.life;ctx.fillStyle=p.heavy?"#17151b":p.medium?"#44444b":"#92979b";ctx.beginPath();ctx.arc(p.x-cam,p.y,p.r,0,Math.PI*2);ctx.fill()}
 for(const p of state.sparks){ctx.globalAlpha=p.life;ctx.fillStyle=p.life>.5?"#fff0ad":"#ff8d44";ctx.fillRect(p.x-cam,p.y,p.r,p.r)}ctx.globalAlpha=1;
