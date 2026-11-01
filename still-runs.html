@@ -666,6 +666,15 @@ html,body,main{background:#0b1030}
 .daily-locked .car-option{opacity:.45;pointer-events:none}
 .daily-locked .car-option.selected{opacity:1;pointer-events:none}
 @media(max-width:650px){.daily-brief{font-size:8px!important;padding:4px 6px;margin:2px 0 5px}.daily-result{font-size:10px;padding:6px}}
+
+#stuntHud{position:absolute;z-index:3;left:12px;bottom:12px;display:flex;align-items:center;gap:8px;background:#121a41df;border:1px solid #5b95d4;padding:5px 9px;color:#81e5fb;font:700 11px/1.2 'Chakra Petch',sans-serif;pointer-events:none}
+#stuntCombo{color:#ffe17b;border-left:1px solid #6275a4;padding-left:8px}
+#stuntPopup,#recordPopup{position:absolute;z-index:4;left:50%;transform:translateX(-50%);white-space:nowrap;max-width:95%;text-align:center;pointer-events:none;font:italic 700 clamp(12px,3vw,20px)/1.2 'Chakra Petch',sans-serif}
+#stuntPopup{top:30%;background:#ffdb76;color:#142145;padding:7px 12px;border:2px solid #fff1b0;box-shadow:3px 3px 0 #141c43}
+#recordPopup{top:19%;background:#62e5f5;color:#111a40;padding:9px 12px;border:2px solid #fff;box-shadow:3px 3px 0 #141c43}
+#stuntHud[hidden],#stuntPopup[hidden],#recordPopup[hidden]{display:none!important}
+@media(max-width:650px){#stuntHud{left:6px;bottom:6px;font-size:9px;padding:4px 6px}#stuntPopup,#recordPopup{font-size:12px;padding:5px 7px}}
+
 </style></head><body><main>
 <div class="top"><span class="game-mark">STILL RUNS! <span class="mark-dot">✦</span> <span class="game-mark-alt">ARCADE / 001</span></span><div class="top-controls"><span class="badge">FOUR CARS. NO WARRANTIES.</span><button type="button" id="soundToggle" class="sound-toggle" aria-label="Mute arcade game sounds" aria-pressed="true" title="Toggle arcade sounds">SFX ON <span aria-hidden="true">◖))</span></button></div></div>
 <div class="heading"><h1>still runs.</h1><p>One pedal. Four ageing legends.<br>Common sense has called in sick.</p></div>
@@ -675,7 +684,7 @@ html,body,main{background:#0b1030}
  <div id="finalInstruction" class="final-instruction">DRIVE PAST THE BLACK HOLE. DO NOT STOP.</div>
  <div class="final-track"><span id="finalFill"></span></div>
  <div class="final-reading"><span id="finalCurrent">0 / 71 KM/H</span><span>TARGET SPEED</span></div>
- </div><div id="replayLabel" hidden>REPLAY · LAST 8 SECONDS</div><div id="runCoach" hidden>HOLD TO ACCELERATE · RELEASE BEFORE BIG LANDINGS</div><div id="ghostBadge" hidden>GHOST +0 m</div>
+ </div><div id="replayLabel" hidden>REPLAY · LAST 8 SECONDS</div><div id="runCoach" hidden>HOLD TO ACCELERATE · RELEASE BEFORE BIG LANDINGS</div><div id="ghostBadge" hidden>GHOST +0 m</div><div id="stuntHud" hidden><span id="stuntPoints">0 PTS</span><span id="stuntCombo">×1</span></div><div id="stuntPopup" hidden aria-live="off">PERFECT LANDING</div><div id="recordPopup" hidden>NEW PERSONAL BEST</div>
 <div class="overlay" id="overlay"><div class="card selection-card">
 <small id="kicker">01 / VEHICLE SELECT · NO REFUNDS</small>
 <h2 id="cardTitle">CHOOSE A CAR.</h2>
@@ -753,7 +762,7 @@ const terrainShape=(u,c,a)=>a*Math.exp(-Math.pow((u-c)/64,2));
 
 const race={ghost:[],ghostSamples:[],ghostPoint:null,ghostAccumulator:0};
 const replaySession={playing:false,mode:null,frames:[],elapsed:0,duration:0,origin:0,index:0,storedEnd:null,recorder:null,stream:null,chunks:[],videoBlob:null,videoType:""};
-const state={running:false,over:false,gas:false,car:"toros",pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0,high:0,sparks:[],damageSmoke:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1};
+const state={running:false,over:false,gas:false,car:"toros",pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0,high:0,sparks:[],damageSmoke:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1,score:0,combo:0,comboLeft:0,airTime:0,airStart:0,recordBeaten:false,previousBest:0,popupLeft:0,recordPopupLeft:0};
 let vw=0,vh=0,dpr=1;
 const car=()=>vehicles.find(v=>v.id===state.car)||vehicles[0];
 
@@ -911,7 +920,7 @@ const audio=(()=>{
    return tracks.length?tracks[0]:null;
  }
  drawButton();
- return {unlock,select,start,stage,impact,finish,tick,toggle,drawButton,fileAudioTrack};
+ return {unlock,select,start,stage,impact,finish,tick,toggle,drawButton,fileAudioTrack,combo(n){if(!enabled||!ctx)return;const p=420+Math.min(5,n)*75;chirp(p,.075,.13,1.25,"square");chirp(p*1.28,.10,.09,1.06,"triangle",.075)},record(){if(!enabled||!ctx)return;chirp(680,.09,.12,1.24,"square");chirp(920,.16,.13,1.12,"triangle",.11)}};
 })();
 $("soundToggle").addEventListener("click",()=>audio.toggle());
 
@@ -1073,7 +1082,9 @@ function reset(){
 audio.start();loadGhost();
 replaySession.playing=false;replaySession.mode=null;replaySession.frames=[];replaySession.videoBlob=null;replaySession.videoType="";
 const startX=24;
-Object.assign(state,{running:true,over:false,gas:false,pos:startX,speed:0,angle:0,angular:0,y:levelAt(startX)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:0,maxDist:startX,smoke:[],damageSmoke:[],sparks:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,shakes:0,clock:0,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1});
+Object.assign(state,{running:true,over:false,gas:false,pos:startX,speed:0,angle:0,angular:0,y:levelAt(startX)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:0,maxDist:startX,smoke:[],damageSmoke:[],sparks:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,shakes:0,clock:0,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1,score:0,combo:0,comboLeft:0,airTime:0,airStart:0,recordBeaten:false,previousBest:0,popupLeft:0,recordPopupLeft:0});
+try{state.previousBest=Number(localStorage.getItem(raceKey()+"-best")||0)}catch(e){}
+$("stuntHud").hidden=false;$("stuntPopup").hidden=true;$("recordPopup").hidden=true;$("stuntPoints").textContent="0 PTS";$("stuntCombo").textContent="×1";
 $("overlay").hidden=true;$("chooser").hidden=false;$("changeCar").hidden=true;$("share").hidden=true;$("results").hidden=true;$("recordNote").hidden=true;$("replayActions").hidden=true;$("replayNote").hidden=true;$("replayLabel").hidden=true;$("finalHint").hidden=true;
 toast(state.car==="toros"?"TOROS. NO FURTHER QUESTIONS.":"ENGINE STARTED.");
 }
@@ -1081,7 +1092,7 @@ function finish(ending="wreck"){
 if(state.over)return;
 audio.finish(ending);
 state.over=true;state.running=false;state.gas=false;state.finalResult=ending;
-$("gas").classList.remove("down");$("overlay").hidden=false;$("finalHint").hidden=true;$("chooser").hidden=true;
+$("gas").classList.remove("down");$("overlay").hidden=false;$("finalHint").hidden=true;$("chooser").hidden=true;$("stuntPopup").hidden=true;$("recordPopup").hidden=true;
 captureReplayFrame(true);
 const m=Math.floor(state.maxDist),survived=ending==="escape",oops=ending==="oops";
 const verdict={
@@ -1099,6 +1110,7 @@ $("share").textContent="SHARE ↗";
 $("share").hidden=portalMode;$("results").hidden=false;$("changeCar").hidden=false;
 $("resultDistance").textContent=m.toLocaleString("en-US")+" m";
 $("resultLands").textContent=String(Math.min(worlds.length,state.visited+1));
+$("recordNote").dataset.points=String(state.score);
 let best=m,previous=0;
 try{
  const key=raceKey()+"-best";previous=Number(localStorage.getItem(key)||0);best=Math.max(m,previous);
@@ -1109,6 +1121,7 @@ try{
 }catch(e){}
 $("recordNote").hidden=false;
 $("recordNote").textContent=oops?"BLACK HOLE 1 — DRIVER 0":survived?"ESCAPE RECORDED. NO FURTHER ACTION.":m>previous?"PERSONAL BEST. NOTED.":"BEST "+best.toLocaleString("en-US")+" M · STILL STANDING.";
+$("recordNote").textContent+="  ·  "+state.score.toLocaleString("en-US")+" SKILL PTS";
 $("replayActions").hidden=state.recordFrames.length<2;
 $("saveReplay").textContent="SAVE 8s CLIP ↓";$("replayNote").hidden=true;
 
@@ -1210,15 +1223,30 @@ const target=levelAt(next)-v.clearance,angleTarget=slopeAt(next);
 if(state.landed){
 state.pos=next;state.y+=clamp((target-state.y)*(.40+.06*v.spring),-22/v.bounce,22/v.bounce);
 const diff=target-state.y;
-if(state.speed>3.15&&diff>13*v.spring){state.landed=false;state.vy=-Math.min(6.5,diff*.16*v.bounce/v.spring)/Math.sqrt(gravityAt(w));state.angular=-.014*v.air}
+if(state.speed>3.15&&diff>13*v.spring){state.airTime=0;state.airStart=state.pos;state.landed=false;state.vy=-Math.min(6.5,diff*.16*v.bounce/v.spring)/Math.sqrt(gravityAt(w));state.angular=-.014*v.air}
 state.angle+=(angleTarget-state.angle)*(ice?.095*v.ice:.16)*v.handling;
 }else{
-state.pos=next;state.y+=state.vy*dt*60;state.vy+=.29*gravityAt(w)*dt*60;
+state.pos=next;state.y+=state.vy*dt*60;state.vy+=.29*gravityAt(w)*dt*60;state.airTime+=dt;
 state.angular+=(state.gas?-.0014:.0022)*(1.2/v.spring)*v.air*dt*60;
 if(stageAt(state.pos)>=15)state.angular+=.00045*dt*60;
 state.angular=clamp(state.angular,-.042,.042);state.angle+=state.angular*dt*60;
 if(state.y>=target){
-const impact=state.vy;state.y=target;state.landed=true;state.vy=0;state.angular=0;
+const impact=state.vy;
+const alignment=Math.abs(state.angle-angleTarget);
+const landingTime=state.airTime;
+state.y=target;state.landed=true;state.vy=0;state.angular=0;
+if(landingTime>=.28&&impact>=.35&&alignment<.27){
+ const perfect=alignment<.105&&impact<6.8*v.spring,clean=alignment<.27&&impact<9*v.spring;
+ if(clean){
+  state.combo=Math.min(8,state.combo+1);state.comboLeft=5.5;
+  const base=perfect?150:70,points=base*state.combo;
+  state.score+=points;state.popupLeft=1.1;
+  $("stuntPopup").hidden=false;
+  $("stuntPopup").textContent=(perfect?"PERFECT LANDING":"CLEAN LANDING")+"  +"+points+"  ×"+state.combo;
+  audio.combo(state.combo);
+ }
+}else if(landingTime>=.28&&alignment>.55){state.combo=0;state.comboLeft=0;}
+state.airTime=0;
 const damage=(Math.max(0,impact-2.6*v.spring*v.landing)*2.3+Math.max(0,Math.abs(state.angle-angleTarget)-.18)*25)*v.damage;
 state.health-=damage;if(damage>.5){spawnImpact(damage);audio.impact(damage)}
 state.shakes=Math.min(9,Math.max(1,impact));state.angle+=(angleTarget-state.angle)*.36;
@@ -1229,6 +1257,16 @@ if(state.pos>old&&state.gas&&Math.random()<.2)state.smoke.push({x:state.pos-45,y
 state.smoke=state.smoke.filter(p=>{p.life-=.025*dt*60;p.y-=.18*dt*60;p.r+=.13*dt*60;return p.life>0}).slice(-40);
 updateDamageFX(dt);const wear=healthBefore-state.health;if(wear>.04){state.wearBucket+=wear;if(state.wearBucket>=2.5){spawnImpact(Math.min(4,state.wearBucket));state.wearBucket=0}}
 state.clock+=dt;state.maxDist=Math.max(state.maxDist,state.pos);state.wheelSpin+=state.speed*dt*60/14;
+if(state.comboLeft>0){state.comboLeft-=dt;if(state.comboLeft<=0)state.combo=0}
+state.popupLeft=Math.max(0,state.popupLeft-dt);if(state.popupLeft===0)$("stuntPopup").hidden=true;
+state.recordPopupLeft=Math.max(0,state.recordPopupLeft-dt);if(state.recordPopupLeft===0)$("recordPopup").hidden=true;
+$("stuntPoints").textContent=state.score.toLocaleString("en-US")+" PTS";
+$("stuntCombo").textContent="×"+Math.max(1,state.combo);
+if(!state.recordBeaten&&state.previousBest>=500&&state.maxDist>state.previousBest){
+ state.recordBeaten=true;state.recordPopupLeft=2.2;
+ $("recordPopup").hidden=false;$("recordPopup").textContent="NEW PERSONAL BEST  ·  "+Math.floor(state.maxDist).toLocaleString("en-US")+" M";
+ audio.record();
+}
 state.recordTime+=dt;captureReplayFrame(false);
 race.ghostAccumulator+=dt;
 if(race.ghostAccumulator>=.10){
