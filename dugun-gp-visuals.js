@@ -291,9 +291,27 @@ function actionEffects(c,s){
 function render(c,s){
  c.save();c.setTransform(1,0,0,1,0,0);
  c.imageSmoothingEnabled=true;c.lineCap="round";c.lineJoin="round";
- sky(c,s);roadway(c,s);streets(c,s);backgroundConvoy(c,s);traffic(c,s);laneDestination(c,s);actors(c,s);navigation(c,s);actionEffects(c,s);map(c,s);
- if(s.mode==="menu"){print(c,"DÜĞÜN KONVOYU",480,150,29,"#fff0ad","#915b5e");}
+ const portrait=typeof window!=="undefined"&&window.innerWidth<=650&&window.innerHeight>window.innerWidth;
+ sky(c,s);
+ if(portrait){
+  fill(c,-1500,226,4000,330,"#79b763");
+  // Dynamic chase-camera pan keeps the player visible through the portrait crop.
+  c.translate(-s.g.lane*roadG(520,s.g.distance).half*.79,0);
+ }
+ roadway(c,s);streets(c,s);backgroundConvoy(c,s);traffic(c,s);laneDestination(c,s);actors(c,s);
+ if(!portrait)navigation(c,s);
+ actionEffects(c,s);
+ if(!portrait)map(c,s);
  c.restore();
+ if(portrait&&s.ride&&s.mode==="playing"){
+  c.save();c.setTransform(1,0,0,1,0,0);
+  const to=s.ride.phase==="waiting"?s.ride.lane:s.ride.destLane;
+  const delta=to-s.g.lane;
+  const arrow=delta<-.24?"◀":delta>.24?"▶":"▼";
+  oval(c,480,180,36,27,"rgba(255,243,190,.94)","#51616b",3);
+  print(c,arrow,480,190,28,"#3d565a","center",null);
+  c.restore();
+ }
 }
 window.DugunVisuals={render,version:"2026.11.01-cartoon-chase"};
 })();
