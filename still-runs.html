@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f7f6f2"><title>Still Runs! — Arcade Driving Game</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#10162e"><title>Still Runs! — Retro Arcade Driving Game</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f7f6f2;color:#111;font-family:Arial,Helvetica,sans-serif}button{font:inherit;cursor:pointer;touch-action:none}a{color:inherit;text-decoration:none}
 main{max-width:1160px;margin:auto;min-height:100dvh;padding:14px 17px;display:flex;flex-direction:column;gap:9px}
@@ -135,15 +135,203 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 }
 @media(prefers-reduced-motion:reduce){.card .car-option,.car-visual svg,.card.selection-card #start{transition:none}}
 
+
+/* STILL RUNS! / RETRO SPACE-ARCADE — fonts and palette drawn from 80s game title screens */
+:root{
+  --arcade-void:#10162c;--arcade-space:#1a2242;--arcade-panel:#1c2445;
+  --arcade-edge:#46517e;--arcade-ivory:#f2f1e9;--arcade-coral:#f58279;
+  --arcade-coral-light:#ffb19a;--arcade-blue:#8ed3e9;--arcade-shadow:#7d343d;
+  --garage-lime:var(--arcade-coral);
+}
+html,body{background:var(--arcade-void);color:var(--arcade-ivory)}
+main{background:var(--arcade-void)}
+.top{font-family:'Press Start 2P',ui-monospace,monospace;font-size:clamp(7px,.7vw,9px);letter-spacing:-.02em;gap:8px}
+.top .game-mark{color:var(--arcade-ivory);font-family:'Chakra Petch',Arial,sans-serif;font-weight:700;font-style:italic;font-size:clamp(15px,2vw,21px);letter-spacing:.04em;white-space:nowrap}
+.top .mark-dot{font-size:13px;color:var(--arcade-coral)}
+.top .game-mark-alt{font:400 clamp(7px,.8vw,9px)/1.2 'Press Start 2P',monospace;letter-spacing:0;font-style:normal;color:var(--arcade-blue)}
+.top .badge{background:none;border:1px solid var(--arcade-edge);color:#9ca9cd;border-radius:0;font:7px/1.6 'Press Start 2P',monospace;padding:7px 8px}
+.heading h1{font:italic 700 clamp(44px,8vw,90px)/.88 'Chakra Petch',Arial,sans-serif;color:var(--arcade-coral);text-transform:uppercase;text-shadow:3px 3px 0 var(--arcade-shadow),6px 6px 0 #070b17;letter-spacing:-.07em}
+.heading p{font:600 12px/1.45 'Chakra Petch',Arial,sans-serif;color:#b9c3e3}
+.metric{background:#182139;border-color:var(--arcade-edge);border-radius:0}
+.metric small{font:7px/1.65 'Press Start 2P',monospace;color:#aab6d6}
+.metric b{font-family:'Chakra Petch',Arial,sans-serif;color:var(--arcade-ivory)}
+.frame{border:2px solid var(--arcade-edge)}
+.instruction{color:#a7b0cf;font-family:'Chakra Petch',monospace;font-weight:600}
+.controls button{background:#ed8178;border-color:#b5515b;color:#1a1c31;font:italic 700 22px 'Chakra Petch',Arial,sans-serif}
+.controls button:active,.controls button.down{background:#ffb29f;color:#111524}
+.smallnote{color:#8793ba}
+/* Stars and scanlines are confined to the menu so the driving game stays readable. */
+.overlay{
+ background-color:#090e22;
+ background-image:
+ radial-gradient(circle at 7% 15%,#92eaff 0 1px,transparent 2px),
+ radial-gradient(circle at 42% 29%,#fff4e2 0 1px,transparent 2px),
+ radial-gradient(circle at 80% 8%,#fb978b 0 1px,transparent 2px),
+ radial-gradient(circle at 65% 75%,#82a7eb 0 1.5px,transparent 2.5px),
+ radial-gradient(circle at 16% 83%,#eae7ff 0 1px,transparent 2px),
+ radial-gradient(circle at 92% 60%,#f9a194 0 1px,transparent 2px),
+ linear-gradient(170deg,#111835,#080e20);
+ background-size:283px 181px,317px 223px,397px 277px,463px 211px,349px 263px,439px 341px,100% 100%;
+ padding:clamp(7px,1.5vw,16px);
+}
+.overlay:before{
+ content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+ opacity:.13;background:repeating-linear-gradient(0deg,transparent 0 3px,#d1c4e5 4px,transparent 5px 8px);
+}
+.card.selection-card{
+ z-index:1;position:relative;
+ background:linear-gradient(155deg,#222b51 0%,#161f3c 68%,#141b36 100%);
+ color:var(--arcade-ivory);
+ border:3px solid #57668f;border-radius:0;
+ box-shadow:7px 7px 0 #080d1f,13px 13px 0 #101731,0 0 52px #d0807430;
+ padding:clamp(11px,2vw,20px);
+ width:min(100%,930px);
+ max-height:100%;overflow:auto;scrollbar-color:#67749e #141d3a;
+}
+.card.selection-card:before{
+ content:"";display:block;width:100%;height:4px;
+ margin:-1px 0 11px;
+ background:repeating-linear-gradient(90deg,var(--arcade-coral) 0 34px,transparent 34px 39px);
+}
+.card.selection-card:after{content:"✦";position:absolute;top:12px;right:18px;color:var(--arcade-blue);font-size:16px;text-shadow:18px 11px 0 #f5827988, -29px 13px 0 #b8c3e077;pointer-events:none}
+.card.selection-card #kicker{
+ display:block;color:var(--arcade-blue);
+ font:7px/1.7 'Press Start 2P',monospace;letter-spacing:0;
+ text-transform:uppercase;padding-right:48px;
+}
+.selection-card h2{
+ font:italic 700 clamp(35px,5.6vw,65px)/.98 'Chakra Petch',Arial,sans-serif;
+ text-transform:uppercase;letter-spacing:-.075em;color:var(--arcade-coral);
+ text-shadow:3px 3px 0 var(--arcade-shadow),6px 6px 0 #080b1a;
+ margin:8px 0 10px;
+}
+.selection-card .lead{
+ color:var(--arcade-ivory);
+ font:500 clamp(12px,1.6vw,15px)/1.4 'Chakra Petch',Arial,sans-serif;
+ letter-spacing:.02em;margin:0 0 14px;
+}
+.car-grid{gap:10px}
+.card .car-option{
+ color:var(--arcade-ivory)!important;background:#151e3a!important;
+ border:2px solid #596588!important;border-radius:0;
+ box-shadow:3px 3px 0 #090d22;min-height:225px;gap:5px;
+ transform:none;transition:border-color .13s ease,background .13s ease,transform .13s ease,box-shadow .13s ease;
+}
+.card .car-option:hover:not(.selected){
+ background:#26345b!important;color:#fff!important;
+ border-color:#9bb8da!important;transform:translateY(-2px);
+ box-shadow:3px 5px 0 #090d22;
+}
+.card .car-option.selected{
+ color:#17182f!important;background:#f48c84!important;border:2px solid #ffe1c0!important;
+ box-shadow:0 0 0 2px #a94956,5px 6px 0 #080d22,0 0 22px #f5827950;
+ transform:translateY(-2px);
+}
+.car-visual{
+ height:83px;border-radius:0;overflow:hidden;
+ background:
+ radial-gradient(circle at 74% 27%,#db7a8d 0 11px,transparent 12px),
+ radial-gradient(circle at 27% 27%,#99dff4 0 1px,transparent 2px),
+ radial-gradient(circle at 9% 62%,#cad9f9 0 1px,transparent 2px),
+ linear-gradient(180deg,#1d284c,#101a35);
+ border-bottom:2px solid #50608d;
+}
+.car-visual:before{inset:70% 0 -22%;transform:none;background:repeating-linear-gradient(90deg,#b0b9df55 0 10px,transparent 10px 23px);opacity:.27}
+.car-visual svg{width:96%;height:87px;max-width:177px;filter:drop-shadow(3px 5px 0 #080d20aa);shape-rendering:crispEdges}
+.car-visual .car-number{color:#a7ceef;font:8px/1.4 'Press Start 2P',monospace;top:7px;left:7px}
+.car-option.selected .car-visual{background:radial-gradient(circle at 76% 30%,#f9ac9b 0 13px,transparent 14px),linear-gradient(180deg,#33416b,#151b3c)}
+.card .car-option.selected .car-number{color:#e9f2fc}
+.car-option .car-name{
+ font:italic 700 clamp(15px,1.85vw,21px)/1.05 'Chakra Petch',Arial,sans-serif;
+ color:var(--arcade-ivory);letter-spacing:-.04em;margin:3px 0 1px;
+}
+.card .car-option.selected .car-name{color:#151a32}
+.car-option .car-tag{
+ background:#303d66;color:#d0deef;
+ font:6.5px/1.5 'Press Start 2P',monospace;letter-spacing:0;
+ padding:5px 5px;max-width:100%;overflow-wrap:anywhere;
+}
+.card .car-option.selected .car-tag{background:#252544;color:#ffada2}
+.car-option .origin{color:#a4b8d5;font:9px/1.45 'Chakra Petch',Arial,sans-serif;font-weight:700;letter-spacing:.035em}
+.car-option .fact{color:#d4d9ee;font:600 11px/1.28 'Chakra Petch',Arial,sans-serif;min-height:28px}
+.car-option .stat{
+ color:#b9c8e1;font:600 10px/1.4 'Chakra Petch',Arial,sans-serif;
+ grid-template-columns:38px 1fr;gap:4px;
+}
+.car-option .bar{height:6px;border:1px solid #607092;background:#202844;border-radius:0}
+.car-option .bar i{height:100%;display:block;border-radius:0;background:repeating-linear-gradient(90deg,#f58279 0 13px,#c96c77 13px 15px);max-width:100%}
+.card .car-option.selected .origin,.card .car-option.selected .fact,.card .car-option.selected .stat{color:#323048}
+.card .car-option.selected .bar{background:#d9a49f;border-color:#803f59}
+.card .car-option.selected .bar i{background:repeating-linear-gradient(90deg,#302441 0 13px,#78506a 13px 15px)}
+.card.selection-card .chooser-tip{
+ color:#99a8ce;font:7px/1.65 'Press Start 2P',monospace;letter-spacing:0;margin-top:11px;
+}
+.card.selection-card #start{
+ background:var(--arcade-coral);color:#14172a;border:3px solid #ffbbad;
+ border-radius:0;box-shadow:5px 5px 0 #873947,8px 8px 0 #0b0f1f;
+ font:italic 700 clamp(20px,3vw,29px)/1.1 'Chakra Petch',Arial,sans-serif;
+ letter-spacing:.055em;text-transform:uppercase;min-height:51px;
+ margin:15px 0 5px;padding:10px;
+}
+.card.selection-card #start:hover{background:#ffaba0;color:#0e1327;transform:translate(-1px,-2px);box-shadow:6px 7px 0 #873947,9px 9px 0 #0b0f1f}
+.card.selection-card #start:active{transform:translate(4px,4px);box-shadow:1px 1px 0 #873947}
+.card.selection-card #share{background:var(--arcade-ivory);color:#121a33}
+.card.selection-card .results,.card.selection-card #replayNote,.card.selection-card .record-note{color:var(--arcade-ivory)}
+.card.selection-card .results-actions button{background:#27325a;color:#f7efe8;border-color:#7e93bf}
+.card.selection-card .results-actions button:hover{background:#374574;color:white}
+.card.selection-card .new-run{color:#9fb6e2}
+.card.selection-card .challenge-note{background:#24375e;border-color:#679bca;color:#e9f3ff}
+@media(max-width:720px){
+ .card.selection-card{padding:9px;box-shadow:4px 4px 0 #080d1f}
+ .card.selection-card:before{margin:0 0 8px}
+ .card.selection-card #kicker{font-size:6px}
+ .selection-card h2{font-size:clamp(27px,7vw,43px);text-shadow:2px 2px 0 #873947,4px 4px 0 #080b1a;margin:4px 0 7px}
+ .selection-card .lead{font-size:11px;margin-bottom:8px}
+ .car-grid{gap:7px}
+ .card .car-option{min-height:170px;padding:6px!important;gap:3px}
+ .car-visual{height:55px}
+ .car-visual svg{height:60px}
+ .car-option .car-name{font-size:clamp(14px,3.8vw,18px)}
+ .car-option .car-tag{font-size:5.4px;line-height:1.6;padding:4px}
+ .car-option .origin{font-size:8px}
+ .car-option .fact{font-size:9px;min-height:24px}
+ .car-option .stat{font-size:9px;grid-template-columns:33px 1fr}
+ .card.selection-card .chooser-tip{font-size:5.6px;line-height:1.8;margin:7px 0 0}
+ .card.selection-card #start{font-size:20px;margin:9px 0 4px;min-height:43px;padding:8px}
+ .top .badge{font-size:6px}
+ .heading h1{font-size:47px}
+ .heading p{font-size:10px}
+}
+@media(max-width:380px){
+ .card .car-option{min-height:160px;padding:5px!important}
+ .car-visual{height:49px}
+ .car-visual svg{height:55px}
+ .car-option .car-tag{font-size:5px}
+ .selection-card h2{font-size:28px}
+ .car-option .stat{font-size:8px;grid-template-columns:28px 1fr}
+}
+@media(max-height:610px) and (min-width:721px){
+ .card.selection-card{padding:10px 16px}
+ .card .car-option{min-height:182px;padding:7px!important}
+ .car-visual{height:60px}
+ .car-visual svg{height:65px}
+ .selection-card h2{font-size:38px;margin:5px 0}
+ .selection-card .lead{margin-bottom:7px}
+ .card.selection-card #start{min-height:43px;margin-top:8px}
+}
+@media(prefers-reduced-motion:reduce){
+ .card .car-option,.car-visual svg,.card.selection-card #start{transition:none}
+}
+
 </style></head><body><main>
-<div class="top"><span class="game-mark">STILL RUNS! <span class="mark-dot">●</span> ARCADE</span><span class="badge">FOUR CARS. NO WARRANTIES.</span></div>
+<div class="top"><span class="game-mark">STILL RUNS! <span class="mark-dot">✦</span> <span class="game-mark-alt">ARCADE / 001</span></span><span class="badge">FOUR CARS. NO WARRANTIES.</span></div>
 <div class="heading"><h1>still runs.</h1><p>One pedal. Four ageing legends.<br>Common sense has called in sick.</p></div>
 <div class="hud"><div class="metric"><small>DISTANCE</small><b id="distance">0 m</b></div><div class="metric"><small>SPEED</small><b id="speed">0</b></div><div class="metric"><small>CONDITION</small><b id="health">100%</b></div><div class="metric"><small>TERRAINS</small><b id="regions">0 / 16</b></div></div>
 <div class="frame" id="frame"><canvas id="scene" aria-label="A side-scrolling driving game with four classic cars and increasingly difficult terrain"></canvas><div id="toast" aria-live="polite"></div><div id="finalHint" hidden>EVENT HORIZON · KEEP YOUR SPEED UP TO ESCAPE</div><div id="replayLabel" hidden>REPLAY · LAST 8 SECONDS</div>
 <div class="overlay" id="overlay"><div class="card selection-card">
-<small id="kicker">VEHICLE SELECTION / NO REFUNDS</small>
-<h2 id="cardTitle">Choose a car.</h2>
-<p id="cardText" class="lead">Four classics. One poor decision.</p>
+<small id="kicker">01 / VEHICLE SELECT · NO REFUNDS</small>
+<h2 id="cardTitle">CHOOSE A CAR.</h2>
+<p id="cardText" class="lead">FOUR CLASSICS. ONE POOR DECISION.</p>
 <div id="chooser"><div id="challenge" class="challenge-note" hidden></div><div class="car-grid" id="carGrid" aria-label="Choose a vehicle"></div><p class="chooser-tip">UNSCIENTIFIC STATS. DEEPLY OPINIONATED VEHICLES.</p></div>
 <button id="start" type="button">START THE ENGINE →</button>
 <button id="share" type="button" class="secondary" hidden>SHARE YOUR RUN ↗</button>
