@@ -570,6 +570,95 @@ html,body,main{background:#0b1030}
  .card.selection-card #start{min-height:36px;margin-top:6px}
 }
 
+
+/* MOBILE GAME VIEW — fit all four vehicle choices and START in one usable viewport */
+@media(max-width:650px){
+ html,body{height:100%;min-height:0;overflow:hidden;overscroll-behavior:none}
+ main{width:100%;height:100dvh;min-height:0;max-width:none;overflow:hidden;padding:calc(env(safe-area-inset-top,0px) + 5px) 8px calc(env(safe-area-inset-bottom,0px) + 5px);gap:5px}
+ .top{flex:0 0 auto;min-height:25px}
+ .top .game-mark{font-size:14px;letter-spacing:0;gap:4px}
+ .top .game-mark-alt{font-size:6px}
+ .top .sound-toggle{min-height:27px;padding:3px 7px;font-size:9px}
+ .heading{flex:0 0 auto;align-items:center;margin:0;padding:1px 1px 2px}
+ .heading h1{font-size:clamp(28px,8vw,39px);line-height:1;text-shadow:2px 2px 0 #9e2e50,4px 4px 0 #070921}
+ .heading p{display:none}
+ .hud{flex:0 0 auto;gap:4px}
+ .metric{min-width:0;padding:4px 5px!important}
+ .metric small{font-size:7px!important;line-height:1.25;letter-spacing:-.025em}
+ .metric b{font-size:clamp(15px,4.4vw,20px)!important;white-space:nowrap}
+ .frame{flex:1 1 auto;min-height:0;height:0;border-width:2px}
+ .overlay{padding:5px;align-items:center;overflow:hidden}
+ .card.selection-card{width:100%;max-width:480px;max-height:100%;padding:8px 9px;overflow-y:auto;box-shadow:3px 3px 0 #050924;border-width:2px}
+ .card.selection-card:before{height:2px;margin:0 0 5px}
+ .card.selection-card:after{display:none}
+ .card.selection-card #kicker{font-size:5.5px;padding:0}
+ .selection-card h2{font-size:clamp(23px,7.3vw,31px);line-height:1;margin:3px 0 2px}
+ .selection-card .lead{font-size:10px;line-height:1.15;margin:0 0 7px}
+ .race-mode{gap:5px;margin:0 0 7px}
+ .card.selection-card .race-mode button{font-size:9px;min-height:29px;padding:4px 5px;line-height:1.05}
+ #dailyDate{font-size:8px}
+ .car-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ .card .car-option{min-height:0!important;padding:5px!important;gap:2px;border-width:1.5px!important;box-shadow:none}
+ .card .car-option.selected{transform:none;box-shadow:inset 0 0 0 2px #ba683c}
+ .car-visual{height:42px;border-bottom-width:1px}
+ .car-visual svg{height:49px;max-width:115px}
+ .car-visual .car-number{font-size:6px;top:4px;left:5px}
+ .car-option .car-name{font-size:clamp(12px,3.6vw,15px);line-height:1.03;margin:2px 0 0}
+ .car-option .car-tag{font:5px/1.1 'Press Start 2P',monospace;padding:3px;max-width:100%;overflow-wrap:anywhere}
+ .car-option .origin,.car-option .fact{display:none!important}
+ .car-option .stat{font-size:8px;line-height:1.05;grid-template-columns:28px 1fr;gap:3px}
+ .car-option .bar{height:4px}
+ .card.selection-card .chooser-tip{display:none}
+ .card.selection-card #start{position:sticky;bottom:0;width:100%;min-height:39px;margin:8px 0 1px;padding:7px;font-size:19px;box-shadow:2px 2px 0 #a62958}
+ .controls{flex:0 0 auto;gap:7px;align-items:center}
+ .instruction{font-size:9px;line-height:1.25;padding:2px 0;max-width:45%;letter-spacing:-.02em}
+ .instruction br:nth-of-type(2){display:none}
+ .controls button{min-width:0;flex:1;min-height:49px;padding:5px;font-size:clamp(16px,5.3vw,21px)}
+ .smallnote{display:none}
+ #runCoach{font-size:8px;top:57px;line-height:1.2}
+ #ghostBadge{font-size:8px;top:46px}
+ #finalHint{bottom:5px}
+ .card.selection-card .results strong{font-size:22px}
+ .card.selection-card .results-actions button{min-height:34px}
+}
+@media(max-width:650px) and (max-height:680px){
+ main{gap:3px}
+ .top{min-height:22px}
+ .top .game-mark{font-size:12px}
+ .heading h1{font-size:28px}
+ .metric{padding:3px 4px!important}
+ .metric b{font-size:15px!important}
+ .card.selection-card{padding:6px 7px}
+ .selection-card h2{font-size:23px}
+ .selection-card .lead{font-size:9px;margin-bottom:4px}
+ .race-mode{margin-bottom:4px}
+ .card.selection-card .race-mode button{min-height:26px}
+ .car-grid{gap:4px}
+ .card .car-option{padding:4px!important}
+ .car-visual{height:34px}
+ .car-visual svg{height:42px}
+ .car-option .car-name{font-size:12px}
+ .car-option .car-tag{font-size:4.4px}
+ .car-option .stat{font-size:7px}
+ .card.selection-card #start{min-height:34px;margin-top:5px;font-size:17px}
+ .controls button{min-height:42px}
+}
+@media(max-width:650px) and (orientation:landscape){
+ .top,.heading,.smallnote{display:none}
+ main{padding:3px 6px;gap:3px}
+ .hud{gap:4px}
+ .metric small{font-size:6px!important}
+ .metric b{font-size:14px!important}
+ .controls button{min-height:36px}
+ .instruction{font-size:8px}
+ .card.selection-card{max-width:670px}
+ .car-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .card .car-option{padding:4px!important}
+ .car-visual{height:37px}
+ .car-visual svg{height:44px}
+ .card.selection-card .race-mode button{min-height:25px}
+}
+
 </style></head><body><main>
 <div class="top"><span class="game-mark">STILL RUNS! <span class="mark-dot">✦</span> <span class="game-mark-alt">ARCADE / 001</span></span><div class="top-controls"><span class="badge">FOUR CARS. NO WARRANTIES.</span><button type="button" id="soundToggle" class="sound-toggle" aria-label="Mute arcade game sounds" aria-pressed="true" title="Toggle arcade sounds">SFX ON <span aria-hidden="true">◖))</span></button></div></div>
 <div class="heading"><h1>still runs.</h1><p>One pedal. Four ageing legends.<br>Common sense has called in sick.</p></div>
