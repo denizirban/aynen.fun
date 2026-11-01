@@ -531,6 +531,45 @@ html,body,main{background:#0b1030}
 .card.selection-card #share[hidden]{display:none!important}
 @media(max-width:390px){.mini-share{padding:13px 11px}.mini-share-icon{height:50px}.mini-share-icons{gap:4px}}
 
+
+/* CrazyGames-style compact launch, visible first-run lesson and saved ghost race */
+.race-mode{display:flex;gap:7px;margin:0 0 10px}
+.card.selection-card .race-mode button{
+ width:auto;flex:1;min-height:34px;padding:7px 9px;margin:0;
+ background:#1a2855;border:1px solid #627bb4;box-shadow:none;color:#bdd7f1;
+ border-radius:0;font:700 10px/1.2 'Chakra Petch',sans-serif;
+ letter-spacing:.05em;
+}
+.card.selection-card .race-mode button.active{background:#53e2f4;color:#0e1535;border-color:#bdfff7}
+.card.selection-card .race-mode button:hover{border-color:#ffdc6f}
+#dailyDate{opacity:.65;font-size:9px}
+#runCoach{position:absolute;left:50%;top:69px;transform:translateX(-50%);z-index:3;
+ width:max-content;max-width:calc(100% - 24px);padding:7px 11px;
+ color:#101b37;background:#ffe180ee;border:1px solid #19192f;
+ text-align:center;font:700 10px/1.3 'Chakra Petch',sans-serif;pointer-events:none}
+#ghostBadge{position:absolute;right:12px;top:54px;z-index:3;background:#15244bda;color:#90eefa;
+ border:1px solid #62c7d8;padding:5px 8px;font:700 10px monospace;pointer-events:none}
+#runCoach[hidden],#ghostBadge[hidden]{display:none}
+@media(max-width:620px){
+ .heading h1{font-size:clamp(31px,8vw,47px);line-height:1}
+ .heading p{font-size:9px;max-width:140px}
+ .card.selection-card .race-mode button{font-size:9px;min-height:33px}
+ .race-mode{margin-bottom:7px}
+ #runCoach{top:62px;font-size:9px;padding:5px 7px}
+ #ghostBadge{top:48px;right:6px;font-size:9px}
+}
+@media(max-height:520px){
+ .top{min-height:20px}.heading{margin:0}
+ .heading h1{font-size:clamp(30px,6vw,55px)}
+ .hud .metric{padding:4px 7px}
+ .hud .metric b{font-size:18px}
+ .controls button{min-height:48px}
+ .card.selection-card{padding:7px 11px}
+ .car-visual{height:42px}.car-visual svg{height:48px}
+ .card .car-option{min-height:142px}
+ .card.selection-card #start{min-height:36px;margin-top:6px}
+}
+
 </style></head><body><main>
 <div class="top"><span class="game-mark">STILL RUNS! <span class="mark-dot">✦</span> <span class="game-mark-alt">ARCADE / 001</span></span><div class="top-controls"><span class="badge">FOUR CARS. NO WARRANTIES.</span><button type="button" id="soundToggle" class="sound-toggle" aria-label="Mute arcade game sounds" aria-pressed="true" title="Toggle arcade sounds">SFX ON <span aria-hidden="true">◖))</span></button></div></div>
 <div class="heading"><h1>still runs.</h1><p>One pedal. Four ageing legends.<br>Common sense has called in sick.</p></div>
@@ -540,12 +579,12 @@ html,body,main{background:#0b1030}
  <div id="finalInstruction" class="final-instruction">DRIVE PAST THE BLACK HOLE. DO NOT STOP.</div>
  <div class="final-track"><span id="finalFill"></span></div>
  <div class="final-reading"><span id="finalCurrent">0 / 71 KM/H</span><span>TARGET SPEED</span></div>
- </div><div id="replayLabel" hidden>REPLAY · LAST 8 SECONDS</div>
+ </div><div id="replayLabel" hidden>REPLAY · LAST 8 SECONDS</div><div id="runCoach" hidden>HOLD TO ACCELERATE · RELEASE BEFORE BIG LANDINGS</div><div id="ghostBadge" hidden>GHOST +0 m</div>
 <div class="overlay" id="overlay"><div class="card selection-card">
 <small id="kicker">01 / VEHICLE SELECT · NO REFUNDS</small>
 <h2 id="cardTitle">CHOOSE A CAR.</h2>
 <p id="cardText" class="lead">FOUR CLASSICS. ONE POOR DECISION.</p>
-<div id="chooser"><div id="challenge" class="challenge-note" hidden></div><div class="car-grid" id="carGrid" aria-label="Choose a vehicle"></div><p class="chooser-tip">UNSCIENTIFIC STATS. DEEPLY OPINIONATED VEHICLES.</p></div>
+<div id="chooser"><div id="challenge" class="challenge-note" hidden></div><div class="race-mode" role="group" aria-label="Game mode"><button id="modeClassic" type="button" class="active" aria-pressed="true">CLASSIC RUN</button><button id="modeDaily" type="button" aria-pressed="false">DAILY CHALLENGE <span id="dailyDate"></span></button></div><div class="car-grid" id="carGrid" aria-label="Choose a vehicle"></div><p class="chooser-tip">UNSCIENTIFIC STATS. DEEPLY OPINIONATED VEHICLES.</p></div>
 <button id="start" type="button">START THE ENGINE →</button>
 <button id="share" type="button" class="secondary" hidden>SHARE YOUR RUN ↗</button>
 <div class="results" id="results" hidden><div><strong id="resultDistance">0 m</strong><span>DISTANCE</span></div><div><strong id="resultLands">0</strong><span>TERRAINS REACHED</span></div></div><p id="recordNote" class="record-note" hidden></p>
@@ -616,6 +655,7 @@ const gravityAt=w=>({6:.63,7:.78,8:.90,9:.64,10:.85,12:.77,13:.83,14:.94,15:1.24
 const slipperyAt=w=>(w===5||w===9||w===10);
 const terrainShape=(u,c,a)=>a*Math.exp(-Math.pow((u-c)/64,2));
 
+const race={mode:"classic",dailyKey:new Date().toISOString().slice(0,10),ghost:[],ghostSamples:[],ghostPoint:null,ghostAccumulator:0,clockAccumulator:0};
 const replaySession={playing:false,mode:null,frames:[],elapsed:0,duration:0,origin:0,index:0,storedEnd:null,recorder:null,stream:null,chunks:[],videoBlob:null,videoType:""};
 const state={running:false,over:false,gas:false,car:"toros",pos:0,speed:0,angle:0,angular:0,y:0,vy:0,health:100,last:0,landed:true,visited:0,maxDist:0,smoke:[],wheelSpin:0,shakes:0,toastTimer:0,clock:0,high:0,sparks:[],damageSmoke:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1};
 let vw=0,vh=0,dpr=1;
@@ -797,7 +837,7 @@ return '<svg viewBox="0 0 122 74" aria-hidden="true"><path d="'+roof+'" fill="'+
 }
 function buildCards(){
 $("carGrid").innerHTML=vehicles.map((c,i)=>'<button class="car-option" type="button" data-car="'+c.id+'" aria-pressed="false">'+'<span class="car-visual"><span class="car-number">0'+(i+1)+'</span>'+carIcon(c)+'</span><span class="car-name">'+c.name+'</span>'+'<span class="car-tag">'+c.tag+'</span>'+'<span class="origin">'+c.origin+'</span><span class="fact">'+c.fact+'</span>'+["Speed","Grip","Tough"].map((name,i)=>'<span class="stat"><span>'+name+'</span><span class="bar"><i style="width:'+(c.bars[i]*20)+'%"></i></span></span>').join("")+'</button>').join("");
-$("carGrid").addEventListener("click",e=>{const b=e.target.closest("[data-car]");if(!b)return;state.car=b.dataset.car;markCar();audio.select(state.car)});
+$("carGrid").addEventListener("click",e=>{const b=e.target.closest("[data-car]");if(!b)return;state.car=b.dataset.car;markCar();loadGhost();audio.select(state.car)});
 markCar();
 }
 function markCar(){document.querySelectorAll("[data-car]").forEach(b=>{const yes=b.dataset.car===state.car;b.classList.toggle("selected",yes);b.setAttribute("aria-pressed",String(yes))});$("start").textContent="START RUN →"}
@@ -818,8 +858,28 @@ if(wi===8)ty+=terrainShape(u,350,18);
 if(wi===9)ty-=terrainShape(u,395,22);
 if(wi===11)ty+=terrainShape(u,330,27);
 if(wi===12)ty-=terrainShape(u,400,21);
+if(race.mode==="daily")ty+=Math.sin(x*.009+dateSeed()*.013)*Math.min(7,4+q*2);
 return .73*vh+ty
 }
+function dateSeed(){let n=0;for(const c of race.dailyKey)n=(n*31+c.charCodeAt(0))%99991;return n}
+function raceKey(){return "still-runs-"+race.mode+"-"+state.car+(race.mode==="daily"?"-"+race.dailyKey:"")}
+function loadGhost(){
+ race.ghost=[];try{
+ const data=JSON.parse(localStorage.getItem(raceKey()+"-ghost")||"null");
+ if(data&&Array.isArray(data.points)&&data.points.length<4000)race.ghost=data.points;
+ }catch(e){}
+ race.ghostPoint=null;race.ghostSamples=[];race.ghostAccumulator=0;
+}
+function setRaceMode(mode){
+ race.mode=mode==="daily"?"daily":"classic";
+ for(const [id,on] of [["modeClassic",race.mode==="classic"],["modeDaily",race.mode==="daily"]]){
+ const b=$(id);b.classList.toggle("active",on);b.setAttribute("aria-pressed",String(on));
+ }
+ loadGhost();markCar();
+}
+$("dailyDate").textContent=race.dailyKey.slice(5);
+$("modeClassic").addEventListener("click",()=>setRaceMode("classic"));
+$("modeDaily").addEventListener("click",()=>setRaceMode("daily"));
 function slopeAt(x){return Math.atan2(levelAt(x+14)-levelAt(x-14),28)}
 function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>e.classList.remove("show"),1450)}
 
@@ -925,7 +985,7 @@ $("watchReplay").addEventListener("click",()=>beginReplay(false));
 $("saveReplay").addEventListener("click",()=>replaySession.videoBlob?shareReplayFile():beginReplay(true));
 
 function reset(){
-audio.start();
+audio.start();loadGhost();
 replaySession.playing=false;replaySession.mode=null;replaySession.frames=[];replaySession.videoBlob=null;replaySession.videoType="";
 const startX=24;
 Object.assign(state,{running:true,over:false,gas:false,pos:startX,speed:0,angle:0,angular:0,y:levelAt(startX)-car().clearance,vy:0,health:100,last:performance.now(),landed:true,visited:0,maxDist:startX,smoke:[],damageSmoke:[],sparks:[],flash:0,smokeBudget:0,wearBucket:0,finalResult:null,shakes:0,clock:0,checkpoint:0,startedCheckpoint:false,iceSkid:0,recordTime:0,recordFrames:[],lastSample:-1});
@@ -955,7 +1015,13 @@ $("share").hidden=portalMode;$("results").hidden=false;$("changeCar").hidden=fal
 $("resultDistance").textContent=m.toLocaleString("en-US")+" m";
 $("resultLands").textContent=String(Math.min(worlds.length,state.visited+1));
 let best=m,previous=0;
-try{const key="still-runs-best-"+state.car;previous=Number(localStorage.getItem(key)||0);best=Math.max(m,previous);if(m>previous)localStorage.setItem(key,String(m))}catch(e){}
+try{
+ const key=raceKey()+"-best";previous=Number(localStorage.getItem(key)||0);best=Math.max(m,previous);
+ if(m>previous){
+ localStorage.setItem(key,String(m));
+ if(race.ghostSamples.length>1)localStorage.setItem(raceKey()+"-ghost",JSON.stringify({score:m,points:race.ghostSamples}));
+ }
+}catch(e){}
 $("recordNote").hidden=false;
 $("recordNote").textContent=oops?"BLACK HOLE 1 — DRIVER 0":survived?"ESCAPE RECORDED. NO FURTHER ACTION.":m>previous?"PERSONAL BEST. NOTED.":"BEST "+best.toLocaleString("en-US")+" M · STILL STANDING.";
 $("replayActions").hidden=state.recordFrames.length<2;
@@ -1079,6 +1145,17 @@ state.smoke=state.smoke.filter(p=>{p.life-=.025*dt*60;p.y-=.18*dt*60;p.r+=.13*dt
 updateDamageFX(dt);const wear=healthBefore-state.health;if(wear>.04){state.wearBucket+=wear;if(state.wearBucket>=2.5){spawnImpact(Math.min(4,state.wearBucket));state.wearBucket=0}}
 state.clock+=dt;state.maxDist=Math.max(state.maxDist,state.pos);state.wheelSpin+=state.speed*dt*60/14;
 state.recordTime+=dt;captureReplayFrame(false);
+race.ghostAccumulator+=dt;
+if(race.ghostAccumulator>=.10){
+ race.ghostAccumulator-=.10;
+ race.ghostSamples.push([Math.round(state.clock*10)/10,Math.round(state.pos),Math.round(state.y),Math.round(state.angle*1000)/1000]);
+ if(race.ghostSamples.length>2500)race.ghostSamples.shift();
+}
+if(race.ghost.length){
+ const t=state.clock;let j=Math.min(race.ghost.length-1,Math.floor(t*10));
+ while(j<race.ghost.length-1&&race.ghost[j+1][0]<t)j++;
+ race.ghostPoint=race.ghost[j];
+}else race.ghostPoint=null;
 const idx=stageAt(state.pos);if(idx>state.visited){state.visited=idx;audio.stage(idx);toast((worlds[idx][0]+" · "+stageTips[idx]).toUpperCase())}
 if(state.health<=0||Math.abs(state.angle)>1.54){state.health=Math.max(0,state.health);finish("wreck")}
 if(state.running && state.pos>=BLACK_HOLE_GATE){finish(state.speed>=ESCAPE_SPEED?"escape":"oops")}
@@ -1215,15 +1292,42 @@ drawBlackHole(cam,n);drawEscapeGate(cam,n);
 for(const p of state.smoke){ctx.globalAlpha=p.life*.3;ctx.fillStyle="#ddd";ctx.beginPath();ctx.arc(p.x-cam,p.y,p.r,0,7);ctx.fill()}
 for(const p of state.damageSmoke){ctx.globalAlpha=(p.heavy?.5:p.medium?.33:.22)*p.life;ctx.fillStyle=p.heavy?"#17151b":p.medium?"#44444b":"#92979b";ctx.beginPath();ctx.arc(p.x-cam,p.y,p.r,0,Math.PI*2);ctx.fill()}
 for(const p of state.sparks){ctx.globalAlpha=p.life;ctx.fillStyle=p.life>.5?"#fff0ad":"#ff8d44";ctx.fillRect(p.x-cam,p.y,p.r,p.r)}ctx.globalAlpha=1;
+if(race.ghostPoint && state.running){
+ const g=race.ghostPoint,gx=g[1]-cam;
+ if(gx>=-90&&gx<=vw+90){
+ ctx.save();ctx.globalAlpha=.34;ctx.fillStyle="#86f4ff";ctx.strokeStyle="#86f4ff";
+ ctx.translate(gx,g[2]);ctx.rotate(g[3]);ctx.fillRect(-62,-24,126,15);
+ ctx.fillRect(-41,-42,78,18);
+ for(const wx of [-42,45]){ctx.beginPath();ctx.arc(wx,1,14,0,Math.PI*2);ctx.stroke()}
+ ctx.restore();
+ }
+}
 drawCar(ox,state.y,state.angle);
 if(slipperyAt(w)&&state.landed&&state.speed>3){ctx.globalAlpha=.18+Math.abs(state.iceSkid)*.016;ctx.strokeStyle="#bce8ff";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ox-48,state.y+10);ctx.lineTo(ox-69-Math.abs(state.iceSkid)*2,state.y+12);ctx.stroke();ctx.globalAlpha=1}
 if(state.flash>.01){ctx.fillStyle="rgba(255,243,203,"+(state.flash*.42)+")";ctx.fillRect(0,0,vw,vh)}
 ctx.fillStyle="#131a19bd";ctx.fillRect(12,11,Math.min(vw-24,300),49);ctx.fillStyle="#f3f4ec";ctx.font="bold 13px Arial";ctx.fillText(world[0],22,30);ctx.fillStyle="#c9d4cf";ctx.font="10px monospace";ctx.fillText(stageTips[n],22,48);
 ctx.fillStyle="#111";ctx.fillRect(vw-132,11,120,34);ctx.fillStyle="#fff";ctx.font="11px monospace";ctx.fillText(state.gas?"● THROTTLE":"○ COASTING",vw-122,32);
 ctx.restore();
+const coach=$("runCoach"),ghostBadge=$("ghostBadge");
+coach.hidden=!state.running||state.clock>28||stageAt(state.pos)>=14;
+if(!coach.hidden)coach.textContent=state.clock<7?"HOLD TO ACCELERATE · RELEASE TO SLOW":state.clock<15?"WATCH THE HILLS · RELEASE BEFORE HARD LANDINGS":"MOMENTUM MATTERS · CONTROL YOUR SPEED";
+ghostBadge.hidden=!state.running||!race.ghostPoint;
+if(!ghostBadge.hidden){const diff=Math.round(state.pos-race.ghostPoint[1]);ghostBadge.textContent="GHOST "+(diff>=0?"+":"")+diff+" m"}
 }
-function loop(t){const dt=Math.min(.05,Math.max(0,(t-(state.last||t))/1000));state.last=t;if(replaySession.playing)advanceReplay(dt);else update(dt);audio.tick();render();requestAnimationFrame(loop)}
-buildCards();requestAnimationFrame(loop);
+const FIXED_DT=1/60;
+let lastFrame=0,accumulator=0;
+function loop(t){
+ if(!lastFrame)lastFrame=t;
+ const elapsed=Math.min(.12,Math.max(0,(t-lastFrame)/1000));lastFrame=t;
+ accumulator+=elapsed;let steps=0;
+ while(accumulator>=FIXED_DT&&steps<8){
+  if(replaySession.playing)advanceReplay(FIXED_DT);else update(FIXED_DT);
+  accumulator-=FIXED_DT;steps++;
+ }
+ if(steps===8)accumulator=0;
+ audio.tick();render();requestAnimationFrame(loop);
+}
+buildCards();setRaceMode("classic");requestAnimationFrame(loop);
 })();
 
 </script></body></html>
