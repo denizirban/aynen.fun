@@ -139,7 +139,7 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:auto
 <div class="group"><button id="brake" aria-label="Fren" type="button" style="font-size:12px">FREN</button><button id="dortlu" class="special" aria-label="Dörtlü flaşörleri aç" type="button">⚡ DÖRTLÜ</button><button id="horn" class="horn" aria-label="Korna çal" type="button">♪ KORNA</button></div>
 </div>
 </div>
-<script src="/dugun-gp-visuals.js?v=20261031-b"></script>
+<script src="/dugun-gp-visuals.js?v=20261101-road-rage"></script>
 <script>
 (function(){
 "use strict";
@@ -261,7 +261,7 @@ function finish(win){
  const resultSub=improved?"YENİ REKOR!":previous&&previous.score>g.score?"ÖNCEKİ TURDA "+Math.max(0,previous.score-g.score)+" PUAN DAHA YAPMIŞTIN.":"BİR TUR DAHA?";
  const modeLabel=runMode==="daily"?"GÜNÜN KONVOYU · "+dailyKey:isVersus()?(isLocal()?"2 OYUNCU · KAPIŞMA":"KAPIŞMA · CPU"):"DÜĞÜN SERVİSİ";
  setMenu('<div class="eyebrow">'+modeLabel+' / YARIŞ SONU</div>'
- +'<h2 style="margin-bottom:5px">'+(isVersus()?(win?"SENİN KONVOY KAZANDI!":"RAKİP KONVOY KAZANDI!"):(win?"SALONA YETİŞTİN!":"KONVOY DAĞILDI"))+'</h2>'
+ +'<h2 style="margin-bottom:5px">'+(isVersus()?(win?"SENİN KONVOY KAZANDI!":(isLocal()?"2. OYUNCU KAZANDI!":"RAKİP KONVOY KAZANDI!")):(win?"SALONA YETİŞTİN!":"KONVOY DAĞILDI"))+'</h2>'
  +'<div class="result-tier">'+identity+'</div>'
  +'<p style="font-size:11px;margin:5px 0">'+description+'</p>'
  +'<div style="font-size:clamp(29px,5vw,44px);color:#ffdf75;font-weight:900;line-height:1.1">'+String(g.score).padStart(6,"0")+'</div>'
@@ -317,7 +317,7 @@ function makeStoryCanvas(){
  p.fillStyle="rgba(7,21,49,.93)";p.fillRect(65,1280,950,510);
  p.fillStyle="#f9e7a6";p.textAlign="center";p.font="bold 65px monospace";p.fillText(scoreIdentity(g.distance>=2280)[0].slice(0,22),540,1370);
  p.font="bold 132px monospace";p.fillText(String(g.score).padStart(6,"0"),540,1550);
- p.fillStyle="#fff";p.font="46px monospace";p.fillText(g.maxConvoy+" ARAÇ   ·   "+g.bestCombo+"× SERİ",540,1655);
+ p.fillStyle="#fff";p.font="46px monospace";p.fillText("₺"+g.earned+"  ·  "+g.delivered+" MİSAFİR",540,1655);
  p.fillStyle="#b9d4e7";p.font="bold 39px monospace";p.fillText(runMode==="daily"?"GÜNÜN KONVOYU":"HIZLI YARIŞ",540,1731);
  p.fillStyle="#fff2c5";p.font="bold 50px monospace";p.fillText("AYNEN.FUN",540,1837);
  return cv;
