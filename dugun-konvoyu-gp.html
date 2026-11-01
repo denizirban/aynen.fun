@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#112c75">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<meta name="description" content="Düğün Konvoyu GP: Kornayla konvoyu büyüt, rakip düğünlerden sıyrıl. Retro arcade yarış oyunu.">
+<meta name="theme-color" content="#203c43">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="description" content="Düğün Konvoyu GP: Kornayla konvoyu büyüt, rakip düğünlerden sıyrıl. Çizgi film görsel stilinde, arkadan kamera açılı sürüş ve düğün servisi oyunu.">
 <title>Düğün Konvoyu GP — aynen.fun</title>
 <style>
 :root{font-family:"Courier New",monospace;color:#eef4ff;background:#101c37}
@@ -97,13 +97,122 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:auto
 }
 @media(max-height:660px) and (max-width:650px){.pad{height:56px}.pad button{min-height:50px}.top{height:22px}}
 .ride-card{position:absolute;z-index:3;top:103px;right:8px;width:min(280px,48%);padding:8px 10px;background:rgba(8,25,58,.94);border:1px solid #e9d19c;box-shadow:3px 4px 0 #0b1c31;font:500 10px/1.4 "DM Mono",monospace;pointer-events:none;display:none}.ride-card.show{display:block}.ride-card .ride-kicker{color:#f9d47d;font-weight:900;font-size:10px}.ride-card #ride-head{color:#fff8e5;font-weight:900;font-size:13px;margin:3px 0}.ride-card #ride-detail{color:#cbdcf3}.ride-card #ride-clock{color:#fff0a8;margin-top:4px}.ride-card #ride-vs{color:#ffc0d6;margin-top:4px;border-top:1px solid #456083;padding-top:4px}@media(max-width:650px){.ride-card{top:77px;right:4px;width:min(215px,60%);padding:5px;font-size:9px}.ride-card #ride-head{font-size:11px}.ride-card .ride-kicker{font-size:9px}.mode-options button{font-size:9px!important;padding:9px 2px!important}}@media(max-height:450px){.ride-card{top:64px}.ride-card #ride-detail{display:none}}@media(max-width:650px){#mode-duel{display:none}.mode-options #mode-versus{grid-column:span 2}.card .rules{display:none}}
+
+/* CARTOON CHASE UI — cel-shaded road-game styling, not pixel arcade. */
+:root{font-family:"Nunito",system-ui,-apple-system,sans-serif;color:#fdf6df;background:#1d3840}
+html,body{background:#1d3840}
+button{font-family:"Nunito",system-ui,sans-serif;font-weight:900}
+#app{max-width:1600px;padding:0;gap:0}
+.top{position:absolute;z-index:8;top:0;left:0;right:0;height:38px;padding:0 18px;background:rgba(26,49,59,.73);backdrop-filter:blur(8px);color:#fff6e1;letter-spacing:.015em;font-size:12px}
+.top>a{color:#fff8e0}
+.top .right{gap:5px}
+.top button{border:1px solid rgba(255,255,255,.3);background:rgba(33,55,61,.6);color:white;border-radius:9px;height:27px;font-size:11px}
+.frame{border:0;box-shadow:none;border-radius:0;background:#78cbd5;height:100dvh}
+canvas{image-rendering:auto;object-fit:fill}
+.frame:after{display:none}
+.pixel-hud{inset:0;padding:0;background:none;letter-spacing:normal;font-family:"Nunito",system-ui,sans-serif;text-shadow:1px 2px 0 #2c3b47,2px -1px 0 #2c3b47,-1px -1px 0 #2c3b47}
+.hud-main{display:contents}
+.metric{position:absolute;display:flex;gap:0;z-index:2;padding:0;align-items:flex-start;background:none}
+.metric-label{font:900 11px/1.1 "Nunito",sans-serif;color:#fff5db;letter-spacing:.04em}
+.metric-value{font:900 clamp(23px,2.9vw,42px)/1.02 "Nunito",sans-serif;color:#ffda71;letter-spacing:-.035em}
+.metric:nth-child(1){left:22px;top:104px}
+.metric:nth-child(2){left:22px;top:47px}
+.metric.time .metric-value{font-size:clamp(40px,4.8vw,67px);color:#ffdf72}
+.metric:nth-child(3){right:24px;top:48px;align-items:flex-end}
+.metric.lap .metric-value{color:#f9edcb;font-size:23px}
+.metric:nth-child(4){right:24px;top:104px;align-items:flex-end}
+.metric.speed .metric-value{font-size:clamp(23px,2.6vw,34px);color:#fffdf1}
+.metric:nth-child(5){right:24px;top:150px;align-items:flex-end}
+.metric.convoy .metric-value{font-size:clamp(18px,2vw,26px);color:#fce7ae}
+.hud-sub{position:absolute;display:flex;left:210px;right:18px;bottom:12px;justify-content:space-between;align-items:center;gap:8px;min-width:0;overflow:visible;margin:0;padding:9px 14px;background:rgba(33,58,65,.88);border:1px solid rgba(255,247,214,.43);border-radius:13px;font-size:11px;box-shadow:0 4px 16px rgba(18,39,46,.16)}
+.hud-stage{color:#f6eac9;max-width:none}.hud-goal{color:#fde39f}.chaos-wrap{color:#fff6e8}.chaos-track{background:#52646c;border:0;height:7px;border-radius:12px;overflow:hidden}.chaos-track i{background:#f07d77}
+#progress-track{position:absolute!important;top:auto!important;left:190px!important;right:0!important;bottom:0!important;height:6px!important;border:0!important;opacity:.9!important;background:rgba(24,55,65,.5)!important}
+#progress-track>i{background:#f8d582}
+.mission-strip{left:22px;top:196px;bottom:auto;max-width:45%;flex-wrap:wrap}
+.mission-chip{font:800 11px/1.1 "Nunito",sans-serif;border:1px solid #ffeda4;background:rgba(37,61,68,.78);color:#ffedb5;border-radius:20px;padding:7px 11px}
+.mission-chip.done{border-color:#c9ffce;color:#bbffc8}
+.ride-card{top:201px;right:21px;width:min(288px,35%);padding:13px 16px;background:rgba(255,249,224,.94);color:#304854;border:2px solid #415663;border-radius:16px;box-shadow:0 5px 0 #38525b;font:700 12px/1.4 "Nunito",sans-serif}
+.ride-card .ride-kicker{font-size:11px;color:#a35a39;letter-spacing:.07em}
+.ride-card #ride-head{font:900 18px/1.14 "Nunito",sans-serif;color:#273f4a;margin:5px 0}
+.ride-card #ride-detail{color:#415b63}.ride-card #ride-clock{color:#9b5847;font-weight:900}
+.ride-card #ride-vs{color:#495e63;border-top:1px solid #c3bda9;font-weight:900;font-size:11px}
+.banner{top:27%;border-radius:17px;border:2px solid #324d54;box-shadow:0 4px 0 #304a50;background:#ffebac;color:#764456;font-family:"Nunito",sans-serif;font-size:clamp(12px,1.5vw,17px);max-width:85%;white-space:normal}
+#tutorial{top:34%;border-radius:18px;border:2px solid #ffefc5;background:rgba(36,65,70,.92);font:900 clamp(12px,1.35vw,18px)/1.3 "Nunito",sans-serif;color:#fff6df;box-shadow:0 5px 0 rgba(37,49,53,.5)}
+#combo-float{bottom:29%;font:900 clamp(16px,2.1vw,27px) "Nunito",sans-serif;color:#fff0ab;text-shadow:2px 2px #405b5e}
+.overlay{background:linear-gradient(95deg,rgba(30,59,61,.85),rgba(30,59,61,.40) 55%,rgba(38,65,66,.63));backdrop-filter:blur(4px);padding:52px 12px 16px}
+.card{width:min(470px,97%);background:#fff1d7;color:#2f4350;border:3px solid #43565f;outline:0;border-radius:24px;box-shadow:0 11px 0 #344d55,0 25px 40px #20384065;text-align:center;padding:clamp(15px,2.8vh,25px);max-height:100%;overflow-y:auto}
+.eyebrow{font:900 10px "Nunito",sans-serif;letter-spacing:.16em;color:#a26557;margin:0 0 6px}
+.card h1,.card h2{font:1000 clamp(30px,4vw,48px)/.97 "Nunito",sans-serif;letter-spacing:-.05em;color:#da705e;text-shadow:2px 2px 0 #fff8e2;text-transform:uppercase;margin:5px 0 10px}
+.card h2{font-size:clamp(23px,3.2vw,37px)}
+.card p{font:700 13px/1.36 "Nunito",sans-serif;color:#54666a;margin:8px 0}
+.card p .accent{color:#ad6156}
+.mode-options{gap:7px;margin:10px 0 6px}
+.mode-options button{border:2px solid #b5c1b7;background:#f8f7ea;color:#56646a;border-radius:12px;font:900 12px/1.1 "Nunito",sans-serif;padding:12px 8px;box-shadow:none}
+.mode-options button[aria-pressed="true"]{background:#f9d680;border-color:#a8754a;color:#4f3c38;box-shadow:0 3px 0 #bd976b}
+.mode-caption{color:#707e7b!important;font-size:11px!important;min-height:15px!important;margin:4px 0!important}
+.garage{gap:8px;margin:9px 0}
+.garage-car{border:2px solid #c2c8b8;background:#f9f8eb;color:#4d5858;border-radius:12px;box-shadow:none;padding:8px 3px}
+.garage-car.is-selected{border:2px solid #a8785b;background:#ffe3a6;color:#514645;box-shadow:0 3px 0 #b89d72}
+.garage-car b{font:900 13px "Nunito",sans-serif}.garage-car small{font:800 10px/1.2 "Nunito",sans-serif}
+.garage-caption{color:#737e7d!important;margin:3px 0 5px!important;font-size:10px!important}
+.tinycar{border-radius:6px 6px 3px 3px;box-shadow:inset 0 2px 0 #ffffff80}
+.card .rules{margin:10px 0;gap:8px}
+.rules>div{background:#f7eacb;border:1px solid #ddcdb1;border-radius:10px;color:#65706c;font:700 11px/1.34 "Nunito",sans-serif;padding:9px}
+.rules strong{font:900 11px "Nunito",sans-serif;color:#9d6555}
+.cta{background:#e47762;color:#fffdf0;border:0;border-bottom:5px solid #a94c4b;border-radius:14px;font:900 16px "Nunito",sans-serif;letter-spacing:.025em;padding:14px 10px;margin:9px 0 0}
+.secondary{border-radius:11px;background:#2b5159;border:0;color:#fff9e4}
+.scoreline{color:#7d7771!important}
+.result-tier{font:900 clamp(21px,3vw,34px) "Nunito",sans-serif;color:#d87e63;text-shadow:none}
+.result-grid div{border-radius:12px;background:#f7e6c7;border:1px solid #dfcdaa;color:#776f64;font-weight:900}
+.result-grid strong{font:900 20px "Nunito",sans-serif;color:#b9685a}
+.result-action-row button{border-radius:10px;background:#385b60;color:#fffaf0;border:0;font:900 11px "Nunito",sans-serif}
+.result-card-foot{color:#6c7771!important}
+.pad{display:none}
+@media (hover:none),(pointer:coarse){
+ .pad{display:flex;height:66px;position:relative;padding:7px 6px;background:#223d46;z-index:9}
+ .pad button{border-radius:12px;border:2px solid #56727b;background:#42626c;box-shadow:0 2px 0 #152d37;color:#fff6d6}
+ .pad button.horn{background:#f2c472;border-color:#ffe7a4;color:#574632}
+ .pad button.special{background:#7a9d91;color:#fffdf1;border-color:#bad3bf}
+}
+@media(max-width:650px){
+ .top{height:29px;padding:0 8px;font-size:10px}
+ .frame{border:0}
+ canvas{object-fit:cover}
+ .metric:nth-child(1){top:86px;left:8px}.metric:nth-child(2){top:35px;left:8px}
+ .metric.time .metric-value{font-size:40px}.metric:nth-child(3){top:37px;right:8px}
+ .metric:nth-child(4){top:83px;right:8px}.metric.speed .metric-value{font-size:24px}
+ .metric:nth-child(5){top:118px;right:8px}.metric.convoy .metric-value{font-size:17px}
+ .metric-label{font-size:9px}.metric-value{font-size:20px}
+ .hud-sub{left:6px;right:6px;bottom:6px;padding:5px 7px;font-size:9px;border-radius:9px}
+ .hud-sub .hud-goal,.hud-sub .chaos-wrap{display:none}.hud-stage{max-width:53vw;font-size:9px}
+ .mission-strip{left:7px;top:145px;max-width:45%;gap:3px}
+ .mission-chip{font-size:9px;padding:5px 7px}
+ .mission-strip #m-streak,.mission-strip #m-lap{display:none}
+ .ride-card{top:152px;right:5px;width:min(215px,57%);border-radius:12px;padding:7px 9px;box-shadow:0 3px 0 #38525b;font-size:10px}
+ .ride-card #ride-head{font-size:14px}.ride-card #ride-detail{font-size:10px}.ride-card #ride-clock{font-size:10px}
+ .ride-card #ride-vs{font-size:9px}
+ #progress-track{left:0!important}
+ .card{padding:13px 14px;max-height:calc(100dvh - 80px)}
+ .card h1{font-size:33px}.card p{font-size:12px}
+ .card .rules{display:none}
+ .mode-options button{font-size:10px!important;padding:10px 5px!important}
+ .mode-options #mode-versus{grid-column:span 2}
+ .garage-car{padding:6px 2px}.garage-car small{font-size:9px}
+ .pad .hint{display:none}
+}
+@media(max-height:550px){
+ .overlay{padding-top:36px;padding-bottom:7px}
+ .card{padding:10px 14px}.card h1{font-size:28px;margin:3px 0 5px}
+ .garage{margin:4px 0}.mode-options{margin:5px 0}
+}
+
 </style>
 </head>
 <body>
 <div id="app">
 <header class="top"><a href="/" aria-label="aynen.fun ana sayfa">← AYNEN.FUN</a><span>DÜĞÜN KONVOYU GP <span style="color:#ffdb6c">★</span></span><div class="right"><button id="sound" type="button" aria-label="Sesi aç kapat">SES: AÇIK</button><button id="pause" type="button" aria-label="Oyunu duraklat">Ⅱ</button></div></header>
 <div class="frame" id="frame">
-<canvas id="game" width="960" height="540" aria-label="Düğün konvoyunda retro yarış; ok tuşları veya dokunmatik kontroller ile oynanır"></canvas>
+<canvas id="game" width="960" height="540" aria-label="Düğün konvoyu: çizgi film tarzında sürüş, yolcu alma ve bırakma; ok tuşları veya dokunmatik kontroller"></canvas>
 <div class="pixel-hud" aria-label="Yarış göstergeleri"><div class="hud-main">
 <div class="metric"><span class="metric-label">PUAN</span><span class="metric-value" id="h-score">000000</span></div>
 <div class="metric time"><span class="metric-label">SÜRE</span><span class="metric-value" id="h-time">90</span></div>
@@ -115,36 +224,36 @@ canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:auto
 <div class="ride-card" id="ride-card" role="status" aria-live="polite"><div class="ride-kicker" id="ride-label">YOLCU ARANIYOR</div><div id="ride-head">İlk misafirini al</div><div id="ride-detail">Sarı işaretli yolcuya yaklaş</div><div id="ride-clock"></div><div id="ride-vs"></div></div><div class="banner" id="banner" role="status" aria-live="polite"></div><div id="combo-float" aria-live="off"></div>
 <div class="overlay" id="overlay">
 <section class="card" id="menu">
-<div class="eyebrow">AYNEN.FUN / RETRO ARCADE</div>
+<div class="eyebrow">İSTANBUL · DÜĞÜN SEZONU</div>
 <h1>DÜĞÜN<br>KONVOYU GP</h1>
-<p>Akrabaları alıp düğüne bırak; rakip konvoyun misafirini çarparak kap!</p><div class="mode-options"><button type="button" class="mode-option" id="mode-quick" aria-pressed="true">DÜĞÜN SERVİSİ</button><button type="button" class="mode-option" id="mode-daily" aria-pressed="false">GÜNÜN KONVOYU</button><button type="button" class="mode-option" id="mode-versus" aria-pressed="false">KAPIŞMA · CPU</button><button type="button" class="mode-option" id="mode-duel" aria-pressed="false">2 OYUNCU · KLAVYE</button></div><p class="mode-caption" id="mode-caption">Misafir topla, doğru şeritte bırak, bahşiş kazan.</p>
+<p>Şehrin içinden düğün salonuna sür. Misafirleri yol üzerinden topla, hedefte bırak. Rakip konvoy misafirini kapmadan yetiş!</p><div class="mode-options"><button type="button" class="mode-option" id="mode-quick" aria-pressed="true">DÜĞÜN SERVİSİ</button><button type="button" class="mode-option" id="mode-daily" aria-pressed="false">GÜNÜN KONVOYU</button><button type="button" class="mode-option" id="mode-versus" aria-pressed="false">KAPIŞMA · CPU</button><button type="button" class="mode-option" id="mode-duel" aria-pressed="false">2 OYUNCU · KLAVYE</button></div><p class="mode-caption" id="mode-caption">Misafir topla, doğru şeritte bırak, bahşiş kazan.</p>
 <div class="garage" id="garage" aria-label="Arabanı seç">
 <button type="button" class="garage-car is-selected" data-car="sahin" aria-pressed="true"><span class="tinycar car-red"></span><b>ŞAHİN</b><small>Dengeli</small></button>
 <button type="button" class="garage-car" data-car="toros" aria-pressed="false"><span class="tinycar car-green"></span><b>TOROS</b><small>+1 can / yavaş</small></button>
 <button type="button" class="garage-car" data-car="doblo" aria-pressed="false"><span class="tinycar car-yellow"></span><b>DOBLO</b><small>Güçlü korna</small></button>
-</div><p class="garage-caption" id="garage-caption">Araç seçimi sadece Hızlı Yarış modunda geçerli.</p>
+</div><p class="garage-caption" id="garage-caption">Araç seçimi Düğün Servisi ve Kapışma modlarında geçerli.</p>
 <div class="rules">
 <div><strong>← → SÜRÜŞ</strong>Mobilde ekrana basıp sürükle; bilgisayarda ← →.</div>
 <div><strong>YOLCU AL / BIRAK</strong>Sarı simgeye yanaş; hedef şeritte bırak. Boşluk: korna, X: dörtlü.</div>
 </div>
-<p>3 etap · teslimat bonusları · <span class="accent">rakibe çarp, misafiri kap.</span></p>
-<button class="cta" id="start" type="button">YARIŞA BAŞLA →</button>
+<p>Üç farklı güzergâh. Misafirleri yetiştir, bahşiş topla, <span class="accent">rakip konvoyu geç.</span></p>
+<button class="cta" id="start" type="button">DİREKSİYONA GEÇ →</button>
 <p class="scoreline" id="best">EN İYİ SKOR: 000000</p>
 </section>
 </div>
 </div>
 <div class="pad" aria-label="Oyun kontrolleri">
 <div class="group"><button id="left" aria-label="Sola dön" type="button">◀</button><button id="right" aria-label="Sağa dön" type="button">▶</button></div>
-<span class="hint">← → YÖNLENDİR &nbsp;·&nbsp; BOŞLUK KORNA<br>↑ HIZLAN &nbsp;↓ FREN &nbsp;·&nbsp; X DÖRTLÜ &nbsp;·&nbsp; P DURAKLAT</span>
+<span class="hint">DİREKSİYON ← → &nbsp;·&nbsp; KORNA BOŞLUK<br>GAZ ↑ &nbsp;·&nbsp; FREN ↓ &nbsp;·&nbsp; DÖRTLÜ X</span>
 <div class="group"><button id="brake" aria-label="Fren" type="button" style="font-size:12px">FREN</button><button id="dortlu" class="special" aria-label="Dörtlü flaşörleri aç" type="button">⚡ DÖRTLÜ</button><button id="horn" class="horn" aria-label="Korna çal" type="button">♪ KORNA</button></div>
 </div>
 </div>
-<script src="/dugun-gp-visuals.js?v=20261101-road-rage"></script>
+<script src="/dugun-gp-visuals.js?v=20261101-cartoon-chase"></script>
 <script>
 (function(){
 "use strict";
 const W=480,H=270,canvas=document.getElementById("game"),c=canvas.getContext("2d",{alpha:false});
-c.imageSmoothingEnabled=false;c.setTransform(2,0,0,2,0,0);
+c.imageSmoothingEnabled=true;c.setTransform(2,0,0,2,0,0);
 const overlay=document.getElementById("overlay"),menu=document.getElementById("menu"),banner=document.getElementById("banner"),soundBtn=document.getElementById("sound"),pauseBtn=document.getElementById("pause"),hornBtn=document.getElementById("horn");
 let mode="menu",muted=false,audio=null,last=0,seconds=0,objects=[],spawnTimer=0,nextId=1,noticeTimer=0,flash=0,runSeed=0;
 const input={left:false,right:false,brake:false,boost:false};
