@@ -68,7 +68,7 @@ function batchStrips(list,mat,container){
  for(let i=0;i<list.positions.length;i+=3){coords.push(list.positions[i]/7,list.positions[i+1]/7)}
  geo.setAttribute("uv",new THREE.Float32BufferAttribute(coords,2));
  geo.computeVertexNormals();
- const m=new THREE.Mesh(geo,mat);m.receiveShadow=true;container.add(m);
+ const m=new THREE.Mesh(geo,mat);m.receiveShadow=true;m.renderOrder=mat===roadMat?2:mat===pavementMat?1:3;container.add(m);
 }
 const empty=()=>({positions:[],indices:[]});
 function faceWindow(list,a,b,x,y,z,w=.92,h=1.10){
@@ -134,10 +134,16 @@ function addStreetProps(group,origin,roads,mobile){
 }
 function createRoads(group,origin,roads,mobile){
  const sidewalk=empty(),asphalt=empty(),curbs=empty(),markings=empty(),sideLine=empty();
- const max=mobile?450:800;
+ const max=mobile?520:1400;
+ // Always retain the roads immediately around the car, regardless of tile ordering.
+ // The old first-N slice could omit all roads near the visible chase camera.
  const near=roads.filter(r=>{
   const c=[(r.a[0]+r.b[0])*.5,(r.a[1]+r.b[1])*.5];
-  return distance(c,origin)<(mobile?385:525);
+  return Math.min(distance(c,origin),distance(r.a,origin),distance(r.b,origin))<(mobile?415:570);
+ }).sort((a,b)=>{
+  const da=Math.min(distance(a.a,origin),distance(a.b,origin));
+  const db=Math.min(distance(b.a,origin),distance(b.b,origin));
+  return da-db;
  }).slice(0,max);
  for(let i=0;i<near.length;i++){
   const r=near[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
@@ -227,10 +233,62 @@ function addBuildings(group,origin,raw,mobile){
  return buildings.length;
 }
 function makeGround(group){
- const m=new THREE.Mesh(new THREE.PlaneGeometry(2500,2500),
-  new THREE.MeshStandardMaterial({color:0x91b47c,roughness:1}));
- m.position.z=-.10;m.receiveShadow=true;group.add(m);
+ // City blocks are warm urban stone, not a flat golf course.
+ const groundTexture=noiseTexture("pavement");
+ groundTexture.repeat.set(220,220);
+ const m=new THREE.Mesh(new THREE.PlaneGeometry(2400,2400),
+  new THREE.MeshStandardMaterial({color:0xb8b8a2,map:groundTexture,roughness:1}));
+ m.position.z=-.22;m.receiveShadow=true;group.add(m);
 }
+function addWater(group,origin,waters,mobile){
+ const material=new THREE.MeshPhysicalMaterial({color:0x247aa5,roughness:.25,metalness:.10,transparent:true,opacity:.96,side:THREE.DoubleSide,depthWrite:true});
+ const lineMaterial=new THREE.MeshBasicMaterial({color:0x9fd5dd,transparent:true,opacity:.50});
+ let count=0;
+ for(const item of (waters||[])){
+  for(const rings of [item.rings]){
+   if(!rings?.[0]||rings[0].length<3)continue;
+   const outer=rings[0].map(p=>toXY(origin,p));
+   if(outer.length>1200)continue;
+   const shape=new THREE.Shape();shape.moveTo(...outer[0]);
+   for(let i=1;i<outer.length;i++)shape.lineTo(...outer[i]);shape.closePath();
+   for(let j=1;j<rings.length;j++){
+    const hole=new THREE.Path(),pts=rings[j].map(p=>toXY(origin,p));
+    if(pts.length<3)continue;
+    hole.moveTo(...pts[0]);for(let i=1;i<pts.length;i++)hole.lineTo(...pts[i]);hole.closePath();shape.holes.push(hole);
+   }
+   const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape),material);
+   mesh.position.z=-.09;mesh.renderOrder=1;group.add(mesh);
+   if(++count>38)return count;
+  }
+ }
+ return count;
+}
+function addOrtakoyLandmark(group,origin,area){
+ if(area!=="ortakoy")return;
+ // Grounded approximate site of Büyük Mecidiye/Ortaköy Mosque; stylized original model.
+ const [x,y]=toXY(origin,[29.02694,41.04722]);
+ if(Math.hypot(x,y)>550)return;
+ const cream=new THREE.MeshStandardMaterial({color:0xf3e7d1,roughness:.85});
+ const trim=new THREE.MeshStandardMaterial({color:0xc5a985,roughness:.88});
+ const dome=new THREE.MeshStandardMaterial({color:0x8ca0a5,metalness:.20,roughness:.60});
+ const g=new THREE.Group();g.position.set(x,y,.14);
+ g.add(meshBox(16,15,10,cream,0,0,5));
+ g.add(meshBox(17,16,.75,trim,0,0,10));
+ const main=new THREE.Mesh(new THREE.SphereGeometry(6.0,20,12,0,Math.PI*2,0,Math.PI*.54),dome);
+ main.position.z=10.7;g.add(main);
+ for(const dx of [-9.8,9.8]){
+  const minaret=new THREE.Mesh(new THREE.CylinderGeometry(.75,1.15,25,12),cream);
+  minaret.rotation.x=Math.PI/2;minaret.position.set(dx,0,12.5);g.add(minaret);
+  const balcony=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,.48,12),trim);
+  balcony.rotation.x=Math.PI/2;balcony.position.set(dx,0,22.3);g.add(balcony);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(1.0,3.2,12),dome);
+  tip.rotation.x=Math.PI/2;tip.position.set(dx,0,27.0);g.add(tip);
+ }
+ const sign=createWorldLabel("ORTAKÖY CAMİİ","#2a626e","#ffffff");
+ sign.position.set(0,0,23);sign.scale.set(9,2.0,1);g.add(sign);
+ group.add(g);
+}
+
 function makeSceneTexture(text,bg,fg){
  const canvas=document.createElement("canvas");canvas.width=512;canvas.height=170;
  const c=canvas.getContext("2d");c.fillStyle=bg;c.fillRect(0,0,512,170);
@@ -502,6 +560,8 @@ export class CityScene3D{
   disposeCityGroup(this.worldGroup);
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
   makeGround(this.worldGroup);
+  this.visibleWater=addWater(this.worldGroup,this.origin,city.water,this.mobile);
+  addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
   if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile)}
   else{
    // Visible drivable street while streaming real vector tiles.
