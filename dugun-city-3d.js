@@ -250,6 +250,7 @@ function startGame(unlimited){
   return;
  }
  pending=false;city.seekingLocalStreets=false;free=unlimited;
+ document.body.dataset.gameMode=free?"free":"race";
  // Default easy mode is intentionally playable with just left/right steering.
  brakeHold=0;stillTime=0;assistedPickupTimer=0;tripElapsed=0;
  playing=true;paused=false;timer=180;earnings=0;deliveries=0;stolen=0;convoy=1;mission=null;
@@ -275,8 +276,8 @@ function startGame(unlimited){
  city.map.jumpTo({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad});
  $("overlay").hidden=true;hud(true);$("pause").textContent="DURAKLAT";
  resetRide=0;last=performance.now();
- spawnMission();seedTraffic();initEngine();syncEngine();
- toast(driveMode==="easy"?"İSTANBUL SENİN · SAĞ / SOLLA SÜR":"İSTANBUL SENİN · W GAZ, A / D DÖN",3);
+ if(!free)spawnMission();seedTraffic();initEngine();syncEngine();
+ toast(free?"İSTANBUL · BOĞAZ KIYISINDA SERBEST SÜRÜŞ":driveMode==="easy"?"OKLARLA DÖN · BOĞAZ'A İLERLE":"W GAZ · A / D DÖN",3);
 }
 function seedTraffic(){
  if(!city.roads.length)return;
@@ -632,9 +633,9 @@ function frameLoop(now){
    if(!free){timer-=dt;if(timer<=0){timer=0;finish("DÜĞÜN BİTTİ")}}
    if(playing){
     resetRide=Math.max(0,resetRide-dt);
-    if(!mission&&resetRide<=0)spawnMission();
+    if(!free&&!mission&&resetRide<=0)spawnMission();
     roadRefresh+=dt;routeRefresh+=dt;camRefresh+=dt;
-    if(roadRefresh>4){roadRefresh=0;city.refresh(car.pos);if(!mission)spawnMission()}
+    if(roadRefresh>4){roadRefresh=0;city.refresh(car.pos);if(!free&&!mission)spawnMission()}
     if(routeRefresh>3){routeRefresh=0;refreshRoute(false)}
     if(camRefresh>.16){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
     lastNavState=navigation.update(car.pos,dt);
