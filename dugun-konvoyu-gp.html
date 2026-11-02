@@ -3,1138 +3,140 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#203c43">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<meta name="description" content="Düğün Konvoyu GP: Kornayla konvoyu büyüt, rakip düğünlerden sıyrıl. Çizgi film görsel stilinde, arkadan kamera açılı sürüş ve düğün servisi oyunu.">
-<title>Düğün Konvoyu GP — aynen.fun</title>
+<meta name="theme-color" content="#17252b">
+<meta name="description" content="Düğün Konvoyu — İstanbul'un gerçek OpenStreetMap sokaklarında 3D serbest sürüş ve düğün servisi.">
+<title>Düğün Konvoyu — İstanbul 3D | aynen.fun</title>
+<link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@5.9.0/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@5.9.0/dist/maplibre-gl.js"></script>
 <style>
-:root{font-family:"Courier New",monospace;color:#eef4ff;background:#101c37}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}
-button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer;touch-action:none}
-button:focus-visible,a:focus-visible{outline:3px solid #ffdc6b;outline-offset:3px}
-#app{position:relative;height:100dvh;max-width:1500px;margin:0 auto;padding:8px 12px 10px;display:flex;flex-direction:column;gap:8px}
-.top{height:27px;flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;font-weight:900;letter-spacing:.05em}
-.top a{color:#dce8ff;text-decoration:none}.top .right{display:flex;align-items:center;gap:8px}.top button{height:27px;background:#213555;color:#eaf5ff;border:1px solid #537399;padding:0 10px;border-radius:3px}
-.frame{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden;border:3px solid #070f27;box-shadow:0 0 0 2px #4e6fa5;background:#164cbd}
-canvas{display:block;width:100%;height:100%;object-fit:fill;image-rendering:auto;image-rendering:crisp-edges;touch-action:none}
-.frame:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0px,transparent 6px,rgba(0,0,0,.008) 7px);pointer-events:none;opacity:.11}
-@media(max-aspect-ratio:11/10){canvas{object-fit:contain}.frame{background:#18345b}}
-.banner{position:absolute;top:21%;left:50%;transform:translateX(-50%);background:#ffefb0;color:#992f38;padding:6px 12px;font-weight:900;font-size:clamp(9px,1.45vw,15px);white-space:nowrap;box-shadow:4px 4px 0 #d94b4b;pointer-events:none;display:none;text-align:center;z-index:3}.banner.show{display:block}
-.pixel-hud{position:absolute;z-index:2;top:0;left:0;right:0;padding:clamp(8px,1vw,13px) clamp(10px,2vw,24px) 9px;pointer-events:none;color:white;font-family:"DM Mono",ui-monospace,monospace;letter-spacing:.008em;background:linear-gradient(#092b9c 0%,#0e4ad3 89%,rgba(19,80,200,.9) 100%);text-shadow:0 1px 0 #18336d}
-.hud-main{display:grid;grid-template-columns:1.25fr .8fr .8fr 1fr 1.2fr;gap:clamp(5px,2vw,28px);align-items:start}
-.metric{display:flex;flex-direction:column;gap:3px;min-width:0}.metric-label{font-size:clamp(10px,.95vw,14px);font-weight:500;color:#d8e9ff;white-space:nowrap}.metric-value{font-size:clamp(15px,1.7vw,27px);font-weight:500;line-height:1.2;color:#fff2ad;white-space:nowrap}.metric.time .metric-label{color:#ffdd8a}.metric.lap .metric-label{color:#9ff1b4}.metric.lap .metric-value{color:#ccffcf}.metric.speed .metric-value{color:#fff}.metric.convoy .metric-value{color:#ffd5dd}
-.hud-sub{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;font-size:clamp(9px,.8vw,12px);font-weight:500;color:#dceaff;white-space:nowrap;overflow:hidden}
-.hud-stage{color:#ffecb8;overflow:hidden;text-overflow:ellipsis}.chaos-wrap{display:flex;align-items:center;gap:6px}.chaos-track{height:5px;width:clamp(36px,8vw,115px);background:#172d62;border:1px solid #7ba3db}.chaos-track i{display:block;width:0%;height:100%;background:#ff6674}.hud-ready{color:#fff1bc}
-@media(max-width:650px){.pixel-hud{padding:7px 7px 6px}.hud-main{gap:4px;grid-template-columns:1.2fr .7fr .6fr .9fr 1fr}.metric-label{font-size:clamp(7px,2.15vw,10px)}.metric-value{font-size:clamp(11px,3.3vw,15px)}.hud-sub{font-size:8px;margin-top:5px}.chaos-track{width:32px}.hud-stage{max-width:48vw}}
-.overlay{position:absolute;inset:0;display:grid;place-items:center;background:rgba(6,17,47,.72);z-index:4;padding:16px}
-
-.overlay[hidden]{display:none}
-.garage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0 0}.garage-car{border:1px solid #4d709f;background:#18325e;color:#e5f2ff;padding:8px 4px;min-width:0;display:grid;align-items:center;justify-items:center;gap:3px;border-radius:4px}.garage-car.is-selected{background:#ffecb6;color:#26304b;border-color:#ffe699;box-shadow:inset 0 -3px 0 #bd9457}.garage-car:disabled{opacity:.5;cursor:default}.garage-car b{font-size:12px;letter-spacing:.04em}.garage-car small{font-size:9px;line-height:1.2;min-height:1.3em}.tinycar{display:block;width:41px;height:19px;position:relative;background:var(--car);border:3px solid #24334b;border-bottom:5px solid #24334b;box-shadow:inset 0 -4px 0 #f9d7b577}.tinycar:before{content:"";position:absolute;width:24px;height:7px;top:-9px;left:5px;background:#83c7dc;border:3px solid #283748}.tinycar:after{content:"";position:absolute;width:6px;height:4px;top:8px;left:2px;background:#fbd57c;box-shadow:26px 0 #fbd57c}.car-red{--car:#e65c4b}.car-green{--car:#7b9971}.car-yellow{--car:#e9bb54}.garage-caption{font-size:9px!important;color:#a3bbd3!important;margin:5px 0 8px!important;line-height:1.3!important}.garage[aria-disabled="true"]{opacity:.48;pointer-events:none}
-@media(max-height:650px){.garage{gap:4px;margin:5px 0}.garage-car{padding:5px 2px}.garage-car small{font-size:8px}.garage-caption{margin:3px 0!important}}
-.mode-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;justify-content:center;margin:10px 0 4px}.mode-options button{min-width:0;font-size:11px;font-weight:900;background:#18315a;color:#d6e4ff;border:1px solid #426aa1;padding:12px 6px}.mode-options button[aria-pressed="true"]{background:#fce9b0;border-color:#ffd467;color:#303048;box-shadow:inset 0 -3px 0 #b88c50}
-.mode-caption{font-size:11px!important;color:#b1cbde!important;margin:5px 0 9px!important;min-height:17px}
-.mission-strip{position:absolute;bottom:14px;left:12px;transform:none;display:flex;gap:6px;align-items:center;justify-content:center;z-index:2;pointer-events:none;font-family:"DM Mono",monospace;white-space:nowrap;max-width:95%;transition:opacity .3s}
-.mission-chip{background:rgba(12,30,59,.88);border:1px solid #8ca5bb;border-radius:3px;padding:6px 10px;color:#ffedb1;font-size:clamp(9px,.85vw,12px);font-weight:500}.mission-chip.done{color:#a8f2c3;border-color:#64bd91}
-#tutorial{position:absolute;left:50%;top:29%;transform:translateX(-50%);z-index:3;display:none;align-items:center;justify-content:center;gap:7px;max-width:88%;padding:8px 12px;border-radius:5px;background:rgba(13,31,57,.94);border:1px solid #ffdf75;color:#fff1c5;font:500 clamp(11px,1vw,14px)/1.4 "DM Mono",monospace;text-align:center;pointer-events:none}
-#tutorial.on{display:flex}
-.hud-progress{height:4px;background:#1a3c80;border:1px solid #5988c6;border-radius:10px;margin-top:6px;overflow:hidden}.hud-progress>i{display:block;width:0%;height:100%;background:#f6cf6c;transition:width .17s}
-.result-tier{font:900 clamp(22px,4vw,34px)/1.07 "Courier New",monospace;color:#ffdf86;margin:10px 0 6px;text-shadow:3px 3px 0 #873d62}
-.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0}.result-grid div{padding:9px 4px;background:#182e58;border:1px solid #496b95;font-size:10px;color:#cbdff1}.result-grid strong{display:block;font-size:clamp(17px,3vw,23px);color:#fff2cc;margin-bottom:3px}
-.result-action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.result-action-row button{background:#24456f;border:1px solid #85a5cc;padding:12px 5px;color:#f5f7fa;font-size:11px;font-weight:700}
-.result-action-row button:active{background:#396088}
-.result-card-foot{font-size:10px!important;color:#b0c6d7!important}
-@media(max-width:650px){.mission-strip{bottom:5px;left:5px;gap:3px}.mission-strip #m-lap{display:none}.mission-chip{font-size:9px;padding:5px 6px}.mode-options{gap:5px}.mode-options button{font-size:10px;padding:12px 2px}.result-action-row{gap:5px}.result-action-row button{font-size:10px}}
-@media(max-height:515px){.mission-strip{bottom:2%}.mission-chip{padding:3px 6px;font-size:9px}#tutorial{top:25%;font-size:10px}.card .rules{display:none}}
-
-.card{width:min(440px,100%);max-height:100%;overflow:auto;background:#10234c;border:3px solid #eff2d6;outline:5px solid #13224d;box-shadow:10px 10px 0 #080e24;padding:clamp(14px,3vw,27px);text-align:center}
-.eyebrow{color:#92d8e7;font-weight:bold;font-size:11px;letter-spacing:.18em;margin:0 0 10px}
-.card h1,.card h2{font-size:clamp(29px,5.2vw,45px);line-height:1.02;letter-spacing:-.08em;text-transform:uppercase;color:#fff1a2;margin:7px 0 16px;text-shadow:3px 4px 0 #e45645}
-.card h2{font-size:clamp(25px,4vw,36px)}
-.card p{font-size:13px;line-height:1.56;color:#e2ecff;margin:10px 0}
-.card .rules{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:17px 0;text-align:left}
-.rules>div{border:1px solid #5376a9;background:#1b3667;padding:10px;font-size:11px;line-height:1.4}
-.rules strong{display:block;color:#ffdd72;font-size:12px;margin-bottom:4px}
-.cta{width:100%;background:#ffde68;border:0;border-bottom:5px solid #d67e28;color:#2a2141;padding:14px 18px;font-size:15px;font-weight:900;margin:8px 0 0;letter-spacing:.04em}
-.cta:active{transform:translateY(3px);border-bottom-width:2px}
-.secondary{display:inline-block;background:#243d6c;border:1px solid #668cc6;color:#fff;padding:10px 13px;font-size:12px;text-decoration:none;margin:9px 4px 0}
-.scoreline{color:#b7cbff!important;font-weight:900}.accent{color:#ffe07b}
-.pad{height:66px;flex:none;display:flex;align-items:stretch;justify-content:space-between;gap:8px}
-.group{display:flex;gap:8px;min-width:0}
-.pad button{min-width:68px;min-height:55px;border:2px solid #7291ad;background:#263d5c;color:#fff2cd;font-size:22px;font-weight:900;box-shadow:0 3px 0 #080f23;border-radius:4px;user-select:none;-webkit-user-select:none}
-.pad button:active,.pad button.down{background:#3b6387;transform:translateY(2px);box-shadow:0 1px 0 #080f23}
-.pad button.horn{min-width:124px;background:#eac954;color:#39283e;border-color:#ffe28a;font-size:14px;letter-spacing:.04em}
-.pad button.horn:disabled,.pad button.special:disabled{opacity:.6}.pad button.horn.active{box-shadow:0 0 0 3px #fff0a0,0 0 20px #e3b759}
-.pad button.special{min-width:115px;background:#2d5480;color:#ffedbc;border-color:#92b5dc;font-size:12px}
-.pad button.special.active{background:#fff0a0;color:#563e21;border-color:#fdd071}
-.hud-ready.ready{color:#ffed77;text-shadow:0 0 10px #fbb85c}
-.hud-stage{font-weight:500}.hud-goal{color:#fff0a7;font-size:inherit}.hud-goal.done{color:#92ffbc}
-#combo-float{position:absolute;bottom:23%;left:50%;z-index:2;transform:translate(-50%,0);pointer-events:none;min-width:100px;text-align:center;font-family:"DM Mono",monospace;font-size:clamp(14px,1.6vw,22px);color:#fff3cb;text-shadow:1px 2px #652f4a;opacity:0;transition:opacity .17s}
-#combo-float.on{opacity:1}
-.frame{background:#163367}
-@media(max-width:650px){.pad button.special{min-width:68px;max-width:78px;font-size:10px}.pad button.horn{min-width:84px;font-size:11px}.pad .group{gap:5px}.pad button{min-width:52px}}
-
-.pad .hint{font-size:10px;color:#a4b8d7;align-self:center;line-height:1.4;text-align:center}
-.mini{color:#aec1e2;font-size:9px;white-space:nowrap;align-self:center}
-@media(max-width:650px){
-#app{padding:4px 5px 7px;gap:5px}.top{height:25px;font-size:10px}
-.top button{font-size:10px;padding:0 7px}.frame{border-width:2px}
-.pad{height:68px}.pad button{min-width:57px}.pad button.horn{min-width:103px}
-.pad .hint,.mini{display:none}.card{padding:17px}.card h1{font-size:33px}.card .rules{margin:10px 0}
+:root{font-family:"DM Sans",system-ui,sans-serif;color:#fff;--ink:#1a2930;--lime:#cdf85a;--glass:rgba(18,30,36,.80)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17252b}
+button,select{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:none}
+button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+#map{position:fixed;inset:0;background:radial-gradient(at 50% 40%,#b8d0bf,#466a79);z-index:0}
+#game{position:fixed;inset:0;z-index:2;pointer-events:none}
+#game.interactive{pointer-events:auto}
+#scene-fade{position:fixed;inset:0;pointer-events:none;z-index:1;background:linear-gradient(180deg,rgba(9,18,26,.20),transparent 19%,transparent 70%,rgba(11,18,23,.23))}
+.maplibregl-control-container .maplibregl-ctrl-bottom-right{bottom:8px!important}
+.maplibregl-ctrl-attrib{font:10px "DM Sans",sans-serif!important;background:rgba(241,245,238,.7)!important}
+#header{position:absolute;top:0;left:0;right:0;z-index:7;height:56px;padding:12px clamp(14px,3vw,32px);display:flex;align-items:center;gap:14px;background:linear-gradient(180deg,rgba(13,25,30,.74),transparent);pointer-events:none}
+.brand{font-size:15px;font-weight:800;letter-spacing:-.045em;white-space:nowrap;text-decoration:none;color:#fff;pointer-events:auto}.brand span{color:var(--lime)}
+.top-title{font-size:11px;font-weight:700;letter-spacing:.15em;color:#cfddda}
+.header-end{margin-left:auto;display:flex;gap:7px;pointer-events:auto}
+.glass-button{padding:8px 12px;border:1px solid rgba(255,255,255,.25);border-radius:12px;background:rgba(21,35,42,.76);color:#fff;font-size:12px;font-weight:700;backdrop-filter:blur(12px)}
+.glass-button:hover{background:rgba(45,67,71,.9)}
+#hud{display:none;position:absolute;z-index:4;inset:0;pointer-events:none}
+#hud.on{display:block}
+#time-box{position:absolute;top:70px;left:clamp(14px,3vw,32px);display:flex;flex-direction:column;text-shadow:0 2px 12px rgba(0,0,0,.30)}
+.kicker{font-size:11px;font-weight:800;letter-spacing:.13em;color:#e6f0ec;text-transform:uppercase}
+#time{font-size:clamp(42px,5vw,72px);font-weight:800;letter-spacing:-.085em;line-height:1.06;font-variant-numeric:tabular-nums}
+#time.urgent{color:#ffa291;animation:pulse 1s infinite alternate}
+@keyframes pulse{to{opacity:.58}}
+.money{margin-top:4px;font-size:clamp(24px,2.5vw,36px);font-weight:800;letter-spacing:-.055em;color:var(--lime)}
+#speed-panel{position:absolute;top:76px;right:clamp(14px,3vw,32px);text-align:right;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+#speed{font-size:clamp(37px,4.6vw,61px);font-weight:800;letter-spacing:-.085em;line-height:1}
+.unit{font-size:13px;font-weight:700;color:#ecf1ed}
+#car-health{margin-top:10px;font-size:12px;font-weight:700;color:#f7e9dc}
+#mission{position:absolute;top:182px;left:clamp(14px,3vw,32px);width:min(362px,43vw);border:1px solid rgba(255,255,255,.18);border-radius:19px;background:rgba(18,32,39,.87);box-shadow:0 12px 32px rgba(7,20,26,.17);backdrop-filter:blur(14px);padding:16px 18px}
+#mission-state{font-size:11px;font-weight:800;letter-spacing:.10em;color:var(--lime);margin-bottom:6px}
+#mission-name{font-size:21px;font-weight:800;letter-spacing:-.045em;line-height:1.16}
+#mission-info{font-size:12px;font-weight:600;color:#c8d9d7;margin-top:7px;line-height:1.45}
+#mission-distance{display:inline-flex;margin-top:11px;font-size:13px;font-weight:800;color:#fff}
+#mission-timer{margin-top:7px;font-size:12px;font-weight:800;color:#ffcb86}
+#mini{position:absolute;left:clamp(14px,3vw,32px);bottom:23px;width:194px;height:173px;background:rgba(20,40,46,.82);border:1px solid rgba(255,255,255,.3);border-radius:18px;box-shadow:0 10px 30px #09171a22;overflow:hidden}
+#minimap{display:block;width:100%;height:100%}
+#mode-pill{position:absolute;bottom:26px;left:240px;background:rgba(20,34,40,.74);border:1px solid #ffffff38;border-radius:14px;padding:11px 15px;font-size:12px;font-weight:800;color:#e4f0e8}
+#toast{position:absolute;top:25%;left:50%;transform:translateX(-50%) translateY(-12px);min-width:190px;max-width:min(460px,88vw);padding:13px 19px;border-radius:14px;background:rgba(20,34,40,.95);border:1px solid #ffffff54;box-shadow:0 15px 40px #0613175c;font-weight:800;text-align:center;font-size:16px;opacity:0;transition:opacity .25s,transform .25s;z-index:8;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#directions{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);border-radius:17px;background:rgba(16,29,35,.84);border:1px solid rgba(255,255,255,.26);padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800;white-space:nowrap}
+#turn-arrow{font-size:27px;color:var(--lime)}
+#controls{position:absolute;z-index:8;left:0;right:0;bottom:0;display:none;align-items:flex-end;justify-content:space-between;padding:8px max(12px,env(safe-area-inset-right)) calc(13px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));pointer-events:none;gap:8px}
+.ctr-group{display:flex;gap:8px;align-items:flex-end;pointer-events:auto}
+.ctr{display:flex;align-items:center;justify-content:center;border:1px solid #ffffff50;border-bottom:3px solid #13252c;background:rgba(17,34,41,.86);color:#fff;backdrop-filter:blur(12px);min-width:60px;min-height:58px;border-radius:17px;font-size:22px;font-weight:800;user-select:none;-webkit-user-select:none}
+.ctr:active,.ctr.pressed{background:rgba(118,160,146,.92);transform:translateY(1px)}
+.ctr.go{background:rgba(187,233,89,.93);color:#1c342d;border-color:#e5ff9b;min-width:75px;font-size:14px}
+.ctr.brake{background:rgba(234,138,116,.93);border-color:#ffcfc7;color:#182a2d;min-width:73px;font-size:13px}
+.ctr.horn{font-size:12px;min-width:67px;min-height:48px}
+#overlay{position:absolute;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 55% 50%,rgba(23,40,45,.42),rgba(8,20,27,.75));backdrop-filter:blur(7px);padding:16px}
+#overlay[hidden]{display:none}
+#panel{width:min(480px,100%);max-height:min(92dvh,810px);overflow:auto;background:#f8f8ee;color:#24363a;border-radius:25px;box-shadow:0 25px 80px #07161a9e;padding:clamp(20px,3vw,32px)}
+.eyebrow{font-size:10px;font-weight:800;letter-spacing:.17em;color:#697872}
+#panel h1{margin:8px 0 10px;line-height:.97;font-weight:800;letter-spacing:-.085em;font-size:clamp(39px,5vw,57px)}
+#panel h1 em{font-style:normal;color:#77964a}
+#panel p{font-size:13px;line-height:1.53;color:#667572;margin:8px 0 14px}
+.feature-row{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0 22px}
+.feature-row span{font-size:10px;font-weight:800;background:#e7ecdf;padding:6px 9px;border-radius:8px;color:#526454}
+.panel-label{font-size:11px;font-weight:800;color:#53615d;margin:12px 0 7px}
+.options{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.option{min-height:60px;background:#edf1e8;border:2px solid transparent;border-radius:12px;padding:10px 8px;text-align:left;color:#364a47;font-size:12px;font-weight:800}
+.option small{display:block;font-size:10px;color:#77847e;font-weight:600;margin-top:4px}
+.option.selected{border-color:#9cbb60;background:#eff6df}
+#start{margin-top:22px;border:none;background:#c7ec72;color:#23352a;width:100%;border-radius:15px;padding:16px;font-weight:800;font-size:15px}
+#start:hover{background:#d7f5a2}
+#loadstate{margin:11px 0 0;font-size:11px;color:#687771;min-height:16px}
+#end-summary{margin:16px 0 6px;font-weight:800;font-size:18px;line-height:1.6}
+#help{font-size:11px;color:#78847e;line-height:1.6;margin-top:10px}
+#data-warning{position:absolute;bottom:15px;right:12px;z-index:5;font-size:11px;font-weight:700;color:#f0f3e5;background:#1b2c33ba;padding:8px 10px;border-radius:9px;display:none}
+#data-warning.show{display:block}
+@media(max-width:700px){
+ #header{height:43px;padding:8px 10px}.top-title{display:none}.brand{font-size:12px}.glass-button{padding:6px 8px;font-size:11px}
+ #time-box{top:48px;left:10px}#time{font-size:43px}.kicker{font-size:9px}.money{font-size:23px}
+ #speed-panel{top:51px;right:10px}#speed{font-size:37px}.unit,#car-health{font-size:10px}
+ #mission{left:10px;top:154px;width:min(260px,67vw);padding:10px 12px;border-radius:14px}#mission-name{font-size:16px}#mission-info{font-size:10px;margin-top:4px}#mission-timer{font-size:10px}
+ #mini{left:10px;bottom:calc(110px + env(safe-area-inset-bottom));width:131px;height:123px;border-radius:12px}
+ #mode-pill{left:auto;right:10px;bottom:calc(116px + env(safe-area-inset-bottom));font-size:10px;padding:7px 9px}
+ #directions{bottom:calc(174px + env(safe-area-inset-bottom));left:auto;right:10px;transform:none;font-size:10px;padding:8px 10px;border-radius:11px}
+ #turn-arrow{font-size:21px}
+ #controls{display:flex}
+ .ctr{min-width:49px;min-height:55px;font-size:19px;border-radius:12px}.ctr.go{min-width:63px;font-size:12px}.ctr.brake{min-width:61px;font-size:11px}.ctr.horn{min-width:47px;font-size:9px}
+ #toast{top:35%;font-size:13px}
+ #panel{padding:20px 17px}#panel h1{font-size:42px}
+ #loadstate{font-size:10px}.options{gap:5px}.option{font-size:11px;padding:8px 5px}
+ #data-warning{bottom:calc(116px + env(safe-area-inset-bottom));right:8px;max-width:160px}
 }
-@media(max-height:490px){#app{padding:3px 6px;gap:3px}.top{height:21px}.pad{height:43px}.pad button{min-height:40px}.card{padding:10px 15px}.card p{font-size:11px;margin:6px 0}.card .rules{margin:8px 0}.cta{padding:9px}.card h1{font-size:27px;margin:4px 0 8px}}
-
-@media(max-width:410px){
- .pad{gap:3px;padding:0 2px}.pad .group{gap:4px}
- .pad button{min-width:0!important;width:42px!important;min-height:54px;font-size:17px}
- .pad button.horn{width:82px!important;min-width:82px!important;font-size:10px!important}
- .pad button.special{width:66px!important;min-width:66px!important;font-size:9px!important}
- .pad button#brake{font-size:10px!important}
- .hud-goal{display:none}.hud-sub{gap:4px}
- .hud-stage{font-size:8px;max-width:44vw}
- .hud-ready{max-width:40vw;overflow:hidden;text-overflow:ellipsis}
- .mission-strip{bottom:5px;left:4px}.mission-chip{padding:4px 4px;font-size:8px}
- .mission-strip #m-streak{display:none}
-}
-@media(max-height:660px) and (max-width:650px){.pad{height:56px}.pad button{min-height:50px}.top{height:22px}}
-.ride-card{position:absolute;z-index:3;top:103px;right:8px;width:min(280px,48%);padding:8px 10px;background:rgba(8,25,58,.94);border:1px solid #e9d19c;box-shadow:3px 4px 0 #0b1c31;font:500 10px/1.4 "DM Mono",monospace;pointer-events:none;display:none}.ride-card.show{display:block}.ride-card .ride-kicker{color:#f9d47d;font-weight:900;font-size:10px}.ride-card #ride-head{color:#fff8e5;font-weight:900;font-size:13px;margin:3px 0}.ride-card #ride-detail{color:#cbdcf3}.ride-card #ride-clock{color:#fff0a8;margin-top:4px}.ride-card #ride-vs{color:#ffc0d6;margin-top:4px;border-top:1px solid #456083;padding-top:4px}@media(max-width:650px){.ride-card{top:77px;right:4px;width:min(215px,60%);padding:5px;font-size:9px}.ride-card #ride-head{font-size:11px}.ride-card .ride-kicker{font-size:9px}.mode-options button{font-size:9px!important;padding:9px 2px!important}}@media(max-height:450px){.ride-card{top:64px}.ride-card #ride-detail{display:none}}@media(max-width:650px){#mode-duel{display:none}.mode-options #mode-versus{grid-column:span 2}.card .rules{display:none}}
-
-/* CARTOON CHASE UI — cel-shaded road-game styling, not pixel arcade. */
-:root{font-family:"Nunito",system-ui,-apple-system,sans-serif;color:#fdf6df;background:#1d3840}
-html,body{background:#1d3840}
-button{font-family:"Nunito",system-ui,sans-serif;font-weight:900}
-#app{max-width:1600px;padding:0;gap:0}
-.top{position:absolute;z-index:8;top:0;left:0;right:0;height:38px;padding:0 18px;background:rgba(26,49,59,.73);backdrop-filter:blur(8px);color:#fff6e1;letter-spacing:.015em;font-size:12px}
-.top>a{color:#fff8e0}
-.top .right{gap:5px}
-.top button{border:1px solid rgba(255,255,255,.3);background:rgba(33,55,61,.6);color:white;border-radius:9px;height:27px;font-size:11px}
-.frame{border:0;box-shadow:none;border-radius:0;background:#78cbd5;height:100dvh}
-canvas{image-rendering:auto;object-fit:fill}
-.frame:after{display:none}
-.pixel-hud{inset:0;padding:0;background:none;letter-spacing:normal;font-family:"Nunito",system-ui,sans-serif;text-shadow:1px 2px 0 #2c3b47,2px -1px 0 #2c3b47,-1px -1px 0 #2c3b47}
-.hud-main{display:contents}
-.metric{position:absolute;display:flex;gap:0;z-index:2;padding:0;align-items:flex-start;background:none}
-.metric-label{font:900 11px/1.1 "Nunito",sans-serif;color:#fff5db;letter-spacing:.04em}
-.metric-value{font:900 clamp(23px,2.9vw,42px)/1.02 "Nunito",sans-serif;color:#ffda71;letter-spacing:-.035em}
-.metric:nth-child(1){left:22px;top:104px}
-.metric:nth-child(2){left:22px;top:47px}
-.metric.time .metric-value{font-size:clamp(40px,4.8vw,67px);color:#ffdf72}
-.metric:nth-child(3){right:24px;top:48px;align-items:flex-end}
-.metric.lap .metric-value{color:#f9edcb;font-size:23px}
-.metric:nth-child(4){right:24px;top:104px;align-items:flex-end}
-.metric.speed .metric-value{font-size:clamp(23px,2.6vw,34px);color:#fffdf1}
-.metric:nth-child(5){right:24px;top:150px;align-items:flex-end}
-.metric.convoy .metric-value{font-size:clamp(18px,2vw,26px);color:#fce7ae}
-.hud-sub{position:absolute;display:flex;left:210px;right:18px;bottom:12px;justify-content:space-between;align-items:center;gap:8px;min-width:0;overflow:visible;margin:0;padding:9px 14px;background:rgba(33,58,65,.88);border:1px solid rgba(255,247,214,.43);border-radius:13px;font-size:11px;box-shadow:0 4px 16px rgba(18,39,46,.16)}
-.hud-stage{color:#f6eac9;max-width:none}.hud-goal{color:#fde39f}.chaos-wrap{color:#fff6e8}.chaos-track{background:#52646c;border:0;height:7px;border-radius:12px;overflow:hidden}.chaos-track i{background:#f07d77}
-#progress-track{position:absolute!important;top:auto!important;left:190px!important;right:0!important;bottom:0!important;height:6px!important;border:0!important;opacity:.9!important;background:rgba(24,55,65,.5)!important}
-#progress-track>i{background:#f8d582}
-.mission-strip{left:22px;top:196px;bottom:auto;max-width:45%;flex-wrap:wrap}
-.mission-chip{font:800 11px/1.1 "Nunito",sans-serif;border:1px solid #ffeda4;background:rgba(37,61,68,.78);color:#ffedb5;border-radius:20px;padding:7px 11px}
-.mission-chip.done{border-color:#c9ffce;color:#bbffc8}
-.ride-card{top:201px;right:21px;width:min(288px,35%);padding:13px 16px;background:rgba(255,249,224,.94);color:#304854;border:2px solid #415663;border-radius:16px;box-shadow:0 5px 0 #38525b;font:700 12px/1.4 "Nunito",sans-serif}
-.ride-card .ride-kicker{font-size:11px;color:#a35a39;letter-spacing:.07em}
-.ride-card #ride-head{font:900 18px/1.14 "Nunito",sans-serif;color:#273f4a;margin:5px 0}
-.ride-card #ride-detail{color:#415b63}.ride-card #ride-clock{color:#9b5847;font-weight:900}
-.ride-card #ride-vs{color:#495e63;border-top:1px solid #c3bda9;font-weight:900;font-size:11px}
-.banner{top:27%;border-radius:17px;border:2px solid #324d54;box-shadow:0 4px 0 #304a50;background:#ffebac;color:#764456;font-family:"Nunito",sans-serif;font-size:clamp(12px,1.5vw,17px);max-width:85%;white-space:normal}
-#tutorial{top:34%;border-radius:18px;border:2px solid #ffefc5;background:rgba(36,65,70,.92);font:900 clamp(12px,1.35vw,18px)/1.3 "Nunito",sans-serif;color:#fff6df;box-shadow:0 5px 0 rgba(37,49,53,.5)}
-#combo-float{bottom:29%;font:900 clamp(16px,2.1vw,27px) "Nunito",sans-serif;color:#fff0ab;text-shadow:2px 2px #405b5e}
-.overlay{background:linear-gradient(95deg,rgba(30,59,61,.85),rgba(30,59,61,.40) 55%,rgba(38,65,66,.63));backdrop-filter:blur(4px);padding:52px 12px 16px}
-.card{width:min(470px,97%);background:#fff1d7;color:#2f4350;border:3px solid #43565f;outline:0;border-radius:24px;box-shadow:0 11px 0 #344d55,0 25px 40px #20384065;text-align:center;padding:clamp(15px,2.8vh,25px);max-height:100%;overflow-y:auto}
-.eyebrow{font:900 10px "Nunito",sans-serif;letter-spacing:.16em;color:#a26557;margin:0 0 6px}
-.card h1,.card h2{font:1000 clamp(30px,4vw,48px)/.97 "Nunito",sans-serif;letter-spacing:-.05em;color:#da705e;text-shadow:2px 2px 0 #fff8e2;text-transform:uppercase;margin:5px 0 10px}
-.card h2{font-size:clamp(23px,3.2vw,37px)}
-.card p{font:700 13px/1.36 "Nunito",sans-serif;color:#54666a;margin:8px 0}
-.card p .accent{color:#ad6156}
-.mode-options{gap:7px;margin:10px 0 6px}
-.mode-options button{border:2px solid #b5c1b7;background:#f8f7ea;color:#56646a;border-radius:12px;font:900 12px/1.1 "Nunito",sans-serif;padding:12px 8px;box-shadow:none}
-.mode-options button[aria-pressed="true"]{background:#f9d680;border-color:#a8754a;color:#4f3c38;box-shadow:0 3px 0 #bd976b}
-.mode-caption{color:#707e7b!important;font-size:11px!important;min-height:15px!important;margin:4px 0!important}
-.garage{gap:8px;margin:9px 0}
-.garage-car{border:2px solid #c2c8b8;background:#f9f8eb;color:#4d5858;border-radius:12px;box-shadow:none;padding:8px 3px}
-.garage-car.is-selected{border:2px solid #a8785b;background:#ffe3a6;color:#514645;box-shadow:0 3px 0 #b89d72}
-.garage-car b{font:900 13px "Nunito",sans-serif}.garage-car small{font:800 10px/1.2 "Nunito",sans-serif}
-.garage-caption{color:#737e7d!important;margin:3px 0 5px!important;font-size:10px!important}
-.tinycar{border-radius:6px 6px 3px 3px;box-shadow:inset 0 2px 0 #ffffff80}
-.card .rules{margin:10px 0;gap:8px}
-.rules>div{background:#f7eacb;border:1px solid #ddcdb1;border-radius:10px;color:#65706c;font:700 11px/1.34 "Nunito",sans-serif;padding:9px}
-.rules strong{font:900 11px "Nunito",sans-serif;color:#9d6555}
-.cta{background:#e47762;color:#fffdf0;border:0;border-bottom:5px solid #a94c4b;border-radius:14px;font:900 16px "Nunito",sans-serif;letter-spacing:.025em;padding:14px 10px;margin:9px 0 0}
-.secondary{border-radius:11px;background:#2b5159;border:0;color:#fff9e4}
-.scoreline{color:#7d7771!important}
-.result-tier{font:900 clamp(21px,3vw,34px) "Nunito",sans-serif;color:#d87e63;text-shadow:none}
-.result-grid div{border-radius:12px;background:#f7e6c7;border:1px solid #dfcdaa;color:#776f64;font-weight:900}
-.result-grid strong{font:900 20px "Nunito",sans-serif;color:#b9685a}
-.result-action-row button{border-radius:10px;background:#385b60;color:#fffaf0;border:0;font:900 11px "Nunito",sans-serif}
-.result-card-foot{color:#6c7771!important}
-.pad{display:none}
-@media (hover:none),(pointer:coarse){
- .pad{display:flex;height:66px;position:relative;padding:7px 6px;background:#223d46;z-index:9}
- .pad button{border-radius:12px;border:2px solid #56727b;background:#42626c;box-shadow:0 2px 0 #152d37;color:#fff6d6}
- .pad button.horn{background:#f2c472;border-color:#ffe7a4;color:#574632}
- .pad button.special{background:#7a9d91;color:#fffdf1;border-color:#bad3bf}
-}
-@media(max-width:650px){
- .top{height:29px;padding:0 8px;font-size:10px}
- .frame{border:0}
- canvas{object-fit:cover}
- .metric:nth-child(1){top:86px;left:8px}.metric:nth-child(2){top:35px;left:8px}
- .metric.time .metric-value{font-size:40px}.metric:nth-child(3){top:37px;right:8px}
- .metric:nth-child(4){top:83px;right:8px}.metric.speed .metric-value{font-size:24px}
- .metric:nth-child(5){top:118px;right:8px}.metric.convoy .metric-value{font-size:17px}
- .metric-label{font-size:9px}.metric-value{font-size:20px}
- .hud-sub{left:6px;right:6px;bottom:6px;padding:5px 7px;font-size:9px;border-radius:9px}
- .hud-sub .hud-goal,.hud-sub .chaos-wrap{display:none}.hud-stage{max-width:53vw;font-size:9px}
- .mission-strip{left:7px;top:145px;max-width:45%;gap:3px}
- .mission-chip{font-size:9px;padding:5px 7px}
- .mission-strip #m-streak,.mission-strip #m-lap{display:none}
- .ride-card{top:152px;right:5px;width:min(215px,57%);border-radius:12px;padding:7px 9px;box-shadow:0 3px 0 #38525b;font-size:10px}
- .ride-card #ride-head{font-size:14px}.ride-card #ride-detail{font-size:10px}.ride-card #ride-clock{font-size:10px}
- .ride-card #ride-vs{font-size:9px}
- #progress-track{left:0!important}
- .card{padding:13px 14px;max-height:calc(100dvh - 80px)}
- .card h1{font-size:33px}.card p{font-size:12px}
- .card .rules{display:none}
- .mode-options button{font-size:10px!important;padding:10px 5px!important}
- .mode-options #mode-versus{grid-column:span 2}
- .garage-car{padding:6px 2px}.garage-car small{font-size:9px}
- .pad .hint{display:none}
-}
-@media(max-height:550px){
- .overlay{padding-top:36px;padding-bottom:7px}
- .card{padding:10px 14px}.card h1{font-size:28px;margin:3px 0 5px}
- .garage{margin:4px 0}.mode-options{margin:5px 0}
-}
-
+@media(max-height:610px) and (min-width:701px){#mission{top:145px}#mini{height:135px;width:153px}#mode-pill{left:185px}}
+@media(max-width:380px){.ctr-group{gap:4px}.ctr{min-width:43px}.ctr.go{min-width:54px}.ctr.brake{min-width:54px}.ctr.horn{min-width:42px}}
 </style>
 </head>
 <body>
-<div id="app">
-<header class="top"><a href="/" aria-label="aynen.fun ana sayfa">← AYNEN.FUN</a><span>DÜĞÜN KONVOYU GP <span style="color:#ffdb6c">★</span></span><div class="right"><button id="sound" type="button" aria-label="Sesi aç kapat">SES: AÇIK</button><button id="pause" type="button" aria-label="Oyunu duraklat">Ⅱ</button></div></header>
-<div class="frame" id="frame">
-<canvas id="game" width="960" height="540" aria-label="Düğün konvoyu: çizgi film tarzında sürüş, yolcu alma ve bırakma; ok tuşları veya dokunmatik kontroller"></canvas>
-<div class="pixel-hud" aria-label="Yarış göstergeleri"><div class="hud-main">
-<div class="metric"><span class="metric-label">PUAN</span><span class="metric-value" id="h-score">000000</span></div>
-<div class="metric time"><span class="metric-label">SÜRE</span><span class="metric-value" id="h-time">90</span></div>
-<div class="metric lap"><span class="metric-label">ETAP</span><span class="metric-value" id="h-lap">1/3</span></div>
-<div class="metric speed"><span class="metric-label">HIZ</span><span class="metric-value" id="h-speed">130 km</span></div>
-<div class="metric convoy"><span class="metric-label">KONVOY</span><span class="metric-value" id="h-convoy">04 ♥♥♥</span></div>
-</div><div class="hud-sub"><span class="hud-stage" id="h-stage">GELİN ALMA · MAHALLE</span><span class="hud-goal" id="h-goal">HEDEF 7 ARAÇ</span><span class="chaos-wrap">KAOS <span class="chaos-track"><i id="h-chaos"></i></span></span><span class="hud-ready" id="h-horn">KORNA HAZIR</span></div></div>
-<div class="hud-progress" aria-hidden="true" id="progress-track" style="position:absolute;z-index:2;top:89px;left:10px;right:10px;margin-top:0;opacity:.82"><i id="h-progress"></i></div><div id="tutorial" aria-live="polite"></div><div class="mission-strip" id="mission-strip" aria-live="off"><span class="mission-chip" id="m-progress">HEDEF 4 / 7</span><span class="mission-chip" id="m-streak">SERİ 0×</span><span class="mission-chip" id="m-lap">SALONA 2.2 KM</span></div>
-<div class="ride-card" id="ride-card" role="status" aria-live="polite"><div class="ride-kicker" id="ride-label">YOLCU ARANIYOR</div><div id="ride-head">İlk misafirini al</div><div id="ride-detail">Sarı işaretli yolcuya yaklaş</div><div id="ride-clock"></div><div id="ride-vs"></div></div><div class="banner" id="banner" role="status" aria-live="polite"></div><div id="combo-float" aria-live="off"></div>
-<div class="overlay" id="overlay">
-<section class="card" id="menu">
-<div class="eyebrow">İSTANBUL · DÜĞÜN SEZONU</div>
-<h1>DÜĞÜN<br>KONVOYU GP</h1>
-<p>Şehrin içinden düğün salonuna sür. Misafirleri yol üzerinden topla, hedefte bırak. Rakip konvoy misafirini kapmadan yetiş!</p><div class="mode-options"><button type="button" class="mode-option" id="mode-quick" aria-pressed="true">DÜĞÜN SERVİSİ</button><button type="button" class="mode-option" id="mode-daily" aria-pressed="false">GÜNÜN KONVOYU</button><button type="button" class="mode-option" id="mode-versus" aria-pressed="false">KAPIŞMA · CPU</button><button type="button" class="mode-option" id="mode-duel" aria-pressed="false">2 OYUNCU · KLAVYE</button></div><p class="mode-caption" id="mode-caption">Misafir topla, doğru şeritte bırak, bahşiş kazan.</p>
-<div class="garage" id="garage" aria-label="Arabanı seç">
-<button type="button" class="garage-car is-selected" data-car="sahin" aria-pressed="true"><span class="tinycar car-red"></span><b>ŞAHİN</b><small>Dengeli</small></button>
-<button type="button" class="garage-car" data-car="toros" aria-pressed="false"><span class="tinycar car-green"></span><b>TOROS</b><small>+1 can / yavaş</small></button>
-<button type="button" class="garage-car" data-car="doblo" aria-pressed="false"><span class="tinycar car-yellow"></span><b>DOBLO</b><small>Güçlü korna</small></button>
-</div><p class="garage-caption" id="garage-caption">Araç seçimi Düğün Servisi ve Kapışma modlarında geçerli.</p>
-<div class="rules">
-<div><strong>← → SÜRÜŞ</strong>Mobilde ekrana basıp sürükle; bilgisayarda ← →.</div>
-<div><strong>YOLCU AL / BIRAK</strong>Sarı simgeye yanaş; hedef şeritte bırak. Boşluk: korna, X: dörtlü.</div>
+<div id="map" aria-label="OpenStreetMap kaynaklı gerçek İstanbul sokakları ve üç boyutlu binalar"></div>
+<div id="scene-fade"></div>
+<div id="game">
+ <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / İSTANBUL 3D</span><div class="header-end"><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
+ <section id="hud" aria-label="Oyunun göstergeleri">
+  <div id="time-box"><span class="kicker">KALAN SÜRE</span><div id="time">03:00</div><div class="money" id="money">₺0</div></div>
+  <div id="speed-panel"><div class="kicker">HIZ</div><div id="speed">0</div><div class="unit">KM / SA</div><div id="car-health">ARAÇ %100</div></div>
+  <div id="mission"><div id="mission-state">MİSAFİR BEKLİYOR</div><div id="mission-name">İstanbul sokaklarında...</div><div id="mission-info">Yol ağı yükleniyor.</div><div id="mission-distance">—</div><div id="mission-timer"></div></div>
+  <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas></div>
+  <div id="mode-pill">KONVOY <span id="convoy">1</span> · <span id="trips">0</span> TESLİMAT</div>
+  <div id="directions"><span id="turn-arrow">↑</span><span id="turn-hint">HEDEFİ TAKİP ET</span></div>
+ </section>
+ <div id="toast" aria-live="polite"></div>
+ <div id="data-warning" role="status"></div>
+ <div id="controls" aria-label="Dokunmatik sürüş kontrolleri">
+  <div class="ctr-group"><button class="ctr" data-hold="left" aria-label="Sola dön">◀</button><button class="ctr" data-hold="right" aria-label="Sağa dön">▶</button></div>
+  <div class="ctr-group"><button class="ctr horn" id="horn" aria-label="Korna">KORNA</button><button class="ctr brake" data-hold="brake" aria-label="Fren">FREN</button><button class="ctr go" data-hold="gas" aria-label="Gaz">GAZ</button></div>
+ </div>
+ <div id="overlay">
+  <div id="panel">
+   <div class="eyebrow">AYNEN.FUN · SERBEST SÜRÜŞ · GERÇEK ŞEHİR HARİTASI</div>
+   <h1>DÜĞÜN<br><em>KONVOYU.</em></h1>
+   <p>Bu kez gerçek İstanbul sokaklarındasın. Kavşaklarda dön, ara sokaklara gir, akrabaları alıp düğüne yetiştir. Rakip konvoydan önce davran.</p>
+   <div class="feature-row"><span>WEBGL 3D</span><span>OPENSTREETMAP</span><span>ÜÇÜNCÜ ŞAHIS KAMERA</span><span>SERBEST SÜRÜŞ</span></div>
+   <div class="panel-label">NEREDEN BAŞLAYALIM?</div>
+   <div class="options" id="districts"><button class="option selected" data-district="kadikoy">KADIKÖY<small>Moda · Çarşı</small></button><button class="option" data-district="besiktas">BEŞİKTAŞ<small>Abbasağa</small></button><button class="option" data-district="karakoy">KARAKÖY<small>Galata</small></button></div>
+   <div class="panel-label">DÜĞÜN ARABASI</div>
+   <div class="options" id="cars"><button class="option selected" data-car="sahin">ŞAHİN<small>Dengeli sürüş</small></button><button class="option" data-car="toros">TOROS<small>Yüksek yol tutuş</small></button><button class="option" data-car="doblo">DOBLO<small>Geniş araç</small></button></div>
+   <button id="start">ŞEHRE ÇIK</button>
+   <div id="loadstate">Harita hazırlanıyor…</div>
+   <div id="help">Bilgisayar: W / ↑ gaz · S / ↓ fren / geri · A D / ← → direksiyon · Space korna · Shift el freni · P duraklat. Mobil: ekrandaki kontroller.</div>
+  </div>
+ </div>
 </div>
-<p>Üç farklı güzergâh. Misafirleri yetiştir, bahşiş topla, <span class="accent">rakip konvoyu geç.</span></p>
-<button class="cta" id="start" type="button">DİREKSİYONA GEÇ →</button>
-<p class="scoreline" id="best">EN İYİ SKOR: 000000</p>
-</section>
-</div>
-</div>
-<div class="pad" aria-label="Oyun kontrolleri">
-<div class="group"><button id="left" aria-label="Sola dön" type="button">◀</button><button id="right" aria-label="Sağa dön" type="button">▶</button></div>
-<span class="hint">DİREKSİYON ← → &nbsp;·&nbsp; KORNA BOŞLUK<br>GAZ ↑ &nbsp;·&nbsp; FREN ↓ &nbsp;·&nbsp; DÖRTLÜ X</span>
-<div class="group"><button id="brake" aria-label="Fren" type="button" style="font-size:12px">FREN</button><button id="dortlu" class="special" aria-label="Dörtlü flaşörleri aç" type="button">⚡ DÖRTLÜ</button><button id="horn" class="horn" aria-label="Korna çal" type="button">♪ KORNA</button></div>
-</div>
-</div>
-<script src="/dugun-gp-visuals.js?v=20261101-cartoon-chase"></script>
-<script>
-(function(){
-"use strict";
-const W=480,H=270,canvas=document.getElementById("game"),c=canvas.getContext("2d",{alpha:false});
-c.imageSmoothingEnabled=true;c.setTransform(2,0,0,2,0,0);
-const overlay=document.getElementById("overlay"),menu=document.getElementById("menu"),banner=document.getElementById("banner"),soundBtn=document.getElementById("sound"),pauseBtn=document.getElementById("pause"),hornBtn=document.getElementById("horn");
-let mode="menu",muted=false,audio=null,last=0,seconds=0,objects=[],spawnTimer=0,nextId=1,noticeTimer=0,flash=0,runSeed=0;
-const input={left:false,right:false,brake:false,boost:false};
-const gesture={active:false,id:null,target:0};
-const rivalInput={left:false,right:false};let rival={lane:-.75,earned:0,delivered:0,hitCD:0,reaction:1},ride=null,rideWait=.5,rideCount=0;
-const isVersus=()=>runMode==="versus"||runMode==="duel",isLocal=()=>runMode==="duel";
-const rideCard=document.getElementById("ride-card"),rideLabel=document.getElementById("ride-label"),rideHead=document.getElementById("ride-head"),rideDetail=document.getElementById("ride-detail"),rideClock=document.getElementById("ride-clock"),rideVersus=document.getElementById("ride-vs");
-let drumClock=0,drumStep=0,roadCut=[false,false],rivalEventDone=false;
-const dortluBtn=document.getElementById("dortlu"),comboFloat=document.getElementById("combo-float"),tutorialEl=document.getElementById("tutorial"),progressEl=document.getElementById("h-progress"),progressTrack=document.getElementById("progress-track"),missionProgress=document.getElementById("m-progress"),missionStreak=document.getElementById("m-streak"),missionLap=document.getElementById("m-lap"),missionStrip=document.getElementById("mission-strip");
-let selectedCar="sahin",activeCar="sahin";
-let runMode="quick",dailyKey="",runRng=null,attempts=0,tutorialStage=0,tutorialClock=0,runEvents=[],hadHorn=false,firstGame=true;
-let lastLap=1,comboFloatTime=0,particles=[],pulse=0,rumble=0,helpShown=false,goalUnlocked=[false,false,false];
-let g={score:0,time:90,speed:130,distance:0,lane:0,hearts:3,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,halay:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
-const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
-const rand=(a,b)=>a+Math.random()*(b-a);
-const siteBase="https://aynen.fun/dugun-konvoyu-gp.html";
-const shareModeUrl=()=>siteBase+(runMode==="daily"?"?mode=daily":"");
-function rect(x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h));}
-function poly(coords,color){c.fillStyle=color;c.beginPath();c.moveTo(coords[0],coords[1]);for(let i=2;i<coords.length;i+=2)c.lineTo(coords[i],coords[i+1]);c.closePath();c.fill();}
-function txt(t,x,y,size,color,align){c.fillStyle=color;c.font="bold "+size+"px monospace";c.textAlign=align||"left";c.fillText(String(t),Math.round(x),Math.round(y));}
-function tone(freq,dur,type,volume){if(muted)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==="suspended")audio.resume();const o=audio.createOscillator(),gain=audio.createGain(),now=audio.currentTime;o.type=type||"square";o.frequency.setValueAtTime(freq,now);gain.gain.setValueAtTime(volume||.045,now);gain.gain.exponentialRampToValueAtTime(.0001,now+dur);o.connect(gain);gain.connect(audio.destination);o.start(now);o.stop(now+dur+.01)}catch(e){}}
-function weddingBeat(){
- if(muted)return;
- if(drumStep%2===0)tone(95,.085,"sine",.014);
- else tone(210,.058,"triangle",.008);
- if(drumStep%8===6)tone(294,.13,"square",.004);
- drumStep++;
-}
-function fanfare(){tone(523,.17,"square",.04);setTimeout(()=>tone(659,.18,"square",.04),130);setTimeout(()=>tone(784,.23,"square",.04),265)}
-function announce(msg,forSeconds){banner.textContent=msg;banner.classList.add("show");noticeTimer=forSeconds||1.6}
-function setMenu(html){overlay.hidden=false;menu.innerHTML=html}
-
-function trDay(){
- const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Istanbul",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
- const pick=t=>parts.find(p=>p.type===t).value;return pick("year")+"-"+pick("month")+"-"+pick("day");
-}
-function seededRandom(seed){let z=seed>>>0;return ()=>{z+=0x6D2B79F5;let x=z;x=Math.imul(x^(x>>>15),x|1);x^=x+Math.imul(x^(x>>>7),x|61);return ((x^(x>>>14))>>>0)/4294967296}}
-function stringHash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
-function gameRandom(){return runRng?runRng():Math.random()}
-function gameRange(a,b){return a+gameRandom()*(b-a)}
-function dailyBestKey(){return "dugun-gp-daily-"+dailyKey}
-function dailyBest(){try{return Number(localStorage.getItem(dailyBestKey())||0)}catch(e){return 0}}
-const modeQuick=document.getElementById("mode-quick"),modeDaily=document.getElementById("mode-daily"),modeVersus=document.getElementById("mode-versus"),modeDuel=document.getElementById("mode-duel"),modeCaption=document.getElementById("mode-caption");
-const garage=document.getElementById("garage"),garageCaption=document.getElementById("garage-caption");
-for(const button of document.querySelectorAll(".garage-car")){
- button.addEventListener("click",()=>{
-   if(runMode==="daily")return;
-   selectedCar=button.dataset.car;
-   for(const other of document.querySelectorAll(".garage-car")){
-     const yes=other===button;other.setAttribute("aria-pressed",String(yes));other.classList.toggle("is-selected",yes);
-   }
-   garageCaption.textContent=selectedCar==="toros"?"Toros: 4 can, biraz daha yavaş.":selectedCar==="doblo"?"Doblo: daha geniş korna menzili, daha uzun bekleme.":"Şahin: dengeli hız ve direksiyon.";
- });
-}
-function chooseMode(t){
- runMode=t;
- for(const [el,key] of [[modeQuick,"quick"],[modeDaily,"daily"],[modeVersus,"versus"],[modeDuel,"duel"]])el.setAttribute("aria-pressed",String(t===key));
- garage.setAttribute("aria-disabled",String(t==="daily"));garageCaption.textContent=t==="daily"?"Günün Konvoyu herkeste aynı: Şahin ile yarışılır.":"Araç seçimi sadece Hızlı Yarış modunda geçerli.";
- dailyKey=trDay();const pb=t==="daily"?dailyBest():bestScore();modeCaption.textContent=t==="daily"?"Bugünün sabit trafiği, herkese aynı yarış.":t==="versus"?"Rakiple aynı misafir için kapış; çarparsan misafiri kaparsın.":t==="duel"?"Oyuncu 1: ← → ve boşluk · Oyuncu 2: A D ve E.":"Misafir al, hedef şeritte bırak; bahşiş ve süre kazan.";
- const startBtn=document.getElementById("start");if(startBtn)startBtn.textContent=t==="daily"?"GÜNÜN KONVOYUNU OYNA →":isVersus()?"KAPIŞMAYI BAŞLAT →":"SERVİSE BAŞLA →";
-}
-modeQuick.addEventListener("click",()=>chooseMode("quick"));
-modeDaily.addEventListener("click",()=>chooseMode("daily"));
-modeVersus.addEventListener("click",()=>chooseMode("versus"));
-modeDuel.addEventListener("click",()=>chooseMode("duel"));
-try{if(new URLSearchParams(location.search).get("mode")==="daily")chooseMode("daily")}catch(e){}
-function showTutorial(msg,ttl){
- tutorialEl.textContent=msg;tutorialEl.classList.add("on");tutorialClock=ttl||2.1;
-}
-function hideTutorial(){tutorialEl.classList.remove("on");tutorialClock=0}
-function start(){
-activeCar=runMode==="daily"?"sahin":selectedCar;
-g={score:0,time:95,speed:130,distance:0,lane:0,earned:0,delivered:0,stolen:0,lost:0,missed:0,bumps:0,hearts:activeCar==="toros"?7:6,introSpawned:false,convoy:4,maxConvoy:4,bestCombo:0,combo:0,comboClock:0,halay:0,chaos:0,lap:1,hornCD:0,dortluCD:0,dortluOn:0,invuln:0,horns:0,joined:0,nearMiss:0,checkpoints:0};
-dailyKey=trDay();runRng=runMode==="daily"?seededRandom(stringHash("dugun-gp-v4-"+dailyKey)):null;attempts++;tutorialStage=0;hadHorn=false;runEvents=[];
-lastLap=1;goalUnlocked=[false,false,false];drumClock=0;drumStep=0;roadCut=[false,false];rivalEventDone=false;comboFloatTime=0;particles=[];pulse=0;rumble=0;helpShown=false;dortluBtn.disabled=false;dortluBtn.textContent="⚡ DÖRTLÜ";objects=[];seconds=0;spawnTimer=.5;ride=null;rideWait=.55;rideCount=0;rival={lane:-.75,earned:0,delivered:0,hitCD:0,reaction:1};rideCard.classList.add("show");rivalInput.left=rivalInput.right=false;runSeed=(runMode==="daily"?stringHash("scene-"+dailyKey):Math.random()*10000);flash=0;mode="playing";g.invuln=4.6;overlay.hidden=true;pauseBtn.textContent="Ⅱ";gesture.active=false;gesture.id=null;last=performance.now();tone(440,.12);setTimeout(()=>tone(660,.18),120);announce("DÜĞÜN SERVİSİ BAŞLADI!",1.7);missionStrip.style.display="flex";progressTrack.style.display="block";updateHud();showTutorial("SARI YOLCUYA YANAŞ · BİNCE HEDEF ŞERİDE GİT",3.5);
-}
-function bestScore(){try{return Number(localStorage.getItem("dugun-gp-best")||0)}catch(e){return 0}}
-function saveBest(){try{if(g.score>bestScore())localStorage.setItem("dugun-gp-best",String(g.score))}catch(e){}}
-document.getElementById("best").textContent="EN İYİ SKOR: "+String(bestScore()).padStart(6,"0");
-document.getElementById("start").addEventListener("click",start);
-
-function scoreIdentity(win){
- if(g.maxConvoy>=14&&win)return ["KONVOY BAŞKANI","Bütün sülale salonda. Otopark yetmedi."];
- if(g.bestCombo>=5)return ["KORNA ORKESTRASI","Beş araçlık seri. Konvoy kendini topladı."];
- if(g.nearMiss>=5)return ["KIL PAYI ENİŞTE","Yola değil, reflekslerine güvendin."];
- if(g.horns>=10&&g.joined<=2)return ["KORNACI BAŞI","Korna mesaisi yüksek. Araç sayısı mütevazı."];
- if(g.hearts===1&&win)return ["SON CANLA YETİŞEN","Salona girdin. Arabayı bir kontrol ettir."];
- if(g.maxConvoy>=9)return ["MAHALLE ORGANİZATÖRÜ","Düğünden haberi olmayan bile katıldı."];
- if(!win)return ["KONVOYDAN KOPAN","Salona giden yönü bir daha kontrol et."];
- return ["GELİN TARAFINDAN","Düğün salonuna vardın. Şimdilik yeter."];
-}
-function saveStats(win){
- saveBest();
- try{
-  localStorage.setItem("dugun-gp-last",JSON.stringify({score:g.score,convoy:g.maxConvoy,win:!!win,mode:runMode}));
-  const current=Number(localStorage.getItem("dugun-gp-games")||0);
-  localStorage.setItem("dugun-gp-games",String(current+1));
-  if(runMode==="daily"&&g.score>dailyBest())localStorage.setItem(dailyBestKey(),String(g.score));
- }catch(e){}
-}
-function lastRun(){
- try{return JSON.parse(localStorage.getItem("dugun-gp-last")||"null")}catch(e){return null}
-}
-function finish(win){
- if(isVersus()&&g.hearts>0)win=g.earned>rival.earned;
- mode="end";hideTutorial();rideCard.classList.remove("show");
- const previous=lastRun();const priorBest=runMode==="daily"?dailyBest():bestScore();
- saveStats(win);fanfare();missionStrip.style.display="none";
- const [identity,description]=scoreIdentity(win);
- const carLabel=activeCar==="toros"?"TOROS":activeCar==="doblo"?"DOBLO":"ŞAHİN";
- const target=nextTarget();
- const improved=g.score>priorBest;
- const bestLabel=runMode==="daily"?"BUGÜNÜN REKORU":"KİŞİSEL REKOR";
- const resultSub=improved?"YENİ REKOR!":previous&&previous.score>g.score?"ÖNCEKİ TURDA "+Math.max(0,previous.score-g.score)+" PUAN DAHA YAPMIŞTIN.":"BİR TUR DAHA?";
- const modeLabel=runMode==="daily"?"GÜNÜN KONVOYU · "+dailyKey:isVersus()?(isLocal()?"2 OYUNCU · KAPIŞMA":"KAPIŞMA · CPU"):"DÜĞÜN SERVİSİ";
- setMenu('<div class="eyebrow">'+modeLabel+' / YARIŞ SONU</div>'
- +'<h2 style="margin-bottom:5px">'+(isVersus()?(win?"SENİN KONVOY KAZANDI!":(isLocal()?"2. OYUNCU KAZANDI!":"RAKİP KONVOY KAZANDI!")):(win?"SALONA YETİŞTİN!":"KONVOY DAĞILDI"))+'</h2>'
- +'<div class="result-tier">'+identity+'</div>'
- +'<p style="font-size:11px;margin:5px 0">'+description+'</p>'
- +'<div style="font-size:clamp(29px,5vw,44px);color:#ffdf75;font-weight:900;line-height:1.1">'+String(g.score).padStart(6,"0")+'</div>'
- +'<p class="eyebrow" style="margin:3px 0;color:#ffe299">'+(improved?"★ ":"")+bestLabel+' '+String(runMode==="daily"?dailyBest():bestScore()).padStart(6,"0")+'</p>'
- +'<p class="result-card-foot">ARACIN: '+carLabel+'</p>'
- +'<div class="result-grid"><div><strong>'+g.delivered+'</strong>TESLİMAT</div><div><strong>₺'+g.earned+'</strong>BAHŞİŞ</div><div><strong>'+g.stolen+'</strong>RAKİPTEN KAPTIN</div></div>'+'<p class="result-card-foot">'+(isVersus()?"RAKİP ₺"+rival.earned+" · "+rival.delivered+" TESLİMAT · ":"")+"MAKSİMUM KONVOY "+g.maxConvoy+'</p>'
- +'<button class="cta" id="again" type="button">TEKRAR DENE →</button>'
- +'<div class="result-action-row"><button id="share" type="button">PAYLAŞ ↗</button><button id="story" type="button">INSTAGRAM GÖRSELİ ↓</button><button id="whatsapp" type="button">WHATSAPP</button><button id="postx" type="button">X ÜZERİNDE PAYLAŞ</button></div>'
- +'<p class="result-card-foot">'+resultSub+' · '+target+'</p>');
- const again=document.getElementById("again"),shareEl=document.getElementById("share"),storyEl=document.getElementById("story");
- again.onclick=start;shareEl.onclick=share;storyEl.onclick=downloadStory;
- const whats=document.getElementById("whatsapp"),post=document.getElementById("postx");
- whats.onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent(shareText()),"_blank","noopener,noreferrer");
- post.onclick=()=>window.open("https://twitter.com/intent/tweet?text="+encodeURIComponent(shareText()),"_blank","noopener,noreferrer");
-}
-function nextTarget(){
- if(g.maxConvoy<7)return "SONRAKİ HEDEF: 7 ARABALIK KONVOY";
- if(g.bestCombo<3)return "SONRAKİ HEDEF: 3 ARABA ÜST ÜSTE";
- if(g.maxConvoy<14)return "SONRAKİ HEDEF: 14 ARABA TOPLA";
- return "SONRAKİ HEDEF: REKORUNU GEÇ";
-}
-function shareText(){
- const [identity]=scoreIdentity(g.distance>=2280);
- return "Düğün Konvoyu GP · "+identity+"\n"+g.score+" puan · ₺"+g.earned+" bahşiş · "+g.delivered+" teslimat · "+g.stolen+" rakipten kaptım · "+g.maxConvoy+" araç · "+(activeCar==="toros"?"Toros":activeCar==="doblo"?"Doblo":"Şahin")+".\nAynı düğüne yetişebilir misin? "+shareModeUrl();
-}
-async function share(){
- const text=shareText();
- try{
-  if(navigator.share){await navigator.share({title:"Düğün Konvoyu GP",text,url:shareModeUrl()});return}
-  if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);document.getElementById("share").textContent="KOPYALANDI ✓";return}
-  window.prompt("Paylaş",text);
- }catch(e){if(e.name!=="AbortError")window.prompt("Paylaş",text)}
-}
-function makeStoryCanvas(){
- const cv=document.createElement("canvas");cv.width=1080;cv.height=1920;
- const p=cv.getContext("2d");if(!p)return null;
- p.fillStyle="#142c5a";p.fillRect(0,0,1080,1920);
- // Original shareable 9:16 art card: retro road, ribbons, city and wedding car.
- p.fillStyle="#2373dc";p.fillRect(0,280,1080,760);
- p.fillStyle="#469d33";p.fillRect(0,1020,1080,900);
- p.fillStyle="#ffefb6";p.fillRect(90,460,900,130);
- p.fillStyle="#b5434b";p.fillRect(90,575,900,14);
- p.textAlign="center";p.fillStyle="#9b3045";p.font="bold 76px monospace";p.fillText("DÜĞÜN KONVOYU",540,548);
- p.fillStyle="#2a343b";p.beginPath();p.moveTo(498,825);p.lineTo(582,825);p.lineTo(1200,1920);p.lineTo(-120,1920);p.fill();
- p.strokeStyle="#fff6da";p.lineWidth=14;p.setLineDash([32,48]);p.beginPath();p.moveTo(540,865);p.lineTo(540,1900);p.stroke();p.setLineDash([]);
- const colors=["#e64a43","#e7e1d8","#d5ae62","#52708b"];
- for(let i=0;i<7;i++){
-  let z=i/7,x=140+(i%3)*260,y=975+i*103,w=95+z*48;
-  p.fillStyle="#131e2c";p.fillRect(x-8,y+43,w+16,20);p.fillStyle=colors[i%4];p.fillRect(x,y,w,55);
-  p.fillStyle="#8dc5d7";p.fillRect(x+19,y-17,w-37,30);
-  p.fillStyle="#fff0e0";p.beginPath();p.moveTo(x+w/2,y+35);p.lineTo(x+w/2-29,y+13);p.lineTo(x+w/2-24,y+48);p.lineTo(x+w/2,y+35);p.lineTo(x+w/2+29,y+13);p.lineTo(x+w/2+24,y+48);p.fill();
- }
- p.fillStyle="rgba(7,21,49,.93)";p.fillRect(65,1280,950,510);
- p.fillStyle="#f9e7a6";p.textAlign="center";p.font="bold 65px monospace";p.fillText(scoreIdentity(g.distance>=2280)[0].slice(0,22),540,1370);
- p.font="bold 132px monospace";p.fillText(String(g.score).padStart(6,"0"),540,1550);
- p.fillStyle="#fff";p.font="46px monospace";p.fillText("₺"+g.earned+"  ·  "+g.delivered+" MİSAFİR",540,1655);
- p.fillStyle="#b9d4e7";p.font="bold 39px monospace";p.fillText(runMode==="daily"?"GÜNÜN KONVOYU":"HIZLI YARIŞ",540,1731);
- p.fillStyle="#fff2c5";p.font="bold 50px monospace";p.fillText("AYNEN.FUN",540,1837);
- return cv;
-}
-function downloadStory(){
- try{
-  const card=makeStoryCanvas();if(!card)return;
-  const link=document.createElement("a");
-  link.download="dugun-konvoyu-gp-"+g.score+".png";
-  link.href=card.toDataURL("image/png");
-  document.body.appendChild(link);link.click();link.remove();
-  const el=document.getElementById("story");if(el)el.textContent="GÖRSEL İNDİRİLDİ ✓";
- }catch(e){const el=document.getElementById("story");if(el)el.textContent="DESTEKLENMİYOR"}
-}
-
-function pause(){if(mode==="playing"){mode="pause";pauseBtn.textContent="▶";setMenu('<div class="eyebrow">KONVOY BEKLİYOR</div><h2>MOLA</h2><p>Kimse düğüne geç kalmadı. Henüz.</p><button class="cta" id="resume" type="button">DEVAM ET →</button><a class="secondary" href="/">AYNEN.FUN</a>');document.getElementById("resume").onclick=pause}
-else if(mode==="pause"){mode="playing";overlay.hidden=true;pauseBtn.textContent="Ⅱ";last=performance.now()}}
-pauseBtn.onclick=pause;
-soundBtn.onclick=function(){muted=!muted;soundBtn.textContent=muted?"SES: KAPALI":"SES: AÇIK";if(!muted)tone(580,.09)};
-function horn(){
-if(mode!=="playing"||g.hornCD>0)return;
-g.hornCD=activeCar==="doblo"?1.2:.90;pulse=.42;g.horns++;hadHorn=true;tone(350,.16,"sawtooth",.065);setTimeout(()=>tone(425,.14,"sawtooth",.05),115);
-let gathered=0;
-for(const o of objects){if(o.type==="guest"&&!o.joined&&!o.passed&&o.z<.75&&o.z>.08&&Math.abs(o.lane-g.lane)<(activeCar==="doblo"?.86:.67)){
-o.joined=true;o.pop=1;gathered++;g.joined++;g.convoy++;g.combo++;if(g.combo===3){g.halay=5.5;announce("HALAY MODU! 5 SN · 2× PUAN",1.6)}
-const perfect=o.z>=.24&&o.z<=.49&&Math.abs(o.lane-g.lane)<.30;
-const gained=(170+Math.min(g.combo,8)*45+(perfect?175:0))*(g.halay>0?2:1);g.score+=gained;
-if(perfect){g.perfect=(g.perfect||0)+1;makeConfetti(o.z,o.lane,10);}
-g.comboClock=5.5;g.maxConvoy=Math.max(g.maxConvoy,g.convoy);g.bestCombo=Math.max(g.bestCombo,g.combo);showCombo("+"+gained+(perfect?" · TAM ZAMANINDA!":" · "+g.combo+"× SERİ"));makeConfetti(o.z,o.lane,18);g.chaos=clamp(g.chaos+6,0,100);tone(740,.17,"square",.035);tone(185,.21,"triangle",.075);
-}}
-if(gathered)announce(gathered>1?gathered+" ARAÇ DAHA KATILDI!":["DAYININ ARKADAŞI DA GELDİ","KONVOYA +1 ARAÇ","HALA OĞLU YETİŞTİ","KORNAYI DUYUP GELDİ"][Math.floor(rand(0,4))],1.3);
-else{g.combo=0;announce("KORNA ÇALINDI. DUYAN YOK.",.6)}
-}
-
-
-const RIDE_PEOPLE=[
- ["Gelin kuzeni","DÜĞÜN SALONU"],["Nikâh şahidi","NİKÂH MASASI"],["Yengeler","SALON GİRİŞİ"],
- ["Davulcu","GELİN EVİ"],["Fotoğrafçı","DÜĞÜN SALONU"],["Çiçekçi","GELİN ARABASI"],
- ["Takı çantasını taşıyan dayı","SALON KAPISI"],["Gelinlik terzisi","KUAFÖR"],
- ["Mahalleden komşu","DÜĞÜN SALONU"],["Saz ekibi","SAHNE ARKASI"],
- ["Damat arkadaşı","KONVOY BULUŞMA"],["Pastayı getiren kuzen","SALON MUTFAĞI"],
- ["Altınları unutan teyze","TAKI MASASI"]
-];
-const BONUS_LABELS=["HASARSIZ","2 KORNA","HIZLI TESLİMAT","KIL PAYI"];
-function makeRide(){
- const person=RIDE_PEOPLE[Math.floor(gameRandom()*RIDE_PEOPLE.length)];
- ride={phase:"waiting",name:person[0],place:person[1],lane:rideCount===0?0:[-.72,0,.72][Math.floor(gameRandom()*3)],z:1.04,owner:null,bonus:rideCount%3===2?Math.floor(gameRandom()*4):-1};
- rideCount++;if(isVersus())rival.reaction=gameRange(.65,1.55);
-}
-function pickupRide(owner){
- if(!ride||ride.phase!=="waiting")return;
- ride.phase="riding";ride.owner=owner;ride.trip=gameRange(185,320);
- ride.destinationDist=g.distance+ride.trip;
- ride.destLane=[-.72,0,.72][Math.floor(gameRandom()*3)];
- ride.limit=11+ride.trip/56;ride.startHorns=g.horns;ride.startBumps=g.bumps;ride.startNear=g.nearMiss;
- if(owner==="p1"){g.score+=125;announce(ride.name.toLocaleUpperCase("tr-TR")+" BİNDİ!",1.2)}
- else announce("RAKİP MİSAFİRİ ALDI!",1.3);
- tone(owner==="p1"?660:380,.17,"triangle",.04);
-}
-function finishRide(ok){
- if(!ride)return;
- if(ok){
-  const secs=Math.max(0,Math.ceil(ride.limit));
-  const base=Math.floor(300+ride.trip*1.4+secs*30);
-  const bonus=ride.owner==="p1"&&ride.bonus>=0&&(
-   ride.bonus===0&&g.bumps===ride.startBumps||
-   ride.bonus===1&&g.horns-ride.startHorns>=2||
-   ride.bonus===2&&secs>=6||
-   ride.bonus===3&&g.nearMiss>ride.startNear
-  )?400:0;
-  if(ride.owner==="p1"){const prize=base+bonus;g.earned+=prize;g.delivered++;g.score+=prize;g.hearts=Math.min(activeCar==="toros"?7:6,g.hearts+1);g.time+=5;showCombo("₺"+prize+" BAHŞİŞ · +5 SN");announce("MİSAFİR BIRAKILDI · TESLİMAT TAMAM!",1.3);makeConfetti(.2,ride.destLane,22)}
-  else {rival.earned+=base;rival.delivered++;announce("RAKİP TESLİMAT YAPTI · ₺"+base,1.3)}
-  fanfare();
- }else{
-  if(ride.owner==="p1"){g.missed++;g.combo=0;announce("HEDEF ŞERİDİ KAÇIRDIN!",1.4)}
-  else announce("RAKİP TESLİMATI KAÇIRDI",1.1);
- }
- ride=null;rideWait=.5;
-}
-function updateRides(dt){
- rival.hitCD=Math.max(0,rival.hitCD-dt);rival.reaction=Math.max(0,rival.reaction-dt);rival.hornCD=Math.max(0,(rival.hornCD||0)-dt);
- if(!ride){rideWait-=dt;if(rideWait<=0)makeRide();return;}
- if(isVersus()){
-  const aim=ride.phase==="waiting"?ride.lane:ride.owner==="p2"?ride.destLane:g.lane;
-  if(isLocal())rival.lane=clamp(rival.lane+(Number(rivalInput.right)-Number(rivalInput.left))*dt*1.30,-.98,.98);
-  else if(!(ride.phase==="waiting"&&rival.reaction>.15))rival.lane+=(clamp(aim,-.9,.9)-rival.lane)*Math.min(1,dt*(ride.phase==="riding"&&ride.owner==="p2"?2.1:.85));
- }
- if(ride.phase==="waiting"){
-  ride.z-=dt*(.14+g.speed*.00143)*.94;
-  if(ride.z<.24&&ride.z>-.035){
-   const playerNear=Math.abs(ride.lane-g.lane)<.40;
-   const rivalNear=isVersus()&&Math.abs(ride.lane-rival.lane)<.37&&rival.reaction<=0;
-   if(playerNear||rivalNear)pickupRide(playerNear?"p1":"p2");
-  }
-  if(ride&&ride.phase==="waiting"&&ride.z<-.06){g.missed++;ride=null;rideWait=.3}
- }else{
-  ride.limit-=dt;
-  const remaining=ride.destinationDist-g.distance;
-  if(remaining<=14&&remaining>=-30&&Math.abs((ride.owner==="p1"?g.lane:rival.lane)-ride.destLane)<.43){finishRide(true);return}
-  if(remaining<-30||ride.limit<=0){finishRide(false);return}
-  if(isVersus()&&rival.hitCD<=0&&Math.abs(g.lane-rival.lane)<.23){
-   rival.hitCD=3.25;rival.reaction=.8;g.bumps++;rumble=.21;flash=.08;
-   if(ride.owner==="p1"&&g.dortluOn<=0){ride.owner="p2";g.lost++;announce("RAKİP ÇARPTI · MİSAFİRİ KAPTI!",1.5);showCombo("MİSAFİR RAKİBE GEÇTİ")}
-   else if(ride.owner==="p2"){ride.owner="p1";g.stolen++;g.score+=300;announce("ÇARPTIN · RAKİBİN MİSAFİRİNİ KAPTIN!",1.5);showCombo("+300 · MİSAFİR KAPILDI")}
-   else showCombo("DÖRTLÜ KALKANI!");
-   tone(125,.17,"sawtooth",.045);
-   rival.lane=clamp(rival.lane+(rival.lane>=g.lane?.36:-.36),-.98,.98);
-  }
- }
-}
-function updateRideHud(){
- if(mode!=="playing")return;
- if(!ride){rideLabel.textContent="SIRADAKİ GÖREV";rideHead.textContent="MİSAFİR ARANIYOR";rideDetail.textContent="Sarı ışığı takip et";rideClock.textContent=""}
- else if(ride.phase==="waiting"){
-  rideLabel.textContent="YOLCU BEKLİYOR";rideHead.textContent=ride.name.toLocaleUpperCase("tr-TR");
-  rideDetail.textContent="SARI İŞARET · "+(ride.lane<-.2?"← SOL":ride.lane>.2?"SAĞ →":"↑ ORTA")+" ŞERİT";
-  rideClock.textContent="YANAŞINCA OTOMATİK BİNER";
- }else{
-  rideLabel.textContent=ride.owner==="p1"?"SENİN MİSAFİRİN":"RAKİPTEKİ MİSAFİR";
-  rideHead.textContent=ride.place;rideDetail.textContent="HEDEF "+(ride.destLane<-.2?"← SOL":ride.destLane>.2?"SAĞ →":"↑ ORTA")+" · "+Math.max(0,Math.round(ride.destinationDist-g.distance))+" m";
-  rideClock.textContent=Math.max(0,Math.ceil(ride.limit))+" SN KALDI"+(ride.bonus>=0?" · BONUS: "+BONUS_LABELS[ride.bonus]:"");
- }
- rideVersus.textContent=isVersus()?"SEN ₺"+g.earned+"  /  "+(isLocal()?"2. OYUNCU":"CPU")+" ₺"+rival.earned+(isLocal()?" · 2P KONVOY "+(rival.convoy||3):""):"₺"+g.earned+" · "+g.delivered+" TESLİMAT";
-}
-
-
-function rivalHorn(){
- if(!isLocal()||mode!=="playing"||(rival.hornCD||0)>0)return;
- rival.hornCD=1.25;let added=0;
- for(const o of objects)if(o.type==="guest"&&!o.joined&&!o.passed&&o.z<.76&&o.z>.08&&Math.abs(o.lane-rival.lane)<.70){
-  o.joined=true;o.claimedBy="p2";o.pop=1;rival.convoy=(rival.convoy||3)+1;rival.earned+=100;added++;makeConfetti(o.z,o.lane,12);
- }
- if(added)announce("2. OYUNCU KONVOYA "+added+" ARAÇ KATTI",1.3);
- tone(300,.12,"sawtooth",.04);
-}
-function showCombo(t){comboFloat.textContent=t;comboFloat.classList.add("on");comboFloatTime=1.4}
-function makeConfetti(z,lane,count){
- const y=roadY(z),x=roadCenter(y)+lane*roadHalf(y)*.83;
- for(let i=0;i<count;i++)particles.push({x:x+rand(-9,9),y:y-rand(3,16),vx:rand(-24,24),vy:rand(-40,-8),life:rand(.5,1.4),color:["#fff0cb","#f47da0","#d9e8f9","#eecc69","#8fba75"][i%5]});
- if(particles.length>110)particles.splice(0,particles.length-110);
-}
-function dortlu(){
- if(mode!=="playing"||g.dortluCD>0)return;
- g.dortluCD=12;g.dortluOn=2.4;g.invuln=Math.max(g.invuln,2.4);
- tone(810,.1,"square",.045);setTimeout(()=>tone(680,.10,"square",.045),110);
- announce("DÖRTLÜLER YANDI · 2 SN KORUMA",1.3);
-}
-dortluBtn.addEventListener("pointerdown",e=>{e.preventDefault();dortlu()});
-
-function spawn(){
- const lanes=[-.73,0,.73],r=gameRandom(),guestChance=g.lap===1?.59:g.lap===2?.47:.38;
- const intro=!g.introSpawned;if(intro)g.introSpawned=true;
- let type=intro?"guest":r<guestChance?"guest":r<guestChance+.34?"rival":"obstacle";
- if(g.distance<145&&type==="obstacle")type="guest";
- let lane=intro?0:lanes[Math.floor(gameRange(0,lanes.length))];
- if(!intro&&objects.some(o=>o.z>.65&&o.z<1.1&&Math.abs(o.lane-lane)<.25))
-   lane=lanes[(lanes.indexOf(lane)+1)%3];
- const variant=Math.floor(gameRange(0,6));
- objects.push({id:nextId++,z:1.05,lane,originalLane:lane,type,variant,joined:false,passed:false,wobble:gameRange(0,6.28),speed:gameRange(.85,1.08)});
-}
-function update(dt){
- seconds+=dt;g.hornCD=Math.max(0,g.hornCD-dt);g.halay=Math.max(0,g.halay-dt);tutorialClock-=dt;if(tutorialClock<=0)tutorialEl.classList.remove("on");
- drumClock+=dt;if(drumClock>.48-(g.lap-1)*.035){drumClock=0;if(seconds>2)weddingBeat()}
- g.dortluCD=Math.max(0,g.dortluCD-dt);g.dortluOn=Math.max(0,g.dortluOn-dt);
- g.invuln=Math.max(0,g.invuln-dt);noticeTimer-=dt;comboFloatTime-=dt;
- if(comboFloatTime<0)comboFloat.classList.remove("on");
- if(noticeTimer<=0)banner.classList.remove("show");
- flash=Math.max(0,flash-dt);pulse=Math.max(0,pulse-dt);rumble=Math.max(0,rumble-dt);
- const laneLimit=innerHeight>innerWidth?.85:1.04;
- const steer=(Number(input.right)-Number(input.left))*dt*(input.brake?1.50:activeCar==="toros"?1.08:1.2);
- if(gesture.active)g.lane+=(clamp(gesture.target,-laneLimit,laneLimit)-g.lane)*Math.min(1,dt*6.3);
- else g.lane+=steer;
- g.lane=clamp(g.lane,-laneLimit,laneLimit);
- const targetSpeed=input.brake?74:input.boost?(activeCar==="toros"?149:173):activeCar==="toros"?120:136;
- g.speed+=(targetSpeed-g.speed)*Math.min(1,dt*(input.brake?2.3:.95));
- g.distance+=g.speed*dt*.315;g.time-=dt;updateRides(dt);updateRideHud();
- g.lap=Math.min(3,1+Math.floor(g.distance/760));
- if(g.lap>lastLap){
-  lastLap=g.lap;g.checkpoints++;g.time+=8;g.score+=500+g.convoy*25;
-  g.chaos=clamp(g.chaos+13,0,100);
-  announce(g.lap===2?"E-5 · BAŞKA DÜĞÜNLER DE VAR!":"SON ETAP · SALON GÖRÜNDÜ!",2.5);
-  showCombo("+500 ETAP BONUSU · +8 SN");
-  fanfare();makeConfetti(.48,0,28);
- }
- g.chaos=clamp(g.chaos+dt*(.30+g.lap*.12),0,100);
- const goals=[7,10,14];
- if(!goalUnlocked[g.lap-1]&&g.convoy>=goals[g.lap-1]){
-    goalUnlocked[g.lap-1]=true;g.score+=750;g.time+=4;g.chaos=Math.max(0,g.chaos-8);
-    announce(["AKRABALAR TOPLANDI! +750","KONVOY TAM KADRO! +750","SÜLALENİN HEPSİ BURADA! +750"][g.lap-1],2.1);
-    makeConfetti(.34,0,38);fanfare();
- }
- if(g.comboClock>0){g.comboClock-=dt;if(g.comboClock<=0)g.combo=0;}
- if(g.distance>=2280){g.score+=Math.floor(g.time)*25+g.hearts*220+g.convoy*70;finish(true);return}
- if(g.time<=0){finish(false);return}
- if(!roadCut[0]&&g.distance>390&&g.distance<650){
-  roadCut[0]=true;objects.push({id:nextId++,z:.95,lane:0,originalLane:0,type:"roadblock",variant:0,joined:false,passed:false,wobble:0,speed:.95});
-  announce("YOL KESENLER VAR · FRENLE YA DA SIYRIL!",2.4);showTutorial("YOL KESİLDİ! FREN YAP VEYA ŞERİT DEĞİŞTİR",2);
- }
- if(!roadCut[1]&&g.distance>1740&&g.distance<1970){
-  roadCut[1]=true;objects.push({id:nextId++,z:.95,lane:.73,originalLane:.73,type:"roadblock",variant:1,joined:false,passed:false,wobble:0,speed:1});
-  announce("SALONA AZ KALDI · YOL KESİLMİŞ!",2);showTutorial("FREN · YOL KESİLDİ",1.9);
- }
- if(!rivalEventDone&&g.distance>1050){
-  rivalEventDone=true;
-  objects.push({id:nextId++,z:.96,lane:-.73,originalLane:-.73,type:"rival",variant:1,joined:false,passed:false,wobble:0,speed:.9});
-  objects.push({id:nextId++,z:.98,lane:.73,originalLane:.73,type:"rival",variant:2,joined:false,passed:false,wobble:2.1,speed:.87});
-  announce("DİĞER DÜĞÜNÜN KONVOYU GELDİ!",2.1);
-  showTutorial("YANLIŞ KONVOY · ARALARINDAN SIYRIL",1.8);
- }
- spawnTimer-=dt;
- if(spawnTimer<=0){spawn();spawnTimer=clamp(gameRange(1.0,1.4)-g.chaos*.0038-(g.lap-1)*.11,.49,1.35)}
- for(const o of objects){
-  o.z-=dt*(.14+g.speed*.00143)*o.speed;if(o.pop>0)o.pop-=dt;
-  if(o.type==="rival")o.lane=clamp(o.originalLane+Math.sin(seconds*2.6+o.wobble)*(.06+g.chaos*.0015),-.90,.90);
-  if(o.z<.11&&!o.passed){
-   o.passed=true;
-   const delta=Math.abs(o.lane-g.lane);
-   if(o.type==="escort"){g.score+=12;continue}
-   if(o.type==="roadblock"){
-     if(delta<.39&&g.speed>106&&g.invuln<=0){
-       g.hearts--;g.bumps++;g.invuln=2.6;g.speed=65;g.chaos=clamp(g.chaos+8,0,100);
-       flash=.29;rumble=.5;g.combo=0;g.convoy=Math.max(1,g.convoy-1);tone(100,.28,"sawtooth",.06);
-       announce("YOL KESMEYİ GÖRMEDİN!",1.6);
-       if(g.hearts<=0){finish(false);return}
-     }else {g.score+=300;showCombo("+300 · YOL KESME ATLATILDI");makeConfetti(o.z,o.lane,12)}
-     continue;
-   }
-   if(o.joined){if(o.claimedBy==="p2")rival.earned+=20;else g.score+=80;continue}
-   if(delta<.31){
-    if(g.invuln<=0){
-     g.hearts--;g.bumps++;g.invuln=2.5;g.speed=Math.max(58,g.speed-47);g.combo=0;g.comboClock=0;
-     g.convoy=Math.max(1,g.convoy-1);g.chaos=clamp(g.chaos+6,0,100);flash=.28;rumble=.42;spawnTimer=Math.max(spawnTimer,1.45);
-     tone(105,.27,"sawtooth",.06);announce(["DAYI ANİ FREN YAPTI!","YANLIŞ KONVOYA GİRDİN!","GÖZÜN YOLDA OLSUN!","KONVOY KARIŞTI!"][Math.floor(rand(0,4))],1.25);
-     if(g.hearts<=0){finish(false);return}
-    }else if(g.dortluOn>0){g.score+=90;showCombo("+90 · DÖRTLÜ KALKANI")}
-   }else if(delta<.56){
-    g.nearMiss++;const gain=100*(g.halay>0?2:1);g.score+=gain;showCombo("+"+gain+" · KIL PAYI!");
-    if(g.nearMiss%4===0){g.score+=250;announce("4 YAKIN GEÇİŞ · BONUS!",1.1)}
-   }else g.score+=20;
-  }
- }
- objects=objects.filter(o=>o.z>-.14);
- if(Math.abs(g.lane)>.94){g.speed=Math.max(46,g.speed-dt*31);g.chaos=Math.min(100,g.chaos+dt*.7)}
- if(!helpShown&&seconds>1.3&&objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.72&&o.z>.19)){
-   helpShown=true;showTutorial("ŞİMDİ KORNA!  + ARACI KONVOYA KAT",2.3);
- }
- for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=54*dt;p.life-=dt}
- particles=particles.filter(p=>p.life>0);
- hornBtn.disabled=g.hornCD>0;hornBtn.textContent=g.hornCD>0?"KORNA "+g.hornCD.toFixed(1):"♪ KORNA";
- dortluBtn.disabled=g.dortluCD>0;dortluBtn.classList.toggle("active",g.dortluOn>0);
- dortluBtn.textContent=g.dortluOn>0?"⚡ AÇIK":g.dortluCD>0?"DÖRTLÜ "+Math.ceil(g.dortluCD):"⚡ DÖRTLÜ";
- updateHud();
-}
-const goalEl=document.getElementById("h-goal"),scoreEl=document.getElementById("h-score"),timeEl=document.getElementById("h-time"),lapEl=document.getElementById("h-lap"),speedEl=document.getElementById("h-speed"),convoyEl=document.getElementById("h-convoy"),stageEl=document.getElementById("h-stage"),chaosEl=document.getElementById("h-chaos"),hornEl=document.getElementById("h-horn");
-function updateHud(){
-scoreEl.textContent=String(g.score).padStart(6,"0");timeEl.textContent=Math.max(0,Math.ceil(g.time));lapEl.textContent=g.lap+"/3";
-speedEl.textContent=Math.round(g.speed)+" km";convoyEl.textContent=String(g.convoy).padStart(2,"0")+" ♥"+g.hearts;
-stageEl.textContent=["GELİN ALMA · MAHALLE","E-5 · KONVOY TRAFİĞİ","DÜĞÜN SALONU · SON ÇIKIŞ"][g.lap-1];
-goalEl.textContent=goalUnlocked[g.lap-1]?"HEDEF TAMAM ✓":"HEDEF "+[7,10,14][g.lap-1]+" ARAÇ";goalEl.classList.toggle("done",goalUnlocked[g.lap-1]);
-chaosEl.style.width=g.chaos+"%";const target=objects.some(o=>o.type==="guest"&&!o.joined&&o.z<.76&&o.z>.14&&Math.abs(o.lane-g.lane)<(activeCar==="doblo"?.9:.7));
-hornEl.textContent=g.hornCD>0?"KORNA DOLUYOR":target?"YAKINDA ARAÇ! KORNA":"KORNA HAZIR";
-hornEl.classList.toggle("ready",target&&g.hornCD===0);
-
-hornBtn.classList.toggle("active",target&&g.hornCD===0);
-if(target&&g.hornCD===0&&!hadHorn&&tutorialClock<=0&&seconds<17)showTutorial("KORNAYA DOKUN · ARABAYI KONVOYA KAT",1.6);
-const wanted=[7,10,14][g.lap-1],current=Math.min(g.convoy,wanted);
-missionProgress.textContent=goalUnlocked[g.lap-1]?"ETAP HEDEFİ ✓":"KONVOY "+current+" / "+wanted;
-missionProgress.classList.toggle("done",goalUnlocked[g.lap-1]);
-missionStreak.textContent=g.halay>0?"HALAY 2× · "+Math.ceil(g.halay)+"s":g.combo>1?"SERİ "+g.combo+"×":"REKOR "+String(bestScore()).padStart(4,"0");
-missionLap.textContent="SALONA "+Math.max(0,Math.ceil((2280-g.distance)/10)/100).toFixed(1)+" KM";
-progressEl.style.width=clamp(g.distance/2280*100,0,100)+"%";
-
-}
-updateHud();
-function roadCenter(y){const t=clamp((y-93)/177,0,1);return 240+Math.sin(g.distance*.0033+1.3-t*1.15)*37*t*t}
-function roadHalf(y){const t=clamp((y-93)/177,0,1);return 9+191*Math.pow(t,1.18)}
-function roadY(z){return 94+176*Math.pow(clamp(1-z,0,1),1.55)}
-function seeded(i){const x=Math.sin(i*127.1+runSeed*.02)*43758.5453;return x-Math.floor(x)}
-function cloud(x,y){rect(x,y+5,32,7,"#e9f8fd");rect(x+5,y,19,6,"#fffdfa");rect(x+23,y+2,10,8,"#f8faff");rect(x-4,y+8,43,4,"#8dd6f2")}
-
-function background(){
-const stage=g.lap;
-rect(0,0,W,H,stage===3?"#f4a878":"#3e94f1");
-rect(0,35,W,64,stage===3?"#f9c092":"#217ee3");
-rect(0,83,W,14,stage===3?"#fcd2a6":"#66b5dc");
-const offset=(g.distance*.028)%570;
-for(let i=0;i<5;i++)cloud(((i*143-offset*.24+570)%570)-40,30+(i%3)*9);
-if(stage===1){
-  // Turkish mahalle: apartments, balcony rugs, shopfronts, bunting.
-  for(let i=0;i<36;i++){
-    let x=i*16-3,h=14+Math.floor(seeded(i+32)*29),col=["#f3d4af","#f2c3aa","#d9cfb8","#dca8a4","#f0dcb7"][i%5];
-    rect(x,109-h,15,h,col);rect(x,109-h,15,2,i%2?"#e9a198":"#e6bd83");
-    for(let row=0;row<3;row++)for(let j=0;j<2;j++){
-      let yy=112-h+row*9;if(yy+4<109){rect(x+2+j*7,yy,4,5,"#577e9a");rect(x+1+j*7,yy+5,6,1,"#ac8376");}
-    }
-    if(i%5===0){rect(x+9,97,6,3,"#b5383f");rect(x+9,100,6,2,"#fff2d4")}
-    if(i%8===2){rect(x,102,15,7,"#b53a4b");rect(x+2,104,9,3,"#f9e4a0")}
-  }
-  rect(0,111,W,7,"#4d8475");
-  for(let i=0;i<14;i++){const x=i*38+(i%2)*10;rect(x,84,1,7,"#f1e5bf");poly([x,88,x+4,89,x+2,94],["#f14d68","#ffe88f","#a9e8e5"][i%3])}
-}else if(stage===2){
-  rect(0,100,W,19,"#209bc2");rect(0,107,W,7,"#0c76b3");
-  for(let i=0;i<90;i++)rect((i*31+Math.floor(runSeed))%480,109+(i%3)*3,5,1,i%2?"#c2f0f7":"#72c6e4");
-  poly([0,103,28,94,72,102,109,93,153,102,203,95,245,105,291,91,339,101,399,94,460,106,480,101,480,112,0,112],"#738c8a");
-  for(let i=0;i<38;i++){let x=i*13,h=5+Math.floor(seeded(i+76)*23);rect(x,108-h,11,h,["#d4c59c","#eee4d0","#d9aba5","#7a858f"][i%4]);rect(x+2,109-h,3,3,"#426f88")}
-  rect(15,77,4,35,"#344a6d");rect(122,69,4,43,"#344a6d");
-  for(let i=0;i<13;i++){let x=19+i*8;rect(x,79+Math.abs(i-6)*2.6,1,29,"#576784")}
-  poly([0,99,18,80,123,72,166,100,166,103,123,77,20,85,0,105],"#334c6f");
-}else{
-  rect(0,103,W,14,"#a0c6bb");
-  for(let i=0;i<29;i++){let x=i*18-6,h=8+i%4*6;rect(x,110-h,17,h,i%3?"#ebcba8":"#dfa48d");rect(x,109-h,17,3,i%2?"#ae5462":"#b96b55");rect(x+5,106-h,4,6,"#8a9a98")}
-  // Large distant venue.
-  rect(8,66,72,47,"#fff4d8");rect(5,63,77,6,"#a33c51");rect(18,89,14,24,"#9a534a");rect(38,89,14,24,"#9a534a");rect(57,89,14,24,"#9a534a");
-  rect(8,74,72,12,"#b3374f");txt("DÜĞÜN SALONU",44,82,6,"#fff1c8","center");
-  for(let i=0;i<9;i++){rect(5+i*9,60,2,7,"#e0d6b0");rect(5+i*9,60,2,2,"#fff5a2")}
-  for(let i=0;i<18;i++){let x=130+i*19;poly([x,70,x+9,77,x,82],["#e15264","#f1cd64","#f2e8cf"][i%3])}
-}
-rect(0,114,W,156,stage===2?"#57952a":"#4e9a31");
-for(let y=115;y<270;y+=12)rect(0,y,W,2,(Math.floor(y/12)%2)?"#4f972b":"#6eaf3c");
-}
-function road(){
-for(let y=93;y<270;y+=1.5){
- const t=(y-93)/177,cx=roadCenter(y),half=roadHalf(y);
- const depth=1/(t+.11);
- const wig=Math.floor(g.distance*.105+depth*5.1);
- const stripe=Math.floor(g.distance*.18+depth*8.0);
- const grass=(wig%3===0)?"#519e2a":"#42942c";
- rect(0,y,W,2,grass);
- rect(cx-half-8*t,y,half*2+16*t,2,"#d9d5bf");
- rect(cx-half-6*t,y,half*2+12*t,2,(stripe%2===0)?"#fff4e1":"#e43e47");
- rect(cx-half,y,half*2,2,y%7<2?"#39434c":"#333d45");
- rect(cx-half+3*t,y,Math.max(1,1+t*1.4),2,"#fff6de");
- rect(cx+half-5*t,y,Math.max(1,1+t*1.4),2,"#fff6de");
- if((wig%4+4)%4!==0){
-   rect(cx-half/3,y,Math.max(1,t*3.5),2,"#f4f2e7");
-   rect(cx+half/3,y,Math.max(1,t*3.5),2,"#f4f2e7");
- }
- if(t>.6&&((stripe%7+7)%7)===0){
-   const fleck=Math.sin(y*31.1+g.distance*.15)*31;
-   rect(cx+fleck*t,y,Math.max(1,t*2),1,"#667174");
- }
-}
-}
-function foliage(){
-for(let i=0;i<30;i++){
- const z=((i/30+g.distance*.00019)%1);
- const y=roadY(z),half=roadHalf(y),cx=roadCenter(y),size=3+26*Math.pow(1-z,1.7),side=i%2===0?1:-1,x=cx+side*(half+13+size*.26);
- if(size<3.6)continue;
- if(g.lap===1 && i%3===0){
-   rect(x-size*.13,y-size*1.36,size*.24,size*1.39,"#65605b");
-   rect(x-size*.5,y-size*1.5,size,size*.62,["#a86f60","#d3c4a0","#a66579"][i%3]);
-   rect(x-size*.36,y-size*1.35,size*.16,size*.19,"#789baa");
-   rect(x+size*.07,y-size*1.35,size*.16,size*.19,"#789baa");
-   rect(x-size*.2,y-size*.87,size*.37,size*.17,"#a74448");
- }else if(i%4===0){
-   rect(x-size*.09,y-size*.85,size*.18,size*.9,"#5b513a");
-   rect(x-size*.1,y-size*1.55,size*.22,size*.78,"#327f35");
-   poly([x,y-size*1.9,x-size*.48,y-size*.86,x+size*.48,y-size*.86],"#196438");
-   rect(x-size*.3,y-size*.91,size*.6,size*.14,"#44a748");
- }else{
-   rect(x-size*.11,y-size*.64,size*.23,size*.67,"#5d4933");
-   poly([x,y-size*1.53,x-size*.57,y-size*.44,x+size*.57,y-size*.44],"#185d3b");
-   poly([x,y-size*1.1,x-size*.64,y-size*.19,x+size*.64,y-size*.19],"#2d873e");
- }
-}
-}
-
-function flag(x,y,s){
-rect(x,y-s*1.7,Math.max(1,s*.08),s*1.78,"#ddd0b4");
-rect(x+s*.07,y-s*1.62,s*.89,s*.56,"#d72b40");
-c.fillStyle="#fff8e2";c.beginPath();c.arc(x+s*.43,y-s*1.33,s*.17,0,Math.PI*2);c.fill();
-c.fillStyle="#d72b40";c.beginPath();c.arc(x+s*.50,y-s*1.36,s*.14,0,Math.PI*2);c.fill();
-rect(x+s*.64,y-s*1.36,Math.max(1,s*.07),Math.max(1,s*.07),"#ffede0");
-}
-function guestPerson(x,y,s,style){
-const head=style===2?"#b97b53":"#e2a576";
-rect(x-s*.1,y-s*1.3,s*.2,s*.3,head);
-rect(x-s*.22,y-s*.99,s*.45,s*.55,style===1?"#dc4590":style===2?"#d0e1db":"#282e4b");
-rect(x-s*.18,y-s*.4,s*.13,s*.4,"#323342");rect(x+s*.06,y-s*.4,s*.13,s*.4,"#323342");
-if(style===2){rect(x+s*.14,y-s*.83,s*.37,s*.43,"#dfbb75");rect(x+s*.28,y-s*.76,s*.09,s*.29,"#804633");rect(x+s*.2,y-s*.6,s*.08,s*.12,"#a84b52")}
-if(style===0){rect(x-s*.45,y-s*.94,s*.24,s*.13,head);rect(x+s*.22,y-s*1.06,s*.3,s*.12,head)}
-}
-function weddingRoadside(){
-for(let i=0;i<17;i++){
- const z=((i/17+g.distance*.00022)%1);
- if(z>.95)continue;
- const y=roadY(z),half=roadHalf(y),cx=roadCenter(y),size=3+32*Math.pow(1-z,1.6);
- const side=i%2===0?1:-1,x=cx+side*(half+13+size*.3);
- if(size<5)continue;
- if(i%4===0){flag(x,y,size*.88)}
- else if(i%4===1){guestPerson(x,y,size*.66,(i+g.lap)%3)}
- else if(i%4===2){
-    rect(x-size*.49,y-size*1.16,size*.98,size*.75,"#ecdbb0");
-    rect(x-size*.49,y-size*1.16,size*.98,size*.14,"#bd4055");
-    rect(x-size*.28,y-size*.81,size*.52,size*.12,"#d84d49");
-    if(size>13)txt(g.lap===3?"DÜĞÜN":g.lap===2?"E-5":"HAYIRLI",x,y-size*.55,Math.max(4,Math.floor(size*.19)),"#793c37","center");
- }else{
-    rect(x-size*.05,y-size*.83,size*.1,size*.84,"#667886");
-    rect(x-size*.32,y-size*1.12,size*.64,size*.33,"#365f9c");
-    if(size>14)txt(g.lap===3?"SALON":g.lap===2?"DÜĞÜN":"GELİN",x,y-size*.89,Math.max(5,Math.floor(size*.17)),"#fff2df","center");
- }
-}
-}
-
-
-
-function fineScene(){
- c.save();c.setTransform(1,0,0,1,0,0);
- const stop=530;
- // Distant hills: buildings, tiny windows and balcony laundry in a true 960px scene.
- for(let i=0;i<62;i++){
-   let x=i*17,y=184+((i*7)%11),h=(i*19)%27;
-   if(g.lap===1){
-    rect(x,y-h,11,h+18,["#f3ceb9","#e9b4b1","#decab4","#f3dfb8"][i%4]);
-    for(let k=0;k<3;k++){const yy=y-h+3+k*6;if(yy<221){rect(x+2,yy,3,4,"#658996");rect(x+7,yy,3,4,"#779ca0")}}
-    if(i%5===0){rect(x+1,y+8,8,3,"#f2e3c6");rect(x+2,y+9,5,2,"#ce607a")}
-   }else if(g.lap===2){
-    rect(x,y-h/2,13,h/2+15,["#d6b8ab","#e5ceba","#9eafad"][i%3]);
-    for(let k=0;k<2;k++)rect(x+2+k*5,y-h/2+3,3,4,"#6a8e9d");
-   }
- }
- // Additional pavement flecks at road edges, perspective-scaled texture.
- for(let i=0;i<35;i++){
-  const z=((i/35+g.distance*.00165)%1),yy=roadY(z),half=roadHalf(yy),cx=roadCenter(yy),size=.5+5*(1-z)*(1-z);
-  for(let side of [-1,1]){
-   let x=(cx+side*(half+2.8+((i*3)%13)*(1-z)))*2;
-   rect(x,yy*2,Math.max(1,size*2),Math.max(1,size),i%3===0?"#d4d7b4":i%3===1?"#588d3b":"#b7b49b");
-  }
- }
- c.restore();
-}
-
-function bannerArch(){
-if(g.distance>210)return;
-const z=clamp(.38-g.distance/540,0,1),y=roadY(z),half=roadHalf(y)*1.16,cx=roadCenter(y),h=17+(1-z)*27;
-if(z<.01)return;
-rect(cx-half,y-h,5,h+3,"#a94c56");rect(cx+half-5,y-h,5,h+3,"#a94c56");
-rect(cx-half,y-h,half*2,14,"#f8edd3");rect(cx-half,y-h,half*2,3,"#cf4158");
-rect(cx-half,y-h+12,half*2,3,"#c94554");
-rect(cx-half+5,y-h-4,10,8,"#f195ae");rect(cx+half-15,y-h-4,10,8,"#f195ae");
-rect(cx-half+16,y-h-2,half*2-32,3,"#3a9347");
-txt("GELİN ALMA KONVOYU",cx,y-h+10,Math.max(6,Math.floor(4+(1-z)*7)),"#a43146","center");
-}
-
-
-
-
-
-
-function carSprite(cx,y,w,type,variant,joined,player){
- // Render vehicles at twice the road-pixel resolution. Distinct silhouettes, fine detailing.
- c.save();c.setTransform(1,0,0,1,0,0);
- cx*=2;y*=2;w=Math.max(7,w*2);
- const h=w*.66,top=y-h,large=w>=34,extra=w>=54;
- const pal=player?(activeCar==="toros"?["#688665","#3e5c4e","#aac49a"]:activeCar==="doblo"?["#d4aa40","#916d31","#f6d985"]:["#f44435","#a22e2a","#ff9073"]):type==="lead"?["#f8e8d4","#bfaa9c","#ffffff"]:type==="guest"?["#e7d3a2","#93846e","#ffebbb"]:type==="escort"?[
- ["#9e2e39","#692836","#f86b6d"],["#b9a378","#76674b","#f3d7a6"],["#344b6a","#1d2e46","#6f89a8"],["#6c866c","#3c5d47","#9cbea2"]][variant%4]:type==="rival"?["#ac4b97","#632568","#de94cd"]:["#b7afa2","#647481","#e0c5a0"];
- // Ground shadow, tires and exhaust.
- rect(cx-w*.54,y-h*.19,w*1.08,h*.25,"#18242b");
- rect(cx-w*.49,top+h*.62,w*.18,h*.39,"#171f28");
- rect(cx+w*.31,top+h*.62,w*.18,h*.39,"#171f28");
- rect(cx-w*.45,top+h*.78,w*.12,h*.05,"#697582");
- rect(cx+w*.33,top+h*.78,w*.12,h*.05,"#697582");
- // Vehicle body: long-tail sedan / tall wedding van / classic hatch.
- const van=(player&&activeCar==="doblo")||(type==="obstacle"&&variant%2===0),roof=van?.03:.21;
- poly([cx-w*.41,top+h*.41,cx-w*(van?.41:.32),top+h*roof,cx+w*(van?.40:.32),top+h*roof,cx+w*.43,top+h*.41,cx+w*.49,top+h*.52,cx+w*.49,top+h*.88,cx-w*.49,top+h*.88,cx-w*.49,top+h*.52],pal[1]);
- poly([cx-w*.41,top+h*.46,cx+w*.41,top+h*.46,cx+w*.46,top+h*.8,cx-w*.46,top+h*.8],pal[0]);
- rect(cx-w*.41,top+h*.44,w*.82,h*.055,pal[2]);
- // Roof and tinted glass: reflection on left.
- poly([cx-w*.28,top+h*.39,cx-w*.235,top+h*(roof+.07),cx+w*.23,top+h*(roof+.07),cx+w*.29,top+h*.39],"#19384a");
- poly([cx-w*.22,top+h*.34,cx-w*.18,top+h*(roof+.115),cx-w*.025,top+h*(roof+.115),cx-w*.075,top+h*.34],"#75b6ca");
- rect(cx+w*.10,top+h*(roof+.12),w*.085,h*.13,"#4b8298");
- // Rear doors/trunk, tail lights, bumper.
- rect(cx-w*.37,top+h*.55,w*.74,h*.2,pal[0]);
- rect(cx-w*.45,top+h*.7,w*.15,h*.095,"#fa6e63");rect(cx+w*.30,top+h*.7,w*.15,h*.095,"#fa6e63");
- rect(cx-w*.43,top+h*.7,w*.085,h*.06,"#ffe9b0");rect(cx+w*.345,top+h*.7,w*.085,h*.06,"#ffe9b0");
- rect(cx-w*.30,top+h*.86,w*.6,h*.07,"#263e4b");
- rect(cx-w*.14,top+h*.825,w*.28,h*.095,"#eef1e6");
- if(large)txt(player?(activeCar==="toros"?"48 TRS":activeCar==="doblo"?"34 DBL":"34 GP"):type==="lead"?"GELİN":"34",cx,top+h*.9,Math.max(7,w*.11),"#2c4663","center");
- // All actual convoy cars carry very visible wedding bows, ribbons and flowers.
- if(player||type==="escort"||type==="lead"||joined||type==="rival"){
-  const ribbon=type==="rival"?"#fd8fcf":type==="lead"?"#eb83a1":"#fff1dc";
-  poly([cx,top+h*.61,cx-w*.205,top+h*.5,cx-w*.20,top+h*.71],ribbon);
-  poly([cx,top+h*.61,cx+w*.205,top+h*.5,cx+w*.20,top+h*.71],ribbon);
-  rect(cx-w*.028,top+h*.565,w*.056,h*.11,"#e65878");
-  poly([cx-w*.04,top+h*.68,cx-w*.21,top+h*1.03,cx-w*.12,top+h*1.02,cx+w*.005,top+h*.69],"#ffe6ef");
-  poly([cx+w*.04,top+h*.68,cx+w*.23,top+h*1.03,cx+w*.12,top+h*1.02,cx-w*.005,top+h*.69],"#ffedf3");
-  if(large){
-   // Flower rosettes above rear windshield.
-   for(let i=-2;i<=2;i++){
-    const xx=cx+i*w*.092,yy=top+h*.47+Math.abs(i)*1.2;
-    rect(xx-2.5,yy-2.5,5,5,i%2===0?"#ff9ab5":"#fff3de");
-    rect(xx-.7,yy-.7,2,2,"#f8cf51");
-    rect(xx+2,yy-1,3,2,"#4c8b53");
-   }
-  }
-  if(extra){
-   // Turkish flag sticker on rear window.
-   rect(cx-w*.33,top+h*.26,w*.18,h*.12,"#e72b3f");
-   rect(cx-w*.285,top+h*.28,w*.045,h*.065,"#fff8dc");
-   rect(cx-w*.275,top+h*.279,w*.045,h*.065,"#e72b3f");
-  }
-  if(type==="lead"&&large){
-   for(let i=0;i<9;i++){let x=cx+(i-4)*w*.058;rect(x,top-h*.09+(i%3)*2,Math.max(2,w*.045),Math.max(3,w*.068),["#e94f81","#fdf1c6","#60965f"][i%3])}
-   if(extra)txt("EVLENİYORUZ",cx,top+h*.58,Math.max(7,w*.085),"#d24b68","center");
-  }
-  if(extra&&type!=="rival"){
-   // Wedding guests hang their hands and a scarf out of the side window.
-   rect(cx+w*.435,top+h*.32,w*.19,h*.062,"#efbc94");
-   rect(cx+w*.585,top+h*.19,w*.055,h*.18,"#efbc94");
-   rect(cx+w*.585,top+h*.19,w*.048,h*.035,"#ffe2b4");
-   poly([cx+w*.55,top+h*.29,cx+w*.68,top+h*.32,cx+w*.65,top+h*.5],"#f1e2bb");
-  }
- }
- if(type==="guest"&&!joined&&w>18){
-  rect(cx-w*.21,top-h*.35,w*.42,h*.25,"#fff6d7");
-  txt("+",cx,top-h*.13,Math.max(9,w*.2),"#b33f43","center");
- }
- if(joined&&w>20)txt("♥",cx,top-h*.17,Math.max(8,w*.16),"#fff2f6","center");
- if(type==="rival"&&extra)txt("YANLIŞ DÜĞÜN",cx,top-h*.18,Math.max(8,w*.13),"#ffe0ef","center");
- if(type==="obstacle"&&large){
-    rect(cx-w*.38,top+h*.22,w*.76,h*.15,"#d3a54e");
-    rect(cx-w*.29,top+h*.18,w*.58,h*.11,"#4e565b");
-    if(extra)txt(variant%2?"MİNİBÜS":"SERVİS",cx,top+h*.35,Math.max(8,w*.1),"#fff0b8","center");
- }
- if(player){
-  // Ribboned bumper and empty tin cans clattering behind.
-  for(let i=-2;i<=2;i++){let xx=cx+i*w*.2;rect(xx-1,y+4,2,Math.max(4,6+i%2*3),"#eee9d8");rect(xx-5,y+10+i%2*4,10,5,i%2?"#e66e58":"#b9e3e3");rect(xx-3,y+12+i%2*4,4,2,"#fdf2dc")}
- }
- c.restore();
-}
-
-function leadCar(){
- // Wedding car stays in the distance as the visual target, with the family convoy around it.
- const z=.44+.02*Math.sin(seconds*.5),y=roadY(z),half=roadHalf(y),cx=roadCenter(y);
- const x=cx+Math.sin(g.distance*.0019)*half*.16,w=32;
- rect(x-15,y+2,30,2,"#273f36");
- carSprite(x,y,w,"lead",0,true,false);
- if(mode==="playing"&&Math.sin(seconds*4)>-.25){txt("♥",x+19,y-29,9,"#ffe1e7","center");txt("♪",x-18,y-16,8,"#fff2b8","center")}
-}
-
-
-function followerConvoy(){
- // The recruited cars remain visible in a moving, ribbon-decorated procession.
- const count=Math.min(6,Math.max(0,g.convoy-1));
- for(let i=count-1;i>=0;i--){
-   const slot=i%3,z=.23+Math.floor(i/3)*.18+(slot%2)*.085;
-   const lane=slot===0?-.73:slot===1?.73:0;
-   const y=roadY(z)+Math.sin(seconds*1.3+i)*.8;
-   const half=roadHalf(y),x=roadCenter(y)+lane*half*.85;
-   const width=5+46*Math.pow(1-z,1.5);
-   carSprite(x,y,width,"escort",i%4,true,false);
- }
-}
-function effects(){
- // Subpixel confetti uses the 960px raster for sharper small accents.
- c.save();c.setTransform(1,0,0,1,0,0);
- for(const p of particles){rect(p.x*2,p.y*2,Math.max(2,3*p.life),Math.max(2,4*p.life),p.color)}
- if(pulse>0){
-  const x=(roadCenter(240)+g.lane*roadHalf(240)*.83)*2,y=475;
-  c.strokeStyle="rgba(255,248,184,"+(pulse/.42*.8)+")";c.lineWidth=3;
-  c.beginPath();c.ellipse(x,y,(.42-pulse)*250+30,(.42-pulse)*75+9,0,0,Math.PI*2);c.stroke();
- }
- if(g.dortluOn>0){
-  const x=(roadCenter(240)+g.lane*roadHalf(240)*.83)*2;
-  if(Math.floor(seconds*7)%2===0){rect(x-61,459,13,7,"#ffb627");rect(x+48,459,13,7,"#ffb627")}
- }
- if(g.halay>0){
-  const x=(roadCenter(240)+g.lane*roadHalf(240)*.83)*2;
-  c.strokeStyle="rgba(255,224,118,.5)";c.lineWidth=2;
-  for(let i=0;i<5;i++){let phi=seconds*2+i*1.26;const xx=x+Math.cos(phi)*110,yy=459+Math.sin(phi)*36;rect(xx,yy,4,4,i%2?"#fff2ae":"#f67ba8")}
- }
- if(input.boost&&g.speed>145){for(let i=0;i<9;i++){const xx=100+i*93%760,yy=390+(i*19+seconds*320)%130;rect(xx,yy,2,9,"#ffffff38")}}
- c.restore();
-}
-
-function roadblockSprite(x,y,w){
- c.save();c.setTransform(1,0,0,1,0,0);
- x*=2;y*=2;w=Math.max(10,w*2);
- const h=w*.56;
- // Two kids with raised arms and a ribbon across the road.
- rect(x-w*.48,y-h*.52,w*.96,4,"#eae4cb");
- rect(x-w*.45,y-h*.52,w*.16,6,"#e23d50");
- rect(x+w*.27,y-h*.52,w*.16,6,"#e23d50");
- for(const dx of [-.46,.46]){
-   const px=x+dx*w;
-   rect(px-3,y-h*.38,6,8,"#f0bc90");
-   rect(px-5,y-h*.14,10,11,dx<0?"#405fa0":"#dd8c43");
-   rect(px-4,y-h*.02,3,9,"#2b394e");rect(px+2,y-h*.02,3,9,"#2b394e");
-   rect(px-dx*4,y-h*.27,Math.max(3,w*.06),3,"#efbc90");
- }
- rect(x-w*.28,y-h*.7,w*.56,h*.23,"#ffebaa");
- txt("MAKAS!",x,y-h*.53,Math.max(8,w*.16),"#a73f45","center");
- if(w>45)txt("FREN!",x,y-h*.87,Math.max(8,w*.16),"#fff4dd","center");
- c.restore();
-}
-function vehicles(){
-const eligible=objects.filter(o=>o.type==="guest"&&!o.joined&&o.z<.76&&o.z>.13&&Math.abs(o.lane-g.lane)<(activeCar==="doblo"?.9:.7));
-let target=null;
-if(eligible.length)target=eligible.reduce((best,o)=>!best||o.z<best.z?o:best,null);
-const sorted=objects.slice().sort((a,b)=>b.z-a.z);
-for(const o of sorted){
-if(o.z>1||o.z<-.13)continue;
-const y=roadY(o.z),half=roadHalf(y),center=roadCenter(y),x=center+o.lane*half*.83;
-const width=5+46*Math.pow(1-clamp(o.z,0,1),1.5);
-if(o.type==="roadblock")roadblockSprite(x,y,width);else carSprite(x,y,width,o.type,o.variant,o.joined,false);
-if(o===target&&g.hornCD===0){
- c.save();c.setTransform(1,0,0,1,0,0);
- const xx=x*2,yy=y*2-width*.9;
- const t=1+.08*Math.sin(seconds*6),rad=Math.max(22,width*1.24)*t;
- c.strokeStyle="#ffe97b";c.lineWidth=3;c.beginPath();c.ellipse(xx,yy,rad,rad*.54,0,0,Math.PI*2);c.stroke();
- rect(xx-33,yy-rad*.55-21,66,17,"#20304a");
- rect(xx-30,yy-rad*.55-18,60,11,"#ffedaa");
- txt("KORNA!",xx,yy-rad*.55-9,10,"#7b3541","center");
- c.restore();
-}
-if(o.type==="roadblock"&&o.z<.55&&o.z>.17){
- const danger=Math.abs(o.lane-g.lane)<.49;
- if(danger&&g.speed>106){c.save();c.setTransform(1,0,0,1,0,0);
-  rect(x*2-37,y*2-width*.85-19,74,17,"#ad304b");
-  txt("FREN!",x*2,y*2-width*.85-7,12,"#fff2be","center");
-  c.restore();
- }
-}
-if(o.joined&&o.z<.55&&o.z>0&&(o.pop>0||Math.sin(seconds*9+o.id)>0.95))txt("♪",x,y-width*.9,Math.max(6,width*.24),"#ffeabf","center");
-}
-}
-
-function decorations(){
- if(g.lap===3){
- const z=((g.distance-1510)%430)/430,y=roadY(1-z);
- if(y>115){const cx=roadCenter(y),hw=roadHalf(y)*1.15;
- rect(cx-hw,y-42,5,44,"#c53e58");rect(cx+hw-5,y-42,5,44,"#c53e58");
- rect(cx-hw,y-42,hw*2,12,"#fff0d4");rect(cx-hw,y-42,hw*2,3,"#d24c63");
- txt("DÜĞÜN SALONU",cx,y-33,Math.max(5,Math.min(10,7+z*4)),"#a33e4d","center");
- for(let k=0;k<9;k++)rect(cx-hw+k*hw/4.5,y-46+(k%2)*2,4,4,k%2?"#e7d578":"#f4abbf");
- }
- }
-}
-
-function playerCar(){
-const x=roadCenter(240)+g.lane*roadHalf(240)*.83,vy=240,shake=flash>0?rand(-3,3):0;
-if(g.invuln>0&&Math.floor(seconds*12)%2===0)return;
-rect(x-32+shake,242,64,3,"#202d32");
-carSprite(x+shake,vy,70,"player",0,false,true);
-if(input.brake){rect(x-25+shake,236,11,5,"#ffdd68");rect(x+14+shake,236,11,5,"#ffdd68")}
-}
-
-
-function fallbackRideGraphics(){
- if(!ride)return;
- if(ride.phase==="waiting"&&ride.z<1.04&&ride.z>-.1){
-  const y=roadY(ride.z),x=roadCenter(y)+ride.lane*roadHalf(y)*.83,w=9+35*(1-ride.z);
-  rect(x-w*.5,y-w*.9,w,w*.5,"#f6df83");txt("MİSAFİR",x,y-w*.6,Math.max(6,w*.17),"#7c3145","center");
-  rect(x-3,y-12,6,12,"#e6a978");rect(x-5,y-5,10,13,"#e86b8d");rect(x-5,y+8,4,7,"#324f81");rect(x+2,y+8,4,7,"#324f81");
- }else if(ride.phase==="riding"){
-  const z=(ride.destinationDist-g.distance)/190;
-  if(z<1.05&&z>-.15){
-   const y=roadY(z),x=roadCenter(y)+ride.destLane*roadHalf(y)*.83;
-   rect(x-28,y-37,56,20,"#b4ffd8");txt("İNDİR ↓",x,y-23,9,"#2d5658","center");rect(x-26,y-10,52,9,"#80eeb9");
-  }
- }
- if(isVersus()){const x=roadCenter(230)+rival.lane*roadHalf(230)*.83;carSprite(x,230,55,"rival",0,true,false);}
-}
-function draw(){
-if(window.DugunVisuals&&window.DugunVisuals.render){window.DugunVisuals.render(c,{g,objects,mode,seconds,activeCar,flash,particles,input,ride,rival,versus:isVersus()});return}
-background();road();foliage();fineScene();weddingRoadside();bannerArch();decorations();leadCar();followerConvoy();vehicles();fallbackRideGraphics();playerCar();effects();
-if(mode==="menu"){rect(162,65,156,18,"#ffedab");txt("DÜĞÜN KONVOYU GP",240,78,10,"#ad3242","center")}
-if(flash>0){c.fillStyle="rgba(255,245,200,"+(flash*.65)+")";c.fillRect(0,40,W,H-40)}
-if(mode==="pause"){rect(0,0,480,270,"rgba(9,13,35,.28)")}
-}
-function frame(now){const dt=Math.min((now-(last||now))/1000,.05);last=now;if(mode==="playing")update(dt);c.setTransform(2,0,0,2,0,0);draw();requestAnimationFrame(frame)}
-requestAnimationFrame(frame);
-function hold(id,key){
-const el=document.getElementById(id);
-el.addEventListener("pointerdown",e=>{e.preventDefault();input[key]=true;el.classList.add("down");try{el.setPointerCapture(e.pointerId)}catch(err){}});
-const stop=()=>{input[key]=false;el.classList.remove("down")};
-el.addEventListener("pointerup",stop);el.addEventListener("pointercancel",stop);el.addEventListener("lostpointercapture",stop);
-}
-hold("left","left");hold("right","right");hold("brake","brake");
-hornBtn.addEventListener("pointerdown",e=>{e.preventDefault();horn()});
-const keys={ArrowLeft:"left",ArrowRight:"right",ArrowDown:"brake",ArrowUp:"boost"};const altKeys={KeyA:"left",KeyD:"right",KeyS:"brake",KeyW:"boost"};
-addEventListener("keydown",e=>{
-if(keys[e.code]){e.preventDefault();input[keys[e.code]]=true}if(altKeys[e.code]){e.preventDefault();if(isLocal()&&(e.code==="KeyA"||e.code==="KeyD"))rivalInput[altKeys[e.code]]=true;else if(!isLocal())input[altKeys[e.code]]=true}
-if(e.code==="Space"){e.preventDefault();if(!e.repeat)horn()}
-if(e.code==="KeyE"&&isLocal()){e.preventDefault();if(!e.repeat)rivalHorn()}
-if(e.code==="KeyX"){e.preventDefault();if(!e.repeat)dortlu()}
-if(e.code==="KeyP"||e.code==="Escape"){e.preventDefault();if(!e.repeat)pause()}
-if(e.code==="Enter"&&mode==="menu"){e.preventDefault();start()}
-});
-addEventListener("keyup",e=>{if(keys[e.code]){e.preventDefault();input[keys[e.code]]=false}if(altKeys[e.code]){e.preventDefault();if(isLocal())rivalInput[altKeys[e.code]]=false;else input[altKeys[e.code]]=false}});
-document.addEventListener("visibilitychange",()=>{if(document.hidden&&mode==="playing")pause()});
-addEventListener("blur",()=>{Object.keys(input).forEach(k=>input[k]=false);rivalInput.left=rivalInput.right=false;gesture.active=false;gesture.id=null;if(mode==="playing")pause()});
-function canvasSteer(e){
- const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/Math.max(1,r.width);
- gesture.target=clamp((x-.5)*2.05,-1,1);
-}
-canvas.addEventListener("pointerdown",e=>{
- if(mode!=="playing")return;
- if(e.pointerType==="mouse"&&e.button!==0)return;
- e.preventDefault();gesture.active=true;gesture.id=e.pointerId;canvasSteer(e);
- try{canvas.setPointerCapture(e.pointerId)}catch(err){}
-});
-canvas.addEventListener("pointermove",e=>{if(gesture.active&&e.pointerId===gesture.id){e.preventDefault();canvasSteer(e)}});
-function endCanvasSteer(e){if(e.pointerId===gesture.id){gesture.active=false;gesture.id=null}}
-canvas.addEventListener("pointerup",endCanvasSteer);
-canvas.addEventListener("pointercancel",endCanvasSteer);
-canvas.addEventListener("lostpointercapture",endCanvasSteer);
-})();
-</script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-v1"></script>
 </body>
 </html>
