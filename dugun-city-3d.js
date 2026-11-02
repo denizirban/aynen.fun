@@ -55,6 +55,7 @@ $("horn").addEventListener("pointerdown",e=>{e.preventDefault();horn()});
 $("pause").addEventListener("click",togglePause);
 $("sound").addEventListener("click",()=>{muted=!muted;$("sound").textContent=muted?"SES KAPALI":"SES AÇIK";if(!muted)sound()});
 $("start").addEventListener("click",()=>startGame(false));
+$("freeroam").addEventListener("click",()=>startGame(true));
 window.addEventListener("resize",()=>city?.map?.resize());
 function togglePause(){
  if(!playing)return;
@@ -78,7 +79,7 @@ function finish(cause){
  $("overlay").hidden=false;
 }
 function startGame(unlimited){
- if(!ready){pending=true;$("loadstate").textContent="Gerçek harita ve yol ağı yükleniyor…";return}
+ if(!ready){pending=unlimited?"free":"timed";$("loadstate").textContent="Gerçek harita ve yol ağı yükleniyor…";return}
  pending=false;free=unlimited;
  playing=true;paused=false;timer=180;earnings=0;deliveries=0;stolen=0;convoy=1;mission=null;
  car={pos:[...AREAS[area].center],speed:0,heading:0,steering:0,health:100,offroad:false};
@@ -311,7 +312,8 @@ function readyMap(){
  ready=true;
  render3D=new Vehicle3D(city);
  $("loadstate").textContent="Harita yüklendi. Gerçek sokaklar ve 3D binalar hazır.";
- if(pending)startGame(false);
+ if(area!==city.area)city.jumpToArea(area);
+ if(pending)startGame(pending==="free");
 }
 function errorMap(message){$("loadstate").textContent="Harita hatası: "+message}
 city=new IstanbulMap(area,readyMap,errorMap);
