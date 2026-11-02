@@ -148,57 +148,96 @@ function addStreetProps(group,origin,roads,mobile){
  });
  group.add(torso,headPeople);
 }
+function roadJunctions(roads,origin,limit){
+ const nodes=new Map();
+ const cell=(p)=>{const xy=toXY(origin,p);return Math.round(xy[0]/1.7)+":"+Math.round(xy[1]/1.7)};
+ for(const r of roads){
+  for(const p of [r.a,r.b]){
+   const k=cell(p);
+   let n=nodes.get(k);
+   if(!n){n={p:toXY(origin,p),degree:0,width:0,types:new Set(),used:0};nodes.set(k,n)}
+   n.degree++;
+   n.width=Math.max(n.width,roadWidth(r.typ));
+   n.types.add(r.typ);
+  }
+ }
+ return [...nodes.values()].filter(n=>n.degree>=3&&n.types.size>=1)
+ .sort((a,b)=>Math.hypot(a.p[0],a.p[1])-Math.hypot(b.p[0],b.p[1]))
+ .slice(0,limit);
+}
+function addIntersectionDisk(out,x,y,r,z){
+ const seg=14,i=out.positions.length/3,h=terrainAt(x,y)+z;
+ out.positions.push(x,y,h);
+ for(let k=0;k<=seg;k++){
+  const t=k/seg*Math.PI*2,xx=x+Math.cos(t)*r,yy=y+Math.sin(t)*r;
+  out.positions.push(xx,yy,z+terrainAt(xx,yy));
+ }
+ for(let k=1;k<=seg;k++)out.indices.push(i,i+k,i+k+1);
+}
 function createRoads(group,origin,roads,mobile){
- const sidewalk=empty(),asphalt=empty(),curbs=empty(),markings=empty(),sideLine=empty();
- const max=mobile?520:1400;
- // Always retain the roads immediately around the car, regardless of tile ordering.
- // The old first-N slice could omit all roads near the visible chase camera.
+ const sidewalk=empty(),asphalt=empty(),intersection=empty(),curbs=empty(),
+  markings=empty(),sideLine=empty(),stopBars=empty();
+ const max=mobile?560:1550;
  const near=roads.filter(r=>{
-  const c=[(r.a[0]+r.b[0])*.5,(r.a[1]+r.b[1])*.5];
-  return Math.min(distance(c,origin),distance(r.a,origin),distance(r.b,origin))<(mobile?415:570);
- }).sort((a,b)=>{
-  const da=Math.min(distance(a.a,origin),distance(a.b,origin));
-  const db=Math.min(distance(b.a,origin),distance(b.b,origin));
-  return da-db;
- }).slice(0,max);
+  const center=[(r.a[0]+r.b[0])*.5,(r.a[1]+r.b[1])*.5];
+  return Math.min(distance(center,origin),distance(r.a,origin),distance(r.b,origin))<(mobile?425:590);
+ }).sort((a,b)=>Math.min(distance(a.a,origin),distance(a.b,origin))-Math.min(distance(b.a,origin),distance(b.b,origin))).slice(0,max);
+ // Draw actual filled connected road intersections instead of disconnected ribbons.
+ const junctions=roadJunctions(near,origin,mobile?90:180);
+ const squares=new Map(),index=(p)=>{const xy=toXY(origin,p);return Math.round(xy[0]/1.7)+":"+Math.round(xy[1]/1.7)};
+ for(const j of junctions){
+  squares.set(Math.round(j.p[0]/1.7)+":"+Math.round(j.p[1]/1.7),j);
+  addIntersectionDisk(intersection,j.p[0],j.p[1],Math.max(3,j.width*.52),.146);
+ }
  for(let i=0;i<near.length;i++){
   const r=near[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
   const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
-  if(len<1)continue;
+  if(len<1.0)continue;
   const ux=dx/len,uy=dy/len,nx=-uy,ny=ux,width=roadWidth(r.typ);
-  emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.6,.085);
-  emitQuad(asphalt.positions,asphalt.indices,a,b,width,.115);
-  // Light kerbs and pavement edges.
-  for(const k of [-1,1]){
+  emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.7,.105);
+  emitQuad(asphalt.positions,asphalt.indices,a,b,width,.147);
+  for(const sign of [-1,1]){
    emitQuad(curbs.positions,curbs.indices,
-     [a[0]+nx*k*(width/2+.07),a[1]+ny*k*(width/2+.07)],
-     [b[0]+nx*k*(width/2+.07),b[1]+ny*k*(width/2+.07)],.18,.145);
+     [a[0]+nx*sign*(width*.5+.10),a[1]+ny*sign*(width*.5+.10)],
+     [b[0]+nx*sign*(width*.5+.10),b[1]+ny*sign*(width*.5+.10)],.24,.179);
   }
-  if(width>=9){
-   for(let d=5;d<len-1;d+=14){
-    const v=Math.min(5.8,len-d),p=[a[0]+ux*d,a[1]+uy*d],q=[a[0]+ux*(d+v),a[1]+uy*(d+v)];
-    emitQuad(markings.positions,markings.indices,p,q,.14,.16);
+  // Asphalt edge shoulder line for medium roads and larger.
+  if(width>=9.5){
+   for(const side of [-1,1])emitQuad(sideLine.positions,sideLine.indices,
+    [a[0]+nx*side*(width*.5-.56),a[1]+ny*side*(width*.5-.56)],
+    [b[0]+nx*side*(width*.5-.56),b[1]+ny*side*(width*.5-.56)],.10,.211);
+  }
+  // White broken lane lines in the Turkish driving direction, never in short alleys.
+  if(width>=9.4&&len>11){
+   for(let d=5;d<len-2;d+=12){
+    const l=Math.min(5.4,len-d-1),p=[a[0]+ux*d,a[1]+uy*d],q=[p[0]+ux*l,p[1]+uy*l];
+    emitQuad(markings.positions,markings.indices,p,q,.13,.211);
    }
   }
-  if(width>=11){
-   for(const k of [-1,1]){
-    emitQuad(sideLine.positions,sideLine.indices,
-    [a[0]+nx*k*(width*.5-.42),a[1]+ny*k*(width*.5-.42)],
-    [b[0]+nx*k*(width*.5-.42),b[1]+ny*k*(width*.5-.42)],.095,.159);
-   }
-  }
-  if(i%9===0&&len>16){
-   // Pedestrian crossings at real intersections, not randomly floating scenery.
-   for(let z=-3;z<=3;z++){
-    const off=z*1.0,at=Math.min(len-2,3.8);
-    const p=[a[0]+ux*at+nx*off,a[1]+uy*at+ny*off];
-    const q=[p[0]+ux*2.65,p[1]+uy*2.65];
-    emitQuad(markings.positions,markings.indices,p,q,.50,.163);
+  // Zebra crossings and stop bars are placed only at mapped 3+ way junctions.
+  if(len>11){
+   for(const endpoint of [0,1]){
+    const node=squares.get(index(endpoint===0?r.a:r.b));
+    if(!node)continue;
+    const inward=endpoint===0?1:-1;
+    const sx=(endpoint===0?a[0]:b[0])+ux*inward*4.2;
+    const sy=(endpoint===0?a[1]:b[1])+uy*inward*4.2;
+    const count=Math.max(4,Math.min(10,Math.floor((width-1.6)/.95)));
+    for(let k=0;k<count;k++){
+     const lateral=(k-(count-1)/2)*.98;
+     const p=[sx+nx*lateral-ux*.95,sy+ny*lateral-uy*.95];
+     const q=[sx+nx*lateral+ux*.95,sy+ny*lateral+uy*.95];
+     emitQuad(markings.positions,markings.indices,p,q,.53,.224);
+    }
+    const p=[sx+ux*inward*3+nx*(width*.46),sy+uy*inward*3+ny*(width*.46)];
+    const q=[sx+ux*inward*3-nx*(width*.46),sy+uy*inward*3-ny*(width*.46)];
+    emitQuad(stopBars.positions,stopBars.indices,p,q,.26,.223);
    }
   }
  }
  batchStrips(sidewalk,pavementMat,group);batchStrips(asphalt,roadMat,group);
- batchStrips(curbs,curbMat,group);batchStrips(markings,lineMat,group);batchStrips(sideLine,lineMat,group);
+ batchStrips(intersection,roadMat,group);batchStrips(curbs,curbMat,group);
+ batchStrips(markings,lineMat,group);batchStrips(stopBars,lineMat,group);batchStrips(sideLine,lineMat,group);
  addStreetProps(group,origin,near,mobile);
  return near;
 }
