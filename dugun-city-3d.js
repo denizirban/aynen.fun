@@ -11,7 +11,31 @@ const PLACES=["Düğün salonu","Nikâh dairesi","Kuaför","Takı masası","Salo
 const keys={gas:false,brake:false,left:false,right:false,handbrake:false};
 let area="kadikoy",kind="sahin",city=null,render3D=null,ready=false,pending=false,playing=false,paused=true,muted=false,free=false;
 let timer=180,earnings=0,deliveries=0,stolen=0,convoy=1,mission=null,car=null,rival=null,traffic=[],route=[],toastEnd=0,resetRide=0,roadRefresh=0,routeRefresh=0,camRefresh=0,hitCooldown=0;
-let last=performance.now(),frame=0,hornCooldown=0,nearMissCooldown=0,deliveryStreak=0,personalBest=0;
+let last=performance.now(),frame=0,hornCooldown=0,nearMissCooldown=0,deliveryStreak=0,personalBest=0,rescueCooldown=0;
+const engine={osc:null,filter:null,gain:null};
+function initEngine(){
+ if(engine.osc||muted)return;
+ try{
+  const AudioClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioClass)return;
+  const context=soundCtx.value||(soundCtx.value=new AudioClass());
+  const osc=context.createOscillator(),filter=context.createBiquadFilter(),gain=context.createGain();
+  osc.type="sawtooth";osc.frequency.value=62;
+  filter.type="lowpass";filter.frequency.value=180;gain.gain.value=0;
+  osc.connect(filter);filter.connect(gain);gain.connect(context.destination);osc.start();
+  engine.osc=osc;engine.filter=filter;engine.gain=gain;
+ }catch(e){console.warn("Motor sesi:",e)}
+}
+function syncEngine(){
+ if(!engine.osc)return;
+ try{
+  const ctx=soundCtx.value,t=ctx.currentTime,active=playing&&!paused&&!muted&&!!car;
+  const speed=active?Math.abs(car.speed):0;
+  engine.osc.frequency.setTargetAtTime(active?65+speed*4.7+(keys.gas?42:0):62,t,.075);
+  engine.filter.frequency.setTargetAtTime(active?155+speed*14+(keys.gas?120:0):120,t,.10);
+  engine.gain.gain.setTargetAtTime(active?(0.0038+speed*.00022+(keys.gas?.0028:0)):0,t,.11);
+ }catch(e){}
+}
 const soundCtx={value:null};
 function sound(freq=520,duration=.15){
  if(muted)return;
@@ -41,6 +65,7 @@ window.addEventListener("keydown",e=>{
  if(e.code==="Space"){e.preventDefault();if(!e.repeat)horn()}
  if(e.code==="KeyP"&&!e.repeat){e.preventDefault();togglePause()}
  if(e.code==="KeyC"&&!e.repeat){e.preventDefault();cycleCamera()}
+ if(e.code==="KeyR"&&!e.repeat){e.preventDefault();recoverCar()}
 });
 window.addEventListener("keyup",e=>{if(inputKeys[e.code]){keys[inputKeys[e.code]]=false;e.preventDefault()}});
 function clearKeys(){for(const k of Object.keys(keys))keys[k]=false;document.querySelectorAll(".ctr").forEach(b=>b.classList.remove("pressed"))}
@@ -54,8 +79,27 @@ for(const button of document.querySelectorAll("[data-hold]")){
 }
 $("horn").addEventListener("pointerdown",e=>{e.preventDefault();horn()});
 $("pause").addEventListener("click",togglePause);
-$("sound").addEventListener("click",()=>{muted=!muted;$("sound").textContent=muted?"SES KAPALI":"SES AÇIK";if(!muted)sound()});
+$("sound").addEventListener("click",()=>{muted=!muted;$("sound").textContent=muted?"SES KAPALI":"SES AÇIK";if(!muted){initEngine();sound()}syncEngine()});
+$("rescue").addEventListener("click",recoverCar);
 $("camera").addEventListener("click",cycleCamera);
+function recoverCar(){
+ if(!playing||paused||!car)return;
+ if(rescueCooldown>0){toast("ÇEKİCİ "+Math.ceil(rescueCooldown)+" SANİYE SONRA",1.1);return}
+ const near=city.nearest(car.pos);
+ if(!near){toast("YAKINDA YOL BULUNAMADI",1.2);return}
+ if(Math.abs(car.speed)>2.3){toast("ÖNCE ARABAYI DURDUR",1.2);return}
+ if(!car.offroad&&car.health>70){toast("ARAÇ ZATEN YOLDA",1.1);return}
+ const fee=Math.min(150,earnings);
+ earnings-=fee;
+ if(!free)timer=Math.max(10,timer-(fee<150?8:2));
+ car.pos=[...near.p];car.heading=angle(near.road.a,near.road.b);
+ car.steering=0;car.speed=0;car.yawRate=0;car.slip=0;
+ car.health=Math.min(100,car.health+28);
+ rescueCooldown=28;
+ if(render3D){render3D.inited=false;render3D.positionTrail=[];render3D.previousTrailPoint=null}
+ city.refresh(car.pos,true);refreshRoute();
+ toast("ÇEKİCİ GELDİ · ARAÇ YOLA DÖNDÜ · +%28",1.7);sound(420,.13);
+}
 function cycleCamera(){
  if(!render3D)return;
  const mode=render3D.setCameraStyle((render3D.camStyle||0)+1);
@@ -70,7 +114,7 @@ function togglePause(){
  paused=!paused;
  $("pause").textContent=paused?"DEVAM ET":"DURAKLAT";
  if(paused)toast("DURAKLATILDI",1.2);
- last=performance.now();clearKeys();
+ last=performance.now();clearKeys();syncEngine();
 }
 function horn(){
  if(!playing||paused)return;
@@ -80,7 +124,7 @@ function horn(){
  hornCooldown=.75;
  const nearby=traffic.find(v=>v.pos&&!v.joined&&distance(v.pos,car.pos)<13);
  if(nearby){
-  nearby.joined=true;convoy=Math.min(6,convoy+1);earnings+=50;
+  nearby.joined=true;nearby.pos=null;nearby.road=null;convoy=Math.min(6,convoy+1);earnings+=50;
   toast("BİR ARABA DAHA KONVOYDA · +₺50",1.5);
  }else if(mission?.phase==="pickup"&&distance(mission.pickup,car.pos)<20){
   toast("MİSAFİR BEKLİYOR · YAVAŞLA",1.1);
@@ -89,7 +133,7 @@ function horn(){
 }
 function hud(on){$("hud").classList.toggle("on",on);$("controls").style.visibility=on?"visible":"hidden"}
 function finish(cause){
- playing=false;paused=true;clearKeys();hud(false);
+ playing=false;paused=true;clearKeys();hud(false);syncEngine();
  $("panel").innerHTML='<div class="eyebrow">DÜĞÜN KONVOYU · İSTANBUL 3D</div><h1>'+cause+'</h1><p>İstanbul sokaklarındaki turun tamamlandı.</p><div id="end-summary">₺'+earnings.toLocaleString("tr-TR")+'<br>'+deliveries+' TESLİMAT · '+stolen+' YOLCU KAPMA · '+convoy+' KONVOY</div><button id="again">YENİDEN SÜR</button><p>Gerçek sokak haritası OpenStreetMap üzerinden yüklenir. Üç boyutlu bina yüksekliği, mevcut harita verisine göre gösterilir.</p>';
  $("again").style.cssText="width:100%;padding:16px;border-radius:14px;background:#c7ec72;border:0;font-weight:800;margin-top:16px";
  $("again").addEventListener("click",()=>startGame(free));
@@ -99,9 +143,9 @@ function startGame(unlimited){
  if(!ready){pending=unlimited?"free":"timed";$("loadstate").textContent="Gerçek harita ve yol ağı yükleniyor…";return}
  pending=false;free=unlimited;
  playing=true;paused=false;timer=180;earnings=0;deliveries=0;stolen=0;convoy=1;mission=null;
- hornCooldown=0;nearMissCooldown=0;deliveryStreak=0;hitCooldown=0;
+ hornCooldown=0;nearMissCooldown=0;deliveryStreak=0;hitCooldown=0;rescueCooldown=0;
  try{personalBest=Number(localStorage.getItem("dugun-3d-best-v3"))||0}catch(e){personalBest=0}
- car={pos:[...AREAS[area].center],speed:0,heading:0,steering:0,health:100,offroad:false};
+ car={pos:[...AREAS[area].center],speed:0,heading:0,steering:0,yawRate:0,slip:0,health:100,offroad:false};
  city.refresh(car.pos,true);
  const near=city.nearest(car.pos);
  if(near){car.pos=near.p;car.heading=angle(near.road.a,near.road.b)}
@@ -113,7 +157,7 @@ function startGame(unlimited){
  city.map.jumpTo({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad});
  $("overlay").hidden=true;hud(true);$("pause").textContent="DURAKLAT";
  resetRide=0;last=performance.now();
- spawnMission();seedTraffic();toast(AREAS[area].name.toLocaleUpperCase("tr-TR")+" · ŞEHİR SENİN",2);
+ spawnMission();seedTraffic();initEngine();syncEngine();toast(AREAS[area].name.toLocaleUpperCase("tr-TR")+" · ŞEHİR SENİN",2);
 }
 function seedTraffic(){
  if(!city.roads.length)return;
@@ -121,13 +165,25 @@ function seedTraffic(){
   v.joined=false;
   const seg=city.roads[Math.floor(Math.random()*city.roads.length)];
   v.road=seg;v.t=Math.random();v.pos=[seg.a[0]+(seg.b[0]-seg.a[0])*v.t,seg.a[1]+(seg.b[1]-seg.a[1])*v.t];
-  v.heading=angle(seg.a,seg.b);
+  v.heading=angle(seg.a,seg.b);v.visualHeading=v.heading;
  }
 }
 function spawnMission(){
  if(mission||!city.roads.length)return;
- const pickup=city.sample(car.pos,60,180);
- const dropoff=pickup&&city.sample(pickup,175,430);
+ let pickup=null,dropoff=null;
+ // Prefer a street-connected passenger and destination; don't send people through impassable blocks.
+ for(let i=0;i<9;i++){
+  const point=city.sample(car.pos,60,180);
+  if(!point)continue;
+  if(city.route(car.pos,point).length>2){pickup=point;break}
+  if(!pickup)pickup=point;
+ }
+ for(let i=0;i<9&&pickup;i++){
+  const point=city.sample(pickup,175,430);
+  if(!point)continue;
+  if(city.route(pickup,point).length>2){dropoff=point;break}
+  if(!dropoff)dropoff=point;
+ }
  if(!pickup||!dropoff){$("mission-name").textContent="Yakındaki sokaklar yükleniyor…";return}
  mission={
   passenger:NAMES[Math.floor(Math.random()*NAMES.length)],
@@ -180,8 +236,16 @@ function drive(dt){
  car.offroad=!!near&&near.dist>(near.road.typ==="primary"?10:7);
  if(car.offroad)car.speed*=Math.max(.7,1-dt*(near.dist>16?1.4:.6));
  car.speed=clamp(car.speed,-6,spec.top*(car.offroad?.62:1));
- let yaw=car.speed/3.6*Math.tan(car.steering)*spec.grip;
- if(keys.handbrake)yaw*=1.6;
+ const reverse=car.speed<0?-1:1;
+ const grip=car.offroad?.68:1;
+ const desiredYaw=car.speed/3.55*Math.tan(car.steering)*spec.grip*grip;
+ car.yawRate??=0;car.slip??=0;
+ const driftTarget=keys.handbrake&&Math.abs(car.speed)>5?
+   clamp(car.steering*Math.abs(car.speed)/9,-.94,.94):0;
+ car.slip+=(driftTarget-car.slip)*Math.min(1,dt*(keys.handbrake?3.8:5.5));
+ const response=keys.handbrake?2.9:8.0;
+ car.yawRate+=(desiredYaw-car.yawRate)*Math.min(1,dt*response);
+ const yaw=car.yawRate*(keys.handbrake?1.30:1)+car.slip*.18;
  car.heading=(car.heading+yaw*dt+Math.PI*2)%(2*Math.PI);
  const previous=car.pos;
  car.pos=travel(car.pos,car.heading,car.speed*dt);
@@ -216,17 +280,31 @@ function advanceTraffic(dt){
   if(!npc.road)continue;
   npc.t+=npc.speed*dt/Math.max(1,npc.road.len);
   if(npc.t>=1){
-   const id=npc.road.b[0].toFixed(5)+":"+npc.road.b[1].toFixed(5);
-   const possible=city.edges.get(id)||[],choice=possible[Math.floor(Math.random()*possible.length)];
-   if(choice&&city.nodes.get(choice.node)){
-    npc.road={a:npc.road.b,b:city.nodes.get(choice.node),len:choice.d};
-   }else npc.road=city.roads[Math.floor(Math.random()*city.roads.length)];
+   const end=npc.road.b;
+   const id=end[0].toFixed(5)+":"+end[1].toFixed(5);
+   const prevId=npc.road.a[0].toFixed(5)+":"+npc.road.a[1].toFixed(5);
+   const possible=(city.edges.get(id)||[]).filter(e=>e.node!==prevId);
+   const choices=possible.length?possible:(city.edges.get(id)||[]);
+   const ranked=choices.map(edge=>{
+    const to=city.nodes.get(edge.node);
+    const turnAmount=to?Math.abs(turn(angle(end,to),npc.heading)):Math.PI;
+    return {edge,turnAmount,weight:turnAmount+Math.random()*.48};
+   }).sort((a,b)=>a.weight-b.weight);
+   const chosen=ranked[0]?.edge;
+   if(chosen&&city.nodes.get(chosen.node)){
+    npc.road={a:end,b:city.nodes.get(chosen.node),len:chosen.d};
+   }else{
+    const next=city.roads.filter(v=>distance(v.a,car.pos)<230);
+    npc.road=next[Math.floor(Math.random()*next.length)]||npc.road;
+   }
    npc.t=0;
   }
   const seg=npc.road;
   
   const center=[seg.a[0]+(seg.b[0]-seg.a[0])*npc.t,seg.a[1]+(seg.b[1]-seg.a[1])*npc.t];
   npc.heading=angle(seg.a,seg.b);
+  npc.visualHeading??=npc.heading;
+  npc.visualHeading+=turn(npc.heading,npc.visualHeading)*Math.min(1,dt*3.5);
   npc.pos=travel(center,npc.heading+Math.PI/2,(/^(primary|secondary)/.test(seg.typ)?2.25:1.05));
   if(npc.joined)npc.speed=Math.min(13,npc.speed+.15*dt);
 
@@ -348,7 +426,7 @@ function frameLoop(now){
  if(ready&&playing&&!paused){
   drive(dt);
   if(playing){
-   hitCooldown=Math.max(0,hitCooldown-dt);hornCooldown=Math.max(0,hornCooldown-dt);nearMissCooldown=Math.max(0,nearMissCooldown-dt);
+   hitCooldown=Math.max(0,hitCooldown-dt);hornCooldown=Math.max(0,hornCooldown-dt);nearMissCooldown=Math.max(0,nearMissCooldown-dt);rescueCooldown=Math.max(0,rescueCooldown-dt);
    advanceTraffic(dt);advanceRival(dt);
    if(!free){timer-=dt;if(timer<=0){timer=0;finish("DÜĞÜN BİTTİ")}}
    if(playing){
@@ -358,7 +436,7 @@ function frameLoop(now){
     if(roadRefresh>4){roadRefresh=0;city.refresh(car.pos);if(!mission)spawnMission()}
     if(routeRefresh>2){routeRefresh=0;refreshRoute()}
     if(camRefresh>.16){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
-    render3D?.update({car,rival,mission,traffic,controls:keys,route,convoy},dt,now);
+    render3D?.update({car,rival,mission,traffic,controls:keys,route,convoy},dt,now);if(frame%8===0)syncEngine();
     if(frame++%3===0){updateHUD();drawMini()}
    }
   }
