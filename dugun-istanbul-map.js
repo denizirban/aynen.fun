@@ -196,8 +196,8 @@ export class IstanbulMap{
     isStyleLoaded(){return false}
    };
   }
-  // Deferred to avoid synchronously re-entering startGame from its own click.
-  queueMicrotask(()=>this.onRoadsReady?.());
+  // The click handler starts the game itself; do not re-enter startGame
+  // through an asynchronous onRoadsReady callback during fallback activation.
   return true;
  }
  jumpToArea(area){
