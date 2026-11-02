@@ -244,7 +244,7 @@ function spawnMission(){
 function refreshRoute(force=true){
  if(!mission||!city||!car)return;
  // Never replace the planned turn every two seconds while the vehicle is on the route.
- if(!force&&!lastNavState?.offroad)return;
+ if(!force&&!lastNavState?.offroad&&!(mission.owner==="rival"&&rival?.pos&&route?.length&&distance(route.at(-1),rival.pos)>55))return;
  const target=mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff;
  const candidate=city.route(car.pos,target);
  if(!candidate||candidate.length<2)return;
@@ -347,7 +347,8 @@ function drive(dt){
  if(city.insideBuilding?.(car.pos)){
   // Source building polygons sometimes overlap carriageways. Prefer the drivable road.
   const road=city.nearest(car.pos);
-  if(!road||road.dist>3.1){
+  const safeRoadWidth=road?/^(primary|trunk)/.test(road.road.typ)?8:/^(secondary|tertiary)/.test(road.road.typ)?6.1:4.8:0;
+  if(!road||road.dist>safeRoadWidth){
    const slideX=[car.pos[0],previous[1]],slideY=[previous[0],car.pos[1]];
    if(!city.insideBuilding(slideX))car.pos=slideX;
    else if(!city.insideBuilding(slideY))car.pos=slideY;
@@ -513,7 +514,7 @@ function updateHUD(){
  const step=navigation.instruction(car.pos,goal,mission.owner==="rival"?"RAKİBİ TAKİP ET":"HEDEFE GİT");
  $("turn-arrow").textContent=step.arrow;
  $("turn-hint").textContent=step.text;
- $("turn-sub").textContent=step.detail;
+ $("turn-sub").textContent=mission.owner==="rival"&&step.kind==="arrive"?"KIRMIZI RAKİBE YAKLAŞ":step.detail;
  $("directions").dataset.direction=step.kind;
 
 }
@@ -535,8 +536,9 @@ function drawMini(){
   route.forEach((p,i)=>{const q=toPx(p);i?ctx.lineTo(...q):ctx.moveTo(...q)});ctx.stroke();
  }
  if(mission){
-  const m=toPx(mission.phase==="pickup"?mission.pickup:mission.dropoff);
-  ctx.fillStyle=mission.phase==="pickup"?"#ffcf65":"#9de6b7";ctx.beginPath();ctx.arc(m[0],m[1],7,0,2*Math.PI);ctx.fill();
+  const target=mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff;
+  const m=toPx(target);
+  ctx.fillStyle=mission.owner==="rival"?"#ff8294":mission.phase==="pickup"?"#ffcf65":"#9de6b7";ctx.beginPath();ctx.arc(m[0],m[1],7,0,2*Math.PI);ctx.fill();
  }
  if(rival.pos){
   const p=toPx(rival.pos);ctx.fillStyle="#ff7c85";ctx.strokeStyle="#ffffff";ctx.lineWidth=2;
