@@ -157,7 +157,16 @@ function drive(dt){
  let yaw=car.speed/3.6*Math.tan(car.steering)*spec.grip;
  if(keys.handbrake)yaw*=1.6;
  car.heading=(car.heading+yaw*dt+Math.PI*2)%(2*Math.PI);
+ const previous=car.pos;
  car.pos=travel(car.pos,car.heading,car.speed*dt);
+ if(city.insideBuilding?.(car.pos)){
+  car.pos=previous;
+  if(Math.abs(car.speed)>3&&hitCooldown<=0){
+   hitCooldown=.9;car.health=Math.max(0,car.health-5);
+   sound(190,.19);toast("BİNAYA ÇARPTIN · HASAR",1.1);
+  }
+  car.speed*=-.22;
+ }
  if(near&&near.dist>18&&Math.abs(car.speed)>4)car.health=Math.max(0,car.health-dt*1.1);
  if(car.health<=0){finish("ARABA YOLDA KALDI");return}
  if(mission){
