@@ -16,7 +16,7 @@ const CHALLENGES=[
  {id:"careful",tag:"HASSAS YÜK",info:"Yolcuyu çarpışmadan ulaştır.",bonus:450},
  {id:"horn",tag:"KONVOY GÖREVİ",info:"Yolculukta 2 kez korna çal.",bonus:280}
 ];
-const keys={gas:false,brake:false,left:false,right:false,handbrake:false};
+const keys={gas:false,brake:false,left:false,right:false,handbrake:false,padSteer:0,padGas:false,padBrake:false,padHandbrake:false};
 let area="istanbul",kind="sahin",city=null,render3D=null,ready=false,pending=false,playing=false,paused=true,muted=false,free=false;
 const navigation=new StableNavigation();let lastNavState=null;
 let timer=180,earnings=0,deliveries=0,stolen=0,convoy=1,mission=null,car=null,rival=null,traffic=[],route=[],toastEnd=0,resetRide=0,roadRefresh=0,routeRefresh=0,camRefresh=0,hitCooldown=0;
@@ -87,7 +87,7 @@ window.addEventListener("keydown",e=>{
  if(e.code==="KeyM"&&!e.repeat){e.preventDefault();toggleDriveMode()}
 });
 window.addEventListener("keyup",e=>{if(inputKeys[e.code]){keys[inputKeys[e.code]]=false;e.preventDefault()}});
-function clearKeys(){for(const k of Object.keys(keys))keys[k]=false;document.querySelectorAll(".ctr").forEach(b=>b.classList.remove("pressed"))}
+function clearKeys(){for(const k of Object.keys(keys))keys[k]=k==="padSteer"?0:false;document.querySelectorAll(".ctr").forEach(b=>b.classList.remove("pressed"))}
 window.addEventListener("blur",()=>{clearKeys();if(playing&&!paused)togglePause()});
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&playing&&!paused)togglePause()});
 for(const button of document.querySelectorAll("[data-hold]")){
@@ -502,8 +502,26 @@ function drawMini(){
  ctx.fillStyle="#eaf6e2";ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(8,9);ctx.lineTo(-8,9);ctx.closePath();ctx.fill();ctx.restore();
  ctx.fillStyle="#ecf5e9";ctx.font="bold 16px sans-serif";ctx.fillText(AREAS[area].name,14,22);
 }
+let padHornWasDown=false,padCameraWasDown=false;
+function readGamepad(){
+ const pads=typeof navigator!=="undefined"&&navigator.getGamepads?.();
+ const pad=pads&&[...pads].find(p=>p?.connected);
+ if(!pad){keys.padSteer=0;keys.padGas=false;keys.padBrake=false;keys.padHandbrake=false;return}
+ const axis=pad.axes?.[0]||0;
+ keys.padSteer=Math.abs(axis)>.12?Math.sign(axis)*Math.pow(Math.abs(axis),1.12):0;
+ keys.padGas=!!(pad.buttons?.[7]?.pressed||pad.buttons?.[0]?.pressed);
+ keys.padBrake=!!(pad.buttons?.[6]?.pressed||pad.buttons?.[1]?.pressed);
+ keys.padHandbrake=!!pad.buttons?.[2]?.pressed;
+ const hornDown=!!pad.buttons?.[3]?.pressed;
+ if(hornDown&&!padHornWasDown)horn();
+ padHornWasDown=hornDown;
+ const cameraDown=!!pad.buttons?.[9]?.pressed;
+ if(cameraDown&&!padCameraWasDown)cycleCamera();
+ padCameraWasDown=cameraDown;
+}
 function frameLoop(now){
  const dt=clamp((now-last)/1000,0,.045);last=now;
+ readGamepad();
  if(ready&&playing&&!paused){
   drive(dt);
   if(playing){
