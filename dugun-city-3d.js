@@ -88,7 +88,7 @@ function startGame(unlimited){
  if(near){car.pos=near.p;car.heading=angle(near.road.a,near.road.b)}
  rival={pos:null,heading:0,speed:10.5,route:[],index:1,cooldown:0};
  traffic=[];
- for(let i=0;i<10;i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0});
+ for(let i=0;i<(window.innerWidth<700?5:10);i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0});
  if(!render3D){render3D=new Vehicle3D(city)}
  render3D.setOrigin(AREAS[area].center);render3D.setCar(kind);
  city.map.jumpTo({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad});
@@ -142,7 +142,7 @@ function deliver(who){
  nextMission();
 }
 function drive(dt){
- const spec=SPEC[kind],direction=Number(keys.right)-Number(keys.left),steerTarget=direction*.55;
+ const spec=SPEC[kind],direction=Number(keys.right)-Number(keys.left),steerTarget=direction*(.57/(1+Math.abs(car.speed)/12));
  car.steering+=(steerTarget-car.steering)*Math.min(1,dt*5.6);
  if(keys.gas)car.speed+=spec.accel*dt*(1-.20*Math.max(0,car.speed)/spec.top);
  if(keys.brake)car.speed-=spec.brake*dt*(car.speed>0?1:.45);
@@ -163,11 +163,11 @@ function drive(dt){
  if(mission){
   const target=mission.phase==="pickup"?mission.pickup:mission.dropoff;
   const d=distance(car.pos,target);
-  if(mission.phase==="pickup"&&mission.owner===null&&d<10&&Math.abs(car.speed)<11){
+  if(mission.phase==="pickup"&&mission.owner===null&&d<10&&Math.abs(car.speed)<6.8){
    mission.phase="dropoff";mission.owner="player";mission.clock=Math.max(47,36+distance(mission.pickup,mission.dropoff)/8);
    toast(mission.passenger.toLocaleUpperCase("tr-TR")+" BİNDİ",1.5);
    sound(540,.17);refreshRivalRoute();refreshRoute();updateMissionText();
-  }else if(mission.phase==="dropoff"&&mission.owner==="player"&&d<10&&Math.abs(car.speed)<11)deliver("player");
+  }else if(mission.phase==="dropoff"&&mission.owner==="player"&&d<10&&Math.abs(car.speed)<6.8)deliver("player");
   if(mission&&mission.phase==="dropoff"){
    mission.clock-=dt;
    if(mission.clock<=0){toast("MİSAFİRİN SÜRESİ DOLDU",1.3);nextMission()}
@@ -217,7 +217,7 @@ function advanceRival(dt){
    mission.phase="dropoff";mission.owner="rival";mission.clock=70;
    toast("RAKİP MİSAFİRİ ALDI! TAKİP ET",2.1);sound(280,.2);
    refreshRivalRoute();refreshRoute();updateMissionText();
-  }else if(mission.phase==="dropoff"&&mission.owner==="rival")deliver("rival");
+  }else if(mission.phase==="dropoff"&&mission.owner==="rival"){deliver("rival");return;}
  }
  if(distance(car.pos,rival.pos)<3.6&&hitCooldown<=0){
   hitCooldown=2.6;rival.cooldown=1;car.health=Math.max(0,car.health-7);car.speed*=-.30;
