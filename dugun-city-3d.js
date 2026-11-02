@@ -125,10 +125,21 @@ function chooseSafeRoadPosition(reference,initial=false){
  if(!city?.roads?.length)return null;
  let best=null,fallback=null;
  const limit=initial?1050:720;
- for(const r of city.roads){
-  if(!isLocalSpawnRoad(r))continue;
+ // Limit expensive building-footprint checks to the nearest candidate streets.
+ // This runs during vector-tile loading and must never block the UI for seconds.
+ const nearbyRoads=[];
+ for(const road of city.roads){
+  if(!isLocalSpawnRoad(road))continue;
+  const len=road.len||distance(road.a,road.b);
+  if(len<6.5)continue;
+  const mid=[(road.a[0]+road.b[0])*.5,(road.a[1]+road.b[1])*.5];
+  const approx=distance(reference,mid);
+  if(approx>limit+len*.55)continue;
+  nearbyRoads.push({road,approx});
+ }
+ nearbyRoads.sort((a,b)=>a.approx-b.approx);
+ for(const {road:r} of nearbyRoads.slice(0,75)){
   const length=r.len||distance(r.a,r.b);
-  if(length<6.5)continue;
   for(const t of [.24,.47,.72]){
    const pos=[r.a[0]+(r.b[0]-r.a[0])*t,r.a[1]+(r.b[1]-r.a[1])*t];
    const d=distance(reference,pos);
