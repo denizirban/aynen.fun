@@ -158,7 +158,7 @@ function addBuildings(group,origin,raw,mobile){
   return da-db;
  }).slice(0,mobile?240:490);
  const windows=empty(),litWindows=empty(),awnings=empty();
- const mats=buildingColors.map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.87}));
+ const mats=buildingColors.map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.88,flatShading:true}));
  for(let i=0;i<buildings.length;i++){
   const b=buildings[i],ring=b.ring?.slice(0,-1)??[];
   if(ring.length<3)continue;
@@ -166,11 +166,11 @@ function addBuildings(group,origin,raw,mobile){
   const maxDist=Math.max(...pts.map(p=>Math.hypot(p[0],p[1])));
   if(maxDist>750)continue;
   const x=(b.minX+b.maxX)*.5,lat=(b.minY+b.maxY)*.5,hseed=hash(x*1e5,lat*1e5);
-  const height=Math.round(3.5+(hseed*.78+.11)*8)*3.15;
+  const height=b.height&&Number.isFinite(b.height)?clamp(b.height,5,100):Math.round(3.5+(hseed*.78+.11)*8)*3.15;
   const shape=new THREE.Shape();shape.moveTo(...pts[0]);for(let j=1;j<pts.length;j++)shape.lineTo(...pts[j]);shape.closePath();
   const geo=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false,curveSegments:1,steps:1});
   const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.castShadow=false;m.receiveShadow=true;group.add(m);
-  const maxFloors=Math.min(6,Math.floor((height-1.5)/3.1));
+  const maxFloors=Math.min(mobile?4:8,Math.floor((height-1.5)/3.1));
   for(let edge=0;edge<pts.length;edge++){
    const a=pts[edge],v=pts[(edge+1)%pts.length],dx=v[0]-a[0],dy=v[1]-a[1],len=Math.hypot(dx,dy);
    if(len<3.8)continue;
