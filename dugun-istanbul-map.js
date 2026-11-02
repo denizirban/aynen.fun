@@ -71,17 +71,27 @@ export class IstanbulMap{
    const geom=f.geometry;
    const paths=geom?.type==="LineString"?[geom.coordinates]:geom?.type==="MultiLineString"?geom.coordinates:[];
    for(const path of paths)for(let j=1;j<path.length;j++){
-    const a=path[j-1],b=path[j],len=distance(a,b);
-    if(len<1.4||len>200||Math.min(distance(player,a),distance(player,b))>780)continue;
-    const id=key(a)+"_"+key(b);
-    if(uniq.has(id))continue;uniq.add(id);
-    roads.push({a,b,len,typ,
-      name:f.properties?.name||"",lanes:Number(f.properties?.lanes)||null,
-      width:Number(f.properties?.width)||null,
-      oneway:f.properties?.oneway===1||f.properties?.oneway==="yes",
-      surface:f.properties?.surface||null,
-      bridge:f.properties?.brunnel==="bridge"||f.properties?.bridge===1
-     });
+    const from=path[j-1],to=path[j],length=distance(from,to);
+    if(length<1.4||nearestOnSegment(player,from,to).dist>810)continue;
+    // Real OSM avenues and embankments sometimes have 200m+ segments.
+    // Keep them as drivable 80m sections instead of discarding them completely.
+    const pieces=Math.max(1,Math.min(100,Math.ceil(length/80)));
+    for(let k=0;k<pieces;k++){
+     const t0=k/pieces,t1=(k+1)/pieces;
+     const a=[from[0]+(to[0]-from[0])*t0,from[1]+(to[1]-from[1])*t0];
+     const b=[from[0]+(to[0]-from[0])*t1,from[1]+(to[1]-from[1])*t1];
+     if(nearestOnSegment(player,a,b).dist>810)continue;
+     const len=distance(a,b),id=key(a)+"_"+key(b);
+     if(uniq.has(id))continue;uniq.add(id);
+     roads.push({a,b,len,typ,
+       name:f.properties?.name||"",lanes:Number(f.properties?.lanes)||null,
+       width:Number(f.properties?.width)||null,
+       oneway:f.properties?.oneway===1||f.properties?.oneway==="yes",
+       surface:f.properties?.surface||null,
+       bridge:f.properties?.brunnel==="bridge"||f.properties?.bridge===1
+      });
+     if(roads.length>5200)break;
+    }
     if(roads.length>5200)break;
    }
    if(roads.length>5200)break;
