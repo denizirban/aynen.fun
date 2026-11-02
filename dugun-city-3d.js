@@ -358,13 +358,15 @@ function drive(dt){
  const spec=SPEC[kind],auto=driveMode==="easy",previous=[...car.pos];
  tripElapsed+=dt;
  // Sub-step integration keeps steering and grip stable at 30 / 60 / 120 Hz.
- const substeps=Math.min(6,Math.max(1,Math.ceil(dt/.012)));
- const grade=render3D?.getGroundHeight?(render3D.getGroundHeight(travel(car.pos,car.heading,5))-render3D.getGroundHeight(travel(car.pos,car.heading+Math.PI,5)))/10:0;
+ const substeps=Math.min(5,Math.max(1,Math.ceil(dt/.015)));
+ // One road lookup per visual frame. Each substep moves <0.3m at normal speeds.
+ // Previously repeated 4-6 full OSM scans per frame plus scene/NPC scans.
+ const nearBefore=city.nearest(car.pos)||city.nearestAny?.(car.pos);
+ const grade=render3D?.getGroundHeight?(render3D.getGroundHeight(travel(car.pos,car.heading,6))-render3D.getGroundHeight(travel(car.pos,car.heading+Math.PI,6)))/12:0;
  for(let i=0;i<substeps;i++){
-  const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
-  stepVehicle(car,keys,{mode:driveMode,spec,road:near,navigation,grade},dt/substeps);
+  stepVehicle(car,keys,{mode:driveMode,spec,road:nearBefore,navigation,grade},dt/substeps);
  }
- const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
+ const near=city.nearest(car.pos)||nearBefore||city.nearestAny?.(car.pos);
  car.currentRoadName=near?.road?.name||"";
  car.currentRoadClass=near?.road?.typ||"";
  car.currentRoadBridge=!!(near?.road?.bridge&&/^(motorway|motorway_link|trunk|primary)/.test(near.road.typ));
@@ -618,7 +620,9 @@ function frameLoop(now){
  // must not permanently stop the vehicle, inputs and on-screen controls.
  requestAnimationFrame(frameLoop);
  try{
- const dt=clamp((now-last)/1000,0,.045);last=now;
+ // At 25-40 FPS, preserve actual motion without stretching physics through
+ // a giant integration step. stepVehicle substeps handle this interval.
+ const dt=clamp((now-last)/1000,0,.065);last=now;
  readGamepad();
  if(ready&&playing&&!paused){
   drive(dt);
