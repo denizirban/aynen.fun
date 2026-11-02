@@ -396,7 +396,9 @@ function drive(dt){
  }
  car.collisionGrace=Math.max(0,(car.collisionGrace||0)-dt);
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
- if(car.collisionGrace<=0&&city.insideBuilding?.(car.pos)){
+ // Free roam is a forgiving arcade drive; inaccurate OSM building outlines
+ // must not teleport the car backwards every frame.
+ if(!free&&car.collisionGrace<=0&&city.insideBuilding?.(car.pos)){
   // Source building polygons sometimes overlap carriageways. Prefer the drivable road.
   const road=city.nearest(car.pos);
   const safeRoadWidth=road?roadHalfWidth(road.road)+.85:0;
