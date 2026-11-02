@@ -32,7 +32,7 @@ export function makeCar(carName="sahin",color=null,rival=false){
  const shadow=new THREE.Mesh(new THREE.CircleGeometry(2.65,28),new THREE.MeshBasicMaterial({color:0x0a1718,transparent:true,opacity:.18,depthWrite:false}));shadow.scale.set(.95,1,1);shadow.position.z=.065;group.add(shadow);
  // Real dimensional body (x=vehicle width, y=length, z=up); smooth front/rear taper.
  group.add(roundedBody(w,l,.53,paint,.52,.22));
- group.add(roundedBody(w*.92,l*.30,.15,paint,1.045,.15)).children;
+ group.add(roundedBody(w*.92,l*.30,.15,paint,1.045,.15));
  const roofLength=doblo?2.68:2.13;
  const roof=roundedBody(w*.82,roofLength,doblo?.85:.67,paint,doblo?1.25:1.20,.18);roof.position.y=-.24;group.add(roof);
  group.add(cube(w*.76,.055,doblo?.48:.38,windowMaterial,0,doblo?.91:.66,doblo?1.67:1.64));
