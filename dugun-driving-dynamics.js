@@ -32,7 +32,7 @@ export function evaluateTurn(nav,position,heading,speed){
 export function stepVehicle(state,controls,environment,dt){
  if(!state?.pos||!dt)return state;
  const car=state,automatic=environment.mode!=="manual",spec=environment.spec||{};
- const input=clamp((controls.right?1:0)-(controls.left?1:0),-1,1);
+ const input=clamp(Math.abs(controls.padSteer||0)>.12?controls.padSteer:(controls.right?1:0)-(controls.left?1:0),-1,1);
  const near=environment.road||null;
  const surfaceWidth=roadHalfWidth(near?.road);
  const crossTrack=near?.dist??0;
@@ -54,11 +54,11 @@ export function stepVehicle(state,controls,environment,dt){
  const preview=evaluateTurn(environment.navigation,car.pos,car.heading,targetSpeed);
  const steerMax=clamp(.62/(1+targetSpeed/26),.35,.62);
  let targetSteer=input*steerMax;
- if(automatic&&input===0&&targetSpeed>1){
+ if(automatic&&Math.abs(input)<.04&&targetSpeed>1){
   const nearRoad=near?.p&&crossTrack>2?wrap(bearing(car.pos,near.p)-car.heading):0;
   // Forward-look steering is deliberately limited: the driver is still in control.
-  if(preview.valid&&Math.abs(preview.error)<1.05){
-   targetSteer+=clamp(preview.error*.47,-.31,.31);
+  if(preview.valid&&Math.abs(preview.error)<.48){
+   targetSteer+=clamp(preview.error*.30,-.14,.14);
   }else if(near?.p&&crossTrack<11&&Math.abs(nearRoad)<1.05){
    targetSteer+=clamp(nearRoad*.18,-.19,.19);
   }
@@ -67,7 +67,7 @@ export function stepVehicle(state,controls,environment,dt){
  // Steering responds quickly without a sudden heading jump.
  const response=automatic?9.5:7.5;
  car.steering+=(targetSteer-car.steering)*(1-Math.exp(-response*dt));
- if(controls.brake){
+ if(controls.brake||controls.padBrake){
   car.brakeHold+=dt;
   const strength=spec.brake||13.0;
   if(car.speed>0)car.speed=Math.max(0,car.speed-strength*dt);
@@ -76,13 +76,13 @@ export function stepVehicle(state,controls,environment,dt){
  }else{
   car.brakeHold=0;
   if(automatic){
-   let cruise=Math.min(15.3,spec.top||16.8,preview.valid?preview.limit:13.9);
+   let cruise=Math.min(17.2,spec.top||19.8,preview.valid?preview.limit:15.8);
    if(Math.abs(car.steering)>steerMax*.66)cruise=Math.min(cruise,8.4);
    if(car.offroad)cruise=Math.min(cruise,7.0);
-   if(controls.gas)cruise=Math.min(spec.top||19.5,19.5);
+   if(controls.gas||controls.padGas)cruise=Math.min(spec.top||19.5,19.5);
    cruise=clamp(cruise-car.grade*18,4.6,spec.top||27);
    car.speed=approach(car.speed,cruise,(car.speed>cruise?11.4:8.5)*dt);
-  }else if(controls.gas){
+  }else if(controls.gas||controls.padGas){
    const t=Math.max(0,1-Math.max(0,car.speed)/(spec.top||19.5));
    car.speed+=Math.max(3.8,(spec.accel||7)*1.30*t)*dt;
   }else{
@@ -91,23 +91,23 @@ export function stepVehicle(state,controls,environment,dt){
   }
  }
  if(Math.abs(car.speed)>1.1)car.speed-=9.81*car.grade*.55*dt;
- if(controls.handbrake)car.speed=approach(car.speed,0,3.1*dt);
+ if((controls.handbrake||controls.padHandbrake))car.speed=approach(car.speed,0,3.1*dt);
  if(car.offroad){
   const decel=crossTrack>16?6.7:3.3;
   if(car.speed>0)car.speed=Math.max(0,car.speed-decel*dt);
  }
  car.speed=clamp(car.speed,-5.2,(spec.top||20.5)*(car.offroad?.72:1));
- const grip=(car.offroad?.67:1)*(controls.handbrake?.60:1);
+ const grip=(car.offroad?.67:1)*((controls.handbrake||controls.padHandbrake)?.60:1);
  // Bicycle steering with limited yaw response: turn radius stays legible.
  const effectiveSpeed=clamp(car.speed,-7,22);
  const wheelbase=3.10;
- const requestedYaw=clamp(effectiveSpeed*Math.tan(car.steering)/wheelbase*(spec.grip||1)*grip,-1.0,1.0);
- car.yawRate+=(requestedYaw-car.yawRate)*(1-Math.exp(-(controls.handbrake?4.3:9.6)*dt));
- const slipTarget=controls.handbrake?clamp(car.steering*Math.abs(car.speed)/15,-.64,.64):clamp(car.yawRate*car.speed/27,-.12,.12);
+ const requestedYaw=clamp(effectiveSpeed*Math.tan(car.steering)/wheelbase*(spec.grip||1)*grip,-1.07,1.07);
+ car.yawRate+=(requestedYaw-car.yawRate)*(1-Math.exp(-((controls.handbrake||controls.padHandbrake)?4.3:9.6)*dt));
+ const slipTarget=(controls.handbrake||controls.padHandbrake)?clamp(car.steering*Math.abs(car.speed)/15,-.64,.64):clamp(car.yawRate*car.speed/27,-.12,.12);
  car.slip+=(slipTarget-car.slip)*(1-Math.exp(-4.5*dt));
  car.heading=(car.heading+(car.yawRate+car.slip*.10)*dt+Math.PI*2)%(Math.PI*2);
  // Lateral displacement is damped rather than teleporting onto the road center.
- car.velocityLateral+=(car.yawRate*car.speed*.065-car.velocityLateral)*(1-Math.exp(-dt*(controls.handbrake?1.6:7.4)));
+ car.velocityLateral+=(car.yawRate*car.speed*.065-car.velocityLateral)*(1-Math.exp(-dt*((controls.handbrake||controls.padHandbrake)?1.6:7.4)));
  const forward=car.speed*dt;
  const side=car.velocityLateral*dt*.17;
  car.pos=travelMeters(travelMeters(car.pos,car.heading,forward),car.heading+Math.PI/2,side);
