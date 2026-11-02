@@ -1,6 +1,6 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v9";
-import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v9";
+import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v10";
+import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v10";
 
 // The road graph and building outlines come from the real OSM vector tiles.
 // This is a standalone ground-level Three.js scene, NOT a tilted map layer.
@@ -8,10 +8,10 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const hash=(a,b=0)=>{let n=Math.sin(a*12.9898+b*78.233)*43758.545;return n-Math.floor(n)};
 const roadWidth=road=>{
  const type=typeof road==="string"?road:road?.typ||"";
- const defaultWidth=/^(primary|trunk)/.test(type)?15:/^secondary/.test(type)?12:/^tertiary/.test(type)?10:/^(service|living_street)/.test(type)?5.7:7.8;
+ const defaultWidth=/^motorway$/.test(type)?29:/^motorway_link/.test(type)?9.8:/^(primary|trunk)/.test(type)?15:/^secondary/.test(type)?12:/^tertiary/.test(type)?10:/^(service|living_street)/.test(type)?5.7:7.8;
  const lanes=typeof road==="object"?road.lanes:null,width=typeof road==="object"?road.width:null;
- if(Number.isFinite(width)&&width>3)return clamp(width,5,21);
- if(Number.isFinite(lanes)&&lanes>=2)return clamp(lanes*3.05+2.2,7.7,21);
+ if(Number.isFinite(width)&&width>3)return clamp(width,5,34);
+ if(Number.isFinite(lanes)&&lanes>=2)return clamp(lanes*3.05+2.2,7.7,34);
  return defaultWidth;
 };
 const buildingColors=["#d8c5ac","#eccfb2","#f2d6bd","#b2c5b9","#c5bfd0","#d9d9ca","#ebbaa7","#b1c3c6","#ead8c4","#c9d2b5"];
@@ -20,7 +20,7 @@ const toXY=(o,p)=>{const x=(p[0]-o[0])*111320*Math.cos((p[1]+o[1])*.5*rad),y=(p[
 let terrainAt=(x,y)=>0;
 function terrainModel(area,origin){
  // Stylized grades, not measured elevation.
- if(area==="ortakoy"){
+ if(area==="istanbul"||area==="ortakoy"){
   const coastX=(29.02745-origin[0])*111320*Math.cos(origin[1]*rad);
   const offset=toXY(AREAS[area].center,origin);
   return (x,y)=>Math.max(0,(coastX-x)*.028)+.35*Math.max(0,Math.sin((y+offset[1])/155));
@@ -76,10 +76,10 @@ function emitQuad(positions,indices,p,q,width,z){
  const dx=q[0]-p[0],dy=q[1]-p[1],len=Math.hypot(dx,dy);
  if(len<.1)return;
  const nx=-dy/len*width*.5,ny=dx/len*width*.5,i=positions.length/3;
- positions.push(p[0]-nx,p[1]-ny,z+terrainAt(p[0]-nx,p[1]-ny),
- q[0]-nx,q[1]-ny,z+terrainAt(q[0]-nx,q[1]-ny),
- q[0]+nx,q[1]+ny,z+terrainAt(q[0]+nx,q[1]+ny),
- p[0]+nx,p[1]+ny,z+terrainAt(p[0]+nx,p[1]+ny));
+ positions.push(p[0]-nx,p[1]-ny,z+terrainAt(p[0]-nx,p[1]-ny)+bridgeLiftAt(p[0]-nx,p[1]-ny),
+ q[0]-nx,q[1]-ny,z+terrainAt(q[0]-nx,q[1]-ny)+bridgeLiftAt(q[0]-nx,q[1]-ny),
+ q[0]+nx,q[1]+ny,z+terrainAt(q[0]+nx,q[1]+ny)+bridgeLiftAt(q[0]+nx,q[1]+ny),
+ p[0]+nx,p[1]+ny,z+terrainAt(p[0]+nx,p[1]+ny)+bridgeLiftAt(p[0]+nx,p[1]+ny));
  indices.push(i,i+1,i+2,i,i+2,i+3);
 }
 function batchStrips(list,mat,container){
@@ -201,7 +201,7 @@ function createRoads(group,origin,roads,mobile){
   const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
   if(len<1.0)continue;
   const ux=dx/len,uy=dy/len,nx=-uy,ny=ux,width=roadWidth(r);
-  emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.7,.105);
+  if(!/^(motorway|motorway_link|trunk)/.test(r.typ))emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.7,.105);
   emitQuad(asphalt.positions,asphalt.indices,a,b,width,.147);
   for(const sign of [-1,1]){
    emitQuad(curbs.positions,curbs.indices,
@@ -222,7 +222,7 @@ function createRoads(group,origin,roads,mobile){
    }
   }
   // Zebra crossings and stop bars are placed only at mapped 3+ way junctions.
-  if(len>11){
+  if(len>11&&!/^(motorway|motorway_link|trunk)/.test(r.typ)){
    for(const endpoint of [0,1]){
     const node=squares.get(index(endpoint===0?r.a:r.b));
     if(!node)continue;
@@ -245,8 +245,9 @@ function createRoads(group,origin,roads,mobile){
  batchStrips(sidewalk,pavementMat,group);batchStrips(asphalt,roadMat,group);
  batchStrips(intersection,roadMat,group);batchStrips(curbs,curbMat,group);
  batchStrips(markings,lineMat,group);batchStrips(stopBars,lineMat,group);batchStrips(sideLine,lineMat,group);
- addStreetProps(group,origin,near,mobile);
- return near;
+ const localStreets=near.filter(r=>!/^(motorway|motorway_link|trunk)/.test(r.typ));
+ addStreetProps(group,origin,localStreets,mobile);
+ return localStreets;
 }
 
 function renderRealParks(group,origin,parks,mobile){
@@ -376,8 +377,172 @@ function addWater(group,origin,waters,mobile){
  }
  return count;
 }
+
+// Approximate scenic bridge geometry. The actual street positions continue to
+// come from OSM; this model is not a photogrammetric reconstruction.
+const BOSPHORUS_WEST=[29.0294,41.0470];
+const BOSPHORUS_EAST=[29.0416,41.0428];
+let bridgeWorldOrigin=null,bridgeCache=null;
+function bridgeSection(){
+ if(!bridgeWorldOrigin)return null;
+ if(bridgeCache)return bridgeCache;
+ const a=toXY(bridgeWorldOrigin,BOSPHORUS_WEST),b=toXY(bridgeWorldOrigin,BOSPHORUS_EAST);
+ const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
+ return bridgeCache={a,b,dx,dy,len,ux:dx/len,uy:dy/len};
+}
+function bridgeLiftAt(x,y){
+ const b=bridgeSection();if(!b)return 0;
+ const px=x-b.a[0],py=y-b.a[1];
+ const along=(px*b.ux+py*b.uy)/b.len;
+ const cross=Math.abs(px*b.uy-py*b.ux);
+ if(cross>38||along<-.32||along>1.32)return 0;
+ const approach=along<0?Math.max(0,(along+.32)/.32):
+               along>1?Math.max(0,(1.32-along)/.32):1;
+ // Smooth lateral envelope, no sudden elevation cliff at the bridge edge.
+ const t=Math.max(0,Math.min(1,(38-cross)/14));
+ const laneFactor=t*t*(3-2*t);
+ return 39.45*approach*laneFactor;
+}
+function makeBosphorusBridge(group,origin,player){
+ const section=bridgeSection();if(!section)return 0;
+ const {a,b,ux,uy,len}=section;
+ const midpoint=[(a[0]+b[0])/2,(a[1]+b[1])/2];
+ const near=Math.min(Math.hypot(...a),Math.hypot(...b),Math.hypot(...midpoint));
+ if(near>1250)return 0;
+ const steel=new THREE.MeshStandardMaterial({color:0xb7bfc5,metalness:.65,roughness:.46});
+ const asphalt=new THREE.MeshStandardMaterial({color:0x414e57,roughness:.93});
+ const guard=new THREE.MeshStandardMaterial({color:0xd2d7d6,metalness:.56,roughness:.44});
+ const stripe=new THREE.MeshBasicMaterial({color:0xfff5d7});
+ const cable=new THREE.MeshStandardMaterial({color:0xc0cbd0,metalness:.72,roughness:.35});
+ const theta=-Math.atan2(ux,uy);
+ const addBox=(w,d,h,x,y,z,mat)=>{
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,d,h),mat);
+  mesh.position.set(x,y,z);mesh.rotation.z=theta;
+  mesh.receiveShadow=true;group.add(mesh);return mesh;
+ };
+ // Six-lane-looking original deck, centered on the 15 July bridge axis.
+ addBox(32,len,1.9,midpoint[0],midpoint[1],38.5,steel);
+ addBox(29.8,len,.13,midpoint[0],midpoint[1],39.5,asphalt);
+ const sideX=-uy,sideY=ux;
+ for(const side of [-1,1]){
+  addBox(.35,len,1.2,midpoint[0]+sideX*side*16,midpoint[1]+sideY*side*16,40.2,guard);
+ }
+ const markN=5*Math.max(0,Math.ceil((len-22)/18));
+ const marks=new THREE.InstancedMesh(new THREE.BoxGeometry(.12,7,.025),stripe,markN);
+ const markDummy=new THREE.Object3D();let markIndex=0;
+ for(let lane=-2;lane<=2;lane++){
+  for(let j=10;j<len-12;j+=18){
+   const lateral=lane*4.8;
+   const x=a[0]+ux*j+sideX*lateral,y=a[1]+uy*j+sideY*lateral;
+   markDummy.position.set(x,y,39.59);markDummy.rotation.z=theta;markDummy.updateMatrix();
+   marks.setMatrixAt(markIndex++,markDummy.matrix);
+  }
+ }
+ marks.count=markIndex;marks.instanceMatrix.needsUpdate=true;group.add(marks);
+ // Two bridge towers. Location and scale are approximate; cables visually
+ // connect to a hanging suspension profile over the full central span.
+ const towerHeight=124,towerWidth=32;
+ for(const p of [a,b]){
+  for(const side of [-1,1]){
+   const x=p[0]+sideX*(towerWidth/2),y=p[1]+sideY*(towerWidth/2);
+   addBox(2.4,3.0,towerHeight,x,y,39+towerHeight/2,steel);
+  }
+  addBox(towerWidth+3,3.5,2.4,p[0],p[1],148,steel);
+  addBox(towerWidth+3,3.5,1.8,p[0],p[1],118,steel);
+ }
+ const verticals=new THREE.InstancedMesh(new THREE.CylinderGeometry(.11,.11,1,5),cable,2*(Math.floor(len/27)-1));
+ const dummy=new THREE.Object3D();let rodIndex=0;
+ for(const side of [-1,1]){
+  const lateral=side*16.6;
+  const points=[];
+  for(let i=0;i<=56;i++){
+   const t=i/56;
+   const sag=44*(4*t*(1-t));
+   points.push(new THREE.Vector3(a[0]+ux*len*t+sideX*lateral,
+     a[1]+uy*len*t+sideY*lateral,165-sag));
+  }
+  const curve=new THREE.CatmullRomCurve3(points);
+  const c=new THREE.Mesh(new THREE.TubeGeometry(curve,92,.22,5,false),cable);
+  c.frustumCulled=false;group.add(c);
+  for(let j=1;j<len/27;j++){
+   const t=j*27/len,z=165-44*(4*t*(1-t)),h=z-40.4;
+   const x=a[0]+ux*len*t+sideX*lateral,y=a[1]+uy*len*t+sideY*lateral;
+   dummy.position.set(x,y,40.4+h/2);dummy.scale.set(1,h,1);dummy.updateMatrix();
+   if(rodIndex<verticals.count)verticals.setMatrixAt(rodIndex++,dummy.matrix);
+  }
+ }
+ verticals.count=rodIndex;
+ verticals.instanceMatrix.needsUpdate=true;
+ group.add(verticals);
+ const name=createWorldLabel("15 TEMMUZ ŞEHİTLER KÖPRÜSÜ","#25526b","#faf8df");
+ name.scale.set(24,2,1);name.position.set(a[0],a[1],169);
+ group.add(name);
+ return 1;
+}
+
+
+// Beylerbeyi shore: purpose-made, stylized Ottoman waterfront palace.
+// This is an architectural illustration aligned to the real neighborhood,
+// not measured facade geometry.
+function addBeylerbeyiWaterfront(group,origin){
+ const location=[29.0400,41.0426],p=toXY(origin,location);
+ if(Math.hypot(...p)>570)return;
+ const stone=new THREE.MeshStandardMaterial({color:0xe1d3bd,roughness:.88});
+ const cream=new THREE.MeshStandardMaterial({color:0xf3e7d4,roughness:.86});
+ const roof=new THREE.MeshStandardMaterial({color:0x687f83,roughness:.74});
+ const trim=new THREE.MeshStandardMaterial({color:0xc0aa91,roughness:.8});
+ const glass=new THREE.MeshStandardMaterial({color:0x64858f,roughness:.24,metalness:.16});
+ const garden=new THREE.MeshStandardMaterial({color:0x648b5d,roughness:1});
+ const scene=new THREE.Group();
+ scene.position.set(p[0],p[1],terrainAt(...p)+.35);
+ scene.rotation.z=-.28;
+ scene.add(meshBox(37,17,6.6,cream,0,0,3.4));
+ scene.add(meshBox(41,20,1.2,stone,0,0,.40));
+ scene.add(meshBox(37.8,18.5,1.1,trim,0,0,6.9));
+ scene.add(meshBox(39,19,5.3,stone,0,0,10.1));
+ scene.add(meshBox(41,20,1.3,trim,0,0,13.2));
+ scene.add(meshBox(42,21,1.15,roof,0,0,14.2));
+ for(const face of [-1,1])for(let i=-6;i<=6;i++){
+  scene.add(meshBox(.9,.9,9,cream,i*2.65,face*10.1,8.4));
+  if(i%2===0)scene.add(meshBox(1.4,.25,3.4,glass,i*2.65,face*10.4,10.6));
+ }
+ for(const x of [-22,-19,19,22]){
+  const cypress=new THREE.Mesh(new THREE.ConeGeometry(1.6,12,9),garden);
+  cypress.position.set(x,6,6);scene.add(cypress);
+ }
+ const label=createWorldLabel("BEYLERBEYİ SAHİLİ","#345c67","#fff9dd");
+ label.position.set(0,0,18);label.scale.set(14,2.0,1);scene.add(label);
+ group.add(scene);
+}
+function addBosphorusPromenade(group,origin){
+ const shore=[[29.0258,41.0483],[29.0266,41.04775],[29.02715,41.04725],[29.0278,41.0468]];
+ const nearest=Math.min(...shore.map(p=>distance(p,origin)));
+ if(nearest>570)return;
+ const railing=new THREE.MeshStandardMaterial({color:0x536671,metalness:.52,roughness:.55});
+ const wood=new THREE.MeshStandardMaterial({color:0x85694b,roughness:.89});
+ for(let i=0;i<shore.length-1;i++){
+  const aa=toXY(origin,shore[i]),bb=toXY(origin,shore[i+1]);
+  const dx=bb[0]-aa[0],dy=bb[1]-aa[1],len=Math.hypot(dx,dy),n=Math.ceil(len/9);
+  const angle=-Math.atan2(dx,dy);
+  const rail=new THREE.Mesh(new THREE.BoxGeometry(.12,len, .12),railing);
+  rail.position.set((aa[0]+bb[0])/2,(aa[1]+bb[1])/2,terrainAt(...aa)+1.10);
+  rail.rotation.z=angle;group.add(rail);
+  for(let j=0;j<=n;j++){
+   const t=j/n,x=aa[0]+dx*t,y=aa[1]+dy*t;
+   const pole=meshBox(.12,.13,1.15,railing,x,y,terrainAt(x,y)+.575);
+   group.add(pole);
+  }
+  if(i%2===0){
+   const bench=new THREE.Group();
+   bench.position.set(aa[0]-3,aa[1],terrainAt(...aa)+.5);bench.rotation.z=angle;
+   bench.add(meshBox(2.1,.62,.18,wood,0,0,0));
+   bench.add(meshBox(2.1,.12,.75,wood,0,-.24,.42));group.add(bench);
+  }
+ }
+}
+
 function addOrtakoyLandmark(group,origin,area){
- if(area!=="ortakoy")return;
+ if(area!=="istanbul"&&area!=="ortakoy")return;
  // Grounded approximate site of Büyük Mecidiye/Ortaköy Mosque; stylized original model.
  const [x,y]=toXY(origin,[29.02694,41.04722]);
  if(Math.hypot(x,y)>550)return;
@@ -401,7 +566,7 @@ function addOrtakoyLandmark(group,origin,area){
  const hull=new THREE.MeshStandardMaterial({color:0xdcebf0,roughness:.58});
  const cabin=new THREE.MeshStandardMaterial({color:0xf7ead2,roughness:.71});
  const windows=new THREE.MeshStandardMaterial({color:0x306e83,roughness:.30});
- for(const [index,where] of [[0,[29.0295,41.04756]],[1,[29.0314,41.04704]]]){
+ for(const [index,where] of [[0,[29.0275,41.0481]],[1,[29.0285,41.0462]]]){
   const [bx,by]=toXY(origin,where),ferry=new THREE.Group();
   ferry.position.set(bx,by,.50);ferry.rotation.z=index?.36:-.27;
   ferry.add(meshBox(16.5,4.9,1.4,hull,0,0,.7));
@@ -584,7 +749,7 @@ export class CityScene3D{
   }
   this.scene=new THREE.Scene();this.scene.background=color("#8ccbee");this.scene.fog=new THREE.Fog("#a7c9bb",245,790);
   this.sky=addSkyAtmosphere(this.scene);this.lightingMode=0;
-  this.camera=new THREE.PerspectiveCamera(64,1,.12,1300);this.camera.up.set(0,0,1);
+  this.camera=new THREE.PerspectiveCamera(64,1,.12,2200);this.camera.up.set(0,0,1);
   this.skyLight=new THREE.HemisphereLight(0xd5eeff,0x8a8e70,1.95);this.scene.add(this.skyLight);
   const sunlight=new THREE.DirectionalLight(0xffe1af,2.4);sunlight.position.set(-125,170,190);
   if(!this.mobile){
@@ -677,7 +842,7 @@ export class CityScene3D{
   this.camStyle=((style%3)+3)%3;
   return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
  }
- getGroundHeight(point){const xy=toXY(this.origin,point);return terrainAt(xy[0],xy[1])}
+ getGroundHeight(point){const xy=toXY(this.origin,point);return terrainAt(xy[0],xy[1])+bridgeLiftAt(xy[0],xy[1])}
  setOrigin(point){this.origin=[...point];this.inited=false;this.safeFollow=null;this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
 
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
@@ -712,10 +877,14 @@ export class CityScene3D{
   disposeCityGroup(this.worldGroup);
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
   terrainAt=terrainModel(city.area,this.origin);
+  bridgeWorldOrigin=this.origin;bridgeCache=null;
   makeGround(this.worldGroup);
   this.visibleParkCount=renderRealParks(this.worldGroup,this.origin,city.parks,this.mobile);
   this.visibleWater=addWater(this.worldGroup,this.origin,city.water,this.mobile);
   addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
+  addBeylerbeyiWaterfront(this.worldGroup,this.origin);
+  addBosphorusPromenade(this.worldGroup,this.origin);
+  this.bridgeVisible=makeBosphorusBridge(this.worldGroup,this.origin,this.focus||this.origin);
   if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile);renderParkedStreetCars(this.worldGroup,this.origin,visibleRoads,this.mobile,this.focus||this.origin)}
   else{
    // Visible drivable street while streaming real vector tiles.
@@ -737,7 +906,7 @@ export class CityScene3D{
  }
  position(mesh,p,z=.16){
   if(!p){mesh.visible=false;return}
-  mesh.visible=true;const [x,y]=toXY(this.origin,p);mesh.position.set(x,y,z+terrainAt(x,y));
+  mesh.visible=true;const [x,y]=toXY(this.origin,p);mesh.position.set(x,y,z+terrainAt(x,y)+bridgeLiftAt(x,y));
  }
  update(state,dt,now){
   if(!state?.car)return;
@@ -914,7 +1083,7 @@ export class CityScene3D{
    }
    this.safeFollow=safeFollow;
   }else if(!hood)safeFollow=this.safeFollow??horizontal;
-  const ground=terrainAt(cx,cy);
+  const ground=terrainAt(cx,cy)+bridgeLiftAt(cx,cy);
   const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,ground+height+(safeFollow<horizontal?1.3:0));
   const lookDistance=hood?22:wide?20:15.5;
   const turnPreview=clamp((car.yawRate||0)*1.65,-.40,.40);
