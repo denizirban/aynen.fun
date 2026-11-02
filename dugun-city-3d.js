@@ -85,7 +85,7 @@ $("camera").addEventListener("click",cycleCamera);
 function recoverCar(){
  if(!playing||paused||!car)return;
  if(rescueCooldown>0){toast("ÇEKİCİ "+Math.ceil(rescueCooldown)+" SANİYE SONRA",1.1);return}
- const near=city.nearest(car.pos);
+ const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
  if(!near){toast("YAKINDA YOL BULUNAMADI",1.2);return}
  if(Math.abs(car.speed)>2.3){toast("ÖNCE ARABAYI DURDUR",1.2);return}
  if(!car.offroad&&car.health>70){toast("ARAÇ ZATEN YOLDA",1.1);return}
