@@ -4,18 +4,37 @@ const mat=(color,metal=.1,rough=.54)=>new THREE.MeshStandardMaterial({color,meta
 function cube(w,l,h,m,x=0,y=0,z=0){
  const o=new THREE.Mesh(new THREE.BoxGeometry(w,l,h),m);o.position.set(x,y,z);return o;
 }
+function roundedBody(w,l,depth,material,z,r=.18){
+ const shape=new THREE.Shape();
+ const x=w*.5,y=l*.5,c=Math.min(r,x*.4,y*.4);
+ shape.moveTo(-x+c,-y);shape.lineTo(x-c,-y);shape.quadraticCurveTo(x,-y,x,-y+c);
+ shape.lineTo(x,y-c);shape.quadraticCurveTo(x,y,x-c,y);
+ shape.lineTo(-x+c,y);shape.quadraticCurveTo(-x,y,-x,y-c);
+ shape.lineTo(-x,-y+c);shape.quadraticCurveTo(-x,-y,-x+c,-y);
+ const geometry=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelSize:.045,bevelThickness:.045,bevelSegments:2,curveSegments:4});
+ const m=new THREE.Mesh(geometry,material);m.position.z=z;return m;
+}
+function plateTexture(){
+ const canvas=document.createElement("canvas");canvas.width=512;canvas.height=112;
+ const ctx=canvas.getContext("2d");
+ ctx.fillStyle="#fff8ed";ctx.fillRect(0,0,512,112);
+ ctx.strokeStyle="#a45452";ctx.lineWidth=9;ctx.strokeRect(5,5,502,102);
+ ctx.fillStyle="#b63146";ctx.font="900 52px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";
+ ctx.fillText("EVLENİYORUZ",256,57);
+ const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;return tex;
+}
 export function makeCar(carName="sahin",color=null,rival=false){
  const group=new THREE.Group(),doblo=carName==="doblo",toros=carName==="toros";
- const w=doblo?1.94:1.78,l=doblo?4.60:toros?4.46:4.28;
+ const w=doblo?1.94:1.78,l=doblo?4.60:toros?4.46:4.28,decorated=color==null||rival;
  const paint=new THREE.MeshPhysicalMaterial({color:color??(rival?0x9f466a:doblo?0xdfb460:toros?0x89a48a:0xefebe3),metalness:.32,roughness:.27,clearcoat:1,clearcoatRoughness:.15});
  const windowMaterial=new THREE.MeshPhysicalMaterial({color:0x7eb0c0,metalness:.24,roughness:.12,transparent:true,opacity:.88,side:THREE.DoubleSide});
  const black=mat(0x172229,0,.87),chrome=mat(0xc7ccd0,.84,.20),glassLine=mat(0x354a53),red=mat(0xf63d4f),white=mat(0xfaf1dd),pink=mat(0xe68c9a);
  const shadow=new THREE.Mesh(new THREE.CircleGeometry(2.65,28),new THREE.MeshBasicMaterial({color:0x0a1718,transparent:true,opacity:.18,depthWrite:false}));shadow.scale.set(.95,1,1);shadow.position.z=.065;group.add(shadow);
  // Real dimensional body (x=vehicle width, y=length, z=up); smooth front/rear taper.
- group.add(cube(w,l,.53,paint,0,0,.79));
- group.add(cube(w*.9,l*.28,.15,paint,0,l*.33,1.115));
+ group.add(roundedBody(w,l,.53,paint,.52,.22));
+ group.add(roundedBody(w*.92,l*.30,.15,paint,1.045,.15)).children;
  const roofLength=doblo?2.68:2.13;
- group.add(cube(w*.81,roofLength,doblo?.85:.67,paint,0,-.24,doblo?1.65:1.53));
+ const roof=roundedBody(w*.82,roofLength,doblo?.85:.67,paint,doblo?1.25:1.20,.18);roof.position.y=-.24;group.add(roof);
  group.add(cube(w*.76,.055,doblo?.48:.38,windowMaterial,0,doblo?.91:.66,doblo?1.67:1.64));
  group.add(cube(w*.76,.05,doblo?.48:.37,windowMaterial,0,doblo?-1.64:-1.32,doblo?1.66:1.63));
  for(const x of [-w*.416,w*.416])group.add(cube(.055,roofLength*.72,.34,windowMaterial,x,-.25,1.65));
@@ -35,15 +54,35 @@ export function makeCar(carName="sahin",color=null,rival=false){
   const tail=cube(.31,.1,.18,red,x,-l*.52,.99);group.add(tail);rearLights.push(tail);
  }
  group.add(cube(.67,.045,.14,white,0,-l*.53,.83));
- // Original wedding details: ribbons, floral bouquet and bridal accessories.
+ // Wedding trim: only the bride/groom and rival cars, never ordinary traffic.
+ if(decorated){
  for(const s of [-1,1]){
-  const ribbon=cube(.055,l*.64,.025,white,s*.34,0,1.09);group.add(ribbon);
+  const ribbon=cube(.08,l*.64,.025,white,s*.34,0,1.09);group.add(ribbon);
   const flower=new THREE.Mesh(new THREE.IcosahedronGeometry(.18,1),s<0?pink:white);flower.position.set(s*.30,-l*.43,1.12);group.add(flower);
   const bow=cube(.28,.055,.05,pink,s*.30,-l*.44,1.15);group.add(bow);
  }
- for(let i=0;i<7;i++){
-  const bloom=new THREE.Mesh(new THREE.DodecahedronGeometry(.10,0),i%2?white:pink);
-  bloom.position.set((i-3)*.18,l*.49,1.24+Math.sin(i*2)*.045);group.add(bloom);
+ const leaf=mat(0x427b59,.03,.75);
+ for(let i=0;i<23;i++){
+  const theta=i*2.399,radius=.08*Math.sqrt(i);
+  const x=Math.cos(theta)*radius,y=-l*.44+Math.sin(theta)*radius*.38,z=1.17+.13*Math.cos(i*.6);
+  const petals=new THREE.Mesh(new THREE.DodecahedronGeometry(.09+(i%3)*.023,1),i%5===0?leaf:i%3?white:pink);
+  petals.position.set(x,y,z);group.add(petals);
+ }
+ for(const sign of [-1,1]){
+  const tulle=new THREE.Mesh(new THREE.SphereGeometry(.19,8,5),pink);
+  tulle.scale.set(1.15,.45,.54);tulle.position.set(sign*.56,-l*.48,1.19);group.add(tulle);
+ }
+ const sign=new THREE.Mesh(new THREE.PlaneGeometry(1.00,.22),new THREE.MeshBasicMaterial({map:plateTexture(),side:THREE.DoubleSide}));
+ sign.rotation.x=Math.PI/2;sign.position.set(0,-l*.552,.87);group.add(sign);
+ for(const side of [-1,1]){
+  const curve=new THREE.CatmullRomCurve3([
+   new THREE.Vector3(side*.27,.68,1.87),
+   new THREE.Vector3(side*.36,-.75,1.83),
+   new THREE.Vector3(side*.26,-l*.49,1.24),
+   new THREE.Vector3(side*.30,-l*.51,.94)
+  ]);
+  group.add(new THREE.Mesh(new THREE.TubeGeometry(curve,18,.038,5,false),pink));
+ }
  }
  group.userData.rearLights=rearLights;group.userData.roof=roofLength;group.userData.len=l;
  return group;
