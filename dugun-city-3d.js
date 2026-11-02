@@ -1,6 +1,6 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v11";
-import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v11";
-import {StableNavigation} from "./dugun-navigation.js?v=20261102-v10";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v12";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v12";
+import {StableNavigation} from "./dugun-navigation.js?v=20261102-v12";
 import {stepVehicle,roadHalfWidth} from "./dugun-driving-dynamics.js?v=20261102-v10";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
