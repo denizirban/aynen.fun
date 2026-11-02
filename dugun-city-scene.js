@@ -397,7 +397,7 @@ function bridgeLiftAt(x,y){
  const approach=along<0?Math.max(0,(along+.32)/.32):
                along>1?Math.max(0,(1.32-along)/.32):1;
  const laneFactor=Math.min(1,Math.max(0,(19-cross)/3));
- return 38*approach*laneFactor;
+ return 39.45*approach*laneFactor;
 }
 function makeBosphorusBridge(group,origin,player){
  const section=bridgeSection();if(!section)return 0;
@@ -421,17 +421,20 @@ function makeBosphorusBridge(group,origin,player){
  addBox(29.8,len,.13,midpoint[0],midpoint[1],39.5,asphalt);
  const sideX=-uy,sideY=ux;
  for(const side of [-1,1]){
-  const ox=side*16,oy=0;
-  addBox(.35,len,1.2,midpoint[0]+sideX*ox,midpoint[1]+sideY*ox,40.2,guard);
-  for(let lane=-2;lane<=2;lane++){
-   if(side!==1)break;
+  addBox(.35,len,1.2,midpoint[0]+sideX*side*16,midpoint[1]+sideY*side*16,40.2,guard);
+ }
+ const markN=5*Math.max(0,Math.ceil((len-22)/18));
+ const marks=new THREE.InstancedMesh(new THREE.BoxGeometry(.12,7,.025),stripe,markN);
+ const markDummy=new THREE.Object3D();let markIndex=0;
+ for(let lane=-2;lane<=2;lane++){
+  for(let j=10;j<len-12;j+=18){
    const lateral=lane*4.8;
-   for(let j=10;j<len-12;j+=18){
-    const x=a[0]+ux*j+sideX*lateral,y=a[1]+uy*j+sideY*lateral;
-    addBox(.12,7,.025,x,y,39.59,stripe);
-   }
+   const x=a[0]+ux*j+sideX*lateral,y=a[1]+uy*j+sideY*lateral;
+   markDummy.position.set(x,y,39.59);markDummy.rotation.z=theta;markDummy.updateMatrix();
+   marks.setMatrixAt(markIndex++,markDummy.matrix);
   }
  }
+ marks.count=markIndex;marks.instanceMatrix.needsUpdate=true;group.add(marks);
  // Two bridge towers. Location and scale are approximate; cables visually
  // connect to a hanging suspension profile over the full central span.
  const towerHeight=124,towerWidth=32;
@@ -498,7 +501,7 @@ function addOrtakoyLandmark(group,origin,area){
  const hull=new THREE.MeshStandardMaterial({color:0xdcebf0,roughness:.58});
  const cabin=new THREE.MeshStandardMaterial({color:0xf7ead2,roughness:.71});
  const windows=new THREE.MeshStandardMaterial({color:0x306e83,roughness:.30});
- for(const [index,where] of [[0,[29.0295,41.04756]],[1,[29.0314,41.04704]]]){
+ for(const [index,where] of [[0,[29.0275,41.0481]],[1,[29.0285,41.0462]]]){
   const [bx,by]=toXY(origin,where),ferry=new THREE.Group();
   ferry.position.set(bx,by,.50);ferry.rotation.z=index?.36:-.27;
   ferry.add(meshBox(16.5,4.9,1.4,hull,0,0,.7));
