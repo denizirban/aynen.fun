@@ -306,6 +306,67 @@ function makeDropoffGate(){
  return g;
 }
 
+
+// Urban dressing is deterministic: the same street has the same shop every visit.
+function addNeighborhoodDetails(group,origin,roads,mobile){
+ const near=roads.filter(r=>distance([(r.a[0]+r.b[0])*.5,(r.a[1]+r.b[1])*.5],origin)<(mobile?240:325));
+ const signs=["BÜFE","KURU TEMİZLEME","ÇİÇEKÇİ","OTO ELEKTRİK","BERBER","PASTANE","KIRTASİYE","TAKICI","GELİNLİKÇİ","ÇAY OCAĞI","LASTİKÇİ","TAMİRCİ"];
+ const palette=["#7a3e45","#315b6f","#52784e","#866342","#6f4a65","#9a694b"];
+ const signPositions=[],benchPositions=[],bollards=[];
+ for(let i=0;i<near.length;i++){
+  const r=near[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
+  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
+  if(len<13)continue;
+  const nx=-dy/len,ny=dx/len,side=i%2===0?1:-1,dist=roadWidth(r.typ)*.5;
+  const x=(a[0]+b[0])*.5+side*nx*(dist+2.3),y=(a[1]+b[1])*.5+side*ny*(dist+2.3);
+  const v=hash(Math.round(x*1.33),Math.round(y*2.77));
+  if(v>.60&&signPositions.length<(mobile?8:18)){
+   signPositions.push([x,y,Math.floor(hash(i+28,4)*signs.length),side]);
+  }else if(v<.16&&benchPositions.length<(mobile?6:12)){
+   benchPositions.push([x,y,Math.atan2(dy,dx)]);
+  }
+  if(i%12===0&&bollards.length<(mobile?28:55)){
+   for(let j=0;j<3;j++)bollards.push([x+dx/len*j*.75,y+dy/len*j*.75]);
+  }
+ }
+ const metal=new THREE.MeshStandardMaterial({color:0x3f5156,metalness:.37,roughness:.65});
+ const wood=new THREE.MeshStandardMaterial({color:0x966d4f,roughness:.88});
+ for(const [x,y,id,side] of signPositions){
+  const label=createWorldLabel(signs[id],palette[id%palette.length],"#fff7de");
+  label.position.set(x,y,3.55);label.scale.set(4.0,.96,1);
+  group.add(label);
+  const awning=new THREE.Mesh(new THREE.BoxGeometry(4.1,1.25,.12),
+   new THREE.MeshStandardMaterial({color:palette[id%palette.length],roughness:.85}));
+  awning.position.set(x,y,2.88);group.add(awning);
+ }
+ for(const [x,y,rotation] of benchPositions){
+  const bench=new THREE.Group();bench.position.set(x,y,.43);bench.rotation.z=rotation;
+  bench.add(meshBox(1.65,.58,.12,wood,0,0,.14));
+  bench.add(meshBox(1.65,.11,.64,wood,0,-.26,.48));
+  bench.add(meshBox(.08,.51,.51,metal,-.69,0,-.05));
+  bench.add(meshBox(.08,.51,.51,metal,.69,0,-.05));
+  group.add(bench);
+ }
+ if(bollards.length){
+  const geom=new THREE.CylinderGeometry(.09,.11,.8,7);
+  const mesh=new THREE.InstancedMesh(geom,metal,bollards.length),dummy=new THREE.Object3D();
+  bollards.forEach(([x,y],i)=>{
+   dummy.position.set(x,y,.40);dummy.scale.set(1,1,1);dummy.updateMatrix();
+   mesh.setMatrixAt(i,dummy.matrix);
+  });group.add(mesh);
+ }
+}
+function addSkyAtmosphere(scene){
+ const shader=new THREE.ShaderMaterial({
+  uniforms:{topColor:{value:new THREE.Color("#438bc9")},horizonColor:{value:new THREE.Color("#b7dfed")},warmColor:{value:new THREE.Color("#f5e6bd")}},
+  vertexShader:"varying vec3 vPos; void main(){vPos=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}",
+  fragmentShader:"varying vec3 vPos; uniform vec3 topColor; uniform vec3 horizonColor; uniform vec3 warmColor; void main(){float h=normalize(vPos).z; float t=smoothstep(-0.11,0.73,h); vec3 c=mix(horizonColor,topColor,t); c=mix(warmColor,c,smoothstep(-0.22,0.18,h)); gl_FragColor=vec4(c,1.0);}",
+  side:THREE.BackSide,depthWrite:false,depthTest:false,fog:false
+ });
+ const sky=new THREE.Mesh(new THREE.SphereGeometry(550,24,16),shader);
+ sky.renderOrder=-900;scene.add(sky);return sky;
+}
+
 export class CityScene3D{
  constructor(city){
   this.city=city;this.origin=[...AREAS[city.area].center];this.mobile=window.innerWidth<700;this.canvas=document.getElementById("driving-canvas");
@@ -318,8 +379,9 @@ export class CityScene3D{
    this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   }
   this.scene=new THREE.Scene();this.scene.background=color("#8ccbee");this.scene.fog=new THREE.Fog("#a7c9bb",245,790);
+  this.sky=addSkyAtmosphere(this.scene);this.lightingMode=0;
   this.camera=new THREE.PerspectiveCamera(64,1,.12,1300);this.camera.up.set(0,0,1);
-  this.scene.add(new THREE.HemisphereLight(0xd5eeff,0x8a8e70,1.95));
+  this.skyLight=new THREE.HemisphereLight(0xd5eeff,0x8a8e70,1.95);this.scene.add(this.skyLight);
   const sunlight=new THREE.DirectionalLight(0xffe1af,2.4);sunlight.position.set(-125,170,190);
   if(!this.mobile){
    sunlight.castShadow=true;
@@ -384,6 +446,22 @@ export class CityScene3D{
   this.renderer.setSize(w,h,false);
  }
 
+ setLightingMode(mode){
+  this.lightingMode=((mode%3)+3)%3;
+  const presets=[
+   {name:"GÜNDÜZ",top:"#438bc9",horizon:"#b7dfed",warm:"#f5e6bd",sun:"#ffe1af",ground:"#a7c9bb",intensity:2.4,ambient:1.95,exposure:1.38,height:180},
+   {name:"ALTIN SAAT",top:"#5f8ec3",horizon:"#f5b48b",warm:"#ffcf99",sun:"#ffb170",ground:"#d9aa88",intensity:2.0,ambient:1.48,exposure:1.30,height:65},
+   {name:"AKŞAM",top:"#203e72",horizon:"#8e7f9e",warm:"#c99891",sun:"#ffb184",ground:"#6d798c",intensity:.88,ambient:1.18,exposure:1.54,height:26}
+  ];
+  const v=presets[this.lightingMode];
+  this.sky.material.uniforms.topColor.value.set(v.top);
+  this.sky.material.uniforms.horizonColor.value.set(v.horizon);
+  this.sky.material.uniforms.warmColor.value.set(v.warm);
+  this.sunlight.color.set(v.sun);this.sunlight.intensity=v.intensity;
+  this.skyLight.intensity=v.ambient;this.scene.fog.color.set(v.ground);
+  this.renderer.toneMappingExposure=v.exposure;this.sunHeight=v.height;
+  return v.name;
+ }
  setCameraStyle(style){
   this.camStyle=((style%3)+3)%3;
   return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
@@ -404,7 +482,7 @@ export class CityScene3D{
   this.worldGroup.traverse(obj=>{if(obj.geometry)obj.geometry.dispose()});
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
   makeGround(this.worldGroup);
-  if(ro?.length){createRoads(this.worldGroup,this.origin,ro,this.mobile)}
+  if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile)}
   else{
    // Visible drivable street while streaming real vector tiles.
    const temporary=[];
@@ -555,7 +633,7 @@ export class CityScene3D{
   // Proper physical 3D chase camera behind the car, not a zoomed overhead GIS camera.
   const [cx,cy]=toXY(this.origin,car.pos),fwdX=Math.sin(car.heading),fwdY=Math.cos(car.heading);
   if(this.sunlight&&!this.mobile){
-   this.sunlight.position.set(cx-120,cy+100,180);
+   this.sunlight.position.set(cx-120,cy+100,this.sunHeight||180);
    this.sunlight.target.position.set(cx,cy,0);
    this.sunlight.target.updateMatrixWorld();
   }
@@ -575,6 +653,7 @@ export class CityScene3D{
   const softness=1-Math.exp(-dt*6.5),lookSoft=1-Math.exp(-dt*4.8);
   this.camPos.lerp(eye,softness);this.camLook.lerp(target,lookSoft);
   this.camera.position.copy(this.camPos);this.camera.lookAt(this.camLook);
+  this.sky.position.copy(this.camera.position);
   // Guest signs billboard to player only after camera aim settles.
   if(this.guest.visible)this.guest.userData.label.quaternion.copy(this.camera.quaternion);
   if(this.dropoffGate.visible)this.dropoffGate.userData.label.quaternion.copy(this.camera.quaternion);
