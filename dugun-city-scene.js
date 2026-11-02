@@ -305,7 +305,7 @@ function addBuildings(group,origin,raw,mobile){
   const db=Math.hypot(...toXY(origin,[(b.minX+b.maxX)*.5,(b.minY+b.maxY)*.5]));
   return da-db;
  }).slice(0,mobile?240:490);
- const windows=empty(),litWindows=empty(),awnings=empty();
+ const windows=empty(),litWindows=empty(),awnings=empty(),roofTiles=[empty(),empty(),empty()];
  const mats=buildingColors.map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.88,flatShading:true}));
  for(let i=0;i<buildings.length;i++){
   const b=buildings[i],ring=b.ring?.slice(0,-1)??[];
@@ -318,6 +318,17 @@ function addBuildings(group,origin,raw,mobile){
   const shape=new THREE.Shape();shape.moveTo(...pts[0]);for(let j=1;j<pts.length;j++)shape.lineTo(...pts[j]);shape.closePath();
   const geo=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false,curveSegments:1,steps:1});
   const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.position.z=terrainAt(pts[0][0],pts[0][1]);m.castShadow=!mobile&&Math.hypot(pts[0][0],pts[0][1])<110;m.receiveShadow=true;group.add(m);
+  // Distinctive terracotta and zinc roofs; merged into three draw calls rather
+  // than hundreds of individual rooftop meshes.
+  const roof=roofTiles[Math.min(2,Math.floor(hseed*3))];
+  const baseZ=terrainAt(pts[0][0],pts[0][1])+height+.075;
+  const middle=pts.reduce((acc,p)=>[acc[0]+p[0],acc[1]+p[1]],[0,0]).map(n=>n/pts.length);
+  const roofRidge=height<23&&pts.length<=8?Math.min(2.2,height*.09):.08;
+  const idx=roof.positions.length/3;
+  roof.positions.push(middle[0],middle[1],baseZ+roofRidge);
+  for(const p of pts)roof.positions.push(p[0],p[1],baseZ);
+  for(let k=1;k<=pts.length;k++)roof.indices.push(idx,idx+k,idx+(k%pts.length)+1);
+
   const maxFloors=Math.min(mobile?4:8,Math.floor((height-1.5)/3.1));
   for(let edge=0;edge<pts.length;edge++){
    const a=pts[edge],v=pts[(edge+1)%pts.length],dx=v[0]-a[0],dy=v[1]-a[1],len=Math.hypot(dx,dy);
@@ -340,6 +351,10 @@ function addBuildings(group,origin,raw,mobile){
  }
  batchStrips(windows,windowMat,group);batchStrips(litWindows,lightMat,group);
  batchStrips(awnings,new THREE.MeshStandardMaterial({color:0xb44957,side:THREE.DoubleSide,roughness:.8}),group);
+ const roofs=["#ae654d","#83766a","#7e8c91"];
+ for(let i=0;i<3;i++)batchStrips(roofTiles[i],
+  new THREE.MeshStandardMaterial({color:roofs[i],side:THREE.DoubleSide,roughness:.94}),group);
+
  return buildings.length;
 }
 function makeGround(group){
