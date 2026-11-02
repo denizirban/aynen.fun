@@ -61,7 +61,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 .ctr.go{background:rgba(187,233,89,.93);color:#1c342d;border-color:#e5ff9b;min-width:75px;font-size:14px}
 .ctr.brake{background:rgba(234,138,116,.93);border-color:#ffcfc7;color:#182a2d;min-width:73px;font-size:13px}
 .ctr.horn{font-size:12px;min-width:67px;min-height:48px}
-#overlay{position:absolute;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 55% 50%,rgba(23,40,45,.42),rgba(8,20,27,.75));backdrop-filter:blur(7px);padding:16px}
+#overlay{position:absolute;z-index:10;inset:0;display:flex;pointer-events:auto;align-items:center;justify-content:center;background:radial-gradient(ellipse at 55% 50%,rgba(23,40,45,.42),rgba(8,20,27,.75));backdrop-filter:blur(7px);padding:16px}
 #overlay[hidden]{display:none}
 #panel{width:min(480px,100%);max-height:min(92dvh,810px);overflow:auto;background:#f8f8ee;color:#24363a;border-radius:25px;box-shadow:0 25px 80px #07161a9e;padding:clamp(20px,3vw,32px)}
 .eyebrow{font-size:10px;font-weight:800;letter-spacing:.17em;color:#697872}
@@ -77,6 +77,8 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 .option.selected{border-color:#9cbb60;background:#eff6df}
 #start{margin-top:22px;border:none;background:#c7ec72;color:#23352a;width:100%;border-radius:15px;padding:16px;font-weight:800;font-size:15px}
 #start:hover{background:#d7f5a2}
+#freeroam{display:block;width:100%;padding:11px;background:transparent;border:1px solid #bec9b9;border-radius:13px;font-size:12px;color:#4a605b;font-weight:800;margin-top:7px}
+#freeroam:hover{background:#e5efdc}
 #loadstate{margin:11px 0 0;font-size:11px;color:#687771;min-height:16px}
 #end-summary{margin:16px 0 6px;font-weight:800;font-size:18px;line-height:1.6}
 #help{font-size:11px;color:#78847e;line-height:1.6;margin-top:10px}
@@ -131,7 +133,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
    <div class="options" id="districts"><button class="option selected" data-district="kadikoy">KADIKÖY<small>Moda · Çarşı</small></button><button class="option" data-district="besiktas">BEŞİKTAŞ<small>Abbasağa</small></button><button class="option" data-district="karakoy">KARAKÖY<small>Galata</small></button></div>
    <div class="panel-label">DÜĞÜN ARABASI</div>
    <div class="options" id="cars"><button class="option selected" data-car="sahin">ŞAHİN<small>Dengeli sürüş</small></button><button class="option" data-car="toros">TOROS<small>Yüksek yol tutuş</small></button><button class="option" data-car="doblo">DOBLO<small>Geniş araç</small></button></div>
-   <button id="start">ŞEHRE ÇIK</button>
+   <button id="start">DÜĞÜN SERVİSİNE BAŞLA · 3 DK</button><button id="freeroam">SERBEST GEZİNTİ · SÜRESİZ</button>
    <div id="loadstate">Harita hazırlanıyor…</div>
    <div id="help">Bilgisayar: W / ↑ gaz · S / ↓ fren / geri · A D / ← → direksiyon · Space korna · Shift el freni · P duraklat. Mobil: ekrandaki kontroller.</div>
   </div>
