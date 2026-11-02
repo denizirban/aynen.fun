@@ -762,6 +762,62 @@ function addNeighborhoodDetails(group,origin,roads,mobile){
   });group.add(mesh);
  }
 }
+
+// Authentic street names are read from the OSM transportation layer.
+function addIstanbulStreetSigns(group,origin,roads,mobile){
+ const chosen=[],seen=new Set();
+ for(const road of roads){
+  const name=(road.name||"").trim();
+  if(name.length<5||name.length>35||seen.has(name))continue;
+  const mid=[(road.a[0]+road.b[0])*.5,(road.a[1]+road.b[1])*.5];
+  if(distance(origin,mid)>(mobile?205:290))continue;
+  seen.add(name);
+  chosen.push({name,point:mid});
+  if(chosen.length>=(mobile?5:12))break;
+ }
+ const material=new THREE.MeshStandardMaterial({color:0x465c5f,metalness:.53,roughness:.49});
+ for(const {name,point} of chosen){
+  const p=toXY(origin,point),z=terrainAt(...p);
+  const post=meshBox(.12,.12,3.4,material,p[0]+4,p[1]+4,z+1.7);
+  group.add(post);
+  const sign=createWorldLabel(name.toLocaleUpperCase("tr-TR"),"#245c79","#ffffff");
+  sign.position.set(p[0]+4,p[1]+4,z+3.7);sign.scale.set(4.5,.95,1);
+  group.add(sign);
+ }
+}
+function addIstanbulFlags(group,origin,mobile){
+ const poles=[
+  [29.02668,41.04771],[29.02691,41.04716],[29.02772,41.04663],
+  [29.02585,41.04805],[29.04005,41.04272]
+ ];
+ const canvas=document.createElement("canvas");canvas.width=384;canvas.height=256;
+ const ctx=canvas.getContext("2d");
+ ctx.fillStyle="#cf2536";ctx.fillRect(0,0,384,256);
+ ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(127,125,58,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle="#cf2536";ctx.beginPath();ctx.arc(151,113,47,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle="#fff";ctx.beginPath();
+ const cx=220,cy=124;
+ for(let k=0;k<10;k++){
+  const theta=-Math.PI/2+k*Math.PI/5,r=k%2?16:39;
+  const x=cx+Math.cos(theta)*r,y=cy+Math.sin(theta)*r;
+  k?ctx.lineTo(x,y):ctx.moveTo(x,y);
+ }
+ ctx.closePath();ctx.fill();
+ const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;
+ const flagMat=new THREE.MeshBasicMaterial({map,side:THREE.DoubleSide,transparent:false});
+ const poleMat=new THREE.MeshStandardMaterial({color:0xa9b7b4,metalness:.72,roughness:.37});
+ let count=0;
+ for(const point of poles){
+  if(distance(point,origin)>(mobile?245:420))continue;
+  const [x,y]=toXY(origin,point),z=terrainAt(x,y);
+  const pole=meshBox(.13,.13,8,poleMat,x,y,z+4);
+  const banner=new THREE.Mesh(new THREE.PlaneGeometry(4.6,3.1),flagMat);
+  banner.position.set(x+2.2,y,z+6.6);banner.rotation.z=.07;
+  group.add(pole,banner);count++;
+ }
+ return count;
+}
+
 function addSkyAtmosphere(scene){
  const shader=new THREE.ShaderMaterial({
   uniforms:{topColor:{value:new THREE.Color("#438bc9")},horizonColor:{value:new THREE.Color("#b7dfed")},warmColor:{value:new THREE.Color("#f5e6bd")}},
@@ -941,8 +997,9 @@ export class CityScene3D{
   addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
   addBeylerbeyiWaterfront(this.worldGroup,this.origin);
   addBosphorusPromenade(this.worldGroup,this.origin);
+  this.flagsVisible=addIstanbulFlags(this.worldGroup,this.origin,this.mobile);
   this.bridgeVisible=makeBosphorusBridge(this.worldGroup,this.origin,this.focus||this.origin);
-  if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile);renderParkedStreetCars(this.worldGroup,this.origin,visibleRoads,this.mobile,this.focus||this.origin)}
+  if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile);addIstanbulStreetSigns(this.worldGroup,this.origin,visibleRoads,this.mobile);renderParkedStreetCars(this.worldGroup,this.origin,visibleRoads,this.mobile,this.focus||this.origin)}
   else{
    // Visible drivable street while streaming real vector tiles.
    const temporary=[];
