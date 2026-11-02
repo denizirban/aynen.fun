@@ -986,12 +986,13 @@ export class CityScene3D{
    }
   }
   if(state.rival?.pos){
-   this.position(this.rival,state.rival.pos,.18);this.rival.rotation.z=-state.rival.heading;
-   this.position(this.rivalBeacon,state.rival.pos,5.2);this.rivalBeacon.quaternion.copy(this.camera.quaternion);
-   this.position(this.rivalPole,state.rival.pos,3.4);
+   const rivalRoad=this.city.nearest(state.rival.pos)?.road;
+   this.position(this.rival,state.rival.pos,.18,!!rivalRoad?.bridge);this.rival.rotation.z=-state.rival.heading;
+   this.position(this.rivalBeacon,state.rival.pos,5.2,!!rivalRoad?.bridge);this.rivalBeacon.quaternion.copy(this.camera.quaternion);
+   this.position(this.rivalPole,state.rival.pos,3.4,!!rivalRoad?.bridge);
   }else{this.rival.visible=false;this.rivalBeacon.visible=false;this.rivalPole.visible=false;}
   this.npcs.forEach((m,i)=>{
-   const npc=state.traffic?.[i];this.position(m,npc?.pos,.18);
+   const npc=state.traffic?.[i];this.position(m,npc?.pos,.18,!!npc?.road?.bridge);
    if(npc?.pos)m.rotation.z=-(npc.visualHeading??npc.heading);
   });
   const path=state.navValid?(state.route||[]):[],sampled=[];
