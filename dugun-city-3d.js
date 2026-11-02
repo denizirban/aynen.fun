@@ -288,9 +288,10 @@ function drive(dt){
  tripElapsed+=dt;
  // Sub-step integration keeps steering and grip stable at 30 / 60 / 120 Hz.
  const substeps=Math.min(6,Math.max(1,Math.ceil(dt/.012)));
+ const grade=render3D?.getGroundHeight?(render3D.getGroundHeight(travel(car.pos,car.heading,5))-render3D.getGroundHeight(travel(car.pos,car.heading+Math.PI,5)))/10:0;
  for(let i=0;i<substeps;i++){
   const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
-  stepVehicle(car,keys,{mode:driveMode,spec,road:near,navigation},dt/substeps);
+  stepVehicle(car,keys,{mode:driveMode,spec,road:near,navigation,grade},dt/substeps);
  }
  const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
  car.currentRoadName=near?.road?.name||"";
