@@ -220,7 +220,7 @@ function addBuildings(group,origin,raw,mobile){
   const maxDist=Math.max(...pts.map(p=>Math.hypot(p[0],p[1])));
   if(maxDist>750)continue;
   const x=(b.minX+b.maxX)*.5,lat=(b.minY+b.maxY)*.5,hseed=hash(x*1e5,lat*1e5);
-  const height=b.height&&Number.isFinite(b.height)?clamp(b.height,5,100):Math.round(3.5+(hseed*.78+.11)*8)*3.15;
+  const height=b.height&&Number.isFinite(b.height)?clamp(b.height,5,48):Math.round(3.5+(hseed*.78+.11)*8)*3.15;
   const shape=new THREE.Shape();shape.moveTo(...pts[0]);for(let j=1;j<pts.length;j++)shape.lineTo(...pts[j]);shape.closePath();
   const geo=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false,curveSegments:1,steps:1});
   const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.position.z=terrainAt(pts[0][0],pts[0][1]);m.castShadow=!mobile&&Math.hypot(pts[0][0],pts[0][1])<110;m.receiveShadow=true;group.add(m);
