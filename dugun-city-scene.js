@@ -201,7 +201,7 @@ function createRoads(group,origin,roads,mobile){
   const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
   if(len<1.0)continue;
   const ux=dx/len,uy=dy/len,nx=-uy,ny=ux,width=roadWidth(r);
-  emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.7,.105);
+  if(!/^(motorway|motorway_link|trunk)/.test(r.typ))emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.7,.105);
   emitQuad(asphalt.positions,asphalt.indices,a,b,width,.147);
   for(const sign of [-1,1]){
    emitQuad(curbs.positions,curbs.indices,
@@ -222,7 +222,7 @@ function createRoads(group,origin,roads,mobile){
    }
   }
   // Zebra crossings and stop bars are placed only at mapped 3+ way junctions.
-  if(len>11){
+  if(len>11&&!/^(motorway|motorway_link|trunk)/.test(r.typ)){
    for(const endpoint of [0,1]){
     const node=squares.get(index(endpoint===0?r.a:r.b));
     if(!node)continue;
@@ -245,8 +245,9 @@ function createRoads(group,origin,roads,mobile){
  batchStrips(sidewalk,pavementMat,group);batchStrips(asphalt,roadMat,group);
  batchStrips(intersection,roadMat,group);batchStrips(curbs,curbMat,group);
  batchStrips(markings,lineMat,group);batchStrips(stopBars,lineMat,group);batchStrips(sideLine,lineMat,group);
- addStreetProps(group,origin,near,mobile);
- return near;
+ const localStreets=near.filter(r=>!/^(motorway|motorway_link|trunk)/.test(r.typ));
+ addStreetProps(group,origin,localStreets,mobile);
+ return localStreets;
 }
 
 function renderRealParks(group,origin,parks,mobile){
