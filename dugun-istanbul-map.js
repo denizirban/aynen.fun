@@ -22,7 +22,7 @@ function nearestOnSegment(p,a,b){
 function key(p){return p[0].toFixed(5)+":"+p[1].toFixed(5)}
 export class IstanbulMap{
  constructor(area,onReady,onError){
-  this.area=area;this.roads=[];this.buildings=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.skids=[];this.vector=null;this.loaded=false;
+  this.area=area;this.roads=[];this.buildings=[];this.water=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.skids=[];this.vector=null;this.loaded=false;
   if(!window.maplibregl){onError("Harita kitaplığı yüklenemedi.");return}
   this.map=new maplibregl.Map({
    container:"map",style:"https://tiles.openfreemap.org/styles/liberty",
@@ -51,7 +51,7 @@ export class IstanbulMap{
   this.area=area;
   if(!this.loaded)return;
   this.map.jumpTo({center:AREAS[area].center,bearing:0,pitch:67,zoom:17.3});
-  this.roads=[];this.buildings=[];this.lastRefresh=0;
+  this.roads=[];this.buildings=[];this.water=[];this.lastRefresh=0;
   setTimeout(()=>this.refresh(AREAS[area].center,true),700);
  }
  refresh(player,force=false){
@@ -78,6 +78,9 @@ export class IstanbulMap{
    if(roads.length>5200)break;
   }
   if(roads.length<6)return;
+  // Tiles return transportation features in arbitrary order. Keep the local road corridor first:
+  // previously the visible renderer took the first 800, leaving the car on a giant blank green plane.
+  roads.sort((x,y)=>Math.min(distance(player,x.a),distance(player,x.b))-Math.min(distance(player,y.a),distance(player,y.b)));
   
   this.roads=roads;this.nodes=new Map();this.edges=new Map();this.samples=[];
   if(this.onRoadsReady)queueMicrotask(()=>this.onRoadsReady?.());
@@ -106,6 +109,29 @@ export class IstanbulMap{
    this.buildings=collection;
   }catch(e){this.buildings=[]}
 
+  try{
+   const waterFeatures=this.map.querySourceFeatures(this.vector,{sourceLayer:"water"})||[];
+   const seen=new Set(),water=[];
+   for(const f of waterFeatures){
+    const kind=f.properties?.class||"water";
+    if(kind==="swimming_pool")continue;
+    const geo=f.geometry;
+    const parts=geo?.type==="Polygon"?[geo.coordinates]:geo?.type==="MultiPolygon"?geo.coordinates:[];
+    for(const rings of parts){
+     const outside=rings?.[0];if(!outside||outside.length<3)continue;
+     const uniqueId=(f.id??f.properties?.id??"")+"_"+outside[0][0].toFixed(6)+"_"+outside[0][1].toFixed(6);
+     if(seen.has(uniqueId))continue;seen.add(uniqueId);
+     const xs=outside.map(q=>q[0]),ys=outside.map(q=>q[1]);
+     const bounds={minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)};
+     const nearest=[Math.max(bounds.minX,Math.min(player[0],bounds.maxX)),Math.max(bounds.minY,Math.min(player[1],bounds.maxY))];
+     if(distance(player,nearest)>650)continue;
+     water.push({rings:rings.slice(0,4),kind,bounds});
+     if(water.length>=55)break;
+    }
+    if(water.length>=55)break;
+   }
+   if(water.length)this.water=water;
+  }catch(e){console.warn("Water tiles not ready",e)}
   for(const r of roads){
    const a=key(r.a),b=key(r.b);
    this.nodes.set(a,r.a);this.nodes.set(b,r.b);
