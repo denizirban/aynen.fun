@@ -158,7 +158,7 @@ function addBuildings(group,origin,raw,mobile){
   return da-db;
  }).slice(0,mobile?240:490);
  const windows=empty(),litWindows=empty(),awnings=empty();
- const mats=buildingColors.map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.87}));
+ const mats=buildingColors.map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.88,flatShading:true}));
  for(let i=0;i<buildings.length;i++){
   const b=buildings[i],ring=b.ring?.slice(0,-1)??[];
   if(ring.length<3)continue;
@@ -166,11 +166,11 @@ function addBuildings(group,origin,raw,mobile){
   const maxDist=Math.max(...pts.map(p=>Math.hypot(p[0],p[1])));
   if(maxDist>750)continue;
   const x=(b.minX+b.maxX)*.5,lat=(b.minY+b.maxY)*.5,hseed=hash(x*1e5,lat*1e5);
-  const height=Math.round(3.5+(hseed*.78+.11)*8)*3.15;
+  const height=b.height&&Number.isFinite(b.height)?clamp(b.height,5,100):Math.round(3.5+(hseed*.78+.11)*8)*3.15;
   const shape=new THREE.Shape();shape.moveTo(...pts[0]);for(let j=1;j<pts.length;j++)shape.lineTo(...pts[j]);shape.closePath();
   const geo=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false,curveSegments:1,steps:1});
-  const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.castShadow=false;m.receiveShadow=true;group.add(m);
-  const maxFloors=Math.min(6,Math.floor((height-1.5)/3.1));
+  const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.castShadow=!mobile&&Math.hypot(pts[0][0],pts[0][1])<110;m.receiveShadow=true;group.add(m);
+  const maxFloors=Math.min(mobile?4:8,Math.floor((height-1.5)/3.1));
   for(let edge=0;edge<pts.length;edge++){
    const a=pts[edge],v=pts[(edge+1)%pts.length],dx=v[0]-a[0],dy=v[1]-a[1],len=Math.hypot(dx,dy);
    if(len<3.8)continue;
@@ -213,6 +213,67 @@ function makeSign(text){
  face.position.set(0,.05,5.6);face.rotation.x=Math.PI/2;
  group.add(face);return group;
 }
+
+function makeGuestActor(){
+ const g=new THREE.Group(),trouser=new THREE.MeshStandardMaterial({color:0x344963,roughness:1});
+ const jacket=new THREE.MeshStandardMaterial({color:0xd5b1bd,roughness:.88});
+ const skin=new THREE.MeshStandardMaterial({color:0xdfac85,roughness:1});
+ const shoe=new THREE.MeshStandardMaterial({color:0x2e3842,roughness:1});
+ const hat=new THREE.MeshStandardMaterial({color:0x5c4352,roughness:1});
+ for(const x of [-.20,.20]){
+  g.add(meshBox(.29,.36,.83,trouser,x,0,.52));
+  g.add(meshBox(.34,.50,.17,shoe,x,.12,.15));
+ }
+ g.add(meshBox(.91,.47,.99,jacket,0,0,1.43));
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.29,12,9),skin);head.position.z=2.14;g.add(head);
+ const hair=new THREE.Mesh(new THREE.SphereGeometry(.32,10,7),hat);hair.position.z=2.36;hair.scale.set(1,1,.35);g.add(hair);
+ const left=new THREE.Group();left.position.set(-.59,0,1.88);
+ left.add(meshBox(.27,.27,.76,jacket,0,0,-.35));g.add(left);
+ const right=new THREE.Group();right.position.set(.59,0,1.92);
+ right.add(meshBox(.25,.26,.72,jacket,0,0,.24));
+ const hand=new THREE.Mesh(new THREE.SphereGeometry(.14,8,7),skin);hand.position.z=.64;right.add(hand);g.add(right);
+ const suitcase=new THREE.Group();
+ suitcase.add(meshBox(.57,.30,.43,new THREE.MeshStandardMaterial({color:0x9b7445}),-.87,.01,.43));
+ suitcase.add(meshBox(.26,.06,.11,shoe,-.87,.0,.72));g.add(suitcase);
+ g.userData.waveArm=right;
+ const mat=new THREE.MeshBasicMaterial({color:0xffe2a5,transparent:true,opacity:.9,depthTest:false});
+ const label=createWorldLabel("MİSAFİRİ AL","#805038","#ffe8b0");
+ label.position.set(0,0,4.3);g.add(label);
+ g.userData.label=label;
+ return g;
+}
+function createWorldLabel(message,bg="#285849",fg="#fff7dd"){
+ const canvas=document.createElement("canvas");
+ canvas.width=512;canvas.height=128;
+ const c=canvas.getContext("2d");
+ c.fillStyle=bg;c.fillRect(0,0,512,128);
+ c.strokeStyle="#fff2ce";c.lineWidth=7;c.strokeRect(5,5,502,118);
+ c.fillStyle=fg;c.font="900 45px system-ui";c.textAlign="center";c.textBaseline="middle";
+ c.fillText(message,256,69);
+ const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;
+ const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthTest:false,transparent:true}));
+ sprite.scale.set(5.2,1.30,1);
+ return sprite;
+}
+function makeDropoffGate(){
+ const g=new THREE.Group();
+ const frame=new THREE.MeshStandardMaterial({color:0xfff0dd,metalness:.22,roughness:.47});
+ const pink=new THREE.MeshStandardMaterial({color:0xea879d,roughness:.61});
+ const gold=new THREE.MeshStandardMaterial({color:0xf5cb74,metalness:.2,roughness:.47});
+ for(const side of [-1,1])g.add(meshBox(.20,.18,3.5,frame,side*2.5,0,1.75));
+ const top=new THREE.Mesh(new THREE.TorusGeometry(2.50,.18,8,30,Math.PI),frame);
+ top.position.set(0,0,3.5);top.rotation.x=Math.PI/2;g.add(top);
+ for(let i=0;i<11;i++){
+  const angle=(i/10)*Math.PI;
+  const bud=new THREE.Mesh(new THREE.DodecahedronGeometry(.21,1),i%3===0?gold:pink);
+  bud.position.set(Math.cos(angle)*2.5,0,3.5+Math.sin(angle)*2.5);g.add(bud);
+ }
+ const label=createWorldLabel("MİSAFİRİ BIRAK","#286d55","#e8ffce");
+ label.position.set(0,0,6.7);g.add(label);
+ g.userData.label=label;
+ return g;
+}
+
 export class CityScene3D{
  constructor(city){
   this.city=city;this.origin=[...AREAS[city.area].center];this.mobile=window.innerWidth<700;this.canvas=document.getElementById("driving-canvas");
@@ -220,15 +281,32 @@ export class CityScene3D{
   this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,this.mobile?1.3:1.65));
   this.renderer.outputColorSpace=THREE.SRGBColorSpace;
   this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  this.renderer.toneMappingExposure=1.64;
+  this.renderer.toneMappingExposure=1.38;
+  if(!this.mobile){
+   this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  }
   this.scene=new THREE.Scene();this.scene.background=color("#8ccbee");this.scene.fog=new THREE.Fog("#a7c9bb",245,790);
   this.camera=new THREE.PerspectiveCamera(64,1,.12,1300);this.camera.up.set(0,0,1);
-  this.scene.add(new THREE.HemisphereLight(0xd5eeff,0x8a8e70,2.5));
-  const sunlight=new THREE.DirectionalLight(0xffe1af,2.6);sunlight.position.set(-125,170,240);this.scene.add(sunlight);
+  this.scene.add(new THREE.HemisphereLight(0xd5eeff,0x8a8e70,1.95));
+  const sunlight=new THREE.DirectionalLight(0xffe1af,2.4);sunlight.position.set(-125,170,190);
+  if(!this.mobile){
+   sunlight.castShadow=true;
+   sunlight.shadow.mapSize.set(1024,1024);
+   sunlight.shadow.camera.left=-85;sunlight.shadow.camera.right=85;
+   sunlight.shadow.camera.top=85;sunlight.shadow.camera.bottom=-85;
+   sunlight.shadow.camera.near=.5;sunlight.shadow.camera.far=520;
+   sunlight.shadow.bias=-.00025;
+  }
+  this.sunlight=sunlight;this.scene.add(sunlight);this.scene.add(sunlight.target);
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
   this.actorGroup=new THREE.Group();this.scene.add(this.actorGroup);
   this.player=makeCar("sahin");this.rival=makeCar("sahin",null,true);
   this.actorGroup.add(this.player,this.rival);
+  if(!this.mobile)for(const v of [this.player,this.rival])v.traverse(obj=>{if(obj.isMesh)obj.castShadow=true});
+  this.followers=Array.from({length:this.mobile?3:5},(_,i)=>makeCar(i%2===0?"toros":"sahin"));
+  this.followers.forEach(f=>{f.visible=false;this.actorGroup.add(f)});
+  this.positionTrail=[];this.previousTrailPoint=null;
+
   // Floating roadway arrows follow the actual navigation path.
   this.guides=[];
   const guideShape=new THREE.Shape();
@@ -251,7 +329,7 @@ export class CityScene3D{
   this.fxTimer=0;this.fxIndex=0;this.lastCarPos=null;this.skids=[];
 
   this.npcs=Array.from({length:this.mobile?5:10},(_,i)=>makeCar(i%3===0?"doblo":"sahin",["#dcad79","#91aeb8","#c3d6b1","#eee2d6","#d48c8d"][i%5]));
-  this.npcs.forEach(x=>this.actorGroup.add(x));
+  this.npcs.forEach(x=>{this.actorGroup.add(x);if(!this.mobile)x.traverse(obj=>{if(obj.isMesh)obj.castShadow=true});});
   this.marker=new THREE.Group();this.actorGroup.add(this.marker);
   const ring=new THREE.Mesh(new THREE.TorusGeometry(2.65,.17,10,28),
     new THREE.MeshBasicMaterial({color:0xffda61,transparent:true,opacity:.93}));
@@ -260,7 +338,9 @@ export class CityScene3D{
   pin.rotation.x=Math.PI/2;pin.position.z=4.2;this.marker.add(pin);
   const circle=new THREE.Mesh(new THREE.SphereGeometry(.55,12,8),new THREE.MeshBasicMaterial({color:0xffffff}));
   circle.position.z=5.5;this.marker.add(circle);this.marker.visible=false;
-  this.camPos=new THREE.Vector3();this.camLook=new THREE.Vector3();this.inited=false;
+  this.guest=makeGuestActor();this.dropoffGate=makeDropoffGate();
+  this.actorGroup.add(this.guest,this.dropoffGate);this.guest.visible=false;this.dropoffGate.visible=false;
+  this.camStyle=0;this.camPos=new THREE.Vector3();this.camLook=new THREE.Vector3();this.inited=false;
   this.lastBuilt=0;this.builtAt=null;this.builtRoads=null;this.builtBuildings=null;
   this.lastFPS=60;this.lastWarn=0;this.routeCache=null;
   window.addEventListener("resize",()=>this.resize());
@@ -271,8 +351,14 @@ export class CityScene3D{
   this.camera.aspect=w/h;this.camera.fov=w<600?74:64;this.camera.updateProjectionMatrix();
   this.renderer.setSize(w,h,false);
  }
- setOrigin(point){this.origin=[...point];this.rebuild(true)}
- setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player)}
+
+ setCameraStyle(style){
+  this.camStyle=((style%3)+3)%3;
+  return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
+ }
+ setOrigin(point){this.origin=[...point];this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
+
+ setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
  rebuild(force=false){
   const t=performance.now();
   if(!force&&t-this.lastBuilt<6500)return;
@@ -315,6 +401,31 @@ export class CityScene3D{
   if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>130))this.rebuild();
   const car=state.car;
   this.position(this.player,car.pos,.18);this.player.rotation.z=-car.heading;
+  if(!this.previousTrailPoint||distance(this.previousTrailPoint,car.pos)>.75){
+   this.positionTrail.push({pos:[...car.pos],heading:car.heading});
+   this.previousTrailPoint=[...car.pos];
+   if(this.positionTrail.length>650)this.positionTrail.shift();
+  }
+  const getBehind=(wanted)=>{
+   let covered=0;
+   for(let j=this.positionTrail.length-1;j>0;j--){
+    const a=this.positionTrail[j],b=this.positionTrail[j-1];
+    const step=distance(a.pos,b.pos);
+    if(covered+step>=wanted){
+     const u=(wanted-covered)/Math.max(step,.001);
+     return {pos:[a.pos[0]+(b.pos[0]-a.pos[0])*u,a.pos[1]+(b.pos[1]-a.pos[1])*u],heading:b.heading};
+    }
+    covered+=step;
+   }
+   return null;
+  };
+  for(let j=0;j<this.followers.length;j++){
+   const model=this.followers[j],behind=(j+1)*9.5;
+   const point=j+1<(state.convoy||1)?getBehind(behind):null;
+   if(point){this.position(model,point.pos,.17);model.rotation.z=-point.heading}
+   else model.visible=false;
+  }
+
   this.player.rotation.y=-car.steering*.065;
   // Handbrake tracks are part of the actual asphalt scene, not hidden GIS overlays.
   if(state.controls?.handbrake&&Math.abs(car.speed)>7&&this.lastCarPos){
@@ -386,18 +497,53 @@ export class CityScene3D{
    this.marker.scale.setScalar(1+Math.sin(now*.003)*.07);
    const targetColor=m.phase==="pickup"?0xffd35c:0x99f5a7;
    this.marker.children.forEach(child=>{if(child.material?.color)child.material.color.setHex(targetColor)});
-  }else this.marker.visible=false;
+  }
+  if(state.mission){
+   const target=state.mission.phase==="pickup"?state.mission.pickup:state.mission.dropoff;
+   if(state.mission.phase==="pickup"){
+    const road=this.city.nearest?.(target)?.road;
+    let guestPos=target;
+    if(road){
+     const a=toXY(this.origin,road.a),b=toXY(this.origin,road.b),len=Math.hypot(b[0]-a[0],b[1]-a[1])||1;
+     const width=roadWidth(road.typ)*.5+1.25;
+     const x=-(b[1]-a[1])/len*width,y=(b[0]-a[0])/len*width;
+     const latitude=target[1]*rad;
+     guestPos=[target[0]+x/(111320*Math.cos(latitude)),target[1]+y/111320];
+    }
+    this.position(this.guest,guestPos,.14);this.dropoffGate.visible=false;
+    this.guest.rotation.z=-Math.atan2(Math.sin(car.heading),Math.cos(car.heading));
+    this.guest.userData.waveArm.rotation.y=Math.sin(now*.006)*.65;
+    this.guest.userData.label.quaternion.copy(this.camera.quaternion);
+   }else{
+    this.guest.visible=false;this.position(this.dropoffGate,target,.14);
+    this.dropoffGate.userData.label.quaternion.copy(this.camera.quaternion);
+   }
+  }else{this.guest.visible=false;this.dropoffGate.visible=false;}
   // Proper physical 3D chase camera behind the car, not a zoomed overhead GIS camera.
   const [cx,cy]=toXY(this.origin,car.pos),fwdX=Math.sin(car.heading),fwdY=Math.cos(car.heading);
-  const speed=Math.abs(car.speed),follow=clamp(10.8+speed*.13,10.8,15.1);
-  const horizontal=window.innerWidth<700?9.8:follow;
-  const height=window.innerWidth<700?5.1:5.8;
-  const eye=new THREE.Vector3(cx-fwdX*horizontal,cy-fwdY*horizontal,height+speed*.025);
-  const target=new THREE.Vector3(cx+fwdX*22,cy+fwdY*22,2.3);
+  if(this.sunlight&&!this.mobile){
+   this.sunlight.position.set(cx-120,cy+100,180);
+   this.sunlight.target.position.set(cx,cy,0);
+   this.sunlight.target.updateMatrixWorld();
+  }
+  for(const light of this.player.userData.rearLights||[]){
+   if(light.material?.emissive)light.material.emissiveIntensity=state.controls?.brake?1.2:.18;
+  }
+  
+  const speed=Math.abs(car.speed),wide=this.camStyle===1,hood=this.camStyle===2;
+  const horizontal=hood?-1.7:(wide?clamp(16+speed*.14,16,21):clamp(9.6+speed*.09,9.6,12.2));
+  const height=hood?1.65:(wide?7.6:4.45)+speed*.022;
+  const eye=new THREE.Vector3(cx-fwdX*horizontal,cy-fwdY*horizontal,height);
+  const lookDistance=hood?27:wide?27:21;
+  const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,hood?1.78:1.65);
+  if(hood)this.player.visible=false;else this.player.visible=true;
   if(!this.inited){this.camPos.copy(eye);this.camLook.copy(target);this.inited=true}
   const softness=1-Math.exp(-dt*6.5),lookSoft=1-Math.exp(-dt*4.8);
   this.camPos.lerp(eye,softness);this.camLook.lerp(target,lookSoft);
   this.camera.position.copy(this.camPos);this.camera.lookAt(this.camLook);
+  // Guest signs billboard to player only after camera aim settles.
+  if(this.guest.visible)this.guest.userData.label.quaternion.copy(this.camera.quaternion);
+  if(this.dropoffGate.visible)this.dropoffGate.userData.label.quaternion.copy(this.camera.quaternion);
   this.renderer.render(this.scene,this.camera);
  }
 }
