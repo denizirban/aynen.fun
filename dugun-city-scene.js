@@ -367,6 +367,22 @@ function addSkyAtmosphere(scene){
  sky.renderOrder=-900;scene.add(sky);return sky;
 }
 
+
+const SHARED_SCENE_MATERIALS=new Set([roadMat,pavementMat,curbMat,lineMat,yellowMat,trunkMat,leavesMat,leavesLightMat,windowMat,lightMat]);
+function disposeCityGroup(group){
+ const seenGeo=new Set(),seenMat=new Set();
+ group.traverse(obj=>{
+  const geo=obj.geometry;
+  if(geo&&!seenGeo.has(geo)){seenGeo.add(geo);geo.dispose?.()}
+  for(const material of (Array.isArray(obj.material)?obj.material:[obj.material])){
+   if(!material||SHARED_SCENE_MATERIALS.has(material)||seenMat.has(material))continue;
+   seenMat.add(material);
+   if(material.map&&material.map!==roadMat.map&&material.map!==pavementMat.map)material.map.dispose?.();
+   material.dispose?.();
+  }
+ });
+}
+
 export class CityScene3D{
  constructor(city){
   this.city=city;this.origin=[...AREAS[city.area].center];this.mobile=window.innerWidth<700;this.canvas=document.getElementById("driving-canvas");
@@ -476,10 +492,14 @@ export class CityScene3D{
   if(!force&&this.builtAt&&distance(this.builtAt,this.focus||this.origin)<83&&this.builtRoads===ro&&this.builtBuildings===bu)return;
   this.lastBuilt=t;this.builtAt=[...(this.focus||this.origin)];this.builtRoads=ro;this.builtBuildings=bu;
   // Shift the render origin as the player explores new districts, avoiding precision loss.
-  if(this.focus&&distance(this.origin,this.focus)>220){this.origin=[...this.focus];this.inited=false;}
+  if(this.focus&&distance(this.origin,this.focus)>220){
+   this.origin=[...this.focus];this.inited=false;
+   for(const skid of this.skids){this.actorGroup.remove(skid);skid.geometry.dispose();skid.material.dispose()}
+   this.skids=[];
+  }
 
   this.scene.remove(this.worldGroup);
-  this.worldGroup.traverse(obj=>{if(obj.geometry)obj.geometry.dispose()});
+  disposeCityGroup(this.worldGroup);
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
   makeGround(this.worldGroup);
   if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile)}
