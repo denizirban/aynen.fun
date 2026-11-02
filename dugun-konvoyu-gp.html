@@ -405,6 +405,19 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
  box-shadow:none;font-weight:850}
 #start:hover{background:#eaf1e9}
 @media(max-width:700px){#freeroam{padding:13px;font-size:13px;margin-top:9px}#start{padding:9px;margin-top:6px}}
+
+/* Exploration should feel like an open-world drive, not a dashboard covering the city. */
+body[data-game-mode="free"] #mission,
+body[data-game-mode="free"] #rival-tracker,
+body[data-game-mode="free"] #directions,
+body[data-game-mode="free"] #time-box,
+body[data-game-mode="free"] #convoy-pill{display:none!important}
+body[data-game-mode="free"] #mini{width:166px;height:166px;opacity:.94}
+body[data-game-mode="free"] #drive-hint{font-size:11px;font-weight:800;letter-spacing:.02em}
+@media(max-width:700px){
+ body[data-game-mode="free"] #mini{width:128px;height:128px}
+ body[data-game-mode="free"] #speed-panel{transform:scale(.85);transform-origin:bottom right}
+}
 </style>
 </head>
 <body>
@@ -454,6 +467,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-drivefix-v12"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-fluid-istanbul-v13"></script>
 </body>
 </html>
