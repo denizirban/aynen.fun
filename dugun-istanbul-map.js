@@ -75,7 +75,13 @@ export class IstanbulMap{
     if(len<1.4||len>200||Math.min(distance(player,a),distance(player,b))>780)continue;
     const id=key(a)+"_"+key(b);
     if(uniq.has(id))continue;uniq.add(id);
-    roads.push({a,b,len,typ});
+    roads.push({a,b,len,typ,
+      name:f.properties?.name||"",lanes:Number(f.properties?.lanes)||null,
+      width:Number(f.properties?.width)||null,
+      oneway:f.properties?.oneway===1||f.properties?.oneway==="yes",
+      surface:f.properties?.surface||null,
+      bridge:f.properties?.brunnel==="bridge"||f.properties?.bridge===1
+     });
     if(roads.length>5200)break;
    }
    if(roads.length>5200)break;
