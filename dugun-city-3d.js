@@ -598,7 +598,12 @@ function readGamepad(){
  if(cameraDown&&!padCameraWasDown)cycleCamera();
  padCameraWasDown=cameraDown;
 }
+let lastFrameError=-Infinity;
 function frameLoop(now){
+ // Always schedule the next frame before the simulation: a WebGL or tile error
+ // must not permanently stop the vehicle, inputs and on-screen controls.
+ requestAnimationFrame(frameLoop);
+ try{
  const dt=clamp((now-last)/1000,0,.045);last=now;
  readGamepad();
  if(ready&&playing&&!paused){
@@ -623,7 +628,18 @@ function frameLoop(now){
  if(ready&&!playing&&render3D&&car)render3D.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,navValid:navigation.ready,convoy},dt,now);
  if(ready&&!playing&&render3D&&!car)render3D.update({car:{pos:AREAS[area].center,speed:0,heading:0,steering:0},rival:null,mission:null,traffic:[],route:[],convoy:1},dt,now);
  if(now>toastEnd)$("toast").classList.remove("show");
- requestAnimationFrame(frameLoop);
+ }catch(error){
+  if(now-lastFrameError>2400){
+   lastFrameError=now;
+   console.error("Düğün Konvoyu sürüş döngüsü:",error);
+   if(playing){
+    toast("OYUN MOTORU HATASI · YENİDEN DENE",2.2);
+    $("drive-hint").textContent="GRAFİK / OYUN HATASI · KONSOLU KONTROL ET";
+   }else{
+    $("loadstate").textContent="Oyun motoru hatası: "+String(error?.message||error);
+   }
+  }
+ }
 }
 function readyMap(){
  ready=true;
