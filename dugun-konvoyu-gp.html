@@ -322,6 +322,31 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
  #controls .ctr.horn{min-width:44px}
  #mode-pill{display:none}
 }
+
+/* Live opponent telemetry: impossible to mistake the player's target for the rival. */
+#rival-tracker{position:absolute;right:18px;top:170px;width:234px;pointer-events:none;
+ color:#ffedf0;border-radius:13px;overflow:hidden;border:2px solid #f4a5a5;
+ background:linear-gradient(140deg,#482d3edc,#242c40ed);box-shadow:0 6px 18px #08172455}
+#rival-tracker[hidden]{display:none!important}
+.rival-top{display:flex;align-items:center;gap:7px;padding:8px 10px;background:#8d4356c5;font-size:11px;letter-spacing:.04em}
+.rival-top b{flex:1;white-space:nowrap}
+.rival-light{width:10px;height:10px;border:2px solid #ffccd2;border-radius:50%;background:#ff6d82;box-shadow:0 0 8px #f9789e}
+#rival-distance{font-size:16px;font-weight:900;color:#fff2b4;white-space:nowrap}
+.rival-bottom{padding:8px 10px;display:flex;gap:11px;align-items:center}
+#rival-arrow{font-size:29px;line-height:1;font-weight:900;color:#ffbabb}
+#rival-status{display:block;font-size:11px;line-height:1.3;font-weight:900;color:#fff0e2}
+#rival-target{display:block;font-size:10px;margin-top:3px;letter-spacing:.03em;color:#f5c8c9;font-weight:750}
+.rival-danger{border-color:#ffd068!important;box-shadow:0 0 20px #ffb1524f!important}
+.rival-danger .rival-top{background:#ad5146}
+@media(max-width:900px){#rival-tracker{right:9px;top:160px;width:181px}
+.rival-top{padding:6px 7px;font-size:9px}.rival-top b{font-size:9px}
+#rival-distance{font-size:13px}.rival-bottom{padding:6px 8px;gap:7px}
+#rival-status{font-size:9px}#rival-target{font-size:8px}#rival-arrow{font-size:21px}}
+@media(max-width:700px){#rival-tracker{top:260px;right:8px;width:158px;border-width:1px}
+.rival-top{padding:5px;gap:4px}.rival-top b{font-size:8px}
+.rival-light{width:7px;height:7px}#rival-distance{font-size:11px}
+.rival-bottom{padding:5px}#rival-status{font-size:8px}#rival-target{font-size:7px}}
+@media(max-width:390px){#rival-tracker{top:246px;width:143px}}
 </style>
 </head>
 <body>
@@ -333,6 +358,10 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
   <div id="time-box"><span class="kicker">KALAN SÜRE</span><div id="time">03:00</div><div class="money" id="money">₺0</div><div id="record">REKOR <span id="bestmoney">₺0</span></div></div>
   <div id="speed-panel"><div class="kicker">HIZ</div><div id="speed">0</div><div class="unit">KM / SA</div><div id="car-health">ARAÇ %100</div><div id="speed-gear">D</div><button id="rescue" type="button" aria-label="Araç sıkıştıysa yola geri dön">YOLA DÖN <span>R</span></button><button id="lighting" type="button" aria-label="Gündüz, altın saat veya akşam ışığını seç">GÜNDÜZ</button></div>
   <div id="mission"><div id="mission-state">MİSAFİR BEKLİYOR</div><div id="mission-name">İstanbul sokaklarında...</div><div id="mission-info">Yol ağı yükleniyor.</div><div id="mission-distance">—</div><div id="mission-timer"></div></div>
+  <div id="rival-tracker" aria-label="Rakip konvoyun anlık durumu" hidden>
+   <div class="rival-top"><span class="rival-light"></span><b>RAKİP KONVOY</b><span id="rival-distance">—</span></div>
+   <div class="rival-bottom"><span id="rival-arrow">↗</span><div><strong id="rival-status">MİSAFİRE GİDİYOR</strong><small id="rival-target">YOLDA</small></div></div>
+  </div>
   <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas></div>
   <div id="mode-pill">KONVOY <span id="convoy">1</span> · <span id="trips">0</span> TESLİMAT</div>
   <div id="directions"><span id="turn-arrow">↑</span><span id="turn-hint">HEDEFİ TAKİP ET</span></div><div id="drive-hint" aria-live="polite">GAZ OTOMATİK · SAĞ / SOL İLE SÜR</div>
@@ -364,6 +393,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-easydrive-v6"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-city-v7"></script>
 </body>
 </html>

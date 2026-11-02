@@ -1,5 +1,5 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v6";
-import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v6";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v7";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v7";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
  sahin:{accel:11.5,brake:18,top:27,grip:1.0},
@@ -187,7 +187,7 @@ function startGame(unlimited){
  try{personalBest=Number(localStorage.getItem("dugun-3d-best-v3"))||0}catch(e){personalBest=0}
  car={pos:[...AREAS[area].center],speed:0,heading:0,steering:0,yawRate:0,slip:0,health:100,offroad:false};
  city.refresh(car.pos,true);
- const near=city.nearest(car.pos);
+ const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
  if(near){car.pos=near.p;car.heading=angle(near.road.a,near.road.b)}
  rival={pos:null,heading:0,speed:10.5,route:[],index:1,cooldown:0};
  traffic=[];
@@ -240,7 +240,7 @@ function spawnMission(){
 }
 function refreshRoute(){
  if(!mission||!city)return;
- const target=mission.phase==="pickup"?mission.pickup:mission.dropoff;
+ const target=mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff;
  route=city.route(car.pos,target);city.setRoute(route);
 }
 function refreshRivalRoute(){
@@ -279,9 +279,19 @@ function drive(dt){
  // Sensible steering at every speed: strong steering around junctions, smaller at high speed.
  const speedAbs=Math.abs(car.speed);
  const steeringLimit=clamp(.55/(1+speedAbs/24),.29,.55);
- const wanted=input*steeringLimit;
+ let wanted=input*steeringLimit;
+ // In EASY mode the game gently corrects the car toward the nearest mapped road.
+ // It never overrides an active left/right press, preserving player agency at junctions.
+ const roadBefore=city.nearest(car.pos)||city.nearestAny?.(car.pos);
+ if(auto&&input===0&&roadBefore&&roadBefore.dist>2.3){
+  const towards=turn(angle(car.pos,roadBefore.p),car.heading);
+  if(Math.abs(towards)<Math.PI*.63){
+   wanted+=clamp(towards*.78,-.43,.43)*clamp((roadBefore.dist-2.3)/7,0,1);
+  }
+ }
+ wanted=clamp(wanted,-steeringLimit,steeringLimit);
  car.steering+=(wanted-car.steering)*(1-Math.exp(-dt*(auto?10.0:7.0)));
- const near=city.nearest(car.pos);
+ const near=roadBefore;
  const width=near?/^(primary|trunk)/.test(near.road.typ)?11:/^(secondary)/.test(near.road.typ)?9:6.8:8;
  car.offroad=!!near&&near.dist>width;
  const cornering=Math.abs(car.steering)>steeringLimit*.50;
@@ -317,6 +327,24 @@ function drive(dt){
  car.heading=(car.heading+(car.yawRate*(keys.handbrake?1.15:1)+car.slip*.12)*dt+Math.PI*2)%(Math.PI*2);
  const previous=car.pos;
  car.pos=travel(car.pos,car.heading,car.speed*dt);
+ if(auto&&!keys.handbrake){
+  const edge=city.nearest(car.pos)||city.nearestAny?.(car.pos);
+  if(edge&&edge.dist>2.3&&edge.dist<18){
+   // Gentle lateral centering prevents the green-ground runaway seen in the screenshot.
+   const correction=Math.min(edge.dist-2.3,(input===0?4.2:1.65)*dt);
+   car.pos=travel(car.pos,angle(car.pos,edge.p),correction);
+  }else if(edge&&edge.dist>=26&&Math.abs(car.speed)<7){
+   // Do not maroon the player off-road when data temporarily redraws.
+   car.pos=[...edge.p];
+   car.yawRate=0;car.speed=Math.min(car.speed,4.5);
+   toast("YOLA GERİ DÖNDÜN",1.2);
+  }
+ }
+ // Decorative grades influence acceleration modestly, without pretending to be measured DEM.
+ if(render3D?.getGroundHeight&&Math.abs(car.speed)>1.5){
+  const slope=render3D.getGroundHeight(car.pos)-render3D.getGroundHeight(previous);
+  car.speed=clamp(car.speed-slope*.32,-5.2,spec.top);
+ }
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
  if(city.insideBuilding?.(car.pos)){
   car.pos=previous;
@@ -453,9 +481,25 @@ function updateMissionText(){
  if(!mission)return;
  $("mission-state").textContent=mission.owner==="rival"?"MİSAFİR RAKİPTE":mission.phase==="pickup"?"MİSAFİRİ AL":mission.challenge.tag;
  $("mission-name").textContent=mission.phase==="pickup"?mission.passenger:mission.venue;
- $("mission-info").textContent=mission.phase==="pickup"?"Sarı işarete yanaş. Yavaşlayınca misafir biner.":mission.challenge.info;
+ $("mission-info").textContent=mission.owner==="rival"?"KIRMIZI RAKİBİ TAKİP ET · ONA YAKLAŞIP MİSAFİRİ GERİ AL":mission.phase==="pickup"?"Sarı işarete yanaş. Yavaşlayınca misafir biner.":mission.challenge.info;
+}
+function updateRivalHUD(){
+ const panel=$("rival-tracker");
+ if(!rival?.pos||!car){panel.hidden=true;return}
+ panel.hidden=false;
+ const d=distance(car.pos,rival.pos);
+ const bearing=turn(angle(car.pos,rival.pos),car.heading);
+ const arrow=Math.abs(bearing)<.36?"↑":Math.abs(bearing)>2.65?"↓":bearing>0?"↗":"↖";
+ $("rival-arrow").textContent=arrow;
+ $("rival-distance").textContent=d>=1000?(d/1000).toFixed(1)+" KM":Math.round(d)+" M";
+ const owner=mission?.owner;
+ $("rival-status").textContent=owner==="rival"?"MİSAFİR ONDA · YAKALA":owner==="player"?"SENDEKİ MİSAFİRİ KOVALIYOR":"MİSAFİRE DOĞRU GİDİYOR";
+ panel.classList.toggle("rival-danger",owner==="rival");
+ const remaining=mission?(mission.phase==="pickup"?mission.pickup:mission.dropoff):null;
+ $("rival-target").textContent=remaining?Math.round(distance(rival.pos,remaining))+" M HEDEFE":"YENİ YOLCUYU BEKLİYOR";
 }
 function updateHUD(){
+ updateRivalHUD();
  const secs=Math.ceil(Math.max(0,timer));
  $("time").textContent=free?"∞":String(Math.floor(secs/60)).padStart(2,"0")+":"+String(secs%60).padStart(2,"0");
  $("time").classList.toggle("urgent",timer<30&&!free);
@@ -476,7 +520,7 @@ function updateHUD(){
   $("mission-distance").textContent="—";$("mission-timer").textContent="";
   return;
  }
- const goal=mission.phase==="pickup"?mission.pickup:mission.dropoff,d=distance(car.pos,goal);
+ const goal=mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff,d=distance(car.pos,goal);
  $("mission-distance").textContent=d<1000?Math.round(d)+" METRE":(d/1000).toFixed(1)+" KM";
  $("mission-timer").textContent=mission.phase==="dropoff"?
   ("YOLCU: "+Math.ceil(Math.max(0,mission.clock))+" SN"+(mission.challenge.id==="horn"?" · KORNA "+Math.min(2,mission.horns)+"/2":mission.challenge.id==="careful"?" · HASAR "+mission.crashes:"")):
@@ -522,7 +566,9 @@ function drawMini(){
   ctx.fillStyle=mission.phase==="pickup"?"#ffcf65":"#9de6b7";ctx.beginPath();ctx.arc(m[0],m[1],7,0,2*Math.PI);ctx.fill();
  }
  if(rival.pos){
-  const p=toPx(rival.pos);ctx.fillStyle="#f4a5b1";ctx.beginPath();ctx.arc(p[0],p[1],5,0,2*Math.PI);ctx.fill();
+  const p=toPx(rival.pos);ctx.fillStyle="#ff7c85";ctx.strokeStyle="#ffffff";ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(p[0],p[1],7,0,2*Math.PI);ctx.fill();ctx.stroke();
+  ctx.fillStyle="#fef2e3";ctx.font="bold 11px sans-serif";ctx.fillText("R",p[0]-4,p[1]+4);
  }
  ctx.restore();ctx.save();ctx.translate(w/2,h/2);
  ctx.fillStyle="#eaf6e2";ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(8,9);ctx.lineTo(-8,9);ctx.closePath();ctx.fill();ctx.restore();

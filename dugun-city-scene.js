@@ -1,6 +1,6 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v6";
-import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v6";
+import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v7";
+import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v7";
 
 // The road graph and building outlines come from the real OSM vector tiles.
 // This is a standalone ground-level Three.js scene, NOT a tilted map layer.
@@ -10,6 +10,19 @@ const roadWidth=type=>/^(primary|trunk)/.test(type)?15:/^(secondary)/.test(type)
 const buildingColors=["#d8c5ac","#eccfb2","#f2d6bd","#b2c5b9","#c5bfd0","#d9d9ca","#ebbaa7","#b1c3c6","#ead8c4","#c9d2b5"];
 const shopColors=["#b83e52","#3f8182","#ba754e","#4f8475","#e2b15a"];
 const toXY=(o,p)=>{const x=(p[0]-o[0])*111320*Math.cos((p[1]+o[1])*.5*rad),y=(p[1]-o[1])*111320;return [x,y]};
+let terrainAt=(x,y)=>0;
+function terrainModel(area,origin){
+ // Stylized grades, not measured elevation.
+ if(area==="ortakoy"){
+  const coastX=(29.02745-origin[0])*111320*Math.cos(origin[1]*rad);
+  const offset=toXY(AREAS[area].center,origin);
+  return (x,y)=>Math.max(0,(coastX-x)*.028)+.35*Math.max(0,Math.sin((y+offset[1])/155));
+ }
+ const offset=toXY(AREAS[area]?.center||origin,origin);
+ if(area==="besiktas"||area==="karakoy"||area==="balat")
+  return (x,y)=>Math.max(0,2.4+1.6*Math.sin((x+offset[0])/150)+1.1*Math.cos((y+offset[1])/190));
+ return (x,y)=>Math.max(0,1.1+.9*Math.sin((x+offset[0])/220)+1.25*Math.cos((y+offset[1])/170));
+}
 const color=(hex)=>new THREE.Color(hex);
 const windowMat=new THREE.MeshStandardMaterial({color:0x759aab,emissive:0x14262c,emissiveIntensity:.28,roughness:.28,metalness:.25,side:THREE.DoubleSide});
 const lightMat=new THREE.MeshStandardMaterial({color:0xe5c899,emissive:0xc88c4b,emissiveIntensity:.30,side:THREE.DoubleSide});
@@ -56,7 +69,10 @@ function emitQuad(positions,indices,p,q,width,z){
  const dx=q[0]-p[0],dy=q[1]-p[1],len=Math.hypot(dx,dy);
  if(len<.1)return;
  const nx=-dy/len*width*.5,ny=dx/len*width*.5,i=positions.length/3;
- positions.push(p[0]-nx,p[1]-ny,z,q[0]-nx,q[1]-ny,z,q[0]+nx,q[1]+ny,z,p[0]+nx,p[1]+ny,z);
+ positions.push(p[0]-nx,p[1]-ny,z+terrainAt(p[0]-nx,p[1]-ny),
+ q[0]-nx,q[1]-ny,z+terrainAt(q[0]-nx,q[1]-ny),
+ q[0]+nx,q[1]+ny,z+terrainAt(q[0]+nx,q[1]+ny),
+ p[0]+nx,p[1]+ny,z+terrainAt(p[0]+nx,p[1]+ny));
  indices.push(i,i+1,i+2,i,i+2,i+3);
 }
 function batchStrips(list,mat,container){
@@ -68,7 +84,7 @@ function batchStrips(list,mat,container){
  for(let i=0;i<list.positions.length;i+=3){coords.push(list.positions[i]/7,list.positions[i+1]/7)}
  geo.setAttribute("uv",new THREE.Float32BufferAttribute(coords,2));
  geo.computeVertexNormals();
- const m=new THREE.Mesh(geo,mat);m.receiveShadow=true;container.add(m);
+ const m=new THREE.Mesh(geo,mat);m.receiveShadow=true;m.renderOrder=mat===roadMat?2:mat===pavementMat?1:3;container.add(m);
 }
 const empty=()=>({positions:[],indices:[]});
 function faceWindow(list,a,b,x,y,z,w=.92,h=1.10){
@@ -89,9 +105,9 @@ function addTrees(group,places,limit,seed=1){
  const dummy=new THREE.Object3D();
  for(let i=0;i<count;i++){
   const item=places[i],s=.76+hash(i+11,seed)*.75;
-  dummy.position.set(item[0],item[1],1.45*s);dummy.scale.set(s,s,s);dummy.rotation.set(0,0,hash(i+12)*6.28);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
-  dummy.position.set(item[0],item[1],3.40*s);dummy.scale.set(1.30*s,1.32*s,1.19*s);dummy.updateMatrix();crowns.setMatrixAt(i,dummy.matrix);
-  dummy.position.set(item[0]+.52*s,item[1]-.44*s,4.14*s);dummy.scale.set(.72*s,.8*s,.73*s);dummy.updateMatrix();crowns2.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(item[0],item[1],1.45*s+terrainAt(item[0],item[1]));dummy.scale.set(s,s,s);dummy.rotation.set(0,0,hash(i+12)*6.28);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(item[0],item[1],3.40*s+terrainAt(item[0],item[1]));dummy.scale.set(1.30*s,1.32*s,1.19*s);dummy.updateMatrix();crowns.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(item[0]+.52*s,item[1]-.44*s,4.14*s+terrainAt(item[0],item[1]));dummy.scale.set(.72*s,.8*s,.73*s);dummy.updateMatrix();crowns2.setMatrixAt(i,dummy.matrix);
  }
  group.add(trunks,crowns,crowns2);
 }
@@ -119,25 +135,31 @@ function addStreetProps(group,origin,roads,mobile){
  const pole=new THREE.InstancedMesh(shaftGeo,poleMat,lamps.length),head=new THREE.InstancedMesh(headGeo,glowMat,lamps.length);
  const dummy=new THREE.Object3D();
  lamps.forEach((p,i)=>{
-  dummy.position.set(p[0],p[1],2.80);dummy.rotation.set(0,0,0);dummy.scale.set(1,1,1);dummy.updateMatrix();pole.setMatrixAt(i,dummy.matrix);
-  dummy.position.set(p[0],p[1],5.55);dummy.updateMatrix();head.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(p[0],p[1],2.80+terrainAt(...p));dummy.rotation.set(0,0,0);dummy.scale.set(1,1,1);dummy.updateMatrix();pole.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(p[0],p[1],5.55+terrainAt(...p));dummy.updateMatrix();head.setMatrixAt(i,dummy.matrix);
  });
  group.add(pole,head);
  const torso=new THREE.InstancedMesh(new THREE.CylinderGeometry(.25,.26,.92,6),new THREE.MeshStandardMaterial({color:0x5d7d87}),people.length);
  const headPeople=new THREE.InstancedMesh(new THREE.SphereGeometry(.19,7,5),new THREE.MeshStandardMaterial({color:0xc89572}),people.length);
  people.forEach((p,i)=>{
-  dummy.position.set(p[0],p[1],1.08);dummy.scale.set(1,1,1);dummy.rotation.set(0,0,0);dummy.updateMatrix();torso.setMatrixAt(i,dummy.matrix);
-  dummy.position.z=1.72;dummy.updateMatrix();headPeople.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(p[0],p[1],1.08+terrainAt(...p));dummy.scale.set(1,1,1);dummy.rotation.set(0,0,0);dummy.updateMatrix();torso.setMatrixAt(i,dummy.matrix);
+  dummy.position.z=1.72+terrainAt(p[0],p[1]);dummy.updateMatrix();headPeople.setMatrixAt(i,dummy.matrix);
   torso.setColorAt(i,color(["#d7645c","#eac86e","#597a9f","#678c6a"][i%4]));
  });
  group.add(torso,headPeople);
 }
 function createRoads(group,origin,roads,mobile){
  const sidewalk=empty(),asphalt=empty(),curbs=empty(),markings=empty(),sideLine=empty();
- const max=mobile?450:800;
+ const max=mobile?520:1400;
+ // Always retain the roads immediately around the car, regardless of tile ordering.
+ // The old first-N slice could omit all roads near the visible chase camera.
  const near=roads.filter(r=>{
   const c=[(r.a[0]+r.b[0])*.5,(r.a[1]+r.b[1])*.5];
-  return distance(c,origin)<(mobile?385:525);
+  return Math.min(distance(c,origin),distance(r.a,origin),distance(r.b,origin))<(mobile?415:570);
+ }).sort((a,b)=>{
+  const da=Math.min(distance(a.a,origin),distance(a.b,origin));
+  const db=Math.min(distance(b.a,origin),distance(b.b,origin));
+  return da-db;
  }).slice(0,max);
  for(let i=0;i<near.length;i++){
   const r=near[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
@@ -198,10 +220,10 @@ function addBuildings(group,origin,raw,mobile){
   const maxDist=Math.max(...pts.map(p=>Math.hypot(p[0],p[1])));
   if(maxDist>750)continue;
   const x=(b.minX+b.maxX)*.5,lat=(b.minY+b.maxY)*.5,hseed=hash(x*1e5,lat*1e5);
-  const height=b.height&&Number.isFinite(b.height)?clamp(b.height,5,100):Math.round(3.5+(hseed*.78+.11)*8)*3.15;
+  const height=b.height&&Number.isFinite(b.height)?clamp(b.height,5,48):Math.round(3.5+(hseed*.78+.11)*8)*3.15;
   const shape=new THREE.Shape();shape.moveTo(...pts[0]);for(let j=1;j<pts.length;j++)shape.lineTo(...pts[j]);shape.closePath();
   const geo=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false,curveSegments:1,steps:1});
-  const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.castShadow=!mobile&&Math.hypot(pts[0][0],pts[0][1])<110;m.receiveShadow=true;group.add(m);
+  const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.position.z=terrainAt(pts[0][0],pts[0][1]);m.castShadow=!mobile&&Math.hypot(pts[0][0],pts[0][1])<110;m.receiveShadow=true;group.add(m);
   const maxFloors=Math.min(mobile?4:8,Math.floor((height-1.5)/3.1));
   for(let edge=0;edge<pts.length;edge++){
    const a=pts[edge],v=pts[(edge+1)%pts.length],dx=v[0]-a[0],dy=v[1]-a[1],len=Math.hypot(dx,dy);
@@ -227,10 +249,80 @@ function addBuildings(group,origin,raw,mobile){
  return buildings.length;
 }
 function makeGround(group){
- const m=new THREE.Mesh(new THREE.PlaneGeometry(2500,2500),
-  new THREE.MeshStandardMaterial({color:0x91b47c,roughness:1}));
- m.position.z=-.10;m.receiveShadow=true;group.add(m);
+ // City blocks are warm urban stone, not a flat golf course.
+ const groundTexture=noiseTexture("pavement");
+ groundTexture.repeat.set(220,220);
+ const geometry=new THREE.PlaneGeometry(2400,2400,48,48);
+ const pos=geometry.attributes.position;
+ for(let i=0;i<pos.count;i++)pos.setZ(i,terrainAt(pos.getX(i),pos.getY(i)));
+ geometry.computeVertexNormals();
+ const m=new THREE.Mesh(geometry,
+  new THREE.MeshStandardMaterial({color:0xb8b8a2,map:groundTexture,roughness:1}));
+ m.position.z=-.22;m.receiveShadow=true;group.add(m);
 }
+function addWater(group,origin,waters,mobile){
+ const material=new THREE.MeshPhysicalMaterial({color:0x247aa5,roughness:.25,metalness:.10,transparent:true,opacity:.96,side:THREE.DoubleSide,depthWrite:true});
+ const lineMaterial=new THREE.MeshBasicMaterial({color:0x9fd5dd,transparent:true,opacity:.50});
+ let count=0;
+ for(const item of (waters||[])){
+  for(const rings of [item.rings]){
+   if(!rings?.[0]||rings[0].length<3)continue;
+   const outer=rings[0].map(p=>toXY(origin,p));
+   if(outer.length>1200)continue;
+   const shape=new THREE.Shape();shape.moveTo(...outer[0]);
+   for(let i=1;i<outer.length;i++)shape.lineTo(...outer[i]);shape.closePath();
+   for(let j=1;j<rings.length;j++){
+    const hole=new THREE.Path(),pts=rings[j].map(p=>toXY(origin,p));
+    if(pts.length<3)continue;
+    hole.moveTo(...pts[0]);for(let i=1;i<pts.length;i++)hole.lineTo(...pts[i]);hole.closePath();shape.holes.push(hole);
+   }
+   const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape),material);
+   mesh.position.z=.26;mesh.renderOrder=1;group.add(mesh);
+   if(++count>38)return count;
+  }
+ }
+ return count;
+}
+function addOrtakoyLandmark(group,origin,area){
+ if(area!=="ortakoy")return;
+ // Grounded approximate site of Büyük Mecidiye/Ortaköy Mosque; stylized original model.
+ const [x,y]=toXY(origin,[29.02694,41.04722]);
+ if(Math.hypot(x,y)>550)return;
+ const cream=new THREE.MeshStandardMaterial({color:0xf3e7d1,roughness:.85});
+ const trim=new THREE.MeshStandardMaterial({color:0xc5a985,roughness:.88});
+ const dome=new THREE.MeshStandardMaterial({color:0x8ca0a5,metalness:.20,roughness:.60});
+ const g=new THREE.Group();g.position.set(x,y,.14+terrainAt(x,y));
+ g.add(meshBox(16,15,10,cream,0,0,5));
+ g.add(meshBox(17,16,.75,trim,0,0,10));
+ const main=new THREE.Mesh(new THREE.SphereGeometry(6.0,20,12,0,Math.PI*2,0,Math.PI*.54),dome);
+ main.rotation.x=Math.PI/2;main.position.z=10.7;g.add(main);
+ for(const dx of [-9.8,9.8]){
+  const minaret=new THREE.Mesh(new THREE.CylinderGeometry(.75,1.15,25,12),cream);
+  minaret.rotation.x=Math.PI/2;minaret.position.set(dx,0,12.5);g.add(minaret);
+  const balcony=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,.48,12),trim);
+  balcony.rotation.x=Math.PI/2;balcony.position.set(dx,0,22.3);g.add(balcony);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(1.0,3.2,12),dome);
+  tip.rotation.x=Math.PI/2;tip.position.set(dx,0,27.0);g.add(tip);
+ }
+ // Two small stylized ferries on the Bosphorus, well offshore east of the mosque.
+ const hull=new THREE.MeshStandardMaterial({color:0xdcebf0,roughness:.58});
+ const cabin=new THREE.MeshStandardMaterial({color:0xf7ead2,roughness:.71});
+ const windows=new THREE.MeshStandardMaterial({color:0x306e83,roughness:.30});
+ for(const [index,where] of [[0,[29.0295,41.04756]],[1,[29.0314,41.04704]]]){
+  const [bx,by]=toXY(origin,where),ferry=new THREE.Group();
+  ferry.position.set(bx,by,.50);ferry.rotation.z=index?.36:-.27;
+  ferry.add(meshBox(16.5,4.9,1.4,hull,0,0,.7));
+  ferry.add(meshBox(8.2,3.8,2.4,cabin,-1.5,0,2.3));
+  ferry.add(meshBox(5.2,3.9,.8,windows,-1.4,0,3.7));
+  ferry.add(meshBox(15,.35,.25,windows,0,2.0,1.4));
+  ferry.add(meshBox(15,.35,.25,windows,0,-2.0,1.4));
+  group.add(ferry);
+ }
+ const sign=createWorldLabel("ORTAKÖY CAMİİ","#2a626e","#ffffff");
+ sign.position.set(0,0,23);sign.scale.set(9,2.0,1);g.add(sign);
+ group.add(g);
+}
+
 function makeSceneTexture(text,bg,fg){
  const canvas=document.createElement("canvas");canvas.width=512;canvas.height=170;
  const c=canvas.getContext("2d");c.fillStyle=bg;c.fillRect(0,0,512,170);
@@ -333,14 +425,14 @@ function addNeighborhoodDetails(group,origin,roads,mobile){
  const wood=new THREE.MeshStandardMaterial({color:0x966d4f,roughness:.88});
  for(const [x,y,id,side] of signPositions){
   const label=createWorldLabel(signs[id],palette[id%palette.length],"#fff7de");
-  label.position.set(x,y,3.55);label.scale.set(4.0,.96,1);
+  label.position.set(x,y,3.55+terrainAt(x,y));label.scale.set(4.0,.96,1);
   group.add(label);
   const awning=new THREE.Mesh(new THREE.BoxGeometry(4.1,1.25,.12),
    new THREE.MeshStandardMaterial({color:palette[id%palette.length],roughness:.85}));
-  awning.position.set(x,y,2.88);group.add(awning);
+  awning.position.set(x,y,2.88+terrainAt(x,y));group.add(awning);
  }
  for(const [x,y,rotation] of benchPositions){
-  const bench=new THREE.Group();bench.position.set(x,y,.43);bench.rotation.z=rotation;
+  const bench=new THREE.Group();bench.position.set(x,y,.43+terrainAt(x,y));bench.rotation.z=rotation;
   bench.add(meshBox(1.65,.58,.12,wood,0,0,.14));
   bench.add(meshBox(1.65,.11,.64,wood,0,-.26,.48));
   bench.add(meshBox(.08,.51,.51,metal,-.69,0,-.05));
@@ -351,7 +443,7 @@ function addNeighborhoodDetails(group,origin,roads,mobile){
   const geom=new THREE.CylinderGeometry(.09,.11,.8,7);
   const mesh=new THREE.InstancedMesh(geom,metal,bollards.length),dummy=new THREE.Object3D();
   bollards.forEach(([x,y],i)=>{
-   dummy.position.set(x,y,.40);dummy.scale.set(1,1,1);dummy.updateMatrix();
+   dummy.position.set(x,y,.40+terrainAt(x,y));dummy.scale.set(1,1,1);dummy.updateMatrix();
    mesh.setMatrixAt(i,dummy.matrix);
   });group.add(mesh);
  }
@@ -412,6 +504,12 @@ export class CityScene3D{
   this.actorGroup=new THREE.Group();this.scene.add(this.actorGroup);
   this.player=makeCar("sahin");this.rival=makeCar("sahin",null,true);
   this.actorGroup.add(this.player,this.rival);
+  this.rivalBeacon=createWorldLabel("RAKİP KONVOY","#9e4358","#fff5e8");
+  this.rivalBeacon.scale.set(7.0,1.6,1);
+  this.rivalBeacon.visible=false;this.actorGroup.add(this.rivalBeacon);
+  this.rivalPole=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,2.4,8),
+   new THREE.MeshBasicMaterial({color:0xff6788,transparent:true,opacity:.77}));
+  this.rivalPole.visible=false;this.actorGroup.add(this.rivalPole);
   if(!this.mobile)for(const v of [this.player,this.rival])v.traverse(obj=>{if(obj.isMesh)obj.castShadow=true});
   this.followers=Array.from({length:this.mobile?3:5},(_,i)=>makeCar(i%2===0?"toros":"sahin"));
   this.followers.forEach(f=>{f.visible=false;this.actorGroup.add(f)});
@@ -482,6 +580,7 @@ export class CityScene3D{
   this.camStyle=((style%3)+3)%3;
   return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
  }
+ getGroundHeight(point){const xy=toXY(this.origin,point);return terrainAt(xy[0],xy[1])}
  setOrigin(point){this.origin=[...point];this.inited=false;this.safeFollow=null;this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
 
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
@@ -501,7 +600,10 @@ export class CityScene3D{
   this.scene.remove(this.worldGroup);
   disposeCityGroup(this.worldGroup);
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
+  terrainAt=terrainModel(city.area,this.origin);
   makeGround(this.worldGroup);
+  this.visibleWater=addWater(this.worldGroup,this.origin,city.water,this.mobile);
+  addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
   if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile)}
   else{
    // Visible drivable street while streaming real vector tiles.
@@ -517,13 +619,13 @@ export class CityScene3D{
    const sign=makeSign((AREAS[city.area]?.name||"İSTANBUL").split(" · ")[0].toLocaleUpperCase("tr-TR"));
    const r=ro.find(x=>distance(x.a,this.origin)<60);
    if(r){
-    const p=toXY(this.origin,r.a);sign.position.set(p[0]+6,p[1]+8,0);this.worldGroup.add(sign);
+    const p=toXY(this.origin,r.a);sign.position.set(p[0]+6,p[1]+8,terrainAt(p[0]+6,p[1]+8));this.worldGroup.add(sign);
    }
   }
  }
  position(mesh,p,z=.16){
   if(!p){mesh.visible=false;return}
-  mesh.visible=true;const [x,y]=toXY(this.origin,p);mesh.position.set(x,y,z);
+  mesh.visible=true;const [x,y]=toXY(this.origin,p);mesh.position.set(x,y,z+terrainAt(x,y));
  }
  update(state,dt,now){
   if(!state?.car)return;
@@ -580,8 +682,11 @@ export class CityScene3D{
     w.wheel.rotation.x+=car.speed*dt/.38;w.steerGroup.rotation.z=w.front?car.steering*.42:0;
    }
   }
-  if(state.rival?.pos){this.position(this.rival,state.rival.pos,.18);this.rival.rotation.z=-state.rival.heading}
-  else this.rival.visible=false;
+  if(state.rival?.pos){
+   this.position(this.rival,state.rival.pos,.18);this.rival.rotation.z=-state.rival.heading;
+   this.position(this.rivalBeacon,state.rival.pos,5.2);this.rivalBeacon.quaternion.copy(this.camera.quaternion);
+   this.position(this.rivalPole,state.rival.pos,3.4);
+  }else{this.rival.visible=false;this.rivalBeacon.visible=false;this.rivalPole.visible=false;}
   this.npcs.forEach((m,i)=>{
    const npc=state.traffic?.[i];this.position(m,npc?.pos,.18);
    if(npc?.pos)m.rotation.z=-(npc.visualHeading??npc.heading);
@@ -677,9 +782,10 @@ export class CityScene3D{
    }
    this.safeFollow=safeFollow;
   }else if(!hood)safeFollow=this.safeFollow??horizontal;
-  const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,height+(safeFollow<horizontal?1.3:0));
+  const ground=terrainAt(cx,cy);
+  const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,ground+height+(safeFollow<horizontal?1.3:0));
   const lookDistance=hood?22:wide?20:15.5;
-  const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,hood?1.78:1.65);
+  const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,ground+(hood?1.78:1.65));
   if(hood)this.player.visible=false;else this.player.visible=true;
   if(!this.inited){this.camPos.copy(eye);this.camLook.copy(target);this.inited=true}
   // Responsive camera and speed-dependent FOV make forward movement perceptible.
@@ -698,6 +804,7 @@ export class CityScene3D{
   this.camera.position.copy(this.camPos);this.camera.lookAt(this.camLook);
   this.sky.position.copy(this.camera.position);
   // Guest signs billboard to player only after camera aim settles.
+  if(this.rivalBeacon.visible)this.rivalBeacon.quaternion.copy(this.camera.quaternion);
   if(this.guest.visible)this.guest.userData.label.quaternion.copy(this.camera.quaternion);
   if(this.dropoffGate.visible)this.dropoffGate.userData.label.quaternion.copy(this.camera.quaternion);
   this.renderer.render(this.scene,this.camera);
