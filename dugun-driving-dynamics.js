@@ -13,9 +13,9 @@ export function travelMeters(point,heading,meters){
 export function roadHalfWidth(road){
  const kind=road?.typ||"";
  const statedWidth=Number(road?.width),lanes=Number(road?.lanes);
- if(Number.isFinite(statedWidth)&&statedWidth>4)return clamp(statedWidth/2,2.5,10.5);
- if(Number.isFinite(lanes)&&lanes>=2)return clamp((lanes*3.05+2.2)/2,3.85,10.5);
- return /^(trunk|primary)/.test(kind)?7.5:/^secondary/.test(kind)?6.0:/^(tertiary)/.test(kind)?5.0:/^(service|living_street)/.test(kind)?3.2:4.05;
+ if(Number.isFinite(statedWidth)&&statedWidth>4)return clamp(statedWidth/2,2.5,17);
+ if(Number.isFinite(lanes)&&lanes>=2)return clamp((lanes*3.05+2.2)/2,3.85,17);
+ return /^motorway$/.test(kind)?14.5:/^motorway_link/.test(kind)?4.9:/^(trunk|primary)/.test(kind)?7.5:/^secondary/.test(kind)?6.0:/^(tertiary)/.test(kind)?5.0:/^(service|living_street)/.test(kind)?3.2:4.05;
 }
 export function evaluateTurn(nav,position,heading,speed){
  if(!nav?.ready)return {error:0,curve:0,limit:Infinity,valid:false};
