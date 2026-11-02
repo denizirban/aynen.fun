@@ -1,4 +1,4 @@
-import {distance,angle,turn,rad} from "./dugun-istanbul-map.js?v=20261102-v10";
+import {distance,angle,turn,rad} from "./dugun-istanbul-map.js?v=20261102-v12";
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const metresPerLon=lat=>111320*Math.cos(lat*rad);
 function projection(p,a,b){
