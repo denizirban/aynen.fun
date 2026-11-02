@@ -13,8 +13,36 @@ const toXY=(o,p)=>{const x=(p[0]-o[0])*111320*Math.cos((p[1]+o[1])*.5*rad),y=(p[
 const color=(hex)=>new THREE.Color(hex);
 const windowMat=new THREE.MeshStandardMaterial({color:0x759aab,emissive:0x14262c,emissiveIntensity:.28,roughness:.28,metalness:.25,side:THREE.DoubleSide});
 const lightMat=new THREE.MeshStandardMaterial({color:0xe5c899,emissive:0xc88c4b,emissiveIntensity:.30,side:THREE.DoubleSide});
-const roadMat=new THREE.MeshStandardMaterial({color:0x41474a,roughness:1});
-const pavementMat=new THREE.MeshStandardMaterial({color:0xc4b8a1,roughness:.97});
+
+function noiseTexture(kind){
+ const canvas=document.createElement("canvas"),size=256;canvas.width=canvas.height=size;
+ const c=canvas.getContext("2d"),image=c.createImageData(size,size);
+ const asphalt=kind==="asphalt";
+ let seed=asphalt?918222:14929;
+ function next(){seed=(1664525*seed+1013904223)>>>0;return seed/4294967296;}
+ for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+  const off=(y*size+x)*4;
+  const grain=(next()-.5)*(asphalt?43:24),base=asphalt?103:178;
+  const fine=asphalt&&(x%3===0&&y%3===1)?-7:0;
+  const variation=(Math.sin(x*.25)+Math.cos(y*.25))*(asphalt?2.5:1.5);
+  const lum=Math.max(15,Math.min(240,base+grain+fine+variation));
+  image.data[off]=lum;image.data[off+1]=lum+(asphalt?2:0);
+  image.data[off+2]=lum+(asphalt?4:-8);image.data[off+3]=255;
+ }
+ c.putImageData(image,0,0);
+ if(!asphalt){
+  c.strokeStyle="rgba(91,82,68,.18)";c.lineWidth=2;
+  for(let i=0;i<size;i+=42){c.beginPath();c.moveTo(i,0);c.lineTo(i,size);c.stroke();c.beginPath();c.moveTo(0,i);c.lineTo(size,i);c.stroke()}
+ }
+ const texture=new THREE.CanvasTexture(canvas);
+ texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
+ texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;
+ texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;
+ return texture;
+}
+
+const roadMat=new THREE.MeshStandardMaterial({color:0xb7bdc0,map:noiseTexture("asphalt"),roughness:1,metalness:0});
+const pavementMat=new THREE.MeshStandardMaterial({color:0xe2d5c2,map:noiseTexture("pavement"),roughness:.97});
 const curbMat=new THREE.MeshStandardMaterial({color:0xf2e2c5,roughness:.88});
 const lineMat=new THREE.MeshBasicMaterial({color:0xf4e6c3,side:THREE.DoubleSide});
 const yellowMat=new THREE.MeshBasicMaterial({color:0xffcc6c,side:THREE.DoubleSide});
@@ -35,7 +63,11 @@ function batchStrips(list,mat,container){
  if(!list.positions.length)return;
  const geo=new THREE.BufferGeometry();
  geo.setAttribute("position",new THREE.Float32BufferAttribute(list.positions,3));
- geo.setIndex(list.indices);geo.computeVertexNormals();
+ geo.setIndex(list.indices);
+ const coords=[];
+ for(let i=0;i<list.positions.length;i+=3){coords.push(list.positions[i]/7,list.positions[i+1]/7)}
+ geo.setAttribute("uv",new THREE.Float32BufferAttribute(coords,2));
+ geo.computeVertexNormals();
  const m=new THREE.Mesh(geo,mat);m.receiveShadow=true;container.add(m);
 }
 const empty=()=>({positions:[],indices:[]});
@@ -278,7 +310,7 @@ export class CityScene3D{
  constructor(city){
   this.city=city;this.origin=[...AREAS[city.area].center];this.mobile=window.innerWidth<700;this.canvas=document.getElementById("driving-canvas");
   this.renderer=new THREE.WebGLRenderer({canvas:this.canvas,antialias:!this.mobile,alpha:false,powerPreference:"high-performance"});
-  this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,this.mobile?1.3:1.65));
+  this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,this.mobile?1.18:1.5));
   this.renderer.outputColorSpace=THREE.SRGBColorSpace;
   this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
   this.renderer.toneMappingExposure=1.38;
@@ -356,7 +388,7 @@ export class CityScene3D{
   this.camStyle=((style%3)+3)%3;
   return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
  }
- setOrigin(point){this.origin=[...point];this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
+ setOrigin(point){this.origin=[...point];this.inited=false;this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
 
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
  rebuild(force=false){
@@ -426,7 +458,8 @@ export class CityScene3D{
    else model.visible=false;
   }
 
-  this.player.rotation.y=-car.steering*.065;
+  this.player.rotation.y=-car.steering*.065-(car.slip||0)*.045;
+  this.player.rotation.z=-car.heading+(car.slip||0)*.055;
   // Handbrake tracks are part of the actual asphalt scene, not hidden GIS overlays.
   if(state.controls?.handbrake&&Math.abs(car.speed)>7&&this.lastCarPos){
    const d=distance(this.lastCarPos,car.pos);
@@ -453,7 +486,7 @@ export class CityScene3D{
   else this.rival.visible=false;
   this.npcs.forEach((m,i)=>{
    const npc=state.traffic?.[i];this.position(m,npc?.pos,.18);
-   if(npc?.pos)m.rotation.z=-npc.heading;
+   if(npc?.pos)m.rotation.z=-(npc.visualHeading??npc.heading);
   });
   const path=state.route||[],sampled=[];
   if(path.length>1){
@@ -518,7 +551,7 @@ export class CityScene3D{
     this.guest.visible=false;this.position(this.dropoffGate,target,.14);
     this.dropoffGate.userData.label.quaternion.copy(this.camera.quaternion);
    }
-  }else{this.guest.visible=false;this.dropoffGate.visible=false;}
+  }else{this.guest.visible=false;this.dropoffGate.visible=false;this.marker.visible=false;}
   // Proper physical 3D chase camera behind the car, not a zoomed overhead GIS camera.
   const [cx,cy]=toXY(this.origin,car.pos),fwdX=Math.sin(car.heading),fwdY=Math.cos(car.heading);
   if(this.sunlight&&!this.mobile){
@@ -533,7 +566,8 @@ export class CityScene3D{
   const speed=Math.abs(car.speed),wide=this.camStyle===1,hood=this.camStyle===2;
   const horizontal=hood?-1.7:(wide?clamp(16+speed*.14,16,21):clamp(9.6+speed*.09,9.6,12.2));
   const height=hood?1.65:(wide?7.6:4.45)+speed*.022;
-  const eye=new THREE.Vector3(cx-fwdX*horizontal,cy-fwdY*horizontal,height);
+  const lateral=(car.slip||0)*.38+(car.steering||0)*Math.min(1,speed/16)*.45;
+  const eye=new THREE.Vector3(cx-fwdX*horizontal+fwdY*lateral,cy-fwdY*horizontal-fwdX*lateral,height);
   const lookDistance=hood?27:wide?27:21;
   const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,hood?1.78:1.65);
   if(hood)this.player.visible=false;else this.player.visible=true;

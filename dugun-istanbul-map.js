@@ -125,6 +125,14 @@ export class IstanbulMap{
   }
   return false;
  }
+ nearestAny(point){
+  let result=null;
+  for(const road of this.roads){
+   const z=nearestOnSegment(point,road.a,road.b);
+   if(!result||z.dist<result.dist)result={...z,road};
+  }
+  return result;
+ }
  nearest(point){
   let result=null;
   for(const r of this.roads){
