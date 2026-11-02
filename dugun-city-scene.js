@@ -316,6 +316,23 @@ export class CityScene3D{
   const car=state.car;
   this.position(this.player,car.pos,.18);this.player.rotation.z=-car.heading;
   this.player.rotation.y=-car.steering*.065;
+  // Handbrake tracks are part of the actual asphalt scene, not hidden GIS overlays.
+  if(state.controls?.handbrake&&Math.abs(car.speed)>7&&this.lastCarPos){
+   const d=distance(this.lastCarPos,car.pos);
+   if(d>.13&&d<3.5){
+    const prev=toXY(this.origin,this.lastCarPos),nowXY=toXY(this.origin,car.pos);
+    const skidMaterial=new THREE.MeshBasicMaterial({color:0x151e25,transparent:true,opacity:.51,depthWrite:false,side:THREE.DoubleSide});
+    for(const side of [-1,1]){
+     const skid=new THREE.Mesh(new THREE.PlaneGeometry(.18,Math.max(.22,d)),skidMaterial);
+     const lateral=side*.57;
+     skid.position.set((prev[0]+nowXY[0])*.5+Math.cos(car.heading)*lateral,(prev[1]+nowXY[1])*.5-Math.sin(car.heading)*lateral,.175);
+     skid.rotation.z=-car.heading;this.actorGroup.add(skid);this.skids.push(skid);
+    }
+    while(this.skids.length>90){const old=this.skids.shift();this.actorGroup.remove(old);old.geometry.dispose();}
+   }
+  }
+  this.lastCarPos=car.pos.slice();
+
   if(this.player.userData.wheels){
    for(const w of this.player.userData.wheels){
     w.wheel.rotation.x+=car.speed*dt/.38;w.steerGroup.rotation.z=w.front?car.steering*.42:0;
