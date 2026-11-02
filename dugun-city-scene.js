@@ -572,7 +572,10 @@ export class CityScene3D{
  constructor(city){
   this.city=city;this.origin=[...AREAS[city.area].center];this.mobile=window.innerWidth<700;this.canvas=document.getElementById("driving-canvas");
   this.renderer=new THREE.WebGLRenderer({canvas:this.canvas,antialias:!this.mobile,alpha:false,powerPreference:"high-performance"});
-  this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,this.mobile?1.18:1.5));
+  this.pixelRatioMax=Math.min(window.devicePixelRatio||1,this.mobile?1.18:1.5);
+  this.dynamicPixelRatio=this.pixelRatioMax;
+  this.framesObserved=0;this.timeObserved=0;this.lastQualityChange=0;
+  this.renderer.setPixelRatio(this.dynamicPixelRatio);
   this.renderer.outputColorSpace=THREE.SRGBColorSpace;
   this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
   this.renderer.toneMappingExposure=1.38;
@@ -738,6 +741,18 @@ export class CityScene3D{
  }
  update(state,dt,now){
   if(!state?.car)return;
+  // Render resolution follows performance, without jumping vehicle physics.
+  // Only reassess after several seconds to prevent oscillating resolution.
+  if(dt>.001&&dt<.10){this.framesObserved++;this.timeObserved+=dt}
+  if(this.timeObserved>3.5&&now-this.lastQualityChange>3500){
+   const fps=this.framesObserved/this.timeObserved;
+   const target=fps<31?Math.max(this.mobile?.82:.95,this.dynamicPixelRatio-.13):
+                fps>51?Math.min(this.pixelRatioMax,this.dynamicPixelRatio+.10):this.dynamicPixelRatio;
+   if(Math.abs(target-this.dynamicPixelRatio)>.035){
+    this.dynamicPixelRatio=target;this.renderer.setPixelRatio(target);
+   }
+   this.lastQualityChange=now;this.framesObserved=0;this.timeObserved=0;
+  }
   this.focus=state.car.pos;
   if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>130))this.rebuild();
   const car=state.car;
