@@ -203,6 +203,9 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
  #panel p{margin:4px 0 7px}
  #panel .feature-row{margin:6px 0 9px}
 }
+#record{margin-top:5px;color:#f2e7c5;font-size:11px;font-weight:900;letter-spacing:.045em}
+#record span{color:#d9ffa2;margin-left:7px}
+@media(max-width:700px){#record{font-size:9px;margin-top:2px}}
 </style>
 </head>
 <body>
@@ -211,7 +214,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 <div id="game">
  <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / İSTANBUL 3D</span><div class="header-end"><button class="glass-button" id="camera" type="button" aria-label="Kamera açısını değiştir">KAMERA: TAKİP</button><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
  <section id="hud" aria-label="Oyunun göstergeleri">
-  <div id="time-box"><span class="kicker">KALAN SÜRE</span><div id="time">03:00</div><div class="money" id="money">₺0</div></div>
+  <div id="time-box"><span class="kicker">KALAN SÜRE</span><div id="time">03:00</div><div class="money" id="money">₺0</div><div id="record">REKOR <span id="bestmoney">₺0</span></div></div>
   <div id="speed-panel"><div class="kicker">HIZ</div><div id="speed">0</div><div class="unit">KM / SA</div><div id="car-health">ARAÇ %100</div><button id="rescue" type="button" aria-label="Araç sıkıştıysa yola geri dön">YOLA DÖN <span>R</span></button><button id="lighting" type="button" aria-label="Gündüz, altın saat veya akşam ışığını seç">GÜNDÜZ</button></div>
   <div id="mission"><div id="mission-state">MİSAFİR BEKLİYOR</div><div id="mission-name">İstanbul sokaklarında...</div><div id="mission-info">Yol ağı yükleniyor.</div><div id="mission-distance">—</div><div id="mission-timer"></div></div>
   <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas></div>
