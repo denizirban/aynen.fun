@@ -642,6 +642,7 @@ export class CityScene3D{
   this.guest=makeGuestActor();this.dropoffGate=makeDropoffGate();
   this.actorGroup.add(this.guest,this.dropoffGate);this.guest.visible=false;this.dropoffGate.visible=false;
   this.camStyle=0;this.camPos=new THREE.Vector3();this.camLook=new THREE.Vector3();this.inited=false;
+  this.bodyPitch=0;this.bodyRoll=0;this.lastDrivingSpeed=0;
   this.lastBuilt=0;this.builtAt=null;this.builtRoads=null;this.builtBuildings=null;
   this.lastFPS=60;this.lastWarn=0;this.routeCache=null;
   window.addEventListener("resize",()=>this.resize());
@@ -766,8 +767,16 @@ export class CityScene3D{
    else model.visible=false;
   }
 
-  this.player.rotation.y=-car.steering*.065-(car.slip||0)*.045;
-  this.player.rotation.z=-car.heading+(car.slip||0)*.055;
+  const acceleration=clamp((car.speed-this.lastDrivingSpeed)/Math.max(.008,dt),-19,19);
+  this.lastDrivingSpeed=car.speed;
+  const desiredPitch=clamp(-acceleration*.010,-.10,.095);
+  const desiredRoll=clamp(-(car.yawRate||0)*Math.abs(car.speed)*.012-(car.slip||0)*.06,-.13,.13);
+  this.bodyPitch+=(desiredPitch-this.bodyPitch)*(1-Math.exp(-dt*6.2));
+  this.bodyRoll+=(desiredRoll-this.bodyRoll)*(1-Math.exp(-dt*5.3));
+  this.player.rotation.x=this.bodyPitch;
+  this.player.rotation.y=this.bodyRoll;
+  this.player.rotation.z=-car.heading+(car.slip||0)*.045;
+  this.player.position.z+=(car.suspension||0);
   // Handbrake tracks are part of the actual asphalt scene, not hidden GIS overlays.
   if(state.controls?.handbrake&&Math.abs(car.speed)>7&&this.lastCarPos){
    const d=distance(this.lastCarPos,car.pos);
@@ -893,7 +902,9 @@ export class CityScene3D{
   const ground=terrainAt(cx,cy);
   const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,ground+height+(safeFollow<horizontal?1.3:0));
   const lookDistance=hood?22:wide?20:15.5;
-  const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,ground+(hood?1.78:1.65));
+  const turnPreview=clamp((car.yawRate||0)*1.65,-.40,.40);
+  const target=new THREE.Vector3(cx+fwdX*lookDistance+fwdY*turnPreview*7,
+   cy+fwdY*lookDistance-fwdX*turnPreview*7,ground+(hood?1.78:1.65));
   if(hood)this.player.visible=false;else this.player.visible=true;
   if(!this.inited){this.camPos.copy(eye);this.camLook.copy(target);this.inited=true}
   // Responsive camera and speed-dependent FOV make forward movement perceptible.
@@ -903,7 +914,7 @@ export class CityScene3D{
    this.camera.fov+=(desiredFov-this.camera.fov)*(1-Math.exp(-dt*3.8));
    this.camera.updateProjectionMatrix();
   }
-  const softness=1-Math.exp(-dt*9.5),lookSoft=1-Math.exp(-dt*7.8);
+  const softness=1-Math.exp(-dt*8.0),lookSoft=1-Math.exp(-dt*6.5);
   this.camPos.lerp(eye,softness);this.camLook.lerp(target,lookSoft);
   if(!hood&&this.city.insideBuilding){
    const p=[this.origin[0]+this.camPos.x/(111320*Math.cos(this.origin[1]*rad)),this.origin[1]+this.camPos.y/111320];
