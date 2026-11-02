@@ -1,12 +1,19 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v8";
-import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v7";
+import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v9";
+import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v9";
 
 // The road graph and building outlines come from the real OSM vector tiles.
 // This is a standalone ground-level Three.js scene, NOT a tilted map layer.
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const hash=(a,b=0)=>{let n=Math.sin(a*12.9898+b*78.233)*43758.545;return n-Math.floor(n)};
-const roadWidth=type=>/^(primary|trunk)/.test(type)?15:/^(secondary)/.test(type)?12:/^(tertiary)/.test(type)?10:/^(service|living_street)/.test(type)?5.7:7.6;
+const roadWidth=road=>{
+ const type=typeof road==="string"?road:road?.typ||"";
+ const defaultWidth=/^(primary|trunk)/.test(type)?15:/^secondary/.test(type)?12:/^tertiary/.test(type)?10:/^(service|living_street)/.test(type)?5.7:7.8;
+ const lanes=typeof road==="object"?road.lanes:null,width=typeof road==="object"?road.width:null;
+ if(Number.isFinite(width)&&width>3)return clamp(width,5,21);
+ if(Number.isFinite(lanes)&&lanes>=2)return clamp(lanes*3.05+2.2,7.7,21);
+ return defaultWidth;
+};
 const buildingColors=["#d8c5ac","#eccfb2","#f2d6bd","#b2c5b9","#c5bfd0","#d9d9ca","#ebbaa7","#b1c3c6","#ead8c4","#c9d2b5"];
 const shopColors=["#b83e52","#3f8182","#ba754e","#4f8475","#e2b15a"];
 const toXY=(o,p)=>{const x=(p[0]-o[0])*111320*Math.cos((p[1]+o[1])*.5*rad),y=(p[1]-o[1])*111320;return [x,y]};
@@ -115,7 +122,7 @@ function addStreetProps(group,origin,roads,mobile){
  const places=[],lamps=[],people=[];
  for(let i=0;i<roads.length;i++){
   const r=roads[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
-  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy),w=roadWidth(r.typ);
+  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy),w=roadWidth(r);
   if(len<6)continue;
   for(let j=0;j<Math.floor(len/24);j++){
    const t=(j+.4)/(Math.floor(len/24)),px=a[0]+dx*t,py=a[1]+dy*t;
@@ -148,60 +155,146 @@ function addStreetProps(group,origin,roads,mobile){
  });
  group.add(torso,headPeople);
 }
+function roadJunctions(roads,origin,limit){
+ const nodes=new Map();
+ const cell=(p)=>{const xy=toXY(origin,p);return Math.round(xy[0]/1.7)+":"+Math.round(xy[1]/1.7)};
+ for(const r of roads){
+  for(const p of [r.a,r.b]){
+   const k=cell(p);
+   let n=nodes.get(k);
+   if(!n){n={p:toXY(origin,p),degree:0,width:0,types:new Set(),used:0};nodes.set(k,n)}
+   n.degree++;
+   n.width=Math.max(n.width,roadWidth(r));
+   n.types.add(r.typ);
+  }
+ }
+ return [...nodes.values()].filter(n=>n.degree>=3&&n.types.size>=1)
+ .sort((a,b)=>Math.hypot(a.p[0],a.p[1])-Math.hypot(b.p[0],b.p[1]))
+ .slice(0,limit);
+}
+function addIntersectionDisk(out,x,y,r,z){
+ const seg=14,i=out.positions.length/3,h=terrainAt(x,y)+z;
+ out.positions.push(x,y,h);
+ for(let k=0;k<=seg;k++){
+  const t=k/seg*Math.PI*2,xx=x+Math.cos(t)*r,yy=y+Math.sin(t)*r;
+  out.positions.push(xx,yy,z+terrainAt(xx,yy));
+ }
+ for(let k=1;k<=seg;k++)out.indices.push(i,i+k,i+k+1);
+}
 function createRoads(group,origin,roads,mobile){
- const sidewalk=empty(),asphalt=empty(),curbs=empty(),markings=empty(),sideLine=empty();
- const max=mobile?520:1400;
- // Always retain the roads immediately around the car, regardless of tile ordering.
- // The old first-N slice could omit all roads near the visible chase camera.
+ const sidewalk=empty(),asphalt=empty(),intersection=empty(),curbs=empty(),
+  markings=empty(),sideLine=empty(),stopBars=empty();
+ const max=mobile?560:1550;
  const near=roads.filter(r=>{
-  const c=[(r.a[0]+r.b[0])*.5,(r.a[1]+r.b[1])*.5];
-  return Math.min(distance(c,origin),distance(r.a,origin),distance(r.b,origin))<(mobile?415:570);
- }).sort((a,b)=>{
-  const da=Math.min(distance(a.a,origin),distance(a.b,origin));
-  const db=Math.min(distance(b.a,origin),distance(b.b,origin));
-  return da-db;
- }).slice(0,max);
+  const center=[(r.a[0]+r.b[0])*.5,(r.a[1]+r.b[1])*.5];
+  return Math.min(distance(center,origin),distance(r.a,origin),distance(r.b,origin))<(mobile?425:590);
+ }).sort((a,b)=>Math.min(distance(a.a,origin),distance(a.b,origin))-Math.min(distance(b.a,origin),distance(b.b,origin))).slice(0,max);
+ // Draw actual filled connected road intersections instead of disconnected ribbons.
+ const junctions=roadJunctions(near,origin,mobile?90:180);
+ const squares=new Map(),index=(p)=>{const xy=toXY(origin,p);return Math.round(xy[0]/1.7)+":"+Math.round(xy[1]/1.7)};
+ for(const j of junctions){
+  squares.set(Math.round(j.p[0]/1.7)+":"+Math.round(j.p[1]/1.7),j);
+  addIntersectionDisk(intersection,j.p[0],j.p[1],Math.max(3,j.width*.52),.146);
+ }
  for(let i=0;i<near.length;i++){
   const r=near[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
   const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
-  if(len<1)continue;
-  const ux=dx/len,uy=dy/len,nx=-uy,ny=ux,width=roadWidth(r.typ);
-  emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.6,.085);
-  emitQuad(asphalt.positions,asphalt.indices,a,b,width,.115);
-  // Light kerbs and pavement edges.
-  for(const k of [-1,1]){
+  if(len<1.0)continue;
+  const ux=dx/len,uy=dy/len,nx=-uy,ny=ux,width=roadWidth(r);
+  emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.7,.105);
+  emitQuad(asphalt.positions,asphalt.indices,a,b,width,.147);
+  for(const sign of [-1,1]){
    emitQuad(curbs.positions,curbs.indices,
-     [a[0]+nx*k*(width/2+.07),a[1]+ny*k*(width/2+.07)],
-     [b[0]+nx*k*(width/2+.07),b[1]+ny*k*(width/2+.07)],.18,.145);
+     [a[0]+nx*sign*(width*.5+.10),a[1]+ny*sign*(width*.5+.10)],
+     [b[0]+nx*sign*(width*.5+.10),b[1]+ny*sign*(width*.5+.10)],.24,.179);
   }
-  if(width>=9){
-   for(let d=5;d<len-1;d+=14){
-    const v=Math.min(5.8,len-d),p=[a[0]+ux*d,a[1]+uy*d],q=[a[0]+ux*(d+v),a[1]+uy*(d+v)];
-    emitQuad(markings.positions,markings.indices,p,q,.14,.16);
+  // Asphalt edge shoulder line for medium roads and larger.
+  if(width>=9.5){
+   for(const side of [-1,1])emitQuad(sideLine.positions,sideLine.indices,
+    [a[0]+nx*side*(width*.5-.56),a[1]+ny*side*(width*.5-.56)],
+    [b[0]+nx*side*(width*.5-.56),b[1]+ny*side*(width*.5-.56)],.10,.211);
+  }
+  // White broken lane lines in the Turkish driving direction, never in short alleys.
+  if(width>=9.4&&len>11){
+   for(let d=5;d<len-2;d+=12){
+    const l=Math.min(5.4,len-d-1),p=[a[0]+ux*d,a[1]+uy*d],q=[p[0]+ux*l,p[1]+uy*l];
+    emitQuad(markings.positions,markings.indices,p,q,.13,.211);
    }
   }
-  if(width>=11){
-   for(const k of [-1,1]){
-    emitQuad(sideLine.positions,sideLine.indices,
-    [a[0]+nx*k*(width*.5-.42),a[1]+ny*k*(width*.5-.42)],
-    [b[0]+nx*k*(width*.5-.42),b[1]+ny*k*(width*.5-.42)],.095,.159);
-   }
-  }
-  if(i%9===0&&len>16){
-   // Pedestrian crossings at real intersections, not randomly floating scenery.
-   for(let z=-3;z<=3;z++){
-    const off=z*1.0,at=Math.min(len-2,3.8);
-    const p=[a[0]+ux*at+nx*off,a[1]+uy*at+ny*off];
-    const q=[p[0]+ux*2.65,p[1]+uy*2.65];
-    emitQuad(markings.positions,markings.indices,p,q,.50,.163);
+  // Zebra crossings and stop bars are placed only at mapped 3+ way junctions.
+  if(len>11){
+   for(const endpoint of [0,1]){
+    const node=squares.get(index(endpoint===0?r.a:r.b));
+    if(!node)continue;
+    const inward=endpoint===0?1:-1;
+    const sx=(endpoint===0?a[0]:b[0])+ux*inward*4.2;
+    const sy=(endpoint===0?a[1]:b[1])+uy*inward*4.2;
+    const count=Math.max(4,Math.min(10,Math.floor((width-1.6)/.95)));
+    for(let k=0;k<count;k++){
+     const lateral=(k-(count-1)/2)*.98;
+     const p=[sx+nx*lateral-ux*.95,sy+ny*lateral-uy*.95];
+     const q=[sx+nx*lateral+ux*.95,sy+ny*lateral+uy*.95];
+     emitQuad(markings.positions,markings.indices,p,q,.53,.224);
+    }
+    const p=[sx+ux*inward*3+nx*(width*.46),sy+uy*inward*3+ny*(width*.46)];
+    const q=[sx+ux*inward*3-nx*(width*.46),sy+uy*inward*3-ny*(width*.46)];
+    emitQuad(stopBars.positions,stopBars.indices,p,q,.26,.223);
    }
   }
  }
  batchStrips(sidewalk,pavementMat,group);batchStrips(asphalt,roadMat,group);
- batchStrips(curbs,curbMat,group);batchStrips(markings,lineMat,group);batchStrips(sideLine,lineMat,group);
+ batchStrips(intersection,roadMat,group);batchStrips(curbs,curbMat,group);
+ batchStrips(markings,lineMat,group);batchStrips(stopBars,lineMat,group);batchStrips(sideLine,lineMat,group);
  addStreetProps(group,origin,near,mobile);
  return near;
 }
+
+function renderRealParks(group,origin,parks,mobile){
+ const materials={
+  park:new THREE.MeshStandardMaterial({color:0x679d6b,roughness:1,side:THREE.DoubleSide}),
+  wood:new THREE.MeshStandardMaterial({color:0x4e865a,roughness:1,side:THREE.DoubleSide}),
+  grass:new THREE.MeshStandardMaterial({color:0x87ad72,roughness:1,side:THREE.DoubleSide})
+ };
+ let count=0;
+ for(const park of (parks||[])){
+  const ring=park.ring;if(!ring||ring.length<3)continue;
+  const xy=ring.map(p=>toXY(origin,p)),shape=new THREE.Shape();
+  shape.moveTo(...xy[0]);for(let i=1;i<xy.length;i++)shape.lineTo(...xy[i]);shape.closePath();
+  const geo=new THREE.ShapeGeometry(shape),pos=geo.attributes.position;
+  for(let i=0;i<pos.count;i++)pos.setZ(i,terrainAt(pos.getX(i),pos.getY(i))-.075);
+  geo.computeVertexNormals();
+  const material=/wood|forest/.test(park.cls)?materials.wood:/grass/.test(park.cls)?materials.grass:materials.park;
+  const mesh=new THREE.Mesh(geo,material);mesh.receiveShadow=true;mesh.renderOrder=0;group.add(mesh);
+  if(++count>=(mobile?32:60))break;
+ }
+ return count;
+}
+function renderParkedStreetCars(group,origin,roads,mobile,player){
+ const capped=mobile?5:12;
+ const palette=["#c4d1ca","#b78b82","#e2c9a1","#96aabd","#6f7f8b","#d1c4bb","#e7b85c"];
+ const positions=[];
+ for(let i=0;i<roads.length&&positions.length<capped;i++){
+  const r=roads[i];
+  const len=distance(r.a,r.b),dist=distance([(r.a[0]+r.b[0])*.5,(r.a[1]+r.b[1])*.5],player);
+  if(len<34||dist>275||dist<25||i%7!==0||/trunk|motorway/.test(r.typ))continue;
+  const point=[r.a[0]+(r.b[0]-r.a[0])*.42,r.a[1]+(r.b[1]-r.a[1])*.42];
+  const heading=Math.atan2((r.b[0]-r.a[0])*Math.cos(point[1]*rad),r.b[1]-r.a[1]);
+  const side=i%2?-1:1;
+  const width=roadWidth(r)*.5;
+  const p=[point[0]+Math.sin(heading+side*Math.PI/2)*(width-1.3)/(111320*Math.cos(point[1]*rad)),
+    point[1]+Math.cos(heading+side*Math.PI/2)*(width-1.3)/111320];
+  positions.push({pos:p,heading:heading+(side<0?Math.PI:0),style:i});
+ }
+ for(const parked of positions){
+  const model=makeCar(parked.style%5===0?"doblo":"sahin",palette[parked.style%palette.length]);
+  const xy=toXY(origin,parked.pos);
+  model.position.set(xy[0],xy[1],terrainAt(...xy)+.15);
+  model.rotation.z=-parked.heading;
+  model.traverse(obj=>{if(obj.isMesh)obj.castShadow=false});
+  group.add(model);
+ }
+}
+
 function addBuildings(group,origin,raw,mobile){
  const buildings=raw.filter(b=>{
   const c=[(b.minX+b.maxX)*.5,(b.minY+b.maxY)*.5];
@@ -409,7 +502,7 @@ function addNeighborhoodDetails(group,origin,roads,mobile){
   const r=near[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
   const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
   if(len<13)continue;
-  const nx=-dy/len,ny=dx/len,side=i%2===0?1:-1,dist=roadWidth(r.typ)*.5;
+  const nx=-dy/len,ny=dx/len,side=i%2===0?1:-1,dist=roadWidth(r)*.5;
   const x=(a[0]+b[0])*.5+side*nx*(dist+2.3),y=(a[1]+b[1])*.5+side*ny*(dist+2.3);
   const v=hash(Math.round(x*1.33),Math.round(y*2.77));
   if(v>.60&&signPositions.length<(mobile?8:18)){
@@ -479,7 +572,10 @@ export class CityScene3D{
  constructor(city){
   this.city=city;this.origin=[...AREAS[city.area].center];this.mobile=window.innerWidth<700;this.canvas=document.getElementById("driving-canvas");
   this.renderer=new THREE.WebGLRenderer({canvas:this.canvas,antialias:!this.mobile,alpha:false,powerPreference:"high-performance"});
-  this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,this.mobile?1.18:1.5));
+  this.pixelRatioMax=Math.min(window.devicePixelRatio||1,this.mobile?1.18:1.5);
+  this.dynamicPixelRatio=this.pixelRatioMax;
+  this.framesObserved=0;this.timeObserved=0;this.lastQualityChange=0;
+  this.renderer.setPixelRatio(this.dynamicPixelRatio);
   this.renderer.outputColorSpace=THREE.SRGBColorSpace;
   this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
   this.renderer.toneMappingExposure=1.38;
@@ -549,6 +645,7 @@ export class CityScene3D{
   this.guest=makeGuestActor();this.dropoffGate=makeDropoffGate();
   this.actorGroup.add(this.guest,this.dropoffGate);this.guest.visible=false;this.dropoffGate.visible=false;
   this.camStyle=0;this.camPos=new THREE.Vector3();this.camLook=new THREE.Vector3();this.inited=false;
+  this.bodyPitch=0;this.bodyRoll=0;this.lastDrivingSpeed=0;
   this.lastBuilt=0;this.builtAt=null;this.builtRoads=null;this.builtBuildings=null;
   this.lastFPS=60;this.lastWarn=0;this.routeCache=null;
   window.addEventListener("resize",()=>this.resize());
@@ -616,9 +713,10 @@ export class CityScene3D{
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
   terrainAt=terrainModel(city.area,this.origin);
   makeGround(this.worldGroup);
+  this.visibleParkCount=renderRealParks(this.worldGroup,this.origin,city.parks,this.mobile);
   this.visibleWater=addWater(this.worldGroup,this.origin,city.water,this.mobile);
   addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
-  if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile)}
+  if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile);renderParkedStreetCars(this.worldGroup,this.origin,visibleRoads,this.mobile,this.focus||this.origin)}
   else{
    // Visible drivable street while streaming real vector tiles.
    const temporary=[];
@@ -643,6 +741,18 @@ export class CityScene3D{
  }
  update(state,dt,now){
   if(!state?.car)return;
+  // Render resolution follows performance, without jumping vehicle physics.
+  // Only reassess after several seconds to prevent oscillating resolution.
+  if(dt>.001&&dt<.10){this.framesObserved++;this.timeObserved+=dt}
+  if(this.timeObserved>3.5&&now-this.lastQualityChange>3500){
+   const fps=this.framesObserved/this.timeObserved;
+   const target=fps<31?Math.max(this.mobile?.82:.95,this.dynamicPixelRatio-.13):
+                fps>51?Math.min(this.pixelRatioMax,this.dynamicPixelRatio+.10):this.dynamicPixelRatio;
+   if(Math.abs(target-this.dynamicPixelRatio)>.035){
+    this.dynamicPixelRatio=target;this.renderer.setPixelRatio(target);
+   }
+   this.lastQualityChange=now;this.framesObserved=0;this.timeObserved=0;
+  }
   this.focus=state.car.pos;
   if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>130))this.rebuild();
   const car=state.car;
@@ -672,8 +782,16 @@ export class CityScene3D{
    else model.visible=false;
   }
 
-  this.player.rotation.y=-car.steering*.065-(car.slip||0)*.045;
-  this.player.rotation.z=-car.heading+(car.slip||0)*.055;
+  const acceleration=clamp((car.speed-this.lastDrivingSpeed)/Math.max(.008,dt),-19,19);
+  this.lastDrivingSpeed=car.speed;
+  const desiredPitch=clamp(-acceleration*.010+(car.grade||0)*.38,-.11,.11);
+  const desiredRoll=clamp(-(car.yawRate||0)*Math.abs(car.speed)*.012-(car.slip||0)*.06,-.13,.13);
+  this.bodyPitch+=(desiredPitch-this.bodyPitch)*(1-Math.exp(-dt*6.2));
+  this.bodyRoll+=(desiredRoll-this.bodyRoll)*(1-Math.exp(-dt*5.3));
+  this.player.rotation.x=this.bodyPitch;
+  this.player.rotation.y=this.bodyRoll;
+  this.player.rotation.z=-car.heading+(car.slip||0)*.045;
+  this.player.position.z+=(car.suspension||0);
   // Handbrake tracks are part of the actual asphalt scene, not hidden GIS overlays.
   if(state.controls?.handbrake&&Math.abs(car.speed)>7&&this.lastCarPos){
    const d=distance(this.lastCarPos,car.pos);
@@ -705,7 +823,7 @@ export class CityScene3D{
    const npc=state.traffic?.[i];this.position(m,npc?.pos,.18);
    if(npc?.pos)m.rotation.z=-(npc.visualHeading??npc.heading);
   });
-  const path=state.route||[],sampled=[];
+  const path=state.navValid?(state.route||[]):[],sampled=[];
   if(path.length>1){
    let carried=0,next=Math.max(9,(state.navProgress||0)+11);
    for(let i=1;i<path.length&&sampled.length<this.guides.length;i++){
@@ -799,7 +917,9 @@ export class CityScene3D{
   const ground=terrainAt(cx,cy);
   const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,ground+height+(safeFollow<horizontal?1.3:0));
   const lookDistance=hood?22:wide?20:15.5;
-  const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,ground+(hood?1.78:1.65));
+  const turnPreview=clamp((car.yawRate||0)*1.65,-.40,.40);
+  const target=new THREE.Vector3(cx+fwdX*lookDistance+fwdY*turnPreview*7,
+   cy+fwdY*lookDistance-fwdX*turnPreview*7,ground+(hood?1.78:1.65));
   if(hood)this.player.visible=false;else this.player.visible=true;
   if(!this.inited){this.camPos.copy(eye);this.camLook.copy(target);this.inited=true}
   // Responsive camera and speed-dependent FOV make forward movement perceptible.
@@ -809,7 +929,7 @@ export class CityScene3D{
    this.camera.fov+=(desiredFov-this.camera.fov)*(1-Math.exp(-dt*3.8));
    this.camera.updateProjectionMatrix();
   }
-  const softness=1-Math.exp(-dt*9.5),lookSoft=1-Math.exp(-dt*7.8);
+  const softness=1-Math.exp(-dt*8.0),lookSoft=1-Math.exp(-dt*6.5);
   this.camPos.lerp(eye,softness);this.camLook.lerp(target,lookSoft);
   if(!hood&&this.city.insideBuilding){
    const p=[this.origin[0]+this.camPos.x/(111320*Math.cos(this.origin[1]*rad)),this.origin[1]+this.camPos.y/111320];

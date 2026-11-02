@@ -1,6 +1,7 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v8";
-import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v8";
-import {StableNavigation} from "./dugun-navigation.js?v=20261102-v8";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v9";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v9";
+import {StableNavigation} from "./dugun-navigation.js?v=20261102-v9";
+import {stepVehicle,roadHalfWidth} from "./dugun-driving-dynamics.js?v=20261102-v9";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
  sahin:{accel:11.5,brake:18,top:27,grip:1.0},
@@ -127,7 +128,7 @@ function recoverCar(){
  earnings-=fee;
  if(!free)timer=Math.max(10,timer-(fee<150?8:2));
  car.pos=[...near.p];car.heading=angle(near.road.a,near.road.b);
- car.steering=0;car.speed=0;car.yawRate=0;car.slip=0;
+ car.steering=0;car.speed=0;car.yawRate=0;car.slip=0;car.velocityLateral=0;
  car.health=Math.min(100,car.health+28);
  rescueCooldown=28;
  if(render3D){render3D.inited=false;render3D.positionTrail=[];render3D.previousTrailPoint=null}
@@ -188,7 +189,7 @@ function startGame(unlimited){
  navigation.clear();lastNavState=null;
  hornCooldown=0;nearMissCooldown=0;deliveryStreak=0;hitCooldown=0;rescueCooldown=0;
  try{personalBest=Number(localStorage.getItem("dugun-3d-best-v3"))||0}catch(e){personalBest=0}
- car={pos:[...AREAS[area].center],speed:0,heading:0,steering:0,yawRate:0,slip:0,health:100,offroad:false};
+ car={pos:[...AREAS[area].center],speed:0,heading:0,steering:0,yawRate:0,slip:0,velocityLateral:0,suspension:0,suspensionVelocity:0,engineRPM:850,health:100,offroad:false};
  city.refresh(car.pos,true);
  const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
  if(near){car.pos=near.p;car.heading=angle(near.road.a,near.road.b)}
@@ -283,71 +284,23 @@ function deliver(who){
  nextMission();
 }
 function drive(dt){
- const spec=SPEC[kind],input=Number(keys.right)-Number(keys.left);
- const auto=driveMode==="easy";
+ const spec=SPEC[kind],auto=driveMode==="easy",previous=[...car.pos];
  tripElapsed+=dt;
- // Sensible steering at every speed: strong steering around junctions, smaller at high speed.
- const speedAbs=Math.abs(car.speed);
- const steeringLimit=clamp(.55/(1+speedAbs/24),.29,.55);
- let wanted=input*steeringLimit;
- // Continuous, non-teleporting assistance. Route ahead is fixed until a missed junction.
- // A manual steering press always takes precedence over lane assist.
- const roadBefore=city.nearest(car.pos)||city.nearestAny?.(car.pos);
- if(auto&&input===0&&car.speed>1){
-  const ahead=navigation.ready?navigation.at(Math.max(12,car.speed*1.7)):null;
-  const dir=ahead&&distance(car.pos,ahead)>5?turn(angle(car.pos,ahead),car.heading):0;
-  const safeRoute=roadBefore&&roadBefore.dist<11&&Math.abs(dir)<1.15;
-  if(safeRoute)wanted+=clamp(dir*.42,-.24,.24);
-  else if(roadBefore&&roadBefore.dist>3&&roadBefore.dist<10){
-   const toRoad=turn(angle(car.pos,roadBefore.p),car.heading);
-   if(Math.abs(toRoad)<.85)wanted+=clamp(toRoad*.12,-.12,.12);
-  }
+ // Sub-step integration keeps steering and grip stable at 30 / 60 / 120 Hz.
+ const substeps=Math.min(6,Math.max(1,Math.ceil(dt/.012)));
+ const grade=render3D?.getGroundHeight?(render3D.getGroundHeight(travel(car.pos,car.heading,5))-render3D.getGroundHeight(travel(car.pos,car.heading+Math.PI,5)))/10:0;
+ for(let i=0;i<substeps;i++){
+  const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
+  stepVehicle(car,keys,{mode:driveMode,spec,road:near,navigation,grade},dt/substeps);
  }
- wanted=clamp(wanted,-steeringLimit,steeringLimit);
- car.steering+=(wanted-car.steering)*(1-Math.exp(-dt*(auto?10.0:7.0)));
- const near=roadBefore;
- const width=near?/^(primary|trunk)/.test(near.road.typ)?11:/^(secondary)/.test(near.road.typ)?9:6.8:8;
- car.offroad=!!near&&near.dist>width;
- const cornering=Math.abs(car.steering)>steeringLimit*.50;
- const cruise=auto?(cornering?7.7:car.offroad?6.7:11.7):0; // ~28 km/h turns, 42 km/h straights.
- if(keys.brake){
-  brakeHold+=dt;
-  car.speed-=spec.brake*dt*(car.speed>0?1:.36);
- }else{
-  brakeHold=0;
-  if(auto){
-   const target=keys.gas?Math.min(spec.top,18.6):cruise;
-   const delta=target-car.speed;
-   car.speed+=clamp(delta,-(cornering?11:8)*dt,(keys.gas?17:14)*dt);
-  }else if(keys.gas){
-   car.speed+=spec.accel*1.55*dt*(1-.15*Math.max(0,car.speed)/spec.top);
-  }else{
-   const friction=2.6+.013*car.speed*car.speed;
-   car.speed-=Math.sign(car.speed)*Math.min(Math.abs(car.speed),friction*dt);
-  }
- }
- if(auto&&!keys.brake&&car.speed<-.10)car.speed=Math.min(0,car.speed+18*dt);
- // Do not put players in reverse the instant they tap BRAKE. Hold longer to reverse.
- if(auto&&keys.brake&&brakeHold<1.10)car.speed=Math.max(car.speed,0);
- if(keys.handbrake)car.speed*=Math.max(0,1-dt*.40);
- if(car.offroad)car.speed*=Math.max(.78,1-dt*(near.dist>17?1.30:.45));
- car.speed=clamp(car.speed,-5.2,spec.top*(car.offroad?.65:1));
- car.yawRate??=0;car.slip??=0;
- const grip=car.offroad?.76:1;
- const desiredYaw=clamp(car.speed/3.95*Math.tan(car.steering)*spec.grip*grip,-.83,.83);
- const slipTarget=keys.handbrake&&Math.abs(car.speed)>5?clamp(car.steering*Math.abs(car.speed)/12,-.70,.70):0;
- car.slip+=(slipTarget-car.slip)*(1-Math.exp(-dt*(keys.handbrake?4.0:6.8)));
- car.yawRate+=(desiredYaw-car.yawRate)*(1-Math.exp(-dt*(keys.handbrake?4.5:11.0)));
- car.heading=(car.heading+(car.yawRate*(keys.handbrake?1.15:1)+car.slip*.12)*dt+Math.PI*2)%(Math.PI*2);
- const previous=car.pos;
- car.pos=travel(car.pos,car.heading,car.speed*dt);
- // Physics owns position. No per-frame snapping, yanks, or slope-based speed impulses.
- // Those discontinuities caused the stationary bouncing seen in the user report.
+ const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
+ car.currentRoadName=near?.road?.name||"";
+ car.currentRoadClass=near?.road?.typ||"";
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
  if(city.insideBuilding?.(car.pos)){
   // Source building polygons sometimes overlap carriageways. Prefer the drivable road.
   const road=city.nearest(car.pos);
-  const safeRoadWidth=road?/^(primary|trunk)/.test(road.road.typ)?8:/^(secondary|tertiary)/.test(road.road.typ)?6.1:4.8:0;
+  const safeRoadWidth=road?roadHalfWidth(road.road)+.85:0;
   if(!road||road.dist>safeRoadWidth){
    const slideX=[car.pos[0],previous[1]],slideY=[previous[0],car.pos[1]];
    if(!city.insideBuilding(slideX))car.pos=slideX;
@@ -495,6 +448,7 @@ function updateHUD(){
  $("speed-panel").style.setProperty("--speed-angle",Math.min(265,speedKmh*2.25)+"deg");
  $("speed-gear").textContent=car.speed<-.8?"R":keys.brake&&Math.abs(car.speed)<1?"N":"D";
  $("car-health").textContent="ARAÇ %"+Math.round(car.health)+(car.offroad?" · YOL DIŞI":"");
+ $("street-name").textContent=(car.currentRoadName||AREAS[area].name).toLocaleUpperCase("tr-TR");
  $("drive-hint").textContent=driveMode==="easy"?(keys.brake?"FREN · TUTARSAN GERİ VİTES":car.offroad?"YOLA DÖN · OKLARLA YÖNLENDİR":Math.abs(car.steering)>.12?"DİREKSİYON SENDE":"GAZ OTOMATİK · SAĞ / SOL İLE SÜR"):(keys.gas?"GAZ VERİLİYOR":"GAZ İÇİN W / ↑ BAS");
  $("car-health").style.color=car.health<35?"#ff9c8f":car.health<65?"#ffdb8e":"#e3f2e6";
  $("rescue").disabled=Math.abs(car.speed)>2.3||rescueCooldown>0;
@@ -531,7 +485,7 @@ function drawMini(){
   ctx.strokeStyle=r.typ==="primary"?"#a7babb":"#65888b";ctx.lineWidth=r.typ==="primary"?5:2.6;
   ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();
  }
- if(route?.length>1){
+ if(navigation.ready&&route?.length>1){
   ctx.strokeStyle="#ffdf80";ctx.lineWidth=4;ctx.beginPath();
   route.forEach((p,i)=>{const q=toPx(p);i?ctx.lineTo(...q):ctx.moveTo(...q)});ctx.stroke();
  }
@@ -565,12 +519,12 @@ function frameLoop(now){
     if(routeRefresh>3){routeRefresh=0;refreshRoute(false)}
     if(camRefresh>.16){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
     lastNavState=navigation.update(car.pos,dt);
-    render3D?.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,convoy},dt,now);if(frame%8===0)syncEngine();
+    render3D?.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,navValid:navigation.ready,convoy},dt,now);if(frame%8===0)syncEngine();
     if(frame++%3===0){updateHUD();drawMini()}
    }
   }
  }
- if(ready&&!playing&&render3D&&car)render3D.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,convoy},dt,now);
+ if(ready&&!playing&&render3D&&car)render3D.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,navValid:navigation.ready,convoy},dt,now);
  if(ready&&!playing&&render3D&&!car)render3D.update({car:{pos:AREAS[area].center,speed:0,heading:0,steering:0},rival:null,mission:null,traffic:[],route:[],convoy:1},dt,now);
  if(now>toastEnd)$("toast").classList.remove("show");
  requestAnimationFrame(frameLoop);

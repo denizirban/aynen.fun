@@ -373,6 +373,13 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
  #turn-arrow{font-size:29px}#turn-hint{font-size:11px}
  #turn-sub{font-size:8px;letter-spacing:0}
 }
+
+#mini{position:absolute;overflow:hidden}
+#street-name{position:absolute;top:0;left:0;right:0;padding:7px 9px;text-align:left;
+ background:linear-gradient(180deg,rgba(9,30,43,.90),rgba(9,30,43,.20));
+ color:#f5f2d4;font-size:9px;font-weight:900;letter-spacing:.025em;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+@media(max-width:700px){#street-name{padding:5px;font-size:8px}}
 </style>
 </head>
 <body>
@@ -388,7 +395,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
    <div class="rival-top"><span class="rival-light"></span><b>RAKİP KONVOY</b><span id="rival-distance">—</span></div>
    <div class="rival-bottom"><span id="rival-arrow">↗</span><div><strong id="rival-status">MİSAFİRE GİDİYOR</strong><small id="rival-target">YOLDA</small></div></div>
   </div>
-  <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas></div>
+  <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas><div id="street-name">KADIKÖY · MODA</div></div>
   <div id="mode-pill">KONVOY <span id="convoy">1</span> · <span id="trips">0</span> TESLİMAT</div>
   <div id="directions" data-direction="straight" aria-label="Sabit kavşak yönlendirmesi"><span id="turn-arrow">↑</span><span class="nav-copy"><strong id="turn-hint">DÜZ DEVAM ET</strong><small id="turn-sub">SIRADAKİ KAVŞAĞA GİT</small></span></div><div id="drive-hint" aria-live="polite">GAZ OTOMATİK · SAĞ / SOL İLE SÜR</div>
  </section>
@@ -419,6 +426,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-smooth-v8"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-driving-v9"></script>
 </body>
 </html>

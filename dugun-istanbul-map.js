@@ -20,9 +20,70 @@ function nearestOnSegment(p,a,b){
  return {dist:Math.hypot(px-t*vx,py-t*vy),p:[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]};
 }
 function key(p){return p[0].toFixed(5)+":"+p[1].toFixed(5)}
+
+// A vector tile can contain two visible crossing streets without a shared vertex.
+// Snap *actual geometric crossings* into the driving graph; keep bridges separated.
+function resolveJunctions(segments,center){
+ const scaleX=111320*Math.cos(center[1]*rad),scaleY=111320,cellSize=65;
+ const XY=p=>[(p[0]-center[0])*scaleX,(p[1]-center[1])*scaleY];
+ const points=segments.map(r=>[XY(r.a),XY(r.b)]);
+ const grid=new Map(),cuts=segments.map(()=>[0,1]);
+ for(let i=0;i<segments.length;i++){
+  const [a,b]=points[i];
+  if(Math.min(Math.hypot(...a),Math.hypot(...b))>680)continue;
+  const left=Math.floor((Math.min(a[0],b[0])-1)/cellSize),right=Math.floor((Math.max(a[0],b[0])+1)/cellSize);
+  const bottom=Math.floor((Math.min(a[1],b[1])-1)/cellSize),top=Math.floor((Math.max(a[1],b[1])+1)/cellSize);
+  for(let x=left;x<=right;x++)for(let y=bottom;y<=top;y++){
+   const k=x+":"+y;
+   if(!grid.has(k))grid.set(k,[]);
+   grid.get(k).push(i);
+  }
+ }
+ const checked=new Set();let pairCount=0,crossCount=0;
+ for(const group of grid.values()){
+  for(let i=0;i<group.length;i++){
+   const id=group[i],[a,b]=points[id],ab=[b[0]-a[0],b[1]-a[1]];
+   for(let j=i+1;j<group.length;j++){
+    const other=group[j];if(id===other)continue;
+    const p=id<other?id+","+other:other+","+id;
+    if(checked.has(p))continue;checked.add(p);
+    if(++pairCount>270000)break;
+    if(segments[id].bridge!==segments[other].bridge)continue;
+    if(segments[id].tunnel!==segments[other].tunnel)continue;
+    const [c,e]=points[other],ce=[e[0]-c[0],e[1]-c[1]],delta=[c[0]-a[0],c[1]-a[1]];
+    const den=ab[0]*ce[1]-ab[1]*ce[0];
+    if(Math.abs(den)<.005)continue;
+    const ta=(delta[0]*ce[1]-delta[1]*ce[0])/den;
+    const tb=(delta[0]*ab[1]-delta[1]*ab[0])/den;
+    if(ta<-.002||ta>1.002||tb<-.002||tb>1.002)continue;
+    // An end-point that is already a graph vertex does not require a split.
+    if(ta>.004&&ta<.996)cuts[id].push(ta);
+    if(tb>.004&&tb<.996)cuts[other].push(tb);
+    crossCount++;
+   }
+   if(pairCount>270000)break;
+  }
+  if(pairCount>270000)break;
+ }
+ const output=[];
+ for(let i=0;i<segments.length;i++){
+  const r=segments[i],values=cuts[i].sort((a,b)=>a-b);
+  for(let j=1;j<values.length;j++){
+   const a=values[j-1],b=values[j];
+   if(b-a<.01)continue;
+   const p=[r.a[0]+(r.b[0]-r.a[0])*a,r.a[1]+(r.b[1]-r.a[1])*a];
+   const q=[r.a[0]+(r.b[0]-r.a[0])*b,r.a[1]+(r.b[1]-r.a[1])*b];
+   const len=distance(p,q);if(len<.55)continue;
+   output.push({...r,a:p,b:q,len});
+   if(output.length>=10500)return output;
+  }
+ }
+ return output;
+}
+
 export class IstanbulMap{
  constructor(area,onReady,onError){
-  this.area=area;this.roads=[];this.buildings=[];this.water=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.skids=[];this.vector=null;this.loaded=false;
+  this.area=area;this.roads=[];this.buildings=[];this.water=[];this.parks=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.skids=[];this.vector=null;this.loaded=false;
   if(!window.maplibregl){onError("Harita kitaplığı yüklenemedi.");return}
   this.map=new maplibregl.Map({
    container:"map",style:"https://tiles.openfreemap.org/styles/liberty",
@@ -71,11 +132,27 @@ export class IstanbulMap{
    const geom=f.geometry;
    const paths=geom?.type==="LineString"?[geom.coordinates]:geom?.type==="MultiLineString"?geom.coordinates:[];
    for(const path of paths)for(let j=1;j<path.length;j++){
-    const a=path[j-1],b=path[j],len=distance(a,b);
-    if(len<1.4||len>200||Math.min(distance(player,a),distance(player,b))>780)continue;
-    const id=key(a)+"_"+key(b);
-    if(uniq.has(id))continue;uniq.add(id);
-    roads.push({a,b,len,typ});
+    const from=path[j-1],to=path[j],length=distance(from,to);
+    if(length<1.4||nearestOnSegment(player,from,to).dist>810)continue;
+    // Real OSM avenues and embankments sometimes have 200m+ segments.
+    // Keep them as drivable 80m sections instead of discarding them completely.
+    const pieces=Math.max(1,Math.min(100,Math.ceil(length/80)));
+    for(let k=0;k<pieces;k++){
+     const t0=k/pieces,t1=(k+1)/pieces;
+     const a=[from[0]+(to[0]-from[0])*t0,from[1]+(to[1]-from[1])*t0];
+     const b=[from[0]+(to[0]-from[0])*t1,from[1]+(to[1]-from[1])*t1];
+     if(nearestOnSegment(player,a,b).dist>810)continue;
+     const len=distance(a,b),id=key(a)+"_"+key(b);
+     if(uniq.has(id))continue;uniq.add(id);
+     roads.push({a,b,len,typ,
+       name:f.properties?.name||"",lanes:Number(f.properties?.lanes)||null,
+       width:Number(f.properties?.width)||null,
+       oneway:f.properties?.oneway===1||f.properties?.oneway==="yes",
+       surface:f.properties?.surface||null,
+       bridge:f.properties?.brunnel==="bridge"||f.properties?.bridge===1
+      });
+     if(roads.length>5200)break;
+    }
     if(roads.length>5200)break;
    }
    if(roads.length>5200)break;
@@ -86,7 +163,9 @@ export class IstanbulMap{
   // previously the visible renderer took the first 800, leaving the car on a giant blank green plane.
   roads.sort((x,y)=>Math.min(distance(player,x.a),distance(player,x.b))-Math.min(distance(player,y.a),distance(player,y.b)));
   
-  this.roads=roads;this.nodes=new Map();this.edges=new Map();this.samples=[];
+  const connectedRoads=resolveJunctions(roads,player);
+  connectedRoads.sort((x,y)=>Math.min(distance(player,x.a),distance(player,x.b))-Math.min(distance(player,y.a),distance(player,y.b)));
+  this.roads=connectedRoads;this.nodes=new Map();this.edges=new Map();this.samples=[];
   if(this.onRoadsReady)queueMicrotask(()=>this.onRoadsReady?.());
   try{
    const buildings=this.map.querySourceFeatures(this.vector,{sourceLayer:"building"})||[];
@@ -113,6 +192,32 @@ export class IstanbulMap{
    this.buildings=collection;
   }catch(e){this.buildings=[]}
 
+
+  try{
+   const parkFeatures=[
+    ...(this.map.querySourceFeatures(this.vector,{sourceLayer:"landuse"})||[]),
+    ...(this.map.querySourceFeatures(this.vector,{sourceLayer:"landcover"})||[])
+   ];
+   const green=[],seen=new Set();
+   for(const f of parkFeatures){
+    const cls=String(f.properties?.class||f.properties?.subclass||"").toLowerCase();
+    if(!/park|grass|wood|forest|cemetery|garden|recreation/.test(cls))continue;
+    const shape=f.geometry?.type==="Polygon"?[f.geometry.coordinates]:f.geometry?.type==="MultiPolygon"?f.geometry.coordinates:[];
+    for(const poly of shape){
+     const ring=poly?.[0];if(!ring||ring.length<3||ring.length>1100)continue;
+     const keyId=ring[0][0].toFixed(5)+":"+ring[0][1].toFixed(5)+":"+cls;
+     if(seen.has(keyId))continue;seen.add(keyId);
+     const minX=Math.min(...ring.map(q=>q[0])),maxX=Math.max(...ring.map(q=>q[0]));
+     const minY=Math.min(...ring.map(q=>q[1])),maxY=Math.max(...ring.map(q=>q[1]));
+     const near=[Math.max(minX,Math.min(player[0],maxX)),Math.max(minY,Math.min(player[1],maxY))];
+     if(distance(player,near)>570)continue;
+     green.push({ring,cls,bounds:{minX,maxX,minY,maxY}});
+     if(green.length>=75)break;
+    }
+    if(green.length>=75)break;
+   }
+   this.parks=green;
+  }catch(e){this.parks=[]}
   try{
    const waterFeatures=this.map.querySourceFeatures(this.vector,{sourceLayer:"water"})||[];
    const seen=new Set(),water=[];
@@ -136,7 +241,7 @@ export class IstanbulMap{
    }
    if(water.length)this.water=water;
   }catch(e){console.warn("Water tiles not ready",e)}
-  for(const r of roads){
+  for(const r of connectedRoads){
    const a=key(r.a),b=key(r.b);
    this.nodes.set(a,r.a);this.nodes.set(b,r.b);
    if(!this.edges.has(a))this.edges.set(a,[]);
