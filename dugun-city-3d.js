@@ -485,7 +485,7 @@ function drawMini(){
   ctx.strokeStyle=r.typ==="primary"?"#a7babb":"#65888b";ctx.lineWidth=r.typ==="primary"?5:2.6;
   ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();
  }
- if(route?.length>1){
+ if(navigation.ready&&route?.length>1){
   ctx.strokeStyle="#ffdf80";ctx.lineWidth=4;ctx.beginPath();
   route.forEach((p,i)=>{const q=toPx(p);i?ctx.lineTo(...q):ctx.moveTo(...q)});ctx.stroke();
  }
@@ -519,12 +519,12 @@ function frameLoop(now){
     if(routeRefresh>3){routeRefresh=0;refreshRoute(false)}
     if(camRefresh>.16){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
     lastNavState=navigation.update(car.pos,dt);
-    render3D?.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,convoy},dt,now);if(frame%8===0)syncEngine();
+    render3D?.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,navValid:navigation.ready,convoy},dt,now);if(frame%8===0)syncEngine();
     if(frame++%3===0){updateHUD();drawMini()}
    }
   }
  }
- if(ready&&!playing&&render3D&&car)render3D.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,convoy},dt,now);
+ if(ready&&!playing&&render3D&&car)render3D.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,navValid:navigation.ready,convoy},dt,now);
  if(ready&&!playing&&render3D&&!car)render3D.update({car:{pos:AREAS[area].center,speed:0,heading:0,steering:0},rival:null,mission:null,traffic:[],route:[],convoy:1},dt,now);
  if(now>toastEnd)$("toast").classList.remove("show");
  requestAnimationFrame(frameLoop);
