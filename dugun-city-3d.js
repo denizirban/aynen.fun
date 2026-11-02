@@ -304,7 +304,7 @@ function drive(dt){
  }
  if(auto&&!keys.brake&&car.speed<-.10)car.speed=Math.min(0,car.speed+18*dt);
  // Do not put players in reverse the instant they tap BRAKE. Hold longer to reverse.
- if(auto&&keys.brake&&brakeHold<.72)car.speed=Math.max(car.speed,0);
+ if(auto&&keys.brake&&brakeHold<1.10)car.speed=Math.max(car.speed,0);
  if(keys.handbrake)car.speed*=Math.max(0,1-dt*.40);
  if(car.offroad)car.speed*=Math.max(.78,1-dt*(near.dist>17?1.30:.45));
  car.speed=clamp(car.speed,-5.2,spec.top*(car.offroad?.65:1));
