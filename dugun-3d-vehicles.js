@@ -1,5 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,turn} from "./dugun-istanbul-map.js";
+import {AREAS,rad,turn,travel} from "./dugun-istanbul-map.js";
 const mat=(color,metal=.1,rough=.54)=>new THREE.MeshStandardMaterial({color,metalness:metal,roughness:rough});
 function cube(w,l,h,m,x=0,y=0,z=0){
  const o=new THREE.Mesh(new THREE.BoxGeometry(w,l,h),m);o.position.set(x,y,z);return o;
@@ -59,7 +59,7 @@ function beacon(color){
 export class Vehicle3D{
  constructor(world){
   this.world=world;this.scene=null;this.car=null;this.rivalCar=null;this.npcModels=[];
-  this.origin=AREAS[world.area].center;this.mercator=null;
+  this.origin=AREAS[world.area].center;this.mercator=null;this.smoke=[];this.smokeClock=0;this.smokeIndex=0;
   world.map.addLayer({id:"wedding-3d-cars",type:"custom",renderingMode:"3d",
    onAdd:(map,context)=>this.onAdd(map,context),
    render:(context,matrix)=>this.render(context,matrix)
@@ -85,7 +85,12 @@ export class Vehicle3D{
    const m=makeCar(i%3===0?"doblo":"sahin",[0xc4c7c0,0xc09985,0xbac8b0,0x85aebc][i%4]);
    this.npcModels.push(m);this.scene.add(m);
   }
+  
   this.rivalCar.visible=this.pickup.visible=this.dropoff.visible=false;
+  for(let i=0;i<24;i++){
+   const m=new THREE.Mesh(new THREE.IcosahedronGeometry(.15,0),new THREE.MeshBasicMaterial({color:0xd2d1ca,transparent:true,opacity:0,depthWrite:false}));
+   this.scene.add(m);m.visible=false;this.smoke.push({mesh:m,age:3,pos:null,offset:0});
+  }
  }
  setCar(name){
   if(!this.scene)return;
@@ -106,6 +111,24 @@ export class Vehicle3D{
   }
   for(const tail of this.car.userData.rearLights||[]){
    tail.material.emissiveIntensity=s.controls?.brake?1.2:0;
+  }
+  
+  this.smokeClock+=dt*(Math.abs(s.car.speed)>12?16:Math.abs(s.car.speed)>2?6:1);
+  if(this.smokeClock>=1&&s.car.pos){
+   this.smokeClock%=1;
+   const p=this.smoke[this.smokeIndex++%this.smoke.length];
+   p.age=0;p.offset=(Math.random()-.5)*.35;
+   p.pos=travel(s.car.pos,s.car.heading+Math.PI,2.1);
+   p.mesh.material.color.setHex(s.car.offroad?0xc0b199:0xcdd2d2);
+  }
+  for(const p of this.smoke){
+   p.age+=dt;p.mesh.visible=p.age<1.3&&!!p.pos;
+   if(p.mesh.visible){
+    this.setPos(p.mesh,p.pos,.48+p.age*.80);
+    p.mesh.position.x+=Math.sin(now*.002+p.offset)*p.age*.20;
+    p.mesh.scale.setScalar(.8+p.age*2.7);
+    p.mesh.material.opacity=Math.max(0,(1-p.age/1.3)*.20);
+   }
   }
   if(s.rival?.pos){this.setPos(this.rivalCar,s.rival.pos,.07);this.rivalCar.rotation.z=-s.rival.heading}
   else this.rivalCar.visible=false;
