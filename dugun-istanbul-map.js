@@ -56,8 +56,11 @@ export class IstanbulMap{
  }
  refresh(player,force=false){
   if(!this.loaded||!this.map?.isStyleLoaded())return;
-  if(!force&&performance.now()-this.lastRefresh<3500)return;
-  this.lastRefresh=performance.now();
+  const now=performance.now();
+  if(!force&&now-this.lastRefresh<3500)return;
+  // Avoid regenerating thousands of static OSM meshes every few seconds.
+  if(!force&&this.roads.length>=65&&this.lastGeometryPos&&distance(player,this.lastGeometryPos)<95&&now-(this.lastDataAt||0)<15500)return;
+  this.lastRefresh=now;
   let features;
   try{features=this.map.querySourceFeatures(this.vector,{sourceLayer:"transportation"})}catch(e){return}
   if(!features?.length)return;
@@ -78,6 +81,7 @@ export class IstanbulMap{
    if(roads.length>5200)break;
   }
   if(roads.length<6)return;
+  this.lastGeometryPos=[...player];this.lastDataAt=now;
   // Tiles return transportation features in arbitrary order. Keep the local road corridor first:
   // previously the visible renderer took the first 800, leaving the car on a giant blank green plane.
   roads.sort((x,y)=>Math.min(distance(player,x.a),distance(player,x.b))-Math.min(distance(player,y.a),distance(player,y.b)));
