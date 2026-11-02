@@ -1,5 +1,5 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v5";
-import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v5";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v6";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v6";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
  sahin:{accel:11.5,brake:18,top:27,grip:1.0},
