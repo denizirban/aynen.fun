@@ -2,7 +2,10 @@
 export const AREAS={
  kadikoy:{name:"Kadıköy · Moda",center:[29.0295,40.9885]},
  besiktas:{name:"Beşiktaş · Abbasağa",center:[29.0071,41.0453]},
- karakoy:{name:"Karaköy · Galata",center:[28.9791,41.0255]}
+ karakoy:{name:"Karaköy · Galata",center:[28.9791,41.0255]},
+ balat:{name:"Balat · Haliç",center:[28.9497,41.0306]},
+ ortakoy:{name:"Ortaköy · Boğaz",center:[29.0270,41.0476]},
+ uskudar:{name:"Üsküdar · Çarşı",center:[29.0158,41.0258]}
 };
 export const rad=Math.PI/180;
 export const distance=(a,b)=>Math.hypot((a[0]-b[0])*111320*Math.cos((a[1]+b[1])*.5*rad),(a[1]-b[1])*111320);
