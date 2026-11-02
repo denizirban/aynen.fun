@@ -33,21 +33,11 @@ export class IstanbulMap{
     this.vector=Object.entries(style.sources).find(([,s])=>s.type==="vector")?.[0];
     if(!this.vector)throw Error("OpenStreetMap vektör verisi bulunamadı.");
     const firstLabel=style.layers.find(l=>l.type==="symbol"&&l.layout?.["text-field"])?.id;
-    this.map.addLayer({
-     id:"wedding-3d-buildings",type:"fill-extrusion",source:this.vector,"source-layer":"building",
-     minzoom:14,paint:{
-      "fill-extrusion-color":"#c9c7bb",
-      "fill-extrusion-height":["max",9,["to-number",["get","render_height"],["get","height"],14]],
-      "fill-extrusion-base":["to-number",["get","render_min_height"],["get","min_height"],0],
-      "fill-extrusion-opacity":.94
-     }
-    },firstLabel);
+    // Avoid rendering a second hidden 3D city: MapLibre provides source data only.
+    // The full-screen Three.js scene renders all architecture and road geometry.
     this.map.addSource("wedding-nav",{type:"geojson",data:{type:"Feature",properties:{},geometry:{type:"LineString",coordinates:[]}}});
     this.map.addSource("wedding-skids",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
-    this.map.addLayer({id:"wedding-skidmarks",type:"line",source:"wedding-skids",paint:{"line-color":"#273943","line-width":3,"line-opacity":.52}});
-    this.map.addLayer({id:"wedding-nav-line",type:"line",source:"wedding-nav",
-     layout:{"line-cap":"round","line-join":"round"},
-     paint:{"line-color":"#ffe16f","line-width":7,"line-opacity":.9}});
+    // Keep geometry sources for the map logic, but draw route and skids only in Three.js.
     this.loaded=true;this.refresh(AREAS[area].center,true);onReady?.();
    }catch(e){onError(e.message);console.error(e)}
   });
@@ -99,7 +89,12 @@ export class IstanbulMap{
      const id=f.properties?.id||f.properties?.osm_id||lng.toFixed(6)+":"+lat.toFixed(6);
      if(used.has(id))continue;used.add(id);
      const xs=ring.map(p=>p[0]),ys=ring.map(p=>p[1]);
-     collection.push({ring,minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)});
+     const prop=f.properties||{};
+     const measuredHeight=Number(prop.render_height??prop.height);
+     const floors=Number(prop.levels??prop.building_levels);
+     const height=Number.isFinite(measuredHeight)&&measuredHeight>2?measuredHeight:
+      Number.isFinite(floors)&&floors>0?floors*3.15:null;
+     collection.push({ring,minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys),height});
      if(collection.length>2600)break;
     }
     if(collection.length>2600)break;
