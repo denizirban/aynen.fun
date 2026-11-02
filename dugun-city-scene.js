@@ -378,6 +378,46 @@ function addWater(group,origin,waters,mobile){
  return count;
 }
 
+
+// Recognizable Bosphorus waterway when vector tile water polygons have not loaded.
+// A deliberately simplified geographic ribbon; it never replaces real OSM road positions.
+function renderBosphorusWaterway(group,origin,mobile){
+ const west=[
+  [29.0290,41.0570],[29.0283,41.0530],[29.0273,41.0490],
+  [29.0277,41.0460],[29.0285,41.0420],[29.0287,41.0370],[29.0282,41.0335]
+ ];
+ const east=[
+  [29.0395,41.0335],[29.0395,41.0380],[29.0404,41.0420],
+  [29.0434,41.0470],[29.0445,41.0520],[29.0424,41.0570]
+ ];
+ const path=[...west,...east],nearest=Math.min(...path.map(p=>distance(p,origin)));
+ if(nearest>1100)return 0;
+ const meshShape=new THREE.Shape();
+ const xy=path.map(p=>toXY(origin,p));
+ meshShape.moveTo(...xy[0]);for(let i=1;i<xy.length;i++)meshShape.lineTo(...xy[i]);meshShape.closePath();
+ const mesh=new THREE.Mesh(new THREE.ShapeGeometry(meshShape),
+  new THREE.MeshStandardMaterial({color:0x3484a5,metalness:.10,roughness:.39,
+   side:THREE.DoubleSide,transparent:true,opacity:.98}));
+ mesh.position.z=.042;mesh.receiveShadow=false;mesh.renderOrder=1;
+ group.add(mesh);
+ // Floating light on the Bosphorus: small glints, drawn as a single instanced mesh.
+ const waterGlint=new THREE.MeshBasicMaterial({color:0xaddde2,transparent:true,opacity:.36,depthWrite:false});
+ const count=mobile?45:95,geometry=new THREE.PlaneGeometry(2.5,.10);
+ const foam=new THREE.InstancedMesh(geometry,waterGlint,count),dummy=new THREE.Object3D();
+ for(let j=0;j<count;j++){
+  const t=(j+.5)/count;
+  const along=west[1][1]-(west[1][1]-west[west.length-2][1])*t;
+  const xWest=29.0281,xEast=29.0408;
+  const lon=xWest+(xEast-xWest)*(.20+.6*hash(j+11,6.2));
+  const y=along+((hash(j,18.4)-.5)*.0010);
+  const [xCoord,yCoord]=toXY(origin,[lon,y]);
+  dummy.position.set(xCoord,yCoord,.065);dummy.rotation.z=(hash(j,10)-.5)*.5;
+  dummy.scale.set(.55+hash(j,14)*2,1,1);dummy.updateMatrix();foam.setMatrixAt(j,dummy.matrix);
+ }
+ foam.instanceMatrix.needsUpdate=true;foam.frustumCulled=false;group.add(foam);
+ return 1;
+}
+
 // Approximate scenic bridge geometry. The actual street positions continue to
 // come from OSM; this model is not a photogrammetric reconstruction.
 const BOSPHORUS_WEST=[29.0294,41.0470];
@@ -849,7 +889,7 @@ export class CityScene3D{
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
  rebuild(force=false){
   const t=performance.now();
-  if(!force&&t-this.lastBuilt<6500)return;
+  if(!force&&t-this.lastBuilt<11500&&this.builtRoadCount>12)return;
   const city=this.city,ro=city.roads,bu=city.buildings;
   const moved=this.builtAt?distance(this.builtAt,this.focus||this.origin):Infinity;
   // A fresh tile object is not necessarily a new city. Rebuilding the entire
@@ -882,6 +922,7 @@ export class CityScene3D{
   makeGround(this.worldGroup);
   this.visibleParkCount=renderRealParks(this.worldGroup,this.origin,city.parks,this.mobile);
   this.visibleWater=addWater(this.worldGroup,this.origin,city.water,this.mobile);
+  this.bosphorusVisible=renderBosphorusWaterway(this.worldGroup,this.origin,this.mobile);
   addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
   addBeylerbeyiWaterfront(this.worldGroup,this.origin);
   addBosphorusPromenade(this.worldGroup,this.origin);
@@ -924,7 +965,7 @@ export class CityScene3D{
    this.lastQualityChange=now;this.framesObserved=0;this.timeObserved=0;
   }
   this.focus=state.car.pos;
-  if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>130))this.rebuild();
+  if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>175))this.rebuild();
   const car=state.car;
   this.lastPlayerOnBridge=!!car.currentRoadBridge;
   this.position(this.player,car.pos,.18,this.lastPlayerOnBridge);this.player.rotation.z=-car.heading;
