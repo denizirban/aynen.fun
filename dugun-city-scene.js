@@ -169,7 +169,7 @@ function addBuildings(group,origin,raw,mobile){
   const height=b.height&&Number.isFinite(b.height)?clamp(b.height,5,100):Math.round(3.5+(hseed*.78+.11)*8)*3.15;
   const shape=new THREE.Shape();shape.moveTo(...pts[0]);for(let j=1;j<pts.length;j++)shape.lineTo(...pts[j]);shape.closePath();
   const geo=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false,curveSegments:1,steps:1});
-  const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.castShadow=false;m.receiveShadow=true;group.add(m);
+  const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.castShadow=!mobile&&Math.hypot(pts[0][0],pts[0][1])<110;m.receiveShadow=true;group.add(m);
   const maxFloors=Math.min(mobile?4:8,Math.floor((height-1.5)/3.1));
   for(let edge=0;edge<pts.length;edge++){
    const a=pts[edge],v=pts[(edge+1)%pts.length],dx=v[0]-a[0],dy=v[1]-a[1],len=Math.hypot(dx,dy);
@@ -281,15 +281,28 @@ export class CityScene3D{
   this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,this.mobile?1.3:1.65));
   this.renderer.outputColorSpace=THREE.SRGBColorSpace;
   this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  this.renderer.toneMappingExposure=1.64;
+  this.renderer.toneMappingExposure=1.38;
+  if(!this.mobile){
+   this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  }
   this.scene=new THREE.Scene();this.scene.background=color("#8ccbee");this.scene.fog=new THREE.Fog("#a7c9bb",245,790);
   this.camera=new THREE.PerspectiveCamera(64,1,.12,1300);this.camera.up.set(0,0,1);
-  this.scene.add(new THREE.HemisphereLight(0xd5eeff,0x8a8e70,2.5));
-  const sunlight=new THREE.DirectionalLight(0xffe1af,2.6);sunlight.position.set(-125,170,240);this.scene.add(sunlight);
+  this.scene.add(new THREE.HemisphereLight(0xd5eeff,0x8a8e70,1.95));
+  const sunlight=new THREE.DirectionalLight(0xffe1af,2.4);sunlight.position.set(-125,170,190);
+  if(!this.mobile){
+   sunlight.castShadow=true;
+   sunlight.shadow.mapSize.set(1024,1024);
+   sunlight.shadow.camera.left=-85;sunlight.shadow.camera.right=85;
+   sunlight.shadow.camera.top=85;sunlight.shadow.camera.bottom=-85;
+   sunlight.shadow.camera.near=.5;sunlight.shadow.camera.far=520;
+   sunlight.shadow.bias=-.00025;
+  }
+  this.sunlight=sunlight;this.scene.add(sunlight);this.scene.add(sunlight.target);
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
   this.actorGroup=new THREE.Group();this.scene.add(this.actorGroup);
   this.player=makeCar("sahin");this.rival=makeCar("sahin",null,true);
   this.actorGroup.add(this.player,this.rival);
+  if(!this.mobile)for(const v of [this.player,this.rival])v.traverse(obj=>{if(obj.isMesh)obj.castShadow=true});
   this.followers=Array.from({length:this.mobile?3:5},(_,i)=>makeCar(i%2===0?"toros":"sahin"));
   this.followers.forEach(f=>{f.visible=false;this.actorGroup.add(f)});
   this.positionTrail=[];this.previousTrailPoint=null;
@@ -316,7 +329,7 @@ export class CityScene3D{
   this.fxTimer=0;this.fxIndex=0;this.lastCarPos=null;this.skids=[];
 
   this.npcs=Array.from({length:this.mobile?5:10},(_,i)=>makeCar(i%3===0?"doblo":"sahin",["#dcad79","#91aeb8","#c3d6b1","#eee2d6","#d48c8d"][i%5]));
-  this.npcs.forEach(x=>this.actorGroup.add(x));
+  this.npcs.forEach(x=>{this.actorGroup.add(x);if(!this.mobile)x.traverse(obj=>{if(obj.isMesh)obj.castShadow=true});});
   this.marker=new THREE.Group();this.actorGroup.add(this.marker);
   const ring=new THREE.Mesh(new THREE.TorusGeometry(2.65,.17,10,28),
     new THREE.MeshBasicMaterial({color:0xffda61,transparent:true,opacity:.93}));
@@ -345,7 +358,7 @@ export class CityScene3D{
  }
  setOrigin(point){this.origin=[...point];this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
 
- setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player)}
+ setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
  rebuild(force=false){
   const t=performance.now();
   if(!force&&t-this.lastBuilt<6500)return;
@@ -508,6 +521,14 @@ export class CityScene3D{
   }else{this.guest.visible=false;this.dropoffGate.visible=false;}
   // Proper physical 3D chase camera behind the car, not a zoomed overhead GIS camera.
   const [cx,cy]=toXY(this.origin,car.pos),fwdX=Math.sin(car.heading),fwdY=Math.cos(car.heading);
+  if(this.sunlight&&!this.mobile){
+   this.sunlight.position.set(cx-120,cy+100,180);
+   this.sunlight.target.position.set(cx,cy,0);
+   this.sunlight.target.updateMatrixWorld();
+  }
+  for(const light of this.player.userData.rearLights||[]){
+   if(light.material?.emissive)light.material.emissiveIntensity=state.controls?.brake?1.2:.18;
+  }
   
   const speed=Math.abs(car.speed),wide=this.camStyle===1,hood=this.camStyle===2;
   const horizontal=hood?-1.7:(wide?clamp(16+speed*.14,16,21):clamp(9.6+speed*.09,9.6,12.2));
