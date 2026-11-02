@@ -19,7 +19,7 @@ function nearestOnSegment(p,a,b){
 function key(p){return p[0].toFixed(5)+":"+p[1].toFixed(5)}
 export class IstanbulMap{
  constructor(area,onReady,onError){
-  this.area=area;this.roads=[];this.buildings=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.vector=null;this.loaded=false;
+  this.area=area;this.roads=[];this.buildings=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.skids=[];this.vector=null;this.loaded=false;
   if(!window.maplibregl){onError("Harita kitaplığı yüklenemedi.");return}
   this.map=new maplibregl.Map({
    container:"map",style:"https://tiles.openfreemap.org/styles/liberty",
@@ -43,6 +43,8 @@ export class IstanbulMap{
      }
     },firstLabel);
     this.map.addSource("wedding-nav",{type:"geojson",data:{type:"Feature",properties:{},geometry:{type:"LineString",coordinates:[]}}});
+    this.map.addSource("wedding-skids",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+    this.map.addLayer({id:"wedding-skidmarks",type:"line",source:"wedding-skids",paint:{"line-color":"#273943","line-width":3,"line-opacity":.52}});
     this.map.addLayer({id:"wedding-nav-line",type:"line",source:"wedding-nav",
      layout:{"line-cap":"round","line-join":"round"},
      paint:{"line-color":"#ffe16f","line-width":7,"line-opacity":.9}});
@@ -170,13 +172,19 @@ export class IstanbulMap{
  setRoute(points){
   this.map?.getSource("wedding-nav")?.setData({type:"Feature",properties:{},geometry:{type:"LineString",coordinates:points||[]}});
  }
- chase(position,bearing,dt,shake=0){
+
+ skid(from,to){
+  this.skids.push({type:"Feature",properties:{},geometry:{type:"LineString",coordinates:[from,to]}});
+  if(this.skids.length>75)this.skids.shift();
+  this.map?.getSource("wedding-skids")?.setData({type:"FeatureCollection",features:this.skids});
+ }
+ chase(position,bearing,dt,shake=0,speed=0){
   if(!this.loaded)return;
   const target=travel(position,bearing,17),map=this.map,c=map.getCenter(),current=[c.lng,c.lat];
   const delta=distance(current,target),theta=angle(current,target);
   const loc=travel(current,theta,delta*Math.min(1,dt*5));
   const old=map.getBearing(),degrees=bearing/rad;
   const next=old+turn(degrees*rad,old*rad)/rad*Math.min(1,dt*4);
-  map.jumpTo({center:loc,bearing:next+shake,pitch:69,zoom:18.08});
+  map.jumpTo({center:loc,bearing:next+shake,pitch:69,zoom:18.08-Math.min(.30,Math.abs(speed)*.012)});
  }
 }
