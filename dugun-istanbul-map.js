@@ -131,14 +131,15 @@ export class IstanbulMap{
     this.map.addSource("wedding-nav",{type:"geojson",data:{type:"Feature",properties:{},geometry:{type:"LineString",coordinates:[]}}});
     this.map.addSource("wedding-skids",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
     // Keep geometry sources for the map logic, but draw route and skids only in Three.js.
-    this.loaded=true;this.refresh(AREAS[area].center,true);onReady?.();
+    this.loaded=true;this.refresh(AREAS[area].center,true);
+    if(!this.didNotifyReady){this.didNotifyReady=true;onReady?.()}
    }catch(e){onError(e.message);console.error(e)}
   });
   this.map.on("error",e=>{if(!this.loaded)onError("Harita verisine erişilemiyor.");console.warn(e.error||e)});
   // When the player is waiting for a safe street, request newly loaded tiles
   // even if the old viewport already had many motorway features.
   const refreshWaitingStreets=()=>{
-   if(!this.loaded||!this.seekingLocalStreets)return;
+   if(this.fallbackLock||!this.loaded||!this.seekingLocalStreets)return;
    const now=performance.now();
    if(now-this.lastSeekRefresh<700)return;
    this.lastSeekRefresh=now;
@@ -153,6 +154,52 @@ export class IstanbulMap{
   this.map.on("moveend",refreshWaitingStreets);
   this.map.on("idle",refreshWaitingStreets);
  }
+ // Guaranteed offline / tile-loading launch track. This is an original, stylized
+ // Ortaköy practice grid, NOT an OSM-derived road network. Do not label it real.
+ // It exists so Start buttons never deadlock when OpenFreeMap takes too long.
+ ensurePlayableFallback(){
+  if(this.fallbackLock&&this.roads.length)return true;
+  const center=[29.02495,41.04720];
+  const xy=(x,y)=>travel(travel(center,Math.PI/2,x),0,y);
+  const road=[],positions=[-240,-180,-120,-60,0,60,120,180],extent=240,step=60;
+  const push=(a,b,typ)=>{
+   road.push({a,b,len:distance(a,b),typ,bridge:false,lanes:2,
+    name:"GEÇİCİ SÜRÜŞ ALANI"});
+  };
+  for(const x of positions){
+   for(let y=-extent;y<extent;y+=step)push(xy(x,y),xy(x,y+step),"residential");
+  }
+  for(const y of positions){
+   for(let x=-extent;x<extent;x+=step)push(xy(x,y),xy(x+step,y),"tertiary");
+  }
+  // Short coastal-approach loop so the first view offers uninterrupted driving.
+  for(let y=-180;y<180;y+=step)push(xy(215,y),xy(215,y+step),"secondary");
+  this.roads=road;
+  this.roadGrid=makeGrid(road,roadBounds);
+  this.nodes=new Map();this.edges=new Map();this.samples=[];
+  for(const r of road){
+   const a=key(r.a),b=key(r.b);
+   this.nodes.set(a,r.a);this.nodes.set(b,r.b);
+   if(!this.edges.has(a))this.edges.set(a,[]);
+   if(!this.edges.has(b))this.edges.set(b,[]);
+   this.edges.get(a).push({node:b,d:r.len});
+   this.edges.get(b).push({node:a,d:r.len});
+   this.samples.push([(r.a[0]+r.b[0])/2,(r.a[1]+r.b[1])/2]);
+  }
+  this.buildings=[];this.buildingGrid=makeGrid([],buildingBounds);
+  this.parks=[];this.water=[];
+  this.fallbackLock=true;this.seekingLocalStreets=false;this.loaded=true;
+  this.lastGeometryPos=[...center];this.lastDataAt=performance.now();
+  if(!this.map){
+   this.map={
+    jumpTo(){},resize(){},getSource(){return null},getCenter(){return{lng:center[0],lat:center[1]}},
+    isStyleLoaded(){return false}
+   };
+  }
+  // Deferred to avoid synchronously re-entering startGame from its own click.
+  queueMicrotask(()=>this.onRoadsReady?.());
+  return true;
+ }
  jumpToArea(area){
   this.area=area;
   if(!this.loaded)return;
@@ -161,7 +208,7 @@ export class IstanbulMap{
   setTimeout(()=>this.refresh(AREAS[area].center,true),700);
  }
  refresh(player,force=false){
-  if(!this.loaded||!this.map?.isStyleLoaded())return;
+  if(this.fallbackLock||!this.loaded||!this.map?.isStyleLoaded())return;
   const now=performance.now();
   if(!force&&now-this.lastRefresh<3500)return;
   // Avoid regenerating thousands of static OSM meshes every few seconds.
@@ -411,7 +458,7 @@ export class IstanbulMap{
   this.map?.getSource("wedding-skids")?.setData({type:"FeatureCollection",features:this.skids});
  }
  chase(position,bearing,dt,shake=0,speed=0){
-  if(!this.loaded||!this.map)return;
+  if(this.fallbackLock||!this.loaded||!this.map)return;
   // Hidden MapLibre feeds OSM tiles; rotating it every .16s stalls actual driving.
   const now=performance.now(),last=this.lastTileMoveAt||0;
   const center=this.map.getCenter(),target=travel(position,bearing,30);
