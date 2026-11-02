@@ -1,5 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,turn,travel} from "./dugun-istanbul-map.js?v=20261102-v13";
+import {AREAS,rad,turn,travel} from "./dugun-istanbul-map.js?v=20261102-v15";
 const mat=(color,metal=.1,rough=.54)=>new THREE.MeshStandardMaterial({color,metalness:metal,roughness:rough});
 function cube(w,l,h,m,x=0,y=0,z=0){
  const o=new THREE.Mesh(new THREE.BoxGeometry(w,l,h),m);o.position.set(x,y,z);return o;
