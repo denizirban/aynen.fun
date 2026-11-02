@@ -588,8 +588,15 @@ export class CityScene3D{
   const t=performance.now();
   if(!force&&t-this.lastBuilt<6500)return;
   const city=this.city,ro=city.roads,bu=city.buildings;
-  if(!force&&this.builtAt&&distance(this.builtAt,this.focus||this.origin)<83&&this.builtRoads===ro&&this.builtBuildings===bu)return;
+  const moved=this.builtAt?distance(this.builtAt,this.focus||this.origin):Infinity;
+  // A fresh tile object is not necessarily a new city. Rebuilding the entire
+  // Three.js street scene every 4 seconds produced an obvious frame hitch.
+  if(!force&&this.builtAt&&moved<108&&this.builtRoadCount>65&&
+     (ro?.length||0)>=this.builtRoadCount*.80&&
+     (bu?.length||0)>=(this.builtBuildingCount||0)*.75)return;
+  if(!force&&this.builtAt&&moved<60&&this.builtRoads===ro&&this.builtBuildings===bu)return;
   this.lastBuilt=t;this.builtAt=[...(this.focus||this.origin)];this.builtRoads=ro;this.builtBuildings=bu;
+  this.builtRoadCount=ro?.length||0;this.builtBuildingCount=bu?.length||0;
   // Shift the render origin as the player explores new districts, avoiding precision loss.
   if(this.focus&&distance(this.origin,this.focus)>220){
    const previousOrigin=[...this.origin];
