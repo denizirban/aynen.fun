@@ -153,14 +153,32 @@ export class IstanbulMap{
   const start=this.closestNode(from),end=this.closestNode(to);
   if(!start||!end)return [from,to];
   const queue=[[start,0]],d=new Map([[start,0]]),prev=new Map();let rounds=0;
-  // Binary heap not necessary for short neighborhood routes; keep frontier bounded.
-  while(queue.length&&rounds++<7500){
-   queue.sort((a,b)=>b[1]-a[1]);const [id,dd]=queue.pop();
+  const push=(entry)=>{
+   let i=queue.length;queue.push(entry);
+   while(i>0){const parent=(i-1)>>1;if(queue[parent][1]<=entry[1])break;queue[i]=queue[parent];i=parent}
+   queue[i]=entry;
+  };
+  const pop=()=>{
+   const best=queue[0],last=queue.pop();
+   if(queue.length){
+    let i=0;
+    while(true){
+     const a=2*i+1,b=a+1;if(a>=queue.length)break;
+     const child=b<queue.length&&queue[b][1]<queue[a][1]?b:a;
+     if(queue[child][1]>=last[1])break;
+     queue[i]=queue[child];i=child;
+    }
+    queue[i]=last;
+   }
+   return best;
+  };
+  while(queue.length&&rounds++<18000){
+   const [id,dd]=pop();
    if(dd>(d.get(id)??Infinity))continue;
    if(id===end)break;
    for(const v of this.edges.get(id)||[]){
     const next=dd+v.d;
-    if(next<(d.get(v.node)??Infinity)){d.set(v.node,next);prev.set(v.node,id);queue.push([v.node,next])}
+    if(next<(d.get(v.node)??Infinity)){d.set(v.node,next);prev.set(v.node,id);push([v.node,next])}
    }
   }
   if(!d.has(end))return [from,to];
