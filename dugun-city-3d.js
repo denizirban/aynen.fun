@@ -391,6 +391,7 @@ function updateHUD(){
  $("time").textContent=free?"∞":String(Math.floor(secs/60)).padStart(2,"0")+":"+String(secs%60).padStart(2,"0");
  $("time").classList.toggle("urgent",timer<30&&!free);
  $("money").textContent="₺"+earnings.toLocaleString("tr-TR");
+ $("bestmoney").textContent="₺"+personalBest.toLocaleString("tr-TR");
  $("speed").textContent=Math.round(Math.abs(car.speed)*3.6);
  $("car-health").textContent="ARAÇ %"+Math.round(car.health)+(car.offroad?" · YOL DIŞI":"");
  $("car-health").style.color=car.health<35?"#ff9c8f":car.health<65?"#ffdb8e":"#e3f2e6";
