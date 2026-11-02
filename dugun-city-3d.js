@@ -431,7 +431,7 @@ function drawMini(){
  const canvas=$("minimap"),w=canvas.width,h=canvas.height;
  ctx.clearRect(0,0,w,h);ctx.fillStyle="#223c44";ctx.fillRect(0,0,w,h);
  const toPx=p=>[(p[0]-car.pos[0])*111320*Math.cos(car.pos[1]*rad)/1.25,(car.pos[1]-p[1])*111320/1.25];
- ctx.save();ctx.translate(w/2,h/2);
+ ctx.save();ctx.translate(w/2,h/2);ctx.rotate(-car.heading);
  for(const r of city.roads){
   const a=toPx(r.a),b=toPx(r.b);
   if(Math.abs(a[0])>240&&Math.abs(b[0])>240)continue;
@@ -450,7 +450,8 @@ function drawMini(){
  if(rival.pos){
   const p=toPx(rival.pos);ctx.fillStyle="#f4a5b1";ctx.beginPath();ctx.arc(p[0],p[1],5,0,2*Math.PI);ctx.fill();
  }
- ctx.rotate(car.heading);ctx.fillStyle="#eaf6e2";ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(8,9);ctx.lineTo(-8,9);ctx.fill();ctx.restore();
+ ctx.restore();ctx.save();ctx.translate(w/2,h/2);
+ ctx.fillStyle="#eaf6e2";ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(8,9);ctx.lineTo(-8,9);ctx.closePath();ctx.fill();ctx.restore();
  ctx.fillStyle="#ecf5e9";ctx.font="bold 16px sans-serif";ctx.fillText(AREAS[area].name,14,22);
 }
 function frameLoop(now){
