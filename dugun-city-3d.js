@@ -293,6 +293,8 @@ function drive(dt){
   stepVehicle(car,keys,{mode:driveMode,spec,road:near,navigation},dt/substeps);
  }
  const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
+ car.currentRoadName=near?.road?.name||"";
+ car.currentRoadClass=near?.road?.typ||"";
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
  if(city.insideBuilding?.(car.pos)){
   // Source building polygons sometimes overlap carriageways. Prefer the drivable road.
@@ -445,6 +447,7 @@ function updateHUD(){
  $("speed-panel").style.setProperty("--speed-angle",Math.min(265,speedKmh*2.25)+"deg");
  $("speed-gear").textContent=car.speed<-.8?"R":keys.brake&&Math.abs(car.speed)<1?"N":"D";
  $("car-health").textContent="ARAÇ %"+Math.round(car.health)+(car.offroad?" · YOL DIŞI":"");
+ $("street-name").textContent=(car.currentRoadName||AREAS[area].name).toLocaleUpperCase("tr-TR");
  $("drive-hint").textContent=driveMode==="easy"?(keys.brake?"FREN · TUTARSAN GERİ VİTES":car.offroad?"YOLA DÖN · OKLARLA YÖNLENDİR":Math.abs(car.steering)>.12?"DİREKSİYON SENDE":"GAZ OTOMATİK · SAĞ / SOL İLE SÜR"):(keys.gas?"GAZ VERİLİYOR":"GAZ İÇİN W / ↑ BAS");
  $("car-health").style.color=car.health<35?"#ff9c8f":car.health<65?"#ffdb8e":"#e3f2e6";
  $("rescue").disabled=Math.abs(car.speed)>2.3||rescueCooldown>0;
