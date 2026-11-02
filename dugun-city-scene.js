@@ -466,7 +466,7 @@ export class CityScene3D{
   this.camStyle=((style%3)+3)%3;
   return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
  }
- setOrigin(point){this.origin=[...point];this.inited=false;this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
+ setOrigin(point){this.origin=[...point];this.inited=false;this.safeFollow=null;this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
 
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
  rebuild(force=false){
@@ -645,13 +645,29 @@ export class CityScene3D{
   const horizontal=hood?-1.7:(wide?clamp(16+speed*.14,16,21):clamp(9.6+speed*.09,9.6,12.2));
   const height=hood?1.65:(wide?7.6:4.45)+speed*.022;
   const lateral=(car.slip||0)*.38+(car.steering||0)*Math.min(1,speed/16)*.45;
-  const eye=new THREE.Vector3(cx-fwdX*horizontal+fwdY*lateral,cy-fwdY*horizontal-fwdX*lateral,height);
+  let safeFollow=horizontal;
+  if(!hood&&this.city.insideBuilding&&now-(this.camSafetyTime||0)>95){
+   this.camSafetyTime=now;
+   // Cast a short line from the car to the eye. Pull camera forward before walls block the player.
+   for(let t=.28;t<=1.001;t+=.12){
+    const x=cx-fwdX*horizontal*t+fwdY*lateral;
+    const y=cy-fwdY*horizontal*t-fwdX*lateral;
+    const probe=[this.origin[0]+x/(111320*Math.cos(this.origin[1]*rad)),this.origin[1]+y/111320];
+    if(this.city.insideBuilding(probe)){safeFollow=Math.max(3.8,horizontal*(t-.19));break}
+   }
+   this.safeFollow=safeFollow;
+  }else if(!hood)safeFollow=this.safeFollow??horizontal;
+  const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,height+(safeFollow<horizontal?1.3:0));
   const lookDistance=hood?27:wide?27:21;
   const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,hood?1.78:1.65);
   if(hood)this.player.visible=false;else this.player.visible=true;
   if(!this.inited){this.camPos.copy(eye);this.camLook.copy(target);this.inited=true}
   const softness=1-Math.exp(-dt*6.5),lookSoft=1-Math.exp(-dt*4.8);
   this.camPos.lerp(eye,softness);this.camLook.lerp(target,lookSoft);
+  if(!hood&&this.city.insideBuilding){
+   const p=[this.origin[0]+this.camPos.x/(111320*Math.cos(this.origin[1]*rad)),this.origin[1]+this.camPos.y/111320];
+   if(this.city.insideBuilding(p))this.camPos.copy(eye);
+  }
   this.camera.position.copy(this.camPos);this.camera.lookAt(this.camLook);
   this.sky.position.copy(this.camera.position);
   // Guest signs billboard to player only after camera aim settles.
