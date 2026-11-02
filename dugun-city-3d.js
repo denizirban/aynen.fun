@@ -1,4 +1,4 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v7";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v8";
 import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v8";
 import {StableNavigation} from "./dugun-navigation.js?v=20261102-v8";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
