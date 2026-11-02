@@ -1,7 +1,7 @@
 import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v13";
-import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v13";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v14";
 import {StableNavigation} from "./dugun-navigation.js?v=20261102-v13";
-import {stepVehicle,roadHalfWidth} from "./dugun-driving-dynamics.js?v=20261102-v13";
+import {stepVehicle,roadHalfWidth} from "./dugun-driving-dynamics.js?v=20261102-v14";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
  sahin:{accel:11.5,brake:18,top:27,grip:1.0},
