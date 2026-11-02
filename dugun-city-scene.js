@@ -229,6 +229,27 @@ export class CityScene3D{
   this.actorGroup=new THREE.Group();this.scene.add(this.actorGroup);
   this.player=makeCar("sahin");this.rival=makeCar("sahin",null,true);
   this.actorGroup.add(this.player,this.rival);
+  // Floating roadway arrows follow the actual navigation path.
+  this.guides=[];
+  const guideShape=new THREE.Shape();
+  guideShape.moveTo(-1.0,-1.8);guideShape.lineTo(1.0,-1.8);guideShape.lineTo(1.0,.25);
+  guideShape.lineTo(1.85,.25);guideShape.lineTo(0,2.45);guideShape.lineTo(-1.85,.25);guideShape.lineTo(-1.0,.25);guideShape.closePath();
+  const guideGeo=new THREE.ShapeGeometry(guideShape);
+  const guideMat=new THREE.MeshBasicMaterial({color:0xffd846,transparent:true,opacity:.92,side:THREE.DoubleSide,depthWrite:false});
+  for(let i=0;i<17;i++){
+   const arrow=new THREE.Mesh(guideGeo,guideMat);arrow.visible=false;arrow.renderOrder=4;
+   this.actorGroup.add(arrow);this.guides.push(arrow);
+  }
+  // Exhaust & drifting dust are real moving particles, not effects drawn on a map.
+  this.fx=[];
+  const dustGeo=new THREE.IcosahedronGeometry(.22,0);
+  for(let i=0;i<28;i++){
+   const particle=new THREE.Mesh(dustGeo,new THREE.MeshBasicMaterial({color:0xc8d5d1,transparent:true,opacity:0,depthWrite:false}));
+   particle.visible=false;this.actorGroup.add(particle);
+   this.fx.push({mesh:particle,age:9,pos:null,velocity:[0,0,0]});
+  }
+  this.fxTimer=0;this.fxIndex=0;this.lastCarPos=null;this.skids=[];
+
   this.npcs=Array.from({length:this.mobile?5:10},(_,i)=>makeCar(i%3===0?"doblo":"sahin",["#dcad79","#91aeb8","#c3d6b1","#eee2d6","#d48c8d"][i%5]));
   this.npcs.forEach(x=>this.actorGroup.add(x));
   this.marker=new THREE.Group();this.actorGroup.add(this.marker);
@@ -241,7 +262,7 @@ export class CityScene3D{
   circle.position.z=5.5;this.marker.add(circle);this.marker.visible=false;
   this.camPos=new THREE.Vector3();this.camLook=new THREE.Vector3();this.inited=false;
   this.lastBuilt=0;this.builtAt=null;this.builtRoads=null;this.builtBuildings=null;
-  this.lastFPS=60;this.lastWarn=0;
+  this.lastFPS=60;this.lastWarn=0;this.routeCache=null;
   window.addEventListener("resize",()=>this.resize());
   this.resize();this.rebuild(true);
  }
@@ -258,6 +279,9 @@ export class CityScene3D{
   const city=this.city,ro=city.roads,bu=city.buildings;
   if(!force&&this.builtAt&&distance(this.builtAt,this.focus||this.origin)<83&&this.builtRoads===ro&&this.builtBuildings===bu)return;
   this.lastBuilt=t;this.builtAt=[...(this.focus||this.origin)];this.builtRoads=ro;this.builtBuildings=bu;
+  // Shift the render origin as the player explores new districts, avoiding precision loss.
+  if(this.focus&&distance(this.origin,this.focus)>220){this.origin=[...this.focus];this.inited=false;}
+
   this.scene.remove(this.worldGroup);
   this.worldGroup.traverse(obj=>{if(obj.geometry)obj.geometry.dispose()});
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
@@ -303,6 +327,42 @@ export class CityScene3D{
    const npc=state.traffic?.[i];this.position(m,npc?.pos,.18);
    if(npc?.pos)m.rotation.z=-npc.heading;
   });
+  const path=state.route||[],sampled=[];
+  if(path.length>1){
+   let carried=0,next=9;
+   for(let i=1;i<path.length&&sampled.length<this.guides.length;i++){
+    const a=path[i-1],b=path[i],len=distance(a,b);if(len<.25)continue;
+    while(carried+len>=next&&sampled.length<this.guides.length){
+     const frac=(next-carried)/len;
+     sampled.push({pos:[a[0]+(b[0]-a[0])*frac,a[1]+(b[1]-a[1])*frac],angle:Math.atan2((b[0]-a[0])*Math.cos(a[1]*rad),b[1]-a[1])});
+     next+=13;
+    }
+    carried+=len;
+   }
+  }
+  this.guides.forEach((a,i)=>{
+   const d=sampled[i];if(!d){a.visible=false;return}
+   this.position(a,d.pos,.24);
+   a.rotation.z=-d.angle;
+   a.material.opacity=.68+.16*Math.sin(now*.003-i*.7);
+  });
+  // Exhaust and low-speed tyre smoke with fading, independently rendered in 3D.
+  this.fxTimer+=dt*(Math.abs(car.speed)>9?15:5);
+  if(this.fxTimer>1){
+   this.fxTimer%=1;
+   const fx=this.fx[this.fxIndex++%this.fx.length],dx=-Math.sin(car.heading),dy=-Math.cos(car.heading);
+   fx.pos=[car.pos[0],car.pos[1]];
+   fx.velocity=[dx*(.6+Math.random()),dy*(.6+Math.random()),.7+Math.random()*.5];
+   fx.age=0;fx.mesh.material.color.setHex(car.offroad?0xc3aa8d:0xd9dcd8);
+  }
+  for(const fx of this.fx){
+   fx.age+=dt;fx.mesh.visible=fx.age<1.35&&!!fx.pos;
+   if(!fx.mesh.visible)continue;
+   const pp=[fx.pos[0]+fx.velocity[0]*fx.age/(111320*Math.cos(fx.pos[1]*rad)),fx.pos[1]+fx.velocity[1]*fx.age/111320];
+   this.position(fx.mesh,pp,.34+fx.velocity[2]*fx.age);
+   fx.mesh.scale.setScalar(.5+fx.age*3.2);
+   fx.mesh.material.opacity=Math.max(0,(1-fx.age/1.35)*.30);
+  }
   if(state.mission){
    const m=state.mission,where=m.phase==="pickup"?m.pickup:m.dropoff;
    this.position(this.marker,where,.18);this.ring.rotation.z=now*.0003;
