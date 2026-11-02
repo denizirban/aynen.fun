@@ -975,7 +975,7 @@ export class CityScene3D{
   const moved=this.builtAt?distance(this.builtAt,this.focus||this.origin):Infinity;
   // A fresh tile object is not necessarily a new city. Rebuilding the entire
   // Three.js street scene every 4 seconds produced an obvious frame hitch.
-  if(!force&&this.builtAt&&moved<108&&this.builtRoadCount>65&&
+  if(!force&&this.builtAt&&moved<226&&this.builtRoadCount>65&&
      (ro?.length||0)>=this.builtRoadCount*.80&&
      (bu?.length||0)>=(this.builtBuildingCount||0)*.75)return;
   if(!force&&this.builtAt&&moved<60&&this.builtRoads===ro&&this.builtBuildings===bu)return;
@@ -1047,7 +1047,7 @@ export class CityScene3D{
    this.lastQualityChange=now;this.framesObserved=0;this.timeObserved=0;
   }
   this.focus=state.car.pos;
-  if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>175))this.rebuild();
+  if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>232))this.rebuild();
   const car=state.car;
   this.lastPlayerOnBridge=!!car.currentRoadBridge;
   this.position(this.player,car.pos,.18,this.lastPlayerOnBridge);this.player.rotation.z=-car.heading;
