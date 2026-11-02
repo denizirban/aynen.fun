@@ -394,10 +394,12 @@ function bridgeLiftAt(x,y){
  const px=x-b.a[0],py=y-b.a[1];
  const along=(px*b.ux+py*b.uy)/b.len;
  const cross=Math.abs(px*b.uy-py*b.ux);
- if(cross>19||along<-.32||along>1.32)return 0;
+ if(cross>38||along<-.32||along>1.32)return 0;
  const approach=along<0?Math.max(0,(along+.32)/.32):
                along>1?Math.max(0,(1.32-along)/.32):1;
- const laneFactor=Math.min(1,Math.max(0,(19-cross)/3));
+ // Smooth lateral envelope, no sudden elevation cliff at the bridge edge.
+ const t=Math.max(0,Math.min(1,(38-cross)/14));
+ const laneFactor=t*t*(3-2*t);
  return 39.45*approach*laneFactor;
 }
 function makeBosphorusBridge(group,origin,player){
