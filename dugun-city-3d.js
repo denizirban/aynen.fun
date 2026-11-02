@@ -1,5 +1,5 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v5";
-import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v5";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v6";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v6";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
  sahin:{accel:11.5,brake:18,top:27,grip:1.0},
@@ -18,6 +18,7 @@ const keys={gas:false,brake:false,left:false,right:false,handbrake:false};
 let area="kadikoy",kind="sahin",city=null,render3D=null,ready=false,pending=false,playing=false,paused=true,muted=false,free=false;
 let timer=180,earnings=0,deliveries=0,stolen=0,convoy=1,mission=null,car=null,rival=null,traffic=[],route=[],toastEnd=0,resetRide=0,roadRefresh=0,routeRefresh=0,camRefresh=0,hitCooldown=0;
 let last=performance.now(),frame=0,hornCooldown=0,nearMissCooldown=0,deliveryStreak=0,personalBest=0,rescueCooldown=0;
+let driveMode="easy",brakeHold=0,stillTime=0,assistedPickupTimer=0,tripElapsed=0,initialRoadWait=false;
 const engine={osc:null,filter:null,gain:null};
 function initEngine(){
  if(engine.osc||muted)return;
@@ -58,13 +59,21 @@ function toast(message,sec=1.8){
  $("toast").textContent=message;$("toast").classList.add("show");toastEnd=performance.now()+sec*1000;
 }
 function choices(group,type,change){
- document.querySelectorAll("#"+group+" .option").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll("#"+group+" .option").forEach(el=>el.classList.remove("selected"));
+ document.querySelectorAll("#"+group+" button").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll("#"+group+" button").forEach(el=>el.classList.remove("selected"));
   btn.classList.add("selected");change(btn.dataset[type]);
  }));
 }
 choices("districts","district",v=>{area=v;if(ready&&!playing)city.jumpToArea(v)});
 choices("cars","car",v=>{kind=v});
+choices("drive-options","drivemode",v=>{driveMode=v;syncDriveUI()});
+function syncDriveUI(){
+ document.body.dataset.driveMode=driveMode;
+ $("drive-mode").textContent=driveMode==="easy"?"KOLAY SÜRÜŞ":"MANUEL";
+ $("turbo-control").textContent=driveMode==="easy"?"HIZLAN":"GAZ";
+ document.querySelectorAll("#drive-options [data-drivemode]").forEach(b=>b.classList.toggle("selected",b.dataset.drivemode===driveMode));
+}
+
 const inputKeys={ArrowUp:"gas",KeyW:"gas",ArrowDown:"brake",KeyS:"brake",ArrowLeft:"left",KeyA:"left",ArrowRight:"right",KeyD:"right",ShiftLeft:"handbrake",ShiftRight:"handbrake"};
 window.addEventListener("keydown",e=>{
  if(inputKeys[e.code]){keys[inputKeys[e.code]]=true;e.preventDefault()}
@@ -73,6 +82,7 @@ window.addEventListener("keydown",e=>{
  if(e.code==="KeyC"&&!e.repeat){e.preventDefault();cycleCamera()}
  if(e.code==="KeyR"&&!e.repeat){e.preventDefault();recoverCar()}
  if(e.code==="KeyL"&&!e.repeat){e.preventDefault();cycleLighting()}
+ if(e.code==="KeyM"&&!e.repeat){e.preventDefault();toggleDriveMode()}
 });
 window.addEventListener("keyup",e=>{if(inputKeys[e.code]){keys[inputKeys[e.code]]=false;e.preventDefault()}});
 function clearKeys(){for(const k of Object.keys(keys))keys[k]=false;document.querySelectorAll(".ctr").forEach(b=>b.classList.remove("pressed"))}
@@ -89,6 +99,14 @@ $("pause").addEventListener("click",togglePause);
 $("sound").addEventListener("click",()=>{muted=!muted;$("sound").textContent=muted?"SES KAPALI":"SES AÇIK";if(!muted){initEngine();sound()}syncEngine()});
 $("rescue").addEventListener("click",recoverCar);
 $("camera").addEventListener("click",cycleCamera);
+$("drive-mode").addEventListener("click",toggleDriveMode);
+function toggleDriveMode(){
+ driveMode=driveMode==="easy"?"manual":"easy";
+ syncDriveUI();
+ toast(driveMode==="easy"?"OTOMATİK GAZ AÇIK · SEN YÖNLENDİR":"MANUEL SÜRÜŞ · GAZ W / ↑",2.1);
+ brakeHold=0;
+}
+
 $("lighting").addEventListener("click",cycleLighting);
 function cycleLighting(){
  if(!render3D)return;
@@ -155,8 +173,15 @@ function finish(cause){
  $("overlay").hidden=false;
 }
 function startGame(unlimited){
- if(!ready){pending=unlimited?"free":"timed";$("loadstate").textContent="Gerçek harita ve yol ağı yükleniyor…";return}
+ if(!ready||!city?.roads?.length){
+  pending=unlimited?"free":"timed";
+  $("loadstate").textContent="İstanbul sokakları yükleniyor… Harita bağlantısını kontrol et.";
+  city?.refresh(AREAS[area].center,true);
+  return
+ }
  pending=false;free=unlimited;
+ // Default easy mode is intentionally playable with just left/right steering.
+ brakeHold=0;stillTime=0;assistedPickupTimer=0;tripElapsed=0;
  playing=true;paused=false;timer=180;earnings=0;deliveries=0;stolen=0;convoy=1;mission=null;
  hornCooldown=0;nearMissCooldown=0;deliveryStreak=0;hitCooldown=0;rescueCooldown=0;
  try{personalBest=Number(localStorage.getItem("dugun-3d-best-v3"))||0}catch(e){personalBest=0}
@@ -169,10 +194,14 @@ function startGame(unlimited){
  for(let i=0;i<(window.innerWidth<700?5:10);i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0,joined:false,respawnCD:0});
  if(!render3D){render3D=new CityScene3D(city)}
  render3D.setOrigin(AREAS[area].center);render3D.setCar(kind);
+ if(render3D.setCameraStyle)render3D.setCameraStyle(1);
+ $("camera").textContent="KAMERA: GENİŞ";
+ syncDriveUI();
  city.map.jumpTo({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad});
  $("overlay").hidden=true;hud(true);$("pause").textContent="DURAKLAT";
  resetRide=0;last=performance.now();
- spawnMission();seedTraffic();initEngine();syncEngine();toast(AREAS[area].name.toLocaleUpperCase("tr-TR")+" · ŞEHİR SENİN",2);
+ spawnMission();seedTraffic();initEngine();syncEngine();
+ toast(driveMode==="easy"?"OKLARLA DÖN · GAZ OTOMATİK":"W GAZ · A / D DİREKSİYON",3);
 }
 function seedTraffic(){
  if(!city.roads.length)return;
@@ -244,54 +273,94 @@ function deliver(who){
  nextMission();
 }
 function drive(dt){
- const spec=SPEC[kind],direction=Number(keys.right)-Number(keys.left),steerTarget=direction*(.57/(1+Math.abs(car.speed)/12));
- car.steering+=(steerTarget-car.steering)*Math.min(1,dt*5.6);
- if(keys.gas)car.speed+=spec.accel*dt*(1-.20*Math.max(0,car.speed)/spec.top);
- if(keys.brake)car.speed-=spec.brake*dt*(car.speed>0?1:.45);
- if(!keys.gas&&!keys.brake){
-  const friction=1.5+.012*car.speed*car.speed;
-  car.speed-=Math.sign(car.speed)*Math.min(Math.abs(car.speed),friction*dt);
- }
+ const spec=SPEC[kind],input=Number(keys.right)-Number(keys.left);
+ const auto=driveMode==="easy";
+ tripElapsed+=dt;
+ // Sensible steering at every speed: strong steering around junctions, smaller at high speed.
+ const speedAbs=Math.abs(car.speed);
+ const steeringLimit=clamp(.55/(1+speedAbs/24),.29,.55);
+ const wanted=input*steeringLimit;
+ car.steering+=(wanted-car.steering)*(1-Math.exp(-dt*(auto?10.0:7.0)));
  const near=city.nearest(car.pos);
- car.offroad=!!near&&near.dist>(near.road.typ==="primary"?10:7);
- if(car.offroad)car.speed*=Math.max(.7,1-dt*(near.dist>16?1.4:.6));
- car.speed=clamp(car.speed,-6,spec.top*(car.offroad?.62:1));
- const reverse=car.speed<0?-1:1;
- const grip=car.offroad?.68:1;
- const desiredYaw=car.speed/3.55*Math.tan(car.steering)*spec.grip*grip;
+ const width=near?/^(primary|trunk)/.test(near.road.typ)?11:/^(secondary)/.test(near.road.typ)?9:6.8:8;
+ car.offroad=!!near&&near.dist>width;
+ const cornering=Math.abs(car.steering)>steeringLimit*.50;
+ const cruise=auto?(cornering?7.7:car.offroad?6.7:11.7):0; // ~28 km/h turns, 42 km/h straights.
+ if(keys.brake){
+  brakeHold+=dt;
+  car.speed-=spec.brake*dt*(car.speed>0?1:.36);
+ }else{
+  brakeHold=0;
+  if(auto){
+   const target=keys.gas?Math.min(spec.top,18.6):cruise;
+   const delta=target-car.speed;
+   car.speed+=clamp(delta,-(cornering?11:8)*dt,(keys.gas?17:14)*dt);
+  }else if(keys.gas){
+   car.speed+=spec.accel*1.55*dt*(1-.15*Math.max(0,car.speed)/spec.top);
+  }else{
+   const friction=2.6+.013*car.speed*car.speed;
+   car.speed-=Math.sign(car.speed)*Math.min(Math.abs(car.speed),friction*dt);
+  }
+ }
+ if(auto&&!keys.brake&&car.speed<-.10)car.speed=Math.min(0,car.speed+18*dt);
+ // Do not put players in reverse the instant they tap BRAKE. Hold longer to reverse.
+ if(auto&&keys.brake&&brakeHold<1.10)car.speed=Math.max(car.speed,0);
+ if(keys.handbrake)car.speed*=Math.max(0,1-dt*.40);
+ if(car.offroad)car.speed*=Math.max(.78,1-dt*(near.dist>17?1.30:.45));
+ car.speed=clamp(car.speed,-5.2,spec.top*(car.offroad?.65:1));
  car.yawRate??=0;car.slip??=0;
- const driftTarget=keys.handbrake&&Math.abs(car.speed)>5?
-   clamp(car.steering*Math.abs(car.speed)/9,-.94,.94):0;
- car.slip+=(driftTarget-car.slip)*Math.min(1,dt*(keys.handbrake?3.8:5.5));
- const response=keys.handbrake?2.9:8.0;
- car.yawRate+=(desiredYaw-car.yawRate)*Math.min(1,dt*response);
- const yaw=car.yawRate*(keys.handbrake?1.30:1)+car.slip*.18;
- car.heading=(car.heading+yaw*dt+Math.PI*2)%(2*Math.PI);
+ const grip=car.offroad?.76:1;
+ const desiredYaw=clamp(car.speed/3.95*Math.tan(car.steering)*spec.grip*grip,-.83,.83);
+ const slipTarget=keys.handbrake&&Math.abs(car.speed)>5?clamp(car.steering*Math.abs(car.speed)/12,-.70,.70):0;
+ car.slip+=(slipTarget-car.slip)*(1-Math.exp(-dt*(keys.handbrake?4.0:6.8)));
+ car.yawRate+=(desiredYaw-car.yawRate)*(1-Math.exp(-dt*(keys.handbrake?4.5:11.0)));
+ car.heading=(car.heading+(car.yawRate*(keys.handbrake?1.15:1)+car.slip*.12)*dt+Math.PI*2)%(Math.PI*2);
  const previous=car.pos;
  car.pos=travel(car.pos,car.heading,car.speed*dt);
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
  if(city.insideBuilding?.(car.pos)){
   car.pos=previous;
+  car.blockedTime=(car.blockedTime||0)+dt;
   if(mission?.phase==="dropoff")mission.crashes++;
   if(Math.abs(car.speed)>3&&hitCooldown<=0){
-   hitCooldown=.9;car.health=Math.max(0,car.health-5);
-   sound(190,.19);toast("BİNAYA ÇARPTIN · HASAR",1.1);
+   hitCooldown=1.05;
+   car.health=Math.max(0,car.health-(auto?2:5));
+   sound(190,.19);toast(auto?"DUVARA YAKLAŞTIN · DİREKSİYONU ÇEVİR":"BİNAYA ÇARPTIN · HASAR",1.3);
   }
-  car.speed*=-.22;
+  car.speed=auto?0:car.speed*-.15;
+  car.yawRate=0;
+  if(auto&&car.blockedTime>1.05){
+   // Restore the last clear position rather than trapping automatic cruise against walls.
+   const back=car.safePos||previous;
+   car.pos=[...back];
+   car.heading=(car.safeHeading??car.heading)+(input===0?.62:input*.32);
+   car.yawRate=0;car.blockedTime=0;
+   if(render3D)render3D.inited=false;
+   toast("YOLA GERİ DÖNDÜN · OKLARLA YÖNLENDİR",1.8);
+  }
+ }else{
+  car.blockedTime=0;
+  car.clearDistance=(car.clearDistance||0)+Math.abs(car.speed)*dt;
+  if(car.clearDistance>4.6||!car.safePos){
+   car.safePos=[...car.pos];car.safeHeading=car.heading;car.clearDistance=0;
+  }
  }
- if(near&&near.dist>18&&Math.abs(car.speed)>4)car.health=Math.max(0,car.health-dt*1.1);
+ if(near&&near.dist>20&&Math.abs(car.speed)>4)car.health=Math.max(0,car.health-dt*(auto?.26:1.1));
  if(car.health<=0){finish("ARABA YOLDA KALDI");return}
+ if(Math.abs(car.speed)<1.1)stillTime+=dt;else stillTime=0;
  if(mission){
   const target=mission.phase==="pickup"?mission.pickup:mission.dropoff;
   const d=distance(car.pos,target);
-  if(mission.phase==="pickup"&&mission.owner===null&&d<10&&Math.abs(car.speed)<6.8){
+  // Drive-through pickup/dropoff: gentle approach is enough; no awkward full stop.
+  const threshold=auto?15:11,allowedSpeed=auto?13.5:8.5;
+  if(mission.phase==="pickup"&&mission.owner===null&&d<threshold&&Math.abs(car.speed)<allowedSpeed){
    mission.phase="dropoff";mission.owner="player";
-   const baseTime=Math.max(47,36+distance(mission.pickup,mission.dropoff)/8);
-   mission.clock=mission.challenge.id==="express"?baseTime*.82:baseTime;
+   const baseTime=Math.max(59,42+distance(mission.pickup,mission.dropoff)/7.5);
+   mission.clock=mission.challenge.id==="express"?baseTime*.87:baseTime;
    mission.initialClock=mission.clock;mission.crashes=0;mission.horns=0;
-   toast(mission.passenger.toLocaleUpperCase("tr-TR")+" BİNDİ",1.5);
+   toast(mission.passenger.toLocaleUpperCase("tr-TR")+" BİNDİ · SALONA GİT",1.9);
    sound(540,.17);refreshRivalRoute();refreshRoute();updateMissionText();
-  }else if(mission.phase==="dropoff"&&mission.owner==="player"&&d<10&&Math.abs(car.speed)<6.8)deliver("player");
+  }else if(mission.phase==="dropoff"&&mission.owner==="player"&&d<threshold&&Math.abs(car.speed)<allowedSpeed)deliver("player");
   if(mission&&mission.phase==="dropoff"){
    mission.clock-=dt;
    if(mission.clock<=0){toast("MİSAFİRİN SÜRESİ DOLDU",1.3);nextMission()}
@@ -392,8 +461,12 @@ function updateHUD(){
  $("time").classList.toggle("urgent",timer<30&&!free);
  $("money").textContent="₺"+earnings.toLocaleString("tr-TR");
  $("bestmoney").textContent="₺"+personalBest.toLocaleString("tr-TR");
- $("speed").textContent=Math.round(Math.abs(car.speed)*3.6);
+ const speedKmh=Math.round(Math.abs(car.speed)*3.6);
+ $("speed").textContent=speedKmh;
+ $("speed-panel").style.setProperty("--speed-angle",Math.min(265,speedKmh*2.25)+"deg");
+ $("speed-gear").textContent=car.speed<-.8?"R":keys.brake&&Math.abs(car.speed)<1?"N":"D";
  $("car-health").textContent="ARAÇ %"+Math.round(car.health)+(car.offroad?" · YOL DIŞI":"");
+ $("drive-hint").textContent=driveMode==="easy"?(keys.brake?"FREN · TUTARSAN GERİ VİTES":car.offroad?"YOLA DÖN · OKLARLA YÖNLENDİR":Math.abs(car.steering)>.12?"DİREKSİYON SENDE":"GAZ OTOMATİK · SAĞ / SOL İLE SÜR"):(keys.gas?"GAZ VERİLİYOR":"GAZ İÇİN W / ↑ BAS");
  $("car-health").style.color=car.health<35?"#ff9c8f":car.health<65?"#ffdb8e":"#e3f2e6";
  $("rescue").disabled=Math.abs(car.speed)>2.3||rescueCooldown>0;
  $("convoy").textContent=convoy;$("trips").textContent=deliveries;
@@ -483,9 +556,16 @@ function frameLoop(now){
 function readyMap(){
  ready=true;
  render3D=new CityScene3D(city);
- $("loadstate").textContent="3D şehir motoru hazır. İstanbul sokakları yükleniyor…";
+ $("loadstate").textContent="3D şehir hazır. Gerçek sokaklar yükleniyor…";
+ city.onRoadsReady=()=>{
+  const info=$("loadstate");if(info)info.textContent="Sokaklar hazır · Sürmeye başlayabilirsin.";
+  if(pending&&city.roads.length){
+   const mode=pending;
+   pending=false;startGame(mode==="free");
+  }
+ };
  if(area!==city.area)city.jumpToArea(area);
- if(pending)startGame(pending==="free");
+ if(pending&&city.roads.length){const mode=pending;pending=false;startGame(mode==="free")}
 }
 function errorMap(message){$("loadstate").textContent="Harita hatası: "+message}
 city=new IstanbulMap(area,readyMap,errorMap);

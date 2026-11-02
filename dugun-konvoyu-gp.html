@@ -206,26 +206,142 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 #record{margin-top:5px;color:#f2e7c5;font-size:11px;font-weight:900;letter-spacing:.045em}
 #record span{color:#d9ffa2;margin-left:7px}
 @media(max-width:700px){#record{font-size:9px;margin-top:2px}}
+
+/* ROAD-GAME HUD V6 — clearer hierarchy, minimal cockpit occlusion, easy driving */
+:root{--sunny:#ffe36c;--navy:#122331;--cream:#fff5d9}
+#header{z-index:9;background:linear-gradient(180deg,rgba(11,30,38,.92),rgba(11,30,38,.40),transparent);height:54px;padding:8px 18px}
+.header-end{gap:7px}
+#drive-mode{background:linear-gradient(180deg,#fce17f,#eeb94f);color:#253742;border:1px solid #fff2b6;box-shadow:0 3px 0 #875f34;font-weight:900;font-size:12px}
+#drive-mode:hover{background:#ffecb6}
+#time-box{top:69px;left:17px;padding:10px 15px 11px;border:1px solid #f8df91;border-radius:14px;background:linear-gradient(125deg,#1b3142eb,#162a38e8);box-shadow:0 6px 22px #06182166}
+#time{font-size:clamp(42px,4.4vw,65px);color:#ffdb6f;text-shadow:0 3px 0 #74543f}
+.money{margin-top:4px;font-size:21px;color:#fff1b2}
+#record{font-size:10px}
+#speed-panel{top:auto;bottom:28px;right:24px;width:148px;height:148px;padding:19px 8px 8px;text-align:center;border:4px solid #e9d7a0;border-radius:50%;background:conic-gradient(from 210deg,#ffde72 0deg,var(--speed-angle,0deg),#1d3344 var(--speed-angle,0deg),#1d3344 282deg,transparent 282deg 360deg);box-shadow:0 6px 0 #142838,0 10px 25px #09192377;text-shadow:none}
+#speed-panel:before{content:"";position:absolute;inset:10px;background:linear-gradient(140deg,#1b3343,#152738);border-radius:50%;z-index:0}
+#speed-panel>*{position:relative;z-index:1}
+#speed-panel .kicker{color:#f0e7cc;font-size:10px}
+#speed{font-size:51px;line-height:.96;color:#fff0aa;text-shadow:0 3px #73543b}
+#speed-panel .unit{font-size:10px}
+#car-health{font-size:10px;margin-top:4px!important}
+#speed-gear{position:absolute;right:2px;top:6px;min-width:27px;padding:3px 5px;border:1px solid #e0ddad;border-radius:8px;background:#102637;color:#fff3ce;font-size:11px;font-weight:900}
+#rescue{position:absolute!important;right:0;left:0;top:-51px;margin:0 auto!important;width:max-content;background:#263c48}
+#lighting{display:none}
+#mission{top:216px;left:17px;width:min(310px,29vw);padding:0 13px 12px;background:linear-gradient(130deg,#142b3ce9,#19303de3);border:1px solid #e6d4a5;border-radius:13px;box-shadow:0 5px 14px #0c1b2650}
+#mission-state{margin:0 -13px 9px;padding:8px 13px;font-size:12px;border-radius:12px 12px 0 0;background:linear-gradient(95deg,#ba5a4c,#8f4446);color:#fff4b7}
+#mission-name{font-size:19px;line-height:1.1}
+#mission-info{font-size:11px;margin-top:5px;line-height:1.35}
+#mission-distance{font-size:14px;margin-top:9px}
+#mission-timer{font-size:11px}
+#directions{top:65px;bottom:auto;left:50%;transform:translateX(-50%);padding:10px 22px;min-width:210px;background:linear-gradient(120deg,#182e3df2,#142739ed);border:2px solid #fce297;border-radius:15px;box-shadow:0 5px #10233299;color:#fef9e9;font-size:13px;max-width:330px;white-space:normal}
+#turn-arrow{font-size:31px}
+#drive-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);padding:8px 15px;border-radius:11px;background:#162b37d9;border:1px solid #e5e0b888;box-shadow:0 3px 8px #061b1d55;color:#fef4d0;font-size:11px;letter-spacing:.04em;font-weight:900;white-space:nowrap}
+#mini{width:174px;height:154px;left:17px;bottom:24px;border-radius:13px;border:2px solid #e6d8b5}
+#mode-pill{left:200px;bottom:30px;font-size:11px;padding:10px 13px;border-radius:11px}
+#controls{display:flex;justify-content:space-between;bottom:0;padding:0 16px calc(17px + env(safe-area-inset-bottom));pointer-events:none;z-index:8}
+#controls .ctr-group{gap:9px}
+#controls .ctr{pointer-events:auto;min-height:61px;min-width:66px;background:linear-gradient(180deg,#39566bdd,#182f42eb);border:2px solid #c6d7d2ad;border-bottom-width:4px;box-shadow:0 4px 15px #061d2555;border-radius:17px;font-size:21px;transition:transform .1s,background .1s}
+#controls .ctr.pressed{transform:translateY(2px);background:#678985}
+#controls .ctr.go{background:linear-gradient(180deg,#ffe887,#edba52);color:#25353c;border-color:#fff0ac;font-size:13px}
+#controls .ctr.brake{background:linear-gradient(180deg,#e4a58e,#bb675c);color:#fff4e9;border-color:#f3d1c1;font-size:12px}
+#controls .ctr.horn{background:linear-gradient(#5d7d86,#2c495b);font-size:12px}
+.drive-choices{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.drive-option{padding:11px 10px;border-radius:12px;border:2px solid #bfc6bc;background:#f5f5e9;color:#455454;font-size:12px;text-align:left;font-weight:900}
+.drive-option small{display:block;margin-top:4px;color:#718078;font-weight:700;font-size:10px}
+.drive-option.selected{background:#fae6a9;border-color:#bb9155;color:#473d35;box-shadow:0 2px 0 #b7a77e}
+.drive-option.selected small{color:#665948}
+#panel{max-height:min(95dvh,800px);overflow-y:auto}
+#panel h1{font-size:clamp(34px,4.2vw,53px)}
+#panel .feature-row{margin:8px 0 12px}
+#panel .panel-label{margin:9px 0 5px}
+#panel .option{min-height:45px;padding:8px}
+#panel #start{margin-top:14px}
+@media(min-width:1000px){
+ #controls{left:auto;right:192px;width:410px;bottom:0}
+ #controls .ctr{min-width:53px;min-height:48px;border-radius:12px;font-size:17px}
+ #controls .ctr.horn{min-height:45px;font-size:10px}
+ #controls .ctr.go,#controls .ctr.brake{font-size:11px}
+ #drive-hint{bottom:83px}
+}
+@media(max-width:900px){
+ #mission{width:min(270px,40vw)}
+ #directions{top:59px}
+ #drive-hint{bottom:calc(92px + env(safe-area-inset-bottom));font-size:10px}
+ #speed-panel{right:9px;bottom:calc(99px + env(safe-area-inset-bottom));width:105px;height:105px;padding:11px 5px}
+ #speed{font-size:37px}
+ #speed-panel .kicker{font-size:9px}
+ #speed-gear{top:0px;right:-5px;min-width:24px}
+ #car-health{font-size:9px}
+ #rescue{top:-40px;font-size:8px}
+ #mini{bottom:calc(105px + env(safe-area-inset-bottom));width:125px;height:113px;left:8px}
+ #mode-pill{left:144px;bottom:calc(108px + env(safe-area-inset-bottom));font-size:9px;padding:7px}
+ #controls{left:0;right:0;width:100%;padding-left:10px;padding-right:10px}
+ #controls .ctr{min-width:58px;min-height:68px}
+}
+@media(max-width:700px){
+ #header{padding:5px 8px;height:39px}
+ .brand{font-size:13px}.glass-button{font-size:9px;padding:6px 7px}
+ #drive-mode{font-size:9px;padding:6px}
+ #time-box{top:44px;left:7px;padding:7px 9px;border-radius:10px}
+ #time{font-size:36px}
+ .money{font-size:16px}
+ #record{display:none}
+ #mission{top:140px;left:7px;width:min(225px,58vw);padding:0 9px 8px}
+ #mission-state{margin:0 -9px 7px;padding:6px 9px;font-size:10px}
+ #mission-name{font-size:15px}
+ #mission-info{font-size:10px}
+ #mission-distance{font-size:12px;margin-top:6px}
+ #mission-timer{font-size:9px}
+ #directions{top:45px;left:auto;right:8px;transform:none;padding:6px 9px;min-width:0;max-width:48vw;font-size:10px;gap:6px;border-radius:10px}
+ #turn-arrow{font-size:24px}
+ #drive-hint{bottom:calc(198px + env(safe-area-inset-bottom));font-size:9px;max-width:90vw;text-align:center;padding:5px 9px}
+ #speed-panel{right:8px;bottom:calc(94px + env(safe-area-inset-bottom));width:91px;height:91px;padding:10px 4px;border-width:2px}
+ #speed-panel:before{inset:6px}
+ #speed{font-size:31px}
+ #speed-panel .unit{font-size:8px}
+ #car-health{font-size:8px}
+ #speed-gear{right:-2px;font-size:9px}
+ #rescue{top:-32px;padding:5px!important;font-size:8px}
+ #mini{bottom:calc(96px + env(safe-area-inset-bottom));width:105px;height:99px}
+ #mode-pill{left:120px;bottom:calc(101px + env(safe-area-inset-bottom));font-size:8px;max-width:40vw}
+ #controls{bottom:0;padding:0 8px calc(16px + env(safe-area-inset-bottom))}
+ #controls .ctr-group{gap:6px}
+ #controls .ctr{min-width:58px;min-height:74px;font-size:24px;border-radius:15px}
+ #controls .ctr.brake{min-width:58px;font-size:10px}
+ #controls .ctr.go{min-width:66px;font-size:11px}
+ #controls .ctr.horn{min-width:48px;font-size:10px;min-height:55px}
+ #panel .drive-option{padding:9px 7px;font-size:11px}
+ #panel .drive-option small{font-size:9px}
+ #panel #help{font-size:10px}
+}
+@media(max-width:380px){
+ #header .glass-button{font-size:8px;padding:5px}
+ #controls .ctr{min-width:49px}
+ #controls .ctr.go{min-width:57px}
+ #controls .ctr.brake{min-width:51px}
+ #controls .ctr.horn{min-width:44px}
+ #mode-pill{display:none}
+}
 </style>
 </head>
 <body>
 <div id="map" aria-label="OpenStreetMap kaynaklı gerçek İstanbul sokakları ve üç boyutlu binalar"></div>
 <canvas id="driving-canvas" aria-label="Canlı üçüncü şahıs kameralı İstanbul 3D sürüş oyunu"></canvas><div id="scene-fade"></div>
 <div id="game">
- <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / İSTANBUL 3D</span><div class="header-end"><button class="glass-button" id="camera" type="button" aria-label="Kamera açısını değiştir">KAMERA: TAKİP</button><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
+ <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / İSTANBUL 3D</span><div class="header-end"><button class="glass-button" id="drive-mode" type="button" aria-label="Kolay veya manuel sürüş arasında değiştir">KOLAY SÜRÜŞ</button><button class="glass-button" id="camera" type="button" aria-label="Kamera açısını değiştir">KAMERA: TAKİP</button><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
  <section id="hud" aria-label="Oyunun göstergeleri">
   <div id="time-box"><span class="kicker">KALAN SÜRE</span><div id="time">03:00</div><div class="money" id="money">₺0</div><div id="record">REKOR <span id="bestmoney">₺0</span></div></div>
-  <div id="speed-panel"><div class="kicker">HIZ</div><div id="speed">0</div><div class="unit">KM / SA</div><div id="car-health">ARAÇ %100</div><button id="rescue" type="button" aria-label="Araç sıkıştıysa yola geri dön">YOLA DÖN <span>R</span></button><button id="lighting" type="button" aria-label="Gündüz, altın saat veya akşam ışığını seç">GÜNDÜZ</button></div>
+  <div id="speed-panel"><div class="kicker">HIZ</div><div id="speed">0</div><div class="unit">KM / SA</div><div id="car-health">ARAÇ %100</div><div id="speed-gear">D</div><button id="rescue" type="button" aria-label="Araç sıkıştıysa yola geri dön">YOLA DÖN <span>R</span></button><button id="lighting" type="button" aria-label="Gündüz, altın saat veya akşam ışığını seç">GÜNDÜZ</button></div>
   <div id="mission"><div id="mission-state">MİSAFİR BEKLİYOR</div><div id="mission-name">İstanbul sokaklarında...</div><div id="mission-info">Yol ağı yükleniyor.</div><div id="mission-distance">—</div><div id="mission-timer"></div></div>
   <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas></div>
   <div id="mode-pill">KONVOY <span id="convoy">1</span> · <span id="trips">0</span> TESLİMAT</div>
-  <div id="directions"><span id="turn-arrow">↑</span><span id="turn-hint">HEDEFİ TAKİP ET</span></div>
+  <div id="directions"><span id="turn-arrow">↑</span><span id="turn-hint">HEDEFİ TAKİP ET</span></div><div id="drive-hint" aria-live="polite">GAZ OTOMATİK · SAĞ / SOL İLE SÜR</div>
  </section>
  <div id="toast" aria-live="polite"></div>
  <div id="data-warning" role="status"></div>
  <div id="controls" aria-label="Dokunmatik sürüş kontrolleri">
   <div class="ctr-group"><button class="ctr" data-hold="left" aria-label="Sola dön">◀</button><button class="ctr" data-hold="right" aria-label="Sağa dön">▶</button></div>
-  <div class="ctr-group"><button class="ctr horn" id="horn" aria-label="Korna">KORNA</button><button class="ctr brake" data-hold="brake" aria-label="Fren">FREN</button><button class="ctr go" data-hold="gas" aria-label="Gaz">GAZ</button></div>
+  <div class="ctr-group"><button class="ctr horn" id="horn" aria-label="Korna">KORNA</button><button class="ctr brake" data-hold="brake" aria-label="Fren">FREN</button><button class="ctr go" data-hold="gas" id="turbo-control" aria-label="Hızlan">HIZLAN</button></div>
  </div>
  <div id="overlay">
   <div id="panel">
@@ -235,14 +351,19 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
    <div class="feature-row"><span>WEBGL 3D</span><span>6 SEMT</span><span>OPENSTREETMAP</span><span>ÜÇÜNCÜ ŞAHIS KAMERA</span><span>SERBEST SÜRÜŞ</span></div>
    <div class="panel-label">NEREDEN BAŞLAYALIM?</div>
    <div class="options" id="districts"><button class="option selected" data-district="kadikoy">KADIKÖY<small>Moda · Çarşı</small></button><button class="option" data-district="besiktas">BEŞİKTAŞ<small>Abbasağa</small></button><button class="option" data-district="karakoy">KARAKÖY<small>Galata</small></button><button class="option" data-district="balat">BALAT<small>Haliç</small></button><button class="option" data-district="ortakoy">ORTAKÖY<small>Boğaz</small></button><button class="option" data-district="uskudar">ÜSKÜDAR<small>Çarşı</small></button></div>
+   <div class="panel-label">SÜRÜŞ NASIL OLSUN?</div>
+   <div class="drive-choices" id="drive-options" aria-label="Sürüş kolaylığı">
+    <button class="drive-option selected" type="button" data-drivemode="easy">KOLAY SÜRÜŞ <small>Gaz otomatik · sadece yönlendir</small></button>
+    <button class="drive-option" type="button" data-drivemode="manual">MANUEL <small>Gaz + fren + direksiyon</small></button>
+   </div>
    <div class="panel-label">DÜĞÜN ARABASI</div>
    <div class="options" id="cars"><button class="option selected" data-car="sahin">ŞAHİN<small>Dengeli sürüş</small></button><button class="option" data-car="toros">TOROS<small>Yüksek yol tutuş</small></button><button class="option" data-car="doblo">DOBLO<small>Geniş araç</small></button></div>
-   <button id="start">DÜĞÜN SERVİSİNE BAŞLA · 3 DK</button><button id="freeroam">SERBEST GEZİNTİ · SÜRESİZ</button>
+   <button id="start">SÜRMEYE BAŞLA · 3 DAKİKA</button><button id="freeroam">SERBEST GEZİNTİ · SÜRESİZ</button>
    <div id="loadstate">Harita hazırlanıyor…</div>
-   <div id="help">Bilgisayar: W / ↑ gaz · S / ↓ fren / geri · A D / ← → direksiyon · Space korna · Shift el freni · C kamera · L ışık · R yola dön · P duraklat. Mobil: ekrandaki kontroller.</div>
+   <div id="help">Kolay sürüşte araba kendi gider: sadece ← → / A D ile yönlendir. S / ↓ fren · W / ↑ hızlan · Space korna · C kamera · M sürüş modu · P duraklat. Mobilde büyük yön tuşlarını kullan.</div>
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-3d-v5"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-easydrive-v6"></script>
 </body>
 </html>

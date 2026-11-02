@@ -1,6 +1,6 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v5";
-import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v5";
+import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v6";
+import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v6";
 
 // The road graph and building outlines come from the real OSM vector tiles.
 // This is a standalone ground-level Three.js scene, NOT a tilted map layer.
@@ -662,8 +662,8 @@ export class CityScene3D{
   }
   
   const speed=Math.abs(car.speed),wide=this.camStyle===1,hood=this.camStyle===2;
-  const horizontal=hood?-1.7:(wide?clamp(16+speed*.14,16,21):clamp(9.6+speed*.09,9.6,12.2));
-  const height=hood?1.65:(wide?7.6:4.45)+speed*.022;
+  const horizontal=hood?-1.7:(wide?clamp(11.7+speed*.09,11.7,14.3):clamp(7.7+speed*.065,7.7,9.6));
+  const height=hood?1.65:(wide?5.15:3.68)+speed*.014;
   const lateral=(car.slip||0)*.38+(car.steering||0)*Math.min(1,speed/16)*.45;
   let safeFollow=horizontal;
   if(!hood&&this.city.insideBuilding&&now-(this.camSafetyTime||0)>95){
@@ -678,11 +678,18 @@ export class CityScene3D{
    this.safeFollow=safeFollow;
   }else if(!hood)safeFollow=this.safeFollow??horizontal;
   const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,height+(safeFollow<horizontal?1.3:0));
-  const lookDistance=hood?27:wide?27:21;
+  const lookDistance=hood?22:wide?20:15.5;
   const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,hood?1.78:1.65);
   if(hood)this.player.visible=false;else this.player.visible=true;
   if(!this.inited){this.camPos.copy(eye);this.camLook.copy(target);this.inited=true}
-  const softness=1-Math.exp(-dt*6.5),lookSoft=1-Math.exp(-dt*4.8);
+  // Responsive camera and speed-dependent FOV make forward movement perceptible.
+  const baseFov=window.innerWidth<700?74:63;
+  const desiredFov=baseFov+Math.min(10,speed*.38);
+  if(Math.abs(this.camera.fov-desiredFov)>.12){
+   this.camera.fov+=(desiredFov-this.camera.fov)*(1-Math.exp(-dt*3.8));
+   this.camera.updateProjectionMatrix();
+  }
+  const softness=1-Math.exp(-dt*9.5),lookSoft=1-Math.exp(-dt*7.8);
   this.camPos.lerp(eye,softness);this.camLook.lerp(target,lookSoft);
   if(!hood&&this.city.insideBuilding){
    const p=[this.origin[0]+this.camPos.x/(111320*Math.cos(this.origin[1]*rad)),this.origin[1]+this.camPos.y/111320];
