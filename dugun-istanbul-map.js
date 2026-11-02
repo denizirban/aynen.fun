@@ -76,6 +76,40 @@ function resolveJunctions(segments,center){
  return output;
 }
 
+
+const GRID_METRES=64;
+const gxy=p=>[p[0]*111320*Math.cos(41.0476*rad),p[1]*111320];
+function makeGrid(items,bounds){
+ const grid=new Map();
+ for(let i=0;i<items.length;i++){
+  const [x0,y0,x1,y1]=bounds(items[i]);
+  const left=Math.floor(x0/GRID_METRES),right=Math.floor(x1/GRID_METRES);
+  const bottom=Math.floor(y0/GRID_METRES),top=Math.floor(y1/GRID_METRES);
+  if((right-left+1)*(top-bottom+1)>400)continue;
+  for(let x=left;x<=right;x++)for(let y=bottom;y<=top;y++){
+   const key=x+":"+y;if(!grid.has(key))grid.set(key,[]);
+   grid.get(key).push(i);
+  }
+ }
+ return grid;
+}
+function roadBounds(r){
+ const a=gxy(r.a),b=gxy(r.b);
+ return [Math.min(a[0],b[0])-14,Math.min(a[1],b[1])-14,Math.max(a[0],b[0])+14,Math.max(a[1],b[1])+14];
+}
+function buildingBounds(b){
+ const a=gxy([b.minX,b.minY]),z=gxy([b.maxX,b.maxY]);
+ return [a[0],a[1],z[0],z[1]];
+}
+function nearby(grid,point,radius){
+ if(!grid?.size)return null;
+ const [x,y]=gxy(point),indices=new Set();
+ const x0=Math.floor((x-radius)/GRID_METRES),x1=Math.floor((x+radius)/GRID_METRES);
+ const y0=Math.floor((y-radius)/GRID_METRES),y1=Math.floor((y+radius)/GRID_METRES);
+ for(let i=x0;i<=x1;i++)for(let j=y0;j<=y1;j++)
+  for(const k of grid.get(i+":"+j)||[])indices.add(k);
+ return indices;
+}
 export class IstanbulMap{
  constructor(area,onReady,onError){
   this.area=area;this.roads=[];this.buildings=[];this.water=[];this.parks=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.lastSeekRefresh=0;this.seekingLocalStreets=false;this.skids=[];this.vector=null;this.loaded=false;
@@ -131,7 +165,7 @@ export class IstanbulMap{
   const now=performance.now();
   if(!force&&now-this.lastRefresh<3500)return;
   // Avoid regenerating thousands of static OSM meshes every few seconds.
-  if(!force&&this.roads.length>=65&&this.lastGeometryPos&&distance(player,this.lastGeometryPos)<95&&now-(this.lastDataAt||0)<15500)return;
+  if(!force&&this.roads.length>=65&&this.lastGeometryPos&&distance(player,this.lastGeometryPos)<172&&now-(this.lastDataAt||0)<22000)return;
   this.lastRefresh=now;
   let features;
   try{features=this.map.querySourceFeatures(this.vector,{sourceLayer:"transportation"})}catch(e){return}
@@ -176,7 +210,7 @@ export class IstanbulMap{
   
   const connectedRoads=resolveJunctions(roads,player);
   connectedRoads.sort((x,y)=>Math.min(distance(player,x.a),distance(player,x.b))-Math.min(distance(player,y.a),distance(player,y.b)));
-  this.roads=connectedRoads;this.nodes=new Map();this.edges=new Map();this.samples=[];
+  this.roads=connectedRoads;this.roadGrid=makeGrid(connectedRoads,roadBounds);this.nodes=new Map();this.edges=new Map();this.samples=[];
   if(this.onRoadsReady)queueMicrotask(()=>this.onRoadsReady?.());
   try{
    const buildings=this.map.querySourceFeatures(this.vector,{sourceLayer:"building"})||[];
@@ -201,6 +235,7 @@ export class IstanbulMap{
     if(collection.length>2600)break;
    }
    this.buildings=collection;
+   this.buildingGrid=makeGrid(collection,buildingBounds);
   }catch(e){this.buildings=[]}
 
 
@@ -265,7 +300,9 @@ export class IstanbulMap{
  }
 
  insideBuilding(point){
-  for(const b of this.buildings){
+  const candidates=nearby(this.buildingGrid,point,2);
+  for(const i of candidates||this.buildings.keys()){
+   const b=this.buildings[i];
    if(point[0]<b.minX||point[0]>b.maxX||point[1]<b.minY||point[1]>b.maxY)continue;
    let inside=false;
    for(let i=0,j=b.ring.length-1;i<b.ring.length;j=i++){
@@ -277,21 +314,26 @@ export class IstanbulMap{
   return false;
  }
  nearestAny(point){
-  let result=null;
-  for(const road of this.roads){
-   const z=nearestOnSegment(point,road.a,road.b);
-   if(!result||z.dist<result.dist)result={...z,road};
-  }
-  return result;
+  const candidates=nearby(this.roadGrid,point,90);
+  let best=null;
+  const scan=iter=>{for(const i of iter){
+   const road=this.roads[i],z=nearestOnSegment(point,road.a,road.b);
+   if(!best||z.dist<best.dist)best={...z,road};
+  }};
+  scan(candidates||this.roads.keys());
+  if(!best&&this.roadGrid?.size)scan(nearby(this.roadGrid,point,340)||[]);
+  if(!best)scan(this.roads.keys());
+  return best;
  }
  nearest(point){
-  let result=null;
-  for(const r of this.roads){
-   if(Math.min(distance(point,r.a),distance(point,r.b))>110)continue;
-   const z=nearestOnSegment(point,r.a,r.b);
-   if(!result||z.dist<result.dist)result={...z,road:r};
+  const candidates=nearby(this.roadGrid,point,90);
+  let best=null;
+  for(const i of candidates||this.roads.keys()){
+   const road=this.roads[i],z=nearestOnSegment(point,road.a,road.b);
+   if(z.dist>100)continue;
+   if(!best||z.dist<best.dist)best={...z,road};
   }
-  return result;
+  return best;
  }
  sample(point,min=60,max=240){
   const candidates=this.samples.filter(p=>{const d=distance(p,point);return d>=min&&d<=max});
@@ -369,12 +411,13 @@ export class IstanbulMap{
   this.map?.getSource("wedding-skids")?.setData({type:"FeatureCollection",features:this.skids});
  }
  chase(position,bearing,dt,shake=0,speed=0){
-  if(!this.loaded)return;
-  const target=travel(position,bearing,17),map=this.map,c=map.getCenter(),current=[c.lng,c.lat];
-  const delta=distance(current,target),theta=angle(current,target);
-  const loc=travel(current,theta,delta*Math.min(1,dt*5));
-  const old=map.getBearing(),degrees=bearing/rad;
-  const next=old+turn(degrees*rad,old*rad)/rad*Math.min(1,dt*4);
-  map.jumpTo({center:loc,bearing:next+shake,pitch:69,zoom:18.08-Math.min(.30,Math.abs(speed)*.012)});
+  if(!this.loaded||!this.map)return;
+  // Hidden MapLibre feeds OSM tiles; rotating it every .16s stalls actual driving.
+  const now=performance.now(),last=this.lastTileMoveAt||0;
+  const center=this.map.getCenter(),target=travel(position,bearing,30);
+  const moved=distance([center.lng,center.lat],target);
+  if(now-last<1650||moved<65)return;
+  this.lastTileMoveAt=now;
+  this.map.jumpTo({center:target,zoom:17.65,pitch:62,bearing:0});
  }
 }

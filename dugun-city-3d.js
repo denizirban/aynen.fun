@@ -1,7 +1,7 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v12";
-import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v12";
-import {StableNavigation} from "./dugun-navigation.js?v=20261102-v12";
-import {stepVehicle,roadHalfWidth} from "./dugun-driving-dynamics.js?v=20261102-v10";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v13";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v13";
+import {StableNavigation} from "./dugun-navigation.js?v=20261102-v13";
+import {stepVehicle,roadHalfWidth} from "./dugun-driving-dynamics.js?v=20261102-v13";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
  sahin:{accel:11.5,brake:18,top:27,grip:1.0},
@@ -117,7 +117,7 @@ function cycleLighting(){
  toast("İSTANBUL · "+name,1.2);
 }
 
-const SAFE_START_ANCHOR=[29.02495,41.04720];
+const SAFE_START_ANCHOR=[29.02620,41.04795];
 function isLocalSpawnRoad(r){
  return !!r&&!r.bridge&&!/^(motorway|motorway_link|trunk|trunk_link|construction|path|footway|pedestrian)$/.test(r.typ||"");
 }
@@ -154,12 +154,17 @@ function chooseSafeRoadPosition(reference,initial=false){
      if(city.insideBuilding?.(travel(pos,candidate,Math.min(step,length*.36))))break;
      clear=step;
     }
-    if(clear>clearMeters){clearMeters=clear;chosenHeading=candidate}
+    const coastAlignment=initial?Math.cos(turn(candidate,angle(pos,[29.031,41.0468]))):0;
+    const previousAlignment=initial?Math.cos(turn(chosenHeading,angle(pos,[29.031,41.0468]))):0;
+    if(clear>clearMeters||clear===clearMeters&&coastAlignment>previousAlignment){
+     clearMeters=clear;chosenHeading=candidate
+    }
    }
    const inBuilding=!!city.insideBuilding?.(pos);
    const onRoad=city.nearestAny?.(pos);
    const centreline=onRoad?onRoad.dist:0;
-   const score=d+(/^(residential|tertiary|secondary)/.test(r.typ||"")?-22:10)
+   const waterward=initial?Math.cos(turn(chosenHeading,angle(pos,[29.031,41.0468]))):0;
+   const score=d+(/^(residential|tertiary|secondary)/.test(r.typ||"")?-22:10)-waterward*22
       +Math.max(0,35-length)*.48+Math.max(0,10-clearMeters)*5.5
       +(inBuilding?90:0)+(centreline>4?40:0);
    const candidate={pos,heading:chosenHeading,road:r,score,buildingOverlap:inBuilding};
@@ -250,6 +255,7 @@ function startGame(unlimited){
   return;
  }
  pending=false;city.seekingLocalStreets=false;free=unlimited;
+ document.body.dataset.gameMode=free?"free":"race";
  // Default easy mode is intentionally playable with just left/right steering.
  brakeHold=0;stillTime=0;assistedPickupTimer=0;tripElapsed=0;
  playing=true;paused=false;timer=180;earnings=0;deliveries=0;stolen=0;convoy=1;mission=null;
@@ -266,7 +272,7 @@ function startGame(unlimited){
  }
  rival={pos:null,heading:0,speed:10.5,route:[],index:1,cooldown:0};
  traffic=[];
- for(let i=0;i<(window.innerWidth<700?8:17);i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0,joined:false,respawnCD:0});
+ for(let i=0;i<(free?(window.innerWidth<700?4:8):(window.innerWidth<700?8:17));i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0,joined:false,respawnCD:0});
  if(!render3D){render3D=new CityScene3D(city)}
  render3D.setOrigin(car.pos);render3D.setCar(kind);
  if(render3D.setCameraStyle)render3D.setCameraStyle(0);
@@ -275,16 +281,26 @@ function startGame(unlimited){
  city.map.jumpTo({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad});
  $("overlay").hidden=true;hud(true);$("pause").textContent="DURAKLAT";
  resetRide=0;last=performance.now();
- spawnMission();seedTraffic();initEngine();syncEngine();
- toast(driveMode==="easy"?"İSTANBUL SENİN · SAĞ / SOLLA SÜR":"İSTANBUL SENİN · W GAZ, A / D DÖN",3);
+ if(!free)spawnMission();seedTraffic();initEngine();syncEngine();
+ toast(free?"İSTANBUL · BOĞAZ KIYISINDA SERBEST SÜRÜŞ":driveMode==="easy"?"OKLARLA DÖN · BOĞAZ'A İLERLE":"W GAZ · A / D DÖN",3);
 }
 function seedTraffic(){
  if(!city.roads.length)return;
+ const candidates=city.roads.filter(r=>!/^(motorway|motorway_link)/.test(r.typ));
+ const pool=candidates.length?candidates:city.roads;
  for(const v of traffic){
   v.joined=false;
-  const seg=city.roads[Math.floor(Math.random()*city.roads.length)];
-  v.road=seg;v.t=Math.random();v.pos=[seg.a[0]+(seg.b[0]-seg.a[0])*v.t,seg.a[1]+(seg.b[1]-seg.a[1])*v.t];
-  v.heading=angle(seg.a,seg.b);v.visualHeading=v.heading;
+  let candidate=null;
+  for(let attempt=0;attempt<28;attempt++){
+   const seg=pool[Math.floor(Math.random()*pool.length)],t=.08+Math.random()*.84;
+   const pos=[seg.a[0]+(seg.b[0]-seg.a[0])*t,seg.a[1]+(seg.b[1]-seg.a[1])*t];
+   if(distance(pos,car.pos)>55){candidate={seg,t,pos};break}
+  }
+  // No traffic in the player's immediate starting lane if all candidates are close.
+  if(!candidate){v.road=null;v.pos=null;continue}
+  v.road=candidate.seg;v.t=candidate.t;v.pos=candidate.pos;
+  v.heading=angle(v.road.a,v.road.b);v.visualHeading=v.heading;
+  v.cooldown=1.3;
  }
 }
 function spawnMission(){
@@ -358,13 +374,15 @@ function drive(dt){
  const spec=SPEC[kind],auto=driveMode==="easy",previous=[...car.pos];
  tripElapsed+=dt;
  // Sub-step integration keeps steering and grip stable at 30 / 60 / 120 Hz.
- const substeps=Math.min(6,Math.max(1,Math.ceil(dt/.012)));
- const grade=render3D?.getGroundHeight?(render3D.getGroundHeight(travel(car.pos,car.heading,5))-render3D.getGroundHeight(travel(car.pos,car.heading+Math.PI,5)))/10:0;
+ const substeps=Math.min(5,Math.max(1,Math.ceil(dt/.015)));
+ // One road lookup per visual frame. Each substep moves <0.3m at normal speeds.
+ // Previously repeated 4-6 full OSM scans per frame plus scene/NPC scans.
+ const nearBefore=city.nearest(car.pos)||city.nearestAny?.(car.pos);
+ const grade=render3D?.getGroundHeight?(render3D.getGroundHeight(travel(car.pos,car.heading,6))-render3D.getGroundHeight(travel(car.pos,car.heading+Math.PI,6)))/12:0;
  for(let i=0;i<substeps;i++){
-  const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
-  stepVehicle(car,keys,{mode:driveMode,spec,road:near,navigation,grade},dt/substeps);
+  stepVehicle(car,keys,{mode:driveMode,spec,road:nearBefore,navigation,grade},dt/substeps);
  }
- const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
+ const near=city.nearest(car.pos)||nearBefore||city.nearestAny?.(car.pos);
  car.currentRoadName=near?.road?.name||"";
  car.currentRoadClass=near?.road?.typ||"";
  car.currentRoadBridge=!!(near?.road?.bridge&&/^(motorway|motorway_link|trunk|primary)/.test(near.road.typ));
@@ -461,7 +479,7 @@ function advanceTraffic(dt){
 
   npc.cooldown=Math.max(0,npc.cooldown-dt);npc.respawnCD=Math.max(0,(npc.respawnCD||0)-dt);
   if(npc.cooldown===0&&Math.abs(car.speed)>5&&distance(npc.pos,car.pos)<3.5){
-   npc.cooldown=2.3;car.speed*=.45;car.health=Math.max(0,car.health-5);if(mission?.phase==="dropoff")mission.crashes++;sound(180,.16);toast("TRAFİĞE DİKKAT · HASAR",1.2);
+   npc.cooldown=2.3;car.speed*=free?.88:.72;if(!free)car.health=Math.max(0,car.health-5);if(mission?.phase==="dropoff")mission.crashes++;sound(180,.13);if(!free)toast("TRAFİĞE DİKKAT · HASAR",1.2);
   }
   if(npc.cooldown===0&&nearMissCooldown===0&&Math.abs(car.speed)>13&&distance(npc.pos,car.pos)>3.5&&distance(npc.pos,car.pos)<6.0){
    const bonus=Math.round(65+(convoy-1)*15);
@@ -618,7 +636,9 @@ function frameLoop(now){
  // must not permanently stop the vehicle, inputs and on-screen controls.
  requestAnimationFrame(frameLoop);
  try{
- const dt=clamp((now-last)/1000,0,.045);last=now;
+ // At 25-40 FPS, preserve actual motion without stretching physics through
+ // a giant integration step. stepVehicle substeps handle this interval.
+ const dt=clamp((now-last)/1000,0,.065);last=now;
  readGamepad();
  if(ready&&playing&&!paused){
   drive(dt);
@@ -628,9 +648,23 @@ function frameLoop(now){
    if(!free){timer-=dt;if(timer<=0){timer=0;finish("DÜĞÜN BİTTİ")}}
    if(playing){
     resetRide=Math.max(0,resetRide-dt);
-    if(!mission&&resetRide<=0)spawnMission();
+    if(!free&&!mission&&resetRide<=0)spawnMission();
     roadRefresh+=dt;routeRefresh+=dt;camRefresh+=dt;
-    if(roadRefresh>4){roadRefresh=0;city.refresh(car.pos);if(!mission)spawnMission()}
+    if(roadRefresh>4){
+     roadRefresh=0;
+     if(!city.refreshQueued){
+      city.refreshQueued=true;
+      const update=()=>{
+       city.refreshQueued=false;
+       if(!playing||!car)return;
+       city.refresh(car.pos);
+       if(!free&&!mission)spawnMission();
+      };
+      // Prefer browser idle time for parsing thousands of OSM road segments.
+      if(typeof requestIdleCallback==="function")requestIdleCallback(update,{timeout:1200});
+      else setTimeout(update,55);
+     }
+    }
     if(routeRefresh>3){routeRefresh=0;refreshRoute(false)}
     if(camRefresh>.16){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
     lastNavState=navigation.update(car.pos,dt);

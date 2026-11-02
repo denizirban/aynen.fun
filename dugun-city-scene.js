@@ -1,6 +1,6 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v12";
-import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v10";
+import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v13";
+import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v13";
 
 // The road graph and building outlines come from the real OSM vector tiles.
 // This is a standalone ground-level Three.js scene, NOT a tilted map layer.
@@ -305,7 +305,7 @@ function addBuildings(group,origin,raw,mobile){
   const db=Math.hypot(...toXY(origin,[(b.minX+b.maxX)*.5,(b.minY+b.maxY)*.5]));
   return da-db;
  }).slice(0,mobile?240:490);
- const windows=empty(),litWindows=empty(),awnings=empty();
+ const windows=empty(),litWindows=empty(),awnings=empty(),roofTiles=[empty(),empty(),empty()];
  const mats=buildingColors.map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.88,flatShading:true}));
  for(let i=0;i<buildings.length;i++){
   const b=buildings[i],ring=b.ring?.slice(0,-1)??[];
@@ -318,6 +318,17 @@ function addBuildings(group,origin,raw,mobile){
   const shape=new THREE.Shape();shape.moveTo(...pts[0]);for(let j=1;j<pts.length;j++)shape.lineTo(...pts[j]);shape.closePath();
   const geo=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false,curveSegments:1,steps:1});
   const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.position.z=terrainAt(pts[0][0],pts[0][1]);m.castShadow=!mobile&&Math.hypot(pts[0][0],pts[0][1])<110;m.receiveShadow=true;group.add(m);
+  // Distinctive terracotta and zinc roofs; merged into three draw calls rather
+  // than hundreds of individual rooftop meshes.
+  const roof=roofTiles[Math.min(2,Math.floor(hseed*3))];
+  const baseZ=terrainAt(pts[0][0],pts[0][1])+height+.075;
+  const middle=pts.reduce((acc,p)=>[acc[0]+p[0],acc[1]+p[1]],[0,0]).map(n=>n/pts.length);
+  const roofRidge=height<23&&pts.length<=8?Math.min(2.2,height*.09):.08;
+  const idx=roof.positions.length/3;
+  roof.positions.push(middle[0],middle[1],baseZ+roofRidge);
+  for(const p of pts)roof.positions.push(p[0],p[1],baseZ);
+  for(let k=1;k<=pts.length;k++)roof.indices.push(idx,idx+k,idx+(k%pts.length)+1);
+
   const maxFloors=Math.min(mobile?4:8,Math.floor((height-1.5)/3.1));
   for(let edge=0;edge<pts.length;edge++){
    const a=pts[edge],v=pts[(edge+1)%pts.length],dx=v[0]-a[0],dy=v[1]-a[1],len=Math.hypot(dx,dy);
@@ -340,6 +351,10 @@ function addBuildings(group,origin,raw,mobile){
  }
  batchStrips(windows,windowMat,group);batchStrips(litWindows,lightMat,group);
  batchStrips(awnings,new THREE.MeshStandardMaterial({color:0xb44957,side:THREE.DoubleSide,roughness:.8}),group);
+ const roofs=["#ae654d","#83766a","#7e8c91"];
+ for(let i=0;i<3;i++)batchStrips(roofTiles[i],
+  new THREE.MeshStandardMaterial({color:roofs[i],side:THREE.DoubleSide,roughness:.94}),group);
+
  return buildings.length;
 }
 function makeGround(group){
@@ -376,6 +391,46 @@ function addWater(group,origin,waters,mobile){
   }
  }
  return count;
+}
+
+
+// Recognizable Bosphorus waterway when vector tile water polygons have not loaded.
+// A deliberately simplified geographic ribbon; it never replaces real OSM road positions.
+function renderBosphorusWaterway(group,origin,mobile){
+ const west=[
+  [29.0290,41.0570],[29.0283,41.0530],[29.0273,41.0490],
+  [29.0277,41.0460],[29.0285,41.0420],[29.0287,41.0370],[29.0282,41.0335]
+ ];
+ const east=[
+  [29.0395,41.0335],[29.0395,41.0380],[29.0404,41.0420],
+  [29.0434,41.0470],[29.0445,41.0520],[29.0424,41.0570]
+ ];
+ const path=[...west,...east],nearest=Math.min(...path.map(p=>distance(p,origin)));
+ if(nearest>1100)return 0;
+ const meshShape=new THREE.Shape();
+ const xy=path.map(p=>toXY(origin,p));
+ meshShape.moveTo(...xy[0]);for(let i=1;i<xy.length;i++)meshShape.lineTo(...xy[i]);meshShape.closePath();
+ const mesh=new THREE.Mesh(new THREE.ShapeGeometry(meshShape),
+  new THREE.MeshStandardMaterial({color:0x3484a5,metalness:.10,roughness:.39,
+   side:THREE.DoubleSide,transparent:true,opacity:.98}));
+ mesh.position.z=.042;mesh.receiveShadow=false;mesh.renderOrder=1;
+ group.add(mesh);
+ // Floating light on the Bosphorus: small glints, drawn as a single instanced mesh.
+ const waterGlint=new THREE.MeshBasicMaterial({color:0xaddde2,transparent:true,opacity:.36,depthWrite:false});
+ const count=mobile?45:95,geometry=new THREE.PlaneGeometry(2.5,.10);
+ const foam=new THREE.InstancedMesh(geometry,waterGlint,count),dummy=new THREE.Object3D();
+ for(let j=0;j<count;j++){
+  const t=(j+.5)/count;
+  const along=west[1][1]-(west[1][1]-west[west.length-2][1])*t;
+  const xWest=29.0281,xEast=29.0408;
+  const lon=xWest+(xEast-xWest)*(.20+.6*hash(j+11,6.2));
+  const y=along+((hash(j,18.4)-.5)*.0010);
+  const [xCoord,yCoord]=toXY(origin,[lon,y]);
+  dummy.position.set(xCoord,yCoord,.065);dummy.rotation.z=(hash(j,10)-.5)*.5;
+  dummy.scale.set(.55+hash(j,14)*2,1,1);dummy.updateMatrix();foam.setMatrixAt(j,dummy.matrix);
+ }
+ foam.instanceMatrix.needsUpdate=true;foam.frustumCulled=false;group.add(foam);
+ return 1;
 }
 
 // Approximate scenic bridge geometry. The actual street positions continue to
@@ -563,18 +618,28 @@ function addOrtakoyLandmark(group,origin,area){
   const tip=new THREE.Mesh(new THREE.ConeGeometry(1.0,3.2,12),dome);
   tip.rotation.x=Math.PI/2;tip.position.set(dx,0,27.0);g.add(tip);
  }
- // Two small stylized ferries on the Bosphorus, well offshore east of the mosque.
- const hull=new THREE.MeshStandardMaterial({color:0xdcebf0,roughness:.58});
- const cabin=new THREE.MeshStandardMaterial({color:0xf7ead2,roughness:.71});
- const windows=new THREE.MeshStandardMaterial({color:0x306e83,roughness:.30});
- for(const [index,where] of [[0,[29.0275,41.0481]],[1,[29.0285,41.0462]]]){
+ // Distinctive original Istanbul double-deck ferries; no borrowed game assets.
+ const hull=new THREE.MeshStandardMaterial({color:0x365b6c,roughness:.55,metalness:.12});
+ const cabin=new THREE.MeshStandardMaterial({color:0xf0e7d1,roughness:.71});
+ const windows=new THREE.MeshStandardMaterial({color:0x31657a,roughness:.27,metalness:.18});
+ const orange=new THREE.MeshStandardMaterial({color:0xf5a235,roughness:.64});
+ const deck=new THREE.MeshStandardMaterial({color:0xd5d3c5,roughness:.77});
+ for(const [index,where] of [[0,[29.0299,41.04845]],[1,[29.0304,41.04465]]]){
   const [bx,by]=toXY(origin,where),ferry=new THREE.Group();
-  ferry.position.set(bx,by,.50);ferry.rotation.z=index?.36:-.27;
-  ferry.add(meshBox(16.5,4.9,1.4,hull,0,0,.7));
-  ferry.add(meshBox(8.2,3.8,2.4,cabin,-1.5,0,2.3));
-  ferry.add(meshBox(5.2,3.9,.8,windows,-1.4,0,3.7));
-  ferry.add(meshBox(15,.35,.25,windows,0,2.0,1.4));
-  ferry.add(meshBox(15,.35,.25,windows,0,-2.0,1.4));
+  if(Math.hypot(bx,by)>650)continue;
+  ferry.position.set(bx,by,.47);ferry.rotation.z=index?.15:-.34;
+  ferry.add(meshBox(27,7.2,2.3,hull,0,0,1.0));
+  ferry.add(meshBox(22,6.65,.40,deck,0,0,2.3));
+  ferry.add(meshBox(20,6.1,3.2,cabin,-1.4,0,4.1));
+  ferry.add(meshBox(16,5.7,2.9,cabin,-1.5,0,7.0));
+  ferry.add(meshBox(14.3,5.9,.45,deck,-1.5,0,8.55));
+  for(let w=-7;w<=7;w+=2.3){
+   ferry.add(meshBox(1.25,.15,1.4,windows,w,3.12,4.6));
+   ferry.add(meshBox(1.25,.15,1.4,windows,w,-3.12,4.6));
+  }
+  const funnel=new THREE.Mesh(new THREE.CylinderGeometry(.8,.98,3.2,10),orange);
+  funnel.rotation.x=Math.PI/2;funnel.position.set(-5,0,10.0);ferry.add(funnel);
+  ferry.add(meshBox(1.4,1.4,.45,windows,-5,0,11.7));
   group.add(ferry);
  }
  const sign=createWorldLabel("ORTAKÖY CAMİİ","#2a626e","#ffffff");
@@ -707,6 +772,62 @@ function addNeighborhoodDetails(group,origin,roads,mobile){
   });group.add(mesh);
  }
 }
+
+// Authentic street names are read from the OSM transportation layer.
+function addIstanbulStreetSigns(group,origin,roads,mobile){
+ const chosen=[],seen=new Set();
+ for(const road of roads){
+  const name=(road.name||"").trim();
+  if(name.length<5||name.length>35||seen.has(name))continue;
+  const mid=[(road.a[0]+road.b[0])*.5,(road.a[1]+road.b[1])*.5];
+  if(distance(origin,mid)>(mobile?205:290))continue;
+  seen.add(name);
+  chosen.push({name,point:mid});
+  if(chosen.length>=(mobile?5:12))break;
+ }
+ const material=new THREE.MeshStandardMaterial({color:0x465c5f,metalness:.53,roughness:.49});
+ for(const {name,point} of chosen){
+  const p=toXY(origin,point),z=terrainAt(...p);
+  const post=meshBox(.12,.12,3.4,material,p[0]+4,p[1]+4,z+1.7);
+  group.add(post);
+  const sign=createWorldLabel(name.toLocaleUpperCase("tr-TR"),"#245c79","#ffffff");
+  sign.position.set(p[0]+4,p[1]+4,z+3.7);sign.scale.set(4.5,.95,1);
+  group.add(sign);
+ }
+}
+function addIstanbulFlags(group,origin,mobile){
+ const poles=[
+  [29.02668,41.04771],[29.02691,41.04716],[29.02772,41.04663],
+  [29.02585,41.04805],[29.04005,41.04272]
+ ];
+ const canvas=document.createElement("canvas");canvas.width=384;canvas.height=256;
+ const ctx=canvas.getContext("2d");
+ ctx.fillStyle="#cf2536";ctx.fillRect(0,0,384,256);
+ ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(127,125,58,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle="#cf2536";ctx.beginPath();ctx.arc(151,113,47,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle="#fff";ctx.beginPath();
+ const cx=220,cy=124;
+ for(let k=0;k<10;k++){
+  const theta=-Math.PI/2+k*Math.PI/5,r=k%2?16:39;
+  const x=cx+Math.cos(theta)*r,y=cy+Math.sin(theta)*r;
+  k?ctx.lineTo(x,y):ctx.moveTo(x,y);
+ }
+ ctx.closePath();ctx.fill();
+ const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;
+ const flagMat=new THREE.MeshBasicMaterial({map,side:THREE.DoubleSide,transparent:false});
+ const poleMat=new THREE.MeshStandardMaterial({color:0xa9b7b4,metalness:.72,roughness:.37});
+ let count=0;
+ for(const point of poles){
+  if(distance(point,origin)>(mobile?245:420))continue;
+  const [x,y]=toXY(origin,point),z=terrainAt(x,y);
+  const pole=meshBox(.13,.13,8,poleMat,x,y,z+4);
+  const banner=new THREE.Mesh(new THREE.PlaneGeometry(4.6,3.1),flagMat);
+  banner.position.set(x+2.2,y,z+6.6);banner.rotation.z=.07;
+  group.add(pole,banner);count++;
+ }
+ return count;
+}
+
 function addSkyAtmosphere(scene){
  const shader=new THREE.ShaderMaterial({
   uniforms:{topColor:{value:new THREE.Color("#438bc9")},horizonColor:{value:new THREE.Color("#b7dfed")},warmColor:{value:new THREE.Color("#f5e6bd")}},
@@ -849,12 +970,12 @@ export class CityScene3D{
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
  rebuild(force=false){
   const t=performance.now();
-  if(!force&&t-this.lastBuilt<6500)return;
+  if(!force&&t-this.lastBuilt<11500&&this.builtRoadCount>12)return;
   const city=this.city,ro=city.roads,bu=city.buildings;
   const moved=this.builtAt?distance(this.builtAt,this.focus||this.origin):Infinity;
   // A fresh tile object is not necessarily a new city. Rebuilding the entire
   // Three.js street scene every 4 seconds produced an obvious frame hitch.
-  if(!force&&this.builtAt&&moved<108&&this.builtRoadCount>65&&
+  if(!force&&this.builtAt&&moved<226&&this.builtRoadCount>65&&
      (ro?.length||0)>=this.builtRoadCount*.80&&
      (bu?.length||0)>=(this.builtBuildingCount||0)*.75)return;
   if(!force&&this.builtAt&&moved<60&&this.builtRoads===ro&&this.builtBuildings===bu)return;
@@ -882,11 +1003,13 @@ export class CityScene3D{
   makeGround(this.worldGroup);
   this.visibleParkCount=renderRealParks(this.worldGroup,this.origin,city.parks,this.mobile);
   this.visibleWater=addWater(this.worldGroup,this.origin,city.water,this.mobile);
+  this.bosphorusVisible=renderBosphorusWaterway(this.worldGroup,this.origin,this.mobile);
   addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
   addBeylerbeyiWaterfront(this.worldGroup,this.origin);
   addBosphorusPromenade(this.worldGroup,this.origin);
+  this.flagsVisible=addIstanbulFlags(this.worldGroup,this.origin,this.mobile);
   this.bridgeVisible=makeBosphorusBridge(this.worldGroup,this.origin,this.focus||this.origin);
-  if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile);renderParkedStreetCars(this.worldGroup,this.origin,visibleRoads,this.mobile,this.focus||this.origin)}
+  if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile);addIstanbulStreetSigns(this.worldGroup,this.origin,visibleRoads,this.mobile);renderParkedStreetCars(this.worldGroup,this.origin,visibleRoads,this.mobile,this.focus||this.origin)}
   else{
    // Visible drivable street while streaming real vector tiles.
    const temporary=[];
@@ -924,7 +1047,7 @@ export class CityScene3D{
    this.lastQualityChange=now;this.framesObserved=0;this.timeObserved=0;
   }
   this.focus=state.car.pos;
-  if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>130))this.rebuild();
+  if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>232))this.rebuild();
   const car=state.car;
   this.lastPlayerOnBridge=!!car.currentRoadBridge;
   this.position(this.player,car.pos,.18,this.lastPlayerOnBridge);this.player.rotation.z=-car.heading;

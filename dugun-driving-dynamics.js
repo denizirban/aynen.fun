@@ -25,8 +25,10 @@ export function evaluateTurn(nav,position,heading,speed){
  const delta=wrap(bearing(position,close)-heading);
  const next=wrap(bearing(close,far)-bearing(short,close));
  const curve=Math.abs(next);
- // Soft slowing ahead of actual bends, not just while the steering key is down.
- const limit=curve>.88?6.5:curve>.50?8.1:curve>.27?10.0:15.0;
+ // A continuous curve-speed envelope prevents speed oscillating between
+ // 6.5/8.1/10/15 m/s every time an OSM corner moves across lookahead.
+ const factor=clamp((curve-.10)/1.15,0,1);
+ const limit=17.5-(factor*factor*(3-2*factor))*10.7;
  return {error:delta,curve,limit,valid:true};
 }
 export function stepVehicle(state,controls,environment,dt){
@@ -59,13 +61,21 @@ export function stepVehicle(state,controls,environment,dt){
   // Forward-look steering is deliberately limited: the driver is still in control.
   if(preview.valid&&Math.abs(preview.error)<.48){
    targetSteer+=clamp(preview.error*.30,-.14,.14);
-  }else if(near?.p&&crossTrack<11&&Math.abs(nearRoad)<1.05){
-   targetSteer+=clamp(nearRoad*.18,-.19,.19);
+  }else if(near?.road&&crossTrack<13){
+   const r=near.road;
+   const roadAngle=bearing(r.a,r.b);
+   const forwardAngle=Math.abs(wrap(roadAngle-car.heading))<Math.PI/2?roadAngle:wrap(roadAngle+Math.PI);
+   const headingError=wrap(forwardAngle-car.heading);
+   const lateralError=near?.p?wrap(bearing(car.pos,near.p)-car.heading):0;
+   // Lane-keeping only while nearly aligned to this street; intersections
+   // remain entirely player-controlled, without sudden GPS-like turns.
+   if(Math.abs(headingError)<.56)
+    targetSteer+=clamp(headingError*.28+Math.sin(lateralError)*clamp(crossTrack/13,0,1)*.11,-.17,.17);
   }
  }
  targetSteer=clamp(targetSteer,-steerMax,steerMax);
  // Steering responds quickly without a sudden heading jump.
- const response=automatic?9.5:7.5;
+ const response=automatic?8.1:7.5;
  car.steering+=(targetSteer-car.steering)*(1-Math.exp(-response*dt));
  if(controls.brake||controls.padBrake){
   car.brakeHold+=dt;
@@ -77,8 +87,8 @@ export function stepVehicle(state,controls,environment,dt){
   car.brakeHold=0;
   if(automatic){
    let cruise=Math.min(17.2,spec.top||19.8,preview.valid?preview.limit:15.8);
-   if(Math.abs(car.steering)>steerMax*.66)cruise=Math.min(cruise,8.4);
-   if(car.offroad)cruise=Math.min(cruise,7.0);
+   if(Math.abs(car.steering)>steerMax*.70)cruise=Math.min(cruise,12.2);
+   if(car.offroad)cruise=Math.min(cruise,11.0);
    if(controls.gas||controls.padGas)cruise=Math.min(spec.top||19.5,19.5);
    cruise=clamp(cruise-car.grade*18,4.6,spec.top||27);
    car.speed=approach(car.speed,cruise,(car.speed>cruise?11.4:8.5)*dt);
@@ -96,7 +106,7 @@ export function stepVehicle(state,controls,environment,dt){
   const decel=crossTrack>16?6.7:3.3;
   if(car.speed>0)car.speed=Math.max(0,car.speed-decel*dt);
  }
- car.speed=clamp(car.speed,-5.2,(spec.top||20.5)*(car.offroad?.72:1));
+ car.speed=clamp(car.speed,-5.2,spec.top||20.5);
  const grip=(car.offroad?.67:1)*((controls.handbrake||controls.padHandbrake)?.60:1);
  // Bicycle steering with limited yaw response: turn radius stays legible.
  const effectiveSpeed=clamp(car.speed,-7,22);
