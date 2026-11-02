@@ -22,7 +22,7 @@ function nearestOnSegment(p,a,b){
 function key(p){return p[0].toFixed(5)+":"+p[1].toFixed(5)}
 export class IstanbulMap{
  constructor(area,onReady,onError){
-  this.area=area;this.roads=[];this.buildings=[];this.water=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.skids=[];this.vector=null;this.loaded=false;
+  this.area=area;this.roads=[];this.buildings=[];this.water=[];this.parks=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.skids=[];this.vector=null;this.loaded=false;
   if(!window.maplibregl){onError("Harita kitaplığı yüklenemedi.");return}
   this.map=new maplibregl.Map({
    container:"map",style:"https://tiles.openfreemap.org/styles/liberty",
@@ -119,6 +119,32 @@ export class IstanbulMap{
    this.buildings=collection;
   }catch(e){this.buildings=[]}
 
+
+  try{
+   const parkFeatures=[
+    ...(this.map.querySourceFeatures(this.vector,{sourceLayer:"landuse"})||[]),
+    ...(this.map.querySourceFeatures(this.vector,{sourceLayer:"landcover"})||[])
+   ];
+   const green=[],seen=new Set();
+   for(const f of parkFeatures){
+    const cls=String(f.properties?.class||f.properties?.subclass||"").toLowerCase();
+    if(!/park|grass|wood|forest|cemetery|garden|recreation/.test(cls))continue;
+    const shape=f.geometry?.type==="Polygon"?[f.geometry.coordinates]:f.geometry?.type==="MultiPolygon"?f.geometry.coordinates:[];
+    for(const poly of shape){
+     const ring=poly?.[0];if(!ring||ring.length<3||ring.length>1100)continue;
+     const keyId=ring[0][0].toFixed(5)+":"+ring[0][1].toFixed(5)+":"+cls;
+     if(seen.has(keyId))continue;seen.add(keyId);
+     const minX=Math.min(...ring.map(q=>q[0])),maxX=Math.max(...ring.map(q=>q[0]));
+     const minY=Math.min(...ring.map(q=>q[1])),maxY=Math.max(...ring.map(q=>q[1]));
+     const near=[Math.max(minX,Math.min(player[0],maxX)),Math.max(minY,Math.min(player[1],maxY))];
+     if(distance(player,near)>570)continue;
+     green.push({ring,cls,bounds:{minX,maxX,minY,maxY}});
+     if(green.length>=75)break;
+    }
+    if(green.length>=75)break;
+   }
+   this.parks=green;
+  }catch(e){this.parks=[]}
   try{
    const waterFeatures=this.map.querySourceFeatures(this.vector,{sourceLayer:"water"})||[];
    const seen=new Set(),water=[];
