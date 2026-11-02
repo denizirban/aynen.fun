@@ -1,6 +1,6 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v12";
-import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v10";
+import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v13";
+import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v13";
 
 // The road graph and building outlines come from the real OSM vector tiles.
 // This is a standalone ground-level Three.js scene, NOT a tilted map layer.
