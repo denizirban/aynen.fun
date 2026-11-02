@@ -1,5 +1,5 @@
 import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js";
-import {Vehicle3D} from "./dugun-3d-vehicles.js";
+import {CityScene3D} from "./dugun-city-scene.js";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
  sahin:{accel:11.5,brake:18,top:27,grip:1.0},
@@ -89,7 +89,7 @@ function startGame(unlimited){
  rival={pos:null,heading:0,speed:10.5,route:[],index:1,cooldown:0};
  traffic=[];
  for(let i=0;i<(window.innerWidth<700?5:10);i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0});
- if(!render3D){render3D=new Vehicle3D(city)}
+ if(!render3D){render3D=new CityScene3D(city)}
  render3D.setOrigin(AREAS[area].center);render3D.setCar(kind);
  city.map.jumpTo({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad});
  $("overlay").hidden=true;hud(true);$("pause").textContent="DURAKLAT";
@@ -320,8 +320,8 @@ function frameLoop(now){
 }
 function readyMap(){
  ready=true;
- render3D=new Vehicle3D(city);
- $("loadstate").textContent="Harita yüklendi. Gerçek sokaklar ve 3D binalar hazır.";
+ render3D=new CityScene3D(city);
+ $("loadstate").textContent="3D şehir motoru hazır. İstanbul sokakları yükleniyor…";
  if(area!==city.area)city.jumpToArea(area);
  if(pending)startGame(pending==="free");
 }
