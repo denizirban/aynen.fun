@@ -823,7 +823,7 @@ export class CityScene3D{
    const npc=state.traffic?.[i];this.position(m,npc?.pos,.18);
    if(npc?.pos)m.rotation.z=-(npc.visualHeading??npc.heading);
   });
-  const path=state.route||[],sampled=[];
+  const path=state.navValid?(state.route||[]):[],sampled=[];
   if(path.length>1){
    let carried=0,next=Math.max(9,(state.navProgress||0)+11);
    for(let i=1;i<path.length&&sampled.length<this.guides.length;i++){
