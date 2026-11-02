@@ -635,7 +635,21 @@ function frameLoop(now){
     resetRide=Math.max(0,resetRide-dt);
     if(!free&&!mission&&resetRide<=0)spawnMission();
     roadRefresh+=dt;routeRefresh+=dt;camRefresh+=dt;
-    if(roadRefresh>4){roadRefresh=0;city.refresh(car.pos);if(!free&&!mission)spawnMission()}
+    if(roadRefresh>4){
+     roadRefresh=0;
+     if(!city.refreshQueued){
+      city.refreshQueued=true;
+      const update=()=>{
+       city.refreshQueued=false;
+       if(!playing||!car)return;
+       city.refresh(car.pos);
+       if(!free&&!mission)spawnMission();
+      };
+      // Prefer browser idle time for parsing thousands of OSM road segments.
+      if(typeof requestIdleCallback==="function")requestIdleCallback(update,{timeout:1200});
+      else setTimeout(update,55);
+     }
+    }
     if(routeRefresh>3){routeRefresh=0;refreshRoute(false)}
     if(camRefresh>.16){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
     lastNavState=navigation.update(car.pos,dt);
