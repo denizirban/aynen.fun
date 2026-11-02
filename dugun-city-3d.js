@@ -151,7 +151,7 @@ function startGame(unlimited){
  if(near){car.pos=near.p;car.heading=angle(near.road.a,near.road.b)}
  rival={pos:null,heading:0,speed:10.5,route:[],index:1,cooldown:0};
  traffic=[];
- for(let i=0;i<(window.innerWidth<700?5:10);i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0,joined:false});
+ for(let i=0;i<(window.innerWidth<700?5:10);i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0,joined:false,respawnCD:0});
  if(!render3D){render3D=new CityScene3D(city)}
  render3D.setOrigin(AREAS[area].center);render3D.setCar(kind);
  city.map.jumpTo({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad});
@@ -308,7 +308,7 @@ function advanceTraffic(dt){
   npc.pos=travel(center,npc.heading+Math.PI/2,(/^(primary|secondary)/.test(seg.typ)?2.25:1.05));
   if(npc.joined)npc.speed=Math.min(13,npc.speed+.15*dt);
 
-  npc.cooldown=Math.max(0,npc.cooldown-dt);
+  npc.cooldown=Math.max(0,npc.cooldown-dt);npc.respawnCD=Math.max(0,(npc.respawnCD||0)-dt);
   if(npc.cooldown===0&&Math.abs(car.speed)>5&&distance(npc.pos,car.pos)<3.5){
    npc.cooldown=2.3;car.speed*=-.25;car.health=Math.max(0,car.health-5);sound(180,.16);toast("TRAFİĞE DİKKAT · HASAR",1.2);
   }
@@ -316,9 +316,13 @@ function advanceTraffic(dt){
    const bonus=Math.round(65+(convoy-1)*15);
    earnings+=bonus;nearMissCooldown=2.5;toast("RAMAK KALA · +₺"+bonus,1.1);
   }
-  if(distance(npc.pos,car.pos)>490){
-   const near=city.roads.filter(v=>Math.min(distance(car.pos,v.a),distance(car.pos,v.b))<250);
-   if(near.length){npc.road=near[Math.floor(Math.random()*near.length)];npc.t=0}
+  if(distance(npc.pos,car.pos)>460&&npc.respawnCD===0){
+   npc.respawnCD=3.5;
+   const available=city.roads.filter(v=>Math.min(distance(car.pos,v.a),distance(car.pos,v.b))<230);
+   if(available.length){
+    npc.road=available[Math.floor(Math.random()*available.length)];npc.t=.1;
+    npc.heading=angle(npc.road.a,npc.road.b);npc.visualHeading=npc.heading;
+   }
   }
  }
 }
