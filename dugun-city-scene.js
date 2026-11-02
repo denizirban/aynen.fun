@@ -262,7 +262,7 @@ function makeDropoffGate(){
  const gold=new THREE.MeshStandardMaterial({color:0xf5cb74,metalness:.2,roughness:.47});
  for(const side of [-1,1])g.add(meshBox(.20,.18,3.5,frame,side*2.5,0,1.75));
  const top=new THREE.Mesh(new THREE.TorusGeometry(2.50,.18,8,30,Math.PI),frame);
- top.position.set(0,0,3.5);top.rotation.z=0;g.add(top);
+ top.position.set(0,0,3.5);top.rotation.x=Math.PI/2;g.add(top);
  for(let i=0;i<11;i++){
   const angle=(i/10)*Math.PI;
   const bud=new THREE.Mesh(new THREE.DodecahedronGeometry(.21,1),i%3===0?gold:pink);
@@ -290,6 +290,10 @@ export class CityScene3D{
   this.actorGroup=new THREE.Group();this.scene.add(this.actorGroup);
   this.player=makeCar("sahin");this.rival=makeCar("sahin",null,true);
   this.actorGroup.add(this.player,this.rival);
+  this.followers=Array.from({length:this.mobile?3:5},(_,i)=>makeCar(i%2===0?"toros":"sahin"));
+  this.followers.forEach(f=>{f.visible=false;this.actorGroup.add(f)});
+  this.positionTrail=[];this.previousTrailPoint=null;
+
   // Floating roadway arrows follow the actual navigation path.
   this.guides=[];
   const guideShape=new THREE.Shape();
@@ -339,7 +343,7 @@ export class CityScene3D{
   this.camStyle=((style%3)+3)%3;
   return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
  }
- setOrigin(point){this.origin=[...point];this.rebuild(true);this.lastCarPos=null;}
+ setOrigin(point){this.origin=[...point];this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
 
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player)}
  rebuild(force=false){
@@ -384,6 +388,31 @@ export class CityScene3D{
   if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>130))this.rebuild();
   const car=state.car;
   this.position(this.player,car.pos,.18);this.player.rotation.z=-car.heading;
+  if(!this.previousTrailPoint||distance(this.previousTrailPoint,car.pos)>.75){
+   this.positionTrail.push({pos:[...car.pos],heading:car.heading});
+   this.previousTrailPoint=[...car.pos];
+   if(this.positionTrail.length>650)this.positionTrail.shift();
+  }
+  const getBehind=(wanted)=>{
+   let covered=0;
+   for(let j=this.positionTrail.length-1;j>0;j--){
+    const a=this.positionTrail[j],b=this.positionTrail[j-1];
+    const step=distance(a.pos,b.pos);
+    if(covered+step>=wanted){
+     const u=(wanted-covered)/Math.max(step,.001);
+     return {pos:[a.pos[0]+(b.pos[0]-a.pos[0])*u,a.pos[1]+(b.pos[1]-a.pos[1])*u],heading:b.heading};
+    }
+    covered+=step;
+   }
+   return null;
+  };
+  for(let j=0;j<this.followers.length;j++){
+   const model=this.followers[j],behind=(j+1)*9.5;
+   const point=j+1<(state.convoy||1)?getBehind(behind):null;
+   if(point){this.position(model,point.pos,.17);model.rotation.z=-point.heading}
+   else model.visible=false;
+  }
+
   this.player.rotation.y=-car.steering*.065;
   // Handbrake tracks are part of the actual asphalt scene, not hidden GIS overlays.
   if(state.controls?.handbrake&&Math.abs(car.speed)>7&&this.lastCarPos){
@@ -459,7 +488,16 @@ export class CityScene3D{
   if(state.mission){
    const target=state.mission.phase==="pickup"?state.mission.pickup:state.mission.dropoff;
    if(state.mission.phase==="pickup"){
-    this.position(this.guest,target,.14);this.dropoffGate.visible=false;
+    const road=this.city.nearest?.(target)?.road;
+    let guestPos=target;
+    if(road){
+     const a=toXY(this.origin,road.a),b=toXY(this.origin,road.b),len=Math.hypot(b[0]-a[0],b[1]-a[1])||1;
+     const width=roadWidth(road.typ)*.5+1.25;
+     const x=-(b[1]-a[1])/len*width,y=(b[0]-a[0])/len*width;
+     const latitude=target[1]*rad;
+     guestPos=[target[0]+x/(111320*Math.cos(latitude)),target[1]+y/111320];
+    }
+    this.position(this.guest,guestPos,.14);this.dropoffGate.visible=false;
     this.guest.rotation.z=-Math.atan2(Math.sin(car.heading),Math.cos(car.heading));
     this.guest.userData.waveArm.rotation.y=Math.sin(now*.006)*.65;
     this.guest.userData.label.quaternion.copy(this.camera.quaternion);
