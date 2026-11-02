@@ -19,7 +19,7 @@ function nearestOnSegment(p,a,b){
 function key(p){return p[0].toFixed(5)+":"+p[1].toFixed(5)}
 export class IstanbulMap{
  constructor(area,onReady,onError){
-  this.area=area;this.roads=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.vector=null;this.loaded=false;
+  this.area=area;this.roads=[];this.buildings=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.vector=null;this.loaded=false;
   if(!window.maplibregl){onError("Harita kitaplığı yüklenemedi.");return}
   this.map=new maplibregl.Map({
    container:"map",style:"https://tiles.openfreemap.org/styles/liberty",
@@ -56,7 +56,7 @@ export class IstanbulMap{
   this.area=area;
   if(!this.loaded)return;
   this.map.jumpTo({center:AREAS[area].center,bearing:0,pitch:67,zoom:17.3});
-  this.roads=[];this.lastRefresh=0;
+  this.roads=[];this.buildings=[];this.lastRefresh=0;
   setTimeout(()=>this.refresh(AREAS[area].center,true),700);
  }
  refresh(player,force=false){
@@ -83,7 +83,28 @@ export class IstanbulMap{
    if(roads.length>5200)break;
   }
   if(roads.length<10)return;
+  
   this.roads=roads;this.nodes=new Map();this.edges=new Map();this.samples=[];
+  try{
+   const buildings=this.map.querySourceFeatures(this.vector,{sourceLayer:"building"})||[];
+   const collection=[],used=new Set();
+   for(const f of buildings){
+    const polygons=f.geometry?.type==="Polygon"?[f.geometry.coordinates]:f.geometry?.type==="MultiPolygon"?f.geometry.coordinates:[];
+    for(const poly of polygons){
+     const ring=poly[0];if(!ring?.length)continue;
+     const lng=ring[0][0],lat=ring[0][1];
+     if(distance(player,[lng,lat])>950)continue;
+     const id=f.properties?.id||f.properties?.osm_id||lng.toFixed(6)+":"+lat.toFixed(6);
+     if(used.has(id))continue;used.add(id);
+     const xs=ring.map(p=>p[0]),ys=ring.map(p=>p[1]);
+     collection.push({ring,minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)});
+     if(collection.length>2600)break;
+    }
+    if(collection.length>2600)break;
+   }
+   this.buildings=collection;
+  }catch(e){this.buildings=[]}
+
   for(const r of roads){
    const a=key(r.a),b=key(r.b);
    this.nodes.set(a,r.a);this.nodes.set(b,r.b);
@@ -93,6 +114,19 @@ export class IstanbulMap{
    this.edges.get(b).push({node:a,d:r.len});
    this.samples.push([(r.a[0]+r.b[0])/2,(r.a[1]+r.b[1])/2]);
   }
+ }
+
+ insideBuilding(point){
+  for(const b of this.buildings){
+   if(point[0]<b.minX||point[0]>b.maxX||point[1]<b.minY||point[1]>b.maxY)continue;
+   let inside=false;
+   for(let i=0,j=b.ring.length-1;i<b.ring.length;j=i++){
+    const a=b.ring[i],c=b.ring[j];
+    if(((a[1]>point[1])!==(c[1]>point[1]))&&(point[0]<(c[0]-a[0])*(point[1]-a[1])/(c[1]-a[1])+a[0]))inside=!inside;
+   }
+   if(inside)return true;
+  }
+  return false;
  }
  nearest(point){
   let result=null;
