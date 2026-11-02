@@ -15,11 +15,13 @@ function terrainModel(area,origin){
  // Stylized grades, not measured elevation.
  if(area==="ortakoy"){
   const coastX=(29.02745-origin[0])*111320*Math.cos(origin[1]*rad);
-  return (x,y)=>Math.max(0,(coastX-x)*.028)+.35*Math.max(0,Math.sin(y/155));
+  const offset=toXY(AREAS[area].center,origin);
+  return (x,y)=>Math.max(0,(coastX-x)*.028)+.35*Math.max(0,Math.sin((y+offset[1])/155));
  }
+ const offset=toXY(AREAS[area]?.center||origin,origin);
  if(area==="besiktas"||area==="karakoy"||area==="balat")
-  return (x,y)=>Math.max(0,2.4+1.6*Math.sin(x/150)+1.1*Math.cos(y/190));
- return (x,y)=>Math.max(0,1.1+.9*Math.sin(x/220)+1.25*Math.cos(y/170));
+  return (x,y)=>Math.max(0,2.4+1.6*Math.sin((x+offset[0])/150)+1.1*Math.cos((y+offset[1])/190));
+ return (x,y)=>Math.max(0,1.1+.9*Math.sin((x+offset[0])/220)+1.25*Math.cos((y+offset[1])/170));
 }
 const color=(hex)=>new THREE.Color(hex);
 const windowMat=new THREE.MeshStandardMaterial({color:0x759aab,emissive:0x14262c,emissiveIntensity:.28,roughness:.28,metalness:.25,side:THREE.DoubleSide});
@@ -293,7 +295,7 @@ function addOrtakoyLandmark(group,origin,area){
  g.add(meshBox(16,15,10,cream,0,0,5));
  g.add(meshBox(17,16,.75,trim,0,0,10));
  const main=new THREE.Mesh(new THREE.SphereGeometry(6.0,20,12,0,Math.PI*2,0,Math.PI*.54),dome);
- main.position.z=10.7;g.add(main);
+ main.rotation.x=Math.PI/2;main.position.z=10.7;g.add(main);
  for(const dx of [-9.8,9.8]){
   const minaret=new THREE.Mesh(new THREE.CylinderGeometry(.75,1.15,25,12),cream);
   minaret.rotation.x=Math.PI/2;minaret.position.set(dx,0,12.5);g.add(minaret);
@@ -488,6 +490,12 @@ export class CityScene3D{
   this.actorGroup=new THREE.Group();this.scene.add(this.actorGroup);
   this.player=makeCar("sahin");this.rival=makeCar("sahin",null,true);
   this.actorGroup.add(this.player,this.rival);
+  this.rivalBeacon=createWorldLabel("RAKİP KONVOY","#9e4358","#fff5e8");
+  this.rivalBeacon.scale.set(7.0,1.6,1);
+  this.rivalBeacon.visible=false;this.actorGroup.add(this.rivalBeacon);
+  this.rivalPole=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,2.4,8),
+   new THREE.MeshBasicMaterial({color:0xff6788,transparent:true,opacity:.77}));
+  this.rivalPole.visible=false;this.actorGroup.add(this.rivalPole);
   if(!this.mobile)for(const v of [this.player,this.rival])v.traverse(obj=>{if(obj.isMesh)obj.castShadow=true});
   this.followers=Array.from({length:this.mobile?3:5},(_,i)=>makeCar(i%2===0?"toros":"sahin"));
   this.followers.forEach(f=>{f.visible=false;this.actorGroup.add(f)});
@@ -660,8 +668,11 @@ export class CityScene3D{
     w.wheel.rotation.x+=car.speed*dt/.38;w.steerGroup.rotation.z=w.front?car.steering*.42:0;
    }
   }
-  if(state.rival?.pos){this.position(this.rival,state.rival.pos,.18);this.rival.rotation.z=-state.rival.heading}
-  else this.rival.visible=false;
+  if(state.rival?.pos){
+   this.position(this.rival,state.rival.pos,.18);this.rival.rotation.z=-state.rival.heading;
+   this.position(this.rivalBeacon,state.rival.pos,5.2);this.rivalBeacon.quaternion.copy(this.camera.quaternion);
+   this.position(this.rivalPole,state.rival.pos,3.4);
+  }else{this.rival.visible=false;this.rivalBeacon.visible=false;this.rivalPole.visible=false;}
   this.npcs.forEach((m,i)=>{
    const npc=state.traffic?.[i];this.position(m,npc?.pos,.18);
    if(npc?.pos)m.rotation.z=-(npc.visualHeading??npc.heading);
@@ -778,6 +789,7 @@ export class CityScene3D{
   this.camera.position.copy(this.camPos);this.camera.lookAt(this.camLook);
   this.sky.position.copy(this.camera.position);
   // Guest signs billboard to player only after camera aim settles.
+  if(this.rivalBeacon.visible)this.rivalBeacon.quaternion.copy(this.camera.quaternion);
   if(this.guest.visible)this.guest.userData.label.quaternion.copy(this.camera.quaternion);
   if(this.dropoffGate.visible)this.dropoffGate.userData.label.quaternion.copy(this.camera.quaternion);
   this.renderer.render(this.scene,this.camera);
