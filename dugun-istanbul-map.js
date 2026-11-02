@@ -191,7 +191,7 @@ export class IstanbulMap{
   const simplify=arr=>arr.filter((p,i)=>!i||distance(p,arr[i-1])>.25);
   // The player and target are on the SAME street segment: no intersection detour.
   if((idA===idC&&idB===idD)||(idA===idD&&idB===idC))
-   return simplify([from,nearStart.p,nearEnd.p,to]);
+   return simplify([from,nearStart.p,[(nearStart.p[0]+nearEnd.p[0])*.5,(nearStart.p[1]+nearEnd.p[1])*.5],nearEnd.p,to]);
   // Cost of starting from each end of the real street segment, not from an
   // arbitrary nearest graph node that may be behind the vehicle.
   const starts=[[idA,distance(nearStart.p,nearStart.road.a)],[idB,distance(nearStart.p,nearStart.road.b)]];
