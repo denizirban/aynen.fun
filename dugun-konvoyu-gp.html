@@ -393,6 +393,18 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 #panel .feature-row span{font-size:9px;padding:5px 7px}
 #drive-hint{max-width:330px;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:700px){.single-city{padding:10px 12px;margin:4px 0 8px}.single-city strong{font-size:17px}.single-city small{font-size:9px}#panel h1{font-size:37px}}
+
+#freeroam{width:100%;margin-top:15px;padding:17px 12px;
+ border:2px solid #f2dc8c;border-radius:14px;
+ background:linear-gradient(105deg,#ffdf79,#f5b94f);color:#223444;
+ font-size:15px;letter-spacing:.015em;font-weight:950;
+ box-shadow:0 4px 0 #947844}
+#freeroam:hover{background:linear-gradient(105deg,#fff0b1,#ffcd72)}
+#start{width:100%;margin-top:9px;padding:11px 12px;border-radius:12px;
+ border:1px solid #91aba7;background:#d8e5dd;color:#2e4a4c;font-size:12px;
+ box-shadow:none;font-weight:850}
+#start:hover{background:#eaf1e9}
+@media(max-width:700px){#freeroam{padding:13px;font-size:13px;margin-top:9px}#start{padding:9px;margin-top:6px}}
 </style>
 </head>
 <body>
@@ -436,9 +448,9 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
    </div>
    <div class="panel-label">DÜĞÜN ARABASI</div>
    <div class="options" id="cars"><button class="option selected" data-car="sahin">ŞAHİN<small>Dengeli sürüş</small></button><button class="option" data-car="toros">TOROS<small>Yüksek yol tutuş</small></button><button class="option" data-car="doblo">DOBLO<small>Geniş araç</small></button></div>
-   <button id="start">SÜRMEYE BAŞLA · 3 DAKİKA</button><button id="freeroam">SERBEST GEZİNTİ · SÜRESİZ</button>
+   <button id="freeroam">İSTANBUL’DA SÜR · SINIRSIZ</button><button id="start">DÜĞÜN YARIŞI · 3 DAKİKA</button>
    <div id="loadstate">Harita hazırlanıyor…</div>
-   <div id="help">Kolay sürüşte araba kendi gider: sadece ← → / A D ile yönlendir. S / ↓ fren · W / ↑ hızlan · Space korna · C kamera · M sürüş modu · P duraklat. Mobilde büyük yön tuşlarını kullan.</div>
+   <div id="help">Kolay sürüş: ← → veya A D ile yönlendir; W hızlan, S fren, Space korna. Oyun koluyla analog direksiyon ve tetikler de desteklenir. C kamera, M manuel sürüş, P duraklat.</div>
   </div>
  </div>
 </div>
