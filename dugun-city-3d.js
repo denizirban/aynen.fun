@@ -173,7 +173,12 @@ function finish(cause){
  $("overlay").hidden=false;
 }
 function startGame(unlimited){
- if(!ready){pending=unlimited?"free":"timed";$("loadstate").textContent="Gerçek harita ve yol ağı yükleniyor…";return}
+ if(!ready||!city?.roads?.length){
+  pending=unlimited?"free":"timed";
+  $("loadstate").textContent="İstanbul sokakları yükleniyor… Harita bağlantısını kontrol et.";
+  city?.refresh(AREAS[area].center,true);
+  return
+ }
  pending=false;free=unlimited;
  // Default easy mode is intentionally playable with just left/right steering.
  brakeHold=0;stillTime=0;assistedPickupTimer=0;tripElapsed=0;
@@ -535,9 +540,16 @@ function frameLoop(now){
 function readyMap(){
  ready=true;
  render3D=new CityScene3D(city);
- $("loadstate").textContent="3D şehir motoru hazır. İstanbul sokakları yükleniyor…";
+ $("loadstate").textContent="3D şehir hazır. Gerçek sokaklar yükleniyor…";
+ city.onRoadsReady=()=>{
+  const info=$("loadstate");if(info)info.textContent="Sokaklar hazır · Sürmeye başlayabilirsin.";
+  if(pending&&city.roads.length){
+   const mode=pending;
+   pending=false;startGame(mode==="free");
+  }
+ };
  if(area!==city.area)city.jumpToArea(area);
- if(pending)startGame(pending==="free");
+ if(pending&&city.roads.length){const mode=pending;pending=false;startGame(mode==="free")}
 }
 function errorMap(message){$("loadstate").textContent="Harita hatası: "+message}
 city=new IstanbulMap(area,readyMap,errorMap);
