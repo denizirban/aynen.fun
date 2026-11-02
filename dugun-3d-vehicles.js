@@ -4,7 +4,7 @@ const mat=(color,metal=.1,rough=.54)=>new THREE.MeshStandardMaterial({color,meta
 function cube(w,l,h,m,x=0,y=0,z=0){
  const o=new THREE.Mesh(new THREE.BoxGeometry(w,l,h),m);o.position.set(x,y,z);return o;
 }
-function makeCar(carName="sahin",color=null,rival=false){
+export function makeCar(carName="sahin",color=null,rival=false){
  const group=new THREE.Group(),doblo=carName==="doblo",toros=carName==="toros";
  const w=doblo?1.94:1.78,l=doblo?4.60:toros?4.46:4.28;
  const paint=new THREE.MeshPhysicalMaterial({color:color??(rival?0x9f466a:doblo?0xdfb460:toros?0x89a48a:0xefebe3),metalness:.32,roughness:.27,clearcoat:1,clearcoatRoughness:.15});
