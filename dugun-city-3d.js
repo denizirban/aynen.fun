@@ -59,18 +59,20 @@ function toast(message,sec=1.8){
  $("toast").textContent=message;$("toast").classList.add("show");toastEnd=performance.now()+sec*1000;
 }
 function choices(group,type,change){
- document.querySelectorAll("#"+group+" .option").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll("#"+group+" .option").forEach(el=>el.classList.remove("selected"));
+ document.querySelectorAll("#"+group+" button").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll("#"+group+" button").forEach(el=>el.classList.remove("selected"));
   btn.classList.add("selected");change(btn.dataset[type]);
  }));
 }
 choices("districts","district",v=>{area=v;if(ready&&!playing)city.jumpToArea(v)});
 choices("cars","car",v=>{kind=v});
-choices("drive-options","drivemode",v=>{
- driveMode=v;
+choices("drive-options","drivemode",v=>{driveMode=v;syncDriveUI()});
+function syncDriveUI(){
  document.body.dataset.driveMode=driveMode;
  $("drive-mode").textContent=driveMode==="easy"?"KOLAY SÜRÜŞ":"MANUEL";
-});
+ $("turbo-control").textContent=driveMode==="easy"?"HIZLAN":"GAZ";
+ document.querySelectorAll("#drive-options [data-drivemode]").forEach(b=>b.classList.toggle("selected",b.dataset.drivemode===driveMode));
+}
 
 const inputKeys={ArrowUp:"gas",KeyW:"gas",ArrowDown:"brake",KeyS:"brake",ArrowLeft:"left",KeyA:"left",ArrowRight:"right",KeyD:"right",ShiftLeft:"handbrake",ShiftRight:"handbrake"};
 window.addEventListener("keydown",e=>{
@@ -100,8 +102,7 @@ $("camera").addEventListener("click",cycleCamera);
 $("drive-mode").addEventListener("click",toggleDriveMode);
 function toggleDriveMode(){
  driveMode=driveMode==="easy"?"manual":"easy";
- $("drive-mode").textContent=driveMode==="easy"?"KOLAY SÜRÜŞ":"MANUEL";
- document.body.dataset.driveMode=driveMode;
+ syncDriveUI();
  toast(driveMode==="easy"?"OTOMATİK GAZ AÇIK · SEN YÖNLENDİR":"MANUEL SÜRÜŞ · GAZ W / ↑",2.1);
  brakeHold=0;
 }
@@ -190,8 +191,7 @@ function startGame(unlimited){
  render3D.setOrigin(AREAS[area].center);render3D.setCar(kind);
  if(render3D.setCameraStyle)render3D.setCameraStyle(1);
  $("camera").textContent="KAMERA: GENİŞ";
- $("drive-mode").textContent=driveMode==="easy"?"KOLAY SÜRÜŞ":"MANUEL";
- document.body.dataset.driveMode=driveMode;
+ syncDriveUI();
  city.map.jumpTo({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad});
  $("overlay").hidden=true;hud(true);$("pause").textContent="DURAKLAT";
  resetRide=0;last=performance.now();
@@ -440,7 +440,10 @@ function updateHUD(){
  $("time").classList.toggle("urgent",timer<30&&!free);
  $("money").textContent="₺"+earnings.toLocaleString("tr-TR");
  $("bestmoney").textContent="₺"+personalBest.toLocaleString("tr-TR");
- $("speed").textContent=Math.round(Math.abs(car.speed)*3.6);
+ const speedKmh=Math.round(Math.abs(car.speed)*3.6);
+ $("speed").textContent=speedKmh;
+ $("speed-panel").style.setProperty("--speed-angle",Math.min(265,speedKmh*2.25)+"deg");
+ $("speed-gear").textContent=car.speed<-.8?"R":keys.brake&&Math.abs(car.speed)<1?"N":"D";
  $("car-health").textContent="ARAÇ %"+Math.round(car.health)+(car.offroad?" · YOL DIŞI":"");
  $("drive-hint").textContent=driveMode==="easy"?(keys.brake?"FREN · TUTARSAN GERİ VİTES":car.offroad?"YOLA DÖN · OKLARLA YÖNLENDİR":Math.abs(car.steering)>.12?"DİREKSİYON SENDE":"GAZ OTOMATİK · SAĞ / SOL İLE SÜR"):(keys.gas?"GAZ VERİLİYOR":"GAZ İÇİN W / ↑ BAS");
  $("car-health").style.color=car.health<35?"#ff9c8f":car.health<65?"#ffdb8e":"#e3f2e6";
