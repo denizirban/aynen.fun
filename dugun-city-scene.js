@@ -213,6 +213,67 @@ function makeSign(text){
  face.position.set(0,.05,5.6);face.rotation.x=Math.PI/2;
  group.add(face);return group;
 }
+
+function makeGuestActor(){
+ const g=new THREE.Group(),trouser=new THREE.MeshStandardMaterial({color:0x344963,roughness:1});
+ const jacket=new THREE.MeshStandardMaterial({color:0xd5b1bd,roughness:.88});
+ const skin=new THREE.MeshStandardMaterial({color:0xdfac85,roughness:1});
+ const shoe=new THREE.MeshStandardMaterial({color:0x2e3842,roughness:1});
+ const hat=new THREE.MeshStandardMaterial({color:0x5c4352,roughness:1});
+ for(const x of [-.20,.20]){
+  g.add(meshBox(.29,.36,.83,trouser,x,0,.52));
+  g.add(meshBox(.34,.50,.17,shoe,x,.12,.15));
+ }
+ g.add(meshBox(.91,.47,.99,jacket,0,0,1.43));
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.29,12,9),skin);head.position.z=2.14;g.add(head);
+ const hair=new THREE.Mesh(new THREE.SphereGeometry(.32,10,7),hat);hair.position.z=2.36;hair.scale.set(1,1,.35);g.add(hair);
+ const left=new THREE.Group();left.position.set(-.59,0,1.88);
+ left.add(meshBox(.27,.27,.76,jacket,0,0,-.35));g.add(left);
+ const right=new THREE.Group();right.position.set(.59,0,1.92);
+ right.add(meshBox(.25,.26,.72,jacket,0,0,.24));
+ const hand=new THREE.Mesh(new THREE.SphereGeometry(.14,8,7),skin);hand.position.z=.64;right.add(hand);g.add(right);
+ const suitcase=new THREE.Group();
+ suitcase.add(meshBox(.57,.30,.43,new THREE.MeshStandardMaterial({color:0x9b7445}),-.87,.01,.43));
+ suitcase.add(meshBox(.26,.06,.11,shoe,-.87,.0,.72));g.add(suitcase);
+ g.userData.waveArm=right;
+ const mat=new THREE.MeshBasicMaterial({color:0xffe2a5,transparent:true,opacity:.9,depthTest:false});
+ const label=createWorldLabel("MİSAFİRİ AL","#805038","#ffe8b0");
+ label.position.set(0,0,4.3);g.add(label);
+ g.userData.label=label;
+ return g;
+}
+function createWorldLabel(message,bg="#285849",fg="#fff7dd"){
+ const canvas=document.createElement("canvas");
+ canvas.width=512;canvas.height=128;
+ const c=canvas.getContext("2d");
+ c.fillStyle=bg;c.fillRect(0,0,512,128);
+ c.strokeStyle="#fff2ce";c.lineWidth=7;c.strokeRect(5,5,502,118);
+ c.fillStyle=fg;c.font="900 45px system-ui";c.textAlign="center";c.textBaseline="middle";
+ c.fillText(message,256,69);
+ const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;
+ const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthTest:false,transparent:true}));
+ sprite.scale.set(5.2,1.30,1);
+ return sprite;
+}
+function makeDropoffGate(){
+ const g=new THREE.Group();
+ const frame=new THREE.MeshStandardMaterial({color:0xfff0dd,metalness:.22,roughness:.47});
+ const pink=new THREE.MeshStandardMaterial({color:0xea879d,roughness:.61});
+ const gold=new THREE.MeshStandardMaterial({color:0xf5cb74,metalness:.2,roughness:.47});
+ for(const side of [-1,1])g.add(meshBox(.20,.18,3.5,frame,side*2.5,0,1.75));
+ const top=new THREE.Mesh(new THREE.TorusGeometry(2.50,.18,8,30,Math.PI),frame);
+ top.position.set(0,0,3.5);top.rotation.z=0;g.add(top);
+ for(let i=0;i<11;i++){
+  const angle=(i/10)*Math.PI;
+  const bud=new THREE.Mesh(new THREE.DodecahedronGeometry(.21,1),i%3===0?gold:pink);
+  bud.position.set(Math.cos(angle)*2.5,0,3.5+Math.sin(angle)*2.5);g.add(bud);
+ }
+ const label=createWorldLabel("MİSAFİRİ BIRAK","#286d55","#e8ffce");
+ label.position.set(0,0,6.7);g.add(label);
+ g.userData.label=label;
+ return g;
+}
+
 export class CityScene3D{
  constructor(city){
   this.city=city;this.origin=[...AREAS[city.area].center];this.mobile=window.innerWidth<700;this.canvas=document.getElementById("driving-canvas");
@@ -260,7 +321,9 @@ export class CityScene3D{
   pin.rotation.x=Math.PI/2;pin.position.z=4.2;this.marker.add(pin);
   const circle=new THREE.Mesh(new THREE.SphereGeometry(.55,12,8),new THREE.MeshBasicMaterial({color:0xffffff}));
   circle.position.z=5.5;this.marker.add(circle);this.marker.visible=false;
-  this.camPos=new THREE.Vector3();this.camLook=new THREE.Vector3();this.inited=false;
+  this.guest=makeGuestActor();this.dropoffGate=makeDropoffGate();
+  this.actorGroup.add(this.guest,this.dropoffGate);this.guest.visible=false;this.dropoffGate.visible=false;
+  this.camStyle=0;this.camPos=new THREE.Vector3();this.camLook=new THREE.Vector3();this.inited=false;
   this.lastBuilt=0;this.builtAt=null;this.builtRoads=null;this.builtBuildings=null;
   this.lastFPS=60;this.lastWarn=0;this.routeCache=null;
   window.addEventListener("resize",()=>this.resize());
@@ -271,7 +334,13 @@ export class CityScene3D{
   this.camera.aspect=w/h;this.camera.fov=w<600?74:64;this.camera.updateProjectionMatrix();
   this.renderer.setSize(w,h,false);
  }
- setOrigin(point){this.origin=[...point];this.rebuild(true)}
+
+ setCameraStyle(style){
+  this.camStyle=((style%3)+3)%3;
+  return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
+ }
+ setOrigin(point){this.origin=[...point];this.rebuild(true);this.lastCarPos=null;}
+
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player)}
  rebuild(force=false){
   const t=performance.now();
@@ -386,18 +455,36 @@ export class CityScene3D{
    this.marker.scale.setScalar(1+Math.sin(now*.003)*.07);
    const targetColor=m.phase==="pickup"?0xffd35c:0x99f5a7;
    this.marker.children.forEach(child=>{if(child.material?.color)child.material.color.setHex(targetColor)});
-  }else this.marker.visible=false;
+  }
+  if(state.mission){
+   const target=state.mission.phase==="pickup"?state.mission.pickup:state.mission.dropoff;
+   if(state.mission.phase==="pickup"){
+    this.position(this.guest,target,.14);this.dropoffGate.visible=false;
+    this.guest.rotation.z=-Math.atan2(Math.sin(car.heading),Math.cos(car.heading));
+    this.guest.userData.waveArm.rotation.y=Math.sin(now*.006)*.65;
+    this.guest.userData.label.quaternion.copy(this.camera.quaternion);
+   }else{
+    this.guest.visible=false;this.position(this.dropoffGate,target,.14);
+    this.dropoffGate.userData.label.quaternion.copy(this.camera.quaternion);
+   }
+  }else{this.guest.visible=false;this.dropoffGate.visible=false;}
   // Proper physical 3D chase camera behind the car, not a zoomed overhead GIS camera.
   const [cx,cy]=toXY(this.origin,car.pos),fwdX=Math.sin(car.heading),fwdY=Math.cos(car.heading);
-  const speed=Math.abs(car.speed),follow=clamp(10.8+speed*.13,10.8,15.1);
-  const horizontal=window.innerWidth<700?9.8:follow;
-  const height=window.innerWidth<700?5.1:5.8;
-  const eye=new THREE.Vector3(cx-fwdX*horizontal,cy-fwdY*horizontal,height+speed*.025);
-  const target=new THREE.Vector3(cx+fwdX*22,cy+fwdY*22,2.3);
+  
+  const speed=Math.abs(car.speed),wide=this.camStyle===1,hood=this.camStyle===2;
+  const horizontal=hood?-1.7:(wide?clamp(16+speed*.14,16,21):clamp(9.6+speed*.09,9.6,12.2));
+  const height=hood?1.65:(wide?7.6:4.45)+speed*.022;
+  const eye=new THREE.Vector3(cx-fwdX*horizontal,cy-fwdY*horizontal,height);
+  const lookDistance=hood?27:wide?27:21;
+  const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,hood?1.78:1.65);
+  if(hood)this.player.visible=false;else this.player.visible=true;
   if(!this.inited){this.camPos.copy(eye);this.camLook.copy(target);this.inited=true}
   const softness=1-Math.exp(-dt*6.5),lookSoft=1-Math.exp(-dt*4.8);
   this.camPos.lerp(eye,softness);this.camLook.lerp(target,lookSoft);
   this.camera.position.copy(this.camPos);this.camera.lookAt(this.camLook);
+  // Guest signs billboard to player only after camera aim settles.
+  if(this.guest.visible)this.guest.userData.label.quaternion.copy(this.camera.quaternion);
+  if(this.dropoffGate.visible)this.dropoffGate.userData.label.quaternion.copy(this.camera.quaternion);
   this.renderer.render(this.scene,this.camera);
  }
 }
