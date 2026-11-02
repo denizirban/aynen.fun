@@ -159,6 +159,7 @@ function drive(dt){
  car.heading=(car.heading+yaw*dt+Math.PI*2)%(2*Math.PI);
  const previous=car.pos;
  car.pos=travel(car.pos,car.heading,car.speed*dt);
+ if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
  if(city.insideBuilding?.(car.pos)){
   car.pos=previous;
   if(Math.abs(car.speed)>3&&hitCooldown<=0){
@@ -307,7 +308,7 @@ function frameLoop(now){
     roadRefresh+=dt;routeRefresh+=dt;camRefresh+=dt;
     if(roadRefresh>4){roadRefresh=0;city.refresh(car.pos);if(!mission)spawnMission()}
     if(routeRefresh>2){routeRefresh=0;refreshRoute()}
-    if(camRefresh>.028){city.chase(car.pos,car.heading,camRefresh);camRefresh=0}
+    if(camRefresh>.028){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
     render3D?.update({car,rival,mission,traffic,controls:keys},dt,now);
     if(frame++%3===0){updateHUD();drawMini()}
    }
