@@ -240,7 +240,7 @@ function spawnMission(){
 }
 function refreshRoute(){
  if(!mission||!city)return;
- const target=mission.phase==="pickup"?mission.pickup:mission.dropoff;
+ const target=mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff;
  route=city.route(car.pos,target);city.setRoute(route);
 }
 function refreshRivalRoute(){
@@ -481,7 +481,7 @@ function updateMissionText(){
  if(!mission)return;
  $("mission-state").textContent=mission.owner==="rival"?"MİSAFİR RAKİPTE":mission.phase==="pickup"?"MİSAFİRİ AL":mission.challenge.tag;
  $("mission-name").textContent=mission.phase==="pickup"?mission.passenger:mission.venue;
- $("mission-info").textContent=mission.phase==="pickup"?"Sarı işarete yanaş. Yavaşlayınca misafir biner.":mission.challenge.info;
+ $("mission-info").textContent=mission.owner==="rival"?"KIRMIZI RAKİBİ TAKİP ET · ONA YAKLAŞIP MİSAFİRİ GERİ AL":mission.phase==="pickup"?"Sarı işarete yanaş. Yavaşlayınca misafir biner.":mission.challenge.info;
 }
 function updateRivalHUD(){
  const panel=$("rival-tracker");
@@ -520,7 +520,7 @@ function updateHUD(){
   $("mission-distance").textContent="—";$("mission-timer").textContent="";
   return;
  }
- const goal=mission.phase==="pickup"?mission.pickup:mission.dropoff,d=distance(car.pos,goal);
+ const goal=mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff,d=distance(car.pos,goal);
  $("mission-distance").textContent=d<1000?Math.round(d)+" METRE":(d/1000).toFixed(1)+" KM";
  $("mission-timer").textContent=mission.phase==="dropoff"?
   ("YOLCU: "+Math.ceil(Math.max(0,mission.clock))+" SN"+(mission.challenge.id==="horn"?" · KORNA "+Math.min(2,mission.horns)+"/2":mission.challenge.id==="careful"?" · HASAR "+mission.crashes:"")):
