@@ -61,8 +61,16 @@ export function stepVehicle(state,controls,environment,dt){
   // Forward-look steering is deliberately limited: the driver is still in control.
   if(preview.valid&&Math.abs(preview.error)<.48){
    targetSteer+=clamp(preview.error*.30,-.14,.14);
-  }else if(near?.p&&crossTrack<11&&Math.abs(nearRoad)<1.05){
-   targetSteer+=clamp(nearRoad*.18,-.19,.19);
+  }else if(near?.road&&crossTrack<13){
+   const r=near.road;
+   const roadAngle=bearing(r.a,r.b);
+   const forwardAngle=Math.abs(wrap(roadAngle-car.heading))<Math.PI/2?roadAngle:wrap(roadAngle+Math.PI);
+   const headingError=wrap(forwardAngle-car.heading);
+   const lateralError=near?.p?wrap(bearing(car.pos,near.p)-car.heading):0;
+   // Lane-keeping only while nearly aligned to this street; intersections
+   // remain entirely player-controlled, without sudden GPS-like turns.
+   if(Math.abs(headingError)<.56)
+    targetSteer+=clamp(headingError*.28+Math.sin(lateralError)*clamp(crossTrack/13,0,1)*.11,-.17,.17);
   }
  }
  targetSteer=clamp(targetSteer,-steerMax,steerMax);
