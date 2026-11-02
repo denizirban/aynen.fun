@@ -486,7 +486,7 @@ export class CityScene3D{
   else this.rival.visible=false;
   this.npcs.forEach((m,i)=>{
    const npc=state.traffic?.[i];this.position(m,npc?.pos,.18);
-   if(npc?.pos)m.rotation.z=-npc.heading;
+   if(npc?.pos)m.rotation.z=-(npc.visualHeading??npc.heading);
   });
   const path=state.route||[],sampled=[];
   if(path.length>1){
