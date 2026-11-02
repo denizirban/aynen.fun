@@ -1,11 +1,6 @@
 
 export const AREAS={
- kadikoy:{name:"Kadıköy · Moda",center:[29.0295,40.9885]},
- besiktas:{name:"Beşiktaş · Abbasağa",center:[29.0071,41.0453]},
- karakoy:{name:"Karaköy · Galata",center:[28.9791,41.0255]},
- balat:{name:"Balat · Haliç",center:[28.9497,41.0306]},
- ortakoy:{name:"Ortaköy · Boğaz",center:[29.0270,41.0476]},
- uskudar:{name:"Üsküdar · Çarşı",center:[29.0158,41.0258]}
+ istanbul:{name:"İstanbul · Boğaz",center:[29.0270,41.0476]}
 };
 export const rad=Math.PI/180;
 export const distance=(a,b)=>Math.hypot((a[0]-b[0])*111320*Math.cos((a[1]+b[1])*.5*rad),(a[1]-b[1])*111320);
@@ -112,7 +107,7 @@ export class IstanbulMap{
   this.area=area;
   if(!this.loaded)return;
   this.map.jumpTo({center:AREAS[area].center,bearing:0,pitch:67,zoom:17.3});
-  this.roads=[];this.buildings=[];this.water=[];this.lastRefresh=0;
+  this.roads=[];this.buildings=[];this.water=[];this.parks=[];this.lastRefresh=0;
   setTimeout(()=>this.refresh(AREAS[area].center,true),700);
  }
  refresh(player,force=false){
@@ -125,7 +120,7 @@ export class IstanbulMap{
   let features;
   try{features=this.map.querySourceFeatures(this.vector,{sourceLayer:"transportation"})}catch(e){return}
   if(!features?.length)return;
-  const roads=[],uniq=new Set(),skip=/^(path|footway|steps|pedestrian|cycleway|track|motorway|motorway_link|construction)$/;
+  const roads=[],uniq=new Set(),skip=/^(path|footway|steps|pedestrian|cycleway|track|construction)$/;
   for(const f of features){
    const typ=f.properties?.class||f.properties?.subclass||"";
    if(skip.test(typ))continue;
@@ -248,7 +243,8 @@ export class IstanbulMap{
    if(!this.edges.has(b))this.edges.set(b,[]);
    this.edges.get(a).push({node:b,d:r.len});
    this.edges.get(b).push({node:a,d:r.len});
-   this.samples.push([(r.a[0]+r.b[0])/2,(r.a[1]+r.b[1])/2]);
+   if(!/^(motorway|motorway_link|trunk)/.test(r.typ))
+    this.samples.push([(r.a[0]+r.b[0])/2,(r.a[1]+r.b[1])/2]);
   }
  }
 
