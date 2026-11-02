@@ -116,17 +116,46 @@ function cycleLighting(){
  $("lighting").textContent=name;
  toast("İSTANBUL · "+name,1.2);
 }
+
+const SAFE_START_ANCHOR=[29.02495,41.04720];
+function isLocalSpawnRoad(r){
+ return !!r&&!r.bridge&&!/^(motorway|motorway_link|trunk|trunk_link|construction|path|footway|pedestrian)$/.test(r.typ||"");
+}
+function chooseSafeRoadPosition(reference,initial=false){
+ if(!city?.roads?.length)return null;
+ let best=null;
+ for(const r of city.roads){
+  if(!isLocalSpawnRoad(r))continue;
+  const length=r.len||distance(r.a,r.b);
+  if(length<11)continue;
+  for(const t of [.32,.52,.68]){
+   const pos=[r.a[0]+(r.b[0]-r.a[0])*t,r.a[1]+(r.b[1]-r.a[1])*t];
+   const d=distance(reference,pos);
+   if(d>(initial?650:520)||city.insideBuilding?.(pos))continue;
+   const heading=angle(r.a,r.b);
+   const step=Math.min(5,length*.15);
+   const forwardOK=!city.insideBuilding?.(travel(pos,heading,step));
+   const backwardOK=!city.insideBuilding?.(travel(pos,heading+Math.PI,step));
+   if(!forwardOK&&!backwardOK)continue;
+   const preferredHeading=forwardOK?heading:(heading+Math.PI)%(2*Math.PI);
+   const score=d+(/^(residential|tertiary|secondary)/.test(r.typ||"")?-22:10)
+     +(length<24?18:0)+(initial?distance(pos,AREAS[area].center)*.12:0);
+   if(!best||score<best.score)best={pos,heading:preferredHeading,road:r,score};
+  }
+ }
+ return best;
+}
+
 function recoverCar(){
  if(!playing||paused||!car)return;
  if(rescueCooldown>0){toast("ÇEKİCİ "+Math.ceil(rescueCooldown)+" SANİYE SONRA",1.1);return}
- const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
- if(!near){toast("YAKINDA YOL BULUNAMADI",1.2);return}
+ const safe=chooseSafeRoadPosition(car.pos);
+ if(!safe){toast("YEREL SOKAK HENÜZ YÜKLENMEDİ",1.2);return}
  if(Math.abs(car.speed)>2.3){toast("ÖNCE ARABAYI DURDUR",1.2);return}
- if(!car.offroad&&car.health>70){toast("ARAÇ ZATEN YOLDA",1.1);return}
  const fee=Math.min(150,earnings);
  earnings-=fee;
  if(!free)timer=Math.max(10,timer-(fee<150?8:2));
- car.pos=[...near.p];car.heading=angle(near.road.a,near.road.b);
+ car.pos=[...safe.pos];car.heading=safe.heading;car.currentRoadBridge=false;
  car.steering=0;car.speed=0;car.yawRate=0;car.slip=0;car.velocityLateral=0;
  car.health=Math.min(100,car.health+28);
  rescueCooldown=28;
@@ -181,22 +210,36 @@ function startGame(unlimited){
   city?.refresh(AREAS[area].center,true);
   return
  }
- pending=false;free=unlimited;
+ const spawn=chooseSafeRoadPosition(SAFE_START_ANCHOR,true);
+ if(!spawn){
+  pending=unlimited?"free":"timed";
+  $("loadstate").textContent="Ortaköy'deki sürülebilir sokaklar yükleniyor…";
+  if(!city.seekingLocalStreets){
+   city.seekingLocalStreets=true;
+   city.map?.jumpTo({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
+  }
+  return;
+ }
+ pending=false;city.seekingLocalStreets=false;free=unlimited;
  // Default easy mode is intentionally playable with just left/right steering.
  brakeHold=0;stillTime=0;assistedPickupTimer=0;tripElapsed=0;
  playing=true;paused=false;timer=180;earnings=0;deliveries=0;stolen=0;convoy=1;mission=null;
  navigation.clear();lastNavState=null;
  hornCooldown=0;nearMissCooldown=0;deliveryStreak=0;hitCooldown=0;rescueCooldown=0;
  try{personalBest=Number(localStorage.getItem("dugun-3d-best-v3"))||0}catch(e){personalBest=0}
- car={pos:[...AREAS[area].center],speed:0,heading:0,steering:0,yawRate:0,slip:0,velocityLateral:0,suspension:0,suspensionVelocity:0,engineRPM:850,health:100,offroad:false};
+ car={pos:[...spawn.pos],speed:0,heading:spawn.heading,steering:0,yawRate:0,slip:0,
+  velocityLateral:0,suspension:0,suspensionVelocity:0,engineRPM:850,health:100,
+  offroad:false,currentRoadBridge:false,currentRoadName:spawn.road.name||""};
  city.refresh(car.pos,true);
- const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
- if(near){car.pos=near.p;car.heading=angle(near.road.a,near.road.b)}
+ const near=city.nearest(car.pos);
+ if(near&&isLocalSpawnRoad(near.road)&&near.dist<5){
+  car.pos=[...near.p];car.currentRoadName=near.road.name||"";
+ }
  rival={pos:null,heading:0,speed:10.5,route:[],index:1,cooldown:0};
  traffic=[];
  for(let i=0;i<(window.innerWidth<700?8:17);i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0,joined:false,respawnCD:0});
  if(!render3D){render3D=new CityScene3D(city)}
- render3D.setOrigin(AREAS[area].center);render3D.setCar(kind);
+ render3D.setOrigin(car.pos);render3D.setCar(kind);
  if(render3D.setCameraStyle)render3D.setCameraStyle(0);
  $("camera").textContent="KAMERA: TAKİP";
  syncDriveUI();
@@ -295,6 +338,7 @@ function drive(dt){
  const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
  car.currentRoadName=near?.road?.name||"";
  car.currentRoadClass=near?.road?.typ||"";
+ car.currentRoadBridge=!!(near?.road?.bridge&&/^(motorway|motorway_link|trunk|primary)/.test(near.road.typ));
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
  if(city.insideBuilding?.(car.pos)){
   // Source building polygons sometimes overlap carriageways. Prefer the drivable road.
