@@ -272,7 +272,7 @@ function startGame(unlimited){
  }
  rival={pos:null,heading:0,speed:10.5,route:[],index:1,cooldown:0};
  traffic=[];
- for(let i=0;i<(window.innerWidth<700?8:17);i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0,joined:false,respawnCD:0});
+ for(let i=0;i<(free?(window.innerWidth<700?4:8):(window.innerWidth<700?8:17));i++)traffic.push({pos:null,road:null,heading:0,t:0,speed:6+Math.random()*6,cooldown:0,joined:false,respawnCD:0});
  if(!render3D){render3D=new CityScene3D(city)}
  render3D.setOrigin(car.pos);render3D.setCar(kind);
  if(render3D.setCameraStyle)render3D.setCameraStyle(0);
@@ -286,11 +286,21 @@ function startGame(unlimited){
 }
 function seedTraffic(){
  if(!city.roads.length)return;
+ const candidates=city.roads.filter(r=>!/^(motorway|motorway_link)/.test(r.typ));
+ const pool=candidates.length?candidates:city.roads;
  for(const v of traffic){
   v.joined=false;
-  const seg=city.roads[Math.floor(Math.random()*city.roads.length)];
-  v.road=seg;v.t=Math.random();v.pos=[seg.a[0]+(seg.b[0]-seg.a[0])*v.t,seg.a[1]+(seg.b[1]-seg.a[1])*v.t];
-  v.heading=angle(seg.a,seg.b);v.visualHeading=v.heading;
+  let candidate=null;
+  for(let attempt=0;attempt<28;attempt++){
+   const seg=pool[Math.floor(Math.random()*pool.length)],t=.08+Math.random()*.84;
+   const pos=[seg.a[0]+(seg.b[0]-seg.a[0])*t,seg.a[1]+(seg.b[1]-seg.a[1])*t];
+   if(distance(pos,car.pos)>55){candidate={seg,t,pos};break}
+  }
+  // No traffic in the player's immediate starting lane if all candidates are close.
+  if(!candidate){v.road=null;v.pos=null;continue}
+  v.road=candidate.seg;v.t=candidate.t;v.pos=candidate.pos;
+  v.heading=angle(v.road.a,v.road.b);v.visualHeading=v.heading;
+  v.cooldown=1.3;
  }
 }
 function spawnMission(){
@@ -469,7 +479,7 @@ function advanceTraffic(dt){
 
   npc.cooldown=Math.max(0,npc.cooldown-dt);npc.respawnCD=Math.max(0,(npc.respawnCD||0)-dt);
   if(npc.cooldown===0&&Math.abs(car.speed)>5&&distance(npc.pos,car.pos)<3.5){
-   npc.cooldown=2.3;car.speed*=.45;car.health=Math.max(0,car.health-5);if(mission?.phase==="dropoff")mission.crashes++;sound(180,.16);toast("TRAFİĞE DİKKAT · HASAR",1.2);
+   npc.cooldown=2.3;car.speed*=free?.88:.72;if(!free)car.health=Math.max(0,car.health-5);if(mission?.phase==="dropoff")mission.crashes++;sound(180,.13);if(!free)toast("TRAFİĞE DİKKAT · HASAR",1.2);
   }
   if(npc.cooldown===0&&nearMissCooldown===0&&Math.abs(car.speed)>13&&distance(npc.pos,car.pos)>3.5&&distance(npc.pos,car.pos)<6.0){
    const bonus=Math.round(65+(convoy-1)*15);
