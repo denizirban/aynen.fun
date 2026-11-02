@@ -347,6 +347,32 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 .rival-light{width:7px;height:7px}#rival-distance{font-size:11px}
 .rival-bottom{padding:5px}#rival-status{font-size:8px}#rival-target{font-size:7px}}
 @media(max-width:390px){#rival-tracker{top:246px;width:143px}}
+
+/* Single, non-flashing Road Rage-style direction board with persistent next junction */
+#directions{display:flex!important;align-items:center;gap:14px;min-width:278px;max-width:380px;
+ padding:10px 19px;border:3px solid #ffdf79;border-radius:16px;
+ background:linear-gradient(105deg,rgba(12,33,49,.97),rgba(28,43,54,.94));
+ box-shadow:0 5px 0 rgba(6,19,33,.72),0 10px 26px #06192875;text-align:left}
+#turn-arrow{flex:0 0 auto;font-size:51px;line-height:1;color:#ffdd56;
+ text-shadow:0 3px 0 #9c6a27}
+#directions .nav-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+#turn-hint{font-size:18px;line-height:1.08;letter-spacing:-.03em;font-weight:950;
+ color:#fff5d4;text-shadow:0 1px 2px #0c1e2b}
+#turn-sub{display:block;color:#c5dfe3;letter-spacing:.045em;font-size:10px;font-weight:900}
+#directions[data-direction="left"],#directions[data-direction="right"]{border-color:#ffe56b}
+#directions[data-direction="arrive"]{border-color:#99edb2}
+#directions[data-direction="arrive"] #turn-arrow{color:#b3ffd0}
+#directions[data-direction="search"]{border-color:#aac0c6}
+@media(max-width:900px){
+ #directions{min-width:215px;max-width:300px;padding:8px 12px;gap:9px}
+ #turn-arrow{font-size:38px}#turn-hint{font-size:14px}#turn-sub{font-size:9px}
+}
+@media(max-width:700px){
+ #directions{top:43px;right:8px;left:auto;transform:none;max-width:min(220px,52vw);min-width:0;
+  padding:6px 8px;gap:6px;border-width:2px;border-radius:11px}
+ #turn-arrow{font-size:29px}#turn-hint{font-size:11px}
+ #turn-sub{font-size:8px;letter-spacing:0}
+}
 </style>
 </head>
 <body>
@@ -364,7 +390,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
   </div>
   <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas></div>
   <div id="mode-pill">KONVOY <span id="convoy">1</span> · <span id="trips">0</span> TESLİMAT</div>
-  <div id="directions"><span id="turn-arrow">↑</span><span id="turn-hint">HEDEFİ TAKİP ET</span></div><div id="drive-hint" aria-live="polite">GAZ OTOMATİK · SAĞ / SOL İLE SÜR</div>
+  <div id="directions" data-direction="straight" aria-label="Sabit kavşak yönlendirmesi"><span id="turn-arrow">↑</span><span class="nav-copy"><strong id="turn-hint">DÜZ DEVAM ET</strong><small id="turn-sub">SIRADAKİ KAVŞAĞA GİT</small></span></div><div id="drive-hint" aria-live="polite">GAZ OTOMATİK · SAĞ / SOL İLE SÜR</div>
  </section>
  <div id="toast" aria-live="polite"></div>
  <div id="data-warning" role="status"></div>
@@ -393,6 +419,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-city-v7"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-smooth-v8"></script>
 </body>
 </html>

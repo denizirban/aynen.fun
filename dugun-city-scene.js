@@ -1,5 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v7";
+import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v8";
 import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v7";
 
 // The road graph and building outlines come from the real OSM vector tiles.
@@ -588,11 +588,25 @@ export class CityScene3D{
   const t=performance.now();
   if(!force&&t-this.lastBuilt<6500)return;
   const city=this.city,ro=city.roads,bu=city.buildings;
-  if(!force&&this.builtAt&&distance(this.builtAt,this.focus||this.origin)<83&&this.builtRoads===ro&&this.builtBuildings===bu)return;
+  const moved=this.builtAt?distance(this.builtAt,this.focus||this.origin):Infinity;
+  // A fresh tile object is not necessarily a new city. Rebuilding the entire
+  // Three.js street scene every 4 seconds produced an obvious frame hitch.
+  if(!force&&this.builtAt&&moved<108&&this.builtRoadCount>65&&
+     (ro?.length||0)>=this.builtRoadCount*.80&&
+     (bu?.length||0)>=(this.builtBuildingCount||0)*.75)return;
+  if(!force&&this.builtAt&&moved<60&&this.builtRoads===ro&&this.builtBuildings===bu)return;
   this.lastBuilt=t;this.builtAt=[...(this.focus||this.origin)];this.builtRoads=ro;this.builtBuildings=bu;
+  this.builtRoadCount=ro?.length||0;this.builtBuildingCount=bu?.length||0;
   // Shift the render origin as the player explores new districts, avoiding precision loss.
   if(this.focus&&distance(this.origin,this.focus)>220){
-   this.origin=[...this.focus];this.inited=false;
+   const previousOrigin=[...this.origin];
+   this.origin=[...this.focus];
+   // Rebase the camera's coordinates without jumping the world view.
+   const shift=toXY(this.origin,previousOrigin);
+   if(this.inited){
+    this.camPos.x+=shift[0];this.camPos.y+=shift[1];
+    this.camLook.x+=shift[0];this.camLook.y+=shift[1];
+   }
    for(const skid of this.skids){this.actorGroup.remove(skid);skid.geometry.dispose();skid.material.dispose()}
    this.skids=[];
   }
@@ -693,7 +707,7 @@ export class CityScene3D{
   });
   const path=state.route||[],sampled=[];
   if(path.length>1){
-   let carried=0,next=9;
+   let carried=0,next=Math.max(9,(state.navProgress||0)+11);
    for(let i=1;i<path.length&&sampled.length<this.guides.length;i++){
     const a=path[i-1],b=path[i],len=distance(a,b);if(len<.25)continue;
     while(carried+len>=next&&sampled.length<this.guides.length){
@@ -799,7 +813,7 @@ export class CityScene3D{
   this.camPos.lerp(eye,softness);this.camLook.lerp(target,lookSoft);
   if(!hood&&this.city.insideBuilding){
    const p=[this.origin[0]+this.camPos.x/(111320*Math.cos(this.origin[1]*rad)),this.origin[1]+this.camPos.y/111320];
-   if(this.city.insideBuilding(p))this.camPos.copy(eye);
+   if(this.city.insideBuilding(p))this.camPos.lerp(eye,Math.min(1,dt*13));
   }
   this.camera.position.copy(this.camPos);this.camera.lookAt(this.camLook);
   this.sky.position.copy(this.camera.position);
