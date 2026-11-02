@@ -494,7 +494,7 @@ export class CityScene3D{
   }
   if(bu?.length)addBuildings(this.worldGroup,this.origin,bu,this.mobile);
   if(ro?.length){
-   const sign=makeSign(["KADIKÖY","BEŞİKTAŞ","KARAKÖY"][Object.keys(AREAS).indexOf(city.area)]||"İSTANBUL");
+   const sign=makeSign((AREAS[city.area]?.name||"İSTANBUL").split(" · ")[0].toLocaleUpperCase("tr-TR"));
    const r=ro.find(x=>distance(x.a,this.origin)<60);
    if(r){
     const p=toXY(this.origin,r.a);sign.position.set(p[0]+6,p[1]+8,0);this.worldGroup.add(sign);
