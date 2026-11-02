@@ -183,42 +183,60 @@ export class IstanbulMap{
  }
  route(from,to){
   if(this.nodes.size<2)return [from,to];
-  const start=this.closestNode(from),end=this.closestNode(to);
-  if(!start||!end)return [from,to];
-  const queue=[[start,0]],d=new Map([[start,0]]),prev=new Map();let rounds=0;
-  const push=(entry)=>{
-   let i=queue.length;queue.push(entry);
-   while(i>0){const parent=(i-1)>>1;if(queue[parent][1]<=entry[1])break;queue[i]=queue[parent];i=parent}
-   queue[i]=entry;
+  const nearStart=this.nearest(from)||this.nearestAny(from);
+  const nearEnd=this.nearest(to)||this.nearestAny(to);
+  if(!nearStart||!nearEnd)return [from,to];
+  const idA=key(nearStart.road.a),idB=key(nearStart.road.b);
+  const idC=key(nearEnd.road.a),idD=key(nearEnd.road.b);
+  const simplify=arr=>arr.filter((p,i)=>!i||distance(p,arr[i-1])>.25);
+  // The player and target are on the SAME street segment: no intersection detour.
+  if((idA===idC&&idB===idD)||(idA===idD&&idB===idC))
+   return simplify([from,nearStart.p,nearEnd.p,to]);
+  // Cost of starting from each end of the real street segment, not from an
+  // arbitrary nearest graph node that may be behind the vehicle.
+  const starts=[[idA,distance(nearStart.p,nearStart.road.a)],[idB,distance(nearStart.p,nearStart.road.b)]];
+  const ends=new Map([[idC,distance(nearEnd.road.a,nearEnd.p)],[idD,distance(nearEnd.road.b,nearEnd.p)]]);
+  const d=new Map(),prev=new Map(),roots=new Set();
+  const queue=[];
+  const push=(item)=>{
+   let i=queue.length;queue.push(item);
+   while(i>0){const parent=(i-1)>>1;if(queue[parent][1]<=item[1])break;queue[i]=queue[parent];i=parent}
+   queue[i]=item;
   };
   const pop=()=>{
-   const best=queue[0],last=queue.pop();
+   const first=queue[0],last=queue.pop();
    if(queue.length){
-    let i=0;
-    while(true){
+    let i=0;while(true){
      const a=2*i+1,b=a+1;if(a>=queue.length)break;
      const child=b<queue.length&&queue[b][1]<queue[a][1]?b:a;
      if(queue[child][1]>=last[1])break;
      queue[i]=queue[child];i=child;
-    }
-    queue[i]=last;
-   }
-   return best;
+    }queue[i]=last;
+   }return first;
   };
-  while(queue.length&&rounds++<18000){
-   const [id,dd]=pop();
-   if(dd>(d.get(id)??Infinity))continue;
-   if(id===end)break;
-   for(const v of this.edges.get(id)||[]){
-    const next=dd+v.d;
-    if(next<(d.get(v.node)??Infinity)){d.set(v.node,next);prev.set(v.node,id);push([v.node,next])}
+  for(const [id,cost] of starts)if(this.nodes.has(id)){
+   if(cost<(d.get(id)??Infinity)){d.set(id,cost);roots.add(id);push([id,cost])}
+  }
+  let bestId=null,bestCost=Infinity,iterations=0;
+  while(queue.length&&iterations++<22000){
+   const [id,cost]=pop();
+   if(cost>(d.get(id)??Infinity))continue;
+   if(cost>bestCost)break;
+   if(ends.has(id)&&cost+ends.get(id)<bestCost){bestId=id;bestCost=cost+ends.get(id)}
+   for(const edge of this.edges.get(id)||[]){
+    const next=cost+edge.d;
+    if(next<(d.get(edge.node)??Infinity)&&next<bestCost){
+     d.set(edge.node,next);prev.set(edge.node,id);push([edge.node,next]);
+    }
    }
   }
-  if(!d.has(end))return [from,to];
-  const path=[to];let p=end;const seen=new Set();
-  while(p&&p!==start&&!seen.has(p)){seen.add(p);path.push(this.nodes.get(p));p=prev.get(p)}
-  if(p!==start)return [from,to];
-  path.push(this.nodes.get(start),from);return path.reverse();
+  if(!bestId)return [from,to]; // no fabricated street route
+  const ids=[],visited=new Set();let current=bestId;
+  while(current&&!visited.has(current)){
+   ids.push(current);visited.add(current);current=prev.get(current);
+  }
+  ids.reverse();
+  return simplify([from,nearStart.p,...ids.map(id=>this.nodes.get(id)),nearEnd.p,to]);
  }
  setRoute(points){
   this.map?.getSource("wedding-nav")?.setData({type:"Feature",properties:{},geometry:{type:"LineString",coordinates:points||[]}});
