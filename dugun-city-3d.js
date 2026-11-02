@@ -285,7 +285,7 @@ function drive(dt){
  const width=near?/^(primary|trunk)/.test(near.road.typ)?11:/^(secondary)/.test(near.road.typ)?9:6.8:8;
  car.offroad=!!near&&near.dist>width;
  const cornering=Math.abs(car.steering)>steeringLimit*.50;
- const cruise=auto?(cornering?8.4:car.offroad?7.3:13.8):0; // ~30 km/h turns, 50 km/h straights.
+ const cruise=auto?(cornering?7.7:car.offroad?6.7:11.7):0; // ~28 km/h turns, 42 km/h straights.
  if(keys.brake){
   brakeHold+=dt;
   car.speed-=spec.brake*dt*(car.speed>0?1:.36);
@@ -320,6 +320,7 @@ function drive(dt){
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
  if(city.insideBuilding?.(car.pos)){
   car.pos=previous;
+  car.blockedTime=(car.blockedTime||0)+dt;
   if(mission?.phase==="dropoff")mission.crashes++;
   if(Math.abs(car.speed)>3&&hitCooldown<=0){
    hitCooldown=1.05;
@@ -328,6 +329,21 @@ function drive(dt){
   }
   car.speed=auto?0:car.speed*-.15;
   car.yawRate=0;
+  if(auto&&car.blockedTime>1.05){
+   // Restore the last clear position rather than trapping automatic cruise against walls.
+   const back=car.safePos||previous;
+   car.pos=[...back];
+   car.heading=(car.safeHeading??car.heading)+(input===0?.62:input*.32);
+   car.yawRate=0;car.blockedTime=0;
+   if(render3D)render3D.inited=false;
+   toast("YOLA GERİ DÖNDÜN · OKLARLA YÖNLENDİR",1.8);
+  }
+ }else{
+  car.blockedTime=0;
+  car.clearDistance=(car.clearDistance||0)+Math.abs(car.speed)*dt;
+  if(car.clearDistance>4.6||!car.safePos){
+   car.safePos=[...car.pos];car.safeHeading=car.heading;car.clearDistance=0;
+  }
  }
  if(near&&near.dist>20&&Math.abs(car.speed)>4)car.health=Math.max(0,car.health-dt*(auto?.26:1.1));
  if(car.health<=0){finish("ARABA YOLDA KALDI");return}
