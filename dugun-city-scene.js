@@ -8,10 +8,10 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const hash=(a,b=0)=>{let n=Math.sin(a*12.9898+b*78.233)*43758.545;return n-Math.floor(n)};
 const roadWidth=road=>{
  const type=typeof road==="string"?road:road?.typ||"";
- const defaultWidth=/^(primary|trunk)/.test(type)?15:/^secondary/.test(type)?12:/^tertiary/.test(type)?10:/^(service|living_street)/.test(type)?5.7:7.8;
+ const defaultWidth=/^motorway$/.test(type)?29:/^motorway_link/.test(type)?9.8:/^(primary|trunk)/.test(type)?15:/^secondary/.test(type)?12:/^tertiary/.test(type)?10:/^(service|living_street)/.test(type)?5.7:7.8;
  const lanes=typeof road==="object"?road.lanes:null,width=typeof road==="object"?road.width:null;
- if(Number.isFinite(width)&&width>3)return clamp(width,5,21);
- if(Number.isFinite(lanes)&&lanes>=2)return clamp(lanes*3.05+2.2,7.7,21);
+ if(Number.isFinite(width)&&width>3)return clamp(width,5,34);
+ if(Number.isFinite(lanes)&&lanes>=2)return clamp(lanes*3.05+2.2,7.7,34);
  return defaultWidth;
 };
 const buildingColors=["#d8c5ac","#eccfb2","#f2d6bd","#b2c5b9","#c5bfd0","#d9d9ca","#ebbaa7","#b1c3c6","#ead8c4","#c9d2b5"];
