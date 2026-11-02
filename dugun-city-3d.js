@@ -308,7 +308,7 @@ function frameLoop(now){
     roadRefresh+=dt;routeRefresh+=dt;camRefresh+=dt;
     if(roadRefresh>4){roadRefresh=0;city.refresh(car.pos);if(!mission)spawnMission()}
     if(routeRefresh>2){routeRefresh=0;refreshRoute()}
-    if(camRefresh>.028){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
+    if(camRefresh>.16){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
     render3D?.update({car,rival,mission,traffic,controls:keys,route},dt,now);
     if(frame++%3===0){updateHUD();drawMini()}
    }
