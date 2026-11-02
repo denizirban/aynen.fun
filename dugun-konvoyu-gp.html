@@ -380,13 +380,26 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
  color:#f5f2d4;font-size:9px;font-weight:900;letter-spacing:.025em;
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 @media(max-width:700px){#street-name{padding:5px;font-size:8px}}
+
+/* One continuous Istanbul, no district-selection friction. */
+.single-city{padding:14px 16px 13px;border-radius:13px;
+ background:linear-gradient(120deg,#193847,#244e5b);color:#fff8de;
+ border:1px solid #92aeb3;display:flex;flex-direction:column;gap:5px;margin:8px 0 14px}
+.single-city .city-badge{font-size:9px;letter-spacing:.14em;font-weight:900;color:#d3d9a7}
+.single-city strong{font-size:clamp(17px,2vw,24px);letter-spacing:.01em;line-height:1.05}
+.single-city small{font-size:10px;line-height:1.45;color:#d2e0db;font-weight:700}
+#panel{width:min(520px,94vw)}
+#panel .feature-row{gap:6px;flex-wrap:wrap}
+#panel .feature-row span{font-size:9px;padding:5px 7px}
+#drive-hint{max-width:330px;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:700px){.single-city{padding:10px 12px;margin:4px 0 8px}.single-city strong{font-size:17px}.single-city small{font-size:9px}#panel h1{font-size:37px}}
 </style>
 </head>
 <body>
 <div id="map" aria-label="OpenStreetMap kaynaklı gerçek İstanbul sokakları ve üç boyutlu binalar"></div>
 <canvas id="driving-canvas" aria-label="Canlı üçüncü şahıs kameralı İstanbul 3D sürüş oyunu"></canvas><div id="scene-fade"></div>
 <div id="game">
- <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / İSTANBUL 3D</span><div class="header-end"><button class="glass-button" id="drive-mode" type="button" aria-label="Kolay veya manuel sürüş arasında değiştir">KOLAY SÜRÜŞ</button><button class="glass-button" id="camera" type="button" aria-label="Kamera açısını değiştir">KAMERA: TAKİP</button><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
+ <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / BOĞAZ 3D</span><div class="header-end"><button class="glass-button" id="drive-mode" type="button" aria-label="Kolay veya manuel sürüş arasında değiştir">KOLAY SÜRÜŞ</button><button class="glass-button" id="camera" type="button" aria-label="Kamera açısını değiştir">KAMERA: TAKİP</button><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
  <section id="hud" aria-label="Oyunun göstergeleri">
   <div id="time-box"><span class="kicker">KALAN SÜRE</span><div id="time">03:00</div><div class="money" id="money">₺0</div><div id="record">REKOR <span id="bestmoney">₺0</span></div></div>
   <div id="speed-panel"><div class="kicker">HIZ</div><div id="speed">0</div><div class="unit">KM / SA</div><div id="car-health">ARAÇ %100</div><div id="speed-gear">D</div><button id="rescue" type="button" aria-label="Araç sıkıştıysa yola geri dön">YOLA DÖN <span>R</span></button><button id="lighting" type="button" aria-label="Gündüz, altın saat veya akşam ışığını seç">GÜNDÜZ</button></div>
@@ -395,7 +408,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
    <div class="rival-top"><span class="rival-light"></span><b>RAKİP KONVOY</b><span id="rival-distance">—</span></div>
    <div class="rival-bottom"><span id="rival-arrow">↗</span><div><strong id="rival-status">MİSAFİRE GİDİYOR</strong><small id="rival-target">YOLDA</small></div></div>
   </div>
-  <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas><div id="street-name">KADIKÖY · MODA</div></div>
+  <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas><div id="street-name">İSTANBUL · BOĞAZ</div></div>
   <div id="mode-pill">KONVOY <span id="convoy">1</span> · <span id="trips">0</span> TESLİMAT</div>
   <div id="directions" data-direction="straight" aria-label="Sabit kavşak yönlendirmesi"><span id="turn-arrow">↑</span><span class="nav-copy"><strong id="turn-hint">DÜZ DEVAM ET</strong><small id="turn-sub">SIRADAKİ KAVŞAĞA GİT</small></span></div><div id="drive-hint" aria-live="polite">GAZ OTOMATİK · SAĞ / SOL İLE SÜR</div>
  </section>
@@ -407,12 +420,15 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
  </div>
  <div id="overlay">
   <div id="panel">
-   <div class="eyebrow">AYNEN.FUN · SERBEST SÜRÜŞ · GERÇEK ŞEHİR HARİTASI</div>
+   <div class="eyebrow">AYNEN.FUN · İSTANBUL BOĞAZI · TEK SÜRÜŞ DÜNYASI</div>
    <h1>DÜĞÜN<br><em>KONVOYU.</em></h1>
-   <p>Bu kez gerçek İstanbul sokaklarındasın. Kavşaklarda dön, ara sokaklara gir, akrabaları alıp düğüne yetiştir. Rakip konvoydan önce davran.</p>
-   <div class="feature-row"><span>WEBGL 3D</span><span>6 SEMT</span><span>OPENSTREETMAP</span><span>ÜÇÜNCÜ ŞAHIS KAMERA</span><span>SERBEST SÜRÜŞ</span></div>
-   <div class="panel-label">NEREDEN BAŞLAYALIM?</div>
-   <div class="options" id="districts"><button class="option selected" data-district="kadikoy">KADIKÖY<small>Moda · Çarşı</small></button><button class="option" data-district="besiktas">BEŞİKTAŞ<small>Abbasağa</small></button><button class="option" data-district="karakoy">KARAKÖY<small>Galata</small></button><button class="option" data-district="balat">BALAT<small>Haliç</small></button><button class="option" data-district="ortakoy">ORTAKÖY<small>Boğaz</small></button><button class="option" data-district="uskudar">ÜSKÜDAR<small>Çarşı</small></button></div>
+   <p>İstanbul’da tek, kesintisiz sürüş dünyası. Boğaz kıyısını keşfet, köprünün iki ayağını gör, mahalle trafiğine gir ve düğün konvoyunu yetiştir.</p>
+   <div class="feature-row"><span>WEBGL 3D</span><span>TEK İSTANBUL</span><span>OPENSTREETMAP</span><span>ÜÇÜNCÜ ŞAHIS KAMERA</span><span>SERBEST SÜRÜŞ</span></div>
+   <div class="single-city" aria-label="Tek kesintisiz İstanbul haritası">
+    <div class="city-badge">TEK ŞEHİR · İKİ YAKA</div>
+    <strong>İSTANBUL BOĞAZI</strong>
+    <small>Ortaköy kıyısı · 15 Temmuz Şehitler Köprüsü · Beylerbeyi · gerçek sokak ağı</small>
+   </div>
    <div class="panel-label">SÜRÜŞ NASIL OLSUN?</div>
    <div class="drive-choices" id="drive-options" aria-label="Sürüş kolaylığı">
     <button class="drive-option selected" type="button" data-drivemode="easy">KOLAY SÜRÜŞ <small>Gaz otomatik · sadece yönlendir</small></button>
@@ -426,6 +442,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-driving-v9"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-bosphorus-v10"></script>
 </body>
 </html>
