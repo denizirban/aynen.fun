@@ -103,11 +103,69 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 }
 @media(max-height:610px) and (min-width:701px){#mission{top:145px}#mini{height:135px;width:153px}#mode-pill{left:185px}}
 @media(max-width:380px){.ctr-group{gap:4px}.ctr{min-width:43px}.ctr.go{min-width:54px}.ctr.brake{min-width:54px}.ctr.horn{min-width:42px}}
+
+/* TRUE 3D GAME SCENE: data-only MapLibre behind independent Three.js ground-level renderer. */
+#map{opacity:0!important;pointer-events:none!important}
+#driving-canvas{position:fixed;inset:0;z-index:1;width:100%;height:100%;display:block;background:#9cd6ed;pointer-events:none}
+#scene-fade{z-index:2;background:linear-gradient(180deg,#071a2325,transparent 18%,transparent 73%,#08162221)}
+#game{z-index:3}
+:root{--lime:#ffe177;--glass:#162631e8}
+#header{height:47px;background:linear-gradient(180deg,#13252bbf,transparent);padding:9px 22px}
+.brand{font-size:19px;font-weight:900;font-style:italic;text-shadow:2px 3px #0e2630}
+.brand span{color:#e6ed71}
+.top-title{font-size:12px;color:#f8f4e6;font-style:italic;font-weight:800;letter-spacing:.05em}
+.glass-button{background:linear-gradient(#34495a,#172b39);border:1px solid #a7c4cb88;border-radius:11px;box-shadow:0 3px #0b1b25}
+#time-box{top:69px;left:22px;padding:12px 18px;background:linear-gradient(100deg,#1c2b3df5,#352936ed);border:2px solid #efd187;border-radius:18px;box-shadow:0 5px #1c2230aa}
+.kicker{color:#fffae5;font-size:11px;font-weight:900;font-style:italic}
+#time{font-size:clamp(50px,5.5vw,79px);font-weight:900;color:#ffcb4c;line-height:1;letter-spacing:-.08em;text-shadow:2px 4px #8c5629}
+#time.urgent{color:#ff7366}
+.money{font-size:25px;color:#ffed9c;font-weight:900;margin-top:7px}
+#speed-panel{top:73px;right:22px;padding:10px 21px;background:linear-gradient(120deg,#192638ef,#324354ed);border:2px solid #f0cf76;border-radius:16px;box-shadow:0 5px #13243499}
+#speed{font-size:clamp(55px,5.5vw,84px);font-weight:900;color:#ffd54c;letter-spacing:-.08em;text-shadow:2px 4px #86562a}
+.unit{font-weight:900;color:#fffaef}
+#car-health{color:#e3f2e6;font-size:11px}
+#mission{top:253px;left:22px;width:min(355px,36vw);padding:0 16px 16px;background:linear-gradient(145deg,#10202ef5,#22313ff2);border:2px solid #f8d181;border-radius:17px;box-shadow:0 5px #0b1c26a8}
+#mission-state{font-size:14px;color:#ffeb87;background:linear-gradient(90deg,#bf3c48,#913c4a);margin:0 -16px 13px;padding:11px 16px;border-radius:14px 14px 0 0;font-weight:900;font-style:italic}
+#mission-name{font-weight:900;font-size:24px;color:#fffdf1}
+#mission-info{font-size:13px;color:#f1f0df}
+#mission-distance{font-size:17px;color:#ffdf73;font-weight:900}
+#mission-timer{color:#ffedab}
+#mini{bottom:34px;left:22px;width:212px;height:197px;border:3px solid #e9f5ed;border-radius:17px;box-shadow:0 5px #10232f;background:#172f40}
+#mode-pill{left:250px;bottom:42px;background:#142735eb;border:2px solid #b8d5d2;padding:12px 15px;font-weight:900}
+#directions{bottom:36px;min-width:228px;justify-content:center;background:linear-gradient(#273c4c,#122536);border:2px solid #f5dd89;border-radius:15px;box-shadow:0 5px #14232f;color:#fff9e8;font-size:14px;font-weight:900;font-style:italic}
+#turn-arrow{font-size:33px;color:#ffdb4c}
+#toast{border:2px solid #ffe38e;background:#142839f8;color:#ffe4a1;font-weight:900}
+#overlay{background:radial-gradient(circle,#09222a44,#091e29ce);backdrop-filter:blur(5px)}
+#panel{background:linear-gradient(#f8f7ed,#e7eee1);border:2px solid #e2ebd6;box-shadow:0 12px #1e383b,0 24px 60px #081b27aa}
+#panel h1{font-weight:900;font-style:italic;text-transform:uppercase}
+#panel h1 em{color:#bd9159}
+#start{background:linear-gradient(#ffeda3,#eacc67);border-bottom:4px solid #ae914d}
+@media(max-width:700px){
+ #header{height:36px;padding:6px 8px}.brand{font-size:14px}
+ #time-box{left:7px;top:44px;padding:7px 9px;border-radius:11px;border-width:1px}
+ .kicker{font-size:9px}#time{font-size:38px}.money{font-size:18px}
+ #speed-panel{top:45px;right:7px;padding:7px 10px;border-radius:12px;border-width:1px}
+ #speed{font-size:38px}.unit,#car-health{font-size:9px}
+ #mission{top:166px;left:7px;width:min(235px,61vw);padding:0 9px 8px;border-radius:13px;border-width:1px}
+ #mission-state{font-size:10px;margin:0 -9px 8px;padding:7px 9px;border-radius:11px 11px 0 0}
+ #mission-name{font-size:16px}#mission-info{font-size:10px}
+ #mission-distance{font-size:12px;margin-top:7px}#mission-timer{font-size:9px}
+ #mini{left:8px;bottom:calc(110px + env(safe-area-inset-bottom));width:126px;height:119px;border-width:2px;border-radius:11px}
+ #mode-pill{left:auto;right:7px;bottom:calc(113px + env(safe-area-inset-bottom));font-size:10px;padding:7px 9px;border-width:1px}
+ #directions{left:auto;right:7px;transform:none;bottom:calc(155px + env(safe-area-inset-bottom));min-width:0;padding:7px 9px;font-size:10px;border-radius:10px}
+ #turn-arrow{font-size:22px}
+}
+@media(min-width:701px) and (max-height:620px){
+ #time-box{top:51px;padding:6px 12px}#time{font-size:49px}
+ #speed-panel{top:51px;padding:6px 12px}#speed{font-size:49px}
+ #mission{top:197px}#mission-info{display:none}
+ #mini{width:156px;height:143px;bottom:14px}#mode-pill{left:192px;bottom:26px}
+}
 </style>
 </head>
 <body>
 <div id="map" aria-label="OpenStreetMap kaynaklı gerçek İstanbul sokakları ve üç boyutlu binalar"></div>
-<div id="scene-fade"></div>
+<canvas id="driving-canvas" aria-label="Canlı üçüncü şahıs kameralı İstanbul 3D sürüş oyunu"></canvas><div id="scene-fade"></div>
 <div id="game">
  <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / İSTANBUL 3D</span><div class="header-end"><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
  <section id="hud" aria-label="Oyunun göstergeleri">
@@ -140,6 +198,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-v1"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-chase-v2"></script>
 </body>
 </html>
