@@ -248,6 +248,53 @@ function createRoads(group,origin,roads,mobile){
  addStreetProps(group,origin,near,mobile);
  return near;
 }
+
+function renderRealParks(group,origin,parks,mobile){
+ const materials={
+  park:new THREE.MeshStandardMaterial({color:0x679d6b,roughness:1,side:THREE.DoubleSide}),
+  wood:new THREE.MeshStandardMaterial({color:0x4e865a,roughness:1,side:THREE.DoubleSide}),
+  grass:new THREE.MeshStandardMaterial({color:0x87ad72,roughness:1,side:THREE.DoubleSide})
+ };
+ let count=0;
+ for(const park of (parks||[])){
+  const ring=park.ring;if(!ring||ring.length<3)continue;
+  const xy=ring.map(p=>toXY(origin,p)),shape=new THREE.Shape();
+  shape.moveTo(...xy[0]);for(let i=1;i<xy.length;i++)shape.lineTo(...xy[i]);shape.closePath();
+  const geo=new THREE.ShapeGeometry(shape),pos=geo.attributes.position;
+  for(let i=0;i<pos.count;i++)pos.setZ(i,terrainAt(pos.getX(i),pos.getY(i))-.075);
+  geo.computeVertexNormals();
+  const material=/wood|forest/.test(park.cls)?materials.wood:/grass/.test(park.cls)?materials.grass:materials.park;
+  const mesh=new THREE.Mesh(geo,material);mesh.receiveShadow=true;mesh.renderOrder=0;group.add(mesh);
+  if(++count>=(mobile?32:60))break;
+ }
+ return count;
+}
+function renderParkedStreetCars(group,origin,roads,mobile,player){
+ const capped=mobile?5:12;
+ const palette=["#c4d1ca","#b78b82","#e2c9a1","#96aabd","#6f7f8b","#d1c4bb","#e7b85c"];
+ const positions=[];
+ for(let i=0;i<roads.length&&positions.length<capped;i++){
+  const r=roads[i];
+  const len=distance(r.a,r.b),dist=distance([(r.a[0]+r.b[0])*.5,(r.a[1]+r.b[1])*.5],player);
+  if(len<34||dist>275||dist<25||i%7!==0||/trunk|motorway/.test(r.typ))continue;
+  const point=[r.a[0]+(r.b[0]-r.a[0])*.42,r.a[1]+(r.b[1]-r.a[1])*.42];
+  const heading=Math.atan2((r.b[0]-r.a[0])*Math.cos(point[1]*rad),r.b[1]-r.a[1]);
+  const side=i%2?-1:1;
+  const width=roadWidth(r)*.5;
+  const p=[point[0]+Math.sin(heading+side*Math.PI/2)*(width-1.3)/(111320*Math.cos(point[1]*rad)),
+    point[1]+Math.cos(heading+side*Math.PI/2)*(width-1.3)/111320];
+  positions.push({pos:p,heading:heading+(side<0?Math.PI:0),style:i});
+ }
+ for(const parked of positions){
+  const model=makeCar(parked.style%5===0?"doblo":"sahin",palette[parked.style%palette.length]);
+  const xy=toXY(origin,parked.pos);
+  model.position.set(xy[0],xy[1],terrainAt(...xy)+.15);
+  model.rotation.z=-parked.heading;
+  model.traverse(obj=>{if(obj.isMesh)obj.castShadow=false});
+  group.add(model);
+ }
+}
+
 function addBuildings(group,origin,raw,mobile){
  const buildings=raw.filter(b=>{
   const c=[(b.minX+b.maxX)*.5,(b.minY+b.maxY)*.5];
@@ -662,9 +709,10 @@ export class CityScene3D{
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
   terrainAt=terrainModel(city.area,this.origin);
   makeGround(this.worldGroup);
+  this.visibleParkCount=renderRealParks(this.worldGroup,this.origin,city.parks,this.mobile);
   this.visibleWater=addWater(this.worldGroup,this.origin,city.water,this.mobile);
   addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
-  if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile)}
+  if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile);renderParkedStreetCars(this.worldGroup,this.origin,visibleRoads,this.mobile,this.focus||this.origin)}
   else{
    // Visible drivable street while streaming real vector tiles.
    const temporary=[];
