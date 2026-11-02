@@ -309,12 +309,13 @@ function frameLoop(now){
     if(roadRefresh>4){roadRefresh=0;city.refresh(car.pos);if(!mission)spawnMission()}
     if(routeRefresh>2){routeRefresh=0;refreshRoute()}
     if(camRefresh>.028){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
-    render3D?.update({car,rival,mission,traffic,controls:keys},dt,now);
+    render3D?.update({car,rival,mission,traffic,controls:keys,route},dt,now);
     if(frame++%3===0){updateHUD();drawMini()}
    }
   }
  }
- if(ready&&!playing&&render3D&&car)render3D.update({car,rival,mission,traffic,controls:keys},dt,now);
+ if(ready&&!playing&&render3D&&car)render3D.update({car,rival,mission,traffic,controls:keys,route},dt,now);
+ if(ready&&!playing&&render3D&&!car)render3D.update({car:{pos:AREAS[area].center,speed:0,heading:0,steering:0},rival:null,mission:null,traffic:[],route:[]},dt,now);
  if(now>toastEnd)$("toast").classList.remove("show");
  requestAnimationFrame(frameLoop);
 }
