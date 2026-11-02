@@ -168,7 +168,7 @@ function recoverCar(){
  earnings-=fee;
  if(!free)timer=Math.max(10,timer-(fee<150?8:2));
  car.pos=[...safe.pos];car.heading=safe.heading;car.currentRoadBridge=false;
- car.steering=0;car.speed=0;car.yawRate=0;car.slip=0;car.velocityLateral=0;
+ car.steering=0;car.speed=0;car.yawRate=0;car.slip=0;car.velocityLateral=0;car.stuckTime=0;car.collisionGrace=3.0;
  car.health=Math.min(100,car.health+28);
  rescueCooldown=28;
  if(render3D){render3D.inited=false;render3D.positionTrail=[];render3D.previousTrailPoint=null}
@@ -244,7 +244,7 @@ function startGame(unlimited){
  try{personalBest=Number(localStorage.getItem("dugun-3d-best-v3"))||0}catch(e){personalBest=0}
  car={pos:[...spawn.pos],speed:0,heading:spawn.heading,steering:0,yawRate:0,slip:0,
   velocityLateral:0,suspension:0,suspensionVelocity:0,engineRPM:850,health:100,
-  offroad:false,currentRoadBridge:false,currentRoadName:spawn.road.name||""};
+  offroad:false,currentRoadBridge:false,currentRoadName:spawn.road.name||"",stuckTime:0,collisionGrace:3.0};
  city.refresh(car.pos,true);
  const near=city.nearest(car.pos);
  if(near&&isLocalSpawnRoad(near.road)&&near.dist<5){
@@ -354,8 +354,9 @@ function drive(dt){
  car.currentRoadName=near?.road?.name||"";
  car.currentRoadClass=near?.road?.typ||"";
  car.currentRoadBridge=!!(near?.road?.bridge&&/^(motorway|motorway_link|trunk|primary)/.test(near.road.typ));
+ car.collisionGrace=Math.max(0,(car.collisionGrace||0)-dt);
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
- if(city.insideBuilding?.(car.pos)){
+ if(car.collisionGrace<=0&&city.insideBuilding?.(car.pos)){
   // Source building polygons sometimes overlap carriageways. Prefer the drivable road.
   const road=city.nearest(car.pos);
   const safeRoadWidth=road?roadHalfWidth(road.road)+.85:0;
@@ -368,6 +369,25 @@ function drive(dt){
    if(hitCooldown<=0&&car.speed>3){hitCooldown=1.3;car.health=Math.max(0,car.health-(auto?1:3))}
    car.yawRate*=.45;
   }
+ }
+ // Watchdog: inconsistent OSM building footprints can otherwise hold the car still
+ // forever while automatic throttle silently fights the collision resolver.
+ const moved=distance(previous,car.pos);
+ const movingRequested=auto?!keys.brake:keys.gas||keys.padGas;
+ car.stuckTime=movingRequested&&moved<.025?Math.min(3,(car.stuckTime||0)+dt):0;
+ if(car.stuckTime>.85){
+  const safe=chooseSafeRoadPosition(car.pos);
+  if(safe&&!safe.buildingOverlap&&distance(car.pos,safe.pos)>1.2&&distance(car.pos,safe.pos)<36){
+   car.pos=[...safe.pos];car.heading=safe.heading;
+   car.steering=0;car.yawRate=0;car.slip=0;car.speed=Math.max(3.5,car.speed);
+   if(render3D){render3D.inited=false;render3D.positionTrail=[];render3D.previousTrailPoint=null}
+   toast("ARAÇ GÜVENLİ SOKAĞA ALINDI",1.5);
+  }else{
+   // Temporarily ignore unreliable building polygons; never freeze the driving game.
+   car.collisionGrace=4.0;
+   toast("SÜRÜŞ KİLİDİ AÇILDI",1.3);
+  }
+  car.stuckTime=0;
  }
  if(near&&near.dist>20&&Math.abs(car.speed)>4)car.health=Math.max(0,car.health-dt*(auto?.26:1.1));
  if(car.health<=0){finish("ARABA YOLDA KALDI");return}
