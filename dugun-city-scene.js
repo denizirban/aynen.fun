@@ -6,7 +6,14 @@ import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v7";
 // This is a standalone ground-level Three.js scene, NOT a tilted map layer.
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const hash=(a,b=0)=>{let n=Math.sin(a*12.9898+b*78.233)*43758.545;return n-Math.floor(n)};
-const roadWidth=type=>/^(primary|trunk)/.test(type)?15:/^(secondary)/.test(type)?12:/^(tertiary)/.test(type)?10:/^(service|living_street)/.test(type)?5.7:7.6;
+const roadWidth=road=>{
+ const type=typeof road==="string"?road:road?.typ||"";
+ const defaultWidth=/^(primary|trunk)/.test(type)?15:/^secondary/.test(type)?12:/^tertiary/.test(type)?10:/^(service|living_street)/.test(type)?5.7:7.8;
+ const lanes=typeof road==="object"?road.lanes:null,width=typeof road==="object"?road.width:null;
+ if(Number.isFinite(width)&&width>3)return clamp(width,5,21);
+ if(Number.isFinite(lanes)&&lanes>=2)return clamp(lanes*3.05+2.2,7.7,21);
+ return defaultWidth;
+};
 const buildingColors=["#d8c5ac","#eccfb2","#f2d6bd","#b2c5b9","#c5bfd0","#d9d9ca","#ebbaa7","#b1c3c6","#ead8c4","#c9d2b5"];
 const shopColors=["#b83e52","#3f8182","#ba754e","#4f8475","#e2b15a"];
 const toXY=(o,p)=>{const x=(p[0]-o[0])*111320*Math.cos((p[1]+o[1])*.5*rad),y=(p[1]-o[1])*111320;return [x,y]};
@@ -115,7 +122,7 @@ function addStreetProps(group,origin,roads,mobile){
  const places=[],lamps=[],people=[];
  for(let i=0;i<roads.length;i++){
   const r=roads[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
-  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy),w=roadWidth(r.typ);
+  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy),w=roadWidth(r);
   if(len<6)continue;
   for(let j=0;j<Math.floor(len/24);j++){
    const t=(j+.4)/(Math.floor(len/24)),px=a[0]+dx*t,py=a[1]+dy*t;
@@ -157,7 +164,7 @@ function roadJunctions(roads,origin,limit){
    let n=nodes.get(k);
    if(!n){n={p:toXY(origin,p),degree:0,width:0,types:new Set(),used:0};nodes.set(k,n)}
    n.degree++;
-   n.width=Math.max(n.width,roadWidth(r.typ));
+   n.width=Math.max(n.width,roadWidth(r));
    n.types.add(r.typ);
   }
  }
@@ -193,7 +200,7 @@ function createRoads(group,origin,roads,mobile){
   const r=near[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
   const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
   if(len<1.0)continue;
-  const ux=dx/len,uy=dy/len,nx=-uy,ny=ux,width=roadWidth(r.typ);
+  const ux=dx/len,uy=dy/len,nx=-uy,ny=ux,width=roadWidth(r);
   emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.7,.105);
   emitQuad(asphalt.positions,asphalt.indices,a,b,width,.147);
   for(const sign of [-1,1]){
@@ -448,7 +455,7 @@ function addNeighborhoodDetails(group,origin,roads,mobile){
   const r=near[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
   const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
   if(len<13)continue;
-  const nx=-dy/len,ny=dx/len,side=i%2===0?1:-1,dist=roadWidth(r.typ)*.5;
+  const nx=-dy/len,ny=dx/len,side=i%2===0?1:-1,dist=roadWidth(r)*.5;
   const x=(a[0]+b[0])*.5+side*nx*(dist+2.3),y=(a[1]+b[1])*.5+side*ny*(dist+2.3);
   const v=hash(Math.round(x*1.33),Math.round(y*2.77));
   if(v>.60&&signPositions.length<(mobile?8:18)){
