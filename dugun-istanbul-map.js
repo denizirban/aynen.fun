@@ -78,7 +78,7 @@ function resolveJunctions(segments,center){
 
 export class IstanbulMap{
  constructor(area,onReady,onError){
-  this.area=area;this.roads=[];this.buildings=[];this.water=[];this.parks=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.skids=[];this.vector=null;this.loaded=false;
+  this.area=area;this.roads=[];this.buildings=[];this.water=[];this.parks=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.lastSeekRefresh=0;this.seekingLocalStreets=false;this.skids=[];this.vector=null;this.loaded=false;
   if(!window.maplibregl){onError("Harita kitaplığı yüklenemedi.");return}
   this.map=new maplibregl.Map({
    container:"map",style:"https://tiles.openfreemap.org/styles/liberty",
@@ -101,7 +101,23 @@ export class IstanbulMap{
    }catch(e){onError(e.message);console.error(e)}
   });
   this.map.on("error",e=>{if(!this.loaded)onError("Harita verisine erişilemiyor.");console.warn(e.error||e)});
-  this.map.on("sourcedata",()=>{if(this.loaded&&this.roads.length<15)this.refresh(AREAS[area].center,false)});
+  // When the player is waiting for a safe street, request newly loaded tiles
+  // even if the old viewport already had many motorway features.
+  const refreshWaitingStreets=()=>{
+   if(!this.loaded||!this.seekingLocalStreets)return;
+   const now=performance.now();
+   if(now-this.lastSeekRefresh<700)return;
+   this.lastSeekRefresh=now;
+   const center=this.map.getCenter?.();
+   this.refresh(center?[center.lng,center.lat]:AREAS[this.area].center,true);
+  };
+  this.map.on("sourcedata",()=>{
+   if(!this.loaded)return;
+   if(this.seekingLocalStreets)refreshWaitingStreets();
+   else if(this.roads.length<15)this.refresh(AREAS[this.area].center,false);
+  });
+  this.map.on("moveend",refreshWaitingStreets);
+  this.map.on("idle",refreshWaitingStreets);
  }
  jumpToArea(area){
   this.area=area;
@@ -152,7 +168,7 @@ export class IstanbulMap{
    }
    if(roads.length>5200)break;
   }
-  if(roads.length<6)return;
+  if(roads.length<2)return;
   this.lastGeometryPos=[...player];this.lastDataAt=now;
   // Tiles return transportation features in arbitrary order. Keep the local road corridor first:
   // previously the visible renderer took the first 800, leaving the car on a giant blank green plane.
