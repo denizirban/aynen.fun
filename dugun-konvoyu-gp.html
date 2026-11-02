@@ -185,6 +185,27 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 #rescue:hover{filter:brightness(1.15)}
 @media(max-width:700px){#rescue{margin-top:7px;padding:6px 7px;font-size:9px;gap:5px}
  #rescue span{min-width:16px;height:15px}}
+
+#lighting{margin-top:8px;padding:7px 12px;border-radius:9px;display:block;pointer-events:auto;
+ border:1px solid #e3d39b;background:linear-gradient(140deg,#f6d98d,#b98e66);color:#2a3032;
+ font-size:10px;font-weight:900;letter-spacing:.045em;box-shadow:0 2px 0 #493e37;cursor:pointer}
+#lighting:hover{filter:brightness(1.08)}
+#lighting:active{transform:translateY(2px);box-shadow:none}
+#districts{grid-template-columns:repeat(3,minmax(0,1fr))}
+#districts .option{min-height:51px}
+@media(max-width:700px){
+ #lighting{font-size:9px;padding:6px 8px;margin-top:5px}
+ #districts .option{min-height:47px}
+ #panel{max-height:94dvh}
+}
+@media(max-height:650px){
+ #districts .option{min-height:40px;padding:5px}
+ #panel p{margin:4px 0 7px}
+ #panel .feature-row{margin:6px 0 9px}
+}
+#record{margin-top:5px;color:#f2e7c5;font-size:11px;font-weight:900;letter-spacing:.045em}
+#record span{color:#d9ffa2;margin-left:7px}
+@media(max-width:700px){#record{font-size:9px;margin-top:2px}}
 </style>
 </head>
 <body>
@@ -193,8 +214,8 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 <div id="game">
  <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / İSTANBUL 3D</span><div class="header-end"><button class="glass-button" id="camera" type="button" aria-label="Kamera açısını değiştir">KAMERA: TAKİP</button><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
  <section id="hud" aria-label="Oyunun göstergeleri">
-  <div id="time-box"><span class="kicker">KALAN SÜRE</span><div id="time">03:00</div><div class="money" id="money">₺0</div></div>
-  <div id="speed-panel"><div class="kicker">HIZ</div><div id="speed">0</div><div class="unit">KM / SA</div><div id="car-health">ARAÇ %100</div><button id="rescue" type="button" aria-label="Araç sıkıştıysa yola geri dön">YOLA DÖN <span>R</span></button></div>
+  <div id="time-box"><span class="kicker">KALAN SÜRE</span><div id="time">03:00</div><div class="money" id="money">₺0</div><div id="record">REKOR <span id="bestmoney">₺0</span></div></div>
+  <div id="speed-panel"><div class="kicker">HIZ</div><div id="speed">0</div><div class="unit">KM / SA</div><div id="car-health">ARAÇ %100</div><button id="rescue" type="button" aria-label="Araç sıkıştıysa yola geri dön">YOLA DÖN <span>R</span></button><button id="lighting" type="button" aria-label="Gündüz, altın saat veya akşam ışığını seç">GÜNDÜZ</button></div>
   <div id="mission"><div id="mission-state">MİSAFİR BEKLİYOR</div><div id="mission-name">İstanbul sokaklarında...</div><div id="mission-info">Yol ağı yükleniyor.</div><div id="mission-distance">—</div><div id="mission-timer"></div></div>
   <div id="mini"><canvas id="minimap" width="388" height="346" aria-label="Gerçek yol ağına dayalı mini harita"></canvas></div>
   <div id="mode-pill">KONVOY <span id="convoy">1</span> · <span id="trips">0</span> TESLİMAT</div>
@@ -211,17 +232,17 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
    <div class="eyebrow">AYNEN.FUN · SERBEST SÜRÜŞ · GERÇEK ŞEHİR HARİTASI</div>
    <h1>DÜĞÜN<br><em>KONVOYU.</em></h1>
    <p>Bu kez gerçek İstanbul sokaklarındasın. Kavşaklarda dön, ara sokaklara gir, akrabaları alıp düğüne yetiştir. Rakip konvoydan önce davran.</p>
-   <div class="feature-row"><span>WEBGL 3D</span><span>OPENSTREETMAP</span><span>ÜÇÜNCÜ ŞAHIS KAMERA</span><span>SERBEST SÜRÜŞ</span></div>
+   <div class="feature-row"><span>WEBGL 3D</span><span>6 SEMT</span><span>OPENSTREETMAP</span><span>ÜÇÜNCÜ ŞAHIS KAMERA</span><span>SERBEST SÜRÜŞ</span></div>
    <div class="panel-label">NEREDEN BAŞLAYALIM?</div>
-   <div class="options" id="districts"><button class="option selected" data-district="kadikoy">KADIKÖY<small>Moda · Çarşı</small></button><button class="option" data-district="besiktas">BEŞİKTAŞ<small>Abbasağa</small></button><button class="option" data-district="karakoy">KARAKÖY<small>Galata</small></button></div>
+   <div class="options" id="districts"><button class="option selected" data-district="kadikoy">KADIKÖY<small>Moda · Çarşı</small></button><button class="option" data-district="besiktas">BEŞİKTAŞ<small>Abbasağa</small></button><button class="option" data-district="karakoy">KARAKÖY<small>Galata</small></button><button class="option" data-district="balat">BALAT<small>Haliç</small></button><button class="option" data-district="ortakoy">ORTAKÖY<small>Boğaz</small></button><button class="option" data-district="uskudar">ÜSKÜDAR<small>Çarşı</small></button></div>
    <div class="panel-label">DÜĞÜN ARABASI</div>
    <div class="options" id="cars"><button class="option selected" data-car="sahin">ŞAHİN<small>Dengeli sürüş</small></button><button class="option" data-car="toros">TOROS<small>Yüksek yol tutuş</small></button><button class="option" data-car="doblo">DOBLO<small>Geniş araç</small></button></div>
    <button id="start">DÜĞÜN SERVİSİNE BAŞLA · 3 DK</button><button id="freeroam">SERBEST GEZİNTİ · SÜRESİZ</button>
    <div id="loadstate">Harita hazırlanıyor…</div>
-   <div id="help">Bilgisayar: W / ↑ gaz · S / ↓ fren / geri · A D / ← → direksiyon · Space korna · Shift el freni · C kamera · R yola dön · P duraklat. Mobil: ekrandaki kontroller.</div>
+   <div id="help">Bilgisayar: W / ↑ gaz · S / ↓ fren / geri · A D / ← → direksiyon · Space korna · Shift el freni · C kamera · L ışık · R yola dön · P duraklat. Mobil: ekrandaki kontroller.</div>
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-3d-v4"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-3d-v5"></script>
 </body>
 </html>

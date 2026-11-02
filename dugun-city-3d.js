@@ -1,5 +1,5 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js";
-import {CityScene3D} from "./dugun-city-scene.js";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v5";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v5";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
  sahin:{accel:11.5,brake:18,top:27,grip:1.0},
@@ -8,6 +8,12 @@ const SPEC={
 };
 const NAMES=["Nikâh şahidi","Gelin kuzeni","Saz ekibi","Fotoğrafçı","Yengeler","Damat arkadaşları","Mahalle teyzesi","Davulcu","Takı çantası","Pastacı","Gelinlik terzisi","Çiçekçi"];
 const PLACES=["Düğün salonu","Nikâh dairesi","Kuaför","Takı masası","Salon girişi","Fotoğraf çekimi"];
+const CHALLENGES=[
+ {id:"normal",tag:"DÜĞÜN SERVİSİ",info:"Hedefe yetiştir, bahşişini al."},
+ {id:"express",tag:"ACİL SERVİS",info:"Sürenin en az %40'ı kalırken teslim et.",bonus:500},
+ {id:"careful",tag:"HASSAS YÜK",info:"Yolcuyu çarpışmadan ulaştır.",bonus:450},
+ {id:"horn",tag:"KONVOY GÖREVİ",info:"Yolculukta 2 kez korna çal.",bonus:280}
+];
 const keys={gas:false,brake:false,left:false,right:false,handbrake:false};
 let area="kadikoy",kind="sahin",city=null,render3D=null,ready=false,pending=false,playing=false,paused=true,muted=false,free=false;
 let timer=180,earnings=0,deliveries=0,stolen=0,convoy=1,mission=null,car=null,rival=null,traffic=[],route=[],toastEnd=0,resetRide=0,roadRefresh=0,routeRefresh=0,camRefresh=0,hitCooldown=0;
@@ -66,6 +72,7 @@ window.addEventListener("keydown",e=>{
  if(e.code==="KeyP"&&!e.repeat){e.preventDefault();togglePause()}
  if(e.code==="KeyC"&&!e.repeat){e.preventDefault();cycleCamera()}
  if(e.code==="KeyR"&&!e.repeat){e.preventDefault();recoverCar()}
+ if(e.code==="KeyL"&&!e.repeat){e.preventDefault();cycleLighting()}
 });
 window.addEventListener("keyup",e=>{if(inputKeys[e.code]){keys[inputKeys[e.code]]=false;e.preventDefault()}});
 function clearKeys(){for(const k of Object.keys(keys))keys[k]=false;document.querySelectorAll(".ctr").forEach(b=>b.classList.remove("pressed"))}
@@ -82,6 +89,13 @@ $("pause").addEventListener("click",togglePause);
 $("sound").addEventListener("click",()=>{muted=!muted;$("sound").textContent=muted?"SES KAPALI":"SES AÇIK";if(!muted){initEngine();sound()}syncEngine()});
 $("rescue").addEventListener("click",recoverCar);
 $("camera").addEventListener("click",cycleCamera);
+$("lighting").addEventListener("click",cycleLighting);
+function cycleLighting(){
+ if(!render3D)return;
+ const name=render3D.setLightingMode((render3D.lightingMode||0)+1);
+ $("lighting").textContent=name;
+ toast("İSTANBUL · "+name,1.2);
+}
 function recoverCar(){
  if(!playing||paused||!car)return;
  if(rescueCooldown>0){toast("ÇEKİCİ "+Math.ceil(rescueCooldown)+" SANİYE SONRA",1.1);return}
@@ -122,6 +136,7 @@ function horn(){
 
  if(hornCooldown>0)return;
  hornCooldown=.75;
+ if(mission?.phase==="dropoff"&&mission.owner==="player")mission.horns=(mission.horns||0)+1;
  const nearby=traffic.find(v=>v.pos&&!v.joined&&distance(v.pos,car.pos)<13);
  if(nearby){
   nearby.joined=true;nearby.pos=null;nearby.road=null;convoy=Math.min(6,convoy+1);earnings+=50;
@@ -188,10 +203,10 @@ function spawnMission(){
  mission={
   passenger:NAMES[Math.floor(Math.random()*NAMES.length)],
   venue:PLACES[Math.floor(Math.random()*PLACES.length)],pickup,dropoff,
-  phase:"pickup",owner:null,clock:0
+  phase:"pickup",owner:null,clock:0,initialClock:0,crashes:0,horns:0,challenge:CHALLENGES[Math.floor(Math.random()*CHALLENGES.length)]
  };
  rival.pos=city.sample(car.pos,90,170)||[...car.pos];
- rival.speed=9+Math.random()*2;rival.cooldown=1.1;
+ rival.speed=Math.min(15.5,9+Math.random()*2+deliveries*.42);rival.cooldown=1.1;
  refreshRivalRoute();refreshRoute();updateMissionText();
 }
 function refreshRoute(){
@@ -213,12 +228,17 @@ function deliver(who){
   deliveryStreak++;
   const multiplier=Math.min(2.2,1+Math.max(0,deliveryStreak-1)*.16+(convoy-1)*.045);
   const tip=Math.floor((320+distance(mission.pickup,mission.dropoff)*2.4+Math.max(0,mission.clock)*20)*multiplier);
-  earnings+=tip;deliveries++;timer+=20;
+  const challenge=mission.challenge||CHALLENGES[0];
+  const bonusDone=challenge.id==="express"?mission.clock>=mission.initialClock*.40:
+   challenge.id==="careful"?mission.crashes===0:
+   challenge.id==="horn"?mission.horns>=2:false;
+  const extra=bonusDone?(challenge.bonus||0):0;
+  earnings+=tip+extra;deliveries++;timer+=20;
   if(earnings>personalBest){
    personalBest=earnings;
    try{localStorage.setItem("dugun-3d-best-v3",String(personalBest))}catch(e){}
   }
-  toast("TESLİMAT TAMAM · ₺"+tip.toLocaleString("tr-TR")+" · +20 SN"+(deliveryStreak>1?" · "+deliveryStreak+" SERİ":""),2.1);
+  toast("TESLİMAT · ₺"+(tip+extra).toLocaleString("tr-TR")+(extra?" · EK BONUS ₺"+extra:"")+" · +20 SN"+(deliveryStreak>1?" · "+deliveryStreak+" SERİ":""),2.1);
   sound(600,.13);setTimeout(()=>sound(800,.16),125);
  }else{timer=Math.max(0,timer-8);deliveryStreak=0;toast("RAKİP ÖNCE YETİŞTİ · -8 SN",2)}
  nextMission();
@@ -252,6 +272,7 @@ function drive(dt){
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
  if(city.insideBuilding?.(car.pos)){
   car.pos=previous;
+  if(mission?.phase==="dropoff")mission.crashes++;
   if(Math.abs(car.speed)>3&&hitCooldown<=0){
    hitCooldown=.9;car.health=Math.max(0,car.health-5);
    sound(190,.19);toast("BİNAYA ÇARPTIN · HASAR",1.1);
@@ -264,7 +285,10 @@ function drive(dt){
   const target=mission.phase==="pickup"?mission.pickup:mission.dropoff;
   const d=distance(car.pos,target);
   if(mission.phase==="pickup"&&mission.owner===null&&d<10&&Math.abs(car.speed)<6.8){
-   mission.phase="dropoff";mission.owner="player";mission.clock=Math.max(47,36+distance(mission.pickup,mission.dropoff)/8);
+   mission.phase="dropoff";mission.owner="player";
+   const baseTime=Math.max(47,36+distance(mission.pickup,mission.dropoff)/8);
+   mission.clock=mission.challenge.id==="express"?baseTime*.82:baseTime;
+   mission.initialClock=mission.clock;mission.crashes=0;mission.horns=0;
    toast(mission.passenger.toLocaleUpperCase("tr-TR")+" BİNDİ",1.5);
    sound(540,.17);refreshRivalRoute();refreshRoute();updateMissionText();
   }else if(mission.phase==="dropoff"&&mission.owner==="player"&&d<10&&Math.abs(car.speed)<6.8)deliver("player");
@@ -310,7 +334,7 @@ function advanceTraffic(dt){
 
   npc.cooldown=Math.max(0,npc.cooldown-dt);npc.respawnCD=Math.max(0,(npc.respawnCD||0)-dt);
   if(npc.cooldown===0&&Math.abs(car.speed)>5&&distance(npc.pos,car.pos)<3.5){
-   npc.cooldown=2.3;car.speed*=-.25;car.health=Math.max(0,car.health-5);sound(180,.16);toast("TRAFİĞE DİKKAT · HASAR",1.2);
+   npc.cooldown=2.3;car.speed*=-.25;car.health=Math.max(0,car.health-5);if(mission?.phase==="dropoff")mission.crashes++;sound(180,.16);toast("TRAFİĞE DİKKAT · HASAR",1.2);
   }
   if(npc.cooldown===0&&nearMissCooldown===0&&Math.abs(car.speed)>13&&distance(npc.pos,car.pos)>3.5&&distance(npc.pos,car.pos)<6.0){
    const bonus=Math.round(65+(convoy-1)*15);
@@ -346,7 +370,7 @@ function advanceRival(dt){
   }else if(mission.phase==="dropoff"&&mission.owner==="rival"){deliver("rival");return;}
  }
  if(distance(car.pos,rival.pos)<3.6&&hitCooldown<=0){
-  hitCooldown=2.6;rival.cooldown=1;car.health=Math.max(0,car.health-7);car.speed*=-.30;
+  hitCooldown=2.6;rival.cooldown=1;car.health=Math.max(0,car.health-7);if(mission?.phase==="dropoff")mission.crashes++;car.speed*=-.30;
   if(mission.owner==="rival"){
    mission.owner="player";stolen++;earnings+=200;
    toast("ÇARPTIN · MİSAFİRİ KAPTIN · ₺200",2);sound(700,.23);
@@ -358,15 +382,16 @@ function advanceRival(dt){
 }
 function updateMissionText(){
  if(!mission)return;
- $("mission-state").textContent=mission.phase==="pickup"?"MİSAFİRİ AL":mission.owner==="rival"?"MİSAFİR RAKİPTE":"HEDEFE YETİŞTİR";
+ $("mission-state").textContent=mission.owner==="rival"?"MİSAFİR RAKİPTE":mission.phase==="pickup"?"MİSAFİRİ AL":mission.challenge.tag;
  $("mission-name").textContent=mission.phase==="pickup"?mission.passenger:mission.venue;
- $("mission-info").textContent=mission.phase==="pickup"?"Sarı işarete yanaş. Yavaşlayınca misafir biner.":"Yeşil teslimat noktasına git; doğru sokaktan dön.";
+ $("mission-info").textContent=mission.phase==="pickup"?"Sarı işarete yanaş. Yavaşlayınca misafir biner.":mission.challenge.info;
 }
 function updateHUD(){
  const secs=Math.ceil(Math.max(0,timer));
  $("time").textContent=free?"∞":String(Math.floor(secs/60)).padStart(2,"0")+":"+String(secs%60).padStart(2,"0");
  $("time").classList.toggle("urgent",timer<30&&!free);
  $("money").textContent="₺"+earnings.toLocaleString("tr-TR");
+ $("bestmoney").textContent="₺"+personalBest.toLocaleString("tr-TR");
  $("speed").textContent=Math.round(Math.abs(car.speed)*3.6);
  $("car-health").textContent="ARAÇ %"+Math.round(car.health)+(car.offroad?" · YOL DIŞI":"");
  $("car-health").style.color=car.health<35?"#ff9c8f":car.health<65?"#ffdb8e":"#e3f2e6";
@@ -380,7 +405,9 @@ function updateHUD(){
  }
  const goal=mission.phase==="pickup"?mission.pickup:mission.dropoff,d=distance(car.pos,goal);
  $("mission-distance").textContent=d<1000?Math.round(d)+" METRE":(d/1000).toFixed(1)+" KM";
- $("mission-timer").textContent=mission.phase==="dropoff"?"YOLCU: "+Math.ceil(Math.max(0,mission.clock))+" SN": "YAVAŞLAYINCA BİNER";
+ $("mission-timer").textContent=mission.phase==="dropoff"?
+  ("YOLCU: "+Math.ceil(Math.max(0,mission.clock))+" SN"+(mission.challenge.id==="horn"?" · KORNA "+Math.min(2,mission.horns)+"/2":mission.challenge.id==="careful"?" · HASAR "+mission.crashes:"")):
+  "YAVAŞLAYINCA BİNER";
 
  const nextPoint=(route||[]).find(p=>distance(car.pos,p)>12)||goal;
  const aim=turn(angle(car.pos,nextPoint),car.heading);
@@ -405,7 +432,7 @@ function drawMini(){
  const canvas=$("minimap"),w=canvas.width,h=canvas.height;
  ctx.clearRect(0,0,w,h);ctx.fillStyle="#223c44";ctx.fillRect(0,0,w,h);
  const toPx=p=>[(p[0]-car.pos[0])*111320*Math.cos(car.pos[1]*rad)/1.25,(car.pos[1]-p[1])*111320/1.25];
- ctx.save();ctx.translate(w/2,h/2);
+ ctx.save();ctx.translate(w/2,h/2);ctx.rotate(-car.heading);
  for(const r of city.roads){
   const a=toPx(r.a),b=toPx(r.b);
   if(Math.abs(a[0])>240&&Math.abs(b[0])>240)continue;
@@ -424,7 +451,8 @@ function drawMini(){
  if(rival.pos){
   const p=toPx(rival.pos);ctx.fillStyle="#f4a5b1";ctx.beginPath();ctx.arc(p[0],p[1],5,0,2*Math.PI);ctx.fill();
  }
- ctx.rotate(car.heading);ctx.fillStyle="#eaf6e2";ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(8,9);ctx.lineTo(-8,9);ctx.fill();ctx.restore();
+ ctx.restore();ctx.save();ctx.translate(w/2,h/2);
+ ctx.fillStyle="#eaf6e2";ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(8,9);ctx.lineTo(-8,9);ctx.closePath();ctx.fill();ctx.restore();
  ctx.fillStyle="#ecf5e9";ctx.font="bold 16px sans-serif";ctx.fillText(AREAS[area].name,14,22);
 }
 function frameLoop(now){
