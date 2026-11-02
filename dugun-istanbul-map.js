@@ -77,9 +77,10 @@ export class IstanbulMap{
    }
    if(roads.length>5200)break;
   }
-  if(roads.length<10)return;
+  if(roads.length<6)return;
   
   this.roads=roads;this.nodes=new Map();this.edges=new Map();this.samples=[];
+  if(this.onRoadsReady)queueMicrotask(()=>this.onRoadsReady?.());
   try{
    const buildings=this.map.querySourceFeatures(this.vector,{sourceLayer:"building"})||[];
    const collection=[],used=new Set();
