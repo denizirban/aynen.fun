@@ -381,12 +381,13 @@ function addWater(group,origin,waters,mobile){
 // come from OSM; this model is not a photogrammetric reconstruction.
 const BOSPHORUS_WEST=[29.0294,41.0470];
 const BOSPHORUS_EAST=[29.0416,41.0428];
-let bridgeWorldOrigin=null;
+let bridgeWorldOrigin=null,bridgeCache=null;
 function bridgeSection(){
  if(!bridgeWorldOrigin)return null;
+ if(bridgeCache)return bridgeCache;
  const a=toXY(bridgeWorldOrigin,BOSPHORUS_WEST),b=toXY(bridgeWorldOrigin,BOSPHORUS_EAST);
  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
- return {a,b,dx,dy,len,ux:dx/len,uy:dy/len};
+ return bridgeCache={a,b,dx,dy,len,ux:dx/len,uy:dy/len};
 }
 function bridgeLiftAt(x,y){
  const b=bridgeSection();if(!b)return 0;
@@ -474,6 +475,67 @@ function makeBosphorusBridge(group,origin,player){
  name.scale.set(24,2,1);name.position.set(a[0],a[1],169);
  group.add(name);
  return 1;
+}
+
+
+// Beylerbeyi shore: purpose-made, stylized Ottoman waterfront palace.
+// This is an architectural illustration aligned to the real neighborhood,
+// not measured facade geometry.
+function addBeylerbeyiWaterfront(group,origin){
+ const location=[29.0400,41.0426],p=toXY(origin,location);
+ if(Math.hypot(...p)>570)return;
+ const stone=new THREE.MeshStandardMaterial({color:0xe1d3bd,roughness:.88});
+ const cream=new THREE.MeshStandardMaterial({color:0xf3e7d4,roughness:.86});
+ const roof=new THREE.MeshStandardMaterial({color:0x687f83,roughness:.74});
+ const trim=new THREE.MeshStandardMaterial({color:0xc0aa91,roughness:.8});
+ const glass=new THREE.MeshStandardMaterial({color:0x64858f,roughness:.24,metalness:.16});
+ const garden=new THREE.MeshStandardMaterial({color:0x648b5d,roughness:1});
+ const scene=new THREE.Group();
+ scene.position.set(p[0],p[1],terrainAt(...p)+.35);
+ scene.rotation.z=-.28;
+ scene.add(meshBox(37,17,6.6,cream,0,0,3.4));
+ scene.add(meshBox(41,20,1.2,stone,0,0,.40));
+ scene.add(meshBox(37.8,18.5,1.1,trim,0,0,6.9));
+ scene.add(meshBox(39,19,5.3,stone,0,0,10.1));
+ scene.add(meshBox(41,20,1.3,trim,0,0,13.2));
+ scene.add(meshBox(42,21,1.15,roof,0,0,14.2));
+ for(const face of [-1,1])for(let i=-6;i<=6;i++){
+  scene.add(meshBox(.9,.9,9,cream,i*2.65,face*10.1,8.4));
+  if(i%2===0)scene.add(meshBox(1.4,.25,3.4,glass,i*2.65,face*10.4,10.6));
+ }
+ for(const x of [-22,-19,19,22]){
+  const cypress=new THREE.Mesh(new THREE.ConeGeometry(1.6,12,9),garden);
+  cypress.position.set(x,6,6);scene.add(cypress);
+ }
+ const label=createWorldLabel("BEYLERBEYİ SAHİLİ","#345c67","#fff9dd");
+ label.position.set(0,0,18);label.scale.set(14,2.0,1);scene.add(label);
+ group.add(scene);
+}
+function addBosphorusPromenade(group,origin){
+ const shore=[[29.0258,41.0483],[29.0266,41.04775],[29.02715,41.04725],[29.0278,41.0468]];
+ const nearest=Math.min(...shore.map(p=>distance(p,origin)));
+ if(nearest>570)return;
+ const railing=new THREE.MeshStandardMaterial({color:0x536671,metalness:.52,roughness:.55});
+ const wood=new THREE.MeshStandardMaterial({color:0x85694b,roughness:.89});
+ for(let i=0;i<shore.length-1;i++){
+  const aa=toXY(origin,shore[i]),bb=toXY(origin,shore[i+1]);
+  const dx=bb[0]-aa[0],dy=bb[1]-aa[1],len=Math.hypot(dx,dy),n=Math.ceil(len/9);
+  const angle=-Math.atan2(dx,dy);
+  const rail=new THREE.Mesh(new THREE.BoxGeometry(.12,len, .12),railing);
+  rail.position.set((aa[0]+bb[0])/2,(aa[1]+bb[1])/2,terrainAt(...aa)+1.10);
+  rail.rotation.z=angle;group.add(rail);
+  for(let j=0;j<=n;j++){
+   const t=j/n,x=aa[0]+dx*t,y=aa[1]+dy*t;
+   const pole=meshBox(.12,.13,1.15,railing,x,y,terrainAt(x,y)+.575);
+   group.add(pole);
+  }
+  if(i%2===0){
+   const bench=new THREE.Group();
+   bench.position.set(aa[0]-3,aa[1],terrainAt(...aa)+.5);bench.rotation.z=angle;
+   bench.add(meshBox(2.1,.62,.18,wood,0,0,0));
+   bench.add(meshBox(2.1,.12,.75,wood,0,-.24,.42));group.add(bench);
+  }
+ }
 }
 
 function addOrtakoyLandmark(group,origin,area){
@@ -812,11 +874,13 @@ export class CityScene3D{
   disposeCityGroup(this.worldGroup);
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
   terrainAt=terrainModel(city.area,this.origin);
-  bridgeWorldOrigin=this.origin;
+  bridgeWorldOrigin=this.origin;bridgeCache=null;
   makeGround(this.worldGroup);
   this.visibleParkCount=renderRealParks(this.worldGroup,this.origin,city.parks,this.mobile);
   this.visibleWater=addWater(this.worldGroup,this.origin,city.water,this.mobile);
   addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
+  addBeylerbeyiWaterfront(this.worldGroup,this.origin);
+  addBosphorusPromenade(this.worldGroup,this.origin);
   this.bridgeVisible=makeBosphorusBridge(this.worldGroup,this.origin,this.focus||this.origin);
   if(ro?.length){const visibleRoads=createRoads(this.worldGroup,this.origin,ro,this.mobile);addNeighborhoodDetails(this.worldGroup,this.origin,visibleRoads,this.mobile);renderParkedStreetCars(this.worldGroup,this.origin,visibleRoads,this.mobile,this.focus||this.origin)}
   else{
