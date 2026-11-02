@@ -117,7 +117,7 @@ function cycleLighting(){
  toast("İSTANBUL · "+name,1.2);
 }
 
-const SAFE_START_ANCHOR=[29.02495,41.04720];
+const SAFE_START_ANCHOR=[29.02620,41.04795];
 function isLocalSpawnRoad(r){
  return !!r&&!r.bridge&&!/^(motorway|motorway_link|trunk|trunk_link|construction|path|footway|pedestrian)$/.test(r.typ||"");
 }
@@ -154,12 +154,17 @@ function chooseSafeRoadPosition(reference,initial=false){
      if(city.insideBuilding?.(travel(pos,candidate,Math.min(step,length*.36))))break;
      clear=step;
     }
-    if(clear>clearMeters){clearMeters=clear;chosenHeading=candidate}
+    const coastAlignment=initial?Math.cos(turn(candidate,angle(pos,[29.031,41.0468]))):0;
+    const previousAlignment=initial?Math.cos(turn(chosenHeading,angle(pos,[29.031,41.0468]))):0;
+    if(clear>clearMeters||clear===clearMeters&&coastAlignment>previousAlignment){
+     clearMeters=clear;chosenHeading=candidate
+    }
    }
    const inBuilding=!!city.insideBuilding?.(pos);
    const onRoad=city.nearestAny?.(pos);
    const centreline=onRoad?onRoad.dist:0;
-   const score=d+(/^(residential|tertiary|secondary)/.test(r.typ||"")?-22:10)
+   const waterward=initial?Math.cos(turn(chosenHeading,angle(pos,[29.031,41.0468]))):0;
+   const score=d+(/^(residential|tertiary|secondary)/.test(r.typ||"")?-22:10)-waterward*22
       +Math.max(0,35-length)*.48+Math.max(0,10-clearMeters)*5.5
       +(inBuilding?90:0)+(centreline>4?40:0);
    const candidate={pos,heading:chosenHeading,road:r,score,buildingOverlap:inBuilding};
