@@ -10,6 +10,17 @@ const roadWidth=type=>/^(primary|trunk)/.test(type)?15:/^(secondary)/.test(type)
 const buildingColors=["#d8c5ac","#eccfb2","#f2d6bd","#b2c5b9","#c5bfd0","#d9d9ca","#ebbaa7","#b1c3c6","#ead8c4","#c9d2b5"];
 const shopColors=["#b83e52","#3f8182","#ba754e","#4f8475","#e2b15a"];
 const toXY=(o,p)=>{const x=(p[0]-o[0])*111320*Math.cos((p[1]+o[1])*.5*rad),y=(p[1]-o[1])*111320;return [x,y]};
+let terrainAt=(x,y)=>0;
+function terrainModel(area,origin){
+ // Stylized grades, not measured elevation.
+ if(area==="ortakoy"){
+  const coastX=(29.02745-origin[0])*111320*Math.cos(origin[1]*rad);
+  return (x,y)=>Math.max(0,(coastX-x)*.028)+.35*Math.max(0,Math.sin(y/155));
+ }
+ if(area==="besiktas"||area==="karakoy"||area==="balat")
+  return (x,y)=>Math.max(0,2.4+1.6*Math.sin(x/150)+1.1*Math.cos(y/190));
+ return (x,y)=>Math.max(0,1.1+.9*Math.sin(x/220)+1.25*Math.cos(y/170));
+}
 const color=(hex)=>new THREE.Color(hex);
 const windowMat=new THREE.MeshStandardMaterial({color:0x759aab,emissive:0x14262c,emissiveIntensity:.28,roughness:.28,metalness:.25,side:THREE.DoubleSide});
 const lightMat=new THREE.MeshStandardMaterial({color:0xe5c899,emissive:0xc88c4b,emissiveIntensity:.30,side:THREE.DoubleSide});
@@ -56,7 +67,10 @@ function emitQuad(positions,indices,p,q,width,z){
  const dx=q[0]-p[0],dy=q[1]-p[1],len=Math.hypot(dx,dy);
  if(len<.1)return;
  const nx=-dy/len*width*.5,ny=dx/len*width*.5,i=positions.length/3;
- positions.push(p[0]-nx,p[1]-ny,z,q[0]-nx,q[1]-ny,z,q[0]+nx,q[1]+ny,z,p[0]+nx,p[1]+ny,z);
+ positions.push(p[0]-nx,p[1]-ny,z+terrainAt(p[0]-nx,p[1]-ny),
+ q[0]-nx,q[1]-ny,z+terrainAt(q[0]-nx,q[1]-ny),
+ q[0]+nx,q[1]+ny,z+terrainAt(q[0]+nx,q[1]+ny),
+ p[0]+nx,p[1]+ny,z+terrainAt(p[0]+nx,p[1]+ny));
  indices.push(i,i+1,i+2,i,i+2,i+3);
 }
 function batchStrips(list,mat,container){
@@ -89,9 +103,9 @@ function addTrees(group,places,limit,seed=1){
  const dummy=new THREE.Object3D();
  for(let i=0;i<count;i++){
   const item=places[i],s=.76+hash(i+11,seed)*.75;
-  dummy.position.set(item[0],item[1],1.45*s);dummy.scale.set(s,s,s);dummy.rotation.set(0,0,hash(i+12)*6.28);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
-  dummy.position.set(item[0],item[1],3.40*s);dummy.scale.set(1.30*s,1.32*s,1.19*s);dummy.updateMatrix();crowns.setMatrixAt(i,dummy.matrix);
-  dummy.position.set(item[0]+.52*s,item[1]-.44*s,4.14*s);dummy.scale.set(.72*s,.8*s,.73*s);dummy.updateMatrix();crowns2.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(item[0],item[1],1.45*s+terrainAt(item[0],item[1]));dummy.scale.set(s,s,s);dummy.rotation.set(0,0,hash(i+12)*6.28);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(item[0],item[1],3.40*s+terrainAt(item[0],item[1]));dummy.scale.set(1.30*s,1.32*s,1.19*s);dummy.updateMatrix();crowns.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(item[0]+.52*s,item[1]-.44*s,4.14*s+terrainAt(item[0],item[1]));dummy.scale.set(.72*s,.8*s,.73*s);dummy.updateMatrix();crowns2.setMatrixAt(i,dummy.matrix);
  }
  group.add(trunks,crowns,crowns2);
 }
@@ -119,15 +133,15 @@ function addStreetProps(group,origin,roads,mobile){
  const pole=new THREE.InstancedMesh(shaftGeo,poleMat,lamps.length),head=new THREE.InstancedMesh(headGeo,glowMat,lamps.length);
  const dummy=new THREE.Object3D();
  lamps.forEach((p,i)=>{
-  dummy.position.set(p[0],p[1],2.80);dummy.rotation.set(0,0,0);dummy.scale.set(1,1,1);dummy.updateMatrix();pole.setMatrixAt(i,dummy.matrix);
-  dummy.position.set(p[0],p[1],5.55);dummy.updateMatrix();head.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(p[0],p[1],2.80+terrainAt(...p));dummy.rotation.set(0,0,0);dummy.scale.set(1,1,1);dummy.updateMatrix();pole.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(p[0],p[1],5.55+terrainAt(...p));dummy.updateMatrix();head.setMatrixAt(i,dummy.matrix);
  });
  group.add(pole,head);
  const torso=new THREE.InstancedMesh(new THREE.CylinderGeometry(.25,.26,.92,6),new THREE.MeshStandardMaterial({color:0x5d7d87}),people.length);
  const headPeople=new THREE.InstancedMesh(new THREE.SphereGeometry(.19,7,5),new THREE.MeshStandardMaterial({color:0xc89572}),people.length);
  people.forEach((p,i)=>{
-  dummy.position.set(p[0],p[1],1.08);dummy.scale.set(1,1,1);dummy.rotation.set(0,0,0);dummy.updateMatrix();torso.setMatrixAt(i,dummy.matrix);
-  dummy.position.z=1.72;dummy.updateMatrix();headPeople.setMatrixAt(i,dummy.matrix);
+  dummy.position.set(p[0],p[1],1.08+terrainAt(...p));dummy.scale.set(1,1,1);dummy.rotation.set(0,0,0);dummy.updateMatrix();torso.setMatrixAt(i,dummy.matrix);
+  dummy.position.z=1.72+terrainAt(p[0],p[1]);dummy.updateMatrix();headPeople.setMatrixAt(i,dummy.matrix);
   torso.setColorAt(i,color(["#d7645c","#eac86e","#597a9f","#678c6a"][i%4]));
  });
  group.add(torso,headPeople);
@@ -207,7 +221,7 @@ function addBuildings(group,origin,raw,mobile){
   const height=b.height&&Number.isFinite(b.height)?clamp(b.height,5,100):Math.round(3.5+(hseed*.78+.11)*8)*3.15;
   const shape=new THREE.Shape();shape.moveTo(...pts[0]);for(let j=1;j<pts.length;j++)shape.lineTo(...pts[j]);shape.closePath();
   const geo=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false,curveSegments:1,steps:1});
-  const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.castShadow=!mobile&&Math.hypot(pts[0][0],pts[0][1])<110;m.receiveShadow=true;group.add(m);
+  const m=new THREE.Mesh(geo,mats[Math.floor(hseed*mats.length)]);m.position.z=terrainAt(pts[0][0],pts[0][1]);m.castShadow=!mobile&&Math.hypot(pts[0][0],pts[0][1])<110;m.receiveShadow=true;group.add(m);
   const maxFloors=Math.min(mobile?4:8,Math.floor((height-1.5)/3.1));
   for(let edge=0;edge<pts.length;edge++){
    const a=pts[edge],v=pts[(edge+1)%pts.length],dx=v[0]-a[0],dy=v[1]-a[1],len=Math.hypot(dx,dy);
@@ -236,7 +250,11 @@ function makeGround(group){
  // City blocks are warm urban stone, not a flat golf course.
  const groundTexture=noiseTexture("pavement");
  groundTexture.repeat.set(220,220);
- const m=new THREE.Mesh(new THREE.PlaneGeometry(2400,2400),
+ const geometry=new THREE.PlaneGeometry(2400,2400,48,48);
+ const pos=geometry.attributes.position;
+ for(let i=0;i<pos.count;i++)pos.setZ(i,terrainAt(pos.getX(i),pos.getY(i)));
+ geometry.computeVertexNormals();
+ const m=new THREE.Mesh(geometry,
   new THREE.MeshStandardMaterial({color:0xb8b8a2,map:groundTexture,roughness:1}));
  m.position.z=-.22;m.receiveShadow=true;group.add(m);
 }
@@ -271,7 +289,7 @@ function addOrtakoyLandmark(group,origin,area){
  const cream=new THREE.MeshStandardMaterial({color:0xf3e7d1,roughness:.85});
  const trim=new THREE.MeshStandardMaterial({color:0xc5a985,roughness:.88});
  const dome=new THREE.MeshStandardMaterial({color:0x8ca0a5,metalness:.20,roughness:.60});
- const g=new THREE.Group();g.position.set(x,y,.14);
+ const g=new THREE.Group();g.position.set(x,y,.14+terrainAt(x,y));
  g.add(meshBox(16,15,10,cream,0,0,5));
  g.add(meshBox(17,16,.75,trim,0,0,10));
  const main=new THREE.Mesh(new THREE.SphereGeometry(6.0,20,12,0,Math.PI*2,0,Math.PI*.54),dome);
@@ -391,14 +409,14 @@ function addNeighborhoodDetails(group,origin,roads,mobile){
  const wood=new THREE.MeshStandardMaterial({color:0x966d4f,roughness:.88});
  for(const [x,y,id,side] of signPositions){
   const label=createWorldLabel(signs[id],palette[id%palette.length],"#fff7de");
-  label.position.set(x,y,3.55);label.scale.set(4.0,.96,1);
+  label.position.set(x,y,3.55+terrainAt(x,y));label.scale.set(4.0,.96,1);
   group.add(label);
   const awning=new THREE.Mesh(new THREE.BoxGeometry(4.1,1.25,.12),
    new THREE.MeshStandardMaterial({color:palette[id%palette.length],roughness:.85}));
-  awning.position.set(x,y,2.88);group.add(awning);
+  awning.position.set(x,y,2.88+terrainAt(x,y));group.add(awning);
  }
  for(const [x,y,rotation] of benchPositions){
-  const bench=new THREE.Group();bench.position.set(x,y,.43);bench.rotation.z=rotation;
+  const bench=new THREE.Group();bench.position.set(x,y,.43+terrainAt(x,y));bench.rotation.z=rotation;
   bench.add(meshBox(1.65,.58,.12,wood,0,0,.14));
   bench.add(meshBox(1.65,.11,.64,wood,0,-.26,.48));
   bench.add(meshBox(.08,.51,.51,metal,-.69,0,-.05));
@@ -409,7 +427,7 @@ function addNeighborhoodDetails(group,origin,roads,mobile){
   const geom=new THREE.CylinderGeometry(.09,.11,.8,7);
   const mesh=new THREE.InstancedMesh(geom,metal,bollards.length),dummy=new THREE.Object3D();
   bollards.forEach(([x,y],i)=>{
-   dummy.position.set(x,y,.40);dummy.scale.set(1,1,1);dummy.updateMatrix();
+   dummy.position.set(x,y,.40+terrainAt(x,y));dummy.scale.set(1,1,1);dummy.updateMatrix();
    mesh.setMatrixAt(i,dummy.matrix);
   });group.add(mesh);
  }
@@ -540,6 +558,7 @@ export class CityScene3D{
   this.camStyle=((style%3)+3)%3;
   return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
  }
+ getGroundHeight(point){const xy=toXY(this.origin,point);return terrainAt(xy[0],xy[1])}
  setOrigin(point){this.origin=[...point];this.inited=false;this.safeFollow=null;this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
 
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
@@ -559,6 +578,7 @@ export class CityScene3D{
   this.scene.remove(this.worldGroup);
   disposeCityGroup(this.worldGroup);
   this.worldGroup=new THREE.Group();this.scene.add(this.worldGroup);
+  terrainAt=terrainModel(city.area,this.origin);
   makeGround(this.worldGroup);
   this.visibleWater=addWater(this.worldGroup,this.origin,city.water,this.mobile);
   addOrtakoyLandmark(this.worldGroup,this.origin,city.area);
@@ -577,13 +597,13 @@ export class CityScene3D{
    const sign=makeSign((AREAS[city.area]?.name||"İSTANBUL").split(" · ")[0].toLocaleUpperCase("tr-TR"));
    const r=ro.find(x=>distance(x.a,this.origin)<60);
    if(r){
-    const p=toXY(this.origin,r.a);sign.position.set(p[0]+6,p[1]+8,0);this.worldGroup.add(sign);
+    const p=toXY(this.origin,r.a);sign.position.set(p[0]+6,p[1]+8,terrainAt(p[0]+6,p[1]+8));this.worldGroup.add(sign);
    }
   }
  }
  position(mesh,p,z=.16){
   if(!p){mesh.visible=false;return}
-  mesh.visible=true;const [x,y]=toXY(this.origin,p);mesh.position.set(x,y,z);
+  mesh.visible=true;const [x,y]=toXY(this.origin,p);mesh.position.set(x,y,z+terrainAt(x,y));
  }
  update(state,dt,now){
   if(!state?.car)return;
