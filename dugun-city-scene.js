@@ -784,7 +784,7 @@ export class CityScene3D{
 
   const acceleration=clamp((car.speed-this.lastDrivingSpeed)/Math.max(.008,dt),-19,19);
   this.lastDrivingSpeed=car.speed;
-  const desiredPitch=clamp(-acceleration*.010,-.10,.095);
+  const desiredPitch=clamp(-acceleration*.010+(car.grade||0)*.38,-.11,.11);
   const desiredRoll=clamp(-(car.yawRate||0)*Math.abs(car.speed)*.012-(car.slip||0)*.06,-.13,.13);
   this.bodyPitch+=(desiredPitch-this.bodyPitch)*(1-Math.exp(-dt*6.2));
   this.bodyRoll+=(desiredRoll-this.bodyRoll)*(1-Math.exp(-dt*5.3));
