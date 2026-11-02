@@ -80,6 +80,7 @@ export function stepVehicle(state,controls,environment,dt){
    if(Math.abs(car.steering)>steerMax*.66)cruise=Math.min(cruise,8.4);
    if(car.offroad)cruise=Math.min(cruise,7.0);
    if(controls.gas)cruise=Math.min(spec.top||19.5,19.5);
+   cruise=clamp(cruise-car.grade*18,4.6,spec.top||27);
    car.speed=approach(car.speed,cruise,(car.speed>cruise?11.4:8.5)*dt);
   }else if(controls.gas){
    const t=Math.max(0,1-Math.max(0,car.speed)/(spec.top||19.5));
