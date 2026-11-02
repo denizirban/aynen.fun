@@ -618,18 +618,28 @@ function addOrtakoyLandmark(group,origin,area){
   const tip=new THREE.Mesh(new THREE.ConeGeometry(1.0,3.2,12),dome);
   tip.rotation.x=Math.PI/2;tip.position.set(dx,0,27.0);g.add(tip);
  }
- // Two small stylized ferries on the Bosphorus, well offshore east of the mosque.
- const hull=new THREE.MeshStandardMaterial({color:0xdcebf0,roughness:.58});
- const cabin=new THREE.MeshStandardMaterial({color:0xf7ead2,roughness:.71});
- const windows=new THREE.MeshStandardMaterial({color:0x306e83,roughness:.30});
- for(const [index,where] of [[0,[29.0275,41.0481]],[1,[29.0285,41.0462]]]){
+ // Distinctive original Istanbul double-deck ferries; no borrowed game assets.
+ const hull=new THREE.MeshStandardMaterial({color:0x365b6c,roughness:.55,metalness:.12});
+ const cabin=new THREE.MeshStandardMaterial({color:0xf0e7d1,roughness:.71});
+ const windows=new THREE.MeshStandardMaterial({color:0x31657a,roughness:.27,metalness:.18});
+ const orange=new THREE.MeshStandardMaterial({color:0xf5a235,roughness:.64});
+ const deck=new THREE.MeshStandardMaterial({color:0xd5d3c5,roughness:.77});
+ for(const [index,where] of [[0,[29.0299,41.04845]],[1,[29.0304,41.04465]]]){
   const [bx,by]=toXY(origin,where),ferry=new THREE.Group();
-  ferry.position.set(bx,by,.50);ferry.rotation.z=index?.36:-.27;
-  ferry.add(meshBox(16.5,4.9,1.4,hull,0,0,.7));
-  ferry.add(meshBox(8.2,3.8,2.4,cabin,-1.5,0,2.3));
-  ferry.add(meshBox(5.2,3.9,.8,windows,-1.4,0,3.7));
-  ferry.add(meshBox(15,.35,.25,windows,0,2.0,1.4));
-  ferry.add(meshBox(15,.35,.25,windows,0,-2.0,1.4));
+  if(Math.hypot(bx,by)>650)continue;
+  ferry.position.set(bx,by,.47);ferry.rotation.z=index?.15:-.34;
+  ferry.add(meshBox(27,7.2,2.3,hull,0,0,1.0));
+  ferry.add(meshBox(22,6.65,.40,deck,0,0,2.3));
+  ferry.add(meshBox(20,6.1,3.2,cabin,-1.4,0,4.1));
+  ferry.add(meshBox(16,5.7,2.9,cabin,-1.5,0,7.0));
+  ferry.add(meshBox(14.3,5.9,.45,deck,-1.5,0,8.55));
+  for(let w=-7;w<=7;w+=2.3){
+   ferry.add(meshBox(1.25,.15,1.4,windows,w,3.12,4.6));
+   ferry.add(meshBox(1.25,.15,1.4,windows,w,-3.12,4.6));
+  }
+  const funnel=new THREE.Mesh(new THREE.CylinderGeometry(.8,.98,3.2,10),orange);
+  funnel.rotation.x=Math.PI/2;funnel.position.set(-5,0,10.0);ferry.add(funnel);
+  ferry.add(meshBox(1.4,1.4,.45,windows,-5,0,11.7));
   group.add(ferry);
  }
  const sign=createWorldLabel("ORTAKÖY CAMİİ","#2a626e","#ffffff");
