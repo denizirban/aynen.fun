@@ -219,20 +219,23 @@ function startGame(unlimited){
  if(!ready||!city?.roads?.length){
   pending=unlimited?"free":"timed";
   $("loadstate").textContent="İstanbul sokakları yükleniyor… Harita bağlantısını kontrol et.";
-  if(city){
+  if(city&&!city.seekingLocalStreets){
    city.seekingLocalStreets=true;
-   city?.map?.jumpTo?.({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
-   city.refresh(SAFE_START_ANCHOR,true);
+   city.map?.jumpTo?.({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
   }
-  return
+  // DO NOT call refresh synchronously: its onRoadsReady microtask could
+  // recursively call startGame forever when no local OSM tiles are available.
+  return;
  }
  const spawn=chooseSafeRoadPosition(SAFE_START_ANCHOR,true);
  if(!spawn){
   pending=unlimited?"free":"timed";
   $("loadstate").textContent="Ortaköy'deki sürülebilir sokaklar yükleniyor…";
-  city.seekingLocalStreets=true;
-  city.map?.jumpTo?.({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
-  city.refresh(SAFE_START_ANCHOR,true);
+  if(!city.seekingLocalStreets){
+   city.seekingLocalStreets=true;
+   city.map?.jumpTo?.({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
+  }
+  // Await actual map 'sourcedata'/'idle' change; never recursively refresh.
   return;
  }
  pending=false;city.seekingLocalStreets=false;free=unlimited;
@@ -647,13 +650,15 @@ function readyMap(){
  $("loadstate").textContent="3D şehir hazır. Gerçek sokaklar yükleniyor…";
  city.onRoadsReady=()=>{
   const info=$("loadstate");if(info)info.textContent="Sokaklar hazır · Sürmeye başlayabilirsin.";
-  if(pending&&city.roads.length){
+  if(pending&&city.roads.length&&chooseSafeRoadPosition(SAFE_START_ANCHOR,true)){
    const mode=pending;
    pending=false;startGame(mode==="free");
   }
  };
  if(area!==city.area)city.jumpToArea(area);
- if(pending&&city.roads.length){const mode=pending;pending=false;startGame(mode==="free")}
+ if(pending&&city.roads.length&&chooseSafeRoadPosition(SAFE_START_ANCHOR,true)){
+  const mode=pending;pending=false;startGame(mode==="free");
+ }
 }
 function errorMap(message){$("loadstate").textContent="Harita hatası: "+message}
 city=new IstanbulMap(area,readyMap,errorMap);
