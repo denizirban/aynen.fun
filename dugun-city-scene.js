@@ -933,6 +933,10 @@ export class CityScene3D{
   this.actorGroup.add(this.guest,this.dropoffGate);this.guest.visible=false;this.dropoffGate.visible=false;
   this.camStyle=0;this.camPos=new THREE.Vector3();this.camLook=new THREE.Vector3();this.inited=false;
   this.bodyPitch=0;this.bodyRoll=0;this.lastDrivingSpeed=0;
+  // The render pose is separate from the physics pose: frame hitches / OSM
+  // elevation jumps must not be projected straight onto the screen.
+  this.visualPose=null;this.visualHeading=null;this.visualGround=null;
+  this.occlusionRatio=1;this.safeFollowValue=null;this.bridgeVisualState=false;
   this.lastBuilt=0;this.builtAt=null;this.builtRoads=null;this.builtBuildings=null;
   this.lastFPS=60;this.lastWarn=0;this.routeCache=null;
   window.addEventListener("resize",()=>this.resize());
@@ -965,7 +969,12 @@ export class CityScene3D{
   return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
  }
  getGroundHeight(point){const xy=toXY(this.origin,point);return terrainAt(xy[0],xy[1])+bridgeLiftAt(xy[0],xy[1],this.lastPlayerOnBridge)}
- setOrigin(point){this.origin=[...point];this.inited=false;this.safeFollow=null;this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
+ setOrigin(point){
+  this.origin=[...point];this.inited=false;this.safeFollow=null;
+  this.visualPose=null;this.visualHeading=null;this.visualGround=null;
+  this.occlusionRatio=1;this.safeFollowValue=null;
+  this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;
+}
 
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
  rebuild(force=false){
@@ -991,6 +1000,9 @@ export class CityScene3D{
     this.camPos.x+=shift[0];this.camPos.y+=shift[1];
     this.camLook.x+=shift[0];this.camLook.y+=shift[1];
    }
+   // The car's smoothed render pose must also be rebased. Without this,
+   // a newly-streamed district makes the displayed car jump hundreds of metres.
+   if(this.visualPose){this.visualPose.x+=shift[0];this.visualPose.y+=shift[1]}
    for(const skid of this.skids){this.actorGroup.remove(skid);skid.geometry.dispose();skid.material.dispose()}
    this.skids=[];
   }
@@ -1050,7 +1062,33 @@ export class CityScene3D{
   if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>232))this.rebuild();
   const car=state.car;
   this.lastPlayerOnBridge=!!car.currentRoadBridge;
-  this.position(this.player,car.pos,.18,this.lastPlayerOnBridge);this.player.rotation.z=-car.heading;
+  const physXY=toXY(this.origin,car.pos);
+  const rawGround=terrainAt(physXY[0],physXY[1])+bridgeLiftAt(physXY[0],physXY[1],this.lastPlayerOnBridge);
+  const desiredZ=.18+rawGround;
+  if(!this.visualPose||!Number.isFinite(this.visualPose.x)||!Number.isFinite(this.visualPose.y)){
+   this.visualPose=new THREE.Vector3(physXY[0],physXY[1],desiredZ);
+   this.visualGround=rawGround;this.visualHeading=car.heading;
+  }else{
+   const dx=physXY[0]-this.visualPose.x,dy=physXY[1]-this.visualPose.y;
+   const error=Math.hypot(dx,dy);
+   // Snap only for a genuine tow/teleport, not for normal road movement.
+   if(error>23){
+    this.visualPose.set(physXY[0],physXY[1],desiredZ);
+    this.visualGround=rawGround;this.visualHeading=car.heading;
+    this.inited=false;
+   }else{
+    const t=1-Math.exp(-Math.min(.075,dt)*15.5);
+    this.visualPose.x+=dx*t;this.visualPose.y+=dy*t;
+    // Smooth uneven interpolated street height and spurious bridge tags;
+    // the bridge slope itself is still reflected in the displayed movement.
+    this.visualGround+=clamp(rawGround-this.visualGround,-4.8*dt,4.8*dt);
+    this.visualPose.z=this.visualGround+.18;
+    const delta=Math.atan2(Math.sin(car.heading-this.visualHeading),Math.cos(car.heading-this.visualHeading));
+    this.visualHeading+=delta*(1-Math.exp(-Math.min(.075,dt)*14.0));
+   }
+  }
+  this.player.position.copy(this.visualPose);
+  this.player.rotation.z=-this.visualHeading;
   if(!this.previousTrailPoint||distance(this.previousTrailPoint,car.pos)>.75){
    this.positionTrail.push({pos:[...car.pos],heading:car.heading});
    this.previousTrailPoint=[...car.pos];
@@ -1084,7 +1122,7 @@ export class CityScene3D{
   this.bodyRoll+=(desiredRoll-this.bodyRoll)*(1-Math.exp(-dt*5.3));
   this.player.rotation.x=this.bodyPitch;
   this.player.rotation.y=this.bodyRoll;
-  this.player.rotation.z=-car.heading+(car.slip||0)*.045;
+  this.player.rotation.z=-this.visualHeading+(car.slip||0)*.035;
   this.player.position.z+=(car.suspension||0);
   // Handbrake tracks are part of the actual asphalt scene, not hidden GIS overlays.
   if(state.controls?.handbrake&&Math.abs(car.speed)>7&&this.lastCarPos){
@@ -1183,7 +1221,9 @@ export class CityScene3D{
    }
   }else{this.guest.visible=false;this.dropoffGate.visible=false;this.marker.visible=false;}
   // Proper physical 3D chase camera behind the car, not a zoomed overhead GIS camera.
-  const [cx,cy]=toXY(this.origin,car.pos),fwdX=Math.sin(car.heading),fwdY=Math.cos(car.heading);
+  // The chase camera follows the same filtered car pose as the renderer.
+  const cx=this.visualPose.x,cy=this.visualPose.y;
+  const fwdX=Math.sin(this.visualHeading),fwdY=Math.cos(this.visualHeading);
   if(this.sunlight&&!this.mobile){
    this.sunlight.position.set(cx-120,cy+100,this.sunHeight||180);
    this.sunlight.target.position.set(cx,cy,0);
@@ -1197,20 +1237,28 @@ export class CityScene3D{
   const horizontal=hood?-1.7:(wide?clamp(11.7+speed*.09,11.7,14.3):clamp(7.7+speed*.065,7.7,9.6));
   const height=hood?1.65:(wide?5.15:3.68)+speed*.014;
   const lateral=(car.slip||0)*.38+(car.steering||0)*Math.min(1,speed/16)*.45;
-  let safeFollow=horizontal;
-  if(!hood&&this.city.insideBuilding&&now-(this.camSafetyTime||0)>95){
+  // Sample occasional occlusion tests, but filter the *distance* continuously.
+  // Previously the camera snapped at each 95ms test between multiple lengths.
+  if(!hood&&this.city.insideBuilding&&now-(this.camSafetyTime||0)>135){
    this.camSafetyTime=now;
-   // Cast a short line from the car to the eye. Pull camera forward before walls block the player.
-   for(let t=.28;t<=1.001;t+=.12){
+   let ratio=1;
+   for(let t=.30;t<=1.001;t+=.14){
     const x=cx-fwdX*horizontal*t+fwdY*lateral;
     const y=cy-fwdY*horizontal*t-fwdX*lateral;
     const probe=[this.origin[0]+x/(111320*Math.cos(this.origin[1]*rad)),this.origin[1]+y/111320];
-    if(this.city.insideBuilding(probe)){safeFollow=Math.max(3.8,horizontal*(t-.19));break}
+    if(this.city.insideBuilding(probe)){ratio=Math.max(.47,t-.17);break}
    }
-   this.safeFollow=safeFollow;
-  }else if(!hood)safeFollow=this.safeFollow??horizontal;
-  const ground=terrainAt(cx,cy)+bridgeLiftAt(cx,cy,this.lastPlayerOnBridge);
-  const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,ground+height+(safeFollow<horizontal?1.3:0));
+   this.occlusionRatio=ratio;
+  }
+  const wantedFollow=hood?horizontal:Math.max(3.6,horizontal*(this.occlusionRatio||1));
+  if(this.safeFollowValue==null)this.safeFollowValue=wantedFollow;
+  this.safeFollowValue+=(wantedFollow-this.safeFollowValue)*
+   (1-Math.exp(-Math.min(dt,.075)*(wantedFollow<this.safeFollowValue?7.4:2.9)));
+  const safeFollow=this.safeFollowValue;
+  // Camera altitude is filtered separately from instantaneous road/bridge height.
+  const ground=this.visualGround;
+  const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,
+   ground+height+(safeFollow<horizontal-.8?1.1:0));
   const lookDistance=hood?22:wide?20:15.5;
   const turnPreview=clamp((car.yawRate||0)*1.65,-.40,.40);
   const target=new THREE.Vector3(cx+fwdX*lookDistance+fwdY*turnPreview*7,
@@ -1226,10 +1274,8 @@ export class CityScene3D{
   }
   const softness=1-Math.exp(-dt*8.0),lookSoft=1-Math.exp(-dt*6.5);
   this.camPos.lerp(eye,softness);this.camLook.lerp(target,lookSoft);
-  if(!hood&&this.city.insideBuilding){
-   const p=[this.origin[0]+this.camPos.x/(111320*Math.cos(this.origin[1]*rad)),this.origin[1]+this.camPos.y/111320];
-   if(this.city.insideBuilding(p))this.camPos.lerp(eye,Math.min(1,dt*13));
-  }
+  // No second hard camera collision jump: the occlusion probe above gently
+  // shortens the desired follow distance, without fighting the camera spring.
   this.camera.position.copy(this.camPos);this.camera.lookAt(this.camLook);
   this.sky.position.copy(this.camera.position);
   // Guest signs billboard to player only after camera aim settles.

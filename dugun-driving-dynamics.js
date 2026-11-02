@@ -74,6 +74,13 @@ export function stepVehicle(state,controls,environment,dt){
   }
  }
  targetSteer=clamp(targetSteer,-steerMax,steerMax);
+ // Keep player-directed steering instant enough for arcade play, but damp
+ // road geometry switching around intersections in hands-free easy mode.
+ if(automatic&&Math.abs(input)<.04){
+  car.assistSteer=Number.isFinite(car.assistSteer)?car.assistSteer:0;
+  car.assistSteer+=(targetSteer-car.assistSteer)*(1-Math.exp(-3.4*dt));
+  targetSteer=car.assistSteer;
+ }else car.assistSteer=0;
  // Steering responds quickly without a sudden heading jump.
  const response=automatic?8.1:7.5;
  car.steering+=(targetSteer-car.steering)*(1-Math.exp(-response*dt));
