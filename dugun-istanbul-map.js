@@ -165,7 +165,7 @@ export class IstanbulMap{
   const now=performance.now();
   if(!force&&now-this.lastRefresh<3500)return;
   // Avoid regenerating thousands of static OSM meshes every few seconds.
-  if(!force&&this.roads.length>=65&&this.lastGeometryPos&&distance(player,this.lastGeometryPos)<95&&now-(this.lastDataAt||0)<15500)return;
+  if(!force&&this.roads.length>=65&&this.lastGeometryPos&&distance(player,this.lastGeometryPos)<172&&now-(this.lastDataAt||0)<22000)return;
   this.lastRefresh=now;
   let features;
   try{features=this.map.querySourceFeatures(this.vector,{sourceLayer:"transportation"})}catch(e){return}
