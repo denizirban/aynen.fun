@@ -81,7 +81,7 @@ export class Vehicle3D{
   this.car=makeCar("sahin");this.rivalCar=makeCar("sahin",null,true);
   this.pickup=beacon(0xffdb65);this.dropoff=beacon(0x94efb2);
   this.scene.add(this.car,this.rivalCar,this.pickup,this.dropoff);
-  for(let i=0;i<10;i++){
+  for(let i=0;i<(window.innerWidth<700?5:10);i++){
    const m=makeCar(i%3===0?"doblo":"sahin",[0xc4c7c0,0xc09985,0xbac8b0,0x85aebc][i%4]);
    this.npcModels.push(m);this.scene.add(m);
   }
@@ -126,7 +126,7 @@ export class Vehicle3D{
  }
  render(context,matrix){
   if(!this.scene||!this.mercator||!this.renderer)return;
-  const m=matrix?.length===16?matrix:matrix?.defaultProjectionData?.mainMatrix;
+  const m=matrix?.length===16?matrix:(matrix?.defaultProjectionData?.mainMatrix||context?.defaultProjectionData?.mainMatrix);
   if(!m)return;
   const tr=new THREE.Matrix4().makeTranslation(this.mercator.x,this.mercator.y,this.mercator.z);
   const scale=new THREE.Matrix4().makeScale(this.scale,-this.scale,this.scale);
