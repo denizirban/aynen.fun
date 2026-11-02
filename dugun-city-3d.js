@@ -183,7 +183,7 @@ function recoverCar(){
  const fee=Math.min(150,earnings);
  earnings-=fee;
  if(!free)timer=Math.max(10,timer-(fee<150?8:2));
- car.pos=[...safe.pos];car.heading=safe.heading;car.currentRoadBridge=false;
+ car.pos=[...safe.pos];car.heading=safe.heading;car.currentRoadBridge=false;car.bridgeCandidateTime=0;
  car.steering=0;car.speed=0;car.yawRate=0;car.slip=0;car.velocityLateral=0;car.stuckTime=0;car.collisionGrace=3.0;
  car.health=Math.min(100,car.health+28);
  rescueCooldown=28;
@@ -264,7 +264,7 @@ function startGame(unlimited){
  try{personalBest=Number(localStorage.getItem("dugun-3d-best-v3"))||0}catch(e){personalBest=0}
  car={pos:[...spawn.pos],speed:0,heading:spawn.heading,steering:0,yawRate:0,slip:0,
   velocityLateral:0,suspension:0,suspensionVelocity:0,engineRPM:850,health:100,
-  offroad:false,currentRoadBridge:false,currentRoadName:spawn.road.name||"",stuckTime:0,collisionGrace:3.0};
+  offroad:false,currentRoadBridge:false,bridgeCandidateTime:0,currentRoadName:spawn.road.name||"",stuckTime:0,collisionGrace:3.0};
  city.refresh(car.pos,true);
  const near=city.nearest(car.pos);
  if(near&&isLocalSpawnRoad(near.road)&&near.dist<5){
@@ -385,7 +385,15 @@ function drive(dt){
  const near=city.nearest(car.pos)||nearBefore||city.nearestAny?.(car.pos);
  car.currentRoadName=near?.road?.name||"";
  car.currentRoadClass=near?.road?.typ||"";
- car.currentRoadBridge=!!(near?.road?.bridge&&/^(motorway|motorway_link|trunk|primary)/.test(near.road.typ));
+ const candidateBridge=!!(near?.road?.bridge&&/^(motorway|motorway_link|trunk|primary)/.test(near.road.typ));
+ // Roads can overlap or change OSM segment identity under the car.
+ // A single frame must never switch the entire car/camera by ~40m in Z.
+ car.bridgeCandidateTime=candidateBridge===(car.currentRoadBridge||false)?
+   0:(car.bridgeCandidateTime||0)+dt;
+ if(car.bridgeCandidateTime>.35&&near?.dist<9){
+  car.currentRoadBridge=candidateBridge;
+  car.bridgeCandidateTime=0;
+ }
  car.collisionGrace=Math.max(0,(car.collisionGrace||0)-dt);
  if(keys.handbrake&&Math.abs(car.speed)>8&&Math.abs(car.steering)>.18&&frame%6===0)city.skid(previous,car.pos);
  if(car.collisionGrace<=0&&city.insideBuilding?.(car.pos)){
