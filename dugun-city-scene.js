@@ -1,5 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
-import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v10";
+import {AREAS,rad,distance} from "./dugun-istanbul-map.js?v=20261102-v11";
 import {makeCar} from "./dugun-3d-vehicles.js?v=20261102-v10";
 
 // The road graph and building outlines come from the real OSM vector tiles.
@@ -72,14 +72,14 @@ const leavesLightMat=new THREE.MeshStandardMaterial({color:0x5a9954,roughness:1,
 function meshBox(w,d,h,mat,x,y,z){
  const m=new THREE.Mesh(new THREE.BoxGeometry(w,d,h),mat);m.position.set(x,y,z);return m;
 }
-function emitQuad(positions,indices,p,q,width,z){
+function emitQuad(positions,indices,p,q,width,z,onBridge=false){
  const dx=q[0]-p[0],dy=q[1]-p[1],len=Math.hypot(dx,dy);
  if(len<.1)return;
  const nx=-dy/len*width*.5,ny=dx/len*width*.5,i=positions.length/3;
- positions.push(p[0]-nx,p[1]-ny,z+terrainAt(p[0]-nx,p[1]-ny)+bridgeLiftAt(p[0]-nx,p[1]-ny),
- q[0]-nx,q[1]-ny,z+terrainAt(q[0]-nx,q[1]-ny)+bridgeLiftAt(q[0]-nx,q[1]-ny),
- q[0]+nx,q[1]+ny,z+terrainAt(q[0]+nx,q[1]+ny)+bridgeLiftAt(q[0]+nx,q[1]+ny),
- p[0]+nx,p[1]+ny,z+terrainAt(p[0]+nx,p[1]+ny)+bridgeLiftAt(p[0]+nx,p[1]+ny));
+ positions.push(p[0]-nx,p[1]-ny,z+terrainAt(p[0]-nx,p[1]-ny)+bridgeLiftAt(p[0]-nx,p[1]-ny,onBridge),
+ q[0]-nx,q[1]-ny,z+terrainAt(q[0]-nx,q[1]-ny)+bridgeLiftAt(q[0]-nx,q[1]-ny,onBridge),
+ q[0]+nx,q[1]+ny,z+terrainAt(q[0]+nx,q[1]+ny)+bridgeLiftAt(q[0]+nx,q[1]+ny,onBridge),
+ p[0]+nx,p[1]+ny,z+terrainAt(p[0]+nx,p[1]+ny)+bridgeLiftAt(p[0]+nx,p[1]+ny,onBridge));
  indices.push(i,i+1,i+2,i,i+2,i+3);
 }
 function batchStrips(list,mat,container){
@@ -190,7 +190,7 @@ function createRoads(group,origin,roads,mobile){
   return Math.min(distance(center,origin),distance(r.a,origin),distance(r.b,origin))<(mobile?425:590);
  }).sort((a,b)=>Math.min(distance(a.a,origin),distance(a.b,origin))-Math.min(distance(b.a,origin),distance(b.b,origin))).slice(0,max);
  // Draw actual filled connected road intersections instead of disconnected ribbons.
- const junctions=roadJunctions(near,origin,mobile?90:180);
+ const junctions=roadJunctions(near.filter(r=>!r.bridge),origin,mobile?90:180);
  const squares=new Map(),index=(p)=>{const xy=toXY(origin,p);return Math.round(xy[0]/1.7)+":"+Math.round(xy[1]/1.7)};
  for(const j of junctions){
   squares.set(Math.round(j.p[0]/1.7)+":"+Math.round(j.p[1]/1.7),j);
@@ -200,25 +200,25 @@ function createRoads(group,origin,roads,mobile){
   const r=near[i],a=toXY(origin,r.a),b=toXY(origin,r.b);
   const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
   if(len<1.0)continue;
-  const ux=dx/len,uy=dy/len,nx=-uy,ny=ux,width=roadWidth(r);
+  const ux=dx/len,uy=dy/len,nx=-uy,ny=ux,width=roadWidth(r),onBridge=!!r.bridge&&/^(motorway|motorway_link|trunk|primary)/.test(r.typ);
   if(!/^(motorway|motorway_link|trunk)/.test(r.typ))emitQuad(sidewalk.positions,sidewalk.indices,a,b,width+4.7,.105);
-  emitQuad(asphalt.positions,asphalt.indices,a,b,width,.147);
+  emitQuad(asphalt.positions,asphalt.indices,a,b,width,.147,onBridge);
   for(const sign of [-1,1]){
    emitQuad(curbs.positions,curbs.indices,
      [a[0]+nx*sign*(width*.5+.10),a[1]+ny*sign*(width*.5+.10)],
-     [b[0]+nx*sign*(width*.5+.10),b[1]+ny*sign*(width*.5+.10)],.24,.179);
+     [b[0]+nx*sign*(width*.5+.10),b[1]+ny*sign*(width*.5+.10)],.24,.179,onBridge);
   }
   // Asphalt edge shoulder line for medium roads and larger.
   if(width>=9.5){
    for(const side of [-1,1])emitQuad(sideLine.positions,sideLine.indices,
     [a[0]+nx*side*(width*.5-.56),a[1]+ny*side*(width*.5-.56)],
-    [b[0]+nx*side*(width*.5-.56),b[1]+ny*side*(width*.5-.56)],.10,.211);
+    [b[0]+nx*side*(width*.5-.56),b[1]+ny*side*(width*.5-.56)],.10,.211,onBridge);
   }
   // White broken lane lines in the Turkish driving direction, never in short alleys.
   if(width>=9.4&&len>11){
    for(let d=5;d<len-2;d+=12){
     const l=Math.min(5.4,len-d-1),p=[a[0]+ux*d,a[1]+uy*d],q=[p[0]+ux*l,p[1]+uy*l];
-    emitQuad(markings.positions,markings.indices,p,q,.13,.211);
+    emitQuad(markings.positions,markings.indices,p,q,.13,.211,onBridge);
    }
   }
   // Zebra crossings and stop bars are placed only at mapped 3+ way junctions.
@@ -390,7 +390,8 @@ function bridgeSection(){
  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
  return bridgeCache={a,b,dx,dy,len,ux:dx/len,uy:dy/len};
 }
-function bridgeLiftAt(x,y){
+function bridgeLiftAt(x,y,onBridge=false){
+ if(!onBridge)return 0;
  const b=bridgeSection();if(!b)return 0;
  const px=x-b.a[0],py=y-b.a[1];
  const along=(px*b.ux+py*b.uy)/b.len;
@@ -842,7 +843,7 @@ export class CityScene3D{
   this.camStyle=((style%3)+3)%3;
   return ["TAKİP","GENİŞ","KAPUT"][this.camStyle];
  }
- getGroundHeight(point){const xy=toXY(this.origin,point);return terrainAt(xy[0],xy[1])+bridgeLiftAt(xy[0],xy[1])}
+ getGroundHeight(point){const xy=toXY(this.origin,point);return terrainAt(xy[0],xy[1])+bridgeLiftAt(xy[0],xy[1],this.lastPlayerOnBridge)}
  setOrigin(point){this.origin=[...point];this.inited=false;this.safeFollow=null;this.rebuild(true);this.lastCarPos=null;this.positionTrail=[];this.previousTrailPoint=null;}
 
  setCar(name){this.actorGroup.remove(this.player);this.player=makeCar(name);this.actorGroup.add(this.player);if(!this.mobile)this.player.traverse(obj=>{if(obj.isMesh)obj.castShadow=true})}
@@ -904,9 +905,9 @@ export class CityScene3D{
    }
   }
  }
- position(mesh,p,z=.16){
+ position(mesh,p,z=.16,onBridge=false){
   if(!p){mesh.visible=false;return}
-  mesh.visible=true;const [x,y]=toXY(this.origin,p);mesh.position.set(x,y,z+terrainAt(x,y)+bridgeLiftAt(x,y));
+  mesh.visible=true;const [x,y]=toXY(this.origin,p);mesh.position.set(x,y,z+terrainAt(x,y)+bridgeLiftAt(x,y,onBridge));
  }
  update(state,dt,now){
   if(!state?.car)return;
@@ -925,7 +926,8 @@ export class CityScene3D{
   this.focus=state.car.pos;
   if(this.city.roads?.length>0&&(!this.builtRoads?.length||distance(this.builtAt,state.car.pos)>130))this.rebuild();
   const car=state.car;
-  this.position(this.player,car.pos,.18);this.player.rotation.z=-car.heading;
+  this.lastPlayerOnBridge=!!car.currentRoadBridge;
+  this.position(this.player,car.pos,.18,this.lastPlayerOnBridge);this.player.rotation.z=-car.heading;
   if(!this.previousTrailPoint||distance(this.previousTrailPoint,car.pos)>.75){
    this.positionTrail.push({pos:[...car.pos],heading:car.heading});
    this.previousTrailPoint=[...car.pos];
@@ -984,12 +986,13 @@ export class CityScene3D{
    }
   }
   if(state.rival?.pos){
-   this.position(this.rival,state.rival.pos,.18);this.rival.rotation.z=-state.rival.heading;
-   this.position(this.rivalBeacon,state.rival.pos,5.2);this.rivalBeacon.quaternion.copy(this.camera.quaternion);
-   this.position(this.rivalPole,state.rival.pos,3.4);
+   const rivalRoad=this.city.nearest(state.rival.pos)?.road;
+   this.position(this.rival,state.rival.pos,.18,!!rivalRoad?.bridge);this.rival.rotation.z=-state.rival.heading;
+   this.position(this.rivalBeacon,state.rival.pos,5.2,!!rivalRoad?.bridge);this.rivalBeacon.quaternion.copy(this.camera.quaternion);
+   this.position(this.rivalPole,state.rival.pos,3.4,!!rivalRoad?.bridge);
   }else{this.rival.visible=false;this.rivalBeacon.visible=false;this.rivalPole.visible=false;}
   this.npcs.forEach((m,i)=>{
-   const npc=state.traffic?.[i];this.position(m,npc?.pos,.18);
+   const npc=state.traffic?.[i];this.position(m,npc?.pos,.18,!!npc?.road?.bridge);
    if(npc?.pos)m.rotation.z=-(npc.visualHeading??npc.heading);
   });
   const path=state.navValid?(state.route||[]):[],sampled=[];
@@ -1083,7 +1086,7 @@ export class CityScene3D{
    }
    this.safeFollow=safeFollow;
   }else if(!hood)safeFollow=this.safeFollow??horizontal;
-  const ground=terrainAt(cx,cy)+bridgeLiftAt(cx,cy);
+  const ground=terrainAt(cx,cy)+bridgeLiftAt(cx,cy,this.lastPlayerOnBridge);
   const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,ground+height+(safeFollow<horizontal?1.3:0));
   const lookDistance=hood?22:wide?20:15.5;
   const turnPreview=clamp((car.yawRate||0)*1.65,-.40,.40);
