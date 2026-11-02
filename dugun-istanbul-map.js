@@ -20,6 +20,67 @@ function nearestOnSegment(p,a,b){
  return {dist:Math.hypot(px-t*vx,py-t*vy),p:[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]};
 }
 function key(p){return p[0].toFixed(5)+":"+p[1].toFixed(5)}
+
+// A vector tile can contain two visible crossing streets without a shared vertex.
+// Snap *actual geometric crossings* into the driving graph; keep bridges separated.
+function resolveJunctions(segments,center){
+ const scaleX=111320*Math.cos(center[1]*rad),scaleY=111320,cellSize=65;
+ const XY=p=>[(p[0]-center[0])*scaleX,(p[1]-center[1])*scaleY];
+ const points=segments.map(r=>[XY(r.a),XY(r.b)]);
+ const grid=new Map(),cuts=segments.map(()=>[0,1]);
+ for(let i=0;i<segments.length;i++){
+  const [a,b]=points[i];
+  if(Math.min(Math.hypot(...a),Math.hypot(...b))>680)continue;
+  const left=Math.floor((Math.min(a[0],b[0])-1)/cellSize),right=Math.floor((Math.max(a[0],b[0])+1)/cellSize);
+  const bottom=Math.floor((Math.min(a[1],b[1])-1)/cellSize),top=Math.floor((Math.max(a[1],b[1])+1)/cellSize);
+  for(let x=left;x<=right;x++)for(let y=bottom;y<=top;y++){
+   const k=x+":"+y;
+   if(!grid.has(k))grid.set(k,[]);
+   grid.get(k).push(i);
+  }
+ }
+ const checked=new Set();let pairCount=0,crossCount=0;
+ for(const group of grid.values()){
+  for(let i=0;i<group.length;i++){
+   const id=group[i],[a,b]=points[id],ab=[b[0]-a[0],b[1]-a[1]];
+   for(let j=i+1;j<group.length;j++){
+    const other=group[j];if(id===other)continue;
+    const p=id<other?id+","+other:other+","+id;
+    if(checked.has(p))continue;checked.add(p);
+    if(++pairCount>270000)break;
+    if(segments[id].bridge!==segments[other].bridge)continue;
+    if(segments[id].tunnel!==segments[other].tunnel)continue;
+    const [c,e]=points[other],ce=[e[0]-c[0],e[1]-c[1]],delta=[c[0]-a[0],c[1]-a[1]];
+    const den=ab[0]*ce[1]-ab[1]*ce[0];
+    if(Math.abs(den)<.005)continue;
+    const ta=(delta[0]*ce[1]-delta[1]*ce[0])/den;
+    const tb=(delta[0]*ab[1]-delta[1]*ab[0])/den;
+    if(ta<-.002||ta>1.002||tb<-.002||tb>1.002)continue;
+    // An end-point that is already a graph vertex does not require a split.
+    if(ta>.004&&ta<.996)cuts[id].push(ta);
+    if(tb>.004&&tb<.996)cuts[other].push(tb);
+    crossCount++;
+   }
+   if(pairCount>270000)break;
+  }
+  if(pairCount>270000)break;
+ }
+ const output=[];
+ for(let i=0;i<segments.length;i++){
+  const r=segments[i],values=cuts[i].sort((a,b)=>a-b);
+  for(let j=1;j<values.length;j++){
+   const a=values[j-1],b=values[j];
+   if(b-a<.01)continue;
+   const p=[r.a[0]+(r.b[0]-r.a[0])*a,r.a[1]+(r.b[1]-r.a[1])*a];
+   const q=[r.a[0]+(r.b[0]-r.a[0])*b,r.a[1]+(r.b[1]-r.a[1])*b];
+   const len=distance(p,q);if(len<.55)continue;
+   output.push({...r,a:p,b:q,len});
+   if(output.length>=10500)return output;
+  }
+ }
+ return output;
+}
+
 export class IstanbulMap{
  constructor(area,onReady,onError){
   this.area=area;this.roads=[];this.buildings=[];this.water=[];this.parks=[];this.nodes=new Map();this.edges=new Map();this.samples=[];this.lastRefresh=0;this.skids=[];this.vector=null;this.loaded=false;
@@ -102,7 +163,9 @@ export class IstanbulMap{
   // previously the visible renderer took the first 800, leaving the car on a giant blank green plane.
   roads.sort((x,y)=>Math.min(distance(player,x.a),distance(player,x.b))-Math.min(distance(player,y.a),distance(player,y.b)));
   
-  this.roads=roads;this.nodes=new Map();this.edges=new Map();this.samples=[];
+  const connectedRoads=resolveJunctions(roads,player);
+  connectedRoads.sort((x,y)=>Math.min(distance(player,x.a),distance(player,x.b))-Math.min(distance(player,y.a),distance(player,y.b)));
+  this.roads=connectedRoads;this.nodes=new Map();this.edges=new Map();this.samples=[];
   if(this.onRoadsReady)queueMicrotask(()=>this.onRoadsReady?.());
   try{
    const buildings=this.map.querySourceFeatures(this.vector,{sourceLayer:"building"})||[];
@@ -178,7 +241,7 @@ export class IstanbulMap{
    }
    if(water.length)this.water=water;
   }catch(e){console.warn("Water tiles not ready",e)}
-  for(const r of roads){
+  for(const r of connectedRoads){
    const a=key(r.a),b=key(r.b);
    this.nodes.set(a,r.a);this.nodes.set(b,r.b);
    if(!this.edges.has(a))this.edges.set(a,[]);
