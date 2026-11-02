@@ -123,29 +123,41 @@ function isLocalSpawnRoad(r){
 }
 function chooseSafeRoadPosition(reference,initial=false){
  if(!city?.roads?.length)return null;
- let best=null;
+ let best=null,fallback=null;
+ const limit=initial?1050:720;
  for(const r of city.roads){
   if(!isLocalSpawnRoad(r))continue;
   const length=r.len||distance(r.a,r.b);
-  if(length<11)continue;
-  for(const t of [.32,.52,.68]){
+  if(length<6.5)continue;
+  for(const t of [.24,.47,.72]){
    const pos=[r.a[0]+(r.b[0]-r.a[0])*t,r.a[1]+(r.b[1]-r.a[1])*t];
    const d=distance(reference,pos);
-   if(d>(initial?650:520)||city.insideBuilding?.(pos))continue;
+   if(d>limit)continue;
    const heading=angle(r.a,r.b);
-   const step=Math.min(5,length*.15);
-   const forwardOK=!city.insideBuilding?.(travel(pos,heading,step));
-   const backwardOK=!city.insideBuilding?.(travel(pos,heading+Math.PI,step));
-   if(!forwardOK&&!backwardOK)continue;
-   const preferredHeading=forwardOK?heading:(heading+Math.PI)%(2*Math.PI);
+   // Map data sometimes puts building polygons across the street centreline.
+   // Penalise those positions, but never deadlock the entire start menu.
+   let chosenHeading=heading,clearMeters=-1;
+   for(const candidate of [heading,(heading+Math.PI)%(Math.PI*2)]){
+    let clear=0;
+    for(const step of [4,9,16,23]){
+     if(city.insideBuilding?.(travel(pos,candidate,Math.min(step,length*.36))))break;
+     clear=step;
+    }
+    if(clear>clearMeters){clearMeters=clear;chosenHeading=candidate}
+   }
+   const inBuilding=!!city.insideBuilding?.(pos);
+   const onRoad=city.nearestAny?.(pos);
+   const centreline=onRoad?onRoad.dist:0;
    const score=d+(/^(residential|tertiary|secondary)/.test(r.typ||"")?-22:10)
-     +(length<24?18:0)+(initial?distance(pos,AREAS[area].center)*.12:0);
-   if(!best||score<best.score)best={pos,heading:preferredHeading,road:r,score};
+      +Math.max(0,35-length)*.48+Math.max(0,10-clearMeters)*5.5
+      +(inBuilding?90:0)+(centreline>4?40:0);
+   const candidate={pos,heading:chosenHeading,road:r,score,buildingOverlap:inBuilding};
+   if(!fallback||candidate.score<fallback.score)fallback=candidate;
+   if(!inBuilding&&clearMeters>=9&&(!best||score<best.score))best=candidate;
   }
  }
- return best;
+ return best||fallback;
 }
-
 function recoverCar(){
  if(!playing||paused||!car)return;
  if(rescueCooldown>0){toast("ÇEKİCİ "+Math.ceil(rescueCooldown)+" SANİYE SONRA",1.1);return}
@@ -207,17 +219,20 @@ function startGame(unlimited){
  if(!ready||!city?.roads?.length){
   pending=unlimited?"free":"timed";
   $("loadstate").textContent="İstanbul sokakları yükleniyor… Harita bağlantısını kontrol et.";
-  city?.refresh(AREAS[area].center,true);
+  if(city){
+   city.seekingLocalStreets=true;
+   city?.map?.jumpTo?.({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
+   city.refresh(SAFE_START_ANCHOR,true);
+  }
   return
  }
  const spawn=chooseSafeRoadPosition(SAFE_START_ANCHOR,true);
  if(!spawn){
   pending=unlimited?"free":"timed";
   $("loadstate").textContent="Ortaköy'deki sürülebilir sokaklar yükleniyor…";
-  if(!city.seekingLocalStreets){
-   city.seekingLocalStreets=true;
-   city.map?.jumpTo({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
-  }
+  city.seekingLocalStreets=true;
+  city.map?.jumpTo?.({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
+  city.refresh(SAFE_START_ANCHOR,true);
   return;
  }
  pending=false;city.seekingLocalStreets=false;free=unlimited;
