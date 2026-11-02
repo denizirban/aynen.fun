@@ -1,5 +1,5 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v6";
-import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v6";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v7";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v7";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
  sahin:{accel:11.5,brake:18,top:27,grip:1.0},
@@ -187,7 +187,7 @@ function startGame(unlimited){
  try{personalBest=Number(localStorage.getItem("dugun-3d-best-v3"))||0}catch(e){personalBest=0}
  car={pos:[...AREAS[area].center],speed:0,heading:0,steering:0,yawRate:0,slip:0,health:100,offroad:false};
  city.refresh(car.pos,true);
- const near=city.nearest(car.pos);
+ const near=city.nearest(car.pos)||city.nearestAny?.(car.pos);
  if(near){car.pos=near.p;car.heading=angle(near.road.a,near.road.b)}
  rival={pos:null,heading:0,speed:10.5,route:[],index:1,cooldown:0};
  traffic=[];
