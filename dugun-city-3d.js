@@ -1,6 +1,6 @@
-import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v13";
-import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v14";
-import {StableNavigation} from "./dugun-navigation.js?v=20261102-v13";
+import {IstanbulMap,AREAS,rad,distance,angle,travel,turn} from "./dugun-istanbul-map.js?v=20261102-v15";
+import {CityScene3D} from "./dugun-city-scene.js?v=20261102-v15";
+import {StableNavigation} from "./dugun-navigation.js?v=20261102-v15";
 import {stepVehicle,roadHalfWidth} from "./dugun-driving-dynamics.js?v=20261102-v14";
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const SPEC={
@@ -232,26 +232,20 @@ function finish(cause){
  $("overlay").hidden=false;
 }
 function startGame(unlimited){
- if(!ready||!city?.roads?.length){
-  pending=unlimited?"free":"timed";
-  $("loadstate").textContent="İstanbul sokakları yükleniyor… Harita bağlantısını kontrol et.";
-  if(city&&!city.seekingLocalStreets){
-   city.seekingLocalStreets=true;
-   city.map?.jumpTo?.({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
-  }
-  // DO NOT call refresh synchronously: its onRoadsReady microtask could
-  // recursively call startGame forever when no local OSM tiles are available.
+ if(!city){$("loadstate").textContent="Oyun motoru henüz hazırlanmadı. Sayfayı yeniden aç.";return}
+ // Clicking either CTA must start a playable world immediately. The original
+ // startup gate silently returned if OSM delivered zero road features.
+ if(!ready||!city.roads?.length||!chooseSafeRoadPosition(SAFE_START_ANCHOR,true)){
+  city.ensurePlayableFallback();
+  if(!ready)readyMap();
+ }
+ if(!ready||!city.roads?.length){
+  $("loadstate").textContent="3D sürüş motoru açılamadı. Tarayıcı WebGL desteğini kontrol et.";
   return;
  }
  const spawn=chooseSafeRoadPosition(SAFE_START_ANCHOR,true);
  if(!spawn){
-  pending=unlimited?"free":"timed";
-  $("loadstate").textContent="Ortaköy'deki sürülebilir sokaklar yükleniyor…";
-  if(!city.seekingLocalStreets){
-   city.seekingLocalStreets=true;
-   city.map?.jumpTo?.({center:SAFE_START_ANCHOR,zoom:18.0,pitch:65});
-  }
-  // Await actual map 'sourcedata'/'idle' change; never recursively refresh.
+  $("loadstate").textContent="Başlangıç yolu oluşturulamadı. Sayfayı yenileyip tekrar dene.";
   return;
  }
  pending=false;city.seekingLocalStreets=false;free=unlimited;
@@ -278,11 +272,14 @@ function startGame(unlimited){
  if(render3D.setCameraStyle)render3D.setCameraStyle(0);
  $("camera").textContent="KAMERA: TAKİP";
  syncDriveUI();
- city.map.jumpTo({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad});
+ try{city.map?.jumpTo?.({center:car.pos,zoom:18.08,pitch:69,bearing:car.heading/rad})}
+ catch(error){console.warn("Harita görünümü güncellenemedi:",error)}
  $("overlay").hidden=true;hud(true);$("pause").textContent="DURAKLAT";
  resetRide=0;last=performance.now();
  if(!free)spawnMission();seedTraffic();initEngine();syncEngine();
- toast(free?"İSTANBUL · BOĞAZ KIYISINDA SERBEST SÜRÜŞ":driveMode==="easy"?"OKLARLA DÖN · BOĞAZ'A İLERLE":"W GAZ · A / D DÖN",3);
+ toast(city.fallbackLock?"GEÇİCİ SÜRÜŞ ALANI · GERÇEK HARİTA BEKLENİYOR":
+   free?"İSTANBUL · BOĞAZ KIYISINDA SERBEST SÜRÜŞ":
+   driveMode==="easy"?"OKLARLA DÖN · BOĞAZ'A İLERLE":"W GAZ · A / D DÖN",3);
 }
 function seedTraffic(){
  if(!city.roads.length)return;
@@ -568,7 +565,7 @@ function updateHUD(){
  $("speed-panel").style.setProperty("--speed-angle",Math.min(265,speedKmh*2.25)+"deg");
  $("speed-gear").textContent=car.speed<-.8?"R":keys.brake&&Math.abs(car.speed)<1?"N":"D";
  $("car-health").textContent="ARAÇ %"+Math.round(car.health)+(car.offroad?" · YOL DIŞI":"");
- $("street-name").textContent=(car.currentRoadName||AREAS[area].name).toLocaleUpperCase("tr-TR");
+ $("street-name").textContent=(city.fallbackLock?"GEÇİCİ SÜRÜŞ ALANI":car.currentRoadName||AREAS[area].name).toLocaleUpperCase("tr-TR");
  $("drive-hint").textContent=driveMode==="easy"?(keys.brake?"FREN · TUTARSAN GERİ VİTES":car.offroad?"YOLA DÖN · OKLARLA YÖNLENDİR":Math.abs(car.steering)>.12?"DİREKSİYON SENDE":"GAZ OTOMATİK · SAĞ / SOL İLE SÜR"):(keys.gas?"GAZ VERİLİYOR":"GAZ İÇİN W / ↑ BAS");
  $("car-health").style.color=car.health<35?"#ff9c8f":car.health<65?"#ffdb8e":"#e3f2e6";
  $("rescue").disabled=Math.abs(car.speed)>2.3||rescueCooldown>0;
@@ -700,9 +697,19 @@ function frameLoop(now){
  }
 }
 function readyMap(){
- ready=true;
- render3D=new CityScene3D(city);
- $("loadstate").textContent="3D şehir hazır. Gerçek sokaklar yükleniyor…";
+ if(ready)return;
+ try{
+  render3D=new CityScene3D(city);
+  ready=true;
+ }catch(error){
+  ready=false;
+  console.error("3D başlangıç hatası:",error);
+  $("loadstate").textContent="3D görüntü başlatılamadı: "+String(error?.message||error);
+  return;
+ }
+ $("loadstate").textContent=city.fallbackLock?
+  "Geçici sürüş alanı hazır · Gerçek sokak verisi henüz alınamadı.":
+  "3D şehir hazır. Sokak verileri hazırlanıyor…";
  city.onRoadsReady=()=>{
   const info=$("loadstate");if(info)info.textContent="Sokaklar hazır · Sürmeye başlayabilirsin.";
   if(pending&&city.roads.length&&chooseSafeRoadPosition(SAFE_START_ANCHOR,true)){
