@@ -45,6 +45,8 @@ export function stepVehicle(state,controls,environment,dt){
  car.slip=Number.isFinite(car.slip)?car.slip:0;
  car.velocityLateral=Number.isFinite(car.velocityLateral)?car.velocityLateral:0;
  car.brakeHold=Number.isFinite(car.brakeHold)?car.brakeHold:0;
+ car.grade=Number.isFinite(car.grade)?car.grade:0;
+ car.grade=approach(car.grade,clamp(environment.grade||0,-.12,.12),dt*.28);
  car.engineRPM=Number.isFinite(car.engineRPM)?car.engineRPM:850;
  car.suspension=Number.isFinite(car.suspension)?car.suspension:0;
  car.suspensionVelocity=Number.isFinite(car.suspensionVelocity)?car.suspensionVelocity:0;
@@ -87,6 +89,7 @@ export function stepVehicle(state,controls,environment,dt){
    car.speed=approach(car.speed,0,drag*dt);
   }
  }
+ if(Math.abs(car.speed)>1.1)car.speed-=9.81*car.grade*.55*dt;
  if(controls.handbrake)car.speed=approach(car.speed,0,3.1*dt);
  if(car.offroad){
   const decel=crossTrack>16?6.7:3.3;
