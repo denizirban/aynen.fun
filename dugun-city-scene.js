@@ -277,7 +277,7 @@ function addWater(group,origin,waters,mobile){
     hole.moveTo(...pts[0]);for(let i=1;i<pts.length;i++)hole.lineTo(...pts[i]);hole.closePath();shape.holes.push(hole);
    }
    const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape),material);
-   mesh.position.z=-.09;mesh.renderOrder=1;group.add(mesh);
+   mesh.position.z=.26;mesh.renderOrder=1;group.add(mesh);
    if(++count>38)return count;
   }
  }
@@ -303,6 +303,20 @@ function addOrtakoyLandmark(group,origin,area){
   balcony.rotation.x=Math.PI/2;balcony.position.set(dx,0,22.3);g.add(balcony);
   const tip=new THREE.Mesh(new THREE.ConeGeometry(1.0,3.2,12),dome);
   tip.rotation.x=Math.PI/2;tip.position.set(dx,0,27.0);g.add(tip);
+ }
+ // Two small stylized ferries on the Bosphorus, well offshore east of the mosque.
+ const hull=new THREE.MeshStandardMaterial({color:0xdcebf0,roughness:.58});
+ const cabin=new THREE.MeshStandardMaterial({color:0xf7ead2,roughness:.71});
+ const windows=new THREE.MeshStandardMaterial({color:0x306e83,roughness:.30});
+ for(const [index,where] of [[0,[29.0295,41.04756]],[1,[29.0314,41.04704]]]){
+  const [bx,by]=toXY(origin,where),ferry=new THREE.Group();
+  ferry.position.set(bx,by,.50);ferry.rotation.z=index?.36:-.27;
+  ferry.add(meshBox(16.5,4.9,1.4,hull,0,0,.7));
+  ferry.add(meshBox(8.2,3.8,2.4,cabin,-1.5,0,2.3));
+  ferry.add(meshBox(5.2,3.9,.8,windows,-1.4,0,3.7));
+  ferry.add(meshBox(15,.35,.25,windows,0,2.0,1.4));
+  ferry.add(meshBox(15,.35,.25,windows,0,-2.0,1.4));
+  group.add(ferry);
  }
  const sign=createWorldLabel("ORTAKÖY CAMİİ","#2a626e","#ffffff");
  sign.position.set(0,0,23);sign.scale.set(9,2.0,1);g.add(sign);
@@ -768,9 +782,10 @@ export class CityScene3D{
    }
    this.safeFollow=safeFollow;
   }else if(!hood)safeFollow=this.safeFollow??horizontal;
-  const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,height+(safeFollow<horizontal?1.3:0));
+  const ground=terrainAt(cx,cy);
+  const eye=new THREE.Vector3(cx-fwdX*safeFollow+fwdY*lateral,cy-fwdY*safeFollow-fwdX*lateral,ground+height+(safeFollow<horizontal?1.3:0));
   const lookDistance=hood?22:wide?20:15.5;
-  const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,hood?1.78:1.65);
+  const target=new THREE.Vector3(cx+fwdX*lookDistance,cy+fwdY*lookDistance,ground+(hood?1.78:1.65));
   if(hood)this.player.visible=false;else this.player.visible=true;
   if(!this.inited){this.camPos.copy(eye);this.camLook.copy(target);this.inited=true}
   // Responsive camera and speed-dependent FOV make forward movement perceptible.
