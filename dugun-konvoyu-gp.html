@@ -161,13 +161,26 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
  #mission{top:197px}#mission-info{display:none}
  #mini{width:156px;height:143px;bottom:14px}#mode-pill{left:192px;bottom:26px}
 }
+
+#camera{background:linear-gradient(180deg,#455c57,#193c43);border-color:#e9e0ab}
+#camera:hover{filter:brightness(1.1)}
+@media(max-width:700px){
+ #camera{font-size:9px;padding:6px 7px;white-space:nowrap}
+ .header-end{gap:4px}
+ .header-end .glass-button{font-size:9px;padding:6px 7px}
+}
+@media(max-width:350px){
+ .brand{font-size:12px}
+ .header-end .glass-button{padding:5px 5px;font-size:8px}
+ #camera{max-width:105px}
+}
 </style>
 </head>
 <body>
 <div id="map" aria-label="OpenStreetMap kaynaklı gerçek İstanbul sokakları ve üç boyutlu binalar"></div>
 <canvas id="driving-canvas" aria-label="Canlı üçüncü şahıs kameralı İstanbul 3D sürüş oyunu"></canvas><div id="scene-fade"></div>
 <div id="game">
- <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / İSTANBUL 3D</span><div class="header-end"><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
+ <header id="header"><a class="brand" href="/">AYNEN<span>.FUN</span></a><span class="top-title">DÜĞÜN KONVOYU / İSTANBUL 3D</span><div class="header-end"><button class="glass-button" id="camera" type="button" aria-label="Kamera açısını değiştir">KAMERA: TAKİP</button><button class="glass-button" id="sound" aria-label="Sesi kapat veya aç">SES AÇIK</button><button class="glass-button" id="pause" aria-label="Durdur">DURAKLAT</button></div></header>
  <section id="hud" aria-label="Oyunun göstergeleri">
   <div id="time-box"><span class="kicker">KALAN SÜRE</span><div id="time">03:00</div><div class="money" id="money">₺0</div></div>
   <div id="speed-panel"><div class="kicker">HIZ</div><div id="speed">0</div><div class="unit">KM / SA</div><div id="car-health">ARAÇ %100</div></div>
@@ -194,10 +207,10 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
    <div class="options" id="cars"><button class="option selected" data-car="sahin">ŞAHİN<small>Dengeli sürüş</small></button><button class="option" data-car="toros">TOROS<small>Yüksek yol tutuş</small></button><button class="option" data-car="doblo">DOBLO<small>Geniş araç</small></button></div>
    <button id="start">DÜĞÜN SERVİSİNE BAŞLA · 3 DK</button><button id="freeroam">SERBEST GEZİNTİ · SÜRESİZ</button>
    <div id="loadstate">Harita hazırlanıyor…</div>
-   <div id="help">Bilgisayar: W / ↑ gaz · S / ↓ fren / geri · A D / ← → direksiyon · Space korna · Shift el freni · P duraklat. Mobil: ekrandaki kontroller.</div>
+   <div id="help">Bilgisayar: W / ↑ gaz · S / ↓ fren / geri · A D / ← → direksiyon · Space korna · Shift el freni · C kamera · P duraklat. Mobil: ekrandaki kontroller.</div>
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-chase-v2"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261102-3d-v3"></script>
 </body>
 </html>
