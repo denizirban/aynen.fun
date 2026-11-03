@@ -724,7 +724,8 @@ body:has(#game) .brand .back{display:none!important}
 
 </style>
 <link rel="stylesheet" href="./house-boss-sims-ui.css?v=7">
-<link rel="stylesheet" href="./house-boss-home-design.css?v=1">
+<link rel="stylesheet" href="./house-boss-home-design.css?v=2">
+<link rel="stylesheet" href="./house-boss-start.css?v=1">
 </head>
 <body>
 <div id="game">
@@ -2331,7 +2332,7 @@ window.HouseBossSimBridge={
  chooseTrait:function(who,id){if(!simTraits[id]||!simState().people[who]||who==='pet')return false;simState().people[who].trait=id;saveGame();return true},
  goTown:function(){enterTown()},
  goHome:function(){leaveTown()},
- openBuild:function(){openNote('upgrades')},
+ openBuild:function(){openNote('design')},
  openChores:function(){setTasksOpen($('#tasks').classList.contains('collapsed'))},
  closeChores:function(){setTasksOpen(false)},
  openFamily:function(){openNote('family')},
@@ -2550,7 +2551,7 @@ $('#cameraOut').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)windo
 $('#cameraReset').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.reset();resetCameraView();clearTaskTarget()};
 
 $('#room').addEventListener('wheel',function(e){if(!started||ended)return;e.preventDefault();setCamera(cameraScale+(e.deltaY<0?.075:-.075))},{passive:false});
-$('#openNotebook').onclick=function(){openNote('upgrades')};$('#familySettings').onclick=function(){openNote('family')};$('#storyButton').onclick=function(){openNote('roadmap')};
+$('#openNotebook').onclick=function(){openNote('design')};$('#familySettings').onclick=function(){openNote('family')};$('#storyButton').onclick=function(){openNote('roadmap')};
 $('#goalMore').onclick=function(){openNote('goals')};
 $('#closeNotebook').onclick=closeNote;$('#noteShade').onclick=closeNote;
 document.querySelectorAll('[data-tab]').forEach(function(b){b.addEventListener('click',function(){noteTab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(function(k){k.classList.toggle('active',k===b)});notebookHtml()})});
@@ -2657,9 +2658,10 @@ requestAnimationFrame(frame)
 </script>
 <!-- Standalone CrazyGames build does not load aynen.fun site navigation widgets. -->
 <script src="./house-boss-en.js?v=2"></script>
-<script type="module" src="./evin-patronu-3d.js?v=9"></script>
+<script type="module" src="./evin-patronu-3d.js?v=10"></script>
 <script type="module" src="./house-boss-town-3d.js?v=3"></script>
 <script src="./house-boss-sims-ui.js?v=8"></script>
-<script src="./house-boss-home-design.js?v=1"></script>
+<script src="./house-boss-home-design.js?v=2"></script>
+<script src="./house-boss-start.js?v=1"></script>
 </body>
 </html>
