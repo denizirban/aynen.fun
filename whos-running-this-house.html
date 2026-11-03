@@ -724,6 +724,7 @@ body:has(#game) .brand .back{display:none!important}
 
 </style>
 <link rel="stylesheet" href="./house-boss-sims-ui.css?v=7">
+<link rel="stylesheet" href="./house-boss-home-design.css?v=1">
 </head>
 <body>
 <div id="game">
@@ -1275,16 +1276,19 @@ function renderProgression(){
  var newGoalHtml=goals.map(function(g){var v=goalValue(g);return '<div class="goal-mini"><b>'+(g.claimed?'✓ ':'○ ')+g.label+'</b><small>'+(g.claimed?"DONE":Math.min(v,g.target)+'/'+g.target)+'</small></div>'}).join('');if(newGoalHtml!==previousGoalHtml){$('#goalPreview').innerHTML=newGoalHtml;previousGoalHtml=newGoalHtml}
  renderUpgrades();renderChapters()
 }
-function notebookHtml(){if(noteTab==='life'){lifeNotebook();return}
- var title={upgrades:"Upgrade your Home",goals:"Daily goals",roadmap:"House Story",family:"Family",memories:"Memories"};$('#noteTitle').textContent=title[noteTab];$('#noteBudget').textContent='$'+cash+' · Level '+level;
+function notebookHtml(){
+ $('#notebook').classList.toggle('design-mode',noteTab==='design');
+ if(noteTab==='design'){window.HouseBossHomeDesign?.render?.();return}
+ if(noteTab==='life'){lifeNotebook();return}
+ var title={design:"Home Design",upgrades:"Upgrade your Home",goals:"Daily goals",roadmap:"House Story",family:"Family",memories:"Memories"};$('#noteTitle').textContent=title[noteTab];$('#noteBudget').textContent='$'+cash+' · Level '+level;
  if(noteTab==='upgrades')$('#noteBody').innerHTML='<div class="upgrade-grid">'+upgradeCatalog.map(function(u){var has=owned.includes(u.id),locked=level<u.level,poor=cash<u.price,disabled=has||locked||poor;return '<article class="upgrade-card'+(has?' owned':'')+'"><div class="upgrade-top"><div class="upgrade-art">'+u.icon+'</div><div><b>'+u.name+'</b><small>'+u.tag+" · LEVEL "+u.level+'</small></div></div><p>'+u.desc+'</p><button class="buy" data-buy="'+u.id+'"'+(disabled?' disabled':'')+'>'+(has?"✓ INSTALLED":locked?"LEVEL "+u.level+" REQUIRED":poor?'$'+u.price+" — NOT ENOUGH MONEY":"BUY · $"+u.price)+'</button></article>'}).join('')+'</div>';
  if(noteTab==='goals')$('#noteBody').innerHTML="<p style=\"font-size:12px;color:#797469;margin:0 0 15px\">Meet goals to earn XP and in-game money.</p>"+goals.map(function(g){var v=goalValue(g);return '<article class="note-goal"><header><strong>'+(g.claimed?'✓ ':'○ ')+g.label+'</strong><span>'+(g.claimed?"COMPLETE":Math.min(v,g.target)+' / '+g.target)+"</span></header><p>Reward: +"+g.xp+' XP · $'+g.money+'</p><div class="track"><i style="width:'+Math.min(100,v/g.target*100)+'%"></i></div></article>'}).join('');
  if(noteTab==='roadmap')$('#noteBody').innerHTML=roadmapHTML();
  if(noteTab==='family')$('#noteBody').innerHTML=familyHtml();
  if(noteTab==='memories')$('#noteBody').innerHTML='<p style="font-size:12px;color:#777;margin:0 0 14px">'+totalDone+" chores finished · "+totalShared+" family assists · "+(day-1)+" evenings survived.</p><div class=\"badge-grid\">"+badgeCatalog.map(function(b){var has=achievements.includes(b.id);return '<div class="badge-tile'+(has?'':' locked')+'"><span class="emblem">'+(has?b.icon:'?')+'</span><div><b>'+b.title+'</b><p>'+b.desc+'</p></div></div>'}).join('')+'</div>';
 }
-function openNote(tab){if(!started)return;window.HouseBossPlatform?.stop();closeMobileFamily();if(innerWidth<=650)setTasksOpen(false);noteTab=tab||'upgrades';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
-function closeNote(){if($('#notebook').classList.contains('hidden'))return;if(!wasPausedOnNote&&!ended)window.HouseBossPlatform?.start();$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
+function openNote(tab){if(!started)return;window.HouseBossHomeDesign?.clearPreview?.();window.HouseBossPlatform?.stop();closeMobileFamily();if(innerWidth<=650)setTasksOpen(false);noteTab=tab||'design';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
+function closeNote(){if($('#notebook').classList.contains('hidden'))return;window.HouseBossHomeDesign?.clearPreview?.();$('#notebook').classList.remove('design-mode');if(!wasPausedOnNote&&!ended)window.HouseBossPlatform?.start();$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
 function buyUpgrade(id){if(!started||ended)return;var u=upgradeCatalog.find(function(a){return a.id===id});if(!u||owned.includes(id)||level<u.level||cash<u.price)return;cash-=u.price;owned.push(id);if(lifeHomeProjects.some(function(p){return p.id===id})){life.homeValue=(life.homeValue||0)+u.price;peace=clamp(peace+4)}grantXp(14);evaluateBadges();rewardChapters();render();notebookHtml();saveGame();floatReward(u.icon+' '+u.name+' installed');message('Home upgraded: '+u.name)}
 function openCare(who){
  if(!['self','partner','kid','pet','elder'].includes(who))return;selected=null;selectedPerson=who;var names={self:"Take a Break",partner:"Talk to Partner",kid:"Spend Time with Kid",pet:"Care for Dog",elder:"Have a Cup of Tea"};
@@ -2210,6 +2214,7 @@ function simFinish(who){
  if(a.pet)petEnergy=clamp(petEnergy+a.pet);
  if(owned.includes('sleep')&&task.id==='sleep')simSetEnergy(who,simEnergy(who)+15);
  if(owned.includes('living')&&['talk','tv','dance'].includes(task.id))p.fun=clamp(p.fun+9);
+ if(['tv','read','talk','nap'].includes(task.id)){var d=life.homeDesign?.selected?.sofa;var boost={sage:3,rust:5,navy:6,boucle:8}[d]||0;p.fun=clamp(p.fun+boost)};
  if(owned.includes('garden')&&['playdog','dogplay'].includes(task.id))p.fun=clamp(p.fun+10);
  if(a.socialTarget)simResolveSocial(who,a);
  if(a.mood&&!(a.socialTarget&&a.socialDelta<0))p.moodlet={label:a.mood,until:simClock()+165};
@@ -2479,6 +2484,7 @@ function finishDay(){
  $('#endScore').textContent="TONIGHT "+lastScore+' POINTS · BEST '+bestScore+' · '+careerDays+' '+(careerDays===1?'EVENING':'EVENINGS')+(careerDays%7===0?' · '+weeklyTitle.toLocaleUpperCase('en-US'):'');$('#endProgress').textContent="LEVEL "+level+' · '+goals.filter(function(g){return g.claimed}).length+'/'+goals.length+" DAILY GOALS · "+owned.length+" KITCHEN UPGRADES · "+(dayInitiatives.partner+dayInitiatives.kid)+" SELF-ASSIGNED CHORES";$('#endDone').textContent=done;$('#endShared').textContent=shared;$('#endPeace').textContent=Math.round(peace)+'%';$('#ending').classList.remove('hidden');render();saveGame()
 }
 function reset(mode){
+ window.HouseBossHomeDesign?.clearPreview?.();
  window.HouseBossPlatform?.start();
  if(mode==='fresh'){life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,outing:null,skills:{social:1,creativity:1,fitness:1},socialXp:0,contacts:0,townTab:'work',selectedPlace:'all',autoWorkDay:0,seededDay:1,billsTotal:0,homeValue:0,schoolLevel:1,schoolXp:0,schoolLastDay:0};partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
  if(mode==='next'){day+=1;cash+=110;partnerEnergy=clamp(partnerEnergy+25);kidEnergy=clamp(kidEnergy+30);petEnergy=clamp(petEnergy+25);}
@@ -2500,7 +2506,7 @@ document.querySelectorAll('[data-runmode]').forEach(function(button){
 setRunMode(runMode);
 $('#start').onclick=function(){if(getSave()&&!confirm('Start a new game and replace your saved progress?'))return;reset('fresh')};$('#resume').onclick=loadSave;$('#again').onclick=function(){reset('next')};$('#newFromStart').onclick=function(){if(confirm('Replace saved progress with a new game?'))reset('fresh')};$('#mobileTasks').onclick=function(){setTasksOpen($('#tasks').classList.contains('collapsed'))};
 $('#mobileFamily').onclick=toggleMobileFamily;
-$('#mobileBuild').onclick=function(){setTasksOpen(false);closeMobileFamily();openNote('upgrades')};
+$('#mobileBuild').onclick=function(){setTasksOpen(false);closeMobileFamily();openNote('design')};
 $('#quickShow').onclick=function(){var j=find(quickTaskId);if(j)locateJob(j)};
 $('#quickAssign').onclick=quickAssign;
 $('#quickHelp').onclick=function(){showHelp($('#helpPanel').classList.contains('hidden'))};
@@ -2551,11 +2557,64 @@ document.querySelectorAll('[data-tab]').forEach(function(b){b.addEventListener('
 $('#noteBody').addEventListener('click',function(e){var action=e.target.closest('[data-life-act]');if(action){lifeBeginActivity(action.dataset.lifeAct);lifeNotebook();return}var b=e.target.closest('[data-buy]');if(b){buyUpgrade(b.dataset.buy);return}familySettingsChange(e.target)});
 window.addEventListener('keydown',function(e){if(e.key==='Escape')closeNote()});
 registerAvatars();syncAvatars();lifeInstall();showSavePreview();goals=makeGoals();templates.forEach(function(t){add(t)});render();
+
+/* HOUSE_BOSS_HOME_DESIGN_BRIDGE_V10 — uses the SAME save and budget as household gameplay. */
+var homeDesignPreview=null;
+function defaultHomeDesign(){
+ return {sofa:'starter',wallpaper:'ivory',flooring:'hex',cabinets:'sage',rug:'linen',curtains:'terracotta'}
+}
+function ensureHomeDesign(){
+ if(!life.homeDesign||typeof life.homeDesign!=='object')life.homeDesign={selected:{},unlocked:{}};
+ var d=life.homeDesign,defaults=defaultHomeDesign();
+ if(!d.selected||typeof d.selected!=='object')d.selected={};
+ if(!d.unlocked||typeof d.unlocked!=='object')d.unlocked={};
+ Object.keys(defaults).forEach(function(k){
+  if(!Array.isArray(d.unlocked[k]))d.unlocked[k]=[];
+  if(!d.unlocked[k].includes(defaults[k]))d.unlocked[k].push(defaults[k]);
+  if(!d.selected[k]||!d.unlocked[k].includes(d.selected[k]))d.selected[k]=defaults[k]
+ });
+ return d
+}
+function effectiveHomeDesign(){
+ var d=ensureHomeDesign(),selected=Object.assign({},d.selected);
+ if(homeDesignPreview&&selected[homeDesignPreview.category]!==undefined)
+   selected[homeDesignPreview.category]=homeDesignPreview.id;
+ return selected
+}
+window.HouseBossDesignBridge={
+ getState:function(){
+  var d=ensureHomeDesign();
+  return {cash:cash,value:life.homeValue||0,selected:Object.assign({},d.selected),
+    unlocked:Object.fromEntries(Object.entries(d.unlocked).map(function(e){return [e[0],e[1].slice()]}))}
+ },
+ getEffective:effectiveHomeDesign,
+ open:function(){openNote('design')},
+ preview:function(category,id){
+  homeDesignPreview=category&&id?{category:category,id:id}:null;
+  window.Evin3D?.applyDesign?.(effectiveHomeDesign())
+ },
+ apply:function(category,id,price){
+  if(!started||ended)return false;
+  var defs=window.HouseBossHomeDesign?.catalog?.[category]?.options||[];
+  var option=defs.find(function(o){return o[0]===id});
+  if(!option||option[2]!==price)return false;
+  var d=ensureHomeDesign(),already=d.unlocked[category].includes(id);
+  if(!already){
+   if(cash<price){message('Earn another $'+(price-cash)+' to buy this design.');return false}
+   cash-=price;d.unlocked[category].push(id);life.homeValue=(life.homeValue||0)+price;
+   grantXp(8);floatReward('HOME DESIGN · '+option[1]);
+  }
+  d.selected[category]=id;homeDesignPreview=null;
+  window.Evin3D?.applyDesign?.(effectiveHomeDesign());
+  render();saveGame();return true
+ }
+};
+
 /* 3D_ONLY_HOUSE_BOSS_V7 — 2D render mode removed. Hidden SVG is retained solely as nonvisual legacy simulation scaffolding. */
 /* 3D scene bridge: authoritative simulation and save state remain here. */
 window.EvinKitchenBridge={
  getState:function(){return {
-   time:time,day:day,owned:owned.slice(),started:started,paused:paused,ended:ended,
+   homeDesign:effectiveHomeDesign(),time:time,day:day,owned:owned.slice(),started:started,paused:paused,ended:ended,
    currentSpot:current&&current.spot||simState().active.self&&simState().active.self.spot||null,partnerSpot:helper&&helper.spot||simState().active.partner&&simState().active.partner.spot||null,
    kidSpot:childTask&&childTask.spot||simState().active.kid&&simState().active.kid.spot||null,
    selfAway:!!(life.shift||life.outing),partnerAway:!!life.pShift,kidAway:kidAtSchool(),
@@ -2601,5 +2660,6 @@ requestAnimationFrame(frame)
 <script type="module" src="./evin-patronu-3d.js?v=9"></script>
 <script type="module" src="./house-boss-town-3d.js?v=3"></script>
 <script src="./house-boss-sims-ui.js?v=8"></script>
+<script src="./house-boss-home-design.js?v=1"></script>
 </body>
 </html>
