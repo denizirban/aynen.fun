@@ -840,6 +840,33 @@ body:has(#game) .brand .back{display:none!important}
 <g id="decor-coffee" display="none"><rect x="751" y="274" width="72" height="34" rx="5" fill="#ebe8e1" stroke="#55534f" stroke-width="4"/><rect x="765" y="285" width="20" height="16" fill="#a99a7d"/><path d="M794 286H815L810 298H796Z" fill="#333"/></g>
 <g id="decor-light" display="none"><path d="M1106 40V184" stroke="#5f5851" stroke-width="5"/><path d="M1068 181H1144L1125 217H1087Z" fill="#f9e6ad" stroke="#514b46" stroke-width="4"/><ellipse cx="1106" cy="217" rx="45" ry="10" fill="#ffe7a3" opacity=".65"/></g>
 
+
+<!-- House extensions: initially invisible; only purchased upgrades reveal them. -->
+<g id="decor-office" display="none" pointer-events="none">
+ <rect x="876" y="307" width="155" height="16" rx="3" fill="#856747" stroke="#514837" stroke-width="3"/>
+ <rect x="886" y="268" width="17" height="37" fill="#b7a58c" stroke="#635a4f" stroke-width="2"/><rect x="911" y="254" width="16" height="51" fill="#a2ac8e"/><rect x="938" y="276" width="18" height="30" fill="#cd9a76"/><rect x="964" y="264" width="18" height="41" fill="#79928c"/>
+ <path d="M991 303V280M992 280l24 -15" stroke="#666c63" stroke-width="5"/><ellipse cx="1015" cy="267" rx="19" ry="11" fill="#e7d9ac"/>
+</g>
+<g id="decor-sleep" display="none" pointer-events="none">
+ <rect x="874" y="46" width="124" height="205" fill="#927457" stroke="#554b3e" stroke-width="7"/><rect x="885" y="57" width="102" height="190" fill="#c4a987" stroke="#785b47" stroke-width="4"/>
+ <rect x="904" y="75" width="64" height="35" fill="#dcd4b3" stroke="#897d68" stroke-width="3"/><circle cx="972" cy="174" r="8" fill="#ece5c7" stroke="#685a43" stroke-width="3"/>
+</g>
+<g id="decor-living" display="none" pointer-events="none">
+ <path d="M42 622Q44 593 76 593H237Q267 592 271 622V707H42Z" fill="#839b7f" stroke="#566752" stroke-width="7"/><rect x="47" y="664" width="220" height="56" rx="13" fill="#9bab86" stroke="#536651" stroke-width="5"/>
+ <rect x="82" y="648" width="65" height="34" rx="7" fill="#d8bea2"/><rect x="161" y="648" width="62" height="34" rx="7" fill="#cfb7a3"/><path d="M70 721v15M245 721v15" stroke="#665343" stroke-width="10"/>
+</g>
+<g id="decor-garden" display="none" pointer-events="none">
+ <rect x="182" y="278" width="270" height="26" rx="5" fill="#a77d57" stroke="#69533d" stroke-width="4"/>
+ <path d="M229 282l-18 -62m18 62l22 -90m32 91l-18 -80m18 80l20 -84m29 84l-12 -91m12 91l22 -74m35 75l-10 -73" stroke="#5c835d" stroke-width="6" stroke-linecap="round"/>
+ <g fill="#759d6c"><ellipse cx="210" cy="221" rx="20" ry="10" transform="rotate(-35 210 221)"/><ellipse cx="250" cy="195" rx="22" ry="10" transform="rotate(25 250 195)"/><ellipse cx="274" cy="213" rx="24" ry="11"/><ellipse cx="320" cy="201" rx="23" ry="12"/><ellipse cx="361" cy="209" rx="20" ry="11"/></g>
+ <g fill="#d7aa88"><circle cx="207" cy="229" r="7"/><circle cx="317" cy="193" r="7"/><circle cx="381" cy="204" r="7"/></g>
+</g>
+<g id="decor-floor2" display="none" pointer-events="none">
+ <path d="M40 736L247 493" stroke="#635545" stroke-width="15"/><path d="M38 737L259 496" stroke="#dec59c" stroke-width="7"/>
+ <g fill="#b99570" stroke="#72583f" stroke-width="4"><path d="M40 734h78v24H40Z"/><path d="M79 690h80v24H79Z"/><path d="M118 647h81v24h-81Z"/><path d="M157 603h80v24h-80Z"/><path d="M197 557h83v24h-83Z"/></g>
+ <path d="M40 734L245 481" stroke="#e1cba7" stroke-width="8"/>
+</g>
+
 <!-- kitchen detail layer -->
 <g id="sceneDetails" pointer-events="none">
 <!-- polished light, gentle steam while cooking -->
@@ -1565,15 +1592,19 @@ function lifeNewDay(){
  var activeIds=[current&&current.id,helper&&helper.id,childTask&&childTask.id].filter(Boolean);
  pending.sort(function(a,b){return (activeIds.includes(a.id)?0:1)-(activeIds.includes(b.id)?0:1)||a.due-b.due});
  var remaining=pending.slice(0,Math.max(3,activeIds.length)),dropped=pending.length-remaining.length;
+ /* HOUSE_BOSS_DAY_REWARDS_V2 */
+ if(peace>=70)wellDays++;
+ careerDays++;lastFinishedDay=day;lastScore=scoreEvening();bestScore=Math.max(bestScore,lastScore);weekScore+=lastScore;
+ if(careerDays%7===0){weeklyTitle=weekScore>=3400?'You are in Charge':weekScore>=2200?'Family Coordinator':weekScore>=1300?'Order Maker':'Somehow Managing';weekScore=0}
  time-=1440;day++;life.billsTotal=(life.billsTotal||0)+45;cash=Math.max(0,cash-45);
  peace=clamp(peace+(owned.includes('garden')?5:1)-Math.min(12,dropped*2));
  energy=clamp(energy+(owned.includes('sleep')?35:24));partnerEnergy=clamp(partnerEnergy+22);kidEnergy=clamp(kidEnergy+22);petEnergy=clamp(petEnergy+20);
- done=0;shared=0;missed=0;combo=0;seq=remaining.reduce(function(n,j){return Math.max(n,j.id+1)},1);jobs=remaining;
+ done=0;shared=0;missed=0;combo=0;assistedFinished=0;seq=remaining.reduce(function(n,j){return Math.max(n,j.id+1)},1);jobs=remaining;
  remaining.forEach(function(j,i){j.due=525+i*42;j.expired=false;if(!activeIds.includes(j.id))j.assigned=null});
  current=current&&remaining.includes(current)?current:null;helper=helper&&remaining.includes(helper)?helper:null;childTask=childTask&&remaining.includes(childTask)?childTask:null;
  selfQueue=selfQueue.filter(function(id){return remaining.some(function(j){return j.id===id})});
  partnerQueue=partnerQueue.filter(function(id){return remaining.some(function(j){return j.id===id})});
- selected=null;life.seededDay=0;goals=makeGoals();careCooldown={};dayInitiatives={partner:0,kid:0};
+ selected=null;life.seededDay=0;goals=makeGoals();evaluateBadges();rewardChapters();careCooldown={};dayInitiatives={partner:0,kid:0};
  nextFamilyDecision=15*60+15;eventAt=9*60+20;
  familyNotice('Day '+day+' started with '+remaining.length+' carried-over chores.');
  message('DAY '+day+' · Bills −$45 · '+weekDay());saveGame()
@@ -1732,6 +1763,7 @@ window.EvinKitchenBridge={
    time:time,day:day,owned:owned.slice(),started:started,paused:paused,ended:ended,
    currentSpot:current&&current.spot||null,partnerSpot:helper&&helper.spot||null,
    kidSpot:childTask&&childTask.spot||null,
+   selfAway:!!life.shift,partnerAway:!!life.pShift,kidAway:kidAtSchool(),
    avatarSelf:avatarSelf,avatarPartner:avatarPartner,
    focusSpot:selected&&find(selected)&&find(selected).spot||null
  }},
