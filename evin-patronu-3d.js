@@ -471,6 +471,85 @@
     }
   });
 
+
+  /* HOUSE_BOSS_EXPANDED_ROOMS_V12 — real unlockable 3D rooms, not only painted doors. */
+  var roomSpaces={};
+  function addRoomWorld(id,x,z,fn){
+    var g=new THREE.Group();g.position.set(x,0,z);scene.add(g);g.visible=false;
+    roomSpaces[id]=g;fn(g);return g
+  }
+  addRoomWorld('sleep',14.05,-.75,function(g){
+    box(g,8.55,.17,9.0,mat('bedFloorBase','#c4baab'),0,-.12,0);
+    var floor=addMesh(g,new THREE.PlaneGeometry(8.54,9),floorMat,0,.006,0,false,true);floor.rotation.x=-Math.PI/2;
+    box(g,8.55,5.5,.16,plaster,0,2.75,-4.54);
+    // Dollhouse cutaway side wall: the player can actually see into the bedroom.
+    box(g,.16,1.08,9,plaster,4.30,.54,0);
+    box(g,2.70,.54,3.1,mat('bedframe','#9a765c'),-.65,.42,-1.15);
+    box(g,2.55,.32,2.88,mat('mattress','#ede3d2'),-.65,.84,-1.15);
+    box(g,2.65,1.23,.32,mat('headboard','#768e83'),-.65,1.28,-2.75);
+    box(g,2.40,.19,1.60,mat('duvet','#b3c8b2'),-.65,1.09,-.55);
+    for(var x of [-1.27,-.03]){
+      var pillow=ball(g,.45,.13,.40,mat('bedPillows','#faf9f2'),x,1.13,-1.95);
+      pillow.rotation.z=(x<-.7?-.04:.04)
+    }
+    for(var xx of [-2.65,1.32]){
+      box(g,.80,.73,.80,wood,xx,.38,-2.03);
+      box(g,.72,.11,.75,mat('nightstandTop','#d3b995'),xx,.78,-2.03);
+      cylinder(g,.17,.17,.42,mat('bedLamp','#c0a78f'),xx,1.07,-2.03);
+      ball(g,.23,.20,.23,mat('bedLight','#f1e4bd'),xx,1.43,-2.03)
+    }
+    box(g,1.53,2.20,.80,mat('wardrobe','#b4a18a'),2.55,1.12,-3.35);
+    for(var xx of [2.1,2.97])capsule(g,[xx,1.0,-2.92],[xx,1.41,-2.92],.037,mat('wardrobeKnob','#a7adb0'));
+    var rug=addMesh(g,new THREE.CircleGeometry(1.6,42),mat('bedRug','#d6bdaa'),-.75,.025,1.35,false,true);
+    rug.rotation.x=-Math.PI/2;rug.scale.set(1.1,1.36,1);
+    box(g,1.9,1.6,.09,mat('bedArtFrame','#a88369'),-2.5,3.2,-4.35);
+    box(g,1.76,1.48,.035,mat('bedArt','#c0cdb8'),-2.5,3.2,-4.27);
+    plant(3.12,.07,3.4,1.1,g)
+  });
+  addRoomWorld('living',14.05,8.35,function(g){
+    box(g,8.55,.17,8.6,mat('livingFloorBase','#ccc1aa'),0,-.12,0);
+    var floor=addMesh(g,new THREE.PlaneGeometry(8.54,8.6),floorMat,0,.006,0,false,true);floor.rotation.x=-Math.PI/2;
+    // Warm living room with dedicated seating, TV wall, sideboard, plants and tables.
+    box(g,8.55,5.4,.16,plaster,0,2.7,-4.35);
+    box(g,.16,1.12,8.6,plaster,4.30,.56,0);
+    var sofa=mat('livingRoomSofa','#96aa95');
+    box(g,3.0,.55,1.26,sofa,-1.0,.50,1.55);
+    box(g,3.0,1.20,.26,sofa,-1.0,1.05,1.01);
+    for(var xx of [-2.35,.35])box(g,.26,.66,1.25,sofa,xx,.73,1.54);
+    for(var xx of [-1.77,-.67])box(g,.93,.18,.88,mat('livingCushion','#c5d4bf'),xx,.90,1.66);
+    var carpet=addMesh(g,new THREE.PlaneGeometry(4.15,4.55),mat('livingCarpet','#d0c0a6'),-.55,.022,.35,false,true);
+    carpet.rotation.x=-Math.PI/2;
+    box(g,1.8,.14,.88,wood,-.6,.66,-.43);
+    for(var xx of [-1.32,.12])for(var zz of [-.76,-.12])box(g,.10,.61,.10,woodDark,xx,.31,zz);
+    box(g,2.65,.75,.65,mat('mediaConsole','#c6b18a'),1.27,.43,-3.34);
+    box(g,3.25,2.15,.13,black,1.30,2.67,-4.19);
+    box(g,2.94,1.79,.05,mat('television','#344d55',.34,.24),1.30,2.67,-4.10);
+    box(g,1.05,.68,.25,mat('shelf','#bba17e'),-3.20,1.58,-4.16);
+    for(var n=0;n<4;n++)box(g,.16,.5,.22,mat('roomBook'+n,['#d0aa73','#7b9a92','#d2c29e','#b27b6a'][n]),-3.52+n*.21,1.97,-4.02);
+    plant(3.17,0,2.9,1.2,g)
+  });
+  addRoomWorld('garden',0,12.2,function(g){
+    box(g,18,.14,11.8,mat('patioEarth','#7d9d76'),0,-.12,0);
+    var grass=new THREE.MeshStandardMaterial({color:'#8aa477',roughness:1});
+    var green=addMesh(g,new THREE.PlaneGeometry(17.9,11.75),grass,0,.015,0,false,true);green.rotation.x=-Math.PI/2;
+    box(g,6.2,.13,3.4,mat('decking','#b79975'),-2,.04,-1.0);
+    for(var i=0;i<8;i++)box(g,.05,.02,3.2,mat('deckLines','#92775b'),-4.85+i*.8,.12,-1.0);
+    for(var i=0;i<6;i++)plant(-7+i*2.65,0,4.0,.8+(i%3)*.2,g);
+    box(g,2.4,.18,1.0,wood,2.6,.75,-1.85);
+    for(var x of [1.7,3.5])cylinder(g,.15,.15,.74,wood,x,.38,-1.85);
+    cylinder(g,.7,.65,.27,mat('gardenPot','#c7a382'),6.1,.16,-1.25);
+    plant(6.1,.35,-1.25,2.2,g)
+  });
+  function focusRoom(room){
+    var destinations={home:[0,1.8,-.25],kitchen:[0,1.8,-.25],
+      sleep:[14.05,1.65,-.75],living:[14.05,1.75,8.35],garden:[0,1.5,12.2]};
+    var point=destinations[room]||destinations.home;
+    var required=({sleep:'sleep',living:'living',garden:'garden'})[room];
+    if(required&&!roomSpaces[required]?.visible)return false;
+    cameraTarget.set(point[0],point[1],point[2]);targetZoom=room==='home'||room==='kitchen'?1:1.03;
+    selection=null;selectionRing.visible=false;return true
+  }
+
   // plants, printer and dog detail
   box(scene,.88,.28,.74,black,-2.1,.5,-3.65);
   box(scene,.9,.75,.83,woodDark,-2.1,.38,-3.65);
@@ -1135,6 +1214,7 @@
   }
   function refresh(state){
     for(var id in upgrades)upgrades[id].visible=(state.owned||[]).includes(id);
+    for(var name in roomSpaces)roomSpaces[name].visible=(state.owned||[]).includes(name);
     syncFurniture(state.furniture);
     applyHomeDesign(state.homeDesign);
     ['self','partner'].forEach(function(key){
@@ -1170,7 +1250,7 @@
     if(host.classList.contains('is-ready'))renderer.render(scene,camera);
   }
   window.Evin3D={
-    focus:focus,focusDesign:focusDesign,reset:resetCamera,zoom:adjustZoom,select:setTarget,applyDesign:applyHomeDesign,
+    focus:focus,focusRoom:focusRoom,focusDesign:focusDesign,reset:resetCamera,zoom:adjustZoom,select:setTarget,applyDesign:applyHomeDesign,
     beginFurniturePlacement:beginFurniturePlacement,cancelFurniturePlacement:cancelFurniturePlacement,
     getFurniturePlacement:getFurniturePlacement,nudgeFurniture:moveFurnitureBy,rotateFurniture:rotateFurniture,
     focusFurniture:focusFurniture,syncFurnitureNow:function(){syncFurniture(snapshot().furniture)},isReady:true,
