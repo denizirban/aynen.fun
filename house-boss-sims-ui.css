@@ -359,3 +359,10 @@
  font:850 10px 'DM Mono',monospace;box-shadow:0 2px 0 #8cab85
 }
 #game.sims-ui #simSheet .ss-freewill button[aria-pressed="false"]{background:#e8e8df;color:#777d6f;border-color:#c7cbbd}
+
+/* SIMS_TRAITS_COMPACT_V8 — in-panel addition; the main dock is unchanged. */
+#game.sims-ui #simSheet .ss-traits{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}
+#game.sims-ui #simSheet .ss-trait{border:1px solid #cbd8c6;border-radius:100px;background:#f0f4ea;color:#617b62;font:800 9px 'DM Mono',monospace;padding:8px 10px;cursor:pointer;white-space:nowrap}
+#game.sims-ui #simSheet .ss-trait:hover{background:#e4f1df;border-color:#8dbb83}
+#game.sims-ui #simSheet .ss-trait.active{border-color:#83b27c;background:#d7eacc;color:#3d683d;box-shadow:inset 0 1px 0 #fff}
+#game.sims-ui #simSheet .ss-trait:disabled{opacity:.85;cursor:default}
