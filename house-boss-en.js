@@ -40,6 +40,7 @@ function translateText(text){
  if(CACHE.size>6000)CACHE.clear();CACHE.set(raw,out);
  return text.slice(0,text.indexOf(raw))+out+text.slice(text.indexOf(raw)+raw.length);
 }
+window.HouseBossEN={translate:translateText};
 function visitNode(node){
  if(node.nodeType===3){
   const p=node.parentElement;
