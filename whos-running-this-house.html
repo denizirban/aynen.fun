@@ -615,6 +615,76 @@ body:has(#game) .brand .back{display:none!important}
 @media(max-width:650px){#topTown{display:none!important}.quick-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important}}@media(max-width:700px){#townLayer .townPanel{top:122px;bottom:8px;right:8px;width:calc(100% - 16px);padding:11px}#townLayer .townMapLabel{display:none}#townLayer .townBack{top:83px;left:10px}}
 @media(max-width:480px){#townLayer .townPanel{top:150px;max-height:calc(100% - 160px)}#townLayer .townBack{top:116px}}
 
+
+/* HOUSE_BOSS_SIMSV3 — town-only interface, original kitchen styles untouched */
+#townLayer{background:radial-gradient(ellipse at 70% 95%,#a8c78c 5%,transparent 65%),linear-gradient(180deg,#cbd4e1 0%,#e6dfcf 44%,#9cb587 100%)!important}
+#town3dStage{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:auto}
+#town3dStage canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+#town3dStage[data-status="ready"]~.townCanvas{opacity:0;pointer-events:none}
+#townLayer .townCanvas{pointer-events:none;transition:opacity .4s}
+#townLayer .townPanel{z-index:8;top:148px;right:20px;bottom:18px;width:min(362px,calc(100% - 32px));background:#fbf9f0f3;border:1px solid #797f6f66;border-radius:21px;padding:0;box-shadow:0 22px 55px #242f2830;backdrop-filter:blur(19px);scrollbar-width:thin}
+#townLayer .townPanelHead{position:sticky;top:0;z-index:3;background:#fbf9f0f4;padding:14px 16px 11px;border-bottom:1px solid #d8d5c7}
+#townLayer .townPanelHead .kicker{font:750 9px 'DM Mono',monospace;color:#7d856e;letter-spacing:.12em}
+#townLayer .townPanelHead h2{font-weight:850;font-size:21px;letter-spacing:-.055em;margin:3px 0 7px;color:#293c30}
+#townLayer .townPanelHead p{font-size:11px;margin:0 0 10px;line-height:1.4}
+#townLayer .townHeadButtons{display:flex;gap:6px;justify-content:space-between}
+#townLayer .townHeadButtons button{flex:1;background:#ecefe3;border:1px solid #ccd2c0;border-radius:10px;padding:9px 5px;color:#516351;font:800 9px 'DM Mono',monospace;letter-spacing:.025em}
+#townLayer .townHeadButtons button.active{color:#f8f8f1;background:#496d59;border-color:#496d59}
+#townLayer #townContent{padding:11px 12px 17px}
+#townLayer .townBack{position:absolute;left:19px;top:auto!important;bottom:20px;z-index:12;min-height:44px;border:1px solid #415746;border-radius:50px;padding:10px 17px;font:900 11px 'DM Mono',monospace;background:#f8f5e9;color:#294632;box-shadow:0 6px 16px #1f33222b;display:flex;gap:7px;align-items:center}
+#townLayer .townBack:hover{background:#d2e6c0}
+#townLayer .townPanelHome{border:0;background:#e1ebd5;border-radius:9px;font:800 9px 'DM Mono',monospace;color:#375743;padding:7px 9px;float:right}
+#townLayer .townMapLabel{top:auto;bottom:94px;left:22px;font-size:24px;line-height:.95;letter-spacing:-.06em;padding:0;background:none;border:0;box-shadow:none;color:#f8f8ef;text-shadow:0 2px 13px #38472f77;pointer-events:none}
+#townLayer .townQuick{position:absolute;bottom:22px;left:165px;z-index:9;display:flex;gap:7px;max-width:calc(100% - 575px);overflow:auto;scrollbar-width:none}
+#townLayer .townQuick button{background:#faf8ecf0;color:#44624a;border:1px solid #edf1e6;border-radius:100px;padding:9px 12px;white-space:nowrap;font:800 10px 'DM Mono',monospace;box-shadow:0 4px 15px #0002}
+#townLayer .townQuick button:hover{background:#dce9d0}
+#townLayer #townHover{position:absolute;z-index:7;pointer-events:none;font:800 11px 'DM Mono',monospace;background:#fffbeb;border:1px solid #6d7c66;color:#355641;padding:7px 10px;border-radius:9px;box-shadow:0 3px 10px #0002}
+#townLayer #townHover[hidden]{display:none!important}
+#townLayer .townStatus{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:10px}
+#townLayer .townStatus>div{padding:9px 8px;background:#f0eee1;border-radius:10px;min-width:0;border:1px solid #e1decf}
+#townLayer .townStatus small{font-size:8px;display:block;color:#768072;text-transform:uppercase;font-weight:900;letter-spacing:.035em}
+#townLayer .townStatus b{font-size:14px;display:block;white-space:nowrap;color:#364d3c;margin-top:3px}
+#townLayer .townJob{padding:11px 10px;margin:7px 0;border:1px solid #dddbcf;background:#fffdf7;border-radius:13px;display:block}
+#townLayer .townJob.chosen{border-color:#82a37b;background:#f0f4e9}
+#townLayer .jobName{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+#townLayer .jobName span{width:29px;height:29px;display:grid;place-items:center;background:#edf1e5;border-radius:8px;color:#6a795c;font-size:15px}
+#townLayer .jobName b{font-size:12px;font-weight:900;color:#303e34}
+#townLayer .townJob small{font-size:10px}
+#townLayer .townJob .jobBtns{display:grid;grid-template-columns:1fr 1fr;margin-top:9px;gap:7px}
+#townLayer .townJob .jobBtns:has(button:only-child){grid-template-columns:1fr}
+#townLayer .townJob button,#townLayer .townActivity button{font:850 10px 'DM Mono',monospace;background:#d3e3bd;border:1px solid #b8caa5;color:#37533d;border-radius:9px;padding:9px 5px;min-height:36px;cursor:pointer}
+#townLayer .townJob button:disabled{background:#f3f0e7;color:#999b91;border-color:#dedbd1;opacity:1}
+#townLayer .townJob button:not(:disabled):active{transform:scale(.98)}
+#townLayer .townActivity{padding:12px;border-radius:12px;border:1px solid #dddbd0;background:#fffdf7;margin:7px 0;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+#townLayer .townActivity b{display:block;font-size:12px}.townActivity small{display:block;font-size:10px;color:#858476;margin-top:5px}
+#townLayer .townSectionLabel{font:850 10px 'DM Mono',monospace;letter-spacing:.05em;color:#627561;margin:12px 2px 7px}
+#townLayer .townBar{height:6px}
+#townLayer .townNote{font-size:10px;color:#6a7769;line-height:1.5;margin:9px 4px}
+#townLayer .townPill{display:inline-block;font:800 9px 'DM Mono',monospace;border-radius:5px;padding:3px 6px;background:#e8eedb;color:#53714e}
+#townLayer .townPill.warn{background:#f5e6d6;color:#987148}
+#townLayer .townMiniBar{height:6px;background:#e4e3d6;border-radius:8px;overflow:hidden;margin-top:5px}
+#townLayer .townMiniBar i{height:100%;display:block;background:#72986c;transition:width .25s}
+#townLayer .townPanelNote{font-size:10px;color:#7b826f;margin:4px 0 9px;line-height:1.5}
+@media(max-width:800px){
+ #townLayer .townPanel{top:127px;right:9px;bottom:11px;width:min(340px,calc(100% - 18px))}
+ #townLayer .townBack{left:10px;bottom:12px}
+ #townLayer .townQuick{left:133px;bottom:14px;max-width:calc(100% - 496px)}
+ #townLayer .townMapLabel{bottom:79px;left:14px}
+}
+@media(max-width:590px){
+ #townLayer .townPanel{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-height:49dvh;border-radius:15px;box-shadow:0 8px 24px #0003}
+ #townLayer .townPanelHead{padding:9px 11px 8px}
+ #townLayer .townPanelHead h2{font-size:16px;margin:0 0 4px}
+ #townLayer .townPanelHead p{display:none}
+ #townLayer .townHeadButtons button{min-height:33px}
+ #townLayer #townContent{padding:8px}
+ #townLayer .townBack{top:134px!important;bottom:auto;left:9px;min-height:36px;padding:7px 11px}
+ #townLayer .townQuick{top:135px;bottom:auto;left:124px;right:7px;max-width:none}
+ #townLayer .townQuick button{padding:8px 10px;font-size:9px}
+ #townLayer .townMapLabel{display:none}
+ #townLayer .townStatus{margin-bottom:6px}
+}
+
 </style>
 </head>
 <body>
@@ -1488,14 +1558,14 @@ function finish(j,kind){
 
 
 /* HOUSE_BOSS_ORIGINAL_UI_LIFE_SIM — game systems, original room untouched */
-var life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,autoWorkDay:0,seededDay:1,billsTotal:0,homeValue:0,schoolLevel:1,schoolXp:0,schoolLastDay:0};
+var life={zone:'home',townTab:'work',selectedPlace:'all',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,outing:null,skills:{social:1,creativity:1,fitness:1},socialXp:0,contacts:0,shifts:0,pShifts:0,earned:0,autoWorkDay:0,seededDay:1,billsTotal:0,homeValue:0,schoolLevel:1,schoolXp:0,schoolLastDay:0};
 var lifeJobs=[
  {id:'walk',title:'Dog Walker',where:'Park',mins:85,pay:70,level:1,energy:12,partner:false},
  {id:'cafe',title:'Barista',where:'Corner Café',mins:130,pay:125,level:1,energy:18,partner:true},
- {id:'shop',title:'Shop Assistant',where:'Market',mins:175,pay:175,level:2,energy:22,partner:true},
- {id:'deliver',title:'City Courier',where:'Delivery Depot',mins:190,pay:220,level:3,energy:24,partner:false},
- {id:'studio',title:'Designer',where:'Creative Studio',mins:245,pay:335,level:4,energy:27,partner:true},
- {id:'manager',title:'Studio Manager',where:'Central Office',mins:300,pay:525,level:7,energy:32,partner:true}
+ {id:'shop',title:'Shop Assistant',where:'Market',mins:170,pay:170,level:1,energy:22,partner:true},
+ {id:'deliver',title:'City Courier',where:'Delivery Depot',mins:185,pay:220,level:2,energy:24,partner:true},
+ {id:'studio',title:'Designer',where:'Creative Studio',mins:235,pay:335,level:3,energy:27,partner:true},
+ {id:'manager',title:'Studio Manager',where:'Central Office',mins:280,pay:525,level:5,energy:32,partner:true}
 ];
 var lifeHomeProjects=[
  {id:'office',name:'Home Office',icon:'▣',price:350,level:2,tag:'ROOM',desc:'Unlock freelance work from home.'},
@@ -1506,6 +1576,73 @@ var lifeHomeProjects=[
 ];
 upgradeCatalog.push.apply(upgradeCatalog,lifeHomeProjects);
 function lifeSkill(partner){return Math.min(12,1+Math.floor((partner?life.partnerCareerXp:life.careerXp)/125))}
+
+/* HOUSE_BOSS_SIMSV3 — neighborhood routines and career logic */
+var townActivities=[
+ {id:'walk',name:'Walk in the Park',place:'park',minutes:55,cost:0,energy:8,fun:20,social:2,fitness:12,creative:0,desc:'A slower hour, a better mood.'},
+ {id:'coffee',name:'Coffee with Neighbors',place:'cafe',minutes:50,cost:14,energy:-12,fun:20,social:18,fitness:0,creative:0,desc:'Get to know the people next door.'},
+ {id:'groceries',name:'Shop for Groceries',place:'market',minutes:35,cost:21,energy:7,fun:3,social:3,fitness:0,creative:0,hunger:40,desc:'Fill the pantry, not the entire house.'},
+ {id:'workshop',name:'Creative Workshop',place:'studio',minutes:95,cost:16,energy:15,fun:18,social:8,fitness:0,creative:24,desc:'Learn new creative techniques.'},
+ {id:'library',name:'Visit the Library',place:'library',minutes:75,cost:0,energy:9,fun:12,social:5,fitness:0,creative:18,desc:'Ideas are free. Borrowing books is too.'},
+ {id:'fitness',name:'Fitness Session',place:'gym',minutes:70,cost:12,energy:18,fun:19,social:7,fitness:26,creative:0,desc:'Invest in strength and stamina.'}
+];
+function townResumeIfNeeded(){
+ if(paused){paused=false;$('#pause').textContent='Ⅱ';window.HouseBossPlatform?.start();message('Time resumed.')}
+}
+function townPickVenue(place){
+ if(!started)return;
+ if(place==='home'){leaveTown();return}
+ const choices={park:'park',cafe:'cafe',market:'market',studio:'studio',office:'office',library:'library',gym:'gym',delivery:'delivery'};
+ life.zone='town';life.selectedPlace=choices[place]||'all';
+ life.townTab=['park','library','gym'].includes(place)?'explore':'work';
+ window.HouseBossTown3D?.highlightPlace?.(place);
+ lifeTownRender(true)
+}
+function townSkillValue(name){return Math.max(1,Number((life.skills||{})[name]||1))}
+function townSkillGain(name,xp){
+ if(!life.skills)life.skills={social:1,creativity:1,fitness:1};
+ const key=name+'Xp';life[key]=(life[key]||0)+xp;
+ while(life[key]>=townSkillValue(name)*30){life[key]-=townSkillValue(name)*30;life.skills[name]=townSkillValue(name)+1;floatReward(name.toUpperCase()+' · LEVEL '+life.skills[name])}
+}
+function beginOuting(id){
+ var a=townActivities.find(x=>x.id===id);
+ if(!a||!started||ended)return;
+ if(life.shift||life.outing||life.activity||current)return message('Finish your current activity first.');
+ if(energy<a.energy+12)return message('You need more energy. Take a rest at home.');
+ if(cash<a.cost)return message('Not enough money. Try a paid shift.');
+ townResumeIfNeeded();
+ cash-=a.cost;life.outing={id:a.id,left:a.minutes,total:a.minutes};
+ message('On your way: '+a.name+'.');lifeTownRender(true);saveGame()
+}
+function finishOuting(){
+ var o=life.outing;if(!o)return;var a=townActivities.find(x=>x.id===o.id);
+ life.outing=null;if(!a)return;
+ energy=clamp(energy-a.energy);life.fun=clamp(life.fun+a.fun);
+ life.hunger=clamp(life.hunger+(a.hunger||0));peace=clamp(peace+Math.min(8,a.fun*.25));
+ if(a.social){life.contacts=(life.contacts||0)+1;townSkillGain('social',a.social)}
+ if(a.fitness)townSkillGain('fitness',a.fitness);
+ if(a.creative)townSkillGain('creativity',a.creative);
+ if(a.id==='coffee')friendship=clamp(friendship+4);
+ if(a.id==='walk')petEnergy=clamp(petEnergy+12);
+ grantXp(9);message(a.name+' completed. New memories made.');lifeTownRender(true);saveGame()
+}
+function townStatus(j,who){
+ var partner=who==='partner',lvl=partner?life.partnerCareerLevel:life.careerLevel,
+     busy=partner?(!!life.pShift||!!helper):(!!life.shift||!!life.activity||!!life.outing||!!current),
+     e=partner?partnerEnergy:energy;
+ if(partner&&!j.partner)return 'Unavailable';
+ if(lvl<j.level)return 'Career LVL '+j.level+' required';
+ if(busy)return 'Currently busy';
+ if(e<j.energy+10)return 'Rest first';
+ return ''
+}
+window.HouseBossTownBridge={
+ getState:function(){return {time:time,day:day,started:started,paused:paused,zone:life.zone,
+   selfShift:life.shift&&life.shift.id,partnerShift:life.pShift&&life.pShift.id,outing:life.outing&&life.outing.id,
+   career:life.careerLevel,partnerCareer:life.partnerCareerLevel,earned:life.earned}},
+ selectVenue:townPickVenue
+};
+
 function lifeInstall(){
  var btn=document.createElement('button');btn.type='button';btn.id='townButton';btn.textContent='TOWN';$('#quickBar .quick-nav').appendChild(btn);
  btn.onclick=function(){enterTown()};var desktopTown=document.createElement('button');desktopTown.type='button';desktopTown.id='topTown';desktopTown.className='mini';desktopTown.textContent='TOWN';desktopTown.setAttribute('aria-label','Visit town');$('#top .clock .controls').appendChild(desktopTown);desktopTown.onclick=enterTown;
@@ -1521,34 +1658,54 @@ function lifeInstall(){
  '<g fill="#678268"><circle cx="55" cy="402" r="49"/><circle cx="349" cy="410" r="44"/><circle cx="745" cy="415" r="42"/></g></svg>'+
  '<button class="townBack" id="backHome">← HOME</button><div class="townMapLabel">THE WORLD<br>OUTSIDE.</div>'+
  '<div class="townPanel"><h2>Town & Work</h2><p>Earn money, build skills, and invest in your home. Your partner can have a career too.</p><div id="townContent"></div></div>';
+
  $('#game').appendChild(town);
- $('#backHome').onclick=function(){leaveTown()};
- town.addEventListener('click',function(e){var b=e.target.closest('button[data-life-job]');if(b)lifeBeginShift(b.dataset.lifeJob,b.dataset.who)});
+ // Three.js visual layer is independent of the existing home scene.
+ town.insertAdjacentHTML('afterbegin','<div id="town3dStage" aria-label="Low-poly countryside and interactive town"></div>');
+ town.insertAdjacentHTML('beforeend','<div id="townHover" role="status" hidden></div><div class="townQuick"><button type="button" data-town-place="park">PARK</button><button type="button" data-town-place="cafe">CAFÉ</button><button type="button" data-town-place="market">MARKET</button><button type="button" data-town-place="studio">STUDIO</button></div>');
+ town.querySelector('.townPanel').innerHTML='<div class="townPanelHead"><button type="button" class="townPanelHome" data-town-home>← HOME</button><span class="kicker">THE LIVING NEIGHBORHOOD</span><h2>Town & Life</h2><p>Work, meet people, build skills. Your household keeps moving.</p><div class="townHeadButtons"><button data-town-tab="work" class="active">WORK</button><button data-town-tab="explore">EXPLORE</button><button data-town-tab="people">SKILLS</button></div></div><div id="townContent"></div>';
+ $('#backHome').textContent='← BACK HOME';
+ $('#backHome').onclick=leaveTown;
+ town.addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  if(b.dataset.townHome!==undefined){leaveTown();return}
+  if(b.dataset.townPlace){townPickVenue(b.dataset.townPlace);return}
+  if(b.dataset.townTab){life.townTab=b.dataset.townTab;lifeTownRender(true);return}
+  if(b.dataset.lifeJob){lifeBeginShift(b.dataset.lifeJob,b.dataset.who||'self');return}
+  if(b.dataset.townActivity){beginOuting(b.dataset.townActivity);return}
+ });
+
 }
-function enterTown(){if(!started||ended)return;hideAction();closeMobileFamily();setTasksOpen(false);life.zone='town';$('#game').classList.add('town-active');lifeTownRender(true)}
-function leaveTown(){life.zone='home';$('#game').classList.remove('town-active');lifeTownRender(true)}
+function enterTown(){if(!started||ended)return;hideAction();closeMobileFamily();setTasksOpen(false);life.zone='town';life.townTab=life.townTab||'work';$('#game').classList.add('town-active');lifeTownRender(true)}
+function leaveTown(){life.zone='home';life.selectedPlace='all';$('#game').classList.remove('town-active');lifeTownRender(true);render();saveGame()}
 function lifeBeginShift(id,who){
- var j=lifeJobs.find(function(x){return x.id===id});if(!j||!started||ended||paused)return message('Resume time first.');
+ var j=lifeJobs.find(function(x){return x.id===id});
+ if(!j||!started||ended)return;
+ var problem=townStatus(j,who);
+ if(problem){message(problem+'.');lifeTownRender(true);return}
+ townResumeIfNeeded();
  if(who==='partner'){
-  if(!j.partner||life.partnerCareerLevel<j.level||life.pShift||helper||partnerQueue.length||partnerEnergy<j.energy+10)return message('Partner is busy, tired, or needs more experience.');
-  life.pShift={id:id,left:j.mins,total:j.mins};familyNotice('Partner left for work at '+j.where+'.');
+  life.pShift={id:id,left:j.mins,total:j.mins};
+  familyNotice('Partner left for work at '+j.where+'.');
  }else{
-  if(life.careerLevel<j.level||life.shift||life.activity||current||selfQueue.length||energy<j.energy+10)return message('Finish your chore, rest or gain career XP first.');
-  life.shift={id:id,left:j.mins,total:j.mins};posTarget=[770,460];
+  life.shift={id:id,left:j.mins,total:j.mins};
+  posTarget=[770,460];say('Off to work. See you later.');
  }
- message((who==='partner'?'Partner':'You')+' started work at '+j.where+'.');lifeTownRender(true);saveGame()
+ life.lastWorkplace=j.where;
+ message((who==='partner'?'Partner':'You')+' started a shift at '+j.where+'.');
+ lifeTownRender(true);saveGame()
 }
 function lifeFinishShift(who){
  var p=who==='partner',job=p?life.pShift:life.shift;
  if(!job)return;var j=lifeJobs.find(function(x){return x.id===job.id});if(!j)return;
  var pay=Math.round(j.pay*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;
- if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2)}
- else {energy=clamp(energy-j.energy);life.careerXp+=48;life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25)}
+ if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2);townSkillGain('social',4)}
+ else {energy=clamp(energy-j.energy);life.careerXp+=48;life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25);townSkillGain(j.id==='studio'||j.id==='manager'?'creativity':j.id==='walk'||j.id==='deliver'?'fitness':'social',12);startSelf()}
  floatReward('PAYDAY +$'+pay);message((p?'Partner':'You')+' earned $'+pay+'.');saveGame()
 }
 function lifeBeginActivity(kind){
  var a={eat:[25,12],rest:[100,0],relax:[55,0],freelance:[130,0]}[kind];
- if(!a||!started||ended||life.shift||life.activity||current)return message('You are busy. Finish your current activity first.');
+ if(!a||!started||ended||life.shift||life.activity||life.outing||current)return message('You are busy. Finish your current activity first.');
  if(kind==='freelance'&&!owned.includes('office'))return message('Build a Home Office first.');
  if(cash<a[1])return message('Not enough money for food.');
  cash-=a[1];life.activity={kind:kind,left:a[0],total:a[0]};message('Started: '+kind);saveGame()
@@ -1558,7 +1715,7 @@ function lifeFinishActivity(){
  if(k==='eat'){life.hunger=clamp(life.hunger+56);peace=clamp(peace+4)}
  if(k==='rest')energy=clamp(energy+65);
  if(k==='relax'){life.fun=clamp(life.fun+(owned.includes('living')?57:38));peace=clamp(peace+6);friendship=clamp(friendship+3)}
- if(k==='freelance'){var pay=Math.round(90*(1+(life.careerLevel-1)*.15));cash+=pay;life.earned+=pay;life.careerXp+=26;life.careerLevel=lifeSkill(false);floatReward('FREELANCE +$'+pay)}
+ if(k==='freelance'){var pay=Math.round(90*(1+(life.careerLevel-1)*.15));cash+=pay;life.earned+=pay;life.careerXp+=26;life.careerLevel=lifeSkill(false);townSkillGain('creativity',10);floatReward('FREELANCE +$'+pay)}
  grantXp(12);message('Completed: '+k);saveGame()
 }
 
@@ -1617,6 +1774,7 @@ function lifeAdvance(dm){
  if(life.shift){life.shift.left-=dm;if(life.shift.left<=0)lifeFinishShift('self')}
  if(life.pShift){life.pShift.left-=dm;if(life.pShift.left<=0)lifeFinishShift('partner')}
  if(life.activity){life.activity.left-=dm;if(life.activity.left<=0)lifeFinishActivity()}
+ if(life.outing){life.outing.left-=dm;if(life.outing.left<=0)finishOuting()}
  /* HOUSE_BOSS_SCHOOL_PROGRESS_V2 */
  if((day-1)%7<5&&time>=900&&time<1000&&life.schoolLastDay!==day){
    life.schoolLastDay=day;life.schoolXp=(life.schoolXp||0)+17;
@@ -1630,20 +1788,72 @@ function lifeAdvance(dm){
 }
 var townLastKey='';
 function lifeTownRender(force){
- if(!$('#townLayer'))return;
- $('#townLayer').style.display=life.zone==='town'?'block':'none';
- $('#game').classList.toggle('town-active',life.zone==='town');
- $('#dayLabel').textContent='DAY '+String(day).padStart(2,'0')+' · '+weekDay()+' / '+(time<6*60?'NIGHT':time<12*60?'MORNING':time<18*60?'AFTERNOON':'EVENING');
- $('#game').classList.toggle('night',time>=21*60||time<6*60);
- $('#player').style.opacity=life.shift?'.12':'1';
- $('#partnerActor').style.opacity=life.pShift?'.12':'1';$('#kidActor').style.opacity=kidAtSchool()?'.12':'1';
- if(!started||life.zone!=='town')return;
- var key=[Math.floor(time/5),life.careerLevel,life.partnerCareerLevel,life.shift&&life.shift.id,life.pShift&&life.pShift.id,Math.floor(energy/5),Math.floor(partnerEnergy/5)].join('|');
+ var layer=$('#townLayer');if(!layer)return;
+ var visible=life.zone==='town';
+ layer.style.display=visible?'block':'none';
+ $('#game').classList.toggle('town-active',visible);
+ $('#dayLabel').textContent='DAY '+String(day).padStart(2,'0')+' · '+weekDay()+' / '+(time<360?'NIGHT':time<720?'MORNING':time<1080?'AFTERNOON':'EVENING');
+ $('#game').classList.toggle('night',time>=1260||time<360);
+ $('#player').style.opacity=life.shift?'.12':'1';$('#partnerActor').style.opacity=life.pShift?'.12':'1';
+ $('#kidActor').style.opacity=kidAtSchool()?'.12':'1';
+ if(!started||!visible)return;
+ var key=[Math.floor(time/2),paused,life.townTab,life.selectedPlace,life.careerLevel,life.partnerCareerLevel,life.shift&&life.shift.id,life.pShift&&life.pShift.id,life.outing&&life.outing.id,
+          Math.floor(energy/5),Math.floor(partnerEnergy/5),Math.floor(life.hunger/5),Math.floor(life.fun/5),Math.floor(cash),life.contacts||0].join('|');
  if(!force&&key===townLastKey)return;townLastKey=key;
- var html='';
- if(life.shift)html+='<div class="townJob"><div><b>YOUR SHIFT</b><small>'+Math.ceil(life.shift.left)+' game min left<div class="townBar"><i style="width:'+(100-100*life.shift.left/life.shift.total)+'%"></i></div></small></div></div>';
- if(life.pShift)html+='<div class="townJob"><div><b>PARTNER WORKING</b><small>'+Math.ceil(life.pShift.left)+' game min left</small></div></div>';
- html+=lifeJobs.map(function(j){return '<div class="townJob"><div><b>'+j.title+'</b><small>'+j.where+' · '+j.mins+' min · $'+j.pay+'+ · Career LVL '+j.level+'</small></div><div class="jobBtns"><button data-life-job="'+j.id+'" data-who="self" '+(life.careerLevel<j.level||life.shift||life.activity||current||energy<j.energy+10?'disabled':'')+'>'+(life.careerLevel<j.level?'LOCKED':'WORK')+'</button>'+(j.partner?'<button data-life-job="'+j.id+'" data-who="partner" '+(life.partnerCareerLevel<j.level||life.pShift||helper||partnerEnergy<j.energy+10?'disabled':'')+'>PARTNER</button>':'')+'</div></div>'}).join('');
+ layer.querySelectorAll('[data-town-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.townTab===(life.townTab||'work'))});
+ var html='<div class="townStatus"><div><small>CAREER</small><b>LVL '+life.careerLevel+'</b></div><div><small>AVAILABLE</small><b>$'+Math.floor(cash)+'</b></div><div><small>MOOD</small><b>'+Math.round(life.fun)+'%</b></div></div>';
+ if(life.shift){
+  var active=lifeJobs.find(function(j){return j.id===life.shift.id});
+  html+='<div class="townJob chosen"><div class="jobName"><span>◷</span><b>YOU ARE WORKING · '+(active?active.title:'SHIFT')+'</b></div><small>'+Math.max(0,Math.ceil(life.shift.left))+' game min to payday</small><div class="townBar"><i style="width:'+Math.max(0,Math.min(100,100-100*life.shift.left/life.shift.total))+'%"></i></div></div>';
+ }
+ if(life.pShift){
+  var pJob=lifeJobs.find(function(j){return j.id===life.pShift.id});
+  html+='<div class="townJob chosen"><div class="jobName"><span>◷</span><b>PARTNER · '+(pJob?pJob.title:'SHIFT')+'</b></div><small>'+Math.max(0,Math.ceil(life.pShift.left))+' min left · income goes to family budget</small><div class="townBar"><i style="width:'+Math.max(0,Math.min(100,100-100*life.pShift.left/life.pShift.total))+'%"></i></div></div>';
+ }
+ if(life.outing){
+  var o=townActivities.find(function(a){return a.id===life.outing.id});
+  html+='<div class="townJob chosen"><b>OUT IN TOWN · '+(o?o.name:'ACTIVITY')+'</b><small>'+Math.max(0,Math.ceil(life.outing.left))+' min remaining</small><div class="townBar"><i style="width:'+Math.max(0,Math.min(100,100-100*life.outing.left/life.outing.total))+'%"></i></div></div>';
+ }
+ var tab=life.townTab||'work',place=life.selectedPlace||'all';
+ if(tab==='work'){
+  html+='<div class="townSectionLabel">CHOOSE YOUR SHIFT</div>';
+  var display=lifeJobs.filter(function(j){
+   if(place==='all')return true;
+   var map={park:['walk'],cafe:['cafe'],market:['shop'],delivery:['deliver'],studio:['studio'],office:['manager']};
+   return !map[place]||map[place].includes(j.id)
+  });
+  if(!display.length)display=lifeJobs;
+  html+=display.map(function(j){
+   var selfErr=townStatus(j,'self'),pErr=townStatus(j,'partner');
+   var icon={walk:'🐕',cafe:'☕',shop:'▦',deliver:'▣',studio:'✦',manager:'◆'}[j.id];
+   var selfLabel=life.careerLevel<j.level?'LVL '+j.level+' NEEDED':selfErr==='Currently busy'?'BUSY':selfErr==='Rest first'?'REST FIRST':'WORK';
+   var partnerLabel=life.partnerCareerLevel<j.level?'LVL '+j.level:pErr?'BUSY':'PARTNER';
+   return '<article class="townJob"><div class="jobName"><span>'+icon+'</span><b>'+j.title+'</b></div>'+
+     '<small>'+j.where+' · '+j.mins+' min · $'+j.pay+'+ per shift</small><div class="jobBtns">'+
+     '<button data-life-job="'+j.id+'" data-who="self" '+(selfErr?'disabled title="'+selfErr+'"':'')+'>'+selfLabel+'</button>'+
+     (j.partner?'<button data-life-job="'+j.id+'" data-who="partner" '+(pErr?'disabled title="'+pErr+'"':'')+'>'+partnerLabel+'</button>':'')+
+     '</div></article>';
+  }).join('');
+  html+='<p class="townNote">Career levels unlock new jobs. Starting a shift resumes paused time automatically. Tap the house or BACK HOME to return anytime.</p>';
+ }else if(tab==='explore'){
+  html+='<div class="townSectionLabel">PLACES & ACTIVITIES</div>';
+  var selected=townActivities.filter(function(a){return place==='all'||a.place===place});
+  if(!selected.length)selected=townActivities;
+  html+=selected.map(function(a){
+   var busy=!!life.shift||!!life.outing||!!life.activity||!!current;
+   return '<article class="townActivity"><div><b>'+a.name+'</b><small>'+a.desc+' · '+a.minutes+' min · '+(a.cost?'$'+a.cost:'FREE')+'</small></div>'+
+     '<button data-town-activity="'+a.id+'" '+(busy||cash<a.cost||energy<a.energy+12?'disabled':'')+'>GO</button></article>'
+  }).join('');
+  html+='<p class="townNote">Meeting neighbors and exploring town improves happiness, social connections and useful skills.</p>'
+ }else{
+  html+='<div class="townSectionLabel">YOUR PERSONAL GROWTH</div>';
+  var social=townSkillValue('social'),creative=townSkillValue('creativity'),fitness=townSkillValue('fitness');
+  [['Social',social,life.socialXp||0],['Creativity',creative,life.creativityXp||0],['Fitness',fitness,life.fitnessXp||0]].forEach(function(a){
+   html+='<div class="townActivity"><div style="width:100%"><b>'+a[0]+' · LVL '+a[1]+'</b><small>'+a[2]+' / '+(a[1]*30)+' XP</small><div class="townMiniBar"><i style="width:'+Math.min(100,100*a[2]/(a[1]*30))+'%"></i></div></div></div>'
+  });
+  html+='<div class="townSectionLabel">YOUR NEIGHBORHOOD</div><p class="townPanelNote">'+(life.contacts||0)+' social encounters · '+life.shifts+' shifts completed · $'+life.earned+' career earnings.<br>Partner career LVL '+life.partnerCareerLevel+' · '+life.pShifts+' shifts completed.</p>';
+  html+='<button class="townPanelHome" data-town-tab="explore" style="width:100%;float:none">EXPLORE THE TOWN →</button>';
+ }
  $('#townContent').innerHTML=html
 }
 function lifeNotebook(){
@@ -1656,7 +1866,8 @@ function lifeNotebook(){
  [['eat','EAT','$12 · 25 min'],['rest','REST','Recover energy · 100 min'],['relax','RELAX','Family time · 55 min'],['freelance','FREELANCE','Requires Home Office · 130 min']].map(function(a){return '<div class="lifeBookAction"><div><b>'+a[1]+'</b><p>'+a[2]+'</p></div><button data-life-act="'+a[0]+'" '+(life.activity||life.shift||current||(a[0]==='freelance'&&!owned.includes('office'))?'disabled':'')+'>START</button></div>'}).join('')+
  '<div class="lifeBookAction"><div><b>YOUR CAREER</b><p>'+life.shifts+' shifts · $'+life.earned+' earned · '+life.careerXp+' XP</p></div></div>'+
  '<div class="lifeBookAction"><div><b>PARTNER CAREER</b><p>LVL '+life.partnerCareerLevel+' · '+life.pShifts+' shifts · '+life.partnerCareerXp+' XP</p></div></div>'+
- '<p>Every new day costs $45 in living expenses. Jobs pay wages. Home expansions appear in UPGRADES.</p>'
+ '<div class="lifeBookAction"><div><b>NEIGHBORHOOD SKILLS</b><p>Social LVL '+townSkillValue('social')+' · Creativity LVL '+townSkillValue('creativity')+' · Fitness LVL '+townSkillValue('fitness')+'</p></div></div>'+ 
+ '<p>Work and neighborhood activities grow skills. Household bills are $45/day. Home improvements stay with your save.</p>'
 }
 
 function advance(dt){
@@ -1688,7 +1899,7 @@ function finishDay(){
 }
 function reset(mode){
  window.HouseBossPlatform?.start();
- if(mode==='fresh'){life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,autoWorkDay:0,seededDay:1,billsTotal:0,homeValue:0,schoolLevel:1,schoolXp:0,schoolLastDay:0};partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
+ if(mode==='fresh'){life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,outing:null,skills:{social:1,creativity:1,fitness:1},socialXp:0,contacts:0,townTab:'work',selectedPlace:'all',autoWorkDay:0,seededDay:1,billsTotal:0,homeValue:0,schoolLevel:1,schoolXp:0,schoolLastDay:0};partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
  if(mode==='next'){day+=1;cash+=110;partnerEnergy=clamp(partnerEnergy+25);kidEnergy=clamp(kidEnergy+30);petEnergy=clamp(petEnergy+25);}
  time=7*60;dayInitiatives={partner:0,kid:0};nextFamilyDecision=15*60+15;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):shiftOptions[runMode].initialPeace;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=9*60+22;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:"Make tea for the guest",detail:"Another cup of tea. Another story.",icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:"Organize the fridge",detail:"Time to face the half lemons.",icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});if(day>=5)add({key:'guest',name:"Getting ready for guests",detail:"One guest is coming. Everyone is on duty.",icon:'🫖',spot:'table',dur:25,due:20*60+10,weight:14});syncAvatars();$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Day '+day+' · 7:00 AM. Time to live, work, and build.');say("When's dinner ready?")
 }
@@ -1794,5 +2005,6 @@ requestAnimationFrame(frame)
 <!-- Standalone CrazyGames build does not load aynen.fun site navigation widgets. -->
 <script src="./house-boss-en.js?v=2"></script>
 <script type="module" src="./evin-patronu-3d.js?v=3"></script>
+<script type="module" src="./house-boss-town-3d.js?v=1"></script>
 </body>
 </html>
