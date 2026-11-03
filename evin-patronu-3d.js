@@ -286,6 +286,58 @@
   addUpgrade('pot',function(g){cylinder(g,.3,.28,.32,mat('newpot','#d6a97e'),6.35,1.84,-3.4)});
   addUpgrade('coffee',function(g){box(g,.5,.65,.4,mat('coffee','#ddd2bf'),7.0,1.9,2.3);cylinder(g,.18,.18,.2,black,7.0,2.32,2.3)});
   addUpgrade('light',function(g){ball(g,.24,.38,.24,mat('shade','#f0e5c7'),1.5,5.4,0)});
+
+  /* LIFE_SCENE_EXTENSIONS_V2 — furniture only appears after purchase */
+  addUpgrade('office',function(g){
+    // Add shelving and a desk lamp to the kitchen's existing laptop nook.
+    box(g,1.85,.11,.36,woodDark,2.2,3.15,-5.15);
+    for(var i=0;i<6;i++){
+      box(g,.14,.38+(i%3)*.07,.23,mat('offbook'+i,i%2?'#aa8867':'#849a8b'),1.48+i*.23,3.42,-5.06);
+    }
+    cylinder(g,.17,.18,.06,stainless,2.74,1.6,-1.38);
+    capsule(g,[2.74,1.62,-1.38],[2.82,2.27,-1.37],.04,stainless);
+    ball(g,.25,.14,.22,mat('officeLamp','#e9d5ab'),2.83,2.31,-1.37);
+  });
+  addUpgrade('sleep',function(g){
+    // A bedroom door suggests a room beyond the kitchen instead of a bed in the kitchen.
+    box(g,1.55,2.85,.11,woodDark,2.7,1.42,-5.34);
+    box(g,1.30,2.65,.06,mat('bedDoor','#d2b991'),2.7,1.40,-5.25);
+    box(g,.44,.16,.065,mat('doorName','#eee9d3'),2.7,2.42,-5.18);
+    ball(g,.09,.09,.09,stainless,3.18,1.43,-5.14);
+    box(g,.42,.09,.21,woodDark,2.7,2.65,-5.22);
+  });
+  addUpgrade('living',function(g){
+    // Cozy reading nook integrated into existing open-plan room.
+    var sofa=mat('livingSofa','#879d83');
+    box(g,1.76,.40,.94,sofa,-6.2,.43,.11);
+    box(g,1.76,.85,.25,sofa,-6.2,.88,-.28);
+    box(g,.23,.58,.91,sofa,-7.07,.68,.1);
+    box(g,.23,.58,.91,sofa,-5.33,.68,.1);
+    box(g,.77,.12,.62,mat('sofaThrow','#e5ceb1'),-6.2,.69,.2);
+    cylinder(g,.11,.14,1.85,black,-4.95,1.0,-.95);
+    ball(g,.31,.20,.31,mat('floorLamp','#f0dba9'),-4.95,1.93,-.95);
+  });
+  addUpgrade('garden',function(g){
+    // Garden growth is visible through the existing window.
+    for(var n=0;n<4;n++)plant(-7.7+n*1.65,1.92,-4.67,.64+(n%2)*.12,g);
+    for(var k=0;k<3;k++){
+      var xx=-7.0+k*2.2;
+      box(g,.8,.12,.26,wood,xx,1.85,-4.85);
+      ball(g,.13,.20,.13,mat('gardenBloom'+k,k%2?'#ddaa82':'#eed5a7'),xx,2.23,-4.78);
+    }
+  });
+  addUpgrade('floor2',function(g){
+    // Architectural staircase hints at a newly built second floor, in the same style.
+    for(var n=0;n<8;n++){
+      box(g,.87,.20+n*.19,.78,wood,-8.05+n*.41,.11+(n*.19)/2,4.3-n*.46);
+    }
+    capsule(g,[-8.40,.56,4.5],[-5.13,2.64,.83],.045,stainless);
+    for(var a=0;a<5;a++){
+      var t=a/4;
+      capsule(g,[-8.40+3.27*t,.28+t*1.96,4.5-3.67*t],[-8.40+3.27*t,.56+t*2.08,4.5-3.67*t],.026,stainless);
+    }
+  });
+
   // plants, printer and dog detail
   box(scene,.88,.28,.74,black,-2.1,.5,-3.65);
   box(scene,.9,.75,.83,woodDark,-2.1,.38,-3.65);
@@ -533,6 +585,7 @@
     };
     for(var k in actors){
       var data=actors[k],root=data.root;
+      root.visible=!(k==='self'&&state.selfAway||k==='partner'&&state.partnerAway||k==='kid'&&state.kidAway);
       var tar=targets[k]||new THREE.Vector3(...data.initial);
       var goal=new THREE.Vector3(tar.x,0,tar.z);
       root.position.lerp(goal,Math.min(1,dt*2.25));
