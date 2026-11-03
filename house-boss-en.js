@@ -16,7 +16,7 @@ function translateText(text){
  let out=DICT.get(raw);
  if(out===undefined){
   out=raw;
-  for(const [source,target] of TRANSLATIONS){
+  for(const [source,target] of DICT){
    if(source.length>=9 && out.includes(source) && source!==target)
      out=out.split(source).join(target);
   }
