@@ -1,0 +1,135 @@
+/* HOUSE BOSS / LIFE CONTROL HUD v4.
+   Original 3D kitchen remains unchanged. Intentional Sims-inspired interaction layout. */
+#game.sims-ui #family,#game.sims-ui #quickBar,#game.sims-ui #levelWidget,#game.sims-ui #goalCard,#game.sims-ui #queuePanel{display:none!important}
+#game.sims-ui #tasks{top:88px;bottom:auto;left:16px;max-height:calc(100dvh - 260px);z-index:23}
+#game.sims-ui #tasks.collapsed{display:none!important}
+#game.sims-ui #action{z-index:31;bottom:170px}
+#game.sims-ui #progress{z-index:24;bottom:165px}
+#game.sims-ui #top{z-index:22}
+#simDock{position:absolute;z-index:26;bottom:max(12px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(1070px,calc(100% - 26px));min-height:136px;background:#f9f8f0f4;color:#293a30;border:1px solid #a7b4a39f;border-radius:22px;box-shadow:0 20px 65px #172e283c,0 3px 0 #ffffffbf inset;display:flex;align-items:stretch;gap:0;padding:9px;backdrop-filter:blur(23px);-webkit-backdrop-filter:blur(23px);transition:transform .25s ease,opacity .25s ease;isolation:isolate}
+#simDock[hidden],#simSheet[hidden],#simObjectMenu[hidden],#simMiniToast[hidden]{display:none!important}
+#simDock button,#simSheet button,#simObjectMenu button{font-family:inherit;cursor:pointer}
+#simDock .sd-portraits{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;flex:0 0 248px;padding:3px 9px 3px 2px;border-right:1px solid #d6dbd1}
+#simDock .sd-avatar{min-width:0;padding:5px 3px 4px;border:1px solid transparent;background:transparent;border-radius:13px;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;color:#677168}
+#simDock .sd-avatar:hover{background:#eff3e8}
+#simDock .sd-avatar.selected{border-color:#8eb396;background:linear-gradient(180deg,#deecda,#f5f8ec);box-shadow:0 0 0 1px #deecda}
+#simDock .sd-face{height:60px;width:52px;max-width:100%;border-radius:11px;overflow:hidden;background:#e8e2d5;display:block;border:1px solid #bcbeb1;box-shadow:0 2px 3px #2c382422}
+#simDock .sd-face svg{width:100%;height:100%;display:block}
+#simDock .sd-label{font:800 10px 'DM Sans',sans-serif;white-space:nowrap}
+#simDock .sd-energy{width:85%;max-width:42px;height:4px;border-radius:10px;background:#deded1;overflow:hidden}
+#simDock .sd-energy i{display:block;height:100%;background:#78a66d;transition:width .4s}
+#simDock .sd-identity{min-width:174px;flex:0 1 185px;padding:7px 12px;display:flex;flex-direction:column;justify-content:center;gap:5px;border-right:1px solid #d6dbd1}
+#simDock .sd-kicker{font:800 8px 'DM Mono',monospace;color:#83917c;letter-spacing:.07em}
+#simDock .sd-name{font-size:18px;font-weight:850;letter-spacing:-.055em;line-height:1.08}
+#simDock .sd-mood{display:flex;align-items:center;gap:5px;width:fit-content;border-radius:100px;background:#dcead7;color:#49704f;padding:5px 9px;font:800 10px 'DM Mono',monospace}
+#simDock .sd-mood:before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
+#simDock .sd-mood[data-tone="tense"]{background:#f8ead7;color:#966a34}
+#simDock .sd-mood[data-tone="bad"]{background:#f7dcd4;color:#ad5347}
+#simDock .sd-mood[data-tone="inspired"]{background:#e3e7f4;color:#6b70a1}
+#simDock .sd-mood[data-tone="neutral"]{background:#e7e9e3;color:#7a8176}
+#simDock .sd-asp-name{font-size:10px;color:#657b63;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#simDock .sd-asp-track{height:5px;border-radius:10px;overflow:hidden;background:#d9dcd0}
+#simDock .sd-asp-track i{display:block;height:100%;background:#74a66b;transition:width .4s}
+#simDock .sd-needs{flex:1;min-width:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px 11px;align-content:center;padding:8px 15px}
+#simDock .sd-need{min-width:0}
+#simDock .sd-need-top{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:5px;font:800 9px 'DM Mono',monospace;color:#5e685d}
+#simDock .sd-need-top b{font-size:8px;color:#9a9d91}
+#simDock .sd-track{height:9px;background:#e4e4d8;border-radius:9px;overflow:hidden;border:1px solid #d1d5c8}
+#simDock .sd-track i{display:block;height:100%;background:linear-gradient(90deg,#6ea86b,#9cc48b);transition:width .4s}
+#simDock .sd-need.low .sd-track i{background:#d8a25e}
+#simDock .sd-need.critical .sd-track i{background:#d77465}
+#simDock .sd-buttons{flex:0 0 174px;border-left:1px solid #d6dbd1;padding:6px 2px 6px 10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,1fr);gap:6px}
+#simDock .sd-buttons button{min-width:0;border:1px solid #d4ddcf;border-radius:10px;background:#ecf0e6;color:#536a52;font:850 10px 'DM Mono',monospace;padding:7px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+#simDock .sd-buttons button:hover,#simDock .sd-buttons button.active{background:#dcebd8;border-color:#9dbb9d;color:#2d5435}
+#simDock .sd-buttons button span{font-size:16px;line-height:1}
+#simDock .sd-queue{position:absolute;left:263px;right:195px;top:-29px;height:26px;display:flex;align-items:center;gap:5px;pointer-events:auto;overflow-x:auto;scrollbar-width:none}
+#simDock .sd-queue button,#simDock .sd-queue .sd-idle{white-space:nowrap;border:1px solid #b9cbb2;border-radius:9px;background:#f7faf2e8;color:#52664b;padding:6px 9px;font:800 9px 'DM Mono',monospace;box-shadow:0 4px 9px #0002}
+#simDock .sd-queue .sd-idle{opacity:.8;pointer-events:none}
+#simDock .sd-queue button:hover{background:#f5dfcf;border-color:#d9ae9c}
+#simSheet{position:absolute;z-index:32;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 152px);left:50%;transform:translateX(-50%);width:min(440px,calc(100vw - 24px));max-height:min(55dvh,510px);overflow:auto;border:1px solid #9baa98;background:#fffdf4f7;color:#2d4133;box-shadow:0 17px 65px #122f2347;border-radius:18px;padding:14px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);overscroll-behavior:contain}
+#simSheet .ss-head,#simObjectMenu .so-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+#simSheet .ss-head b,#simObjectMenu .so-head b{font-size:17px;letter-spacing:-.04em}
+#simSheet .ss-close,#simObjectMenu .so-close{background:#ebeee4;color:#475f4d;border:1px solid #d5ddcf;border-radius:8px;min-width:30px;min-height:30px}
+#simSheet .ss-muted,#simObjectMenu .so-muted{color:#7a8479;font-size:11px;line-height:1.45;margin:4px 0 10px}
+#simSheet .ss-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#simSheet .ss-action,#simObjectMenu .so-action{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;border:1px solid #d4ddce;border-radius:12px;background:#f3f5ed;color:#354c39;padding:10px;min-width:0}
+#simSheet .ss-action:hover,#simObjectMenu .so-action:hover{background:#dfeedd;border-color:#98bb90}
+#simSheet .ss-action b,#simObjectMenu .so-action b{font-size:11px}
+#simSheet .ss-action small,#simObjectMenu .so-action small{font-size:9px;color:#818e80}
+#simSheet .ss-row{padding:10px 3px;border-bottom:1px solid #e0e4d8;font-size:11px}
+#simSheet .ss-row .ss-progress{height:8px;background:#e3e4d8;border-radius:8px;overflow:hidden;margin-top:6px}
+#simSheet .ss-row .ss-progress i{height:100%;background:#7cac71;display:block}
+#simSheet .ss-pill{border-radius:8px;padding:4px 7px;background:#e6eee2;color:#567b5c;display:inline-block;font:850 9px 'DM Mono',monospace}
+#simSheet .ss-asp{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid #d8decf;border-radius:11px;padding:10px;margin:7px 0}
+#simSheet .ss-asp.active{border-color:#89a982;background:#ecf3e8}
+#simSheet .ss-asp b{font-size:12px}.ss-asp small{display:block;font-size:10px;color:#7c8779;margin-top:3px}
+#simSheet .ss-asp button,#simSheet .ss-simple{border:1px solid #a9bda4;background:#d8e6d3;color:#365b3c;border-radius:8px;padding:8px 10px;font:850 10px 'DM Mono',monospace}
+#simObjectMenu{position:absolute;z-index:34;left:50%;top:42%;transform:translate(-50%,-50%);width:min(360px,calc(100vw - 24px));padding:14px;border-radius:20px;border:1px solid #aec1a6;background:#fbf9eef5;box-shadow:0 15px 60px #21352677;backdrop-filter:blur(20px)}
+#simObjectMenu .so-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#simObjectMenu .so-action{min-height:63px}
+#simObjectMenu .so-action span{font-size:17px}
+#simObjectMenu .so-decoration{position:absolute;left:calc(50% - 5px);top:-8px;width:10px;height:10px;transform:rotate(45deg);background:#f9f9ee;border:1px solid #b8c7b2;border-right:0;border-bottom:0}
+#game.town-active #simDock,#game:has(#splash:not(.hidden)) #simDock,#game:has(#ending:not(.hidden)) #simDock,#game:has(#notebook:not(.hidden)) #simDock,#game:has(#avatarModal:not(.hidden)) #simDock{opacity:0;pointer-events:none;transform:translate(-50%,calc(100% + 40px))}
+#game.town-active #simSheet,#game.town-active #simObjectMenu,#game:has(#notebook:not(.hidden)) #simSheet,#game:has(#notebook:not(.hidden)) #simObjectMenu{display:none!important}
+#game.sims-ui #cameraTools{bottom:175px}
+@media(max-width:1090px){
+ #simDock{width:calc(100% - 20px);min-height:121px;border-radius:16px;padding:6px}
+ #simDock .sd-portraits{flex-basis:205px}
+ #simDock .sd-face{width:43px;height:50px}
+ #simDock .sd-identity{flex-basis:154px;min-width:120px;padding:5px 9px}
+ #simDock .sd-name{font-size:16px}
+ #simDock .sd-needs{gap:7px 8px;padding:5px 9px}
+ #simDock .sd-buttons{flex-basis:139px}
+ #simDock .sd-buttons button{font-size:8px}
+ #simDock .sd-queue{left:220px;right:155px}
+}
+@media(max-width:760px){
+ #simDock{bottom:max(7px,env(safe-area-inset-bottom));min-height:107px}
+ #simDock .sd-portraits{flex-basis:155px;gap:2px;padding-right:4px}
+ #simDock .sd-face{width:32px;height:40px;border-radius:7px}
+ #simDock .sd-label{font-size:8px}
+ #simDock .sd-energy{max-width:31px}
+ #simDock .sd-identity{flex-basis:110px;min-width:93px;padding:5px}
+ #simDock .sd-kicker{font-size:7px}
+ #simDock .sd-name{font-size:13px}
+ #simDock .sd-mood{font-size:8px;padding:4px 5px}
+ #simDock .sd-asp-name{font-size:9px}
+ #simDock .sd-needs{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #simDock .sd-buttons{flex:0 0 92px;padding-left:5px;gap:3px}
+ #simDock .sd-buttons button span{font-size:12px}
+ #simDock .sd-buttons button{font-size:8px;padding:4px 1px}
+ #simDock .sd-queue{left:165px;right:102px}
+ #simSheet{bottom:calc(max(7px,env(safe-area-inset-bottom)) + 120px);max-height:50dvh}
+ #game.sims-ui #tasks{max-height:calc(100dvh - 240px)}
+}
+@media(max-width:520px){
+ #simDock{min-height:99px;width:calc(100% - 10px);padding:4px;gap:0;border-radius:13px}
+ #simDock .sd-portraits{flex-basis:140px;padding:2px 3px 2px 0;gap:0}
+ #simDock .sd-face{width:29px;height:37px}
+ #simDock .sd-label{font-size:7px}
+ #simDock .sd-identity{flex-basis:95px;min-width:88px;padding:3px}
+ #simDock .sd-name{font-size:12px}
+ #simDock .sd-asp-name,#simDock .sd-asp-track{display:none}
+ #simDock .sd-needs{gap:5px;padding:4px}
+ #simDock .sd-need-top{font-size:7px;margin-bottom:2px}
+ #simDock .sd-need-top b{display:none}
+ #simDock .sd-track{height:6px}
+ #simDock .sd-buttons{flex-basis:63px;grid-template-columns:repeat(2,minmax(0,1fr));padding:2px;gap:2px}
+ #simDock .sd-buttons button{font-size:0;padding:3px 0;min-height:24px;border-radius:6px}
+ #simDock .sd-buttons button span{font-size:15px}
+ #simDock .sd-queue{left:145px;right:70px;top:-25px}
+ #simDock .sd-queue button{font-size:8px;padding:4px 6px}
+ #simSheet{bottom:calc(max(7px,env(safe-area-inset-bottom)) + 107px);max-height:55dvh;padding:11px}
+ #simObjectMenu{top:40%}
+ #game.sims-ui #tasks{top:105px;left:7px;max-height:calc(100dvh - 237px)}
+ #game.sims-ui #tasks:not(.collapsed){bottom:115px;top:auto;max-height:50dvh}
+ #game.sims-ui #action{bottom:113px!important}
+ #game.sims-ui #cameraTools{bottom:121px}
+}
+@media(max-height:560px){
+ #simDock{min-height:88px}
+ #simDock .sd-face{height:38px}
+ #simSheet{max-height:49dvh}
+ #game.sims-ui #tasks{max-height:calc(100dvh - 191px)}
+}
+@media(prefers-reduced-motion:reduce){#simDock,#simDock *,#simSheet *,#simObjectMenu *{transition:none!important;animation:none!important}}
