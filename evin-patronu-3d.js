@@ -676,6 +676,16 @@
     cameraTarget.set(p.x*.72,1.5,p.z*.72);
     targetZoom=1.35;
   }
+  function focusDesign(category){
+    const targets={
+      sofa:[-6,1.1,.1],wallpaper:[0,3.4,-5.1],flooring:[0,.4,.9],
+      cabinets:[5.9,1.5,-1.7],rug:[-5.4,.4,3.0],curtains:[-1.5,3.8,-5.0]
+    };
+    const p=targets[category];if(!p)return;
+    cameraTarget.set(p[0]*.70,Math.max(1.1,p[1]*.68),p[2]*.72);
+    targetZoom=category==='wallpaper'||category==='flooring'?1.15:1.42;
+    selection=null;selectionRing.visible=false;
+  }
   function resetCamera(){cameraTarget.copy(defaultTarget);targetZoom=1;selection=null;selectionRing.visible=false}
   function adjustZoom(v){targetZoom=Math.max(.77,Math.min(2.2,targetZoom+v))}
   // The same camera is used on mobile and desktop; keep a cinematic orthographic perspective.
@@ -711,6 +721,7 @@
   }
 
   function activate(e){
+    if(document.getElementById('notebook')?.classList.contains('design-mode'))return;
     var target=getHit(e);
     if(!target){walkIn3D(e);return}
     if(target.userData.person){
@@ -955,7 +966,7 @@
     if(host.classList.contains('is-ready'))renderer.render(scene,camera);
   }
   window.Evin3D={
-    focus:focus,reset:resetCamera,zoom:adjustZoom,select:setTarget,applyDesign:applyHomeDesign,isReady:true,
+    focus:focus,focusDesign:focusDesign,reset:resetCamera,zoom:adjustZoom,select:setTarget,applyDesign:applyHomeDesign,isReady:true,
     destroy:function(){living=false;ro.disconnect();renderer.dispose();host.replaceChildren()}
   };
   host.dataset.status='ready';
