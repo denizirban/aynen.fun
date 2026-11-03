@@ -2843,7 +2843,7 @@ function homeFurnitureValidate(raw){
  return {ok:true,reason:'Free space'}
 }
 function homeFurnitureCopy(){
- return ensureHomeFurniture().map(function(o){return {uid:o.uid,type:o.type,x:o.x,z:o.z,rot:o.rot,condition:Math.round(o.condition||100)}})
+ return ensureHomeFurniture().map(function(o){return {uid:o.uid,type:o.type,x:o.x,z:o.z,rot:o.rot,condition:Math.round(o.condition||100),tint:o.tint||null}})
 }
 function homeFurnitureQuality(){
  var furn=ensureHomeFurniture(),style=ensureHomeDesign().selected,base=defaultHomeDesign();
@@ -2894,6 +2894,15 @@ function homeFurnitureMove(uid,x,z,rot){
  if(!started||ended||!item)return false;
  var next={uid:item.uid,type:item.type,x:Number(x),z:Number(z),rot:Number(rot)};
  if(!homeFurnitureValidate(next).ok)return false;
+ // Never leave a tabletop collectible floating after moving its host.
+ var before=ensureHomeFurniture().filter(function(o){return homeDecorLayer(o.type)==='tabletop'&&homeTableSurfaceAt(o)>0});
+ if(before.length&&homeDecorLayer(item.type)==='solid'){
+  var ox=item.x,oz=item.z,or=item.rot;
+  item.x=next.x;item.z=next.z;item.rot=next.rot;
+  var floating=before.some(function(o){return homeTableSurfaceAt(o)===0});
+  item.x=ox;item.z=oz;item.rot=or;
+  if(floating){message('Move the tabletop decorations first.');return false}
+ }
  item.x=next.x;item.z=next.z;item.rot=next.rot;
  saveGame();render();return true
 }
@@ -2901,6 +2910,15 @@ function homeFurnitureSell(uid){
  var list=ensureHomeFurniture(),index=list.findIndex(function(o){return o.uid===uid});
  if(!started||ended||index<0)return false;
  var meta=window.HouseBossFurnitureTypes?.[list[index].type];if(!meta)return false;
+ if(list.some(function(o){return o.uid!==uid&&homeDecorLayer(o.type)==='tabletop'&&homeTableSurfaceAt(o)>0})){
+  var removed=list[index],before={x:removed.x,z:removed.z,rot:removed.rot};
+  if(meta.category==='tables'||removed.type==='sidetable'||removed.type==='walnutdesk'){
+   list.splice(index,1);
+   var stranded=list.some(function(o){return homeDecorLayer(o.type)==='tabletop'&&!homeTableSurfaceAt(o)});
+   list.splice(index,0,removed);
+   if(stranded){message('Pick up the objects on the table before selling it.');return false}
+  }
+ }
  var refund=Math.floor(meta.price*(.20+.30*((list[index].condition||100)/100))),price=meta.price;
  list.splice(index,1);
  cash+=refund;life.homeValue=Math.max(0,(life.homeValue||0)-price);
@@ -2944,6 +2962,15 @@ function homeFurnitureBonus(who,action,p,uid){
  if(action==='dance'&&has('stereo'))p.fun=clamp(p.fun+12);
  if(action==='talk'&&has('sidetable'))p.social=clamp(p.social+6);
 }
+function homeFurnitureRecolor(uid,newTint){
+ if(!started||ended)return false;
+ var item=ensureHomeFurniture().find(function(o){return o.uid===uid});
+ var options=window.HouseBossFurnitureTypes?.[item?.type]?.variants;
+ if(!item||!options||!options.includes(newTint))return false;
+ item.tint=newTint;
+ window.Evin3D?.syncFurnitureNow?.();
+ saveGame();return true
+}
 function homeFurnitureRepairCost(item){
  var meta=window.HouseBossFurnitureTypes?.[item?.type];if(!meta)return Infinity;
  return Math.max(6,Math.ceil(meta.price*.17*(100-Math.max(25,item.condition||100))/75))
@@ -2980,6 +3007,7 @@ window.HouseBossBuildBridge={
  move:homeFurnitureMove,
  sell:homeFurnitureSell,
  repair:homeFurnitureRepair,
+ recolor:homeFurnitureRecolor,
  repairCost:function(uid){var o=ensureHomeFurniture().find(function(f){return f.uid===uid});return o?homeFurnitureRepairCost(o):0},
  toggleWishlist:homeFurnitureToggleWishlist,
  interact:homeFurnitureInteract
