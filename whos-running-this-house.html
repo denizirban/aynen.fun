@@ -1891,7 +1891,8 @@ function lifeNewDay(){
  if(careerDays%7===0){weeklyTitle=weekScore>=3400?'You are in Charge':weekScore>=2200?'Family Coordinator':weekScore>=1300?'Order Maker':'Somehow Managing';weekScore=0}
  time-=1440;day++;life.billsTotal=(life.billsTotal||0)+45;simChargeBills(45);
  peace=clamp(peace+(owned.includes('garden')?5:1)-Math.min(12,dropped*2));
- energy=clamp(energy+(owned.includes('sleep')?35:24));partnerEnergy=clamp(partnerEnergy+22);kidEnergy=clamp(kidEnergy+22);petEnergy=clamp(petEnergy+20);
+ // No free reset to full energy each morning: characters must actually sleep or rest.
+ energy=clamp(energy+3);partnerEnergy=clamp(partnerEnergy+3);kidEnergy=clamp(kidEnergy+3);petEnergy=clamp(petEnergy+3);
  done=0;shared=0;missed=0;combo=0;assistedFinished=0;seq=remaining.reduce(function(n,j){return Math.max(n,j.id+1)},1);jobs=remaining;
  remaining.forEach(function(j,i){j.due=525+i*42;j.expired=false;if(!activeIds.includes(j.id))j.assigned=null});
  current=current&&remaining.includes(current)?current:null;helper=helper&&remaining.includes(helper)?helper:null;childTask=childTask&&remaining.includes(childTask)?childTask:null;
@@ -1912,7 +1913,7 @@ var simActions={
  snack:{name:'Grab a Snack',icon:'◧',duration:15,cost:5,spot:'stove',effect:{hunger:29},mood:'Comforted'},
  shower:{name:'Take a Shower',icon:'◉',duration:35,cost:0,spot:'laundry',effect:{hygiene:66,energy:3},mood:'Fresh'},
  toilet:{name:'Use Bathroom',icon:'▣',duration:15,cost:0,spot:'laundry',effect:{bladder:85},mood:'Relieved'},
- sleep:{name:'Sleep',icon:'☾',duration:100,cost:0,spot:'kid',effect:{energy:75,fun:5},mood:'Rested'},
+ sleep:{name:'Sleep',icon:'☾',duration:150,cost:0,spot:'kid',effect:{energy:78,fun:6},mood:'Rested'},
  nap:{name:'Take a Nap',icon:'☾',duration:38,cost:0,spot:'table',effect:{energy:38},mood:'Rested'},
  tv:{name:'Watch TV',icon:'▷',duration:45,cost:0,spot:'table',effect:{fun:46,social:-3},mood:'Entertained'},
  talk:{name:'Talk to Family',icon:'♡',duration:28,cost:0,spot:'table',effect:{social:37,fun:8},relationship:5,skill:'Charisma',xp:7,mood:'Connected'},
@@ -2303,7 +2304,7 @@ window.HouseBossSimBridge={
 function lifeAdvance(dm){
  simTick(dm);
  if(life.hunger<20||life.fun<15)peace=clamp(peace-dm*.012);
- if(time>=22*60||time<6*60)energy=clamp(energy+dm*(owned.includes('sleep')?.18:.12));
+ // Energy only recovers through sleep, naps, and intentional rest, not automatically at night.
  if(life.shift){life.shift.left-=dm;if(life.shift.left<=0)lifeFinishShift('self')}
  if(life.pShift){life.pShift.left-=dm;if(life.pShift.left<=0)lifeFinishShift('partner')}
  if(life.activity){life.activity.left-=dm;if(life.activity.left<=0)lifeFinishActivity()}
@@ -2411,7 +2412,16 @@ function advance(dt){
  if(current&&!life.shift&&!life.activity){current.remaining-=dm*(energy<15?.72:1)*(current.spot==='sink'&&owned.includes('dishwasher')?1.82:1)*(current.spot==='floor'&&owned.includes('robot')?1.82:1)*(current.spot==='stove'&&owned.includes('pot')?1.54:1);if(current.remaining<=0)finish(current,'self')}
  if(helper&&!life.pShift){helper.remaining-=dm*familySpeed('partner',helper.spot)*(.64+friendship/500)*(owned.includes('board')?1.2:1)*(helper.spot==='sink'&&owned.includes('dishwasher')?1.82:1)*(helper.spot==='floor'&&owned.includes('robot')?1.82:1)*(helper.spot==='stove'&&owned.includes('pot')?1.54:1);if(helper.remaining<=0)finish(helper,'partner')}
  if(childTask){childTask.remaining-=dm*familySpeed('kid',childTask.spot)*(.46+trust/500)*(childTask.spot==='floor'&&owned.includes('robot')?1.82:1);if(childTask.remaining<=0)finish(childTask,'kid')}
- energy=clamp(energy-dm*.015);partnerEnergy=clamp(partnerEnergy+dm*.017);kidEnergy=clamp(kidEnergy+dm*.018);petEnergy=clamp(petEnergy-dm*.025);
+ // Life-sim fatigue: all characters get tired; restorative actions replenish energy.
+ var acts=simState().active;
+ function energyDrain(who,rate){
+   var a=acts[who]&&acts[who].id||'';
+   return /^(sleep|nap|dognap)$/.test(a)?0:rate
+ }
+ energy=clamp(energy-dm*energyDrain('self',.038));
+ partnerEnergy=clamp(partnerEnergy-dm*energyDrain('partner',.032));
+ kidEnergy=clamp(kidEnergy-dm*energyDrain('kid',.028));
+ petEnergy=clamp(petEnergy-dm*energyDrain('pet',.025));
  if(petEnergy<20&&Math.random()<.02){peace=clamp(peace-2);say('Hav!')}
  jobs.forEach(function(j){if(j.remaining>0&&time>j.due&&!j.expired){j.expired=true;missed++;combo=0;peace=clamp(peace-shiftOptions[runMode].latePenalty);message('Overdue: '+j.name)}})
  if(time>=eventAt&&time<22*60){
