@@ -1896,7 +1896,7 @@ function lifeNewDay(){
  careerDays++;lastFinishedDay=day;lastScore=scoreEvening();bestScore=Math.max(bestScore,lastScore);weekScore+=lastScore;
  if(careerDays%7===0){weeklyTitle=weekScore>=3400?'You are in Charge':weekScore>=2200?'Family Coordinator':weekScore>=1300?'Order Maker':'Somehow Managing';weekScore=0}
  time-=1440;day++;life.billsTotal=(life.billsTotal||0)+45;simChargeBills(45);
- peace=clamp(peace+(owned.includes('garden')?5:1)+Math.min(3,ensureHomeFurniture().filter(function(o){return o.type==='plant'}).length)-Math.min(12,dropped*2));
+ peace=clamp(peace+(owned.includes('garden')?5:1)+Math.min(3,ensureHomeFurniture().filter(function(o){return o.type==='plant'}).length)+Math.floor(homeFurnitureQuality().score/35)-Math.min(12,dropped*2));
  // No free reset to full energy each morning: characters must actually sleep or rest.
  energy=clamp(energy+3);partnerEnergy=clamp(partnerEnergy+3);kidEnergy=clamp(kidEnergy+3);petEnergy=clamp(petEnergy+3);
  done=0;shared=0;missed=0;combo=0;assistedFinished=0;seq=remaining.reduce(function(n,j){return Math.max(n,j.id+1)},1);jobs=remaining;
@@ -1953,7 +1953,8 @@ var simWishesCatalog=[
  {id:'learning',title:'Work on a new skill',action:'skill',goal:2,bonus:42},
  {id:'tidy',title:'Keep the kitchen in order',action:'clean',goal:1,bonus:29},
  {id:'dog',title:'Spend time with the dog',action:'pet',goal:2,bonus:36},
- {id:'payday',title:'Come home with a paycheck',action:'work',goal:1,bonus:55}
+ {id:'payday',title:'Come home with a paycheck',action:'work',goal:1,bonus:55},
+ {id:'design',title:'Make your house feel like home',action:'design',goal:1,bonus:45}
 ];
 function simEnsurePro(){
  var s=simState();
@@ -2180,6 +2181,12 @@ function simBegin(who,id){
   var requestIndex=furnRequests.findIndex(function(f){return f.id===id&&ensureHomeFurniture().some(function(o){return o.uid===f.uid})});
   if(requestIndex>=0)s.active[who].furnitureUid=furnRequests.splice(requestIndex,1)[0].uid
  }
+ // Autonomous Sims prefer usable furniture already owned by the household.
+ if(!s.active[who].furnitureUid&&['read','nap','paint','exercise','dognap','dance','talk'].includes(id)){
+   var furnishings=ensureHomeFurniture(),models=window.HouseBossFurnitureTypes||{};
+   var matching=furnishings.find(function(o){return models[o.type]?.action===id});
+   if(matching)s.active[who].furnitureUid=matching.uid
+ }
  if(who==='self'&&points[a.spot])posTarget=points[a.spot].slice();
  if(s.walkTargets)s.walkTargets[who]=null;
  message((who==='self'?'You':who==='partner'?'Partner':who==='kid'?'Kid':'Dog')+' started: '+a.name+'.');
@@ -2268,7 +2275,7 @@ function simAutonomy(){
 }
 function simValue(id){
  var s=simState();
- if(id==='home')return owned.length;
+ if(id==='home')return owned.length+ensureHomeFurniture().length;
  if(id==='career')return life.shifts;
  if(id==='social')return Math.round((friendship+trust)/2);
  if(id==='mastery')return Object.values(s.people.self.skills).reduce(function(a,b){return a+b},0);
@@ -2676,8 +2683,16 @@ function homeFurnitureValidate(raw){
 function homeFurnitureCopy(){
  return ensureHomeFurniture().map(function(o){return {uid:o.uid,type:o.type,x:o.x,z:o.z,rot:o.rot}})
 }
+function homeFurnitureQuality(){
+ var furn=ensureHomeFurniture(),style=ensureHomeDesign().selected,base=defaultHomeDesign();
+ var changed=Object.keys(base).filter(function(k){return style[k]&&style[k]!==base[k]}).length;
+ var uniqueness=new Set(furn.map(function(f){return f.type})).size;
+ var score=Math.min(100,Math.round(12+uniqueness*4+furn.length*1.6+changed*5+owned.length*2.5));
+ var tier=score>=80?'Dream Home':score>=62?'Styled Haven':score>=43?'Well-Lived':score>=27?'Cozy Home':'First Place';
+ return {score:score,tier:tier,furniture:furn.length,styles:changed};
+}
 function homeFurnitureState(){
- return {cash:Math.max(0,Math.floor(cash)),homeValue:Math.max(0,Math.floor(life.homeValue||0)),furniture:homeFurnitureCopy(),max:32}
+ return {cash:Math.max(0,Math.floor(cash)),homeValue:Math.max(0,Math.floor(life.homeValue||0)),quality:homeFurnitureQuality(),furniture:homeFurnitureCopy(),max:32}
 }
 function homeFurnitureBuy(type,x,z,rot,price){
  var meta=window.HouseBossFurnitureTypes?.[type],list=ensureHomeFurniture();
@@ -2687,7 +2702,10 @@ function homeFurnitureBuy(type,x,z,rot,price){
  cash-=price;life.homeValue=(life.homeValue||0)+price;
  var d=ensureHomeDesign(),id='f'+(++d.furnitureSeq);
  list.push({uid:id,type:type,x:placement.x,z:placement.z,rot:placement.rot});
- grantXp(9);floatReward(meta.name+' · INSTALLED');saveGame();render();
+ grantXp(9);simWishProgress('design');simCheckAspiration();
+ simMemory('home','A new '+meta.name, 'Your home grows with your own choices.');
+ simState().people.self.moodlet={label:'Inspired',until:simClock()+145};
+ floatReward(meta.name+' · INSTALLED');saveGame();render();
  return true
 }
 function homeFurnitureMove(uid,x,z,rot){
