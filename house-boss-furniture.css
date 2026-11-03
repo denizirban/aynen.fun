@@ -50,3 +50,12 @@
  #notebook.design-mode .hbf-card-top strong{font-size:10px}
  #notebook.design-mode .hbf-place-buttons>button{font-size:8px}
 }
+
+
+#notebook.design-mode .hbf-quality{padding:11px 12px;background:linear-gradient(160deg,#e4f0df,#f5f8ef);border:1px solid #c9debf;border-radius:12px;margin:10px 0 12px}
+#notebook.design-mode .hbf-quality>div:first-child{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+#notebook.design-mode .hbf-quality strong{font-size:14px;color:#4a704e;letter-spacing:-.045em}
+#notebook.design-mode .hbf-quality b{font:850 9px 'DM Mono',monospace;color:#738e73}
+#notebook.design-mode .hbf-quality-track{height:8px;border-radius:9px;background:#d0dec9;overflow:hidden;margin:9px 0 6px}
+#notebook.design-mode .hbf-quality-track i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#5f9364,#a3c78b);transition:width .3s}
+#notebook.design-mode .hbf-quality small{font-size:9px;color:#819784;line-height:1.45}
