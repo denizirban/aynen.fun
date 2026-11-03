@@ -727,7 +727,8 @@ body:has(#game) .brand .back{display:none!important}
 <link rel="stylesheet" href="./house-boss-home-design.css?v=3">
 <link rel="stylesheet" href="./house-boss-start.css?v=1">
 <link rel="stylesheet" href="./house-boss-furniture.css?v=4">
-<link rel="stylesheet" href="./house-boss-progression.css?v=1">
+<link rel="stylesheet" href="./house-boss-progression.css?v=2">
+<link rel="stylesheet" href="./house-boss-lifestyle.css?v=1">
 </head>
 <body>
 <div id="game">
@@ -1282,6 +1283,7 @@ function renderProgression(){
 }
 function notebookHtml(){
  $('#notebook').classList.toggle('design-mode',noteTab==='design');
+ $('#notebook').classList.toggle('lifehub-mode',noteTab==='lifestyle');
  if(noteTab==='design'){window.HouseBossHomeDesign?.render?.();return}
  if(noteTab==='lifestyle'){window.HouseBossLifestyle?.render?.();return}
  if(noteTab==='life'){lifeNotebook();return}
@@ -1295,7 +1297,7 @@ function notebookHtml(){
 function openNote(tab){if(!started)return;
  if(!$('#notebook').classList.contains('hidden')){noteTab=tab||'design';document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();return}
  window.HouseBossHomeDesign?.clearPreview?.();window.HouseBossPlatform?.stop();closeMobileFamily();if(innerWidth<=650)setTasksOpen(false);noteTab=tab||'design';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
-function closeNote(){if($('#notebook').classList.contains('hidden'))return;window.HouseBossHomeDesign?.clearPreview?.();$('#notebook').classList.remove('design-mode');if(!wasPausedOnNote&&!ended)window.HouseBossPlatform?.start();$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
+function closeNote(){if($('#notebook').classList.contains('hidden'))return;window.HouseBossHomeDesign?.clearPreview?.();$('#notebook').classList.remove('design-mode','lifehub-mode');if(!wasPausedOnNote&&!ended)window.HouseBossPlatform?.start();$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
 function buyUpgrade(id){if(!started||ended)return;var u=upgradeCatalog.find(function(a){return a.id===id});if(!u||owned.includes(id)||level<u.level||cash<u.price)return;cash-=u.price;owned.push(id);if(lifeHomeProjects.some(function(p){return p.id===id})){life.homeValue=(life.homeValue||0)+u.price;peace=clamp(peace+4)}grantXp(14);evaluateBadges();rewardChapters();render();notebookHtml();saveGame();floatReward(u.icon+' '+u.name+' installed');message('Home upgraded: '+u.name)}
 function openCare(who){
  if(!['self','partner','kid','pet','elder'].includes(who))return;selected=null;selectedPerson=who;var names={self:"Take a Break",partner:"Talk to Partner",kid:"Spend Time with Kid",pet:"Care for Dog",elder:"Have a Cup of Tea"};
@@ -2973,7 +2975,7 @@ window.HouseBossLifestyleBridge={
  getState:lifestyleSnapshot,claim:lifestyleClaim,payDebt:lifestylePayDebt,focus:setCareerFocus,
  open:function(tab){openNote(tab||'lifestyle')},openBuild:function(){openNote('design')},
  openGoals:function(){openNote('goals')},openUpgrades:function(){openNote('upgrades')},
- goTown:function(){closeNote();enterTown()},goNeeds:function(){closeNote();window.HouseBossSimUI?.showPanel?.('needs')},
+ goTown:function(){closeNote();enterTown()},goNeeds:function(){closeNote();window.HouseBossSimUI?.showPanel?.('needs')},goChores:function(){closeNote();setTasksOpen(true)},
  repair:homeFurnitureRepair,
  repairCost:function(uid){var o=ensureHomeFurniture().find(function(f){return f.uid===uid});return o?homeFurnitureRepairCost(o):0}
 };
@@ -3031,6 +3033,7 @@ requestAnimationFrame(frame)
 <script src="./house-boss-sims-ui.js?v=8"></script>
 <script src="./house-boss-furniture.js?v=4"></script>
 <script src="./house-boss-home-design.js?v=6"></script>
+<script src="./house-boss-lifestyle.js?v=1"></script>
 <script src="./house-boss-start.js?v=1"></script>
 </body>
 </html>
