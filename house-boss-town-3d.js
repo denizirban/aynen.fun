@@ -173,7 +173,7 @@
   resident('#bda2a6',-3.0,-1.1,'#57483b')
  ];
  function targetPlace(job){
-   const jobToVenue={walk:'park',cafe:'cafe',shop:'market',deliver:'market',studio:'studio',manager:'office'};
+   const jobToVenue={walk:'park',cafe:'cafe',coffee:'cafe',groceries:'market',shop:'market',deliver:'market',studio:'studio',workshop:'studio',manager:'office',fitness:'gym',library:'library'};
    const id=jobToVenue[job]||job;
    const v=venues.find(x=>x.id===id);
    return v?new T.Vector3(v.where.x,0,v.where.z+2.4):new T.Vector3(-7.4,0,2.8)
