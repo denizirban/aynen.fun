@@ -3009,6 +3009,68 @@ function lifestyleDecide(choiceId){
  simMemory('choice',e.title,o.label);
  message('LIFE CHOICE · '+o.label+'.');render();saveGame();return true
 }
+
+/* Daily Planner — explicit player-planned routines, no hidden free resources. */
+var lifestyleRoutineCatalog={
+ morning:{title:'Morning Reset',desc:'A practical start to the day.',self:['toilet','shower','snack'],partner:['toilet','shower','snack'],kid:['toilet','shower','snack'],pet:['dogplay','groom','dogfood']},
+ unwind:{title:'Unwind & Rest',desc:'Restore energy, then enjoy some downtime.',self:['nap','snack','read'],partner:['nap','snack','read'],kid:['nap','snack','tv'],pet:['dognap','dogfood','dogplay']},
+ connect:{title:'Quality Time',desc:'Make space for relationships and play.',self:['talk','playdog','tv'],partner:['talk','playdog','tv'],kid:['talk','playdog','tv'],pet:['dogplay','groom','dognap']}
+};
+var lifestyleNeedCare={hunger:{self:'snack',partner:'snack',kid:'snack',pet:'dogfood'},hygiene:{self:'shower',partner:'shower',kid:'shower',pet:'groom'},bladder:{self:'toilet',partner:'toilet',kid:'toilet',pet:'dogplay'},energy:{self:'nap',partner:'nap',kid:'nap',pet:'dognap'},fun:{self:'tv',partner:'tv',kid:'tv',pet:'dogplay'},social:{self:'talk',partner:'talk',kid:'talk',pet:'dogplay'}};
+function lifestyleCarePlan(who){
+ var s=simState(),p=s.people[who];if(!p)return [];
+ var keys=['hunger','hygiene','bladder','energy','fun','social'];
+ var values={hunger:p.hunger,hygiene:p.hygiene,bladder:p.bladder,energy:simEnergy(who),fun:p.fun,social:p.social};
+ var sorted=keys.sort(function(a,b){return values[a]-values[b]}),selected=[];
+ for(var n of sorted){
+  if(selected.length>=3)break;
+  if(values[n]>=72&&selected.length)break;
+  var act=lifestyleNeedCare[n]?.[who];
+  if(act&&!selected.includes(act))selected.push(act)
+ }
+ return selected.length?selected:[who==='pet'?'dogplay':'read']
+}
+function lifestyleRoutinePlan(who,kind){
+ if(!['self','partner','kid','pet'].includes(who))return [];
+ if(kind==='care')return lifestyleCarePlan(who);
+ var def=lifestyleRoutineCatalog[kind];return def&&def[who]?def[who].slice():[]
+}
+function lifestyleStartRoutine(who,kind){
+ if(!started||ended||!['self','partner','kid','pet'].includes(who))return {ok:false,reason:'Start a household first.'};
+ if(who==='kid'&&kidAtSchool())return {ok:false,reason:'Kid is at school. Plan this after 3 PM.'};
+ var s=simState(),queue=s.queues[who],active=s.active[who],plan=lifestyleRoutinePlan(who,kind);
+ if(!plan.length)return {ok:false,reason:'Choose a valid care plan.'};
+ var added=[],skipped=[],available=3-queue.length,plannedSpend=0;
+ for(var id of plan){
+  if(available<=0){skipped.push('Queue is full');break}
+  if(!simAllowed(who,id)||queue.includes(id)||(active&&active.id===id)){skipped.push(id+' already planned');continue}
+  var a=simActions[id],cost=simPriceForAction(a);
+  if(cash-plannedSpend<cost){skipped.push('Not enough money for '+a.name);continue}
+  if(simSocialTargetBusy(who,id)){skipped.push(a.name+' · someone is busy');continue}
+  if(simQueueAction(id,who)){added.push(id);plannedSpend+=cost;available=3-s.queues[who].length}
+  else skipped.push(a.name+' could not start')
+ }
+ if(!added.length){
+  var reason=skipped[0]||'Nothing can be scheduled right now.';
+  message(reason);return {ok:false,reason:reason}
+ }
+ var d=ensureLifestyle();d.lastRoutine={day:day,who:who,kind:kind,actions:added.slice()};
+ simMemory('routine','A new daily routine',who+' · '+added.map(function(id){return simActions[id]?.name||id}).join(' → '));
+ message('PLANNED '+added.length+' ACTIONS · '+who.toUpperCase());saveGame();
+ return {ok:true,added:added,skipped:skipped,who:who}
+}
+function lifestyleCancelPlanned(who,index){
+ if(!['self','partner','kid','pet'].includes(who)||!started||ended)return false;
+ var s=simState();if(index<0||index>=s.queues[who].length)return false;
+ s.queues[who].splice(index,1);saveGame();return true
+}
+function lifestyleAutonomy(who){
+ if(!started||ended)return false;
+ if(who==='self'){var pref=simEnsurePro().preference;pref.freeWill=!pref.freeWill;saveGame();return pref.freeWill}
+ if(who==='partner'){autoPartner=!autoPartner;saveGame();return autoPartner}
+ if(who==='kid'){autoKid=!autoKid;saveGame();return autoKid}
+ return false
+}
 function lifestyleSnapshot(){
  var s=simSnapshot(),q=homeFurnitureQuality(),p=householdPeaceFactors(),f=simEnsurePro().finance;
  return {started:started,paused:paused,day:day,homeLevel:level,homeXP:xp,homeNext:xpNeeded(),
@@ -3020,7 +3082,11 @@ function lifestyleSnapshot(){
   furniture:homeFurnitureCopy(),wishlist:(ensureHomeDesign().wishlist||[]).slice(),
   careerJobs:lifeJobs.map(function(j){return {id:j.id,title:j.title,level:j.level,track:j.track,pay:j.pay,mins:j.mins}}),
   milestones:lifestyleMilestones.map(lifestyleMilestoneStatus),event:lifestyleDecisionState(),
-  needs:s.people,relationships:s.relationships,chores:s.chores,wishes:s.wishes}
+  needs:s.people,relationships:s.relationships,chores:s.chores,wishes:s.wishes,
+  selectedPerson:s.selected,autonomy:{self:s.freeWill,partner:autoPartner,kid:autoKid,pet:true},
+  school:kidAtSchool(),routines:Object.keys(lifestyleRoutineCatalog).map(function(k){return {id:k,title:lifestyleRoutineCatalog[k].title,desc:lifestyleRoutineCatalog[k].desc}}),
+  lastRoutine:ensureLifestyle().lastRoutine||null,
+  carePlans:Object.fromEntries(['self','partner','kid','pet'].map(function(w){return [w,lifestyleCarePlan(w)]}))}
 }
 function lifestyleClaim(id){
  if(!started||ended)return false;
@@ -3041,6 +3107,7 @@ function lifestylePayDebt(request){
 }
 window.HouseBossLifestyleBridge={
  getState:lifestyleSnapshot,claim:lifestyleClaim,payDebt:lifestylePayDebt,focus:setCareerFocus,decide:lifestyleDecide,
+ routine:lifestyleStartRoutine,cancelPlanned:lifestyleCancelPlanned,toggleAutonomy:lifestyleAutonomy,
  open:function(tab){openNote(tab||'lifestyle')},openBuild:function(){openNote('design')},
  openGoals:function(){openNote('goals')},openUpgrades:function(){openNote('upgrades')},
  goTown:function(){closeNote();enterTown()},goNeeds:function(){closeNote();window.HouseBossSimUI?.showPanel?.('needs')},goChores:function(){closeNote();setTasksOpen(true)},
