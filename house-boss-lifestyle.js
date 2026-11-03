@@ -5,8 +5,8 @@
 const B=window.HouseBossLifestyleBridge,build=()=>window.HouseBossBuildBridge;
 const book=document.getElementById('notebook'),body=document.getElementById('noteBody'),level=document.getElementById('levelWidget');
 if(!B||!book||!body||!level)return;
-let section='overview';
-const sections=[['overview','OVERVIEW'],['career','CAREER'],['home','HOME & DESIGN'],['finance','FINANCES']];
+let section='overview',plannerPerson='self',plannerNotice='';
+const sections=[['overview','OVERVIEW'],['planner','DAILY PLANNER'],['career','CAREER'],['home','HOME & DESIGN'],['finance','FINANCES']];
 const fmt=n=>'$'+Math.round(Number(n)||0).toLocaleString('en-US');
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=n=>Math.max(0,Math.min(100,Math.round(Number(n)||0)));
@@ -27,7 +27,7 @@ function needsBrief(s){
 function priority(s){
  const f=s.peaceFactors,n=needsBrief(s);
  if(s.debt>=45)return {tag:'BUDGET ALERT',title:'Get the bills under control',copy:'Debt reduces household peace. Paying it down helps the home recover.',action:'finance',text:'VIEW FINANCES'};
- if(n.value<38)return {tag:'YOUR NEXT MOVE',title:n.action,copy:'Your lowest personal need is '+n.value+'%. Restoring daily needs supports mood and peace.',action:'needs',text:'CARE FOR NEEDS'};
+ if(n.value<38)return {tag:'YOUR NEXT MOVE',title:n.action,copy:'Your lowest personal need is '+n.value+'%. Restoring daily needs supports mood and peace.',action:'planner',text:'PLAN DAILY CARE'};
  if(f.chores<65)return {tag:'HOUSEHOLD PRIORITY',title:'Share the chores',copy:'Overdue and unfinished work is putting pressure on your home.',action:'chores',text:'OPEN CHORES'};
  if(s.quality.score<42)return {tag:'INTERIOR GOAL',title:'Upgrade your space',copy:'Better furniture increases comfort and makes everyday activities more rewarding.',action:'build',text:'DESIGN YOUR HOME'};
  return {tag:'YOUR NEXT MOVE',title:'Build the next chapter',copy:'Your home is becoming a place to thrive. Work, design and collect new experiences.',action:'career',text:'EXPLORE CAREERS'}
@@ -63,7 +63,7 @@ function overview(s){
  const f=s.peaceFactors,p=priority(s),m=nextMilestone(s);
  const factors=[['NEEDS',f.needs,'The people in this home'],['RELATIONSHIPS',f.relationships,'Family connections'],['HOME QUALITY',f.home,'Furniture and design'],['CHORES',f.chores,'Work left unfinished']];
  return '<div class="hbl-hero"><div><span class="hbl-eyebrow">YOUR LIFE / DAY '+s.day+'</span><h3>Build the life you want.</h3><p>Your home changes with every choice — what you buy, how you work, and how you live.</p>'+
- '<div class="hbl-hero-actions"><button data-hbl-go="build">DESIGN HOME</button><button class="hbl-outline" data-hbl-go="career">CAREER PATH</button></div></div>'+
+ '<div class="hbl-hero-actions"><button data-hbl-go="build">DESIGN HOME</button><button class="hbl-outline" data-hbl-go="career">CAREER PATH</button><button class="hbl-outline" data-hbl-go="planner">DAILY PLANNER</button></div></div>'+
  '<div class="hbl-house-emblem"><span>⌂</span><b>LVL '+s.homeLevel+'</b><small>'+esc(s.quality.tier)+'</small></div></div>'+
  '<div class="hbl-metrics">'+metric('HOME LEVEL',s.homeLevel+' / 20',s.homeXP+' / '+s.homeNext+' XP')+
  metric('CAREER',s.careerLevel+' / 12',esc(s.careerRank))+
@@ -123,6 +123,61 @@ function home(s){
  '</div>'}).join('')+'</div>':'<div class="hbl-empty">No movable furniture yet. Design your first room to begin.</div>')+
  '<div class="hbl-section-title"><div><span>HOME ACHIEVEMENTS</span><h4>Milestones</h4></div></div>'+milestoneList(s,false)
 }
+
+/* The planner uses the authoritative action queue: it does not simulate imaginary actions. */
+const familyLabels={self:'YOU',partner:'PARTNER',kid:'KID',pet:'DOG'};
+const needLabels={hunger:'HUNGER',hygiene:'HYGIENE',bladder:'BATHROOM',energy:'ENERGY',fun:'FUN',social:'SOCIAL'};
+const actionLabels={toilet:'Use Bathroom',shower:'Take a Shower',snack:'Have a Snack',nap:'Take a Nap',
+ read:'Read & Relax',tv:'Watch TV',talk:'Talk Together',playdog:'Play with Dog',
+ dogplay:'Play & Explore',groom:'Get Groomed',dogfood:'Eat Dog Food',dognap:'Dog Nap'};
+function routinePreview(s,who,id){
+ let steps=[];
+ if(id==='care')steps=s.carePlans?.[who]||[];
+ else steps=({morning:{self:['toilet','shower','snack'],partner:['toilet','shower','snack'],kid:['toilet','shower','snack'],pet:['dogplay','groom','dogfood']},
+ unwind:{self:['nap','snack','read'],partner:['nap','snack','read'],kid:['nap','snack','tv'],pet:['dognap','dogfood','dogplay']},
+ connect:{self:['talk','playdog','tv'],partner:['talk','playdog','tv'],kid:['talk','playdog','tv'],pet:['dogplay','groom','dognap']}})[id]?.[who]||[];
+ return steps.map(a=>actionLabels[a]||a).join(' → ');
+}
+function planner(s){
+ const who=plannerPerson,p=s.needs[who]||{},current=p.active,queue=p.queue||[];
+ const needs=Object.entries(needLabels).map(([id,name])=>{
+  const val=pct(p[id]),tone=val<30?'urgent':val<50?'low':'fine';
+  return '<div class="hbl-person-need '+tone+'"><div><b>'+name+'</b><strong>'+val+'%</strong></div>'+
+   bar(val,val<50?'warm':'green')+'</div>'
+ }).join('');
+ const canPlan=!(who==='kid'&&s.school);
+ const activeName=current?(actionLabels[current.id]||current.id):p.busy?'BUSY WITH OTHER TASKS':'AVAILABLE';
+ const list=(queue||[]).map((id,i)=>'<div class="hbl-planned-action"><span class="hbl-queue-number">'+(i+1)+'</span>'+
+  '<b>'+esc(actionLabels[id]||id)+'</b><button data-hbl-cancel="'+i+'" aria-label="Remove planned action">REMOVE</button></div>').join('');
+ const plans=[{id:'care',title:'Smart Care',desc:'Start with the needs that matter most.',icon:'✚'},
+  {id:'morning',title:'Morning Reset',desc:'Get clean, fed and ready for the day.',icon:'◌'},
+  {id:'unwind',title:'Unwind & Rest',desc:'Recover energy without rushing.',icon:'☾'},
+  {id:'connect',title:'Quality Time',desc:'Relationships and play matter too.',icon:'♡'}];
+ return '<div class="hbl-section-lead"><span>HOUSEHOLD / DAY '+s.day+'</span><h3>Small routines. A better everyday.</h3>'+
+ '<p>Make plans for each household member. Actions use real game time, household resources and the existing action queue.</p></div>'+
+ '<nav class="hbl-person-tabs" aria-label="Select household member">'+Object.keys(familyLabels).map(key=>{
+ const m=s.needs[key]||{},av=Math.round(Object.values(needLabels).reduce((sum,n,i)=>sum+pct(m[Object.keys(needLabels)[i]]),0)/6);
+ return '<button type="button" class="'+(who===key?'active ':'')+(av<45?'needs-help':'')+'" data-hbl-person="'+key+'">'+
+ '<span class="hbl-person-avatar '+key+'">'+familyLabels[key].slice(0,1)+'</span>'+
+ '<span><strong>'+familyLabels[key]+'</strong><small>'+av+'% WELL-BEING</small></span></button>'
+ }).join('')+'</nav>'+
+ '<div class="hbl-planner-grid"><section class="hbl-panel hbl-planner-needs"><div class="hbl-panel-title"><div><span>DAILY NEEDS</span><h4>'+familyLabels[who]+' · How are things?</h4></div><b class="hbl-planner-status">'+esc(p.mood?.label||'Fine')+'</b></div>'+
+ '<div class="hbl-person-needs">'+needs+'</div>'+
+ '<div class="hbl-autonomy"><div><b>FREE WILL</b><small>'+(who==='pet'?'The dog always follows its own needs.':who==='self'?'Your Sim can act autonomously when not selected.':'Let this character make their own choices.')+'</small></div>'+
+ '<button type="button" data-hbl-autonomy="'+who+'" '+(who==='pet'?'disabled':'')+' aria-pressed="'+Boolean(s.autonomy?.[who])+'">'+(s.autonomy?.[who]?'ON':'OFF')+'</button></div></section>'+
+ '<section class="hbl-panel hbl-planner-queue"><span class="hbl-eyebrow">ACTION QUEUE</span><h4>Now & Next</h4>'+
+ '<div class="hbl-active-now"><span class="hbl-status-dot '+(current?'busy':'')+'"></span><div><small>RIGHT NOW</small><b>'+esc(activeName)+'</b>'+(current?bar(100*(1-(current.left||0)/Math.max(1,current.total||1))):'')+'</div></div>'+
+ '<div class="hbl-queue-steps">'+(list||'<p class="hbl-muted">Nothing queued. Pick a routine below to make a plan.</p>')+'</div>'+
+ '<div class="hbl-queue-footer"><span>'+queue.length+' / 3 queued</span><span>'+(s.autonomy?.[who]?'AUTONOMY ENABLED':'MANUAL CONTROL')+'</span></div></section></div>'+
+ '<div class="hbl-section-title"><div><span>ONE-TAP ACTIVITY PLANNING</span><h4>Choose a routine</h4></div><small>3 actions max per queue</small></div>'+
+ '<div class="hbl-routines">'+plans.map(plan=>{
+ const preview=routinePreview(s,who,plan.id);
+ return '<article class="hbl-routine-card"><div class="hbl-routine-symbol">'+plan.icon+'</div><div><h4>'+plan.title+'</h4><p>'+plan.desc+'</p>'+
+ '<small>'+esc(preview)+'</small></div><button type="button" data-hbl-routine="'+plan.id+'" '+(!canPlan||queue.length>=3?'disabled':'')+'>PLAN →</button></article>'
+ }).join('')+'</div>'+
+ (plannerNotice?'<div class="hbl-planner-notice" role="status">'+esc(plannerNotice)+'</div>':'')+
+ '<p class="hbl-muted">Scheduled actions are charged when they begin, and can be removed individually. If a character is busy, new actions wait their turn. School and full queues prevent scheduling.</p>'
+}
 function finances(s){
  const daily=s.dailyBills,months=7*daily;
  const saving=s.debt>0?Math.min(s.debt,s.cash):0;
@@ -145,7 +200,7 @@ function render(){
  const s=B.getState();book.classList.add('lifehub-mode');book.classList.remove('design-mode');
  document.getElementById('noteTitle').textContent='Life Hub';
  document.getElementById('noteBudget').textContent=fmt(s.cash)+' · DAY '+s.day+' · '+s.quality.tier;
- body.innerHTML='<div class="hbl-app">'+pageTabs()+(section==='overview'?overview(s):section==='career'?careers(s):section==='home'?home(s):finances(s))+'</div>';
+ body.innerHTML='<div class="hbl-app">'+pageTabs()+(section==='overview'?overview(s):section==='planner'?planner(s):section==='career'?careers(s):section==='home'?home(s):finances(s))+'</div>';
 }
 const mainTab=document.createElement('button');mainTab.type='button';mainTab.dataset.tab='lifestyle';mainTab.textContent='LIFE HUB';
 const tabs=book.querySelector('.note-tabs');tabs?.insertBefore(mainTab,tabs.firstChild);
@@ -154,7 +209,15 @@ const trigger=document.createElement('button');trigger.type='button';trigger.id=
 level.appendChild(trigger);
 body.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn||!book.classList.contains('lifehub-mode'))return;
- if(btn.dataset.hblTab){section=btn.dataset.hblTab;render();return}
+ if(btn.dataset.hblTab){section=btn.dataset.hblTab;plannerNotice='';render();return}
+ if(btn.dataset.hblPerson){plannerPerson=btn.dataset.hblPerson;plannerNotice='';render();return}
+ if(btn.dataset.hblRoutine){
+  const out=B.routine(plannerPerson,btn.dataset.hblRoutine);
+  plannerNotice=out.ok?'Scheduled '+out.added.length+' action(s) for '+familyLabels[plannerPerson]+'.'+(out.skipped?.length?' Some steps were skipped.':''):out.reason||'Unable to schedule.';
+  render();return
+ }
+ if(btn.dataset.hblCancel!==undefined){B.cancelPlanned(plannerPerson,Number(btn.dataset.hblCancel));plannerNotice='Removed a queued action.';render();return}
+ if(btn.dataset.hblAutonomy){B.toggleAutonomy(btn.dataset.hblAutonomy);render();return}
  if(btn.dataset.hblDecide){if(B.decide(btn.dataset.hblDecide))render();return}
  if(btn.dataset.hblClaim){if(B.claim(btn.dataset.hblClaim))render();return}
  if(btn.dataset.hblRepair){if(B.repair(btn.dataset.hblRepair))render();return}
@@ -162,7 +225,8 @@ body.addEventListener('click',e=>{
  if(btn.dataset.hblFocus){B.focus(btn.dataset.hblFocus);render();return}
  if(btn.dataset.hblGo){
   const go=btn.dataset.hblGo;
-  if(go==='career'){section='career';render()}
+  if(go==='planner'){section='planner';plannerNotice='';render()}
+  else if(go==='career'){section='career';render()}
   else if(go==='finance'){section='finance';render()}
   else if(go==='build')B.openBuild();
   else if(go==='town')B.goTown();
