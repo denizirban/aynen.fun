@@ -1116,7 +1116,7 @@ body:has(#game) .brand .back{display:none!important}
         <div class="menu-microcopy">Work in town · Grow your career · Upgrade your home</div>
       </section>
       <section class="menu-controls">
-        <div class="menu-section-title"><b>01 / YOUR HOUSEHOLD</b><span>ONE LIVING WORLD</span></div>
+        <div class="menu-section-title"><b>01 / START YOUR STORY</b><span>ONE LIVING WORLD</span></div>
         <div class="mode-picks" role="group" aria-label="Game mode">
           <button type="button" class="mode-option selected" data-runmode="classic" aria-pressed="true"><span class="mode-symbol">◷</span><span><b>CLASSIC</b><small>The original evening</small></span></button>
           <button type="button" class="mode-option" data-runmode="chaos" aria-pressed="false"><span class="mode-symbol">↯</span><span><b>CHAOS</b><small>More trouble, faster</small></span></button>
@@ -1132,7 +1132,7 @@ body:has(#game) .brand .back{display:none!important}
           </div>
         </div>
         <div id="profileSelect" class="profile-select">
-          <div class="menu-section-title"><b>02 / YOUR HOUSEHOLD</b><span>CHARACTERS</span></div>
+          <div class="menu-section-title"><b>02 / CREATE YOUR HOUSEHOLD</b><span>CHARACTERS</span></div>
           <div class="profile-row"><span>YOU</span><div class="profile-options"><button type="button" data-avatar="self:m">Male</button><button type="button" data-avatar="self:f">Female</button><button type="button" data-avatar="self:n">Neutral</button></div></div>
           <div class="profile-row"><span>PARTNER</span><div class="profile-options"><button type="button" data-avatar="partner:m">Male</button><button type="button" data-avatar="partner:f">Female</button><button type="button" data-avatar="partner:n">Neutral</button></div></div>
         </div>
@@ -1156,8 +1156,8 @@ var SAVE_KEY='house-boss:english:v1';
 
 var runMode='classic';
 var shiftOptions={
- classic:{difficulty:'NORMAL',description:'One household. A whole life to build.',
-   goals:['Keep your home running','Earn wages and progress your career','Improve your home every day'],clock:1.75,firstEvent:24,events:[23,17],latePenalty:7,initialPeace:75},
+ classic:{difficulty:'LIVING WORLD',description:'Choose your household, care for their needs and shape a life that keeps growing.',
+   goals:['Care for your household','Work, explore and make friends','Grow your skills and build a better home'],clock:1.75,firstEvent:24,events:[23,17],latePenalty:7,initialPeace:75},
  chaos:{difficulty:'HARD',description:'The phone is ringing. The dog is hungry. Again.',
    goals:['Keep the house running','Expect surprise chores','Delegate before it is too late'],clock:2.12,firstEvent:14,events:[15,11],latePenalty:10,initialPeace:67},
  cozy:{difficulty:'RELAXED',description:'The same household, with room to breathe.',
