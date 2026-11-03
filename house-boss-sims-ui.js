@@ -17,6 +17,31 @@
  };
  const needNames={hunger:'Hunger',energy:'Energy',hygiene:'Hygiene',bladder:'Bladder',fun:'Fun',social:'Social'};
  const symbols={hunger:'◈',energy:'☾',hygiene:'◉',bladder:'◧',fun:'♫',social:'♡'};
+
+ /* HOUSE_BOSS_VECTOR_ICONS_V6 — original SVG icon vocabulary. */
+ const iconPaths={
+ hunger:'<path d="M4 3v8M7 3v8M10 3v8M7 11v10M4 11h6M17 3c-4 4-4 9 0 12h3V3zM18 15v6"/>',
+ energy:'<path d="M13 2L5 13h7l-1 9 8-12h-7z"/>',
+ hygiene:'<path d="M3 8V6a4 4 0 018 0v2M2 9h12M4 13v2M8 13v2M12 13v2M5 18v2M11 18v2"/>',
+ bladder:'<path d="M12 2c-2 4-7 9-7 13a7 7 0 0014 0c0-4-5-9-7-13z"/>',
+ fun:'<circle cx="12" cy="12" r="9"/><path d="M8 10h.01M16 10h.01M8 15c2 3 6 3 8 0"/>',
+ social:'<path d="M20 11a7 7 0 01-7 7H6l-3 3v-7a7 7 0 017-10h3a7 7 0 017 7z"/><path d="M9 11l3 3 3-3"/>',
+ needs:'<path d="M20.5 8.8c0 4.9-8.5 11.2-8.5 11.2S3.5 13.7 3.5 8.8A4.4 4.4 0 0112 7a4.4 4.4 0 018.5 1.8z"/><path d="M4 12h4l2-3 3 6 2-3h5"/>',
+ skills:'<path d="M12 2l2.5 6 6.5.5-5 4.5 1.5 6.5-5.5-3.5-5.5 3.5L8 13 3 8.5 9.5 8z"/>',
+ goals:'<path d="M4 5h16v4a8 8 0 01-16 0zM4 7H2v2a5 5 0 005 5M20 7h2v2a5 5 0 01-5 5M12 17v4M8 21h8"/>',
+ chores:'<path d="M16 3L8 15M6 15l6 4M5 14l6 5-4 3-5-4z"/>',
+ town:'<path d="M3 10l9-7 9 7v11H3zM8 21v-8h8v8"/>',
+ build:'<path d="M3 21l12-12M12 5l7-2 2 7-3 3-7-7z"/>',
+ appearance:'<circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0116 0v2"/>',
+ food:'<path d="M12 7c-2-3-5-3-7-1-5 5 0 15 5 15l2-1 2 1c5 0 10-10 5-15-2-2-5-2-7 1zM12 8c0-4 2-6 5-6"/>',
+ rest:'<path d="M18 3A9 9 0 1021 18 8 8 0 0118 3z"/>',
+ dog:'<path d="M5 10L3 5l4 2 5-2 5 2 4-2-2 5v7l-7 4-7-4zM8 13h.01M16 13h.01M10 17h4"/>',
+ basket:'<path d="M3 10h18l-2 11H5zM7 10l5-8 5 8M8 14v3M12 14v3M16 14v3"/>',
+ wallet:'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M12 8v8M9 11h6"/>'
+ };
+ function ico(name){return '<svg class="sim-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(iconPaths[name]||iconPaths.skills)+'</svg>'}
+ const actIcons={cook:'food',snack:'food',shower:'hygiene',toilet:'bladder',sleep:'rest',nap:'rest',tv:'fun',talk:'social',read:'skills',study:'skills',paint:'skills',exercise:'energy',dance:'fun',clean:'chores',laundry:'hygiene',computer:'skills',homework:'skills',playdog:'dog',feedpet:'dog',dogfood:'food',dognap:'rest',dogplay:'dog',groom:'hygiene'};
+
  const actionDescription={
    cook:'Prepare a proper meal and practice cooking.',snack:'Quick food for a small appetite.',shower:'Freshen up and feel comfortable.',
    toilet:'Take care of a basic need.',sleep:'Sleep until you feel rested.',nap:'Get some energy back.',
@@ -55,7 +80,7 @@
    '<span class="sd-energy"><i data-mini-energy="'+who+'" style="width:85%"></i></span></button>'
  ).join('');
  const bars=Object.keys(needNames).map(need=>
-   '<div class="sd-need" data-sd-need="'+need+'"><div class="sd-need-top"><span>'+symbols[need]+' '+needNames[need]+'</span><b data-need-val="'+need+'">80</b></div>'+
+   '<div class="sd-need" data-sd-need="'+need+'"><div class="sd-need-top"><span class="sd-need-label">'+ico(need)+' '+needNames[need]+'</span><b data-need-val="'+need+'">80</b></div>'+
    '<div class="sd-track"><i data-need-bar="'+need+'" style="width:80%"></i></div></div>'
  ).join('');
  dock.innerHTML='<div class="sd-queue" id="simQueue" aria-live="polite"></div>'+
@@ -65,14 +90,14 @@
  '<div class="sd-asp-track"><i id="simAspBar" style="width:0%"></i></div></div>'+
  '<div class="sd-needs" aria-label="Six life needs">'+bars+'</div>'+
  '<div class="sd-buttons" aria-label="Character controls">'+
- '<button type="button" data-sd-panel="needs" aria-label="Needs"><span>◉</span>NEEDS</button>'+
- '<button type="button" data-sd-panel="social" aria-label="Social and relationships"><span>♡</span>SOCIAL</button>'+
- '<button type="button" data-sd-panel="skills" aria-label="Skills"><span>✧</span>SKILLS</button>'+
- '<button type="button" data-sd-panel="goals" aria-label="Life goals"><span>✦</span>GOALS</button>'+
- '<button type="button" data-sd-go="chores" aria-label="Open household chores"><span>✓</span>CHORES</button>'+
- '<button type="button" data-sd-go="town" aria-label="Go to town"><span>⌂</span>TOWN</button>'+
- '<button type="button" data-sd-go="build" aria-label="Build and upgrade home"><span>▤</span>BUILD</button>'+
- '<button type="button" data-sd-go="appearance" aria-label="Customize character appearance"><span>◈</span>STYLE</button></div>';
+ '<button type="button" data-sd-panel="needs" aria-label="Needs"><span class="sd-menu-icon">'+ico('needs')+'</span>NEEDS</button>'+
+ '<button type="button" data-sd-panel="social" aria-label="Social and relationships"><span class="sd-menu-icon">'+ico('social')+'</span>SOCIAL</button>'+
+ '<button type="button" data-sd-panel="skills" aria-label="Skills"><span class="sd-menu-icon">'+ico('skills')+'</span>SKILLS</button>'+
+ '<button type="button" data-sd-panel="goals" aria-label="Life goals"><span class="sd-menu-icon">'+ico('goals')+'</span>GOALS</button>'+
+ '<button type="button" data-sd-go="chores" aria-label="Open household chores"><span class="sd-menu-icon">'+ico('chores')+'</span>CHORES</button>'+
+ '<button type="button" data-sd-go="town" aria-label="Go to town"><span class="sd-menu-icon">'+ico('town')+'</span>TOWN</button>'+
+ '<button type="button" data-sd-go="build" aria-label="Build and upgrade home"><span class="sd-menu-icon">'+ico('build')+'</span>BUILD</button>'+
+ '<button type="button" data-sd-go="appearance" aria-label="Customize character appearance"><span class="sd-menu-icon">'+ico('appearance')+'</span>STYLE</button></div>';
  game.appendChild(dock);
  const sheet=document.createElement('section');sheet.id='simSheet';sheet.hidden=true;sheet.setAttribute('aria-label','Character details');game.appendChild(sheet);
  const object=document.createElement('section');object.id='simObjectMenu';object.hidden=true;object.setAttribute('aria-label','Object interactions');game.appendChild(object);
@@ -88,7 +113,7 @@
    if(id.startsWith('bond_'))name=( {chat:'Chat',joke:'Tell a Joke',compliment:'Compliment',support:'Offer Support',argue:'Argue',apologize:'Apologize'}[id.split('_')[1]]||'Connect' );
    name=labels[id]||name;
    return '<button type="button" class="ss-action" data-sd-action="'+id+'" data-for="'+who+'">'+
-     '<b>'+escapeText(name)+'</b><small>'+escapeText(actionDescription[id]||'')+'</small></button>'
+     '<b><span class="ss-action-icon">'+ico(id.startsWith('bond_')?'social':(actIcons[id]||'skills'))+'</span>'+escapeText(name)+'</b><small>'+escapeText(actionDescription[id]||'')+'</small></button>'
  }
  function dismissObject(){object.hidden=true}
  function closePanel(){currentPanel='';sheet.hidden=true;dock.querySelectorAll('[data-sd-panel]').forEach(b=>b.classList.remove('active'))}
@@ -120,7 +145,7 @@
         const value=percent(p[need]),care=careActions[who][need];
         const moodClass=value<25?'critical':value<45?'low':'';
         body+='<button type="button" class="ss-need-card '+moodClass+'" data-sd-care="'+care+'" data-for="'+who+'" title="Care for '+name+'">'+
-          '<div class="ss-need-line"><span>'+symbols[need]+' '+name+'</span><strong>'+value+'%</strong></div>'+
+          '<div class="ss-need-line"><span class="ss-need-label">'+ico(need)+name+'</span><strong>'+value+'%</strong></div>'+
           '<span class="ss-progress"><i style="width:'+value+'%"></i></span></button>';
       }
       body+='</div><div class="ss-section-heading"><span>QUICK ACTIONS</span><small>Tap to start or queue</small></div>';
