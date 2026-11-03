@@ -972,8 +972,8 @@ var SAVE_KEY='house-boss:english:v1';
 
 var runMode='classic';
 var shiftOptions={
- classic:{difficulty:'NORMAL',description:'One evening. A lot of opinions.',
-   goals:['Finish 3 chores','Delegate 1 task','Get dinner ready on time'],clock:1.75,firstEvent:24,events:[23,17],latePenalty:7,initialPeace:75},
+ classic:{difficulty:'NORMAL',description:'One household. A whole life to build.',
+   goals:['Keep your home running','Earn wages and progress your career','Improve your home every day'],clock:1.75,firstEvent:24,events:[23,17],latePenalty:7,initialPeace:75},
  chaos:{difficulty:'HARD',description:'The phone is ringing. The dog is hungry. Again.',
    goals:['Keep the house running','Expect surprise chores','Delegate before it is too late'],clock:2.12,firstEvent:14,events:[15,11],latePenalty:10,initialPeace:67},
  cozy:{difficulty:'RELAXED',description:'The same household, with room to breathe.',
@@ -1079,7 +1079,7 @@ function renderProgression(){
  renderUpgrades();renderChapters()
 }
 function notebookHtml(){if(noteTab==='life'){lifeNotebook();return}
- var title={upgrades:"Upgrade the Kitchen",goals:"Tonight's goals",roadmap:"House Story",family:"Family",memories:"Memories"};$('#noteTitle').textContent=title[noteTab];$('#noteBudget').textContent='$'+cash+' · Seviye '+level;
+ var title={upgrades:"Upgrade your Home",goals:"Daily goals",roadmap:"House Story",family:"Family",memories:"Memories"};$('#noteTitle').textContent=title[noteTab];$('#noteBudget').textContent='$'+cash+' · Seviye '+level;
  if(noteTab==='upgrades')$('#noteBody').innerHTML='<div class="upgrade-grid">'+upgradeCatalog.map(function(u){var has=owned.includes(u.id),locked=level<u.level,poor=cash<u.price,disabled=has||locked||poor;return '<article class="upgrade-card'+(has?' owned':'')+'"><div class="upgrade-top"><div class="upgrade-art">'+u.icon+'</div><div><b>'+u.name+'</b><small>'+u.tag+" · LEVEL "+u.level+'</small></div></div><p>'+u.desc+'</p><button class="buy" data-buy="'+u.id+'"'+(disabled?' disabled':'')+'>'+(has?"✓ INSTALLED":locked?"LEVEL "+u.level+" REQUIRED":poor?'$'+u.price+" — NOT ENOUGH MONEY":"BUY · $"+u.price)+'</button></article>'}).join('')+'</div>';
  if(noteTab==='goals')$('#noteBody').innerHTML="<p style=\"font-size:12px;color:#797469;margin:0 0 15px\">Meet goals to earn XP and in-game money.</p>"+goals.map(function(g){var v=goalValue(g);return '<article class="note-goal"><header><strong>'+(g.claimed?'✓ ':'○ ')+g.label+'</strong><span>'+(g.claimed?"COMPLETE":Math.min(v,g.target)+' / '+g.target)+"</span></header><p>Reward: +"+g.xp+' XP · $'+g.money+'</p><div class="track"><i style="width:'+Math.min(100,v/g.target*100)+'%"></i></div></article>'}).join('');
  if(noteTab==='roadmap')$('#noteBody').innerHTML=roadmapHTML();
@@ -1088,7 +1088,7 @@ function notebookHtml(){if(noteTab==='life'){lifeNotebook();return}
 }
 function openNote(tab){if(!started)return;window.HouseBossPlatform?.stop();closeMobileFamily();if(innerWidth<=650)setTasksOpen(false);noteTab=tab||'upgrades';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
 function closeNote(){if($('#notebook').classList.contains('hidden'))return;if(!wasPausedOnNote&&!ended)window.HouseBossPlatform?.start();$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
-function buyUpgrade(id){if(!started||ended)return;var u=upgradeCatalog.find(function(a){return a.id===id});if(!u||owned.includes(id)||level<u.level||cash<u.price)return;cash-=u.price;owned.push(id);grantXp(14);evaluateBadges();rewardChapters();render();notebookHtml();saveGame();floatReward(u.icon+' '+u.name+' kuruldu');message("Kitchen upgraded: "+u.name)}
+function buyUpgrade(id){if(!started||ended)return;var u=upgradeCatalog.find(function(a){return a.id===id});if(!u||owned.includes(id)||level<u.level||cash<u.price)return;cash-=u.price;owned.push(id);if(lifeHomeProjects.some(function(p){return p.id===id})){life.homeValue=(life.homeValue||0)+u.price;peace=clamp(peace+4)}grantXp(14);evaluateBadges();rewardChapters();render();notebookHtml();saveGame();floatReward(u.icon+' '+u.name+' installed');message('Home upgraded: '+u.name)}
 function openCare(who){
  if(!['self','partner','kid','pet','elder'].includes(who))return;selected=null;selectedPerson=who;var names={self:"Take a Break",partner:"Talk to Partner",kid:"Spend Time with Kid",pet:"Care for Dog",elder:"Have a Cup of Tea"};
  $('#actionTitle').textContent=names[who];$('#actionDesc').textContent="Relationships need attention too. It carries into tomorrow.";$('#actionMeta').textContent="FAMILY / QUICK ACTION";
@@ -1225,7 +1225,7 @@ function decideFamilyJob(who){if(who==='partner'&&life.pShift)return;if(who==='k
 function familyTick(){
  if(!started||paused||ended||time>=22*60||time<nextFamilyDecision)return;
  nextFamilyDecision=time+24+Math.random()*13;
- var order=Math.floor((time-17*60)/30)%2===0?['partner','kid']:['kid','partner'];
+ var order=Math.floor(time/30)%2===0?['partner','kid']:['kid','partner'];
  order.forEach(function(w){decideFamilyJob(w)});
 }
 function familyHtml(){
@@ -1461,7 +1461,7 @@ function finish(j,kind){
 
 
 /* HOUSE_BOSS_ORIGINAL_UI_LIFE_SIM — game systems, original room untouched */
-var life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,autoWorkDay:0};
+var life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,autoWorkDay:0,seededDay:1,billsTotal:0,homeValue:0};
 var lifeJobs=[
  {id:'walk',title:'Dog Walker',where:'Park',mins:85,pay:70,level:1,energy:12,partner:false},
  {id:'cafe',title:'Barista',where:'Corner Café',mins:130,pay:125,level:1,energy:18,partner:true},
@@ -1549,14 +1549,36 @@ function independentWork(){
  familyNotice('Partner went to work at '+chosen.where+'.');
 }
 
-function lifeNewDay(){
- var unfinished=jobs.filter(function(j){return j.remaining>0}).length;
- time-=1440;day++;cash=Math.max(0,cash-45);peace=clamp(peace+(owned.includes('garden')?5:0)-(unfinished>4?4:0));
- energy=clamp(energy+(owned.includes('sleep')?36:24));partnerEnergy=clamp(partnerEnergy+23);kidEnergy=clamp(kidEnergy+24);petEnergy=clamp(petEnergy+20);
- done=0;shared=0;missed=0;combo=0;seq=1;jobs=[];current=helper=childTask=null;selfQueue=[];partnerQueue=[];selected=null;
- goals=makeGoals();eventAt=9*60+22;nextFamilyDecision=9*60+28;careCooldown={};dayInitiatives={partner:0,kid:0};
- templates.forEach(function(t){add(t)});message('DAY '+day+' · Daily bills $45 · Life goes on.');saveGame()
+
+/* HOUSE_BOSS_PERSISTENT_DAYS_V2 */
+function seedDay(){
+ if(life.seededDay===day||time<420)return;
+ life.seededDay=day;
+ templates.forEach(function(t){if(!jobs.some(function(j){return j.key===t.key&&j.remaining>0}))add(t)});
+ if(day%3===0)add({key:'tea',name:'Make tea for a guest',detail:'The kettle never gets a break.',icon:'☕',spot:'stove',dur:14,due:1110,weight:8});
+ if(day%5===0)add({key:'fridge',name:'Clean out the fridge',detail:'Someone left half a lemon. Again.',icon:'🧊',spot:'laundry',dur:18,due:1220,weight:9});
+ nextFamilyDecision=15*60+15;eventAt=9*60+20;
+ message(weekDay()+' · Morning chores are ready.');saveGame()
 }
+function lifeNewDay(){
+ var pending=jobs.filter(function(j){return j.remaining>0});
+ var activeIds=[current&&current.id,helper&&helper.id,childTask&&childTask.id].filter(Boolean);
+ pending.sort(function(a,b){return (activeIds.includes(a.id)?0:1)-(activeIds.includes(b.id)?0:1)||a.due-b.due});
+ var remaining=pending.slice(0,Math.max(3,activeIds.length)),dropped=pending.length-remaining.length;
+ time-=1440;day++;life.billsTotal=(life.billsTotal||0)+45;cash=Math.max(0,cash-45);
+ peace=clamp(peace+(owned.includes('garden')?5:1)-Math.min(12,dropped*2));
+ energy=clamp(energy+(owned.includes('sleep')?35:24));partnerEnergy=clamp(partnerEnergy+22);kidEnergy=clamp(kidEnergy+22);petEnergy=clamp(petEnergy+20);
+ done=0;shared=0;missed=0;combo=0;seq=remaining.reduce(function(n,j){return Math.max(n,j.id+1)},1);jobs=remaining;
+ remaining.forEach(function(j,i){j.due=525+i*42;j.expired=false;if(!activeIds.includes(j.id))j.assigned=null});
+ current=current&&remaining.includes(current)?current:null;helper=helper&&remaining.includes(helper)?helper:null;childTask=childTask&&remaining.includes(childTask)?childTask:null;
+ selfQueue=selfQueue.filter(function(id){return remaining.some(function(j){return j.id===id})});
+ partnerQueue=partnerQueue.filter(function(id){return remaining.some(function(j){return j.id===id})});
+ selected=null;life.seededDay=0;goals=makeGoals();careCooldown={};dayInitiatives={partner:0,kid:0};
+ nextFamilyDecision=15*60+15;eventAt=9*60+20;
+ familyNotice('Day '+day+' started with '+remaining.length+' carried-over chores.');
+ message('DAY '+day+' · Bills −$45 · '+weekDay());saveGame()
+}
+
 function lifeAdvance(dm){
  life.hunger=clamp(life.hunger-dm*.058);life.fun=clamp(life.fun-dm*.03);
  if(life.hunger<20||life.fun<15)peace=clamp(peace-dm*.012);
@@ -1564,7 +1586,7 @@ function lifeAdvance(dm){
  if(life.shift){life.shift.left-=dm;if(life.shift.left<=0)lifeFinishShift('self')}
  if(life.pShift){life.pShift.left-=dm;if(life.pShift.left<=0)lifeFinishShift('partner')}
  if(life.activity){life.activity.left-=dm;if(life.activity.left<=0)lifeFinishActivity()}
- if(time>=1440)lifeNewDay();independentWork()
+ if(time>=1440)lifeNewDay();seedDay();independentWork()
 }
 var townLastKey='';
 function lifeTownRender(force){
@@ -1626,9 +1648,9 @@ function finishDay(){
 }
 function reset(mode){
  window.HouseBossPlatform?.start();
- if(mode==='fresh'){life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,autoWorkDay:0};partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
+ if(mode==='fresh'){life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,autoWorkDay:0,seededDay:1,billsTotal:0,homeValue:0};partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
  if(mode==='next'){day+=1;cash+=110;partnerEnergy=clamp(partnerEnergy+25);kidEnergy=clamp(kidEnergy+30);petEnergy=clamp(petEnergy+25);}
- time=7*60;dayInitiatives={partner:0,kid:0};nextFamilyDecision=time+31;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):shiftOptions[runMode].initialPeace;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=9*60+22;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:"Make tea for the guest",detail:"Another cup of tea. Another story.",icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:"Organize the fridge",detail:"Time to face the half lemons.",icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});if(day>=5)add({key:'guest',name:"Getting ready for guests",detail:"One guest is coming. Everyone is on duty.",icon:'🫖',spot:'table',dur:25,due:20*60+10,weight:14});syncAvatars();$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Day '+day+' · 7:00 AM. Time to live, work, and build.');say("When's dinner ready?")
+ time=7*60;dayInitiatives={partner:0,kid:0};nextFamilyDecision=15*60+15;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):shiftOptions[runMode].initialPeace;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=9*60+22;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:"Make tea for the guest",detail:"Another cup of tea. Another story.",icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:"Organize the fridge",detail:"Time to face the half lemons.",icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});if(day>=5)add({key:'guest',name:"Getting ready for guests",detail:"One guest is coming. Everyone is on duty.",icon:'🫖',spot:'table',dur:25,due:20*60+10,weight:14});syncAvatars();$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Day '+day+' · 7:00 AM. Time to live, work, and build.');say("When's dinner ready?")
 }
 
 function frame(now){
