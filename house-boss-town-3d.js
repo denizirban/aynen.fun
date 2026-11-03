@@ -147,6 +147,62 @@
   animals.push({root,initX:x,initZ:z,seed:(x+z)*.8});
  }
  for(let k=0;k<12;k++)animal(-12+(k*7.13)%26,6.6+(k*3.77)%7,k%5===0);
+
+ // TOWN_PEOPLE_V2: miniature residents travel between jobs and shared spaces.
+ const people=[];
+ function resident(color,x,z,hairColor){
+   const g=new T.Group();g.position.set(x,0,z);scene.add(g);
+   const shirt=mat('person'+color,color),skin=mat('personSkin','#c8a184');
+   const hair=mat('personHair'+hairColor,hairColor),trousers=mat('pants','#6d766c');
+   const body=box(g,.34,.52,.24,shirt,0,.83,0);
+   sphere(g,.215,skin,0,1.27,0);
+   let scalp=sphere(g,.218,hair,0,1.39,-.035);scalp.scale.set(1,.47,1.15);
+   box(g,.13,.45,.17,trousers,-.1,.30,0);
+   box(g,.13,.45,.17,trousers,.1,.30,0);
+   const armL=box(g,.09,.46,.12,skin,-.23,.83,0);
+   const armR=box(g,.09,.46,.12,skin,.23,.83,0);
+   people.push({g,armL,armR,home:new T.Vector3(x,0,z),goal:new T.Vector3(x,0,z),scale:1});
+   return people[people.length-1]
+ }
+ const player=resident('#b98b78',-7.1,2.8,'#4f3930');
+ const partner=resident('#c3be90',-7.8,2.4,'#5d493e');
+ const locals=[
+  resident('#91a69d',-1.8,3.9,'#493a36'),
+  resident('#c5a88e',2.9,4.6,'#655344'),
+  resident('#9eaaa4',6.2,3.8,'#4b3935'),
+  resident('#bda2a6',-3.0,-1.1,'#57483b')
+ ];
+ function targetPlace(job){
+   const jobToVenue={walk:'park',cafe:'cafe',shop:'market',deliver:'market',studio:'studio',manager:'office'};
+   const id=jobToVenue[job]||job;
+   const v=venues.find(x=>x.id===id);
+   return v?new T.Vector3(v.where.x,0,v.where.z+2.4):new T.Vector3(-7.4,0,2.8)
+ }
+ function animateResidents(state,elapsed){
+   const me=state.outing||state.selfShift;
+   const their=state.partnerShift;
+   player.goal.copy(me?targetPlace(me):player.home);
+   partner.goal.copy(their?targetPlace(their):partner.home);
+   locals.forEach((p,i)=>{
+     p.goal.x=p.home.x+Math.cos(elapsed*.16+i*1.43)*.85;
+     p.goal.z=p.home.z+Math.sin(elapsed*.16+i*1.43)*.65
+   });
+   people.forEach((p,i)=>{
+     const dx=p.goal.x-p.g.position.x,dz=p.goal.z-p.g.position.z,dist=Math.hypot(dx,dz);
+     const step=Math.min(dist,.035+(i%2)*.007);
+     if(dist>.02){
+       p.g.position.x+=dx/dist*step;p.g.position.z+=dz/dist*step;
+       p.g.rotation.y=Math.atan2(dx,dz);
+       p.armL.rotation.x=Math.sin(elapsed*7+i)*.4;
+       p.armR.rotation.x=-Math.sin(elapsed*7+i)*.4;
+     }else{
+       p.armL.rotation.x=Math.sin(elapsed*.8+i)*.035;
+       p.armR.rotation.x=-Math.sin(elapsed*.8+i)*.035;
+     }
+     p.g.position.y=Math.sin(elapsed*(dist>.02?8:1.5)+i)*.026;
+   })
+ }
+
  // Meadow grass in one draw call using instancing.
  const count=mobile?1100:2300;
  const grassGeo=new T.ConeGeometry(.021,.30,3),grassMat=mat('blade','#accb7b');
@@ -174,7 +230,7 @@
   sun.shadow.bias=-.00035;
  }
  const raycaster=new T.Raycaster(), pointer=new T.Vector2();
- let hovered=null,down=null;
+ let hovered=null,down=null,orbitAngle=0,orbitTarget=0;
  const hoverBubble=document.getElementById('townHover');
  function hit(e){
   const r=renderer.domElement.getBoundingClientRect();
@@ -192,6 +248,14 @@
  });
  renderer.domElement.addEventListener('pointermove',e=>{
   if(layer.hidden||!layer.closest('.town-active'))return;
+  if(down&&e.buttons){
+    if(Math.abs(e.clientX-down.x)>7){
+      orbitTarget=Math.max(-.43,Math.min(.43,orbitTarget+(e.clientX-(down.lastX||e.clientX))*.003));
+      down.lastX=e.clientX;
+      if(hoverBubble)hoverBubble.hidden=true;
+      return;
+    }
+  }
   const venue=hit(e);hovered=venue;
   renderer.domElement.style.cursor=venue?'pointer':'default';
   if(hoverBubble){
@@ -224,7 +288,8 @@
   sun.intensity+=( (night?.52:hour>17?1.6:2.35)-sun.intensity)*.07;
   hemi.intensity+=( (night?1.05:2.1)-hemi.intensity)*.07;
   zoom+=(targetZoom-zoom)*.12;
-  camera.zoom=zoom;camera.position.set(19,11.8,20);
+  camera.zoom=zoom;orbitAngle+=(orbitTarget-orbitAngle)*.05;
+  camera.position.set(Math.sin(.78+orbitAngle)*27,11.8,Math.cos(.78+orbitAngle)*27);
   camera.lookAt(target);camera.updateProjectionMatrix();
   const sec=ms/1000;
   animals.forEach((a,k)=>{
@@ -232,6 +297,8 @@
    a.root.rotation.y=Math.sin(sec*.24+a.seed)*.20;
    a.root.position.y=Math.sin(sec*.75+a.seed)*.022;
   });
+  animateResidents(state,sec);
+  mount.style.filter=night?'brightness(.78) saturate(.84)':hour>17?'sepia(.08)':'none';
   renderer.render(scene,camera);
  }
  requestAnimationFrame(frame);
