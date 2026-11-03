@@ -2691,8 +2691,19 @@ function homeFurnitureQuality(){
  var tier=score>=80?'Dream Home':score>=62?'Styled Haven':score>=43?'Well-Lived':score>=27?'Cozy Home':'First Place';
  return {score:score,tier:tier,furniture:furn.length,styles:changed};
 }
+function homeFurnitureRooms(){
+ var rooms=[{id:'home',name:'Kitchen',level:1,price:0,installed:true,available:true}];
+ for(var id of ['sleep','living','garden']){
+  var u=lifeHomeProjects.find(function(p){return p.id===id});
+  if(!u)continue;
+  rooms.push({id:id,name:id==='sleep'?'Bedroom':id==='living'?'Living Room':'Garden',
+   level:u.level,price:u.price,installed:owned.includes(id),
+   available:level>=u.level&&cash>=u.price})
+ }
+ return rooms
+}
 function homeFurnitureState(){
- return {cash:Math.max(0,Math.floor(cash)),homeValue:Math.max(0,Math.floor(life.homeValue||0)),quality:homeFurnitureQuality(),furniture:homeFurnitureCopy(),max:32}
+ return {cash:Math.max(0,Math.floor(cash)),homeValue:Math.max(0,Math.floor(life.homeValue||0)),quality:homeFurnitureQuality(),furniture:homeFurnitureCopy(),rooms:homeFurnitureRooms(),max:32}
 }
 function homeFurnitureBuy(type,x,z,rot,price){
  var meta=window.HouseBossFurnitureTypes?.[type],list=ensureHomeFurniture();
@@ -2755,6 +2766,13 @@ function homeFurnitureBonus(who,action,p){
 }
 window.HouseBossBuildBridge={
  getState:homeFurnitureState,
+ rooms:homeFurnitureRooms,
+ buyRoom:function(id){
+  if(!['sleep','living','garden'].includes(id)||owned.includes(id))return false;
+  var u=lifeHomeProjects.find(function(p){return p.id===id});
+  if(!u||level<u.level||cash<u.price)return false;
+  buyUpgrade(id);return owned.includes(id)
+ },
  validate:homeFurnitureValidate,
  buy:homeFurnitureBuy,
  move:homeFurnitureMove,
