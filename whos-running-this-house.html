@@ -1838,6 +1838,98 @@ var simAspirations={
  social:{title:'Beloved Household',desc:'Build stronger family bonds.',targets:[72,85,97],metric:'relationship'},
  mastery:{title:'Renaissance Sim',desc:'Master a little bit of everything.',targets:[7,12,19],metric:'skillLevels'}
 };
+
+/* HOUSE_BOSS_PRO_V6 — persistent household economy & social world. */
+var simWishesCatalog=[
+ {id:'meal',title:'Cook something for the household',action:'cook',goal:1,bonus:32},
+ {id:'friends',title:'Make time for someone',action:'social',goal:2,bonus:40},
+ {id:'learning',title:'Work on a new skill',action:'skill',goal:2,bonus:42},
+ {id:'tidy',title:'Keep the kitchen in order',action:'clean',goal:1,bonus:29},
+ {id:'dog',title:'Spend time with the dog',action:'pet',goal:2,bonus:36},
+ {id:'payday',title:'Come home with a paycheck',action:'work',goal:1,bonus:55}
+];
+function simEnsurePro(){
+ var s=simState();
+ if(!s.relationships)s.relationships={'partner:self':friendship,'kid:self':trust,'partner:kid':65,'pet:self':74,'partner:pet':66,'kid:pet':79};
+ if(!s.finance)s.finance={pantry:5,debt:0,spentOnFood:0,earned:0,billsPaid:0};
+ s.finance.pantry=Math.max(0,Math.min(99,Number(s.finance.pantry)||0));
+ s.finance.debt=Math.max(0,Number(s.finance.debt)||0);
+ if(!Array.isArray(s.memories))s.memories=[];
+ if(!Array.isArray(s.wishes))s.wishes=[];
+ if(!s.wishDay)s.wishDay=0;
+ return s
+}
+function simRelationshipKey(a,b){return [a,b].sort().join(':')}
+function simRelationship(a,b){
+ if(a===b)return 100;
+ var s=simEnsurePro(),key=simRelationshipKey(a,b);
+ if(s.relationships[key]===undefined)s.relationships[key]=65;
+ return Math.round(s.relationships[key])
+}
+function simModifyRelationship(a,b,n){
+ if(a===b)return;
+ var s=simEnsurePro(),key=simRelationshipKey(a,b);
+ s.relationships[key]=clamp(simRelationship(a,b)+n);
+ if(key==='partner:self')friendship=s.relationships[key];
+ if(key==='kid:self')trust=s.relationships[key]
+}
+function simMemory(type,title,details){
+ var s=simEnsurePro();
+ s.memories.unshift({day:day,time:Math.round(time),type:type,title:title,details:details||''});
+ s.memories=s.memories.slice(0,30)
+}
+function simGenerateWishes(){
+ var s=simEnsurePro();
+ if(s.wishDay===day&&s.wishes.length)return;
+ var offset=(day*3+(s.completedActions||0))%simWishesCatalog.length;
+ s.wishes=[0,1,2].map(function(k){
+  var a=simWishesCatalog[(offset+k*2)%simWishesCatalog.length];
+  return {id:a.id,title:a.title,action:a.action,goal:a.goal,done:0,bonus:a.bonus,complete:false}
+ });
+ s.wishDay=day
+}
+function simWishProgress(kind){
+ var s=simEnsurePro();simGenerateWishes();
+ for(var wish of s.wishes){
+  if(wish.complete||wish.action!==kind)continue;
+  wish.done=Math.min(wish.goal,wish.done+1);
+  if(wish.done===wish.goal){
+   wish.complete=true;cash+=wish.bonus;
+   s.people.self.moodlet={label:'Satisfied',until:simClock()+210};
+   simMemory('wish','Wish fulfilled',wish.title+' · +$'+wish.bonus);
+   floatReward('WISH COMPLETE +$'+wish.bonus);
+   message('Wish fulfilled: '+wish.title)
+  }
+ }
+}
+function simChargeBills(amount){
+ var f=simEnsurePro().finance,n=Math.max(0,amount),paid=Math.min(cash,n);
+ cash=Math.max(0,cash-paid);f.billsPaid+=paid;
+ if(paid<n){f.debt+=n-paid;peace=clamp(peace-7);simMemory('money','Bills overdue','$'+(n-paid)+' added to debt')}
+}
+function simCollectWages(pay){
+ var f=simEnsurePro().finance;f.earned+=pay;
+ if(f.debt>0&&cash>0){
+  var repayment=Math.min(f.debt,Math.floor(cash*.33));
+  if(repayment>0){cash-=repayment;f.debt-=repayment;simMemory('money','Bills repaid','$'+repayment+' paid')}
+ }
+}
+function simPriceForAction(a){
+ var f=simEnsurePro().finance;
+ return (a.name==='Cook a Meal'||a.name==='Grab a Snack')&&f.pantry>0?0:a.cost
+}
+function simConsumeSupplies(a){
+ var f=simEnsurePro().finance,food=a.name==='Cook a Meal'||a.name==='Grab a Snack';
+ if(food&&f.pantry>0){f.pantry--;return}
+ var cost=a.cost||0;cash-=cost;if(food)f.spentOnFood+=cost
+}
+function simTrackAction(id,a){
+ if(id==='cook'||id==='snack')simWishProgress('cook');
+ if(id==='clean'||id==='laundry')simWishProgress('clean');
+ if(a.skill&&a.xp>=12)simWishProgress('skill');
+ if(['feedpet','playdog','groom','dogplay'].includes(id))simWishProgress('pet')
+}
+
 function simDefaultPerson(who){
  return {hunger:who==='self'?life.hunger:who==='pet'?79:82,hygiene:who==='pet'?86:85,bladder:86,fun:who==='self'?life.fun:76,social:72,energy:100,
   skills:{Cooking:1,Charisma:1,Logic:1,Creativity:1,Fitness:1},skillXp:{Cooking:0,Charisma:0,Logic:0,Creativity:0,Fitness:0},
