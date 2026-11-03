@@ -1895,7 +1895,7 @@ function lifeNewDay(){
  careerDays++;lastFinishedDay=day;lastScore=scoreEvening();bestScore=Math.max(bestScore,lastScore);weekScore+=lastScore;
  if(careerDays%7===0){weeklyTitle=weekScore>=3400?'You are in Charge':weekScore>=2200?'Family Coordinator':weekScore>=1300?'Order Maker':'Somehow Managing';weekScore=0}
  time-=1440;day++;life.billsTotal=(life.billsTotal||0)+45;simChargeBills(45);
- peace=clamp(peace+(owned.includes('garden')?5:1)-Math.min(12,dropped*2));
+ peace=clamp(peace+(owned.includes('garden')?5:1)+Math.min(3,ensureHomeFurniture().filter(function(o){return o.type==='plant'}).length)-Math.min(12,dropped*2));
  // No free reset to full energy each morning: characters must actually sleep or rest.
  energy=clamp(energy+3);partnerEnergy=clamp(partnerEnergy+3);kidEnergy=clamp(kidEnergy+3);petEnergy=clamp(petEnergy+3);
  done=0;shared=0;missed=0;combo=0;assistedFinished=0;seq=remaining.reduce(function(n,j){return Math.max(n,j.id+1)},1);jobs=remaining;
@@ -2217,6 +2217,7 @@ function simFinish(who){
  if(owned.includes('living')&&['talk','tv','dance'].includes(task.id))p.fun=clamp(p.fun+9);
  if(['tv','read','talk','nap'].includes(task.id)){var d=life.homeDesign?.selected?.sofa;var boost={sage:3,rust:5,navy:6,boucle:8}[d]||0;p.fun=clamp(p.fun+boost)};
  if(owned.includes('garden')&&['playdog','dogplay'].includes(task.id))p.fun=clamp(p.fun+10);
+ homeFurnitureBonus(who,task.id,p);
  if(a.socialTarget)simResolveSocial(who,a);
  if(a.mood&&!(a.socialTarget&&a.socialDelta<0))p.moodlet={label:a.mood,until:simClock()+165};
  p.completed=(p.completed||0)+1;s.completedActions++;
@@ -2611,11 +2612,124 @@ window.HouseBossDesignBridge={
  }
 };
 
+
+/* HOUSE_BOSS_FURNITURE_LOGIC_V11 — authoritative economy, collision rules and inventory. */
+function ensureHomeFurniture(){
+ var d=ensureHomeDesign();
+ if(!Array.isArray(d.furniture))d.furniture=[];
+ if(!Number.isFinite(Number(d.furnitureSeq)))d.furnitureSeq=0;
+ d.furnitureSeq=Math.max(0,Math.floor(Number(d.furnitureSeq)||0));
+ d.furniture=d.furniture.filter(function(o){
+  return o&&typeof o.uid==='string'&&typeof o.type==='string'&&Number.isFinite(o.x)&&Number.isFinite(o.z)&&Number.isFinite(o.rot)
+ }).slice(0,32);
+ return d.furniture
+}
+function furnitureBounds(item){
+ var types=window.HouseBossFurnitureTypes||{},meta=types[item.type];
+ if(!meta)return null;
+ var rot=((Math.round(item.rot||0)%4)+4)%4;
+ var w=rot%2?meta.d:meta.w,d=rot%2?meta.w:meta.d;
+ return {minX:item.x-w/2,maxX:item.x+w/2,minZ:item.z-d/2,maxZ:item.z+d/2}
+}
+function homeFurnitureValidate(raw){
+ var types=window.HouseBossFurnitureTypes||{};
+ if(!raw||!Object.prototype.hasOwnProperty.call(types,raw.type))return {ok:false,reason:'Choose a furniture piece'};
+ var x=Number(raw.x),z=Number(raw.z),rot=Number(raw.rot);
+ if(!Number.isFinite(x)||!Number.isFinite(z)||!Number.isFinite(rot))return {ok:false,reason:'Invalid position'};
+ if(Math.abs(x*2-Math.round(x*2))>.001||Math.abs(z*2-Math.round(z*2))>.001||rot!==Math.round(rot)||rot<0||rot>3)
+   return {ok:false,reason:'Move to the nearest grid tile'};
+ var a=furnitureBounds({type:raw.type,x:x,z:z,rot:rot});
+ if(!a||a.minX< -8.35||a.maxX>4.89||a.minZ< -4.55||a.maxZ>4.55)
+   return {ok:false,reason:'Outside the buildable room'};
+ var blocks=[
+  [-4.95,5.02,-1.83,1.77],// Kitchen island and work surfaces
+  [-7.57,-4.87,-.76,1.06],// Fixed lounge sofa
+  [-6.53,-4.03,2.59,4.56],// Dog resting spot
+  [-5.34,-4.73,-4.55,4.55],// Walking corridor around the island
+  [-4.65,4.89,2.06,2.82],// Front kitchen aisle
+  [-4.00,4.89,-2.67,-2.07],// Rear kitchen aisle
+  [-1.2,-.2,1.76,3.22],[2.55,3.85,1.70,3.24],// Dining chairs
+  [-5.13,-3.9,-3.24,-1.91] // Rear dining chair
+ ];
+ for(var q of blocks){
+  if(a.minX<q[1]&&a.maxX>q[0]&&a.minZ<q[3]&&a.maxZ>q[2])
+    return {ok:false,reason:'Keep access and work areas clear'}
+ }
+ var others=ensureHomeFurniture();
+ for(var o of others){
+  if(o.uid===raw.uid)continue;
+  var b=furnitureBounds(o);if(!b)continue;
+  if(a.minX<b.maxX+.16&&a.maxX>b.minX-.16&&a.minZ<b.maxZ+.16&&a.maxZ>b.minZ-.16)
+    return {ok:false,reason:'Too close to another object'}
+ }
+ return {ok:true,reason:'Free space'}
+}
+function homeFurnitureCopy(){
+ return ensureHomeFurniture().map(function(o){return {uid:o.uid,type:o.type,x:o.x,z:o.z,rot:o.rot}})
+}
+function homeFurnitureState(){
+ return {cash:Math.max(0,Math.floor(cash)),homeValue:Math.max(0,Math.floor(life.homeValue||0)),furniture:homeFurnitureCopy(),max:32}
+}
+function homeFurnitureBuy(type,x,z,rot,price){
+ var meta=window.HouseBossFurnitureTypes?.[type],list=ensureHomeFurniture();
+ if(!started||ended||!meta||list.length>=32||meta.price!==price)return false;
+ var placement={type:type,x:Number(x),z:Number(z),rot:Number(rot)};
+ if(!homeFurnitureValidate(placement).ok||cash<price)return false;
+ cash-=price;life.homeValue=(life.homeValue||0)+price;
+ var d=ensureHomeDesign(),id='f'+(++d.furnitureSeq);
+ list.push({uid:id,type:type,x:placement.x,z:placement.z,rot:placement.rot});
+ grantXp(9);floatReward(meta.name+' · INSTALLED');saveGame();render();
+ return true
+}
+function homeFurnitureMove(uid,x,z,rot){
+ var list=ensureHomeFurniture(),item=list.find(function(o){return o.uid===uid});
+ if(!started||ended||!item)return false;
+ var next={uid:item.uid,type:item.type,x:Number(x),z:Number(z),rot:Number(rot)};
+ if(!homeFurnitureValidate(next).ok)return false;
+ item.x=next.x;item.z=next.z;item.rot=next.rot;
+ saveGame();render();return true
+}
+function homeFurnitureSell(uid){
+ var list=ensureHomeFurniture(),index=list.findIndex(function(o){return o.uid===uid});
+ if(!started||ended||index<0)return false;
+ var meta=window.HouseBossFurnitureTypes?.[list[index].type];if(!meta)return false;
+ var refund=Math.floor(meta.price/2),price=meta.price;
+ list.splice(index,1);
+ cash+=refund;life.homeValue=Math.max(0,(life.homeValue||0)-price);
+ message(meta.name+' sold · +$'+refund);render();saveGame();return true
+}
+function homeFurnitureInteract(uid){
+ if(!started||ended)return false;
+ var item=ensureHomeFurniture().find(function(o){return o.uid===uid}),meta=item&&window.HouseBossFurnitureTypes?.[item.type];
+ if(!meta)return false;
+ var who=meta.action==='dognap'?'pet':simState().selected;
+ if(who==='pet'&&meta.action!=='dognap')who='self';
+ return simQueueAction(meta.action,who)
+}
+function homeFurnitureBonus(who,action,p){
+ var items=ensureHomeFurniture(),has=function(t){return items.some(function(o){return o.type===t})};
+ if(action==='read'&&has('bookshelf'))simSkill(who,'Logic',9);
+ if(action==='paint'&&has('easel'))simSkill(who,'Creativity',10);
+ if(action==='exercise'&&has('yogamat'))simSkill(who,'Fitness',7);
+ if(action==='dognap'&&who==='pet'&&has('petbed'))simSetEnergy(who,simEnergy(who)+16);
+ if(action==='nap'&&(has('armchair')||has('ottoman')))simSetEnergy(who,simEnergy(who)+(has('armchair')?9:5));
+ if(action==='dance'&&has('stereo'))p.fun=clamp(p.fun+12);
+ if(action==='talk'&&has('sidetable'))p.social=clamp(p.social+6);
+}
+window.HouseBossBuildBridge={
+ getState:homeFurnitureState,
+ validate:homeFurnitureValidate,
+ buy:homeFurnitureBuy,
+ move:homeFurnitureMove,
+ sell:homeFurnitureSell,
+ interact:homeFurnitureInteract
+};
+
 /* 3D_ONLY_HOUSE_BOSS_V7 — 2D render mode removed. Hidden SVG is retained solely as nonvisual legacy simulation scaffolding. */
 /* 3D scene bridge: authoritative simulation and save state remain here. */
 window.EvinKitchenBridge={
  getState:function(){return {
-   homeDesign:effectiveHomeDesign(),time:time,day:day,owned:owned.slice(),started:started,paused:paused,ended:ended,
+   homeDesign:effectiveHomeDesign(),furniture:homeFurnitureCopy(),time:time,day:day,owned:owned.slice(),started:started,paused:paused,ended:ended,
    currentSpot:current&&current.spot||simState().active.self&&simState().active.self.spot||null,partnerSpot:helper&&helper.spot||simState().active.partner&&simState().active.partner.spot||null,
    kidSpot:childTask&&childTask.spot||simState().active.kid&&simState().active.kid.spot||null,
    selfAway:!!(life.shift||life.outing),partnerAway:!!life.pShift,kidAway:kidAtSchool(),
