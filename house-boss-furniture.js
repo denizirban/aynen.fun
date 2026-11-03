@@ -99,6 +99,14 @@ function render(){
  '<div class="hbf-quality"><div><strong>'+quality.tier+'</strong><b>HOME QUALITY · '+quality.score+'%</b></div><div class="hbf-quality-track"><i style="width:'+quality.score+'%"></i></div><small>Design, furniture and upgrades make this house a better place to live.</small></div>';
  if(warning)html+='<div class="hbf-warning" role="status">'+warning+'</div>';
  html+=placeBar();
+ html+='<div class="hbf-section-title"><strong>HOUSE ROOMS</strong><small>Build and explore</small></div>'+
+ '<div class="hbf-room-tiles">'+(st.rooms||[]).map(room=>{
+   const status=room.id==='home'?'ALWAYS OPEN':room.installed?'BUILT':'LEVEL '+room.level;
+   return '<article class="hbf-room"><strong>'+room.name+'</strong><small>'+status+'</small>'+
+    (room.installed?'<button data-hbf-room="'+room.id+'">VIEW IN 3D ↗</button>':
+    '<button data-hbf-room-buy="'+room.id+'" '+(!room.available?'disabled':'')+'>'+
+    (room.available?'BUILD · $'+room.price:'UNLOCK · LVL '+room.level+' · $'+room.price)+'</button>')+'</article>'
+ }).join('')+'</div>';
  html+='<div class="hbf-section-title"><strong>FURNITURE CATALOG</strong><small>'+all.length+' objects</small></div>'+
  '<div class="hbf-market">'+all.map(([id,item])=>{
   const poor=st.cash<item.price,editing=!!sceneCandidate();
@@ -122,6 +130,12 @@ function render(){
 function install(){
  const body=view();if(!body)return;
  body.addEventListener('click',e=>{
+  let room=e.target.closest('[data-hbf-room]');if(room){clear();window.Evin3D?.focusRoom?.(room.dataset.hbfRoom);render();return}
+  room=e.target.closest('[data-hbf-room-buy]');if(room){
+   const installed=bridge()?.buyRoom?.(room.dataset.hbfRoom);
+   if(installed){clear();window.Evin3D?.focusRoom?.(room.dataset.hbfRoom);render()}
+   return
+  }
   let t=e.target.closest('[data-hbf-buy]');if(t){begin(t.dataset.hbfBuy);return}
   t=e.target.closest('[data-hbf-move]');if(t){const f=bridge()?.getState?.()?.furniture?.find(x=>x.uid===t.dataset.hbfMove);if(f)begin(f.type,f.uid);return}
   t=e.target.closest('[data-hbf-sell]');if(t){sell(t.dataset.hbfSell);return}
