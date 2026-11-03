@@ -284,7 +284,7 @@
   }
   mug(-3,-.7,'#e3dec5');mug(1.3,.67,'#698c6e');
   // Laptop
-  var desk=new THREE.Group();scene.add(desk);desk.position.set(2.2,0,-1.1);
+  var desk=new THREE.Group();scene.add(desk);desk.position.set(2.2,0,-.76);
   box(desk,1.35,.045,.91,mat('laptop','#899299',.35,.3),0,1.53,0);
   var screen=box(desk,1.35,.84,.045,mat('laptopback','#606b70',.39,.18),0,2.02,-.48);screen.rotation.x=-.18;
   box(desk,1.13,.63,.015,mat('display','#d1d9d9',.23),0,2.02,-.444);
@@ -324,12 +324,12 @@
     ball(g,.25,.14,.22,mat('officeLamp','#e9d5ab'),2.83,2.31,-1.37);
   });
   addUpgrade('sleep',function(g){
-    // A bedroom door suggests a room beyond the kitchen instead of a bed in the kitchen.
-    box(g,1.55,2.85,.11,woodDark,2.7,1.42,-5.34);
-    box(g,1.30,2.65,.06,mat('bedDoor','#d2b991'),2.7,1.40,-5.25);
-    box(g,.44,.16,.065,mat('doorName','#eee9d3'),2.7,2.42,-5.18);
-    ball(g,.09,.09,.09,stainless,3.18,1.43,-5.14);
-    box(g,.42,.09,.21,woodDark,2.7,2.65,-5.22);
+    // Bedroom now exists east of the kitchen. Remove the fake door on the
+    // rear wall and bridge the real gap between adjacent room floors.
+    var passage=mat('roomPassage','#b8a689');
+    box(g,1.50,.18,2.45,passage,9.38,-.075,-.75);
+    for(var z of [-1.9,.38])
+      box(g,1.5,.035,.06,mat('roomThreshold','#d7cbb5'),9.38,.025,z);
   });
   addUpgrade('living',function(g){
     // The room extension adds its own lighting and side table.
@@ -338,6 +338,8 @@
     ball(g,.31,.20,.31,mat('floorLamp','#f0dba9'),-4.95,1.93,-.95);
     box(g,.58,.1,.53,woodDark,-4.75,.58,.15);
     cylinder(g,.11,.11,.54,woodDark,-4.75,.29,.15);
+    // Walkable corridor linking kitchen to the separately built living room.
+    box(g,1.45,.18,6.2,mat('livingPassage','#b7aa96'),9.36,-.075,4.95);
   });
 
   /* HOME_DESIGN_3D_V10 — real 3D furniture variants and materials, not UI-only color changes. */
@@ -455,6 +457,8 @@
 
   addUpgrade('garden',function(g){
     // Garden growth is visible through the existing window.
+    // The narrow transition covers the former visible gap to the patio.
+    box(g,3.2,.13,1.20,mat('gardenThreshold','#aeaa8c'),-1.65,-.07,5.80);
     for(var n=0;n<4;n++)plant(-7.7+n*1.65,1.92,-4.67,.64+(n%2)*.12,g);
     for(var k=0;k<3;k++){
       var xx=-7.0+k*2.2;
