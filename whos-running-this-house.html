@@ -1549,7 +1549,7 @@ function render(){
  ch.hidden=combo<2||!started||ended;
  if(!ch.hidden)$('#comboValue').textContent='×'+combo;
  $('#time').textContent=format(time);$('#dayLabel').textContent="DAY "+String(day).padStart(2,'0')+" / "+(time<360?'NIGHT':time<720?'MORNING':time<1080?'AFTERNOON':time<1260?'EVENING':'NIGHT');$('#peace').textContent=Math.round(peace)+'%';$('#energy').textContent=Math.round(energy)+'%';$('#cash').textContent='$'+Math.round(cash);
- var peaceInfo=householdPeaceFactors();$('#peace').title='House Peace '+Math.round(peace)+'% · Based on Needs '+peaceInfo.needs+'%, Relationships '+peaceInfo.relationships+'%, Home Quality '+peaceInfo.home+'%, pending chores '+peaceInfo.remaining+(peaceInfo.debt?' · Bills owed $'+peaceInfo.debt:'');
+ var peaceInfo=householdPeaceFactors();$('#peace').title='House Peace '+Math.round(peace)+'% · Based on Needs '+peaceInfo.needs+'%, Relationships '+peaceInfo.relationships+'%, Home Quality '+peaceInfo.home+'%, Comfort '+peaceInfo.comfort+', pending chores '+peaceInfo.remaining+(peaceInfo.debt?' · Bills owed $'+peaceInfo.debt:'');
  $('#familyActivity').textContent=familyLog.length?familyLog[0].text:"Everybody is keeping to themselves. For now.";$('#relationPartner').textContent=Math.round(friendship);$('#relationKid').textContent=Math.round(trust);$('#badgeCount').textContent=achievements.length+'/'+badgeCatalog.length;$('#selfMeter').style.width=energy+'%';$('#partnerMeter').style.width=partnerEnergy+'%';$('#kidMeter').style.width=kidEnergy+'%';$('#petMeter').style.width=petEnergy+'%';
  $('#selfQueue').textContent='YOU / '+([current].concat(selfQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||"Waiting");
  $('#partnerQueue').textContent="PARTNER / "+([helper].concat(partnerQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||"Waiting");
@@ -2230,9 +2230,9 @@ function simFinish(who){
  if(a.pet)petEnergy=clamp(petEnergy+a.pet);
  if(owned.includes('sleep')&&task.id==='sleep')simSetEnergy(who,simEnergy(who)+15);
  if(owned.includes('living')&&['talk','tv','dance'].includes(task.id))p.fun=clamp(p.fun+9);
- if(['tv','read','talk','nap'].includes(task.id)){var d=life.homeDesign?.selected?.sofa;var boost={sage:3,rust:5,navy:6,boucle:8}[d]||0;p.fun=clamp(p.fun+boost)};
+ if(['tv','read','talk','nap'].includes(task.id)){var d=life.homeDesign?.selected?.sofa;var boost={sage:3,rust:5,navy:6,boucle:8,leather:11,cloud:15,atelier:20}[d]||0;p.fun=clamp(p.fun+boost)};
  if(owned.includes('garden')&&['playdog','dogplay'].includes(task.id))p.fun=clamp(p.fun+10);
- homeFurnitureBonus(who,task.id,p);
+ homeFurnitureBonus(who,task.id,p,task.furnitureUid);
  if(a.socialTarget)simResolveSocial(who,a);
  if(a.mood&&!(a.socialTarget&&a.socialDelta<0))p.moodlet={label:a.mood,until:simClock()+165};
  p.completed=(p.completed||0)+1;s.completedActions++;
@@ -2482,12 +2482,12 @@ function householdPeaceFactors(){
  var remaining=jobs.filter(function(j){return j.remaining>0});
  var late=remaining.filter(function(j){return j.expired&&!j.assigned}).length;
  var chores=clamp(100-Math.max(0,remaining.length-3)*5-late*8);
- var home=homeFurnitureQuality().score;
+ var quality=homeFurnitureQuality(),home=quality.score,comfort=quality.comfort;
  var debt=simEnsurePro().finance.debt;
  var penalty=Math.min(16,debt/45);
- var target=clamp(needs*.60+relations*.20+(50+home*.5)*.10+chores*.10-penalty);
+ var target=clamp(needs*.58+relations*.20+(50+home*.5)*.10+chores*.12+Math.min(8,comfort*.12)-penalty);
  return {needs:Math.round(needs),relationships:Math.round(relations),
-  chores:Math.round(chores),home:Math.round(home),debt:Math.round(debt),
+  chores:Math.round(chores),home:Math.round(home),comfort:comfort,debt:Math.round(debt),
   overdue:late,remaining:remaining.length,target:Math.round(target)}
 }
 function updateHouseholdPeace(dm){
@@ -2649,7 +2649,7 @@ function effectiveHomeDesign(){
 window.HouseBossDesignBridge={
  getState:function(){
   var d=ensureHomeDesign();
-  return {cash:cash,value:life.homeValue||0,selected:Object.assign({},d.selected),
+  return {cash:cash,level:level,value:life.homeValue||0,selected:Object.assign({},d.selected),
     unlocked:Object.fromEntries(Object.entries(d.unlocked).map(function(e){return [e[0],e[1].slice()]}))}
  },
  getEffective:effectiveHomeDesign,
@@ -2665,6 +2665,7 @@ window.HouseBossDesignBridge={
   if(!option||option[2]!==price)return false;
   var d=ensureHomeDesign(),already=d.unlocked[category].includes(id);
   if(!already){
+   if(level<(option[5]||1)){message('Reach Home Level '+option[5]+' to unlock this design.');return false}
    if(cash<price){message('Earn another $'+(price-cash)+' to buy this design.');return false}
    cash-=price;d.unlocked[category].push(id);life.homeValue=(life.homeValue||0)+price;
    grantXp(8);floatReward('HOME DESIGN · '+option[1]);
@@ -2734,10 +2735,12 @@ function homeFurnitureCopy(){
 function homeFurnitureQuality(){
  var furn=ensureHomeFurniture(),style=ensureHomeDesign().selected,base=defaultHomeDesign();
  var changed=Object.keys(base).filter(function(k){return style[k]&&style[k]!==base[k]}).length;
- var uniqueness=new Set(furn.map(function(f){return f.type})).size;
- var score=Math.min(100,Math.round(12+uniqueness*4+furn.length*1.6+changed*5+owned.length*2.5));
- var tier=score>=80?'Dream Home':score>=62?'Styled Haven':score>=43?'Well-Lived':score>=27?'Cozy Home':'First Place';
- return {score:score,tier:tier,furniture:furn.length,styles:changed};
+ var types=window.HouseBossFurnitureTypes||{},uniqueness=new Set(furn.map(function(f){return f.type})).size;
+ var sofaComfort={starter:0,sage:4,rust:7,navy:10,boucle:15,leather:21,cloud:28,atelier:36};
+ var comfort=furn.reduce(function(sum,o){return sum+(types[o.type]?.comfort||0)},0)+(sofaComfort[style.sofa]||0);
+ var score=Math.min(100,Math.round(12+uniqueness*3+furn.length*1.5+changed*4+owned.length*2.5+Math.min(35,comfort*.38)));
+ var tier=score>=85?'Designer Residence':score>=67?'Curated Home':score>=46?'Styled Haven':score>=27?'Cozy Home':'First Apartment';
+ return {score:score,tier:tier,furniture:furn.length,styles:changed,comfort:comfort};
 }
 function homeFurnitureRooms(){
  var rooms=[{id:'home',name:'Kitchen',level:1,price:0,installed:true,available:true}];
@@ -2751,11 +2754,11 @@ function homeFurnitureRooms(){
  return rooms
 }
 function homeFurnitureState(){
- return {cash:Math.max(0,Math.floor(cash)),homeValue:Math.max(0,Math.floor(life.homeValue||0)),quality:homeFurnitureQuality(),furniture:homeFurnitureCopy(),rooms:homeFurnitureRooms(),max:32}
+ return {cash:Math.max(0,Math.floor(cash)),level:level,careerLevel:life.careerLevel,homeValue:Math.max(0,Math.floor(life.homeValue||0)),comfort:homeFurnitureQuality().comfort,quality:homeFurnitureQuality(),furniture:homeFurnitureCopy(),rooms:homeFurnitureRooms(),max:32}
 }
 function homeFurnitureBuy(type,x,z,rot,price){
  var meta=window.HouseBossFurnitureTypes?.[type],list=ensureHomeFurniture();
- if(!started||ended||!meta||list.length>=32||meta.price!==price)return false;
+ if(!started||ended||!meta||list.length>=32||meta.price!==price||level<(meta.level||1))return false;
  var placement={type:type,x:Number(x),z:Number(z),rot:Number(rot)};
  if(!homeFurnitureValidate(placement).ok||cash<price)return false;
  cash-=price;life.homeValue=(life.homeValue||0)+price;
@@ -2802,7 +2805,10 @@ function homeFurnitureInteract(uid){
  }
  saveGame();return true
 }
-function homeFurnitureBonus(who,action,p){
+function homeFurnitureBonus(who,action,p,uid){
+ var used=uid&&ensureHomeFurniture().find(function(o){return o.uid===uid});
+ var furniture=used&&window.HouseBossFurnitureTypes?.[used.type];
+ if(furniture&&furniture.action===action){var b=Math.min(20,Math.round(furniture.comfort*.46));p.fun=clamp(p.fun+b);if(action==='nap')simSetEnergy(who,simEnergy(who)+Math.round(b*.8));}
  var items=ensureHomeFurniture(),has=function(t){return items.some(function(o){return o.type===t})};
  if(action==='read'&&has('bookshelf'))simSkill(who,'Logic',9);
  if(action==='paint'&&has('easel'))simSkill(who,'Creativity',10);
