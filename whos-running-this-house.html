@@ -1672,6 +1672,7 @@ function lifeInstall(){
   if(b.dataset.townPlace){townPickVenue(b.dataset.townPlace);return}
   if(b.dataset.townTab){life.townTab=b.dataset.townTab;lifeTownRender(true);return}
   if(b.dataset.lifeJob){lifeBeginShift(b.dataset.lifeJob,b.dataset.who||'self');return}
+  if(b.dataset.shiftChoice){lifeWorkChoice(b.dataset.shiftChoice);return}
   if(b.dataset.townActivity){beginOuting(b.dataset.townActivity);return}
  });
 
@@ -1693,20 +1694,42 @@ function lifeBeginShift(id,who){
  }
  townResumeIfNeeded();
  if(who==='partner'){
-  life.pShift={id:id,left:j.mins,total:j.mins};
+  life.pShift={id:id,left:j.mins,total:j.mins,performance:55,lastChoice:-999};
   familyNotice('Partner left for work at '+j.where+'.');
  }else{
-  life.shift={id:id,left:j.mins,total:j.mins};
+  life.shift={id:id,left:j.mins,total:j.mins,performance:50,lastChoice:-999};
   posTarget=[770,460];say('Off to work. See you later.');
  }
  life.lastWorkplace=j.where;
  message((who==='partner'?'Partner':'You')+' started a shift at '+j.where+'.');
  lifeTownRender(true);saveGame()
 }
+
+function lifeWorkChoice(action){
+ var sh=life.shift;if(!sh||!started)return message('Start a shift first.');
+ if(time-(sh.lastChoice||-999)<35)return message('You have just made a work decision. Give it some time.');
+ if(action==='focus'){
+   sh.performance=clamp((sh.performance??50)+12);
+   sh.left=Math.max(1,sh.left-16);
+   energy=clamp(energy-5);
+   message('Focused work · productivity increased.');
+ }else if(action==='socialize'){
+   sh.performance=clamp((sh.performance??50)+3);
+   life.fun=clamp(life.fun+7);townSkillGain('social',8);
+   message('You got to know your coworkers.');
+ }else if(action==='break'){
+   sh.performance=clamp((sh.performance??50)-3);
+   sh.left+=9;energy=clamp(energy+11);
+   message('Short break · energy restored.');
+ }else return;
+ sh.lastChoice=time;lifeTownRender(true);saveGame()
+}
+
 function lifeFinishShift(who){
  var p=who==='partner',job=p?life.pShift:life.shift;
  if(!job)return;var j=lifeJobs.find(function(x){return x.id===job.id});if(!j)return;
- var pay=Math.round(j.pay*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;
+ var performance=Number(job.performance??50);var factor=.75+Math.max(0,Math.min(100,performance))/200;
+ var pay=Math.round(j.pay*factor*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;
  if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2);startPartner()}
  else {energy=clamp(energy-j.energy);life.careerXp+=48;life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25);townSkillGain(j.id==='studio'||j.id==='manager'?'creativity':j.id==='walk'||j.id==='deliver'?'fitness':'social',12);startSelf()}
  floatReward('PAYDAY +$'+pay);message((p?'Partner':'You')+' earned $'+pay+'.');saveGame()
@@ -1813,6 +1836,8 @@ function lifeTownRender(force){
  if(life.shift){
   var active=lifeJobs.find(function(j){return j.id===life.shift.id});
   html+='<div class="townJob chosen"><div class="jobName"><span>◷</span><b>YOU ARE WORKING · '+(active?active.title:'SHIFT')+'</b></div><small>'+Math.max(0,Math.ceil(life.shift.left))+' game min to payday</small><div class="townBar"><i style="width:'+Math.max(0,Math.min(100,100-100*life.shift.left/life.shift.total))+'%"></i></div></div>';
+  var canAct=time-(life.shift.lastChoice||-999)>=35;
+  html+='<div class="townJob"><b>WORK PERFORMANCE · '+Math.round(life.shift.performance??50)+'%</b><small>Decisions change your wage, mood and energy.</small><div class="jobBtns" style="grid-template-columns:repeat(3,1fr)"><button data-shift-choice="focus" '+(!canAct?'disabled':'')+'>FOCUS</button><button data-shift-choice="socialize" '+(!canAct?'disabled':'')+'>TALK</button><button data-shift-choice="break" '+(!canAct?'disabled':'')+'>BREAK</button></div></div>';
  }
  if(life.pShift){
   var pJob=lifeJobs.find(function(j){return j.id===life.pShift.id});
