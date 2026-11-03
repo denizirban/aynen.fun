@@ -68,3 +68,57 @@
 #notebook.design-mode .hbf-room button{font:850 9px 'DM Mono',monospace;color:#416c4a;border:1px solid #aed0a7;background:#ddedd6;border-radius:8px;padding:9px 4px;margin-top:auto;cursor:pointer}
 #notebook.design-mode .hbf-room button:hover:not(:disabled){background:#c8e8bf}
 #notebook.design-mode .hbf-room button:disabled{color:#a1a9a0;border-color:#d6dfd4;background:#f0f2ea;cursor:default}
+
+/* Furniture collections V2 — compact high-end interior design catalogue. */
+#notebook.design-mode .hbf-lifestyle-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:11px 0 8px}
+#notebook.design-mode .hbf-lifestyle-stats span{padding:8px 5px;border:1px solid #c8d8c2;background:#fffefaaf;border-radius:9px;text-align:center}
+#notebook.design-mode .hbf-lifestyle-stats b{display:block;font:800 17px 'Space Grotesk',sans-serif;color:#2e5941;letter-spacing:-.06em}
+#notebook.design-mode .hbf-lifestyle-stats small{font:700 7px 'DM Mono',monospace;color:#688878;letter-spacing:.035em}
+#notebook.design-mode .hbf-next{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #d1d5cc;background:#f7f5ee;border-radius:11px;padding:10px 11px;margin:5px 0 12px}
+#notebook.design-mode .hbf-next>div{display:flex;flex-direction:column;gap:3px}
+#notebook.design-mode .hbf-next b{color:#84908a;font:700 8px 'DM Mono',monospace;letter-spacing:.08em}
+#notebook.design-mode .hbf-next strong{color:#2f4e3e;font:700 12px 'Space Grotesk',sans-serif}
+#notebook.design-mode .hbf-next small{font-size:9px;line-height:1.4;color:#7f8c80}
+#notebook.design-mode .hbf-lock-symbol{font-size:24px;color:#c7b590}
+#notebook.design-mode .hbf-filters{display:flex;gap:5px;padding:2px 0 11px;overflow-x:auto}
+#notebook.design-mode .hbf-filters button{flex:1;min-width:max-content;cursor:pointer;border:1px solid #d5ddd1;color:#788a7a;border-radius:8px;background:#f8faf6;padding:9px 6px;font:800 8px 'DM Mono',monospace}
+#notebook.design-mode .hbf-filters button.active{background:#345c47;color:#fff;border-color:#345c47}
+#notebook.design-mode .hbf-market{gap:9px}
+#notebook.design-mode .hbf-card{border:1px solid #d8dbd3;background:#fffefa;border-radius:13px;box-shadow:0 4px 13px #263f2913;transition:transform .2s}
+#notebook.design-mode .hbf-card:hover{transform:translateY(-1px)}
+#notebook.design-mode .hbf-card.is-locked{background:#f6f5f1;border-color:#deded7}
+#notebook.design-mode .hbf-card.is-locked .hbf-silhouette{filter:grayscale(.6);opacity:.6}
+#notebook.design-mode .hbf-visual{height:94px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 63%,#ffffff 8%,#e8e9e2 95%);display:grid;place-items:center;isolation:isolate}
+#notebook.design-mode .hbf-tier-premium .hbf-visual{background:radial-gradient(ellipse,#fff9f0 10%,#e4dfd4 95%)}
+#notebook.design-mode .hbf-tier-luxury .hbf-visual{background:radial-gradient(ellipse,#faf5e6 10%,#d5d7d1 97%)}
+#notebook.design-mode .hbf-visual:after{content:'';position:absolute;left:13%;right:13%;bottom:12px;height:10px;border-radius:50%;background:#47564b24;filter:blur(5px)}
+#notebook.design-mode .hbf-silhouette{position:relative;width:91px;height:61px;z-index:1;transform:perspective(180px) rotateX(6deg) rotateY(-16deg);filter:drop-shadow(5px 7px 5px #0003)}
+#notebook.design-mode .hbf-silhouette i{position:absolute;display:block;background:var(--tone);box-shadow:inset -7px -6px 11px #0002,inset 4px 3px 6px #fff7}
+#notebook.design-mode .hbf-silhouette i:first-child{left:13%;right:13%;bottom:13px;height:27px;border-radius:11px 11px 7px 7px}
+#notebook.design-mode .hbf-silhouette i:nth-child(2){left:10%;right:10%;top:3px;height:24px;border-radius:14px 14px 4px 4px}
+#notebook.design-mode .hbf-silhouette i:nth-child(3){left:7%;right:7%;bottom:9px;height:9px;border-radius:6px;background:#746a54}
+#notebook.design-mode .hbf-silhouette.chair i:first-child{left:25%;right:25%;height:30px}
+#notebook.design-mode .hbf-silhouette.chair i:nth-child(2){left:22%;right:22%;border-radius:15px 15px 5px 5px}
+#notebook.design-mode .hbf-silhouette.lamp i:first-child{left:28%;right:28%;top:2px;height:24px;clip-path:polygon(18% 0,82% 0,100% 100%,0 100%);border-radius:6px}
+#notebook.design-mode .hbf-silhouette.lamp i:nth-child(2){left:49%;right:auto;top:21px;height:37px;width:5px;border-radius:3px;background:#746a54}
+#notebook.design-mode .hbf-silhouette.lamp i:nth-child(3){left:28%;right:28%;bottom:1px}
+#notebook.design-mode .hbf-silhouette.shelf i:first-child,#notebook.design-mode .hbf-silhouette.bookshelf i:first-child{left:28%;right:28%;height:56px;bottom:0;border:6px solid #846345}
+#notebook.design-mode .hbf-silhouette.shelf i:nth-child(2),#notebook.design-mode .hbf-silhouette.bookshelf i:nth-child(2){left:32%;right:32%;top:20px;height:5px;border-radius:0}
+#notebook.design-mode .hbf-silhouette.desk i:first-child,#notebook.design-mode .hbf-silhouette.sidetable i:first-child{left:8%;right:8%;bottom:37px;height:10px}
+#notebook.design-mode .hbf-silhouette.desk i:nth-child(2),#notebook.design-mode .hbf-silhouette.sidetable i:nth-child(2){left:15%;right:15%;top:23px;height:34px;clip-path:polygon(0 0,9% 0,9% 100%,0 100%,0 0,90% 0,100% 0,100% 100%,91% 100%,91% 0)}
+#notebook.design-mode .hbf-silhouette.media i:first-child,#notebook.design-mode .hbf-silhouette.stereo i:first-child{left:24%;right:24%;height:42px}
+#notebook.design-mode .hbf-silhouette.plant i:first-child{left:38%;right:38%;bottom:3px;height:22px}
+#notebook.design-mode .hbf-silhouette.plant i:nth-child(2){left:20%;right:20%;top:0;height:39px;border-radius:70%;background:#5a9476}
+#notebook.design-mode .hbf-silhouette.plant i:nth-child(3){display:none}
+#notebook.design-mode .hbf-padlock,#notebook.design-mode .hbf-available{position:absolute;top:7px;right:7px;z-index:2;border-radius:30px;font:800 7px 'DM Mono',monospace;letter-spacing:.025em;padding:5px 6px}
+#notebook.design-mode .hbf-padlock{background:#616c62e9;color:#fff}
+#notebook.design-mode .hbf-available{background:#f7fff2e8;color:#46784c}
+#notebook.design-mode .hbf-card-content{padding:9px 9px 8px;display:flex;flex:1;flex-direction:column;gap:4px}
+#notebook.design-mode .hbf-card-kicker{font:800 7px 'DM Mono',monospace;letter-spacing:.065em;color:#a08f78}
+#notebook.design-mode .hbf-card-content>strong{color:#2c4037;font:700 12px 'Space Grotesk',sans-serif;line-height:1.2}
+#notebook.design-mode .hbf-card-content>small{font:400 9px 'Space Grotesk',sans-serif;color:#8b9588;line-height:1.35;min-height:25px}
+#notebook.design-mode .hbf-card-content .hbf-bonus{margin:auto 0 0;color:#3a6952;font:800 8px 'DM Mono',monospace;background:#e9f3e9}
+#notebook.design-mode .hbf-card-content .hbf-bonus span{font-weight:500;color:#789380}
+#notebook.design-mode .hbf-card.is-locked>button{background:#ecebe6;color:#9ca19a}
+#notebook.design-mode .hbf-tier-luxury .hbf-card-kicker{color:#a67c41}
+@media(max-width:650px){#notebook.design-mode .hbf-visual{height:82px}#notebook.design-mode .hbf-silhouette{transform:scale(.88) perspective(180px) rotateY(-16deg)}}
