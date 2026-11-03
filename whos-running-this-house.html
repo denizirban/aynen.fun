@@ -1424,7 +1424,7 @@ function finish(j,kind){
  if(combo===3||combo===6){var bonus=combo===3?15:35;grantXp(bonus);floatReward('STREAK ×'+combo+' · +'+bonus+' XP')}if(kind!=='self'){assistedFinished++;totalShared++}peace=clamp(peace+(j.expired?1:Math.min(7,3+combo*.4)));
  if(kind==='self'){energy=clamp(energy-j.weight);current=null;posTarget=[770,460];}
  if(kind==='partner'){partnerEnergy=clamp(partnerEnergy-j.weight*.8);helper=null;partnerPractice=Math.min(40,partnerPractice+1);if(partnerPractice%4===0&&partnerPractice<=16)familyNotice("Partner's household skill is now level "+helperSkill('partner')+'.');}
- if(kind==='kid'){kidEnergy=clamp(kidEnergy-j.weight*.9);childTask=null;kidPractice=Math.min(40,kidPractice+1);if(kidPractice%4===0&&kidPractice<=16)familyNotice("Kid's household skill is now level "+helperSkill('kid')+' oldu.');}
+ if(kind==='kid'){kidEnergy=clamp(kidEnergy-j.weight*.9);childTask=null;kidPractice=Math.min(40,kidPractice+1);if(kidPractice%4===0&&kidPractice<=16)familyNotice("Kid's household skill is now level "+helperSkill('kid')+'.');}
  if(j.key==='dinner'){cash=Math.max(0,cash-35);if(owned.includes('herbs'))peace=clamp(peace+3)}if(j.key==='pet'){petEnergy=clamp(petEnergy+12)};grantXp(12+Math.min(8,Math.round(j.dur/5))+(j.expired?0:5));evaluateGoals();evaluateBadges();rewardChapters();
  message((kind==='partner'?"Partner finished: ":kind==='kid'?"Kid finished: ":"Finished: ")+j.name);
  if(j.initiative){if(kind==='partner')friendship=clamp(friendship+1);if(kind==='kid')trust=clamp(trust+1);familyNotice((kind==='partner'?"Partner":"Kid")+' kendi bitirdi: '+j.name)}if(kind==='self')startSelf();if(kind==='partner')startPartner();render();saveGame();
