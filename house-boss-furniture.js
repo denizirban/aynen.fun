@@ -206,9 +206,22 @@ function applySearch(){
 }
 function install(){
  const body=view();if(!body)return;
+ body.addEventListener('input',e=>{
+  if(e.target.id==='hbf-search'){searchQuery=e.target.value||'';applySearch()}
+ });
+ body.addEventListener('change',e=>{
+  if(e.target.id==='hbf-style'){styleFilter=e.target.value||'all';render()}
+ });
  body.addEventListener('click',e=>{
   const wish=e.target.closest('[data-hbf-wish]');if(wish){bridge()?.toggleWishlist?.(wish.dataset.hbfWish);render();return}
   const repair=e.target.closest('[data-hbf-repair]');if(repair){if(bridge()?.repair?.(repair.dataset.hbfRepair))render();return}
+  const preview=e.target.closest('[data-hbf-preview]');if(preview){begin(preview.dataset.hbfPreview,null,true);return}
+  const recolor=e.target.closest('[data-hbf-color]');if(recolor){
+   const [uid,color]=recolor.dataset.hbfColor.split(',');
+   if(bridge()?.recolor?.(uid,color))render();
+   return
+  }
+  const cat=e.target.closest('[data-hbf-category]');if(cat){category=cat.dataset.hbfCategory;render();return}
   const choice=e.target.closest('[data-hbf-filter]');if(choice){filter=choice.dataset.hbfFilter;render();return}
   let room=e.target.closest('[data-hbf-room]');if(room){clear();window.Evin3D?.focusRoom?.(room.dataset.hbfRoom);render();return}
   room=e.target.closest('[data-hbf-room-buy]');if(room){
