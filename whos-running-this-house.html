@@ -904,14 +904,14 @@ body:has(#game) .brand .back{display:none!important}
 <div id="splash">
   <div class="paper game-menu" role="dialog" aria-modal="true" aria-label="House Boss game menu">
     <div class="menu-top">
-      <span><i class="status-light"></i> HOUSE BOSS <em>/</em> EVENING SHIFT</span>
+      <span><i class="status-light"></i> HOUSE BOSS <em>/</em> LIFE SIMULATION</span>
       <span>01 — SINGLE PLAYER</span>
     </div>
     <div class="menu-grid">
       <section class="menu-story">
         <div class="menu-eyebrow">ONE HOME. FOUR PERSONALITIES. ENDLESS CHORES.</div>
         <h1>HOUSE<br>BOSS<span>.</span></h1>
-        <p class="menu-tagline">Run the kitchen. Keep the peace.<br>Survive another evening.</p>
+        <p class="menu-tagline">Care for your family, earn a living,<br>and build a home that grows with you.</p>
         <div class="menu-preview" aria-label="Household chaos preview">
           <div class="preview-hud"><span><i class="preview-live"></i> 5:00 PM · SHIFT START</span><span>PEACE <b>75%</b></span></div>
           <div class="preview-kitchen" aria-hidden="true">
@@ -929,7 +929,7 @@ body:has(#game) .brand .back{display:none!important}
           </div>
           <div class="preview-bottom"><span>3 NEW REQUESTS</span><span>YOU'RE IN CHARGE. SORT OF.</span></div>
         </div>
-        <div class="menu-microcopy">Assign chores · Manage moods · Upgrade your home</div>
+        <div class="menu-microcopy">Work in town · Grow your career · Upgrade your home</div>
       </section>
       <section class="menu-controls">
         <div class="menu-section-title"><b>01 / YOUR HOUSEHOLD</b><span>ONE LIVING WORLD</span></div>
@@ -1384,7 +1384,7 @@ function loadSave(){
  seq=s.seq||1;eventAt=s.eventAt||time+35;combo=s.combo||0;pos=Array.isArray(s.pos)?s.pos:[770,460];posTarget=Array.isArray(s.posTarget)?s.posTarget:[770,460];partnerPos=Array.isArray(s.partnerPos)?s.partnerPos:[885,351];kidPos=Array.isArray(s.kidPos)?s.kidPos:[746,714];selfQueue=s.selfQueue||[];partnerQueue=s.partnerQueue||[];
  current=jobs.find(function(j){return j.id===s.current})||null;helper=jobs.find(function(j){return j.id===s.helper})||null;childTask=jobs.find(function(j){return j.id===s.childTask})||null;paused=false;ended=false;started=true;selected=null;$('#splash').classList.add('hidden');$('#ending').classList.add('hidden');$('#player').setAttribute('transform','translate('+pos[0]+' '+pos[1]+')');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',Number(b.dataset.speed)===speed)});$('#pause').textContent='Ⅱ';render();if(s.ended){message('Previous save continued.');}else{message("Day "+day+', '+format(time)+" — welcome back.");say("Can I ask you something?")}return true
 }
-function showSavePreview(){var s=getSave();if(s){avatarSelf=s.avatarSelf||avatarSelf;avatarPartner=s.avatarPartner||avatarPartner;syncAvatars();setRunMode('classic')}if(!s){$('#resume').hidden=true;$('#savedStats').hidden=true;$('#start').textContent='START EVENING →';return}savedPreview=s;$('#resume').hidden=false;$('#savedStats').hidden=false;$('#savedStats').textContent='DAY '+s.day+' · '+format(s.time)+' · '+Math.round(s.peace)+'% PEACE · '+(s.jobs||[]).filter(function(j){return j.remaining>0}).length+' CHORES'+(s.ended?' · SHIFT FINISHED':'');$('#resume').textContent=s.ended?'LAST SHIFT REPORT →':'↳ CONTINUE SAVED GAME';$('#start').textContent='START NEW EVENING →';
+function showSavePreview(){var s=getSave();if(s){avatarSelf=s.avatarSelf||avatarSelf;avatarPartner=s.avatarPartner||avatarPartner;syncAvatars();setRunMode('classic')}if(!s){$('#resume').hidden=true;$('#savedStats').hidden=true;$('#start').textContent='START YOUR LIFE →';return}savedPreview=s;$('#resume').hidden=false;$('#savedStats').hidden=false;$('#savedStats').textContent='DAY '+s.day+' · '+format(s.time)+' · '+Math.round(s.peace)+'% PEACE · '+(s.jobs||[]).filter(function(j){return j.remaining>0}).length+' CHORES'+(s.ended?' · SHIFT FINISHED':'');$('#resume').textContent='↳ CONTINUE SAVED LIFE';$('#start').textContent='START NEW LIFE →';
 }
 
 function find(id){return jobs.find(function(j){return j.id===Number(id)&&j.remaining>0})}
@@ -1482,7 +1482,7 @@ function lifeSkill(partner){return Math.min(12,1+Math.floor((partner?life.partne
 function lifeInstall(){
  var btn=document.createElement('button');btn.type='button';btn.id='townButton';btn.textContent='TOWN';$('#quickBar .quick-nav').appendChild(btn);
  btn.onclick=function(){enterTown()};
- var tab=document.createElement('button');tab.type='button';tab.dataset.tab='life';tab.textContent='LIFE';$('#notebook .note-tabs').appendChild(tab);
+ var tab=document.createElement('button');tab.type='button';tab.dataset.tab='life';tab.textContent='LIFE';$('#notebook .note-tabs').appendChild(tab);tab.onclick=function(){noteTab='life';document.querySelectorAll('[data-tab]').forEach(function(x){x.classList.toggle('active',x===tab)});notebookHtml()};
  var town=document.createElement('div');town.id='townLayer';
  town.innerHTML='<svg class="townCanvas" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+
  '<defs><linearGradient id="townSky" x2="0" y2="1"><stop stop-color="#c8d9c2"/><stop offset="1" stop-color="#eee2c8"/></linearGradient></defs><rect width="1200" height="760" fill="url(#townSky)"/>'+
@@ -1613,7 +1613,7 @@ function reset(mode){
  window.HouseBossPlatform?.start();
  if(mode==='fresh'){life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0};partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
  if(mode==='next'){day+=1;cash+=110;partnerEnergy=clamp(partnerEnergy+25);kidEnergy=clamp(kidEnergy+30);petEnergy=clamp(petEnergy+25);}
- time=7*60;dayInitiatives={partner:0,kid:0};nextFamilyDecision=time+31;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):shiftOptions[runMode].initialPeace;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=9*60+22;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:"Make tea for the guest",detail:"Another cup of tea. Another story.",icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:"Organize the fridge",detail:"Time to face the half lemons.",icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});if(day>=5)add({key:'guest',name:"Getting ready for guests",detail:"One guest is coming. Everyone is on duty.",icon:'🫖',spot:'table',dur:25,due:20*60+10,weight:14});syncAvatars();$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message("Day "+day+' — 5:00 PM. The house is counting on you.');say("When's dinner ready?")
+ time=7*60;dayInitiatives={partner:0,kid:0};nextFamilyDecision=time+31;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):shiftOptions[runMode].initialPeace;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=9*60+22;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:"Make tea for the guest",detail:"Another cup of tea. Another story.",icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:"Organize the fridge",detail:"Time to face the half lemons.",icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});if(day>=5)add({key:'guest',name:"Getting ready for guests",detail:"One guest is coming. Everyone is on duty.",icon:'🫖',spot:'table',dur:25,due:20*60+10,weight:14});syncAvatars();$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Day '+day+' · 7:00 AM. Time to live, work, and build.');say("When's dinner ready?")
 }
 
 function frame(now){
