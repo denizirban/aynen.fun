@@ -860,10 +860,10 @@
       }
       cylinder(g,.06,.06,.04,mat('buildKnob','#d7be92'),0,.83,.36);
       for(var xx of [-.41,.41])box(g,.09,.20,.08,dark,xx,.10,0);
-    }else if(['loungechair','loveseat','recliner','chaise','statementsofa'].includes(type)){
+    }else if(['loungechair','loveseat','recliner','chaise','statementsofa','daybed'].includes(type)){
        var meta=window.HouseBossFurnitureTypes?.[type]||{w:1.2,d:1.1,color:'#b5a596'};
        var w=meta.w-.08,d=meta.d-.10,one=['loungechair','recliner'].includes(type);
-       var premium=['chaise','statementsofa','recliner'].includes(type);
+       var premium=['chaise','statementsofa','recliner','daybed'].includes(type);
        var fabric=new THREE.MeshStandardMaterial({color:meta.color,roughness:type==='recliner'?.58:.88,metalness:0});
        var trim=mat('furnPiping','#dfd7c7'),frame=mat('furnFrame','#9c7d61');
        for(var xx of [-w*.37,w*.37])for(var zz of [-d*.29,d*.29])box(g,.085,.23,.085,frame,xx,.13,zz);
