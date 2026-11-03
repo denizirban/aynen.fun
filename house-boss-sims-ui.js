@@ -116,7 +116,7 @@
      body='<p class="ss-muted">Spend time with family and neighbors to build lasting bonds.</p>';
      body+='<div class="ss-row"><b>Partner relationship</b> <strong style="float:right">'+s.relationships.partner+'%</strong><div class="ss-progress"><i style="width:'+s.relationships.partner+'%"></i></div></div>';
      body+='<div class="ss-row"><b>Kid trust</b> <strong style="float:right">'+s.relationships.kid+'%</strong><div class="ss-progress"><i style="width:'+s.relationships.kid+'%"></i></div></div>';
-     body+='<p class="ss-muted" style="margin-top:12px">Social activities</p><div class="ss-grid">'+actions.social[who].map(id=>actionButton(id,who)).join('')+'</div>';
+     body+='<p class="ss-muted" style="margin-top:12px">Social activities</p><div class="ss-grid">'+actions.social[who].map(id=>actionButton(id,who)).join('')+'</div>'+'<div style="margin-top:12px"><button class="ss-simple" data-sd-manage-family>FAMILY AUTONOMY & HABITS ↗</button></div>';
    }else if(currentPanel==='skills'){
      body='<p class="ss-muted">Practice activities to level up. Each character grows independently.</p>';
      for(const [skill,lvl] of Object.entries(p.skills)){
@@ -211,6 +211,7 @@
    const b=e.target.closest('button');if(!b)return;
    if(b.hasAttribute('data-sd-close')){closePanel();return}
    if(b.dataset.sdAsp){B.chooseAspiration(b.dataset.sdAsp);renderSheet();refreshNow();return}
+   if(b.hasAttribute('data-sd-manage-family')){closePanel();B.openFamily();return}
    if(b.dataset.sdAction){B.action(b.dataset.sdAction,b.dataset.for);refreshNow();renderSheet()}
  });
  object.addEventListener('click',e=>{
