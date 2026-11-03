@@ -69,18 +69,27 @@
     var tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;tx.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());return tx;
   }
   // Floor is a real plane with highly repeatable grout lines, not an image backdrop.
+  /* HOME_INTERIOR_STYLING_V4 — soft hexagonal floor inspired by lived-in domestic spaces. */
   var tile=makeTexture(1024,704,function(ctx,W,H){
-    ctx.fillStyle='#f3f0e5';ctx.fillRect(0,0,W,H);
-    var tw=W/20,th=H/14;
-    for(var y=0;y<14;y++)for(var x=0;x<20;x++){
-      var a=(x+y)%2===0;
-      ctx.fillStyle=a?'#1e2525':'#f5f0e5';
-      ctx.fillRect(x*tw+.8,y*th+.8,tw-1.6,th-1.6);
-      if(!a){ctx.fillStyle='rgba(168,153,132,.11)';ctx.fillRect(x*tw+3,y*th+3,tw-6,2);}
+    ctx.fillStyle='#b9c0b8';ctx.fillRect(0,0,W,H);
+    var R=24,stepX=1.5*R,stepY=Math.sqrt(3)*R;
+    for(var col=-1;col<=Math.ceil(W/stepX)+1;col++){
+      for(var row=-2;row<=Math.ceil(H/stepY)+2;row++){
+        var cx=col*stepX,cy=(row+(col%2)*.5)*stepY;
+        ctx.beginPath();
+        for(var n=0;n<6;n++){
+          var a=n*Math.PI/3,x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+          if(!n)ctx.moveTo(x,y);else ctx.lineTo(x,y)
+        }
+        ctx.closePath();
+        ctx.fillStyle=['#d1d5cf','#d4d5cf','#c9ceca','#d9d8d2','#cdd0cb'][(col*3+row*7+10000)%5];
+        ctx.fill();ctx.lineWidth=2.3;ctx.strokeStyle='#adb4ad';ctx.stroke();
+        if((row+col)%7===0){
+          ctx.strokeStyle='rgba(255,255,255,.21)';ctx.lineWidth=.9;
+          ctx.beginPath();ctx.moveTo(cx-R*.4,cy-R*.19);ctx.lineTo(cx+R*.36,cy-R*.19);ctx.stroke()
+        }
+      }
     }
-    ctx.strokeStyle='rgba(38,32,30,.2)';ctx.lineWidth=1;
-    for(var xx=0;xx<=20;xx++){ctx.beginPath();ctx.moveTo(xx*tw,0);ctx.lineTo(xx*tw,H);ctx.stroke()}
-    for(var yy=0;yy<=14;yy++){ctx.beginPath();ctx.moveTo(0,yy*th);ctx.lineTo(W,yy*th);ctx.stroke()}
   });
   var floorMat=new THREE.MeshStandardMaterial({map:tile,roughness:.86});
   var floor=addMesh(scene,new THREE.PlaneGeometry(18,11),floorMat,0,-.015,0,false,true);
@@ -204,9 +213,9 @@
     var g=new THREE.Group();scene.add(g);g.position.set(6.72,0,-1.65);
     // two grounded kitchen runs: right wall counters
     for(var z of [-2.25,.1,2.23]){
-      box(g,1.7,1.4,2.12,mat('cabinet','#eeeee6'),0,.73,z);
+      box(g,1.7,1.4,2.12,mat('cabinet','#a5b8a4'),0,.73,z);
       box(g,1.9,.15,2.3,tableWood,0,1.49,z);
-      box(g,.07,1.18,1.82,mat('door','#d6d7cf'),-.86,.76,z);
+      box(g,.07,1.18,1.82,mat('door','#a0b39c'),-.86,.76,z);
       capsule(g,[-.91,.7,z-.33],[-.91,.7,z+.35],.035,stainless);
     }
     var sink=new THREE.Group();sink.position.set(6.65,0,-.9);scene.add(sink);
@@ -398,7 +407,7 @@
   littleCurtain();
   function cabinetDetail(){
     // Recessed panels and steel handles give real depth to the cabinetry.
-    var panel=mat('cabinetPanel','#f7f5ea',.62);
+    var panel=mat('cabinetPanel','#b3c7af',.62);
     for(var z of [-3.9,-1.65,.7,2.75]){
       box(scene,.065,.89,1.42,panel,5.82,.80,z);
       box(scene,.09,.04,.67,wood,5.75,1.30,z);
@@ -410,6 +419,39 @@
     for(var x=0;x<13;x++)capsule(scene,[5.8+x*.235,1.62,-5.44],[5.8+x*.235,2.5,-5.44],.008,grout);
   }
   cabinetDetail();
+  // A little character in the kitchen: sage tile, picture frame and fruit.
+  (function(){
+    var tiles=makeTexture(512,512,function(ctx,W,H){
+      ctx.fillStyle='#e6e9e1';ctx.fillRect(0,0,W,H);
+      var p=42;
+      for(var y=0;y<H/p+1;y++)for(var x=0;x<W/p+1;x++){
+        var hue=['#bbcfb9','#b5cbb5','#c2d3be','#b3c9b0'][(x+y*3)%4];
+        ctx.fillStyle=hue;ctx.fillRect(x*p+3,y*p+3,p-6,p-6);
+        ctx.fillStyle='rgba(245,255,241,.23)';ctx.fillRect(x*p+5,y*p+5,p-10,4);
+      }
+    });
+    var backsplash=new THREE.MeshStandardMaterial({map:tiles,roughness:.45,metalness:.02});
+    addMesh(scene,new THREE.PlaneGeometry(5.1,2.6),backsplash,5.25,3.34,-5.47,false,false);
+    var print=makeTexture(320,400,function(ctx,W,H){
+      ctx.fillStyle='#f5e9d2';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#e2d0aa';ctx.fillRect(17,17,W-34,H-34);
+      ctx.fillStyle='#d68660';ctx.beginPath();ctx.arc(130,200,67,0,7);ctx.fill();
+      ctx.fillStyle='#efbc65';ctx.beginPath();ctx.arc(193,140,54,0,7);ctx.fill();
+      ctx.strokeStyle='#5c8b60';ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(152,148);ctx.lineTo(196,73);ctx.stroke();
+      ctx.fillStyle='#628c60';ctx.beginPath();ctx.ellipse(204,93,37,16,-.5,0,7);ctx.fill();
+      ctx.fillStyle='#6d8c57';ctx.beginPath();ctx.ellipse(159,98,30,12,.75,0,7);ctx.fill();
+      ctx.fillStyle='#f2d6a5';ctx.font='bold 19px sans-serif';ctx.fillText('GOOD THINGS',45,345);
+    });
+    box(scene,2.2,2.35,.10,mat('wallArtFrame','#8b7054'),1.7,4.16,-5.37);
+    var art=addMesh(scene,new THREE.PlaneGeometry(2.03,2.18),new THREE.MeshBasicMaterial({map:print}),1.7,4.16,-5.30,false,false);
+    // Domestic countertop props: three pieces of fruit and a small jar.
+    var bowlBase=mat('newBowl','#dfd1b8',.38);
+    cylinder(scene,.43,.31,.19,bowlBase,4.65,1.70,-3.5);
+    ball(scene,.16,.15,.15,mat('newApple','#c77a58'),4.43,1.84,-3.53);
+    ball(scene,.15,.17,.15,mat('newPear','#c4b16f'),4.65,1.85,-3.42);
+    ball(scene,.18,.14,.17,mat('newOrange','#dfa75f'),4.91,1.83,-3.51);
+  })();
+
   function countertopStillLife(){
     // Board and a few deliberately imperfect domestic props.
     var g=new THREE.Group();scene.add(g);
