@@ -565,6 +565,26 @@
   renderer.domElement.addEventListener('touchstart',function(e){for(var t of e.changedTouches)touches.set(t.identifier,{x:t.clientX,y:t.clientY});if(touches.size<2)prevPinch=0},{passive:true});
   renderer.domElement.addEventListener('touchmove',function(e){for(var t of e.changedTouches)touches.set(t.identifier,{x:t.clientX,y:t.clientY});if(touches.size===2){var p=[...touches.values()];var dist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);if(prevPinch>0)adjustZoom((dist-prevPinch)*.002);prevPinch=dist}},{passive:true});
   renderer.domElement.addEventListener('touchend',function(e){for(var t of e.changedTouches)touches.delete(t.identifier);if(touches.size<2)prevPinch=0},{passive:true});
+  // SIM_SELECTED_MARKER_V4: original floating selection halo, not an imported game asset.
+  var simMarker=new THREE.Group();scene.add(simMarker);
+  var simMarkerMat=new THREE.MeshStandardMaterial({color:'#9ed493',emissive:'#315f3e',emissiveIntensity:.32,roughness:.42,metalness:.07});
+  var simLeaf=new THREE.Mesh(new THREE.SphereGeometry(.20,10,8),simMarkerMat);
+  simLeaf.scale.set(.69,1.55,.56);simLeaf.rotation.z=-.16;simMarker.add(simLeaf);
+  var simRing=new THREE.Mesh(new THREE.TorusGeometry(.34,.029,7,24),
+     new THREE.MeshBasicMaterial({color:'#f5ffe7',transparent:true,opacity:.65}));
+  simRing.rotation.x=Math.PI/2;simRing.position.y=-.33;simMarker.add(simRing);
+  simMarker.visible=false;
+  function updateSimMarker(state,t){
+    var sel=state.simSelected||'self';
+    var person=sel==='pet'?dogRoot:actors[sel]&&actors[sel].root;
+    if(!person||!person.visible||state.selfAway&&sel==='self'||state.partnerAway&&sel==='partner'||state.kidAway&&sel==='kid'){simMarker.visible=false;return}
+    simMarker.visible=true;
+    simMarker.position.set(person.position.x,person.position.y+(sel==='pet'?1.6:3.2)+Math.sin(t*1.9)*.075,person.position.z);
+    simLeaf.rotation.y=t*.7;
+    var tone=state.simMoodTone||'happy';
+    simMarkerMat.color.set(tone==='bad'?'#d48c7c':tone==='tense'?'#d9b376':tone==='inspired'?'#9aabdf':'#9ed493');
+  }
+
   // Render sync is read-only: game logic and save files remain the authoritative source.
   var lastStateTime=0,clock=new THREE.Clock(),oldSnapshot=null,previousAvatar='';
   function updateActors(state,dt,elapsed){
@@ -626,6 +646,7 @@
       oldSnapshot=snapshot();lastStateTime=elapsed;refresh(oldSnapshot);
     }
     updateActors(oldSnapshot||{},dt,elapsed);
+    updateSimMarker(oldSnapshot||{},elapsed);
     syncWorkingDetails(oldSnapshot||{},elapsed);
     tailRoot.rotation.y=Math.sin(elapsed*5.2)*.42;
     if(selectionRing.visible){selectionRing.children[0].rotation.z=elapsed*.12;attention.material.opacity=.10+.07*Math.sin(elapsed*3)}
