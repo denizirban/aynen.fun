@@ -155,3 +155,38 @@
 @media(prefers-reduced-motion:reduce){
  #notebook.design-mode .hbf-card{transition:none}
 }
+
+/* Curated collection unlocks: designer sets, real in-game rewards. */
+#notebook.design-mode .hbf-set-header{display:flex;align-items:baseline;justify-content:space-between;gap:9px;padding:6px 1px 9px}
+#notebook.design-mode .hbf-set-header b{font:850 9px 'DM Mono',monospace;color:#826f77;letter-spacing:.065em;white-space:nowrap}
+#notebook.design-mode .hbf-set-header span{font:500 10px 'Space Grotesk',sans-serif;color:#988e8d;line-height:1.45}
+#notebook.design-mode .hbf-designer-sets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:14px}
+#notebook.design-mode .hbf-set-card{border:1px solid #e4ddd8;border-radius:12px;background:linear-gradient(160deg,#fffefa,#f8f4f0);padding:9px;display:flex;flex-direction:column;gap:8px;min-width:0}
+#notebook.design-mode .hbf-set-card.ready{border-color:#96be9a;background:#f3faf0}
+#notebook.design-mode .hbf-set-card.claimed{border-color:#b9d0c0;background:#f0f5ed}
+#notebook.design-mode .hbf-set-top{display:flex;align-items:flex-start;gap:6px;min-width:0}
+#notebook.design-mode .hbf-set-symbol{display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:8px;background:#e8a2b6;color:#fff;font-size:14px}
+#notebook.design-mode .hbf-set-symbol.soft{background:#c2add0}
+#notebook.design-mode .hbf-set-symbol.organic{background:#9cb99b}
+#notebook.design-mode .hbf-set-symbol.retro{background:#d9a56c}
+#notebook.design-mode .hbf-set-symbol.modern{background:#a9b5c5}
+#notebook.design-mode .hbf-set-top>div{flex:1;min-width:0}
+#notebook.design-mode .hbf-set-top b{display:block;font:800 9px 'Space Grotesk',sans-serif;color:#5d5458;line-height:1.2}
+#notebook.design-mode .hbf-set-top small{display:block;font:500 8px 'Space Grotesk',sans-serif;color:#a19b96;margin-top:4px;line-height:1.3}
+#notebook.design-mode .hbf-set-top strong{font:900 9px 'DM Mono',monospace;color:#8c827d;white-space:nowrap}
+#notebook.design-mode .hbf-set-progress{height:6px;background:#e9e6e0;border-radius:8px;overflow:hidden}
+#notebook.design-mode .hbf-set-progress i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#c8a5aa,#aaabbc)}
+#notebook.design-mode .hbf-set-card button{margin-top:auto;min-height:30px;width:100%;padding:6px 3px;border:1px solid #d9d1ce;border-radius:7px;background:#fffbf6;color:#8b6e79;font:800 7px 'DM Mono',monospace;cursor:pointer}
+#notebook.design-mode .hbf-set-card button:hover{background:#f5e7e7;border-color:#cca6ac}
+#notebook.design-mode .hbf-set-card.ready button{background:#dcefd8;color:#4d7e56;border-color:#a8c6a6}
+#notebook.design-mode .hbf-set-completed{font:850 7px 'DM Mono',monospace;text-align:center;color:#508b62;margin:auto 0 2px}
+@media(max-width:840px){
+ #notebook.design-mode .hbf-designer-sets{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #notebook.design-mode .hbf-set-header{flex-wrap:wrap}
+}
+@media(max-width:550px){
+ #notebook.design-mode .hbf-designer-sets{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;gap:6px;padding-bottom:4px}
+ #notebook.design-mode .hbf-set-card{min-width:148px;max-width:148px;scroll-snap-align:start}
+ #notebook.design-mode .hbf-set-header b{font-size:8px}
+ #notebook.design-mode .hbf-set-header span{font-size:9px}
+}
