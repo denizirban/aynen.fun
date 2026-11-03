@@ -1192,7 +1192,7 @@ function familySpeed(who,spot){
  var levelBoost=1+(helperSkill(who)-1)*.065;
  return levelBoost*(liked?1.25:1);
 }
-function decideFamilyJob(who){if(who==='partner'&&life.pShift)return;
+function decideFamilyJob(who){if(who==='partner'&&life.pShift)return;if(who==='kid'&&kidAtSchool())return;
  if(!started||paused||ended||time<17*60+28)return null;
  var isPartner=who==='partner';
  if(isPartner ? !autoPartner : !autoKid)return null;
@@ -1276,7 +1276,7 @@ function recommendedJob(){
 }
 function suggestWorker(j){
  if(!j||j.assigned)return null;
- var selfOpen=!current&&energy>=13,partnerOpen=!helper&&partnerEnergy>=22,childOpen=!childTask&&kidEnergy>=24&&canKid(j);
+ var selfOpen=!current&&!life.shift&&!life.activity&&energy>=13,partnerOpen=!helper&&!life.pShift&&partnerEnergy>=22,childOpen=!childTask&&!kidAtSchool()&&kidEnergy>=24&&canKid(j);
  var partnerLikes=habits.partner[partnerHabit].spots.includes(j.spot);
  var kidLikes=habits.kid[kidHabit].spots.includes(j.spot);
  if(childOpen&&kidLikes&&j.spot==='pet')return 'kid';
@@ -1422,7 +1422,7 @@ function locateJob(j){
  $('#room').style.setProperty('--cam-x',Math.round(cameraX)+'px');$('#room').style.setProperty('--cam-y',Math.round(cameraY)+'px');
  });
 }
-function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=null;showTaskTarget(j);$('#askKid').hidden=false;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+" BEFORE / "+Math.ceil(j.remaining)+' DK';$('#actionContext').textContent=j.assigned?(j.assigned==='self'?"You took this one.":j.assigned==='partner'?"Your partner is handling this.":"Your kid is handling this."):("Who should handle it? "+(j.due-time<35?"This chore is almost overdue.":"Choose who should do this."));$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'ADD TO QUEUE':"DO IT MYSELF";$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?"QUEUE FOR PARTNER":"ASK PARTNER";$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j));$('#action').classList.add('visible');placeAction(j.spot);if(innerWidth<850)setTasksOpen(false);closeMobileFamily();}
+function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=null;showTaskTarget(j);$('#askKid').hidden=false;$('#actionTitle').textContent=j.name;$('#actionDesc').textContent=j.detail;$('#actionMeta').textContent=j.icon+'  '+format(j.due)+" BEFORE / "+Math.ceil(j.remaining)+' DK';$('#actionContext').textContent=j.assigned?(j.assigned==='self'?"You took this one.":j.assigned==='partner'?"Your partner is handling this.":"Your kid is handling this."):("Who should handle it? "+(j.due-time<35?"This chore is almost overdue.":"Choose who should do this."));$('#doIt').disabled=Boolean(j.assigned||selfQueue.length>=3);$('#doIt').textContent=current?'ADD TO QUEUE':"DO IT MYSELF";$('#delegate').disabled=Boolean(j.assigned||partnerQueue.length>=2||partnerEnergy<12);$('#delegate').textContent=helper?"QUEUE FOR PARTNER":"ASK PARTNER";$('#askKid').disabled=Boolean(j.assigned||childTask||kidEnergy<15||!canKid(j)||kidAtSchool());$('#action').classList.add('visible');placeAction(j.spot);if(innerWidth<850)setTasksOpen(false);closeMobileFamily();}
 
 function hideAction(){closeMobileFamily();var wasFinding=taskBeingFound!==null;$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;clearTaskTarget();placeAction(null);if(wasFinding)resetCameraView()}
 function startSelf(){
@@ -1443,7 +1443,7 @@ function work(kind){
    else{helper=j;j.assigned='partner';message("Task delegated.")}
    shared++;
  }else if(kind==='kid'){
-   if(childTask||kidEnergy<15||!canKid(j)){message("You can't assign this to your kid.");return}
+   if(childTask||kidEnergy<15||!canKid(j)||kidAtSchool()){message(kidAtSchool()?'Kid is at school.':'Not an appropriate chore.');return}
    childTask=j;j.assigned='kid';shared++;say("Fine, but I get to play afterward.");
  }
  hideAction();render();saveGame()
@@ -1461,7 +1461,7 @@ function finish(j,kind){
 
 
 /* HOUSE_BOSS_ORIGINAL_UI_LIFE_SIM — game systems, original room untouched */
-var life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0};
+var life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,autoWorkDay:0};
 var lifeJobs=[
  {id:'walk',title:'Dog Walker',where:'Park',mins:85,pay:70,level:1,energy:12,partner:false},
  {id:'cafe',title:'Barista',where:'Corner Café',mins:130,pay:125,level:1,energy:18,partner:true},
@@ -1534,6 +1534,21 @@ function lifeFinishActivity(){
  if(k==='freelance'){var pay=Math.round(90*(1+(life.careerLevel-1)*.15));cash+=pay;life.earned+=pay;life.careerXp+=26;life.careerLevel=lifeSkill(false);floatReward('FREELANCE +$'+pay)}
  grantXp(12);message('Completed: '+k);saveGame()
 }
+
+/* HOUSE_BOSS_AUTONOMY_V2 */
+function kidAtSchool(){return started&&((day-1)%7)<5&&time>=480&&time<900}
+function weekDay(){return ['MON','TUE','WED','THU','FRI','SAT','SUN'][(day-1)%7]}
+function independentWork(){
+ if(!started||paused||ended||!autoPartner||life.autoWorkDay===day||time<510||time>=660)return;
+ life.autoWorkDay=day;
+ if((day-1)%7>=5||life.pShift||helper||partnerQueue.length||partnerEnergy<50)return;
+ var choices=lifeJobs.filter(function(j){return j.partner&&j.level<=life.partnerCareerLevel&&partnerEnergy>=j.energy+12});
+ if(!choices.length)return;
+ var chosen=choices[choices.length-1];
+ lifeBeginShift(chosen.id,'partner');
+ familyNotice('Partner went to work at '+chosen.where+'.');
+}
+
 function lifeNewDay(){
  var unfinished=jobs.filter(function(j){return j.remaining>0}).length;
  time-=1440;day++;cash=Math.max(0,cash-45);peace=clamp(peace+(owned.includes('garden')?5:0)-(unfinished>4?4:0));
@@ -1549,7 +1564,7 @@ function lifeAdvance(dm){
  if(life.shift){life.shift.left-=dm;if(life.shift.left<=0)lifeFinishShift('self')}
  if(life.pShift){life.pShift.left-=dm;if(life.pShift.left<=0)lifeFinishShift('partner')}
  if(life.activity){life.activity.left-=dm;if(life.activity.left<=0)lifeFinishActivity()}
- if(time>=1440)lifeNewDay()
+ if(time>=1440)lifeNewDay();independentWork()
 }
 var townLastKey='';
 function lifeTownRender(force){
@@ -1559,7 +1574,7 @@ function lifeTownRender(force){
  $('#dayLabel').textContent='DAY '+String(day).padStart(2,'0')+' / '+(time<6*60?'NIGHT':time<12*60?'MORNING':time<18*60?'AFTERNOON':'EVENING');
  $('#game').classList.toggle('night',time>=21*60||time<6*60);
  $('#player').style.opacity=life.shift?'.12':'1';
- $('#partnerActor').style.opacity=life.pShift?'.12':'1';
+ $('#partnerActor').style.opacity=life.pShift?'.12':'1';$('#kidActor').style.opacity=kidAtSchool()?'.12':'1';
  if(!started||life.zone!=='town')return;
  var key=[Math.floor(time/5),life.careerLevel,life.partnerCareerLevel,life.shift&&life.shift.id,life.pShift&&life.pShift.id,Math.floor(energy/5),Math.floor(partnerEnergy/5)].join('|');
  if(!force&&key===townLastKey)return;townLastKey=key;
@@ -1611,7 +1626,7 @@ function finishDay(){
 }
 function reset(mode){
  window.HouseBossPlatform?.start();
- if(mode==='fresh'){life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0};partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
+ if(mode==='fresh'){life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0,autoWorkDay:0};partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
  if(mode==='next'){day+=1;cash+=110;partnerEnergy=clamp(partnerEnergy+25);kidEnergy=clamp(kidEnergy+30);petEnergy=clamp(petEnergy+25);}
  time=7*60;dayInitiatives={partner:0,kid:0};nextFamilyDecision=time+31;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):shiftOptions[runMode].initialPeace;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=9*60+22;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:"Make tea for the guest",detail:"Another cup of tea. Another story.",icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:"Organize the fridge",detail:"Time to face the half lemons.",icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});if(day>=5)add({key:'guest',name:"Getting ready for guests",detail:"One guest is coming. Everyone is on duty.",icon:'🫖',spot:'table',dur:25,due:20*60+10,weight:14});syncAvatars();$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Day '+day+' · 7:00 AM. Time to live, work, and build.');say("When's dinner ready?")
 }
