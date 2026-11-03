@@ -2707,15 +2707,14 @@ function homeFurnitureValidate(raw){
  if(!a||a.minX< -8.35||a.maxX>4.89||a.minZ< -4.55||a.maxZ>4.55)
    return {ok:false,reason:'Outside the buildable room'};
  var blocks=[
-  [-4.95,5.02,-1.83,1.77],// Kitchen island and work surfaces
-  [-7.57,-4.87,-.76,1.06],// Fixed lounge sofa
+  [-3.60,3.89,-1.56,1.56],// Actual dining table footprint, not the old 10m oversized one
+  [-7.57,-4.87,-.76,1.06],// Existing lounge sofa
   [-6.53,-4.03,2.59,4.56],// Dog resting spot
-  [-5.34,-4.73,-4.55,4.55],// Walking corridor around the island
-  [-4.65,4.89,2.06,2.82],// Front kitchen aisle
-  [-4.00,4.89,-2.67,-2.07],// Rear kitchen aisle
-  [-1.2,-.2,1.76,3.22],[2.55,3.85,1.70,3.24],// Dining chairs
-  [-5.13,-3.9,-3.24,-1.91] // Rear dining chair
+  [-5.34,-4.73,-4.55,4.55],// Kitchen circulation corridor
+  [-3.40,3.50,1.54,2.64],// Front dining chairs
+  [-3.40,3.50,-2.65,-1.55] // Back dining chairs
  ];
+ if(owned.includes('floor2'))blocks.push([-8.80,-7.45,-4.60,1.05]);
  for(var q of blocks){
   if(a.minX<q[1]&&a.maxX>q[0]&&a.minZ<q[3]&&a.maxZ>q[2])
     return {ok:false,reason:'Keep access and work areas clear'}
