@@ -1851,7 +1851,7 @@ var simWishesCatalog=[
 ];
 function simEnsurePro(){
  var s=simState();
- if(!s.relationships)s.relationships={'partner:self':friendship,'kid:self':trust,'partner:kid':65,'pet:self':74,'partner:pet':66,'kid:pet':79};
+ if(!s.relationships)s.relationships={'partner:self':friendship,'kid:self':trust,'kid:partner':65,'pet:self':74,'partner:pet':66,'kid:pet':79};
  if(!s.finance)s.finance={pantry:5,debt:0,spentOnFood:0,earned:0,billsPaid:0};
  s.finance.pantry=Math.max(0,Math.min(99,Number(s.finance.pantry)||0));
  s.finance.debt=Math.max(0,Number(s.finance.debt)||0);
@@ -2067,12 +2067,16 @@ function simFinish(who){
   if(name==='energy')simSetEnergy(who,simEnergy(who)+a.effect[name]*(task.quality||1));
   else if(typeof p[name]==='number')p[name]=clamp(p[name]+a.effect[name]*(a.effect[name]>0?(task.quality||1):1));
  }
- if(a.skill)simSkill(who,a.skill,a.xp||8);
+ if(a.skill){var xpBoost=(owned.includes('office')&&(a.skill==='Logic'||a.skill==='Creativity'))?1.25:1;
+  simSkill(who,a.skill,Math.round((a.xp||8)*xpBoost));}
  if(a.peace)peace=clamp(peace+a.peace);
- if(a.relationship){friendship=clamp(friendship+a.relationship);trust=clamp(trust+a.relationship*.65)}
+ if(a.relationship){simModifyRelationship('self','partner',a.relationship);simModifyRelationship('self','kid',a.relationship*.65)}
  if(a.pet)petEnergy=clamp(petEnergy+a.pet);
- if(a.mood)p.moodlet={label:a.mood,until:simClock()+165};
+ if(owned.includes('sleep')&&task.id==='sleep')simSetEnergy(who,simEnergy(who)+15);
+ if(owned.includes('living')&&['talk','tv','dance'].includes(task.id))p.fun=clamp(p.fun+9);
+ if(owned.includes('garden')&&['playdog','dogplay'].includes(task.id))p.fun=clamp(p.fun+10);
  if(a.socialTarget)simResolveSocial(who,a);
+ if(a.mood&&!(a.socialTarget&&a.socialDelta<0))p.moodlet={label:a.mood,until:simClock()+165};
  p.completed=(p.completed||0)+1;s.completedActions++;
  simTrackAction(task.id,a);
  if(who==='self'){life.hunger=p.hunger;life.fun=p.fun}
