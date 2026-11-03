@@ -62,8 +62,10 @@
  '<button type="button" data-sd-panel="social" aria-label="Social and relationships"><span>♡</span>SOCIAL</button>'+
  '<button type="button" data-sd-panel="skills" aria-label="Skills"><span>✧</span>SKILLS</button>'+
  '<button type="button" data-sd-panel="goals" aria-label="Life goals"><span>✦</span>GOALS</button>'+
+ '<button type="button" data-sd-go="chores" aria-label="Open household chores"><span>✓</span>CHORES</button>'+
  '<button type="button" data-sd-go="town" aria-label="Go to town"><span>⌂</span>TOWN</button>'+
- '<button type="button" data-sd-go="build" aria-label="Build and upgrade home"><span>▤</span>BUILD</button></div>';
+ '<button type="button" data-sd-go="build" aria-label="Build and upgrade home"><span>▤</span>BUILD</button>'+
+ '<button type="button" data-sd-go="appearance" aria-label="Customize character appearance"><span>◈</span>STYLE</button></div>';
  game.appendChild(dock);
  const sheet=document.createElement('section');sheet.id='simSheet';sheet.hidden=true;sheet.setAttribute('aria-label','Character details');game.appendChild(sheet);
  const object=document.createElement('section');object.id='simObjectMenu';object.hidden=true;object.setAttribute('aria-label','Object interactions');game.appendChild(object);
@@ -129,7 +131,7 @@
        const stage=s.aspirationStages[id]||0,target=a.targets[Math.min(stage,a.targets.length-1)];
        const isDone=stage>=a.targets.length;
        const value=id===s.aspiration?s.aspirationValue:
-          id==='home'?s.owned:id==='career'?s.people.self.completed+0:id==='social'?Math.round((s.relationships.partner+s.relationships.kid)/2):
+          id==='home'?s.owned:id==='career'?s.careerShifts:id==='social'?Math.round((s.relationships.partner+s.relationships.kid)/2):
           Object.values(s.people.self.skills).reduce((x,y)=>x+y,0);
        body+='<div class="ss-asp '+(s.aspiration===id?'active':'')+'"><div style="min-width:0"><b>'+escapeText(a.title)+'</b>'+
          '<small>'+escapeText(a.desc)+'</small><small>'+(isDone?'COMPLETE':('STEP '+(stage+1)+' / '+a.targets.length+' · '+value+' / '+target))+'</small></div>'+
@@ -200,6 +202,8 @@
      closePanel();dismissObject();
      if(b.dataset.sdGo==='town')B.goTown();
      if(b.dataset.sdGo==='build')B.openBuild();
+     if(b.dataset.sdGo==='chores')B.openChores();
+     if(b.dataset.sdGo==='appearance')B.openAppearance();
    }
    if(b.dataset.sdCancel!==undefined){B.cancel(b.dataset.sdCancelWho,Number(b.dataset.sdCancel));refreshNow()}
  });
