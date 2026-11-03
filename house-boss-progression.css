@@ -1,0 +1,27 @@
+/* House Boss — progression system: furniture collections, comfort and careers. */
+#hbProgressTrack{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:7px 0 5px;font:800 8px 'DM Mono',monospace;color:#647862;letter-spacing:.015em}
+#hbProgressTrack span{display:flex;align-items:center;gap:4px;padding:5px 6px;border:1px solid #dce8d9;background:#f4f8f1;border-radius:7px;white-space:nowrap}
+#hbProgressTrack span:first-child{color:#5d6653}#hbProgressTrack span:last-child{color:#397452}
+.hb-career-track{margin:10px 1px 16px;padding:13px 14px;border:1px solid #c6d9ca;border-radius:13px;background:linear-gradient(135deg,#f4f8ef,#e4f1e5);box-shadow:0 2px 7px #2b503316}
+.hb-career-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hb-career-heading>div{display:flex;flex-direction:column;gap:3px}
+.hb-career-heading small{font:800 9px 'DM Mono',monospace;color:#708f75;letter-spacing:.1em}
+.hb-career-heading strong{font:800 17px 'Space Grotesk',sans-serif;letter-spacing:-.055em;color:#315f46}
+.hb-career-heading>span{font:800 10px 'DM Mono',monospace;color:#517459;border:1px solid #c1d8c3;padding:6px 8px;border-radius:20px;background:#f9fcf7}
+.hb-career-bar{width:100%;height:9px;background:#c5d7c3;border-radius:9px;overflow:hidden;margin:11px 0 6px}
+.hb-career-bar>i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#579768,#a7c48c);transition:width .3s}
+.hb-career-track p{font-size:10px;line-height:1.5;margin:0;color:#668372}
+.townJob.hb-job-locked{position:relative;background:linear-gradient(140deg,#f2f0eb,#e5e6e0)!important;border-color:#d4d7cf!important}
+.townJob.hb-job-locked .jobName>b{color:#7d817a}
+.townJob .jobName em{font:900 8px 'DM Mono',monospace;font-style:normal;margin-left:auto;background:#dceddb;color:#3d8150;padding:5px 7px;border-radius:30px;white-space:nowrap}
+.townJob.hb-job-locked .jobName em{color:#8d8b80;background:#e0ded7}
+.townJob.hb-job-locked .jobBtns button:disabled{opacity:.68}
+#notebook.design-mode .hd-style.hd-locked{background:linear-gradient(155deg,#f8f7f3,#edeee8);border-color:#d7d9d2;position:relative}
+#notebook.design-mode .hd-style.hd-locked .hd-swatch{filter:grayscale(.32);opacity:.72}
+#notebook.design-mode .hd-style.hd-locked .hd-style-tag{background:#767a6f;color:#fff}
+#notebook.design-mode .hd-style .hd-tier{font:800 8px 'DM Mono',monospace;color:#71907c;letter-spacing:.035em;display:block;margin-top:5px}
+#notebook.design-mode .hd-style.hd-locked .hd-tier{color:#a4957e}
+#notebook.design-mode .hd-style.hd-locked .hd-purchase{background:#eeeae4!important;color:#9e9b95!important;cursor:not-allowed}
+#notebook.design-mode .hd-lead .hd-kicker{letter-spacing:.13em}
+#notebook.design-mode .hd-collection h3{letter-spacing:-.04em}
+@media(max-width:650px){#hbProgressTrack{font-size:7px;gap:3px}#hbProgressTrack span{padding:4px 3px}.hb-career-track{padding:10px}.hb-career-heading strong{font-size:14px}.townJob .jobName em{font-size:7px;padding:4px 5px}}
