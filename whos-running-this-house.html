@@ -2620,9 +2620,11 @@ function ensureHomeFurniture(){
  if(!Array.isArray(d.furniture))d.furniture=[];
  if(!Number.isFinite(Number(d.furnitureSeq)))d.furnitureSeq=0;
  d.furnitureSeq=Math.max(0,Math.floor(Number(d.furnitureSeq)||0));
- d.furniture=d.furniture.filter(function(o){
+ var cleaned=d.furniture.filter(function(o){
   return o&&typeof o.uid==='string'&&typeof o.type==='string'&&Number.isFinite(o.x)&&Number.isFinite(o.z)&&Number.isFinite(o.rot)
  }).slice(0,32);
+ // Keep the same array identity while validating. UI, purchase and save share it.
+ d.furniture.splice(0,d.furniture.length,...cleaned);
  return d.furniture
 }
 function furnitureBounds(item){
