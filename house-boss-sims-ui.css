@@ -273,3 +273,73 @@
   #game.sims-ui #simDock .sd-face{height:34px}
   #game.sims-ui #simSheet .ss-need-card{min-height:54px;padding:7px}
 }
+
+
+/* HOUSE_BOSS_PRO_VISUAL_V6 — icon-first polished game HUD, not a borrowed game skin. */
+#game.sims-ui .sim-icon{width:17px;height:17px;display:inline-block;vertical-align:middle;flex:none;stroke:currentColor}
+#game.sims-ui #simDock{background:linear-gradient(175deg,#fffdf5f5,#eaf0e4f3);border:1px solid #d3ddcb;box-shadow:0 12px 38px #1328203c,0 1px 0 #ffffff inset}
+#game.sims-ui #simDock .sd-buttons button{background:linear-gradient(#fffefa,#e4ecda);border:1px solid #bdcdb6;box-shadow:0 2px 3px #2a433112,0 1px 0 #fff inset;border-radius:11px}
+#game.sims-ui #simDock .sd-buttons button:hover,#game.sims-ui #simDock .sd-buttons button.active{background:linear-gradient(#e6f3d9,#c9e3bb);border-color:#93b58a;box-shadow:0 2px 7px #6e9c792b,inset 0 1px 0 #ffffff}
+#game.sims-ui #simDock .sd-buttons .sd-menu-icon{display:inline-flex;align-items:center;justify-content:center;line-height:0}
+#game.sims-ui #simDock .sd-buttons .sd-menu-icon .sim-icon{width:19px;height:19px}
+#game.sims-ui #simDock .sd-avatar{transition:background .17s,border-color .17s;position:relative}
+#game.sims-ui #simDock .sd-avatar.selected{background:linear-gradient(#e6f4dc,#d0e8c7);border-color:#82ac7f;box-shadow:0 2px 9px #60946040}
+#game.sims-ui #simDock .sd-avatar.selected:before{content:"";position:absolute;top:-7px;left:calc(50% - 5px);width:10px;height:16px;background:#83ba70;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);filter:drop-shadow(0 1px 2px #446a38)}
+#game.sims-ui #simDock .sd-need-top .sd-need-label{display:inline-flex;align-items:center;gap:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#game.sims-ui #simDock .sd-need-label .sim-icon{width:13px;height:13px;color:#527b51}
+#game.sims-ui #simDock .sd-track,#game.sims-ui #simSheet .ss-progress{background:linear-gradient(#dadfd2,#eeeede);border:1px solid #c9d2c1;border-radius:9px;box-shadow:inset 0 1px 2px #1f352020;overflow:hidden}
+#game.sims-ui #simDock .sd-track i,#game.sims-ui #simSheet .ss-progress i{background:linear-gradient(180deg,#afd58e,#6fa365);box-shadow:inset 0 1px 0 #ffffff66;transition:width .25s}
+#game.sims-ui #simDock .sd-need.low .sd-track i,#game.sims-ui #simSheet .ss-need-card.low .ss-progress i{background:linear-gradient(#ead08e,#cf9d58)}
+#game.sims-ui #simDock .sd-need.critical .sd-track i,#game.sims-ui #simSheet .ss-need-card.critical .ss-progress i{background:linear-gradient(#e9a197,#c76f60)}
+#game.sims-ui #simSheet{background:linear-gradient(160deg,#fffdf5f8,#f4f7edf8);border:1px solid #cedbc5;box-shadow:0 18px 55px #1a352646,0 1px 0 white inset}
+#game.sims-ui #simSheet .ss-head{background:#fffdf6f7}
+#game.sims-ui #simSheet .ss-head b{font-size:15px;letter-spacing:-.045em}
+#game.sims-ui #simSheet .ss-need-grid{gap:5px}
+#game.sims-ui #simSheet .ss-need-card{min-height:63px;border-radius:11px;background:linear-gradient(160deg,#fffef9,#eaf3e5);border:1px solid #cedcc8;box-shadow:0 2px 6px #294a2012,inset 0 1px 0 white;transition:transform .12s,background .12s}
+#game.sims-ui #simSheet .ss-need-card:hover{transform:translateY(-1px);background:#e0f1dc;border-color:#95b891}
+#game.sims-ui #simSheet .ss-need-line{gap:6px}
+#game.sims-ui #simSheet .ss-need-label{display:inline-flex;align-items:center;gap:6px;font-size:10px}
+#game.sims-ui #simSheet .ss-need-label .sim-icon{width:19px;height:19px;color:#48744b;background:#ddebd9;border-radius:7px;padding:3px;box-sizing:content-box}
+#game.sims-ui #simSheet .ss-action,#game.sims-ui #simObjectMenu .so-action{background:linear-gradient(#f6f9f0,#e4ecdf);border:1px solid #cadac5;box-shadow:0 2px 4px #284d2c15,inset 0 1px 0 white}
+#game.sims-ui #simSheet .ss-action:hover,#game.sims-ui #simObjectMenu .so-action:hover{background:linear-gradient(#e5f1df,#cfe5c9);border-color:#9ac292}
+#game.sims-ui #simSheet .ss-action b,#game.sims-ui #simObjectMenu .so-action b{display:flex;align-items:center;gap:7px;font-size:10px;line-height:1.2}
+#game.sims-ui #simSheet .ss-action-icon,#game.sims-ui #simObjectMenu .ss-action-icon{display:inline-flex;justify-content:center;align-items:center;width:27px;height:27px;background:#d8e9d5;color:#446f49;border-radius:9px;flex:none}
+#game.sims-ui #simSheet .ss-action-icon .sim-icon,#game.sims-ui #simObjectMenu .ss-action-icon .sim-icon{width:17px;height:17px}
+#game.sims-ui #simSheet .ss-section-heading{padding-top:3px}
+#game.sims-ui #simSheet .ss-section-heading>span{display:flex;align-items:center;gap:5px}
+#game.sims-ui #simSheet .ss-section-heading .sim-icon{width:13px;height:13px}
+#game.sims-ui #simSheet .ss-relation-targets{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}
+#game.sims-ui #simSheet .ss-rel-person{border-radius:10px;border:1px solid #d0dac7;background:#f0f3e9;min-height:70px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#547152}
+#game.sims-ui #simSheet .ss-rel-person span{font-size:20px;line-height:1}
+#game.sims-ui #simSheet .ss-rel-person b{font-size:11px}
+#game.sims-ui #simSheet .ss-rel-person small{font:750 9px 'DM Mono',monospace;color:#859484}
+#game.sims-ui #simSheet .ss-rel-person.active{background:linear-gradient(#e5f3dd,#cfe6c5);border-color:#83b27d;box-shadow:0 0 0 1px #c5dfbf}
+#game.sims-ui #simSheet .ss-rel-detail{background:#eff3e9;border:1px solid #d1ddcc;border-radius:10px;padding:9px 11px;margin:10px 0}
+#game.sims-ui #simSheet .ss-rel-detail strong{font-size:11px}
+#game.sims-ui #simSheet .ss-rel-detail span{float:right;font-size:10px}
+#game.sims-ui #simSheet .ss-rel-detail .ss-progress{display:block;clear:both;height:7px;margin-top:9px}
+#game.sims-ui #simSheet .ss-pantry{display:flex;align-items:center;gap:6px;border:1px solid #dae3d2;border-radius:9px;background:#f2f6ee;padding:6px 8px;font-size:10px;margin:8px 0}
+#game.sims-ui #simSheet .ss-pantry .sim-icon{width:15px;height:15px;color:#66875d}
+#game.sims-ui #simSheet .ss-pantry span{margin-left:auto;color:#788576}
+#game.sims-ui #simSheet .ss-pantry button{border:1px solid #a7bd9c;border-radius:7px;background:#dcead5;color:#365a40;padding:6px 7px;font-size:9px;font-weight:800;white-space:nowrap}
+#game.sims-ui #simSheet .ss-wishes{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0}
+#game.sims-ui #simSheet .ss-wish{display:flex;align-items:center;gap:9px;padding:9px;border:1px solid #d6dfd0;border-radius:10px;background:#f4f6ec}
+#game.sims-ui #simSheet .ss-wish.done{background:#e7f2e0;color:#658564}
+#game.sims-ui #simSheet .ss-wish-check{width:29px;height:29px;border-radius:9px;background:#dcebd3;color:#507550;display:grid;place-items:center;flex:none;font-size:16px;font-weight:900}
+#game.sims-ui #simSheet .ss-wish-check .sim-icon{width:16px;height:16px}
+#game.sims-ui #simSheet .ss-wish b{font-size:10px;display:block}
+#game.sims-ui #simSheet .ss-wish small{color:#81927b;font-size:9px}
+#game.sims-ui #simSheet .ss-finance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0}
+#game.sims-ui #simSheet .ss-finance div{padding:9px 5px;border:1px solid #d6dfcc;border-radius:9px;text-align:center;background:#f2f5e9}
+#game.sims-ui #simSheet .ss-finance small{font:750 8px 'DM Mono',monospace;color:#8a9885;display:block}
+#game.sims-ui #simSheet .ss-finance strong{font-size:15px;color:#426749}
+#game.sims-ui #simSheet .ss-grocery-link{width:100%;display:flex;justify-content:center;gap:8px;align-items:center;margin:8px 0}
+#game.sims-ui #simSheet .ss-grocery-link .sim-icon{width:16px;height:16px}
+@media(max-width:650px){
+ #game.sims-ui #simDock .sd-buttons .sd-menu-icon .sim-icon{width:16px;height:16px}
+ #game.sims-ui #simDock .sd-need-label .sim-icon{width:10px;height:10px}
+ #game.sims-ui #simSheet .ss-relation-targets{gap:4px}
+ #game.sims-ui #simSheet .ss-rel-person{min-height:57px}
+ #game.sims-ui #simSheet .ss-wish{padding:7px}
+}
+@media(max-height:560px){#game.sims-ui #simSheet .ss-need-card{min-height:48px;padding:6px}}
