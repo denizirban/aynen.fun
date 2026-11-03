@@ -1682,7 +1682,23 @@ var lifeHomeProjects=[
  {id:'floor2',name:'Second Floor',icon:'⌂',price:2600,level:9,tag:'EXTENSION',desc:'Expand the household with an additional floor.'}
 ];
 upgradeCatalog.push.apply(upgradeCatalog,lifeHomeProjects);
+lifeJobs.push(
+ {id:'senior',title:'Senior Designer',where:'Creative Studio',mins:280,pay:760,level:7,energy:32,partner:true},
+ {id:'director',title:'Creative Director',where:'Central Office',mins:310,pay:1160,level:9,energy:36,partner:true},
+ {id:'founder',title:'Studio Founder',where:'Central Office',mins:350,pay:1880,level:12,energy:42,partner:true}
+);
 function lifeSkill(partner){return Math.min(12,1+Math.floor((partner?life.partnerCareerXp:life.careerXp)/125))}
+function careerRank(v){return v>=12?'FOUNDER':v>=9?'DIRECTOR':v>=7?'SENIOR PROFESSIONAL':v>=5?'MANAGER':v>=3?'SPECIALIST':v>=2?'ASSOCIATE':'ENTRY LEVEL'}
+function careerPromotion(who,previous){
+ var now=who==='partner'?life.partnerCareerLevel:life.careerLevel;
+ if(now<=previous)return false;
+ var reward=(now-previous)*(55+now*24);cash+=reward;grantXp((now-previous)*25);
+ var label=who==='partner'?'PARTNER':'YOU',rank=careerRank(now);
+ simMemory('career','Promoted to '+rank,label+' reached career level '+now+'.');
+ floatReward('PROMOTION · '+rank+' · +$'+reward);
+ message(label+' PROMOTED to '+rank+'! Career LVL '+now+' · +$'+reward+' bonus.');
+ return true
+}
 
 /* HOUSE_BOSS_SIMSV3 — neighborhood routines and career logic */
 var townActivities=[
@@ -1840,11 +1856,12 @@ function lifeFinishShift(who){
  if(!job)return;var j=lifeJobs.find(function(x){return x.id===job.id});if(!j)return;
  var performance=Number(job.performance??50);var factor=.75+Math.max(0,Math.min(100,performance))/200;
  var moodTone=simMood(p?'partner':'self').tone;
+ var previousCareer=p?life.partnerCareerLevel:life.careerLevel;
  var moodFactor=moodTone==='bad'?.86:moodTone==='tense'?.94:moodTone==='inspired'?1.09:moodTone==='happy'?1.05:1;
  var pay=Math.round(j.pay*factor*moodFactor*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;simCollectWages(pay);simWishProgress('work');simMemory('career','Payday',j.title+' · +$'+pay);
  if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2);startPartner()}
  else {energy=clamp(energy-j.energy);life.careerXp+=48;life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25);townSkillGain(j.id==='studio'||j.id==='manager'?'creativity':j.id==='walk'||j.id==='deliver'?'fitness':'social',12);startSelf()}
- floatReward('PAYDAY +$'+pay);message((p?'Partner':'You')+' earned $'+pay+'.');saveGame()
+ if(!careerPromotion(p?'partner':'self',previousCareer)){floatReward('PAYDAY +$'+pay);message((p?'Partner':'You')+' earned $'+pay+'.')}saveGame()
 }
 function lifeBeginActivity(kind){
  var a={eat:[25,12],rest:[100,0],relax:[55,0],freelance:[130,0]}[kind];
@@ -1858,7 +1875,7 @@ function lifeFinishActivity(){
  if(k==='eat'){life.hunger=clamp(life.hunger+56);simState().people.self.hunger=life.hunger;peace=clamp(peace+4)}
  if(k==='rest')energy=clamp(energy+65);
  if(k==='relax'){life.fun=clamp(life.fun+(owned.includes('living')?57:38));simState().people.self.fun=life.fun;peace=clamp(peace+6);friendship=clamp(friendship+3)}
- if(k==='freelance'){var pay=Math.round(90*(1+(life.careerLevel-1)*.15));cash+=pay;life.earned+=pay;life.careerXp+=26;life.careerLevel=lifeSkill(false);townSkillGain('creativity',10);floatReward('FREELANCE +$'+pay)}
+ if(k==='freelance'){var prevCareer=life.careerLevel;var pay=Math.round(90*(1+(life.careerLevel-1)*.15));cash+=pay;life.earned+=pay;life.careerXp+=26;life.careerLevel=lifeSkill(false);townSkillGain('creativity',10);if(!careerPromotion('self',prevCareer))floatReward('FREELANCE +$'+pay)}
  grantXp(12);message('Completed: '+k);saveGame()
 }
 
@@ -2394,6 +2411,10 @@ function lifeTownRender(force){
  if(!force&&key===townLastKey)return;townLastKey=key;
  layer.querySelectorAll('[data-town-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.townTab===(life.townTab||'work'))});
  var html='<div class="townStatus"><div><small>CAREER</small><b>LVL '+life.careerLevel+'</b></div><div><small>AVAILABLE</small><b>$'+Math.floor(cash)+'</b></div><div><small>MOOD</small><b>'+Math.round(life.fun)+'%</b></div></div>';
+ var nextCareerXp=125,progressXp=(life.careerXp||0)%125;
+ html+='<section class="hb-career-track"><div class="hb-career-heading"><div><small>CAREER PATH</small><strong>'+careerRank(life.careerLevel)+'</strong></div><span>LVL '+life.careerLevel+' / 12</span></div>'+
+  '<div class="hb-career-bar"><i style="width:'+(life.careerLevel>=12?100:Math.min(100,Math.round(100*progressXp/nextCareerXp)))+'%"></i></div>'+
+  '<p>'+(life.careerLevel>=12?'You reached the top of the career ladder.':'Earn '+Math.max(0,nextCareerXp-progressXp)+' more career XP to your next promotion.')+' Better jobs will fund your dream home.</p></section>';
  if(life.shift){
   var active=lifeJobs.find(function(j){return j.id===life.shift.id});
   html+='<div class="townJob chosen"><div class="jobName"><span>◷</span><b>YOU ARE WORKING · '+(active?active.title:'SHIFT')+'</b></div><small>'+Math.max(0,Math.ceil(life.shift.left))+' game min to payday</small><div class="townBar"><i style="width:'+Math.max(0,Math.min(100,100-100*life.shift.left/life.shift.total))+'%"></i></div></div>';
@@ -2413,16 +2434,16 @@ function lifeTownRender(force){
   html+='<div class="townSectionLabel">CHOOSE YOUR SHIFT</div>';
   var display=lifeJobs.filter(function(j){
    if(place==='all')return true;
-   var map={park:['walk'],cafe:['cafe'],market:['shop'],delivery:['deliver'],studio:['studio'],office:['manager']};
+   var map={park:['walk'],cafe:['cafe'],market:['shop'],delivery:['deliver'],studio:['studio','senior'],office:['manager','director','founder']};
    return !map[place]||map[place].includes(j.id)
   });
   if(!display.length)display=lifeJobs;
   html+=display.map(function(j){
    var selfErr=townStatus(j,'self'),pErr=townStatus(j,'partner');
-   var icon={walk:'🐕',cafe:'☕',shop:'▦',deliver:'▣',studio:'✦',manager:'◆'}[j.id];
+   var icon={walk:'🐕',cafe:'☕',shop:'▦',deliver:'▣',studio:'✦',manager:'◆',senior:'✧',director:'♛',founder:'✪'}[j.id];
    var selfLabel=life.careerLevel<j.level?'LVL '+j.level+' NEEDED':selfErr==='Currently busy'?'BUSY':selfErr==='Rest first'?'REST FIRST':'WORK';
    var partnerLabel=life.partnerCareerLevel<j.level?'LVL '+j.level:pErr?'BUSY':'PARTNER';
-   return '<article class="townJob"><div class="jobName"><span>'+icon+'</span><b>'+j.title+'</b></div>'+
+   return '<article class="townJob '+(life.careerLevel<j.level?'hb-job-locked':'hb-job-unlocked')+'"><div class="jobName"><span>'+icon+'</span><b>'+j.title+'</b><em>'+(life.careerLevel<j.level?'◆ LEVEL '+j.level:'OPEN')+'</em></div>'+
      '<small>'+j.where+' · '+j.mins+' min · $'+j.pay+'+ per shift</small><div class="jobBtns">'+
      '<button data-life-job="'+j.id+'" data-who="self" '+(selfErr?'disabled title="'+selfErr+'"':'')+'>'+selfLabel+'</button>'+
      (j.partner?'<button data-life-job="'+j.id+'" data-who="partner" '+(pErr?'disabled title="'+pErr+'"':'')+'>'+partnerLabel+'</button>':'')+
