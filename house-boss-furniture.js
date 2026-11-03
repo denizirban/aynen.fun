@@ -13,9 +13,9 @@ const types={
   sidetable:{name:'Round Side Table',price:110,color:'#ae9375',w:.75,d:.75,icon:'◯',desc:'Somewhere to put your cup.',benefit:'More enjoyable conversations',action:'talk'},
   stereo:{name:'Music Console',price:305,color:'#5c7f87',w:1.1,d:.66,icon:'♫',desc:'Put a little music on.',benefit:'Dancing is more fun',action:'dance'}
 };
-const defaults=[[-7.65,-3.55],[-6.3,-3.55],[-7.7,-2.1],[-6.1,-2.25],
- [-2.5,3.85],[.0,3.9],[1.95,3.9],[4.45,3.85],
- [-2.1,-3.8],[.35,-3.8],[3.1,-3.8],[-7.85,1.7],[-7.8,3.9],[-5.95,3.98]];
+const defaults=[[-8,-4],[-6.5,-4],[-7.5,-2.5],[-6,-2.5],
+ [-2.5,4],[0,4],[1.5,4],[4.5,4],
+ [-2.5,-4],[0,-4],[3,-4],[-8,2],[-8,4],[-6,4]];
 const bridge=()=>window.HouseBossBuildBridge;
 let selectedUid=null,warning='';
 function floor2(v){return Math.round(Number(v)*2)/2}
@@ -91,10 +91,12 @@ function render(){
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+st.cash+' · Home Value $'+st.homeValue;
  const all=Object.entries(types);
  const pieces=st.furniture||[];
+ let quality=st.quality||{score:0,tier:'First Place',furniture:pieces.length};
  let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Furniture</button>'+
  Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([k,v])=>'<button type="button" data-hd-category="'+k+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>'+
  '<div class="hbf-head"><span>BUILD MODE / FURNITURE</span><strong>'+pieces.length+' OBJECT'+(pieces.length===1?'':'S')+' INSTALLED</strong></div>'+
- '<p class="hbf-sub">Buy, move, rotate and arrange real furniture in your 3D home. Work in progress is not charged until you place it.</p>';
+ '<p class="hbf-sub">Buy, move, rotate and arrange real furniture in your 3D home. Work in progress is not charged until you place it.</p>'+
+ '<div class="hbf-quality"><div><strong>'+quality.tier+'</strong><b>HOME QUALITY · '+quality.score+'%</b></div><div class="hbf-quality-track"><i style="width:'+quality.score+'%"></i></div><small>Design, furniture and upgrades make this house a better place to live.</small></div>';
  if(warning)html+='<div class="hbf-warning" role="status">'+warning+'</div>';
  html+=placeBar();
  html+='<div class="hbf-section-title"><strong>FURNITURE CATALOG</strong><small>'+all.length+' objects</small></div>'+
