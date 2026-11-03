@@ -1608,7 +1608,7 @@ function townSkillGain(name,xp){
 function beginOuting(id){
  var a=townActivities.find(x=>x.id===id);
  if(!a||!started||ended)return;
- if(life.shift||life.outing||life.activity)return message('Finish your current activity first.');
+ if(life.shift||life.outing||life.activity||simState().active.self)return message('Finish your current activity first.');
  if(energy<a.energy+12)return message('You need more energy. Take a rest at home.');
  if(cash<a.cost)return message('Not enough money. Try a paid shift.');
  if(current){if(!selfQueue.includes(current.id))selfQueue.unshift(current.id);current=null;}
@@ -1630,7 +1630,7 @@ function finishOuting(){
 }
 function townStatus(j,who){
  var partner=who==='partner',lvl=partner?life.partnerCareerLevel:life.careerLevel,
-     busy=partner?!!life.pShift:(!!life.shift||!!life.activity||!!life.outing),
+     busy=partner?(!!life.pShift||!!simState().active.partner):(!!life.shift||!!life.activity||!!life.outing||!!simState().active.self),
      e=partner?partnerEnergy:energy;
  if(partner&&!j.partner)return 'Unavailable';
  if(lvl<j.level)return 'Career LVL '+j.level+' required';
@@ -1739,7 +1739,7 @@ function lifeFinishShift(who){
 }
 function lifeBeginActivity(kind){
  var a={eat:[25,12],rest:[100,0],relax:[55,0],freelance:[130,0]}[kind];
- if(!a||!started||ended||life.shift||life.activity||life.outing||current)return message('You are busy. Finish your current activity first.');
+ if(!a||!started||ended||life.shift||life.activity||life.outing||current||simState().active.self)return message('You are busy. Finish your current activity first.');
  if(kind==='freelance'&&!owned.includes('office'))return message('Build a Home Office first.');
  if(cash<a[1])return message('Not enough money for food.');
  cash-=a[1];life.activity={kind:kind,left:a[0],total:a[0]};message('Started: '+kind);saveGame()
@@ -1939,7 +1939,7 @@ function simFinish(who){
 }
 function simTryNext(who){
  var s=simState();if(simBusy(who)||!s.queues[who].length)return;
- var next=s.queues[who].shift();simBegin(who,next)
+ var next=s.queues[who][0];if(!simActions[next]||cash<simActions[next].cost)return;s.queues[who].shift();simBegin(who,next)
 }
 function simAutonomy(){
  var s=simState(),now=simClock();
@@ -1982,7 +1982,7 @@ function simTick(dm){
  for(var who of ['self','partner','kid','pet']){
   var p=s.people[who];
   for(var need in decays){
-   var rate=decays[need]*(who==='pet'&&need==='bladder'?.65:1);
+   var rate=decays[need]*(who==='pet'&&(need==='bladder'||need==='hygiene')?.2:1);
    p[need]=clamp(p[need]-dm*rate)
   }
   if(p.hunger<13||p.bladder<10||p.hygiene<12){
@@ -2259,6 +2259,7 @@ window.EvinKitchenBridge={
    kidSpot:childTask&&childTask.spot||simState().active.kid&&simState().active.kid.spot||null,
    selfAway:!!(life.shift||life.outing),partnerAway:!!life.pShift,kidAway:kidAtSchool(),
    avatarSelf:avatarSelf,avatarPartner:avatarPartner,
+   simSelected:simState().selected,simMoodTone:simMood(simState().selected).tone,
    focusSpot:selected&&find(selected)&&find(selected).spot||null
  }},
  selectStation:function(spot){
