@@ -6,7 +6,7 @@
  const B=window.HouseBossSimBridge,game=document.getElementById('game');
  if(!B||!game)return;
  const q=s=>game.querySelector(s),qa=s=>Array.from(game.querySelectorAll(s));
- let currentPanel='',lastSheetAt=0,portraitFingerprint='',lastQueueSignature='',lastStatusKey='';
+ let currentPanel='',socialTarget='partner',lastSheetAt=0,portraitFingerprint='',lastQueueSignature='',lastStatusKey='';
  const names={self:'You',partner:'Partner',kid:'Kid',pet:'Dog'};
  /* COMPACT_NEEDS_RENDER_V5 — fast contextual care and small nonmodal sheet */
  const careActions={
@@ -85,6 +85,7 @@
     clean:'Clean the Kitchen',laundry:'Do Laundry',computer:'Use Computer',
     homework:'Do Homework',playdog:'Play with Dog',feedpet:'Feed Dog',
     dogfood:'Eat',dognap:'Sleep',dogplay:'Explore',groom:'Brush Dog'};
+   if(id.startsWith('bond_'))name=( {chat:'Chat',joke:'Tell a Joke',compliment:'Compliment',support:'Offer Support',argue:'Argue',apologize:'Apologize'}[id.split('_')[1]]||'Connect' );
    name=labels[id]||name;
    return '<button type="button" class="ss-action" data-sd-action="'+id+'" data-for="'+who+'">'+
      '<b>'+escapeText(name)+'</b><small>'+escapeText(actionDescription[id]||'')+'</small></button>'
@@ -131,11 +132,25 @@
         if(shown.length===4)break;
       }
       body+='<div class="ss-grid">'+shown.map(id=>actionButton(id,who)).join('')+'</div>';
-    }else if(currentPanel==='social'){
-     body='<p class="ss-muted">Spend time with family and neighbors to build lasting bonds.</p>';
-     body+='<div class="ss-row"><b>Partner relationship</b> <strong style="float:right">'+s.relationships.partner+'%</strong><div class="ss-progress"><i style="width:'+s.relationships.partner+'%"></i></div></div>';
-     body+='<div class="ss-row"><b>Kid trust</b> <strong style="float:right">'+s.relationships.kid+'%</strong><div class="ss-progress"><i style="width:'+s.relationships.kid+'%"></i></div></div>';
-     body+='<p class="ss-muted" style="margin-top:12px">Social activities</p><div class="ss-grid">'+actions.social[who].map(id=>actionButton(id,who)).join('')+'</div>'+'<div style="margin-top:12px"><button class="ss-simple" data-sd-manage-family>FAMILY AUTONOMY & HABITS ↗</button></div>';
+    
+}else if(currentPanel==='social'){
+     /* HOUSE_BOSS_RELATION_UI_V6 */
+     const targets=['self','partner','kid','pet'].filter(t=>t!==who);
+     if(!targets.includes(socialTarget))socialTarget=targets[0];
+     body='<p class="ss-muted">Choose someone to spend time with. Each relationship changes through your actions.</p>';
+     body+='<div class="ss-relation-targets">'+targets.map(t=>{
+       const key=[who,t].sort().join(':'),value=Math.round(s.relationships.matrix[key]??65);
+       return '<button class="ss-rel-person '+(socialTarget===t?'active':'')+'" type="button" data-sd-rel-target="'+t+'"><span>'+((t==='pet')?'♧':'♡')+'</span><b>'+names[t]+'</b><small>'+value+'%</small></button>'
+     }).join('')+'</div>';
+     const relKey=[who,socialTarget].sort().join(':'),bond=Math.round(s.relationships.matrix[relKey]??65);
+     body+='<div class="ss-rel-detail"><strong>'+names[who]+' + '+names[socialTarget]+'</strong><span>'+bond+'% relationship</span><div class="ss-progress"><i style="width:'+bond+'%"></i></div></div>';
+     if(who==='pet'){
+       body+='<div class="ss-grid">'+actions.social.pet.map(id=>actionButton(id,who)).join('')+'</div>';
+     }else{
+       const moves=socialTarget==='pet'?['chat','joke','compliment','support']:['chat','joke','compliment','support','argue','apologize'];
+       body+='<div class="ss-grid">'+moves.map(id=>actionButton('bond_'+id+'_'+socialTarget,who)).join('')+'</div>';
+     }
+     body+='<button class="ss-simple" data-sd-manage-family>FAMILY AUTONOMY & HABITS ↗</button>';
    }else if(currentPanel==='skills'){
      body='<p class="ss-muted">Practice activities to level up. Each character grows independently.</p>';
      for(const [skill,lvl] of Object.entries(p.skills)){
@@ -230,6 +245,7 @@
    const b=e.target.closest('button');if(!b)return;
    if(b.hasAttribute('data-sd-close')){closePanel();return}
    if(b.dataset.sdAsp){B.chooseAspiration(b.dataset.sdAsp);renderSheet();refreshNow();return}
+   if(b.dataset.sdRelTarget){socialTarget=b.dataset.sdRelTarget;renderSheet();return}
    if(b.dataset.sdCare){B.action(b.dataset.sdCare,b.dataset.for);refreshNow();renderSheet();return}
    if(b.hasAttribute('data-sd-manage-family')){closePanel();B.openFamily();return}
    if(b.dataset.sdAction){B.action(b.dataset.sdAction,b.dataset.for);refreshNow();renderSheet()}
