@@ -135,7 +135,16 @@ function render(){
  '<div class="hbf-quality"><div><strong>'+esc(qualities.tier)+'</strong><b>HOME QUALITY · '+qualities.score+'%</b></div>'+
  '<div class="hbf-quality-track"><i style="width:'+qualities.score+'%"></i></div>'+
  '<div class="hbf-lifestyle-stats"><span><b>'+comfort+'</b><small>COMFORT</small></span><span><b>'+available+'/'+all.length+'</b><small>UNLOCKED</small></span><span><b>'+homeLevel+'/20</b><small>HOME LEVEL</small></span></div>'+
- '<small>Unique objects boost design variety. Better condition makes every functional object more useful.</small></div>'+
+ '<small>Unique objects boost design variety. Completed designer themes add +'+(qualities.setBonus||0)+' home quality.</small></div>'+
+ '<div class="hbf-set-header"><b>CURATED COLLECTIONS</b><span>Collect 3 different designs in each style to earn bonus XP, money and home quality.</span></div>'+
+ '<div class="hbf-designer-sets">'+(st.sets||[]).map(set=>
+  '<article class="hbf-set-card '+(set.claimed?'claimed':set.ready?'ready':'')+'"><div class="hbf-set-top"><span class="hbf-set-symbol '+set.id+'">✦</span>'+
+  '<div><b>'+esc(set.title)+'</b><small>'+esc(set.desc)+'</small></div><strong>'+set.owned+'/'+set.goal+'</strong></div>'+
+  '<div class="hbf-set-progress"><i style="width:'+Math.min(100,100*set.owned/set.goal)+'%"></i></div>'+
+  (set.claimed?'<span class="hbf-set-completed">✓ COLLECTION COMPLETE</span>':set.ready?
+   '<button type="button" data-hbf-claim-set="'+set.id+'">CLAIM $'+set.reward+' +'+set.xp+' XP</button>':
+   '<button type="button" data-hbf-set="'+set.id+'">EXPLORE '+set.id.toUpperCase()+' PIECES</button>')+
+  '</article>').join('')+'</div>'+
  '<div class="hbf-next"><div><b>UP NEXT / YOUR NEXT COLLECTION</b><strong>'+(nextUnlock?'LEVEL '+nextUnlock[1].level+' · '+esc(nextUnlock[1].name):'EVERYTHING UNLOCKED')+'</strong>'+
  '<small>'+(nextUnlock?'Earn Home XP to discover and purchase more collectible objects.':'Every design can now be bought and styled.')+'</small></div><span class="hbf-lock-symbol">✦</span></div>';
  if(warning)html+='<div class="hbf-warning" role="status">'+esc(warning)+'</div>';
@@ -213,6 +222,8 @@ function install(){
   if(e.target.id==='hbf-style'){styleFilter=e.target.value||'all';render()}
  });
  body.addEventListener('click',e=>{
+  const claim=e.target.closest('[data-hbf-claim-set]');if(claim){if(bridge()?.claimSet?.(claim.dataset.hbfClaimSet))render();return}
+  const collection=e.target.closest('[data-hbf-set]');if(collection){styleFilter=collection.dataset.hbfSet;filter='all';category='all';render();return}
   const wish=e.target.closest('[data-hbf-wish]');if(wish){bridge()?.toggleWishlist?.(wish.dataset.hbfWish);render();return}
   const repair=e.target.closest('[data-hbf-repair]');if(repair){if(bridge()?.repair?.(repair.dataset.hbfRepair))render();return}
   const preview=e.target.closest('[data-hbf-preview]');if(preview){begin(preview.dataset.hbfPreview,null,true);return}
