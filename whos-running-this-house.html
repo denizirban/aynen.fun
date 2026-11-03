@@ -2767,6 +2767,29 @@ function furnitureBounds(item){
  var w=rot%2?meta.d:meta.w,d=rot%2?meta.w:meta.d;
  return {minX:item.x-w/2,maxX:item.x+w/2,minZ:item.z-d/2,maxZ:item.z+d/2}
 }
+/* Rugs are floor layers; decorative accents sit on real table surfaces. */
+function homeDecorLayer(type){
+ return window.HouseBossFurnitureTypes?.[type]?.layer||'solid'
+}
+function homeTableSurfaceAt(item){
+ var a=furnitureBounds(item);if(!a)return 0;
+ // Original large dining table; its visible top is at 1.44m.
+ if(a.minX>=-3.13&&a.maxX<=3.43&&a.minZ>=-1.34&&a.maxZ<=1.14)return 1.47;
+ var all=ensureHomeFurniture(),types=window.HouseBossFurnitureTypes||{};
+ for(var o of all){
+  if(o.uid===item.uid||o.type===item.type&&o.x===item.x&&o.z===item.z)continue;
+  var meta=types[o.type],isTable=meta&&(meta.category==='tables'||o.type==='sidetable'||o.type==='walnutdesk');
+  if(!isTable)continue;
+  var b=furnitureBounds(o);
+  if(b&&a.minX>=b.minX+.035&&a.maxX<=b.maxX-.035&&a.minZ>=b.minZ+.035&&a.maxZ<=b.maxZ-.035){
+   return o.type==='walnutdesk'?.97:o.type==='sidetable'?.79:.77
+  }
+ }
+ return 0
+}
+function homeFurnitureHeight(item){
+ return homeDecorLayer(item.type)==='tabletop'?homeTableSurfaceAt(item):0
+}
 function homeFurnitureValidate(raw){
  var types=window.HouseBossFurnitureTypes||{};
  if(!raw||!Object.prototype.hasOwnProperty.call(types,raw.type))return {ok:false,reason:'Choose a furniture piece'};
@@ -2777,6 +2800,26 @@ function homeFurnitureValidate(raw){
  var a=furnitureBounds({type:raw.type,x:x,z:z,rot:rot});
  if(!a||a.minX< -8.35||a.maxX>4.89||a.minZ< -4.55||a.maxZ>4.55)
    return {ok:false,reason:'Outside the buildable room'};
+ var layer=homeDecorLayer(raw.type);
+ if(layer==='tabletop'){
+  if(!homeTableSurfaceAt(raw))return {ok:false,reason:'Place this accent on the dining table or a coffee table'};
+  for(var deco of ensureHomeFurniture()){
+   if(deco.uid===raw.uid||homeDecorLayer(deco.type)!=='tabletop')continue;
+   var collision=furnitureBounds(deco);if(!collision)continue;
+   if(a.minX<collision.maxX+.06&&a.maxX>collision.minX-.06&&a.minZ<collision.maxZ+.06&&a.maxZ>collision.minZ-.06)
+    return {ok:false,reason:'Make room for the other tabletop decorations'}
+  }
+  return {ok:true,reason:'On display — tabletop object'}
+ }
+ if(layer==='floor'){
+  for(var carpet of ensureHomeFurniture()){
+   if(carpet.uid===raw.uid||homeDecorLayer(carpet.type)!=='floor')continue;
+   var rug=furnitureBounds(carpet);if(!rug)continue;
+   if(a.minX<rug.maxX+.05&&a.maxX>rug.minX-.05&&a.minZ<rug.maxZ+.05&&a.maxZ>rug.minZ-.05)
+    return {ok:false,reason:'Rugs should not overlap other rugs'}
+  }
+  return {ok:true,reason:'Rug can sit beneath furniture'}
+ }
  var blocks=[
   [-3.60,3.89,-1.56,1.56],// Actual dining table footprint, not the old 10m oversized one
   [-7.57,-4.87,-.76,1.06],// Existing lounge sofa
@@ -2792,7 +2835,7 @@ function homeFurnitureValidate(raw){
  }
  var others=ensureHomeFurniture();
  for(var o of others){
-  if(o.uid===raw.uid)continue;
+  if(o.uid===raw.uid||homeDecorLayer(o.type)==='floor'||homeDecorLayer(o.type)==='tabletop')continue;
   var b=furnitureBounds(o);if(!b)continue;
   if(a.minX<b.maxX+.16&&a.maxX>b.minX-.16&&a.minZ<b.maxZ+.16&&a.maxZ>b.minZ-.16)
     return {ok:false,reason:'Too close to another object'}
@@ -2924,6 +2967,7 @@ function homeFurnitureToggleWishlist(type){
 }
 window.HouseBossBuildBridge={
  getState:homeFurnitureState,
+ height:homeFurnitureHeight,
  rooms:homeFurnitureRooms,
  buyRoom:function(id){
   if(!['sleep','living','garden'].includes(id)||owned.includes(id))return false;
@@ -3163,10 +3207,11 @@ requestAnimationFrame(frame)
 </script>
 <!-- Standalone CrazyGames build does not load aynen.fun site navigation widgets. -->
 <script src="./house-boss-en.js?v=2"></script>
-<script type="module" src="./evin-patronu-3d.js?v=16"></script>
+<script type="module" src="./evin-patronu-3d.js?v=17"></script>
 <script type="module" src="./house-boss-town-3d.js?v=3"></script>
 <script src="./house-boss-sims-ui.js?v=9"></script>
-<script src="./house-boss-furniture.js?v=4"></script>
+<script src="./house-boss-furniture.js?v=5"></script>
+<script src="./house-boss-designer-collection.js?v=1"></script>
 <script src="./house-boss-home-design.js?v=6"></script>
 <script src="./house-boss-lifestyle.js?v=3"></script>
 <script src="./house-boss-start.js?v=1"></script>
