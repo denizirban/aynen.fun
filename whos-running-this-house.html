@@ -2941,6 +2941,54 @@ function lifestyleMilestoneStatus(m){
  return {id:m.id,title:m.title,desc:m.desc,level:m.level,quality:m.quality,career:m.career,reward:m.reward,xp:m.xp,claimed:claimed,
   ready:!claimed&&level>=m.level&&quality>=m.quality&&life.careerLevel>=m.career}
 }
+
+/* Day-to-day decisions: explicit costs, one decision per game day, save compatible. */
+var lifestyleDecisions=[
+ {id:'neighbor',title:'A neighbor needs help',desc:'The next-door neighbor has asked for a little help moving furniture.',options:[
+  {id:'help',label:'Help them out',desc:'–$20 · relationships +6 · peace +4',cash:-20,friendship:6,trust:3,peace:4,xp:14},
+  {id:'stay',label:'Stay home and recharge',desc:'Energy +12 · fun +4',energy:12,fun:4}]},
+ {id:'opportunity',title:'An unexpected work offer',desc:'A short creative brief just came in. It is tempting, but you are already tired.',options:[
+  {id:'accept',label:'Take the side project',desc:'+$125 · career XP +24 · energy –20',cash:125,careerXp:24,energy:-20,xp:10},
+  {id:'pass',label:'Keep the evening free',desc:'Energy +15 · fun +8',energy:15,fun:8}]},
+ {id:'family',title:'A family evening?',desc:'A small plan can make a big difference to life at home.',options:[
+  {id:'together',label:'Make it a proper night',desc:'–$18 · peace +9 · family bond +8',cash:-18,peace:9,friendship:8,trust:8,xp:12},
+  {id:'quiet',label:'Have a quiet night',desc:'Energy +12 · peace +3',energy:12,peace:3}]},
+ {id:'market',title:'The design market is in town',desc:'A little inspiration can help you imagine the next version of your home.',options:[
+  {id:'visit',label:'Explore the design fair',desc:'–$35 · home XP +25 · fun +10',cash:-35,xp:25,fun:10},
+  {id:'save',label:'Save for a bigger purchase',desc:'Money stays in your budget · energy +8',energy:8}]},
+ {id:'pet',title:'The dog wants to go out',desc:'Somebody is convinced it is the perfect afternoon for a long walk.',options:[
+  {id:'walk',label:'Take the scenic route',desc:'Energy –8 · peace +6 · fun +12',energy:-8,petEnergy:20,peace:6,fun:12,xp:12},
+  {id:'short',label:'A shorter break',desc:'Dog energy +8 · your energy +3',petEnergy:8,energy:3}]},
+ {id:'repairs',title:'A small house problem',desc:'A leaky tap needs attention. Deal with it now or leave it for tomorrow?',options:[
+  {id:'fix',label:'Get it fixed properly',desc:'–$45 · peace +8 · home XP +15',cash:-45,peace:8,xp:15},
+  {id:'later',label:'Leave it for later',desc:'No cost now · peace –4',peace:-4}]}
+];
+function lifestyleDecisionState(){
+ var d=ensureLifestyle();
+ if(!d.choice||d.choice.day!==day)d.choice={day:day,id:lifestyleDecisions[(day-1)%lifestyleDecisions.length].id,selected:null};
+ var e=lifestyleDecisions.find(function(x){return x.id===d.choice.id})||lifestyleDecisions[0];
+ return {id:e.id,title:e.title,desc:e.desc,selected:d.choice.selected,options:e.options.map(function(o){
+  return {id:o.id,label:o.label,desc:o.desc,available:(cash+(o.cash||0))>=0}
+ })}
+}
+function lifestyleDecide(choiceId){
+ if(!started||ended)return false;
+ var state=lifestyleDecisionState(),e=lifestyleDecisions.find(function(x){return x.id===state.id});
+ if(state.selected||!e)return false;
+ var o=e.options.find(function(x){return x.id===choiceId});
+ if(!o||cash+(o.cash||0)<0)return false;
+ ensureLifestyle().choice.selected=choiceId;
+ cash=Math.max(0,cash+(o.cash||0));
+ energy=clamp(energy+(o.energy||0));petEnergy=clamp(petEnergy+(o.petEnergy||0));
+ peace=clamp(peace+(o.peace||0));
+ if(o.friendship)simModifyRelationship('self','partner',o.friendship);
+ if(o.trust)simModifyRelationship('self','kid',o.trust);
+ if(o.fun){var person=simState().people.self;person.fun=clamp(person.fun+o.fun);life.fun=person.fun}
+ if(o.careerXp){var oldCareer=life.careerLevel;life.careerXp+=o.careerXp;life.careerLevel=lifeSkill(false);careerPromotion('self',oldCareer)}
+ if(o.xp)grantXp(o.xp);
+ simMemory('choice',e.title,o.label);
+ message('LIFE CHOICE · '+o.label+'.');render();saveGame();return true
+}
 function lifestyleSnapshot(){
  var s=simSnapshot(),q=homeFurnitureQuality(),p=householdPeaceFactors(),f=simEnsurePro().finance;
  return {started:started,paused:paused,day:day,homeLevel:level,homeXP:xp,homeNext:xpNeeded(),
@@ -2951,7 +2999,7 @@ function lifestyleSnapshot(){
   peace:Math.round(peace),peaceFactors:p,quality:q,owned:owned.slice(),design:ensureHomeDesign().selected,
   furniture:homeFurnitureCopy(),wishlist:(ensureHomeDesign().wishlist||[]).slice(),
   careerJobs:lifeJobs.map(function(j){return {id:j.id,title:j.title,level:j.level,track:j.track,pay:j.pay,mins:j.mins}}),
-  milestones:lifestyleMilestones.map(lifestyleMilestoneStatus),
+  milestones:lifestyleMilestones.map(lifestyleMilestoneStatus),event:lifestyleDecisionState(),
   needs:s.people,relationships:s.relationships,chores:s.chores,wishes:s.wishes}
 }
 function lifestyleClaim(id){
@@ -2972,7 +3020,7 @@ function lifestylePayDebt(request){
  message('Paid $'+amount+' toward household bills.');render();saveGame();return true
 }
 window.HouseBossLifestyleBridge={
- getState:lifestyleSnapshot,claim:lifestyleClaim,payDebt:lifestylePayDebt,focus:setCareerFocus,
+ getState:lifestyleSnapshot,claim:lifestyleClaim,payDebt:lifestylePayDebt,focus:setCareerFocus,decide:lifestyleDecide,
  open:function(tab){openNote(tab||'lifestyle')},openBuild:function(){openNote('design')},
  openGoals:function(){openNote('goals')},openUpgrades:function(){openNote('upgrades')},
  goTown:function(){closeNote();enterTown()},goNeeds:function(){closeNote();window.HouseBossSimUI?.showPanel?.('needs')},goChores:function(){closeNote();setTasksOpen(true)},
