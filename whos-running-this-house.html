@@ -2711,6 +2711,9 @@ function ensureHomeFurniture(){
  }).slice(0,32);
  // Keep the same array identity while validating. UI, purchase and save share it.
  d.furniture.splice(0,d.furniture.length,...cleaned);
+ d.furniture.forEach(function(o){o.condition=Number.isFinite(Number(o.condition))?Math.max(25,Math.min(100,Number(o.condition))):100});
+ if(!Array.isArray(d.wishlist))d.wishlist=[];
+ d.wishlist=d.wishlist.filter(function(t){return typeof t==='string'&&window.HouseBossFurnitureTypes?.[t]}).slice(0,12);
  return d.furniture
 }
 function furnitureBounds(item){
@@ -2753,14 +2756,14 @@ function homeFurnitureValidate(raw){
  return {ok:true,reason:'Free space'}
 }
 function homeFurnitureCopy(){
- return ensureHomeFurniture().map(function(o){return {uid:o.uid,type:o.type,x:o.x,z:o.z,rot:o.rot}})
+ return ensureHomeFurniture().map(function(o){return {uid:o.uid,type:o.type,x:o.x,z:o.z,rot:o.rot,condition:Math.round(o.condition||100)}})
 }
 function homeFurnitureQuality(){
  var furn=ensureHomeFurniture(),style=ensureHomeDesign().selected,base=defaultHomeDesign();
  var changed=Object.keys(base).filter(function(k){return style[k]&&style[k]!==base[k]}).length;
  var types=window.HouseBossFurnitureTypes||{},uniqueness=new Set(furn.map(function(f){return f.type})).size;
  var sofaComfort={starter:0,sage:4,rust:7,navy:10,boucle:15,leather:21,cloud:28,atelier:36};
- var comfort=furn.reduce(function(sum,o){return sum+(types[o.type]?.comfort||0)},0)+(sofaComfort[style.sofa]||0);
+ var comfort=furn.reduce(function(sum,o){return sum+Math.round((types[o.type]?.comfort||0)*(.45+.55*(o.condition||100)/100))},0)+(sofaComfort[style.sofa]||0);
  var score=Math.min(100,Math.round(12+uniqueness*3+furn.length*1.5+changed*4+owned.length*2.5+Math.min(35,comfort*.38)));
  var tier=score>=85?'Designer Residence':score>=67?'Curated Home':score>=46?'Styled Haven':score>=27?'Cozy Home':'First Apartment';
  return {score:score,tier:tier,furniture:furn.length,styles:changed,comfort:comfort};
@@ -2777,7 +2780,7 @@ function homeFurnitureRooms(){
  return rooms
 }
 function homeFurnitureState(){
- return {cash:Math.max(0,Math.floor(cash)),level:level,careerLevel:life.careerLevel,homeValue:Math.max(0,Math.floor(life.homeValue||0)),comfort:homeFurnitureQuality().comfort,quality:homeFurnitureQuality(),furniture:homeFurnitureCopy(),rooms:homeFurnitureRooms(),max:32}
+ return {cash:Math.max(0,Math.floor(cash)),level:level,careerLevel:life.careerLevel,homeValue:Math.max(0,Math.floor(life.homeValue||0)),comfort:homeFurnitureQuality().comfort,quality:homeFurnitureQuality(),furniture:homeFurnitureCopy(),wishlist:ensureHomeDesign().wishlist||[],rooms:homeFurnitureRooms(),max:32}
 }
 function homeFurnitureBuy(type,x,z,rot,price){
  var meta=window.HouseBossFurnitureTypes?.[type],list=ensureHomeFurniture();
@@ -2786,7 +2789,7 @@ function homeFurnitureBuy(type,x,z,rot,price){
  if(!homeFurnitureValidate(placement).ok||cash<price)return false;
  cash-=price;life.homeValue=(life.homeValue||0)+price;
  var d=ensureHomeDesign(),id='f'+(++d.furnitureSeq);
- list.push({uid:id,type:type,x:placement.x,z:placement.z,rot:placement.rot});
+ list.push({uid:id,type:type,x:placement.x,z:placement.z,rot:placement.rot,condition:100});
  grantXp(9);simWishProgress('design');simCheckAspiration();
  simMemory('home','A new '+meta.name, 'Your home grows with your own choices.');
  simState().people.self.moodlet={label:'Inspired',until:simClock()+145};
@@ -2805,7 +2808,7 @@ function homeFurnitureSell(uid){
  var list=ensureHomeFurniture(),index=list.findIndex(function(o){return o.uid===uid});
  if(!started||ended||index<0)return false;
  var meta=window.HouseBossFurnitureTypes?.[list[index].type];if(!meta)return false;
- var refund=Math.floor(meta.price/2),price=meta.price;
+ var refund=Math.floor(meta.price*(.20+.30*((list[index].condition||100)/100))),price=meta.price;
  list.splice(index,1);
  cash+=refund;life.homeValue=Math.max(0,(life.homeValue||0)-price);
  message(meta.name+' sold · +$'+refund);render();saveGame();return true
@@ -2831,7 +2834,14 @@ function homeFurnitureInteract(uid){
 function homeFurnitureBonus(who,action,p,uid){
  var used=uid&&ensureHomeFurniture().find(function(o){return o.uid===uid});
  var furniture=used&&window.HouseBossFurnitureTypes?.[used.type];
- if(furniture&&furniture.action===action){var b=Math.min(20,Math.round(furniture.comfort*.46));p.fun=clamp(p.fun+b);if(action==='nap')simSetEnergy(who,simEnergy(who)+Math.round(b*.8));}
+ if(furniture&&furniture.action===action){
+  var condition=Math.max(25,Math.min(100,used.condition||100));
+  var b=Math.min(20,Math.round(furniture.comfort*.46*(.40+.60*condition/100)));
+  p.fun=clamp(p.fun+b);
+  if(action==='nap'||action==='dognap')simSetEnergy(who,simEnergy(who)+Math.round(b*.9));
+  if(action==='read'||action==='computer')simSkill(who,'Logic',Math.max(2,Math.round(b*.55)));
+  used.condition=Math.max(25,Math.round((condition-.9)*10)/10);
+ }
  var items=ensureHomeFurniture(),has=function(t){return items.some(function(o){return o.type===t})};
  if(action==='read'&&has('bookshelf'))simSkill(who,'Logic',9);
  if(action==='paint'&&has('easel'))simSkill(who,'Creativity',10);
@@ -2840,6 +2850,27 @@ function homeFurnitureBonus(who,action,p,uid){
  if(action==='nap'&&(has('armchair')||has('ottoman')))simSetEnergy(who,simEnergy(who)+(has('armchair')?9:5));
  if(action==='dance'&&has('stereo'))p.fun=clamp(p.fun+12);
  if(action==='talk'&&has('sidetable'))p.social=clamp(p.social+6);
+}
+function homeFurnitureRepairCost(item){
+ var meta=window.HouseBossFurnitureTypes?.[item?.type];if(!meta)return Infinity;
+ return Math.max(6,Math.ceil(meta.price*.17*(100-Math.max(25,item.condition||100))/75))
+}
+function homeFurnitureRepair(uid){
+ if(!started||ended)return false;
+ var item=ensureHomeFurniture().find(function(o){return o.uid===uid});
+ if(!item||item.condition>=99.5)return false;
+ var cost=homeFurnitureRepairCost(item);
+ if(cash<cost){message('Save another $'+(cost-cash)+' for this repair.');return false}
+ cash-=cost;item.condition=100;
+ simMemory('home','Furniture refreshed',window.HouseBossFurnitureTypes[item.type].name+' is like new again.');
+ message('Furniture restored · -$'+cost);saveGame();render();return true
+}
+function homeFurnitureToggleWishlist(type){
+ if(!started||ended||!window.HouseBossFurnitureTypes?.[type])return false;
+ var d=ensureHomeDesign(),list=d.wishlist||(d.wishlist=[]),i=list.indexOf(type);
+ if(i>=0)list.splice(i,1);
+ else{if(list.length>=12){message('Wishlist is full. Remove another item first.');return false}list.push(type)}
+ saveGame();return true
 }
 window.HouseBossBuildBridge={
  getState:homeFurnitureState,
@@ -2854,6 +2885,9 @@ window.HouseBossBuildBridge={
  buy:homeFurnitureBuy,
  move:homeFurnitureMove,
  sell:homeFurnitureSell,
+ repair:homeFurnitureRepair,
+ repairCost:function(uid){var o=ensureHomeFurniture().find(function(f){return f.uid===uid});return o?homeFurnitureRepairCost(o):0},
+ toggleWishlist:homeFurnitureToggleWishlist,
  interact:homeFurnitureInteract
 };
 
