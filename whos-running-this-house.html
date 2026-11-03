@@ -1112,7 +1112,7 @@ var chapters=[
 function chapterValue(c){return c[3]==='jobs'?totalDone:c[3]==='team'?totalShared:c[3]==='decor'?owned.length:careerDays}
 function nextChapter(){return chapters.find(function(c){return !chapterClaimed.includes(c[0])})}
 function rewardChapters(){chapters.forEach(function(c){if(chapterClaimed.includes(c[0])||chapterValue(c)<c[4])return;chapterClaimed.push(c[0]);cash+=c[5];grantXp(c[6]);floatReward("CHAPTER COMPLETE · $"+c[5]);message("House Story: "+c[1])})}
-function renderChapters(){var c=nextChapter();$('#storyTitle').textContent=c?c[1].toLocaleUpperCase('tr-TR'):"ALL COMPLETE";$('#storyState').textContent=c?(chapterClaimed.length+1)+'/6':'6/6';$('#storyHint').textContent=c?c[2]:"The kitchen is finally yours"}
+function renderChapters(){var c=nextChapter();$('#storyTitle').textContent=c?c[1].toLocaleUpperCase('en-US'):"ALL COMPLETE";$('#storyState').textContent=c?(chapterClaimed.length+1)+'/6':'6/6';$('#storyHint').textContent=c?c[2]:"The kitchen is finally yours"}
 function roadmapHTML(){return "<p class=\"roadmap-intro\">Six chapters, lasting upgrades. Your home evolves.</p>"+chapters.map(function(c,i){var done=chapterClaimed.includes(c[0]),v=Math.min(chapterValue(c),c[4]);return '<article class="chapter-card'+(done?' complete':'')+'"><div><b>'+(i+1)+'. '+c[1]+'</b><span>'+(done?'✓ TAMAM':v+'/'+c[4])+'</span></div><p>'+c[2]+'</p><div class="chapter-track"><i style="width:'+Math.floor(v*100/c[4])+"%\"></i></div><small>REWARD · +"+c[6]+' XP / $'+c[5]+'</small></article>'}).join('')}
 function scoreEvening(){return Math.max(0,Math.round(peace*3+done*24+assistedFinished*18+goals.filter(function(g){return g.claimed}).length*35-missed*12))}
 function actorLook(kind,role){
@@ -1206,7 +1206,7 @@ function familyHtml(){
   {who:'partner',title:"Partner",energy:partnerEnergy,trait:partnerHabit,auto:autoPartner,practice:partnerPractice},
   {who:'kid',title:"Kid",energy:kidEnergy,trait:kidHabit,auto:autoKid,practice:kidPractice}
  ];
- return "<p class=\"family-intro\">Family sadece beklemiyor. Açık olduğunda kendi tercih ettikleri güvenli işlere başlayabiliyorlar. Önce senin verdiğin görevler yapılır; istersen özerkliği kapatabilirsin.</p>"+
+ return "<p class=\"family-intro\">Family members aren't just waiting around. When autonomy is enabled, they can take safe chores that suit their habits. Your assignments take priority; you can also turn autonomy off.</p>"+
  list.map(function(c){
   var busy=c.who==='partner'?(helper?helper.name:(partnerEnergy<26?"Taking a break":"Available")):(childTask?childTask.name:(kidEnergy<30?"Taking a break":"Available"));
   var lvl=helperSkill(c.who),progress=c.practice%4;
@@ -1232,7 +1232,7 @@ function familySettingsChange(button){
   var pair=habit.dataset.familyHabit.split(':');
   if(!habits[pair[0]]||!habits[pair[0]][pair[1]])return;
   if(pair[0]==='partner')partnerHabit=pair[1];else kidHabit=pair[1];
-  familyNotice((pair[0]==='partner'?"Partner":"Kid")+' artık '+habits[pair[0]][pair[1]].name.toLocaleLowerCase('tr-TR')+" is acting independently.");
+  familyNotice((pair[0]==='partner'?"Partner":"Kid")+' now prefers '+habits[pair[0]][pair[1]].name.toLocaleLowerCase('en-US')+" chores.");
  }else return;
  notebookHtml();render();saveGame()
 }
@@ -1347,7 +1347,14 @@ function loadSave(){
  var s=getSave();if(!s)return false;
  setRunMode(shiftOptions[s.runMode]?s.runMode:'classic');
  window.HouseBossPlatform?.start();
- day=Math.max(1,s.day||1);cash=s.cash??420;time=s.time||17*60;avatarSelf=s.avatarSelf||'m';avatarPartner=s.avatarPartner||'f';chapterClaimed=Array.isArray(s.chapterClaimed)?s.chapterClaimed:[];careerDays=s.careerDays||0;bestScore=s.bestScore||0;lastScore=s.lastScore||0;weekScore=s.weekScore||0;weeklyTitle=s.weeklyTitle||'';syncAvatars();xp=s.xp||0;level=s.level||1;owned=Array.isArray(s.owned)?s.owned:[];achievements=Array.isArray(s.achievements)?s.achievements:[];goals=Array.isArray(s.goals)?s.goals:makeGoals();totalDone=s.totalDone||0;assistedFinished=s.assistedFinished||0;totalShared=s.totalShared||0;wellDays=s.wellDays||0;lastFinishedDay=s.lastFinishedDay||(s.ended?day:0);friendship=s.friendship??66;trust=s.trust??64;careCooldown=s.careCooldown||{};partnerHabit=habits.partner[s.partnerHabit]?s.partnerHabit:'planner';kidHabit=habits.kid[s.kidHabit]?s.kidHabit:'curious';autoPartner=s.autoPartner!==false;autoKid=s.autoKid!==false;partnerPractice=Math.max(0,Math.min(40,s.partnerPractice||0));kidPractice=Math.max(0,Math.min(40,s.kidPractice||0));nextFamilyDecision=s.nextFamilyDecision||time+28;familyLog=Array.isArray(s.familyLog)?s.familyLog.slice(0,6):[];autonomyCounts=s.autonomyCounts||{partner:0,kid:0};dayInitiatives=s.dayInitiatives||{partner:0,kid:0};peace=s.peace??75;energy=s.energy??100;partnerEnergy=s.partnerEnergy??88;kidEnergy=s.kidEnergy??83;petEnergy=s.petEnergy??90;done=s.done||0;shared=s.shared||0;missed=s.missed||0;speed=s.speed||1;jobs=s.jobs;seq=s.seq||1;eventAt=s.eventAt||time+35;combo=s.combo||0;pos=Array.isArray(s.pos)?s.pos:[770,460];posTarget=Array.isArray(s.posTarget)?s.posTarget:[770,460];partnerPos=Array.isArray(s.partnerPos)?s.partnerPos:[885,351];kidPos=Array.isArray(s.kidPos)?s.kidPos:[746,714];selfQueue=s.selfQueue||[];partnerQueue=s.partnerQueue||[];
+ day=Math.max(1,s.day||1);cash=s.cash??420;time=s.time||17*60;avatarSelf=s.avatarSelf||'m';avatarPartner=s.avatarPartner||'f';chapterClaimed=Array.isArray(s.chapterClaimed)?s.chapterClaimed:[];careerDays=s.careerDays||0;bestScore=s.bestScore||0;lastScore=s.lastScore||0;weekScore=s.weekScore||0;weeklyTitle=s.weeklyTitle||'';syncAvatars();xp=s.xp||0;level=s.level||1;owned=Array.isArray(s.owned)?s.owned:[];achievements=Array.isArray(s.achievements)?s.achievements:[];goals=Array.isArray(s.goals)?s.goals:makeGoals();totalDone=s.totalDone||0;assistedFinished=s.assistedFinished||0;totalShared=s.totalShared||0;wellDays=s.wellDays||0;lastFinishedDay=s.lastFinishedDay||(s.ended?day:0);friendship=s.friendship??66;trust=s.trust??64;careCooldown=s.careCooldown||{};partnerHabit=habits.partner[s.partnerHabit]?s.partnerHabit:'planner';kidHabit=habits.kid[s.kidHabit]?s.kidHabit:'curious';autoPartner=s.autoPartner!==false;autoKid=s.autoKid!==false;partnerPractice=Math.max(0,Math.min(40,s.partnerPractice||0));kidPractice=Math.max(0,Math.min(40,s.kidPractice||0));nextFamilyDecision=s.nextFamilyDecision||time+28;familyLog=Array.isArray(s.familyLog)?s.familyLog.slice(0,6):[];autonomyCounts=s.autonomyCounts||{partner:0,kid:0};dayInitiatives=s.dayInitiatives||{partner:0,kid:0};peace=s.peace??75;energy=s.energy??100;partnerEnergy=s.partnerEnergy??88;kidEnergy=s.kidEnergy??83;petEnergy=s.petEnergy??90;done=s.done||0;shared=s.shared||0;missed=s.missed||0;speed=s.speed||1;jobs=s.jobs;
+ // Migrate older English-edition saves created before source localization.
+ if(window.HouseBossEN?.translate){
+  jobs.forEach(function(j){if(typeof j.name==='string')j.name=window.HouseBossEN.translate(j.name);
+    if(typeof j.detail==='string')j.detail=window.HouseBossEN.translate(j.detail)});
+  if(Array.isArray(s.goals))s.goals.forEach(function(g){if(typeof g.label==='string')g.label=window.HouseBossEN.translate(g.label)});
+ }
+ seq=s.seq||1;eventAt=s.eventAt||time+35;combo=s.combo||0;pos=Array.isArray(s.pos)?s.pos:[770,460];posTarget=Array.isArray(s.posTarget)?s.posTarget:[770,460];partnerPos=Array.isArray(s.partnerPos)?s.partnerPos:[885,351];kidPos=Array.isArray(s.kidPos)?s.kidPos:[746,714];selfQueue=s.selfQueue||[];partnerQueue=s.partnerQueue||[];
  current=jobs.find(function(j){return j.id===s.current})||null;helper=jobs.find(function(j){return j.id===s.helper})||null;childTask=jobs.find(function(j){return j.id===s.childTask})||null;paused=false;ended=false;started=true;selected=null;$('#splash').classList.add('hidden');$('#ending').classList.add('hidden');$('#player').setAttribute('transform','translate('+pos[0]+' '+pos[1]+')');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',Number(b.dataset.speed)===speed)});$('#pause').textContent='Ⅱ';render();if(s.ended){finishDay();}else{message("Day "+day+', '+format(time)+" — welcome back.");say("Can I ask you something?")}return true
 }
 function showSavePreview(){var s=getSave();if(s){avatarSelf=s.avatarSelf||avatarSelf;avatarPartner=s.avatarPartner||avatarPartner;syncAvatars();if(shiftOptions[s.runMode])setRunMode(s.runMode)}if(!s){$('#resume').hidden=true;$('#savedStats').hidden=true;$('#start').textContent='START EVENING →';return}savedPreview=s;$('#resume').hidden=false;$('#savedStats').hidden=false;$('#savedStats').textContent='DAY '+s.day+' · '+format(s.time)+' · '+Math.round(s.peace)+'% PEACE · '+(s.jobs||[]).filter(function(j){return j.remaining>0}).length+' CHORES'+(s.ended?' · SHIFT FINISHED':'');$('#resume').textContent=s.ended?'LAST SHIFT REPORT →':'↳ CONTINUE SAVED GAME';$('#start').textContent='START NEW EVENING →';
@@ -1367,7 +1374,7 @@ function showTaskTarget(j){
  var xy=taskLocations[j.key]||stationLocations[j.spot]||[730,510];
  $('#focusTarget').setAttribute('transform','translate('+xy[0]+' '+xy[1]+')');
  $('#focusTarget').setAttribute('visibility','visible');
- $('#focusLabel').textContent=(j.key==='charger'?"PHONE CHARGER":j.name).slice(0,25).toLocaleUpperCase('tr-TR');
+ $('#focusLabel').textContent=(j.key==='charger'?"PHONE CHARGER":j.name).slice(0,25).toLocaleUpperCase('en-US');
  $('#findHintText').textContent="FOUND · "+j.name+(j.key==='charger'?" · next to the laptop":'');
  $('#findHint').classList.remove('hidden');$('#game').classList.add('finding');
 }
@@ -1448,7 +1455,7 @@ function finishDay(){
  var title=peace<=0?"THE HOUSE HAS WON.":peace>=75&&pending<=3?"THE HOUSE OBEYS.":peace>=45?"HOUSE STILL STANDING.":"THINGS HAPPENED.";
  $('#endTitle').textContent=title;
  $('#endDesc').textContent=peace<=0?"The evening isn't over. Your patience is.":pending+" chores left for tomorrow. "+(pending>4?"Tomorrow will start suspiciously like today.":"Being the boss is a full-time job.")+" Overdue chores: "+missed+'.';
- $('#endScore').textContent="TONIGHT "+lastScore+' PUAN · REKOR '+bestScore+' · '+careerDays+" EVENINGS"+(careerDays%7===0?' · '+weeklyTitle.toLocaleUpperCase('tr-TR'):'');$('#endProgress').textContent="LEVEL "+level+' · '+goals.filter(function(g){return g.claimed}).length+'/'+goals.length+" DAILY GOALS · "+owned.length+" KITCHEN UPGRADES · "+(dayInitiatives.partner+dayInitiatives.kid)+" SELF-ASSIGNED CHORES";$('#endDone').textContent=done;$('#endShared').textContent=shared;$('#endPeace').textContent=Math.round(peace)+'%';$('#ending').classList.remove('hidden');render();saveGame()
+ $('#endScore').textContent="TONIGHT "+lastScore+' PUAN · REKOR '+bestScore+' · '+careerDays+" EVENINGS"+(careerDays%7===0?' · '+weeklyTitle.toLocaleUpperCase('en-US'):'');$('#endProgress').textContent="LEVEL "+level+' · '+goals.filter(function(g){return g.claimed}).length+'/'+goals.length+" DAILY GOALS · "+owned.length+" KITCHEN UPGRADES · "+(dayInitiatives.partner+dayInitiatives.kid)+" SELF-ASSIGNED CHORES";$('#endDone').textContent=done;$('#endShared').textContent=shared;$('#endPeace').textContent=Math.round(peace)+'%';$('#ending').classList.remove('hidden');render();saveGame()
 }
 function reset(mode){
  window.HouseBossPlatform?.start();
