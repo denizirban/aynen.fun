@@ -686,7 +686,7 @@ body:has(#game) .brand .back{display:none!important}
 }
 
 </style>
-<link rel="stylesheet" href="./house-boss-sims-ui.css?v=1">
+<link rel="stylesheet" href="./house-boss-sims-ui.css?v=2">
 </head>
 <body>
 <div id="game">
@@ -2185,7 +2185,7 @@ function frame(now){
   pos[0]+=(posTarget[0]-pos[0])*k;pos[1]+=(posTarget[1]-pos[1])*k;
   $('#player').setAttribute('transform','translate('+pos[0].toFixed(1)+' '+pos[1].toFixed(1)+')');
   var workPoints={stove:[1035,395],sink:[1210,465],table:[610,480],kid:[710,625],floor:[480,730],laundry:[1150,675],desk:[870,355],pet:[360,745]};
-  var p=helper&&workPoints[helper.spot]||[885,351],c=childTask&&workPoints[childTask.spot]||[746,714];
+  var p=helper&&workPoints[helper.spot]||simState().active.partner&&workPoints[simState().active.partner.spot]||[885,351],c=childTask&&workPoints[childTask.spot]||simState().active.kid&&workPoints[simState().active.kid.spot]||[746,714];
   partnerPos[0]+=(p[0]-partnerPos[0])*k*.7;partnerPos[1]+=(p[1]-partnerPos[1])*k*.7;
   kidPos[0]+=(c[0]-kidPos[0])*k*.8;kidPos[1]+=(c[1]-kidPos[1])*k*.8;
   $('#partnerActor').setAttribute('transform','translate('+partnerPos[0].toFixed(1)+' '+partnerPos[1].toFixed(1)+')');
@@ -2281,8 +2281,8 @@ requestAnimationFrame(frame)
 </script>
 <!-- Standalone CrazyGames build does not load aynen.fun site navigation widgets. -->
 <script src="./house-boss-en.js?v=2"></script>
-<script type="module" src="./evin-patronu-3d.js?v=5"></script>
+<script type="module" src="./evin-patronu-3d.js?v=6"></script>
 <script type="module" src="./house-boss-town-3d.js?v=3"></script>
-<script src="./house-boss-sims-ui.js?v=2"></script>
+<script src="./house-boss-sims-ui.js?v=3"></script>
 </body>
 </html>
