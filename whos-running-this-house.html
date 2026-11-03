@@ -709,6 +709,19 @@ body:has(#game) .brand .back{display:none!important}
 }
 @media(prefers-reduced-motion:reduce){#splash .hb-opening-town{animation:none}}
 
+
+/* HOUSE_BOSS_3D_ONLY_V7 — no visible/interactive SVG fallback or 2D toggle.
+   The SVG element remains hidden for legacy data/animation compatibility. */
+#game #room{display:none!important;visibility:hidden!important;pointer-events:none!important}
+#game #kitchen3d{inset:0;height:100%;background:#dce6d9}
+#game #kitchen3d.is-ready{visibility:visible;pointer-events:auto}
+#game #visualMode{display:none!important}
+#game #kitchen3d[data-status="unavailable"]{visibility:visible;pointer-events:auto;display:grid;place-items:center}
+#game #kitchen3d .hb-3d-error{width:min(390px,calc(100vw - 45px));padding:22px;background:#f9f9eff5;color:#30443a;border:1px solid #acbeaa;border-radius:17px;box-shadow:0 12px 40px #233d3140;text-align:center;z-index:5}
+#game #kitchen3d .hb-3d-error h2{font-size:19px;margin:0 0 9px}
+#game #kitchen3d .hb-3d-error p{font-size:12px;line-height:1.55;color:#718073}
+#game #kitchen3d .hb-3d-error button{background:#d6e8d1;border:1px solid #87ac81;padding:11px 16px;border-radius:9px;color:#305339;font-weight:800}
+
 </style>
 <link rel="stylesheet" href="./house-boss-sims-ui.css?v=6">
 </head>
@@ -987,7 +1000,7 @@ body:has(#game) .brand .back{display:none!important}
 <g id="focusTarget" visibility="hidden" pointer-events="none"><circle id="focusOuter" r="53" fill="#f8ffe9" fill-opacity=".18" stroke="#efffca" stroke-width="5" stroke-dasharray="9 6"/><circle r="34" fill="none" stroke="#3e6a46" stroke-width="4"/><path d="M-70 0h23M47 0h23M0-70v23M0 47v23" stroke="#f9ffe2" stroke-width="5"/><rect x="-104" y="-98" width="208" height="31" rx="10" fill="#fffbe6" stroke="#547351" stroke-width="2"/><text id="focusLabel" y="-77" text-anchor="middle" font-size="13" font-family="Arial" font-weight="700" fill="#2f533a">ITEM LOCATION</text></g>
 <rect width="1400" height="900" fill="url(#grain)" pointer-events="none"/>
 </svg>
-<div id="sceneShade"></div><div class="stage-vignette" aria-hidden="true"></div><div class="scene-caption"><span class="scene-dot"></span><span>HOME / KITCHEN</span><span class="scene-sep">·</span><span id="sceneMood">DAYTIME</span></div><div id="cameraTools" aria-label="Camera controls"><button type="button" id="cameraOut" aria-label="Zoom out">−</button><button type="button" id="cameraReset" aria-label="Reset camera">⌖</button><button type="button" id="cameraIn" aria-label="Zoom in">+</button><button type="button" id="visualMode" aria-label="Toggle between 3D and 2D views" hidden>3D</button></div>
+<div id="sceneShade"></div><div class="stage-vignette" aria-hidden="true"></div><div class="scene-caption"><span class="scene-dot"></span><span>HOME / KITCHEN</span><span class="scene-sep">·</span><span id="sceneMood">DAYTIME</span></div><div id="cameraTools" aria-label="Camera controls"><button type="button" id="cameraOut" aria-label="Zoom out">−</button><button type="button" id="cameraReset" aria-label="Reset camera">⌖</button><button type="button" id="cameraIn" aria-label="Zoom in">+</button></div>
 <header id="top">
 <div class="brand"><a class="back" href="#" onclick="return false" aria-label="House Boss">←</a><div><b>HOUSE BOSS</b><small>A LIVING HOUSEHOLD SIM</small></div></div>
 <div class="clock"><div><small id="dayLabel">DAY 01 / EVENING</small><strong id="time">17:00</strong></div><div class="controls"><button class="mini" id="pause" aria-label="Duraklat">Ⅱ</button><button class="mini" id="saveNow" aria-label="Kaydet" title="Kaydet">⌑</button><button class="mini on" data-speed="1">1×</button><button class="mini" data-speed="2">2×</button><button class="mini" data-speed="3">3×</button></div></div>
@@ -1139,7 +1152,7 @@ body:has(#game) .brand .back{display:none!important}
         <div id="savedStats" class="save-preview" hidden></div>
         <button type="button" id="start" class="menu-play">START YOUR LIFE <span>→</span></button>
         <button type="button" id="resume" class="menu-continue" hidden>↳ CONTINUE SAVED GAME</button>
-        <div class="menu-footer"><span id="splashNote">AUTOSAVE ENABLED</span><span>3D / 2D · PLAY IN BROWSER</span></div>
+        <div class="menu-footer"><span id="splashNote">AUTOSAVE ENABLED</span><span>3D WORLD · PLAY IN BROWSER</span></div>
       </section>
     </div>
   </div>
@@ -1945,6 +1958,7 @@ function simEnsurePro(){
  if(!Array.isArray(s.wishes))s.wishes=[];
  if(!s.wishDay)s.wishDay=0;
  if(!s.preference)s.preference={freeWill:true};
+ if(!s.walkTargets)s.walkTargets={self:null,partner:null,kid:null,pet:null};
  if(typeof s.preference.freeWill!=='boolean')s.preference.freeWill=true;
  return s
 }
@@ -2122,6 +2136,7 @@ function simBegin(who,id){
  simConsumeSupplies(a);
  s.active[who]={id:id,left:duration,total:duration,spot:a.spot,quality:moodTone==='bad'?.85:moodTone==='inspired'?1.12:1,started:simClock()};
  if(who==='self'&&points[a.spot])posTarget=points[a.spot].slice();
+ if(s.walkTargets)s.walkTargets[who]=null;
  message((who==='self'?'You':who==='partner'?'Partner':who==='kid'?'Kid':'Dog')+' started: '+a.name+'.');
  saveGame();return true
 }
@@ -2483,7 +2498,7 @@ document.querySelectorAll('[data-task-filter]').forEach(function(b){b.addEventLi
 $('#cameraIn').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.zoom(.14);else setCamera(cameraScale+.14)};
 $('#cameraOut').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.zoom(-.14);else setCamera(cameraScale-.14)};
 $('#cameraReset').onclick=function(){if(window.Evin3D&&window.Evin3D.isReady)window.Evin3D.reset();resetCameraView();clearTaskTarget()};
-$('#visualMode').onclick=function(){if(window.Evin3D){window.Evin3D.setEnabled(!window.Evin3D.isReady);hideAction()}};
+
 $('#room').addEventListener('wheel',function(e){if(!started||ended)return;e.preventDefault();setCamera(cameraScale+(e.deltaY<0?.075:-.075))},{passive:false});
 $('#openNotebook').onclick=function(){openNote('upgrades')};$('#familySettings').onclick=function(){openNote('family')};$('#storyButton').onclick=function(){openNote('roadmap')};
 $('#goalMore').onclick=function(){openNote('goals')};
@@ -2492,6 +2507,7 @@ document.querySelectorAll('[data-tab]').forEach(function(b){b.addEventListener('
 $('#noteBody').addEventListener('click',function(e){var action=e.target.closest('[data-life-act]');if(action){lifeBeginActivity(action.dataset.lifeAct);lifeNotebook();return}var b=e.target.closest('[data-buy]');if(b){buyUpgrade(b.dataset.buy);return}familySettingsChange(e.target)});
 window.addEventListener('keydown',function(e){if(e.key==='Escape')closeNote()});
 registerAvatars();syncAvatars();lifeInstall();showSavePreview();goals=makeGoals();templates.forEach(function(t){add(t)});render();
+/* 3D_ONLY_HOUSE_BOSS_V7 — 2D render mode removed. Hidden SVG is retained solely as nonvisual legacy simulation scaffolding. */
 /* 3D scene bridge: authoritative simulation and save state remain here. */
 window.EvinKitchenBridge={
  getState:function(){return {
@@ -2501,6 +2517,9 @@ window.EvinKitchenBridge={
    selfAway:!!(life.shift||life.outing),partnerAway:!!life.pShift,kidAway:kidAtSchool(),
    avatarSelf:avatarSelf,avatarPartner:avatarPartner,
    simSelected:simState().selected,simMoodTone:simMood(simState().selected).tone,
+   simActions:{self:simState().active.self&&simState().active.self.id||null,partner:simState().active.partner&&simState().active.partner.id||null,kid:simState().active.kid&&simState().active.kid.id||null,pet:simState().active.pet&&simState().active.pet.id||null},
+   simWalkTargets:simEnsurePro().walkTargets,
+   simPetActivity:simState().active.pet&&simState().active.pet.id||null,
    focusSpot:selected&&find(selected)&&find(selected).spot||null
  }},
  selectStation:function(spot){
@@ -2508,6 +2527,18 @@ window.EvinKitchenBridge={
    if(window.HouseBossSimUI){window.HouseBossSimUI.openObjectMenu(spot);return}
    var list=jobs.filter(function(j){return j.remaining>0&&j.spot===spot}).sort(function(a,b){return a.due-b.due});
    if(list.length)choose(list[0]);else message("Nothing needs doing here. Yet.")
+ },
+ walkTo:function(x,z){
+   if(!started||ended||life.zone==='town')return;
+   var state=simEnsurePro(),who=state.selected;
+   if(simBusy(who)){message('Finish the current activity before walking.');return}
+   if(!['self','partner','kid','pet'].includes(who))return;
+   var px=Math.max(-5.6,Math.min(5.25,Number(x))),pz=Math.max(-4.15,Math.min(4.35,Number(z)));
+   if(!Number.isFinite(px)||!Number.isFinite(pz))return;
+   // Keep walking destinations on the open edges of the kitchen, not inside the worktop.
+   if(px>-4.2&&px<4.5&&pz>-1.8&&pz<1.6)pz=pz>=0?2.15:-2.2;
+   state.walkTargets[who]={x:px,z:pz};
+   saveGame();
  },
  selectPerson:function(who){
    if(!started||ended)return;
