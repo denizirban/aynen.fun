@@ -1243,7 +1243,7 @@ var badgeCatalog=[
  {id:'peace',icon:'☀',title:"One Peaceful Evening",desc:"Finished an evening above 70% peace."},
  {id:'seven',icon:'📅',title:"A Whole Week",desc:"Completed seven days."}
 ];
-var ranks=["First evening","Learning the ropes","Getting by","Home Coordinator","Order Maker","Household Engineer","Master Organizer","Quietly Capable"];
+var ranks=['First Apartment','Making It Cozy','Room to Grow','Home Enthusiast','A Fresh Start','City Comfort','Well Styled','Modern Living','Collected Pieces','Designed to Last','The Good Life','Curated Interior','A Home of Your Own','Architectural Taste','Signature Residence','Beautifully Settled','Dream Home','Design Icon','Estate of Dreams','House Boss Legend'];
 function xpNeeded(){return 55+level*45}
 function floatReward(t){var n=$('#rewardBubble');n.textContent=t;n.classList.add('on');clearTimeout(rewardTimer);rewardTimer=setTimeout(function(){n.classList.remove('on')},1500)}
 function grantXp(n){xp+=n;var raised=false;while(xp>=xpNeeded()&&level<20){xp-=xpNeeded();level++;cash+=35;raised=true}if(raised){floatReward("LEVEL "+level+'! +$35');say("We are becoming quite the professionals.")} }
@@ -1283,6 +1283,7 @@ function renderProgression(){
 function notebookHtml(){
  $('#notebook').classList.toggle('design-mode',noteTab==='design');
  if(noteTab==='design'){window.HouseBossHomeDesign?.render?.();return}
+ if(noteTab==='lifestyle'){window.HouseBossLifestyle?.render?.();return}
  if(noteTab==='life'){lifeNotebook();return}
  var title={design:"Home Design",upgrades:"Upgrade your Home",goals:"Daily goals",roadmap:"House Story",family:"Family",memories:"Memories"};$('#noteTitle').textContent=title[noteTab];$('#noteBudget').textContent='$'+cash+' · Level '+level;
  if(noteTab==='upgrades')$('#noteBody').innerHTML='<div class="upgrade-grid">'+upgradeCatalog.map(function(u){var has=owned.includes(u.id),locked=level<u.level,poor=cash<u.price,disabled=has||locked||poor;return '<article class="upgrade-card'+(has?' owned':'')+'"><div class="upgrade-top"><div class="upgrade-art">'+u.icon+'</div><div><b>'+u.name+'</b><small>'+u.tag+" · LEVEL "+u.level+'</small></div></div><p>'+u.desc+'</p><button class="buy" data-buy="'+u.id+'"'+(disabled?' disabled':'')+'>'+(has?"✓ INSTALLED":locked?"LEVEL "+u.level+" REQUIRED":poor?'$'+u.price+" — NOT ENOUGH MONEY":"BUY · $"+u.price)+'</button></article>'}).join('')+'</div>';
@@ -1291,7 +1292,9 @@ function notebookHtml(){
  if(noteTab==='family')$('#noteBody').innerHTML=familyHtml();
  if(noteTab==='memories')$('#noteBody').innerHTML='<p style="font-size:12px;color:#777;margin:0 0 14px">'+totalDone+" chores finished · "+totalShared+" family assists · "+(day-1)+" evenings survived.</p><div class=\"badge-grid\">"+badgeCatalog.map(function(b){var has=achievements.includes(b.id);return '<div class="badge-tile'+(has?'':' locked')+'"><span class="emblem">'+(has?b.icon:'?')+'</span><div><b>'+b.title+'</b><p>'+b.desc+'</p></div></div>'}).join('')+'</div>';
 }
-function openNote(tab){if(!started)return;window.HouseBossHomeDesign?.clearPreview?.();window.HouseBossPlatform?.stop();closeMobileFamily();if(innerWidth<=650)setTasksOpen(false);noteTab=tab||'design';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
+function openNote(tab){if(!started)return;
+ if(!$('#notebook').classList.contains('hidden')){noteTab=tab||'design';document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();return}
+ window.HouseBossHomeDesign?.clearPreview?.();window.HouseBossPlatform?.stop();closeMobileFamily();if(innerWidth<=650)setTasksOpen(false);noteTab=tab||'design';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
 function closeNote(){if($('#notebook').classList.contains('hidden'))return;window.HouseBossHomeDesign?.clearPreview?.();$('#notebook').classList.remove('design-mode');if(!wasPausedOnNote&&!ended)window.HouseBossPlatform?.start();$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
 function buyUpgrade(id){if(!started||ended)return;var u=upgradeCatalog.find(function(a){return a.id===id});if(!u||owned.includes(id)||level<u.level||cash<u.price)return;cash-=u.price;owned.push(id);if(lifeHomeProjects.some(function(p){return p.id===id})){life.homeValue=(life.homeValue||0)+u.price;peace=clamp(peace+4)}grantXp(14);evaluateBadges();rewardChapters();render();notebookHtml();saveGame();floatReward(u.icon+' '+u.name+' installed');message('Home upgraded: '+u.name)}
 function openCare(who){
@@ -2914,6 +2917,65 @@ window.HouseBossBuildBridge={
  repairCost:function(uid){var o=ensureHomeFurniture().find(function(f){return f.uid===uid});return o?homeFurnitureRepairCost(o):0},
  toggleWishlist:homeFurnitureToggleWishlist,
  interact:homeFurnitureInteract
+};
+
+
+/* HOUSE_BOSS_LIFESTYLE_V2 — persistent milestones and explainable progression. */
+var lifestyleMilestones=[
+ {id:'keys',title:'A Place to Call Home',desc:'Your first thoughtfully furnished home.',level:2,quality:20,career:1,reward:95,xp:35},
+ {id:'roots',title:'Finding Your Feet',desc:'A cozy home and a real career beginning.',level:4,quality:36,career:2,reward:190,xp:55},
+ {id:'studio',title:'A Better Life',desc:'Design upgrades start to change everyday life.',level:6,quality:48,career:4,reward:310,xp:75},
+ {id:'haven',title:'Comfort & Character',desc:'Build somewhere worth coming home to.',level:9,quality:60,career:6,reward:560,xp:110},
+ {id:'signature',title:'The Designer Residence',desc:'Develop your own signature collection.',level:12,quality:78,career:8,reward:900,xp:145},
+ {id:'legacy',title:'House Boss Legacy',desc:'A beautiful home, an accomplished career.',level:17,quality:90,career:11,reward:1650,xp:210}
+];
+function ensureLifestyle(){
+ if(!life.lifestyle||typeof life.lifestyle!=='object')life.lifestyle={claimed:[]};
+ if(!Array.isArray(life.lifestyle.claimed))life.lifestyle.claimed=[];
+ return life.lifestyle
+}
+function lifestyleMilestoneStatus(m){
+ var claimed=ensureLifestyle().claimed.includes(m.id),quality=homeFurnitureQuality().score;
+ return {id:m.id,title:m.title,desc:m.desc,level:m.level,quality:m.quality,career:m.career,reward:m.reward,xp:m.xp,claimed:claimed,
+  ready:!claimed&&level>=m.level&&quality>=m.quality&&life.careerLevel>=m.career}
+}
+function lifestyleSnapshot(){
+ var s=simSnapshot(),q=homeFurnitureQuality(),p=householdPeaceFactors(),f=simEnsurePro().finance;
+ return {started:started,paused:paused,day:day,homeLevel:level,homeXP:xp,homeNext:xpNeeded(),
+  careerLevel:life.careerLevel,careerXP:life.careerXp||0,partnerCareerLevel:life.partnerCareerLevel,careerRank:careerRank(life.careerLevel),
+  focus:currentCareerFocus(),focusChangedDay:life.focusChangedDay||0,
+  cash:Math.floor(cash),propertyValue:Math.floor(life.homeValue||0),netWorth:Math.floor(cash+(life.homeValue||0)-f.debt),
+  debt:Math.round(f.debt),pantry:f.pantry,paidBills:Math.floor(f.billsPaid||0),earned:Math.floor(f.earned||0),dailyBills:45,
+  peace:Math.round(peace),peaceFactors:p,quality:q,owned:owned.slice(),design:ensureHomeDesign().selected,
+  furniture:homeFurnitureCopy(),wishlist:(ensureHomeDesign().wishlist||[]).slice(),
+  careerJobs:lifeJobs.map(function(j){return {id:j.id,title:j.title,level:j.level,track:j.track,pay:j.pay,mins:j.mins}}),
+  milestones:lifestyleMilestones.map(lifestyleMilestoneStatus),
+  needs:s.people,relationships:s.relationships,chores:s.chores,wishes:s.wishes}
+}
+function lifestyleClaim(id){
+ if(!started||ended)return false;
+ var m=lifestyleMilestones.find(function(x){return x.id===id}),status=m&&lifestyleMilestoneStatus(m);
+ if(!status||!status.ready)return false;
+ ensureLifestyle().claimed.push(id);cash+=m.reward;grantXp(m.xp);
+ simMemory('home','Lifestyle milestone',m.title+' · $'+m.reward);
+ floatReward('MILESTONE COMPLETE · +$'+m.reward);message(m.title+' achieved! New possibilities unlocked.');
+ render();saveGame();return true
+}
+function lifestylePayDebt(request){
+ if(!started||ended)return false;
+ var f=simEnsurePro().finance,amount=Math.min(cash,Math.floor(f.debt),Math.max(0,Math.floor(Number(request)||0)));
+ if(amount<=0)return false;
+ cash-=amount;f.debt-=amount;f.billsPaid+=amount;
+ simMemory('money','Household bills paid','$'+amount+' debt repaid.');
+ message('Paid $'+amount+' toward household bills.');render();saveGame();return true
+}
+window.HouseBossLifestyleBridge={
+ getState:lifestyleSnapshot,claim:lifestyleClaim,payDebt:lifestylePayDebt,focus:setCareerFocus,
+ open:function(tab){openNote(tab||'lifestyle')},openBuild:function(){openNote('design')},
+ openGoals:function(){openNote('goals')},openUpgrades:function(){openNote('upgrades')},
+ goTown:function(){closeNote();enterTown()},goNeeds:function(){closeNote();window.HouseBossSimUI?.showPanel?.('needs')},
+ repair:homeFurnitureRepair,
+ repairCost:function(uid){var o=ensureHomeFurniture().find(function(f){return f.uid===uid});return o?homeFurnitureRepairCost(o):0}
 };
 
 /* 3D_ONLY_HOUSE_BOSS_V7 — 2D render mode removed. Hidden SVG is retained solely as nonvisual legacy simulation scaffolding. */
