@@ -1,0 +1,60 @@
+/* HOUSE BOSS / HOME DESIGN STUDIO V1.
+   Keeps the existing HUD; turns only the Build journal into a compact studio. */
+#notebook.design-mode{display:block;pointer-events:none;padding:0;z-index:49}
+#notebook.design-mode .note-shade{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;pointer-events:none}
+#notebook.design-mode .note-sheet{
+ pointer-events:auto;position:absolute;right:clamp(10px,2vw,34px);left:auto;top:clamp(76px,12vh,120px);
+ width:min(415px,calc(100vw - 28px));max-height:min(77dvh,810px);height:auto;
+ box-shadow:0 25px 75px #183a2545,0 1px 0 #fff inset;border:1px solid #c5d4be;
+ background:linear-gradient(160deg,#fffdf4f7,#edf4e8f7);border-radius:23px;backdrop-filter:blur(20px)
+}
+#notebook.design-mode .note-heading{padding:15px 17px 8px;align-items:center}
+#notebook.design-mode .note-heading h2{font-size:24px;line-height:1}
+#notebook.design-mode .note-heading small{font-size:8px;letter-spacing:.08em}
+#notebook.design-mode .note-tabs{gap:4px;padding:4px 12px 11px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+#notebook.design-mode .note-tabs button{padding:7px 9px;flex:none;font-size:9px;border-color:#d2ddce;border-radius:9px}
+#notebook.design-mode .note-tabs button.active{background:#477154;border-color:#477154}
+#notebook.design-mode #noteBody{padding:10px 14px 12px;min-height:140px;overflow-y:auto}
+#notebook.design-mode .note-footer{padding:9px 15px!important;border-top:1px solid #dbe3d6}
+#notebook.design-mode .note-footer span{font-size:9px}
+.hd-lead{margin:3px 0 10px}
+.hd-kicker{font:900 9px 'DM Mono',monospace;color:#648968;letter-spacing:.12em}
+.hd-lead p{font-size:11px;color:#647767;line-height:1.55;margin:4px 0 0}
+.hd-categories{display:flex;gap:5px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:thin;scroll-snap-type:x proximity}
+.hd-categories button{
+ flex:0 0 auto;min-width:76px;display:flex;align-items:center;justify-content:center;flex-direction:column;
+ gap:4px;background:#f2f5ed;border:1px solid #d2ddcd;border-radius:11px;padding:8px 7px;
+ color:#596c5e;font:800 9px 'DM Mono',monospace;scroll-snap-align:start;cursor:pointer}
+.hd-categories button>span{font:750 21px sans-serif;line-height:1.1}
+.hd-categories button.active,.hd-categories button:hover{background:#dbeed7;border-color:#8fb588;color:#2f6240}
+.hd-collection{display:flex;align-items:baseline;justify-content:space-between;gap:7px;border-top:1px solid #dce5d6;padding:11px 2px 5px}
+.hd-collection h3{font-size:16px;letter-spacing:-.05em;margin:0;color:#2e503b}
+.hd-collection small{font-size:9px;color:#839482;line-height:1.35;text-align:right;max-width:184px}
+.hd-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:5px 0}
+.hd-style{border:1px solid #d9e0d2;background:#fffcf6;border-radius:13px;overflow:hidden;min-width:0;display:flex;flex-direction:column;box-shadow:0 1px 6px #29432b12}
+.hd-style.hd-current{border-color:#81ad7a;box-shadow:0 0 0 2px #cfe8ca}
+.hd-preview{border:0;background:transparent;display:flex;flex-direction:column;gap:3px;text-align:left;padding:9px;flex:1;min-width:0;color:#3a5140;cursor:pointer}
+.hd-preview:focus-visible{outline:2px solid #3a7a53}
+.hd-swatch{height:48px;border-radius:9px;width:100%;background:var(--sample);border:1px solid #ffffff88;box-shadow:inset 0 -11px 15px #00000011,0 1px 4px #23372027;overflow:hidden;position:relative;margin-bottom:4px}
+.hd-swatch:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(110deg,#fff2 0px,#fff2 1px,transparent 1px,transparent 14px);opacity:.6}
+.hd-swatch i{position:absolute;left:12px;bottom:0;width:52px;height:26px;border-radius:15px 15px 5px 5px;background:#fff9;border:1px solid #fff6}
+.hd-style-name{font-size:12px;font-weight:850;letter-spacing:-.025em}
+.hd-style-desc{font-size:9px;color:#7b8c7a;line-height:1.35;min-height:24px}
+.hd-style-tag{color:#4e7956;font:800 9px 'DM Mono',monospace;margin-top:2px}
+.hd-purchase{border:0;border-top:1px solid #d9e2d5;background:linear-gradient(#e7f1e0,#d9eace);color:#335d3b;padding:8px 4px;font:900 9px 'DM Mono',monospace;min-height:36px;cursor:pointer}
+.hd-purchase:hover:not(:disabled){background:#bbdcb5}
+.hd-purchase:disabled{background:#f2f2e9;color:#8b968a;cursor:default}
+.hd-applied .hd-purchase{color:#4b8a5e}
+.hd-foot{margin-top:9px;padding:10px 2px 3px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #d5dfcf;font:850 9px 'DM Mono',monospace;color:#64856a}
+.hd-foot button{padding:7px 10px;border-radius:9px;border:1px solid #bdcebb;background:#fffaf1;color:#5b7b60;font:800 9px 'DM Mono',monospace}
+.hd-tip{font-size:9px;color:#8a9988;margin:8px 0 2px;line-height:1.5}
+@media(max-width:760px){
+ #notebook.design-mode .note-sheet{top:auto;bottom:max(7px,env(safe-area-inset-bottom));left:7px;right:7px;width:auto;max-height:min(60dvh,600px)}
+ #notebook.design-mode #noteBody{padding:7px 11px 9px}
+ #notebook.design-mode .note-tabs{padding-bottom:6px}
+ #notebook.design-mode .note-heading{padding:9px 12px 5px}
+ #notebook.design-mode .note-heading h2{font-size:18px}
+ #notebook.design-mode .hd-swatch{height:34px}
+ #notebook.design-mode .hd-style-desc{min-height:14px}
+}
+@media(max-height:650px) and (min-width:761px){#notebook.design-mode .note-sheet{top:55px;max-height:calc(100dvh - 65px)}}
