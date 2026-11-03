@@ -33,6 +33,7 @@
  town:'<path d="M3 10l9-7 9 7v11H3zM8 21v-8h8v8"/>',
  build:'<path d="M3 21l12-12M12 5l7-2 2 7-3 3-7-7z"/>',
  appearance:'<circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0116 0v2"/>',
+ hub:'<path d="M3 10l9-7 9 7v11H3zM9 21v-6h6v6M7 11h.01M17 11h.01"/>',
  food:'<path d="M12 7c-2-3-5-3-7-1-5 5 0 15 5 15l2-1 2 1c5 0 10-10 5-15-2-2-5-2-7 1zM12 8c0-4 2-6 5-6"/>',
  rest:'<path d="M18 3A9 9 0 1021 18 8 8 0 0118 3z"/>',
  dog:'<path d="M5 10L3 5l4 2 5-2 5 2 4-2-2 5v7l-7 4-7-4zM8 13h.01M16 13h.01M10 17h4"/>',
@@ -96,7 +97,8 @@
  '<button type="button" data-sd-panel="goals" aria-label="Life goals"><span class="sd-menu-icon">'+ico('goals')+'</span>GOALS</button>'+
  '<button type="button" data-sd-go="chores" aria-label="Open household chores"><span class="sd-menu-icon">'+ico('chores')+'</span>CHORES</button>'+
  '<button type="button" data-sd-go="town" aria-label="Go to town"><span class="sd-menu-icon">'+ico('town')+'</span>TOWN</button>'+
- '<button type="button" data-sd-go="build" aria-label="Build and upgrade home"><span class="sd-menu-icon">'+ico('build')+'</span>BUILD</button>'+
+ '<button type="button" data-sd-go="build" aria-label="Build and upgrade home"><span class="sd-menu-icon">'+ico('build')+'</span>BUILD</button>'+ 
+ '<button type="button" data-sd-go="lifehub" aria-label="Open Life Hub overview"><span class="sd-menu-icon">'+ico('hub')+'</span>LIFE</button>'+
  '<button type="button" data-sd-go="appearance" aria-label="Customize character appearance"><span class="sd-menu-icon">'+ico('appearance')+'</span>STYLE</button></div>';
  game.appendChild(dock);
  const sheet=document.createElement('section');sheet.id='simSheet';sheet.hidden=true;sheet.setAttribute('aria-label','Character details');game.appendChild(sheet);
@@ -281,6 +283,7 @@
      closePanel();dismissObject();
      if(b.dataset.sdGo==='town')B.goTown();
      if(b.dataset.sdGo==='build')B.openBuild();
+     if(b.dataset.sdGo==='lifehub')window.HouseBossLifestyle?.open?.();
      if(b.dataset.sdGo==='chores')B.openChores();
      if(b.dataset.sdGo==='appearance')B.openAppearance();
    }
