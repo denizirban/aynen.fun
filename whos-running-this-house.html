@@ -3040,14 +3040,14 @@ function lifestyleStartRoutine(who,kind){
  if(who==='kid'&&kidAtSchool())return {ok:false,reason:'Kid is at school. Plan this after 3 PM.'};
  var s=simState(),queue=s.queues[who],active=s.active[who],plan=lifestyleRoutinePlan(who,kind);
  if(!plan.length)return {ok:false,reason:'Choose a valid care plan.'};
- var added=[],skipped=[],available=3-queue.length,plannedSpend=0;
+ var added=[],skipped=[],available=3-queue.length,queuedSpend=0;
  for(var id of plan){
   if(available<=0){skipped.push('Queue is full');break}
   if(!simAllowed(who,id)||queue.includes(id)||(active&&active.id===id)){skipped.push(id+' already planned');continue}
   var a=simActions[id],cost=simPriceForAction(a);
-  if(cash-plannedSpend<cost){skipped.push('Not enough money for '+a.name);continue}
+  if(cash-queuedSpend<cost){skipped.push('Not enough money for '+a.name);continue}
   if(simSocialTargetBusy(who,id)){skipped.push(a.name+' · someone is busy');continue}
-  if(simQueueAction(id,who)){added.push(id);plannedSpend+=cost;available=3-s.queues[who].length}
+  if(simQueueAction(id,who)){added.push(id);if(s.queues[who].includes(id))queuedSpend+=cost;available=3-s.queues[who].length}
   else skipped.push(a.name+' could not start')
  }
  if(!added.length){
