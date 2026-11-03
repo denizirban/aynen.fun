@@ -175,7 +175,8 @@
        const moves=socialTarget==='pet'?['chat','joke','compliment','support']:['chat','joke','compliment','support','argue','apologize'];
        body+='<div class="ss-grid">'+moves.map(id=>actionButton('bond_'+id+'_'+socialTarget,who)).join('')+'</div>';
      }
-     body+='<button class="ss-simple" data-sd-manage-family>FAMILY AUTONOMY & HABITS ↗</button>';
+     body+='<div class="ss-freewill"><div><b>Household Free Will</b><small>Unselected adults can care for their own needs.</small></div><button data-sd-freewill aria-pressed="'+!!s.freeWill+'">'+(s.freeWill?'ON':'OFF')+'</button></div>'+
+      '<button class="ss-simple" data-sd-manage-family>FAMILY AUTONOMY & HABITS ↗</button>';
    }else if(currentPanel==='skills'){
      body='<p class="ss-muted">Practice activities to level up. Each character grows independently.</p>';
      for(const [skill,lvl] of Object.entries(p.skills)){
@@ -285,6 +286,7 @@
    if(b.hasAttribute('data-sd-close')){closePanel();return}
    if(b.dataset.sdAsp){B.chooseAspiration(b.dataset.sdAsp);renderSheet();refreshNow();return}
    if(b.dataset.sdRelTarget){socialTarget=b.dataset.sdRelTarget;renderSheet();return}
+   if(b.hasAttribute('data-sd-freewill')){B.toggleFreeWill();renderSheet();return}
    if(b.hasAttribute('data-sd-shop')){closePanel();B.goTown();window.HouseBossTownBridge?.selectVenue?.('market');return}
    if(b.dataset.sdCare){B.action(b.dataset.sdCare,b.dataset.for);refreshNow();renderSheet();return}
    if(b.hasAttribute('data-sd-manage-family')){closePanel();B.openFamily();return}
