@@ -686,7 +686,7 @@ body:has(#game) .brand .back{display:none!important}
 }
 
 </style>
-<link rel="stylesheet" href="./house-boss-sims-ui.css?v=2">
+<link rel="stylesheet" href="./house-boss-sims-ui.css?v=3">
 </head>
 <body>
 <div id="game">
@@ -1829,7 +1829,8 @@ var simActions={
  feedpet:{name:'Feed the Dog',icon:'◈',duration:15,cost:7,spot:'pet',effect:{fun:3},pet:30,mood:'Caring'},
  dogfood:{name:'Eat Dog Food',icon:'◈',duration:18,cost:0,spot:'pet',effect:{hunger:59},mood:'Content'},
  dognap:{name:'Curl Up and Nap',icon:'☾',duration:42,cost:0,spot:'pet',effect:{energy:46},mood:'Content'},
- dogplay:{name:'Explore the House',icon:'◌',duration:32,cost:0,spot:'pet',effect:{fun:40,social:12,bladder:40,energy:-8},mood:'Playful'}
+ dogplay:{name:'Explore the House',icon:'◌',duration:32,cost:0,spot:'pet',effect:{fun:40,social:12,bladder:40,energy:-8},mood:'Playful'},
+ groom:{name:'Brush the Dog',icon:'◉',duration:30,cost:0,spot:'pet',effect:{hygiene:58,social:10,fun:8},mood:'Fresh'}
 };
 var simAspirations={
  home:{title:'Dream Home',desc:'Turn this house into a home.',targets:[2,4,7],metric:'upgrades'},
@@ -1883,8 +1884,8 @@ function simBusy(who){
 }
 function simAllowed(who,id){
  if(!['self','partner','kid','pet'].includes(who)||!simActions[id])return false;
- if(who==='pet')return ['dogfood','dognap','dogplay'].includes(id);
- if(['dogfood','dognap','dogplay'].includes(id))return false;
+ if(who==='pet')return ['dogfood','dognap','dogplay','groom'].includes(id);
+ if(['dogfood','dognap','dogplay','groom'].includes(id))return false;
  return true
 }
 function simBegin(who,id){
@@ -1953,7 +1954,7 @@ function simAutonomy(){
   if(p.hunger<43)choices.push(who==='pet'?'dogfood':'snack');
   if(simEnergy(who)<30)choices.push(who==='pet'?'dognap':'nap');
   if(who!=='pet'&&p.bladder<35)choices.push('toilet');
-  if(who!=='pet'&&p.hygiene<38)choices.push('shower');
+  if(p.hygiene<38)choices.push(who==='pet'?'groom':'shower');
   if(p.fun<38)choices.push(who==='pet'?'dogplay':'tv');
   if(who!=='pet'&&p.social<39)choices.push('talk');
   if(choices.length)simBegin(who,choices[0])
@@ -2032,7 +2033,8 @@ window.HouseBossSimBridge={
  goTown:function(){enterTown()},
  goHome:function(){leaveTown()},
  openBuild:function(){openNote('upgrades')},
- openChores:function(){setTasksOpen(true)},
+ openChores:function(){setTasksOpen($('#tasks').classList.contains('collapsed'))},
+ closeChores:function(){setTasksOpen(false)},
  openFamily:function(){openNote('family')},
  openAppearance:function(){$('#editAvatars').click()},
  pause:function(){$('#pause').click()},
@@ -2285,6 +2287,6 @@ requestAnimationFrame(frame)
 <script src="./house-boss-en.js?v=2"></script>
 <script type="module" src="./evin-patronu-3d.js?v=6"></script>
 <script type="module" src="./house-boss-town-3d.js?v=3"></script>
-<script src="./house-boss-sims-ui.js?v=4"></script>
+<script src="./house-boss-sims-ui.js?v=5"></script>
 </body>
 </html>
