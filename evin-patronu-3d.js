@@ -796,7 +796,7 @@
   buildGrid.position.set(-.9,.032,0);
   buildGrid.material.transparent=true;buildGrid.material.opacity=.23;
   buildGrid.visible=false;scene.add(buildGrid);
-  function furnitureMesh(type,uid,isGhost){
+  function furnitureMesh(type,uid,isGhost,showOriginalPreview){
     var g=new THREE.Group();scene.add(g);
     var natural=mat('buildNatural','#b48a62',.83),pale=mat('buildPale','#eee7d8',.9);
     var dark=mat('buildDark','#45504a'),sage=mat('buildSage','#738e7d'),copper=mat('buildCopper','#b07e60');
@@ -922,8 +922,8 @@
     if(isGhost){
       g.traverse(function(o){if(!o.isMesh)return;
         o.castShadow=false;o.receiveShadow=false;
-        o.material=o.material.clone();o.material.color.set('#75c995');
-        o.material.transparent=true;o.material.opacity=.53;o.material.depthWrite=false
+        o.material=o.material.clone();if(!showOriginalPreview)o.material.color.set('#75c995');
+        o.material.transparent=true;o.material.opacity=showOriginalPreview?.92:.53;o.material.depthWrite=false
       });
     }else{
       g.traverse(function(o){if(o.isMesh){o.userData.owner=g;pickables.push(o)}});
@@ -979,7 +979,7 @@
     ghostFurniture.position.set(pendingFurniture.x,(window.HouseBossBuildBridge?.height?.(pendingFurniture)||0)+.055,pendingFurniture.z);
     ghostFurniture.rotation.y=pendingFurniture.rot*Math.PI/2;
     ghostFurniture.traverse(function(obj){
-      if(obj.isMesh)obj.material.color.set(pendingFurniture.valid?'#71c58b':'#e77267')
+      if(obj.isMesh&&pendingFurniture.mode!=='preview')obj.material.color.set(pendingFurniture.valid?'#71c58b':'#e77267')
     });
     notifyPlacement();return pendingFurniture.valid
   }
@@ -987,7 +987,7 @@
     if(!item||!window.HouseBossBuildBridge?.validate||!window.HouseBossFurnitureTypes?.[item.type])return false;
     cancelFurniturePlacement();
     pendingFurniture={type:item.type,uid:item.uid||null,mode:item.mode||'buy',x:item.x,z:item.z,rot:item.rot||0};
-    ghostFurniture=furnitureMesh(item.type,'preview',true);
+    ghostFurniture=furnitureMesh(item.type,'preview',true,pendingFurniture.mode==='preview');
     if(!ghostFurniture){pendingFurniture=null;return false}
     buildGrid.visible=true;
     var moved=furnitureObjects.get(pendingFurniture.uid);if(moved)moved.group.visible=false;
