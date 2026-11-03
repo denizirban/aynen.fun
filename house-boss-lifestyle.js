@@ -155,7 +155,7 @@ body.addEventListener('click',e=>{
   else if(go==='build')B.openBuild();
   else if(go==='town')B.goTown();
   else if(go==='needs')B.goNeeds();
-  else if(go==='chores'){B.openGoals()}
+  else if(go==='chores'){B.goChores()}
  }
 });
 const observer=new MutationObserver(()=>{
