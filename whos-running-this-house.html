@@ -1289,7 +1289,7 @@ function familySpeed(who,spot){
  var levelBoost=1+(helperSkill(who)-1)*.065;
  return levelBoost*(liked?1.25:1);
 }
-function decideFamilyJob(who){if(who==='partner'&&life.pShift)return;if(who==='kid'&&kidAtSchool())return;
+function decideFamilyJob(who){if(who==='partner'&&(life.pShift||simState().active.partner))return;if(who==='kid'&&(kidAtSchool()||simState().active.kid))return;
  if(!started||paused||ended||time<17*60+28)return null;
  var isPartner=who==='partner';
  if(isPartner ? !autoPartner : !autoKid)return null;
@@ -1523,24 +1523,24 @@ function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=nu
 
 function hideAction(){closeMobileFamily();var wasFinding=taskBeingFound!==null;$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;clearTaskTarget();placeAction(null);if(wasFinding)resetCameraView()}
 function startSelf(){
- if(life.shift||life.activity||life.outing||current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('You: '+current.name)}}
-function startPartner(){if(life.pShift||helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message("Partner started: "+helper.name)}}
+ if(life.shift||life.activity||life.outing||simState().active.self||current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('You: '+current.name)}}
+function startPartner(){if(life.pShift||simState().active.partner||helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message("Partner started: "+helper.name)}}
 function work(kind){
  if(selectedPerson){careAction(kind);return}
  var j=find(selected);if(!j)return;
  if(j.assigned){message("Someone is already handling that.");return}
  if(kind==='self'){
-   if(life.shift||life.activity||life.outing){message('You are busy.');return}
+   if(life.shift||life.activity||life.outing||simState().active.self){message('You are busy.');return}
    if(current){if(selfQueue.length>=3){message("Your queue is full.");return}selfQueue.push(j.id);j.assigned='self';message("Added to the queue: "+j.name)}
    else{current=j;j.assigned='self';posTarget=points[j.spot].slice();message(j.name+" — you're starting.")}
  }else if(kind==='partner'){
-   if(life.pShift){message('Partner is at work.');return}
+   if(life.pShift||simState().active.partner){message('Partner is busy.');return}
    if(partnerEnergy<12){message("Your partner needs a break.");return}
    if(helper){if(partnerQueue.length>=2){message("Your partner's queue is full.");return}partnerQueue.push(j.id);j.assigned='partner';message("Added to your partner's queue.")}
    else{helper=j;j.assigned='partner';message("Task delegated.")}
    shared++;
  }else if(kind==='kid'){
-   if(childTask||kidEnergy<15||!canKid(j)||kidAtSchool()){message(kidAtSchool()?'Kid is at school.':'Not an appropriate chore.');return}
+   if(childTask||simState().active.kid||kidEnergy<15||!canKid(j)||kidAtSchool()){message(kidAtSchool()?'Kid is at school.':'Not an appropriate chore.');return}
    childTask=j;j.assigned='kid';shared++;say("Fine, but I get to play afterward.");
  }
  hideAction();render();saveGame()
@@ -1618,8 +1618,8 @@ function beginOuting(id){
 function finishOuting(){
  var o=life.outing;if(!o)return;var a=townActivities.find(x=>x.id===o.id);
  life.outing=null;if(!a)return;
- energy=clamp(energy-a.energy);life.fun=clamp(life.fun+a.fun);
- life.hunger=clamp(life.hunger+(a.hunger||0));peace=clamp(peace+Math.min(8,a.fun*.25));
+ energy=clamp(energy-a.energy);life.fun=clamp(life.fun+a.fun);simState().people.self.fun=life.fun;
+ life.hunger=clamp(life.hunger+(a.hunger||0));simState().people.self.hunger=life.hunger;peace=clamp(peace+Math.min(8,a.fun*.25));
  if(a.social){life.contacts=(life.contacts||0)+1;townSkillGain('social',a.social)}
  if(a.fitness)townSkillGain('fitness',a.fitness);
  if(a.creative)townSkillGain('creativity',a.creative);
@@ -1745,9 +1745,9 @@ function lifeBeginActivity(kind){
 }
 function lifeFinishActivity(){
  var k=life.activity.kind;life.activity=null;
- if(k==='eat'){life.hunger=clamp(life.hunger+56);peace=clamp(peace+4)}
+ if(k==='eat'){life.hunger=clamp(life.hunger+56);simState().people.self.hunger=life.hunger;peace=clamp(peace+4)}
  if(k==='rest')energy=clamp(energy+65);
- if(k==='relax'){life.fun=clamp(life.fun+(owned.includes('living')?57:38));peace=clamp(peace+6);friendship=clamp(friendship+3)}
+ if(k==='relax'){life.fun=clamp(life.fun+(owned.includes('living')?57:38));simState().people.self.fun=life.fun;peace=clamp(peace+6);friendship=clamp(friendship+3)}
  if(k==='freelance'){var pay=Math.round(90*(1+(life.careerLevel-1)*.15));cash+=pay;life.earned+=pay;life.careerXp+=26;life.careerLevel=lifeSkill(false);townSkillGain('creativity',10);floatReward('FREELANCE +$'+pay)}
  grantXp(12);message('Completed: '+k);saveGame()
 }
@@ -1800,8 +1800,245 @@ function lifeNewDay(){
  message('DAY '+day+' · Bills −$45 · '+weekDay());saveGame()
 }
 
+
+/* HOUSE_BOSS_SIMULATION_4
+   Sims-style needs, relationships, mood, queues and goals.
+   Runs on the existing authoritative game clock. All saved in life.sim. */
+var simActions={
+ cook:{name:'Cook a Meal',icon:'◈',duration:50,cost:9,spot:'stove',effect:{hunger:55,hygiene:-6,fun:5},skill:'Cooking',xp:16,mood:'Accomplished'},
+ snack:{name:'Grab a Snack',icon:'◧',duration:15,cost:5,spot:'stove',effect:{hunger:29},mood:'Comforted'},
+ shower:{name:'Take a Shower',icon:'◉',duration:35,cost:0,spot:'laundry',effect:{hygiene:66,energy:3},mood:'Fresh'},
+ toilet:{name:'Use Bathroom',icon:'▣',duration:15,cost:0,spot:'laundry',effect:{bladder:85},mood:'Relieved'},
+ sleep:{name:'Sleep',icon:'☾',duration:100,cost:0,spot:'kid',effect:{energy:75,fun:5},mood:'Rested'},
+ nap:{name:'Take a Nap',icon:'☾',duration:38,cost:0,spot:'table',effect:{energy:38},mood:'Rested'},
+ tv:{name:'Watch TV',icon:'▷',duration:45,cost:0,spot:'table',effect:{fun:46,social:-3},mood:'Entertained'},
+ talk:{name:'Talk to Family',icon:'♡',duration:28,cost:0,spot:'table',effect:{social:37,fun:8},relationship:5,skill:'Charisma',xp:7,mood:'Connected'},
+ read:{name:'Read a Book',icon:'▤',duration:45,cost:0,spot:'desk',effect:{fun:20,energy:-3},skill:'Logic',xp:14,mood:'Focused'},
+ study:{name:'Study',icon:'✧',duration:65,cost:0,spot:'desk',effect:{fun:-7,energy:-10},skill:'Logic',xp:28,mood:'Focused'},
+ paint:{name:'Make Art',icon:'✿',duration:60,cost:8,spot:'desk',effect:{fun:28,hygiene:-2},skill:'Creativity',xp:23,mood:'Inspired'},
+ exercise:{name:'Exercise',icon:'↗',duration:45,cost:0,spot:'floor',effect:{fun:18,energy:-15,hygiene:-22},skill:'Fitness',xp:24,mood:'Energized'},
+ dance:{name:'Dance',icon:'♫',duration:32,cost:0,spot:'floor',effect:{fun:30,social:6,energy:-7},skill:'Fitness',xp:8,mood:'Playful'},
+ clean:{name:'Clean the Kitchen',icon:'✦',duration:38,cost:0,spot:'sink',effect:{hygiene:-5,fun:-2},peace:6,skill:'Cooking',xp:5,mood:'Proud'},
+ laundry:{name:'Do Laundry',icon:'▧',duration:48,cost:0,spot:'laundry',effect:{fun:-5},peace:5,mood:'Productive'},
+ computer:{name:'Use Computer',icon:'⌘',duration:50,cost:0,spot:'desk',effect:{fun:16,social:-3},skill:'Creativity',xp:14,mood:'Inspired'},
+ homework:{name:'Do Homework',icon:'✎',duration:55,cost:0,spot:'kid',effect:{fun:-8,energy:-7},skill:'Logic',xp:22,mood:'Focused'},
+ playdog:{name:'Play With Dog',icon:'♧',duration:28,cost:0,spot:'pet',effect:{fun:27,social:17},pet:25,mood:'Happy'},
+ feedpet:{name:'Feed the Dog',icon:'◈',duration:15,cost:7,spot:'pet',effect:{fun:3},pet:30,mood:'Caring'},
+ dogfood:{name:'Eat Dog Food',icon:'◈',duration:18,cost:0,spot:'pet',effect:{hunger:59},mood:'Content'},
+ dognap:{name:'Curl Up and Nap',icon:'☾',duration:42,cost:0,spot:'pet',effect:{energy:46},mood:'Content'},
+ dogplay:{name:'Explore the House',icon:'◌',duration:32,cost:0,spot:'pet',effect:{fun:40,social:12,energy:-8},mood:'Playful'}
+};
+var simAspirations={
+ home:{title:'Dream Home',desc:'Turn this house into a home.',targets:[2,4,7],metric:'upgrades'},
+ career:{title:'Career Climber',desc:'Build a career worth talking about.',targets:[2,6,12],metric:'shifts'},
+ social:{title:'Beloved Household',desc:'Build stronger family bonds.',targets:[72,85,97],metric:'relationship'},
+ mastery:{title:'Renaissance Sim',desc:'Master a little bit of everything.',targets:[7,12,19],metric:'skillLevels'}
+};
+function simDefaultPerson(who){
+ return {hunger:who==='self'?life.hunger:who==='pet'?79:82,hygiene:who==='pet'?86:85,bladder:86,fun:who==='self'?life.fun:76,social:72,energy:100,
+  skills:{Cooking:1,Charisma:1,Logic:1,Creativity:1,Fitness:1},skillXp:{Cooking:0,Charisma:0,Logic:0,Creativity:0,Fitness:0},
+  moodlet:{label:'',until:0},completed:0}
+}
+function simState(){
+ if(!life.sim||!life.sim.people){
+  life.sim={version:4,selected:'self',people:{self:simDefaultPerson('self'),partner:simDefaultPerson('partner'),kid:simDefaultPerson('kid'),pet:simDefaultPerson('pet')},
+   queues:{self:[],partner:[],kid:[],pet:[]},active:{self:null,partner:null,kid:null,pet:null},
+   aspiration:'home',aspirationStages:{home:0,career:0,social:0,mastery:0},interactions:0,completedActions:0,lastAutonomy:0};
+ }
+ var s=life.sim;
+ if(!s.queues)s.queues={self:[],partner:[],kid:[],pet:[]};
+ if(!s.active)s.active={self:null,partner:null,kid:null,pet:null};
+ if(!s.aspirationStages)s.aspirationStages={home:0,career:0,social:0,mastery:0};
+ if(!s.people)s.people={};
+ for(var who of ['self','partner','kid','pet']){
+  if(!s.people[who])s.people[who]=simDefaultPerson(who);
+  var p=s.people[who];p.skills=p.skills||simDefaultPerson(who).skills;p.skillXp=p.skillXp||simDefaultPerson(who).skillXp;
+  p.moodlet=p.moodlet||{label:'',until:0};
+  if(!Array.isArray(s.queues[who]))s.queues[who]=[];
+  if(s.active[who]===undefined)s.active[who]=null;
+ }
+ return s
+}
+function simClock(){return day*1440+time}
+function simEnergy(who){return who==='self'?energy:who==='partner'?partnerEnergy:who==='kid'?kidEnergy:petEnergy}
+function simSetEnergy(who,value){value=clamp(value);if(who==='self')energy=value;else if(who==='partner')partnerEnergy=value;else if(who==='kid')kidEnergy=value;else petEnergy=value}
+function simMood(who){
+ var p=simState().people[who],low=Math.min(p.hunger,p.hygiene,p.bladder,p.fun,p.social,simEnergy(who));
+ if(low<16)return {label:'Miserable',tone:'bad',description:'Some basic needs are critically low.'};
+ if(low<34)return {label:'Uncomfortable',tone:'tense',description:'Take care of your needs.'};
+ if(p.moodlet&&p.moodlet.until>simClock()&&p.moodlet.label){
+  return {label:p.moodlet.label,tone:['Focused','Inspired','Energized'].includes(p.moodlet.label)?'inspired':'happy',description:'A recent experience is affecting your mood.'}
+ }
+ var avg=(p.hunger+p.hygiene+p.bladder+p.fun+p.social+simEnergy(who))/6;
+ return avg>76?{label:'Very Happy',tone:'happy',description:'Life is going surprisingly well.'}:avg>52?{label:'Fine',tone:'neutral',description:'Things are moving along.'}:{label:'Tense',tone:'tense',description:'Your needs need attention.'}
+}
+function simBusy(who){
+ var s=simState();
+ return !!s.active[who]||(who==='self'&&!!(life.shift||life.outing||life.activity||current))||
+  (who==='partner'&&!!(life.pShift||helper))||
+  (who==='kid'&&!!childTask)||who==='kid'&&kidAtSchool()
+}
+function simAllowed(who,id){
+ if(!['self','partner','kid','pet'].includes(who)||!simActions[id])return false;
+ if(who==='pet')return ['dogfood','dognap','dogplay'].includes(id);
+ if(['dogfood','dognap','dogplay'].includes(id))return false;
+ return true
+}
+function simBegin(who,id){
+ var s=simState(),a=simActions[id];if(!a||!simAllowed(who,id))return false;
+ if(cash<a.cost){message('Not enough money for '+a.name+'.');return false}
+ cash-=a.cost;s.active[who]={id:id,left:a.duration,total:a.duration,spot:a.spot,started:simClock()};
+ if(who==='self'&&points[a.spot])posTarget=points[a.spot].slice();
+ message((who==='self'?'You':who==='partner'?'Partner':who==='kid'?'Kid':'Dog')+' started: '+a.name+'.');
+ saveGame();return true
+}
+function simQueueAction(id,who){
+ var s=simState();who=who||s.selected;
+ if(!started||ended){message('Start your life first.');return false}
+ if(!simAllowed(who,id)){message('This action is not available for that character.');return false}
+ if(who==='kid'&&kidAtSchool()){message('Kid is at school until 3 PM.');return false}
+ var queue=s.queues[who],busy=simBusy(who);
+ if(busy){
+  if(queue.length>=3){message('Action queue is full (3).');return false}
+  queue.push(id);message('Queued: '+simActions[id].name);saveGame();return true
+ }
+ var result=simBegin(who,id);
+ window.HouseBossSimUI?.refreshNow?.();return result
+}
+function simSkill(who,name,amount){
+ var p=simState().people[who],x=p.skillXp,levels=p.skills;
+ if(!Object.prototype.hasOwnProperty.call(levels,name))return;
+ x[name]=(x[name]||0)+amount;
+ while(x[name]>=levels[name]*35&&levels[name]<10){
+  x[name]-=levels[name]*35;levels[name]++;
+  floatReward(name.toUpperCase()+' LVL '+levels[name]);message((who==='self'?'You':who==='partner'?'Partner':'Kid')+' reached '+name+' level '+levels[name]+'.')
+ }
+}
+function simFinish(who){
+ var s=simState(),task=s.active[who];if(!task)return;var a=simActions[task.id],p=s.people[who];
+ s.active[who]=null;if(!a)return;
+ for(var name in a.effect){
+  if(name==='energy')simSetEnergy(who,simEnergy(who)+a.effect[name]);
+  else if(typeof p[name]==='number')p[name]=clamp(p[name]+a.effect[name]);
+ }
+ if(a.skill)simSkill(who,a.skill,a.xp||8);
+ if(a.peace)peace=clamp(peace+a.peace);
+ if(a.relationship){friendship=clamp(friendship+a.relationship);trust=clamp(trust+a.relationship*.65)}
+ if(a.pet)petEnergy=clamp(petEnergy+a.pet);
+ if(a.mood)p.moodlet={label:a.mood,until:simClock()+165};
+ p.completed=(p.completed||0)+1;s.completedActions++;
+ if(who==='self'){life.hunger=p.hunger;life.fun=p.fun}
+ if(task.id==='homework'&&who==='kid'){trust=clamp(trust+3);life.schoolXp=(life.schoolXp||0)+9}
+ if(task.id==='playdog')friendship=clamp(friendship+1);
+ grantXp(who==='self'?10:5);
+ message(a.name+' completed.');simCheckAspiration();
+ simTryNext(who);
+ saveGame()
+}
+function simTryNext(who){
+ var s=simState();if(simBusy(who)||!s.queues[who].length)return;
+ var next=s.queues[who].shift();simBegin(who,next)
+}
+function simAutonomy(){
+ var s=simState(),now=simClock();
+ if(now-(s.lastAutonomy||0)<50)return;s.lastAutonomy=now;
+ for(var who of ['partner','kid','pet']){
+  if(who==='partner'&&!autoPartner||who==='kid'&&!autoKid)continue;
+  if(simBusy(who)||s.queues[who].length)continue;
+  var p=s.people[who],choices=[];
+  if(p.hunger<43)choices.push(who==='pet'?'dogfood':'snack');
+  if(simEnergy(who)<30)choices.push(who==='pet'?'dognap':'nap');
+  if(who!=='pet'&&p.bladder<35)choices.push('toilet');
+  if(who!=='pet'&&p.hygiene<38)choices.push('shower');
+  if(p.fun<38)choices.push(who==='pet'?'dogplay':'tv');
+  if(who!=='pet'&&p.social<39)choices.push('talk');
+  if(choices.length)simBegin(who,choices[0])
+ }
+}
+function simValue(id){
+ var s=simState();
+ if(id==='home')return owned.length;
+ if(id==='career')return life.shifts;
+ if(id==='social')return Math.round((friendship+trust)/2);
+ if(id==='mastery')return Object.values(s.people.self.skills).reduce(function(a,b){return a+b},0);
+ return 0
+}
+function simCheckAspiration(){
+ var s=simState(),id=s.aspiration||'home',a=simAspirations[id];
+ if(!a)return;var n=s.aspirationStages[id]||0;
+ if(n>=a.targets.length)return;
+ if(simValue(id)>=a.targets[n]){
+  s.aspirationStages[id]=n+1;
+  var amount=(n+1)*90;
+  cash+=amount;grantXp(20*(n+1));floatReward('LIFE GOAL +$'+amount);
+  message(a.title+' milestone complete!');saveGame()
+ }
+}
+function simTick(dm){
+ if(!started||ended)return;var s=simState();
+ var decays={hunger:.045,hygiene:.028,bladder:.07,fun:.025,social:.018};
+ for(var who of ['self','partner','kid','pet']){
+  var p=s.people[who];
+  for(var need in decays){
+   var rate=decays[need]*(who==='pet'&&need==='bladder'?.65:1);
+   p[need]=clamp(p[need]-dm*rate)
+  }
+  if(p.hunger<13||p.bladder<10||p.hygiene<12){
+    if(who==='self')peace=clamp(peace-dm*.015)
+    if(who==='partner')friendship=clamp(friendship-dm*.005)
+  }
+  if(s.active[who]){
+   s.active[who].left-=dm;
+   if(s.active[who].left<=0)simFinish(who)
+  }else if(s.queues[who].length)simTryNext(who)
+ }
+ life.hunger=s.people.self.hunger;life.fun=s.people.self.fun;
+ simAutonomy();simCheckAspiration()
+}
+function simSnapshot(){
+ var s=simState();
+ var people={};
+ for(var who of ['self','partner','kid','pet']){
+  var p=s.people[who];people[who]={
+   hunger:Math.round(p.hunger),hygiene:Math.round(p.hygiene),bladder:Math.round(p.bladder),
+   fun:Math.round(p.fun),social:Math.round(p.social),energy:Math.round(simEnergy(who)),
+   skills:p.skills,skillXp:p.skillXp,mood:simMood(who),
+   busy:simBusy(who),active:s.active[who],queue:s.queues[who],completed:p.completed||0
+  }
+ }
+ var aspId=s.aspiration||'home',asp=simAspirations[aspId];
+ return {started:started,paused:paused,ended:ended,day:day,time:time,selected:s.selected,
+   people:people,peace:Math.round(peace),money:Math.floor(cash),relationships:{partner:Math.round(friendship),kid:Math.round(trust)},
+   aspiration:aspId,aspirations:simAspirations,aspirationStages:s.aspirationStages,
+   aspirationValue:simValue(aspId),careerLevel:life.careerLevel,partnerCareerLevel:life.partnerCareerLevel,
+   chores:jobs.filter(function(j){return j.remaining>0}).length,homeLevel:level,owned:owned.length,
+   isTown:life.zone==='town',workShift:life.shift,school:kidAtSchool(),autoPartner:autoPartner,autoKid:autoKid}
+}
+window.HouseBossSimBridge={
+ getState:simSnapshot,
+ action:simQueueAction,
+ selectPerson:function(who){if(!['self','partner','kid','pet'].includes(who))return;simState().selected=who;saveGame()},
+ cancel:function(who,index){
+  var s=simState();if(!s.queues[who])return;
+  if(index===-1){s.active[who]=null;if(who==='self')posTarget=[770,460];simTryNext(who)}
+  else if(index>=0&&index<s.queues[who].length)s.queues[who].splice(index,1);
+  saveGame()
+ },
+ chooseAspiration:function(id){if(simAspirations[id]){simState().aspiration=id;simCheckAspiration();saveGame()}},
+ goTown:function(){enterTown()},
+ goHome:function(){leaveTown()},
+ openBuild:function(){openNote('upgrades')},
+ openChores:function(){setTasksOpen(true)},
+ openFamily:function(){openNote('family')},
+ openAppearance:function(){$('#editAvatars').click()},
+ pause:function(){$('#pause').click()},
+ speed:function(v){var b=document.querySelector('[data-speed="'+v+'"]');if(b)b.click()},
+ focus:function(spot){if(window.Evin3D?.isReady)window.Evin3D.focus(spot)},
+ live:function(){return started&&!ended}
+};
+
 function lifeAdvance(dm){
- life.hunger=clamp(life.hunger-dm*.058);life.fun=clamp(life.fun-dm*.03);
+ simTick(dm);
  if(life.hunger<20||life.fun<15)peace=clamp(peace-dm*.012);
  if(time>=22*60||time<6*60)energy=clamp(energy+dm*(owned.includes('sleep')?.18:.12));
  if(life.shift){life.shift.left-=dm;if(life.shift.left<=0)lifeFinishShift('self')}
@@ -1989,7 +2226,7 @@ $('#share').onclick=function(){var text=shareSummary(),url=shareLink();if(naviga
 $('#shareX').onclick=function(){openShare('x')};
 $('#shareWhatsapp').onclick=function(){openShare('whatsapp')};
 window.addEventListener('keydown',function(e){if(e.key==='Escape')hideAction();if(e.code==='Space'&&started&&document.activeElement===document.body){e.preventDefault();$('#pause').click()}});
-document.querySelectorAll('[data-person]').forEach(function(b){function pick(e){if(!started||ended)return;e.stopPropagation();var who=b.dataset.person;activePerson=who;document.querySelectorAll('.person-card').forEach(function(c){c.classList.toggle('selected',c.dataset.person===who)});var line={self:"Everyone in this house needs you.",partner:helper?"I'm busy doing something.":"We can divide the work.",kid:childTask?"I'm doing it!":"What about my homework?",pet:"Woof! Check the food bowl." ,elder:"A cup of tea would be nice."}[who];say(line);message(line);openCare(who)}
+document.querySelectorAll('[data-person]').forEach(function(b){function pick(e){if(!started||ended)return;e.stopPropagation();var who=b.dataset.person;if(window.HouseBossSimUI){window.HouseBossSimUI.selectPerson(who);return}activePerson=who;document.querySelectorAll('.person-card').forEach(function(c){c.classList.toggle('selected',c.dataset.person===who)});var line={self:"Everyone in this house needs you.",partner:helper?"I'm busy doing something.":"We can divide the work.",kid:childTask?"I'm doing it!":"What about my homework?",pet:"Woof! Check the food bowl." ,elder:"A cup of tea would be nice."}[who];say(line);message(line);openCare(who)}
  b.addEventListener('click',pick);if(b.namespaceURI==='http://www.w3.org/2000/svg')b.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(e)}})
 });
 $('#room').addEventListener('click',function(e){
@@ -2016,19 +2253,21 @@ registerAvatars();syncAvatars();lifeInstall();showSavePreview();goals=makeGoals(
 window.EvinKitchenBridge={
  getState:function(){return {
    time:time,day:day,owned:owned.slice(),started:started,paused:paused,ended:ended,
-   currentSpot:current&&current.spot||null,partnerSpot:helper&&helper.spot||null,
-   kidSpot:childTask&&childTask.spot||null,
+   currentSpot:current&&current.spot||simState().active.self&&simState().active.self.spot||null,partnerSpot:helper&&helper.spot||simState().active.partner&&simState().active.partner.spot||null,
+   kidSpot:childTask&&childTask.spot||simState().active.kid&&simState().active.kid.spot||null,
    selfAway:!!(life.shift||life.outing),partnerAway:!!life.pShift,kidAway:kidAtSchool(),
    avatarSelf:avatarSelf,avatarPartner:avatarPartner,
    focusSpot:selected&&find(selected)&&find(selected).spot||null
  }},
  selectStation:function(spot){
    if(!started||ended){message("Choose NEW GAME to start.");return}
+   if(window.HouseBossSimUI){window.HouseBossSimUI.openObjectMenu(spot);return}
    var list=jobs.filter(function(j){return j.remaining>0&&j.spot===spot}).sort(function(a,b){return a.due-b.due});
    if(list.length)choose(list[0]);else message("Nothing needs doing here. Yet.")
  },
  selectPerson:function(who){
    if(!started||ended)return;
+   if(window.HouseBossSimUI){window.HouseBossSimUI.selectPerson(who);return}
    if(who==='elder')who='elder';else if(who==='self')who='self';
    else if(who==='partner')who='partner';else if(who==='kid')who='kid';
    openCare(who)
