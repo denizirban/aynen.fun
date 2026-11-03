@@ -822,7 +822,7 @@ body:has(#game) .brand .back{display:none!important}
 
 
 <!-- playable character -->
-<g id="player" class="selectable" data-person="self" role="button" tabindex="0" aria-label="Oyuncu karakterin">
+<g id="player" class="selectable" data-person="self" role="button" tabindex="0" aria-label="Player character">
 <ellipse class="player-shadow" cy="25" rx="27" ry="10" fill="#3f4834" opacity=".26"/>
 <path d="M-25 7L-23 31L-7 36L-2 18L11 36L27 31L23 6Z" fill="#7b8564" stroke="#677656" stroke-width="1.5"/>
 <path d="M-28-14Q-13-27 7-25Q26-22 30-7L27 15Q4 23-24 14Z" fill="url(#shirtOrange)" stroke="#ab6a4e" stroke-width="2"/>
@@ -1383,7 +1383,7 @@ function render(){
  var late=time>j.due,active=[current,helper,childTask].some(function(v){return v&&v.id===j.id});
  var owner=j.assigned==='self'?"You're doing it · ":j.assigned==='partner'?"Partner's on it · ":j.assigned==='kid'?"Kid's on it · ":'';
  return '<div class="job-wrap'+(late?' late':'')+(active?' active':'')+'">'+
- '<button type="button" class="job job-open" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+owner+Math.ceil(j.remaining)+' dk</small></span><span class="remaining">'+(late?"LATE "+Math.ceil(time-j.due)+' min':format(j.due))+'</span></button>'+
+ '<button type="button" class="job job-open" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+owner+Math.ceil(j.remaining)+' min</small></span><span class="remaining">'+(late?"LATE "+Math.ceil(time-j.due)+' min':format(j.due))+'</span></button>'+
  '<button type="button" class="job-locate" data-locate="'+j.id+'" aria-label="'+j.name+" locate this chore in the scene\">FIND ⌕</button>"+
  (j.assigned?'<span class="job-progress"><i style="width:'+Math.min(100,100*(1-j.remaining/j.dur))+'%"></i></span>':'')+'</div>'
  }).join('')||"<p class=\"no-tasks\">Nothing here right now.</p>";
@@ -1792,7 +1792,7 @@ requestAnimationFrame(frame)
 })();
 </script>
 <!-- Standalone CrazyGames build does not load aynen.fun site navigation widgets. -->
-<script src="./house-boss-en.js?v=1"></script>
-<script type="module" src="./evin-patronu-3d.js?v=2"></script>
+<script src="./house-boss-en.js?v=2"></script>
+<script type="module" src="./evin-patronu-3d.js?v=3"></script>
 </body>
 </html>
