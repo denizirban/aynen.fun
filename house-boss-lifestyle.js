@@ -48,6 +48,17 @@ function milestoneList(s,compact){
    '</div></article>'
  }).join('')+'</div>'
 }
+function decisionCard(s){
+ const ev=s.event;if(!ev)return '';
+ const chosen=ev.options.find(o=>o.id===ev.selected);
+ return '<section class="hbl-daily-event '+(ev.selected?'resolved':'')+'">'+
+ '<div class="hbl-event-icon">✧</div><div class="hbl-event-content"><span class="hbl-eyebrow">LIFE MOMENT / DAY '+s.day+(ev.selected?' · RESOLVED':' · YOUR DECISION')+'</span>'+
+ '<h4>'+esc(ev.title)+'</h4><p>'+esc(ev.desc)+'</p>'+
+ (ev.selected?'<div class="hbl-event-result">✓ '+esc(chosen?.label||'Choice made')+' · Tomorrow brings a new situation.</div>':
+ '<div class="hbl-event-options">'+ev.options.map(o=>'<button type="button" data-hbl-decide="'+esc(o.id)+'" '+(!o.available?'disabled':'')+'>'+
+ '<strong>'+esc(o.label)+'</strong><small>'+esc(o.desc)+'</small></button>').join('')+'</div>')+
+ '</div></section>'
+}
 function overview(s){
  const f=s.peaceFactors,p=priority(s),m=nextMilestone(s);
  const factors=[['NEEDS',f.needs,'The people in this home'],['RELATIONSHIPS',f.relationships,'Family connections'],['HOME QUALITY',f.home,'Furniture and design'],['CHORES',f.chores,'Work left unfinished']];
@@ -57,7 +68,7 @@ function overview(s){
  '<div class="hbl-metrics">'+metric('HOME LEVEL',s.homeLevel+' / 20',s.homeXP+' / '+s.homeNext+' XP')+
  metric('CAREER',s.careerLevel+' / 12',esc(s.careerRank))+
  metric('COMFORT',s.quality.comfort,'From your furnishings')+
- metric('NET WORTH',fmt(s.netWorth),'Home + cash − debt')+'</div>'+
+ metric('NET WORTH',fmt(s.netWorth),'Home + cash − debt')+'</div>'+decisionCard(s)+
  '<div class="hbl-dual"><section class="hbl-panel"><div class="hbl-panel-title"><div><span>HOUSEHOLD WELL-BEING</span><h4>Why is House Peace at '+s.peace+'%?</h4></div><b class="hbl-peace-num">'+s.peace+'%</b></div>'+
  '<p class="hbl-muted">Current balance target: '+f.target+'%. Peace moves gradually toward this value as daily conditions improve.</p>'+
  factors.map(([label,value,ex])=>'<div class="hbl-factor"><div><b>'+label+'</b><strong>'+pct(value)+'%</strong></div>'+bar(value,value<42?'warm':'green')+'<small>'+ex+'</small></div>').join('')+
@@ -144,6 +155,7 @@ level.appendChild(trigger);
 body.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn||!book.classList.contains('lifehub-mode'))return;
  if(btn.dataset.hblTab){section=btn.dataset.hblTab;render();return}
+ if(btn.dataset.hblDecide){if(B.decide(btn.dataset.hblDecide))render();return}
  if(btn.dataset.hblClaim){if(B.claim(btn.dataset.hblClaim))render();return}
  if(btn.dataset.hblRepair){if(B.repair(btn.dataset.hblRepair))render();return}
  if(btn.dataset.hblPay!==undefined){if(B.payDebt(Number(btn.dataset.hblPay)))render();return}
