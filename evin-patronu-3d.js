@@ -329,16 +329,127 @@
     box(g,.42,.09,.21,woodDark,2.7,2.65,-5.22);
   });
   addUpgrade('living',function(g){
-    // Cozy reading nook integrated into existing open-plan room.
-    var sofa=mat('livingSofa','#879d83');
-    box(g,1.76,.40,.94,sofa,-6.2,.43,.11);
-    box(g,1.76,.85,.25,sofa,-6.2,.88,-.28);
-    box(g,.23,.58,.91,sofa,-7.07,.68,.1);
-    box(g,.23,.58,.91,sofa,-5.33,.68,.1);
-    box(g,.77,.12,.62,mat('sofaThrow','#e5ceb1'),-6.2,.69,.2);
+    // The room extension adds its own lighting and side table.
+    // The sofa itself is controlled by Home Design, independently of the upgrade.
     cylinder(g,.11,.14,1.85,black,-4.95,1.0,-.95);
     ball(g,.31,.20,.31,mat('floorLamp','#f0dba9'),-4.95,1.93,-.95);
+    box(g,.58,.1,.53,woodDark,-4.75,.58,.15);
+    cylinder(g,.11,.11,.54,woodDark,-4.75,.29,.15);
   });
+
+  /* HOME_DESIGN_3D_V10 — real 3D furniture variants and materials, not UI-only color changes. */
+  var sofaVariants={},designLastKey='',designTextureCache={};
+  function makeSofa(id,color){
+    var g=new THREE.Group(),rounded=(id==='rust'||id==='boucle');
+    g.position.set(-6.20,0,.10);scene.add(g);
+    var fabric=new THREE.MeshStandardMaterial({color:color,roughness:id==='rust'?.68:.97,metalness:0,flatShading:!rounded});
+    var seams=mat('sofaSeams','#9d8d77'),cushion=mat('sofaCushion'+id,id==='starter'?'#e5d7c0':id==='navy'?'#8ea4b9':id==='rust'?'#e8b69d':id==='boucle'?'#d9c6a9':'#cddac8');
+    var width=id==='boucle'?2.35:id==='navy'?2.32:2.14,height=id==='boucle'?.47:.43;
+    box(g,width,height,1.05,fabric,0,.43,0);
+    box(g,width,.89,.27,fabric,0,.89,-.40);
+    for(var sx of [-1,1]){
+      if(rounded){
+       ball(g,.25,.38,.56,fabric,sx*(width/2-.04),.68,.03);
+       ball(g,.33,.23,.33,fabric,sx*.46,.81,.24);
+      }else box(g,.21,.59,.97,fabric,sx*(width/2-.075),.66,.03);
+    }
+    for(var sx of [-.5,.5]){
+      box(g,.87,.19,.68,rounded?fabric:cushion,sx,.72,.19);
+      box(g,.73,.39,.18,fabric,sx,1.09,-.24);
+    }
+    box(g,.22,.15,.22,seams,-width*.34,.11,-.28);
+    box(g,.22,.15,.22,seams,width*.34,.11,-.28);
+    if(id==='rust'||id==='navy'){
+      box(g,.38,.32,.16,cushion,.42,1.0,-.16).rotation.z=.15;
+      box(g,.38,.32,.16,cushion,-.43,1.0,-.16).rotation.z=-.18;
+    }
+    if(id==='boucle'){for(var z of [-.05,.34])for(var x of [-.62,0,.62])ball(g,.28,.09,.23,fabric,x,.88,z)}
+    g.visible=id==='starter';sofaVariants[id]=g;
+  }
+  [
+   ['starter','#bdb49c'],['sage','#8ca796'],['rust','#be7c67'],
+   ['navy','#667f9b'],['boucle','#f1e9d9']
+  ].forEach(function(p){makeSofa(p[0],p[1])});
+  function designTexture(kind,variant){
+   var key=kind+':'+variant;if(designTextureCache[key])return designTextureCache[key];
+   var map;
+   if(kind==='flooring'&&variant==='hex')return tile;
+   if(kind==='wallpaper'){
+     var palette={ivory:['#f6f1e6','#f3eee4'],sage:['#a9c0a7','#d1dcc7'],botanical:['#b7c7b1','#608964'],clay:['#ddbbab','#c88f7c'],blue:['#c5d6df','#9dbccb']};
+     var colors=palette[variant]||palette.ivory;
+     map=makeTexture(512,512,function(ctx,W,H){
+       ctx.fillStyle=colors[0];ctx.fillRect(0,0,W,H);
+       if(variant==='sage'){ctx.fillStyle=colors[1];for(var x=0;x<W;x+=34)ctx.fillRect(x,0,5,H)}
+       else if(variant==='botanical'){
+         ctx.strokeStyle=colors[1];ctx.lineWidth=5;
+         for(var y=-20;y<H;y+=92)for(var x=-30;x<W;x+=110){
+           ctx.beginPath();ctx.moveTo(x+40,y+75);ctx.quadraticCurveTo(x+65,y+50,x+70,y+7);ctx.stroke();
+           ctx.fillStyle=colors[1];
+           for(var i=0;i<4;i++){ctx.save();ctx.translate(x+54+(i%2?24:0),y+20+i*14);ctx.rotate((i%2?-.65:.65));ctx.beginPath();ctx.ellipse(0,0,17,7,0,0,Math.PI*2);ctx.fill();ctx.restore()}
+         }
+       }else if(variant==='clay'){for(var i=0;i<550;i++){var x=(i*79.13)%W,y=(i*39.71)%H;ctx.fillStyle=i%2?'#efdfce22':'#97674e12';ctx.fillRect(x,y,20+i%21,2+i%6)}}
+       else if(variant==='blue'){ctx.strokeStyle='#ffffff55';for(var y=0;y<H;y+=48){ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}}
+       else{ctx.fillStyle='#fff8';for(var y=0;y<H;y+=73)ctx.fillRect(0,y,W,2)}
+     });
+   }else if(kind==='flooring'){
+     map=makeTexture(1024,700,function(ctx,W,H){
+       if(variant==='oak'){
+         ctx.fillStyle='#b79570';ctx.fillRect(0,0,W,H);
+         for(var y=0;y<H;y+=66){ctx.fillStyle=y%132?'#ae8b68':'#bea17d';ctx.fillRect(0,y,W,64);ctx.strokeStyle='#8d715653';ctx.lineWidth=2;ctx.strokeRect(0,y,W,65)}
+         ctx.strokeStyle='#8c725b80';
+         for(var x=0;x<W;x+=180){for(var y=0;y<H;y+=132){ctx.beginPath();ctx.moveTo(x+(y%264?95:0),y);ctx.lineTo(x+(y%264?95:0),y+65);ctx.stroke()}}
+         for(var i=0;i<350;i++){var x=(i*83.17)%W,y=(i*53.41)%H;ctx.strokeStyle='#fff6e619';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+95,y);ctx.stroke()}
+       }else if(variant==='terrazzo'){
+         ctx.fillStyle='#dbd5c8';ctx.fillRect(0,0,W,H);
+         for(var i=0;i<2200;i++){var x=(i*37.31)%W,y=(i*119.13)%H;
+           ctx.fillStyle=['#bd9e8d','#a9bcb4','#e9e1d1','#bfc5c8','#c9b4a2'][i%5];
+           ctx.beginPath();ctx.ellipse(x,y,2+i%8,2+i%5,i*.29,0,7);ctx.fill()}
+       }else{
+         var size=87;
+         for(var y=0;y<H;y+=size)for(var x=0;x<W;x+=size){
+           ctx.fillStyle=((Math.floor(x/size)+Math.floor(y/size))%2)?'#9fb6a2':'#e3e0ce';
+           ctx.fillRect(x+2,y+2,size-4,size-4)
+         }
+       }
+     });
+   }else if(kind==='rug'||kind==='curtains'){
+     var palette=kind==='rug'?{linen:'#c9be9c',rose:'#b98786',forest:'#6c946f',blue:'#8db6c1'}:
+       {terracotta:'#bb7954',ivory:'#eee7d9',sage:'#94ab92',navy:'#718b9b'};
+     var color=palette[variant]||Object.values(palette)[0];
+     map=makeTexture(512,512,function(ctx,W,H){
+       ctx.fillStyle=color;ctx.fillRect(0,0,W,H);
+       ctx.strokeStyle='#ffffff43';ctx.lineWidth=2;
+       for(var x=0;x<W;x+=19){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+       for(var y=0;y<H;y+=28){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+       if(variant==='rose'||variant==='forest'){
+         ctx.strokeStyle='#fff6';ctx.lineWidth=4;
+         for(var x=40;x<W;x+=115)for(var y=30;y<H;y+=116){
+           ctx.beginPath();ctx.arc(x,y,12,0,Math.PI*2);ctx.stroke();
+           ctx.beginPath();ctx.moveTo(x-22,y+17);ctx.lineTo(x+20,y-18);ctx.stroke()
+         }
+       }
+     })
+   }
+   designTextureCache[key]=map;return map
+  }
+  function applyHomeDesign(next){
+    var chosen=Object.assign({sofa:'starter',wallpaper:'ivory',flooring:'hex',cabinets:'sage',rug:'linen',curtains:'terracotta'},next||{});
+    var key=JSON.stringify(chosen);if(key===designLastKey)return;
+    designLastKey=key;
+    Object.entries(sofaVariants).forEach(function(entry){entry[1].visible=entry[0]===chosen.sofa});
+    var wall=designTexture('wallpaper',chosen.wallpaper);
+    plaster.map=wall;plaster.color.set('#ffffff');plaster.needsUpdate=true;
+    floorMat.map=designTexture('flooring',chosen.flooring);floorMat.color.set('#ffffff');floorMat.needsUpdate=true;
+    var cabinetColors={sage:'#a5b8a4',cream:'#e2d4b8',forest:'#526c5c',blue:'#8daebc',clay:'#c28d7b'};
+    var color=cabinetColors[chosen.cabinets]||cabinetColors.sage;
+    mat('cabinet').color.set(color);mat('door').color.set(color);
+    var trim=new THREE.Color(color).multiplyScalar(1.055);
+    mat('cabinetPanel').color.copy(trim);
+    linen.map=designTexture('rug',chosen.rug);linen.color.set('#ffffff');linen.needsUpdate=true;
+    mat('rug').color.set({linen:'#8c9d68',rose:'#bd9391',forest:'#659278',blue:'#91aeb7'}[chosen.rug]||'#8c9d68');
+    if(homeCurtainMaterial){homeCurtainMaterial.map=designTexture('curtains',chosen.curtains);homeCurtainMaterial.needsUpdate=true}
+  }
+
   addUpgrade('garden',function(g){
     // Garden growth is visible through the existing window.
     for(var n=0;n<4;n++)plant(-7.7+n*1.65,1.92,-4.67,.64+(n%2)*.12,g);
@@ -398,6 +509,7 @@
     return group
   }
   rug(-5.5,3.1,3.2,2.1);
+  var homeCurtainMaterial=null;
   function littleCurtain(){
     var fabric=mat('fabric','#b97951',.98);
     var print=makeTexture(256,512,function(ctx,W,H){
@@ -408,7 +520,7 @@
         ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+6,y+7,x+3,y+13);ctx.stroke();
       }
     });
-    var cloth=new THREE.MeshStandardMaterial({map:print,side:THREE.DoubleSide,roughness:.99});
+    var cloth=new THREE.MeshStandardMaterial({map:print,side:THREE.DoubleSide,roughness:.99});homeCurtainMaterial=cloth;
     // Pleated café curtain on right side of window. Its folds catch the sunlight.
     for(var i=0;i<13;i++){
       var x=-1.30+i*.10,fold=Math.cos(i*Math.PI)*.10;
@@ -809,6 +921,7 @@
   }
   function refresh(state){
     for(var id in upgrades)upgrades[id].visible=(state.owned||[]).includes(id);
+    applyHomeDesign(state.homeDesign);
     ['self','partner'].forEach(function(key){
       var model=actors[key],kind=key==='self'?state.avatarSelf:state.avatarPartner;
       if(model&&model.sideHair)model.sideHair.forEach(function(o){o.visible=kind==='f'});
@@ -842,7 +955,7 @@
     if(host.classList.contains('is-ready'))renderer.render(scene,camera);
   }
   window.Evin3D={
-    focus:focus,reset:resetCamera,zoom:adjustZoom,select:setTarget,isReady:true,
+    focus:focus,reset:resetCamera,zoom:adjustZoom,select:setTarget,applyDesign:applyHomeDesign,isReady:true,
     destroy:function(){living=false;ro.disconnect();renderer.dispose();host.replaceChildren()}
   };
   host.dataset.status='ready';
