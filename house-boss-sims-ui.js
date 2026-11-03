@@ -8,6 +8,13 @@
  const q=s=>game.querySelector(s),qa=s=>Array.from(game.querySelectorAll(s));
  let currentPanel='',lastSheetAt=0,portraitFingerprint='',lastQueueSignature='',lastStatusKey='';
  const names={self:'You',partner:'Partner',kid:'Kid',pet:'Dog'};
+ /* COMPACT_NEEDS_RENDER_V5 — fast contextual care and small nonmodal sheet */
+ const careActions={
+   self:{hunger:'snack',energy:'nap',hygiene:'shower',bladder:'toilet',fun:'tv',social:'talk'},
+   partner:{hunger:'snack',energy:'nap',hygiene:'shower',bladder:'toilet',fun:'tv',social:'talk'},
+   kid:{hunger:'snack',energy:'nap',hygiene:'shower',bladder:'toilet',fun:'tv',social:'talk'},
+   pet:{hunger:'dogfood',energy:'dognap',hygiene:'groom',bladder:'dogplay',fun:'dogplay',social:'dogplay'}
+ };
  const needNames={hunger:'Hunger',energy:'Energy',hygiene:'Hygiene',bladder:'Bladder',fun:'Fun',social:'Social'};
  const symbols={hunger:'◈',energy:'☾',hygiene:'◉',bladder:'◧',fun:'♫',social:'♡'};
  const actionDescription={
@@ -17,12 +24,12 @@
    study:'Work hard on your Logic skill.',paint:'Make something creative.',exercise:'Train and improve Fitness.',
    dance:'Move around and have fun.',clean:'Improve House Peace and tidy up.',laundry:'Keep the house running.',
    computer:'Practice creativity on the computer.',homework:'Learn something new.',playdog:'Play with your companion.',
-   feedpet:'A happy dog is a well-fed dog.',dogfood:'Dinner time.',dognap:'A proper dog nap.',dogplay:'A little adventure.'
+   feedpet:'A happy dog is a well-fed dog.',dogfood:'Dinner time.',dognap:'A proper dog nap.',dogplay:'A little adventure.',groom:'A clean, happy dog.'
  };
  const actions={
-   needs:{self:['cook','snack','shower','toilet','sleep','tv'],partner:['cook','snack','shower','toilet','nap','talk'],kid:['snack','shower','toilet','nap','tv','homework'],pet:['dogfood','dognap','dogplay']},
-   social:{self:['talk','playdog','dance','tv'],partner:['talk','playdog','dance'],kid:['talk','playdog','dance'],pet:['dogplay','dognap']},
-   skills:{self:['cook','read','study','paint','exercise','computer'],partner:['cook','read','paint','exercise'],kid:['homework','read','paint','exercise'],pet:['dogplay']},
+   needs:{self:['cook','snack','shower','toilet','sleep','tv'],partner:['cook','snack','shower','toilet','nap','talk'],kid:['snack','shower','toilet','nap','tv','homework'],pet:['dogfood','dognap','groom','dogplay']},
+   social:{self:['talk','playdog','dance','tv'],partner:['talk','playdog','dance'],kid:['talk','playdog','dance'],pet:['dogplay','groom','dognap']},
+   skills:{self:['cook','read','study','paint','exercise','computer'],partner:['cook','read','paint','exercise'],kid:['homework','read','paint','exercise'],pet:['groom','dogplay']},
    station:{
      stove:['cook','snack','clean'],
      sink:['shower','clean','laundry'],
@@ -31,7 +38,7 @@
      kid:['homework','read','talk','nap'],
      floor:['exercise','dance','clean'],
      laundry:['laundry','shower','toilet'],
-     pet:['feedpet','playdog','dogfood','dognap','dogplay']
+     pet:['feedpet','playdog','dogfood','dognap','groom','dogplay']
    }
  };
  function escapeText(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -77,7 +84,7 @@
     study:'Study Logic',paint:'Make Art',exercise:'Exercise',dance:'Dance',
     clean:'Clean the Kitchen',laundry:'Do Laundry',computer:'Use Computer',
     homework:'Do Homework',playdog:'Play with Dog',feedpet:'Feed Dog',
-    dogfood:'Eat',dognap:'Sleep',dogplay:'Explore'};
+    dogfood:'Eat',dognap:'Sleep',dogplay:'Explore',groom:'Brush Dog'};
    name=labels[id]||name;
    return '<button type="button" class="ss-action" data-sd-action="'+id+'" data-for="'+who+'">'+
      '<b>'+escapeText(name)+'</b><small>'+escapeText(actionDescription[id]||'')+'</small></button>'
@@ -94,6 +101,7 @@
    if(s.isTown){closePanel();return}
    if(currentPanel===panel&&!sheet.hidden){closePanel();return}
    currentPanel=panel;sheet.hidden=false;dismissObject();
+   B.closeChores?.();
    dock.querySelectorAll('[data-sd-panel]').forEach(b=>b.classList.toggle('active',b.dataset.sdPanel===panel));
    renderSheet()
  }
@@ -105,14 +113,25 @@
    )+'</b><button class="ss-close" type="button" data-sd-close aria-label="Close">×</button></div>';
    let body='';
    if(currentPanel==='needs'){
-     body='<p class="ss-muted">Care for '+names[who]+'. Needs change as the game clock runs. Low needs affect mood.</p>';
-     for(const [need,name] of Object.entries(needNames)){
-       const value=percent(p[need]);
-       body+='<div class="ss-row"><div style="display:flex;justify-content:space-between"><b>'+name+'</b><span>'+value+'%</span></div>'+
-         '<div class="ss-progress"><i style="width:'+value+'%;background:'+(value<25?'#d47767':value<50?'#d5a160':'#7fac73')+'"></i></div></div>'
-     }
-     body+='<p class="ss-muted" style="margin-top:12px">Suggested actions</p><div class="ss-grid">'+actions.needs[who].map(id=>actionButton(id,who)).join('')+'</div>';
-   }else if(currentPanel==='social'){
+      body='<p class="ss-muted">'+names[who]+' · Tap any need to add its care action to the queue.</p>';
+      body+='<div class="ss-need-grid">';
+      for(const [need,name] of Object.entries(needNames)){
+        const value=percent(p[need]),care=careActions[who][need];
+        const moodClass=value<25?'critical':value<45?'low':'';
+        body+='<button type="button" class="ss-need-card '+moodClass+'" data-sd-care="'+care+'" data-for="'+who+'" title="Care for '+name+'">'+
+          '<div class="ss-need-line"><span>'+symbols[need]+' '+name+'</span><strong>'+value+'%</strong></div>'+
+          '<span class="ss-progress"><i style="width:'+value+'%"></i></span></button>';
+      }
+      body+='</div><div class="ss-section-heading"><span>QUICK ACTIONS</span><small>Tap to start or queue</small></div>';
+      const priorities=Object.keys(needNames).sort((a,b)=>percent(p[a])-percent(p[b]));
+      const shown=[];
+      for(const need of priorities){
+        const id=careActions[who][need];
+        if(!shown.includes(id))shown.push(id);
+        if(shown.length===4)break;
+      }
+      body+='<div class="ss-grid">'+shown.map(id=>actionButton(id,who)).join('')+'</div>';
+    }else if(currentPanel==='social'){
      body='<p class="ss-muted">Spend time with family and neighbors to build lasting bonds.</p>';
      body+='<div class="ss-row"><b>Partner relationship</b> <strong style="float:right">'+s.relationships.partner+'%</strong><div class="ss-progress"><i style="width:'+s.relationships.partner+'%"></i></div></div>';
      body+='<div class="ss-row"><b>Kid trust</b> <strong style="float:right">'+s.relationships.kid+'%</strong><div class="ss-progress"><i style="width:'+s.relationships.kid+'%"></i></div></div>';
@@ -144,8 +163,8 @@
  function openObjectMenu(spot,mouseX,mouseY){
    const s=B.getState();if(!s.started||s.ended||s.isTown)return;
    const who=s.selected,options=actions.station[spot]||['talk','read','clean'];
-   const allowed=options.filter(id=>who==='pet'?['dogfood','dognap','dogplay'].includes(id):
-       !['dogfood','dognap','dogplay'].includes(id));
+   const allowed=options.filter(id=>who==='pet'?['dogfood','dognap','groom','dogplay'].includes(id):
+       !['dogfood','dognap','groom','dogplay'].includes(id));
    if(!allowed.length)return;
    closePanel();
    const title={stove:'Stove & Kitchen',sink:'Sink & Counter',table:'Dining Table',desk:'Office Corner',kid:'Kids’ Corner',floor:'Open Floor',laundry:'Laundry & Bathroom',pet:'Dog’s Corner'}[spot]||'Household Object';
@@ -167,7 +186,7 @@
    if(html!==lastQueueSignature){lastQueueSignature=html;q('#simQueue').innerHTML=html}
  }
  function actionNames(id){
-   const map={cook:'Cooking',snack:'Eating',shower:'Shower',toilet:'Bathroom',sleep:'Sleeping',nap:'Resting',tv:'Watching TV',talk:'Talking',read:'Reading',study:'Studying',paint:'Making Art',exercise:'Exercising',dance:'Dancing',clean:'Cleaning',laundry:'Laundry',computer:'Computer',homework:'Homework',playdog:'Playing',feedpet:'Feeding Dog',dogfood:'Eating',dognap:'Napping',dogplay:'Exploring'};
+   const map={cook:'Cooking',snack:'Eating',shower:'Shower',toilet:'Bathroom',sleep:'Sleeping',nap:'Resting',tv:'Watching TV',talk:'Talking',read:'Reading',study:'Studying',paint:'Making Art',exercise:'Exercising',dance:'Dancing',clean:'Cleaning',laundry:'Laundry',computer:'Computer',homework:'Homework',playdog:'Playing',feedpet:'Feeding Dog',dogfood:'Eating',dognap:'Napping',dogplay:'Exploring',groom:'Being Groomed'};
    return map[id]||id
  }
  function refreshNow(){
@@ -211,6 +230,7 @@
    const b=e.target.closest('button');if(!b)return;
    if(b.hasAttribute('data-sd-close')){closePanel();return}
    if(b.dataset.sdAsp){B.chooseAspiration(b.dataset.sdAsp);renderSheet();refreshNow();return}
+   if(b.dataset.sdCare){B.action(b.dataset.sdCare,b.dataset.for);refreshNow();renderSheet();return}
    if(b.hasAttribute('data-sd-manage-family')){closePanel();B.openFamily();return}
    if(b.dataset.sdAction){B.action(b.dataset.sdAction,b.dataset.for);refreshNow();renderSheet()}
  });
