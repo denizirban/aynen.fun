@@ -1,15 +1,29 @@
-/* Evin Patronu — real-time kitchen scene. Three.js r161, no 3D asset downloads.
-   Preserves gameplay in evin-patronu.html; gracefully falls back to SVG. */
+/* House Boss — always-on 3D household scene.
+   The existing save/simulation is authoritative; no 2D mode.
+   Optional WebGL failure is displayed rather than silently switching rendering modes. */
 (async function () {
   var host = document.getElementById('kitchen3d');
   if (!host) return;
+  function show3DUnavailable(reason){
+    host.dataset.status='unavailable';
+    host.classList.remove('is-ready');
+    host.replaceChildren();
+    var section=document.createElement('section');
+    section.className='hb-3d-error';section.setAttribute('role','alert');
+    var title=document.createElement('h2');title.textContent='3D World Unavailable';
+    var message=document.createElement('p');
+    message.textContent='House Boss uses a 3D world. Enable hardware acceleration/WebGL in your browser, then try again.';
+    var retry=document.createElement('button');retry.type='button';retry.textContent='RELOAD 3D WORLD';
+    retry.onclick=function(){location.reload()};
+    section.append(title,message,retry);host.appendChild(section);
+    console.error('House Boss 3D error:',reason)
+  }
   var THREE;
   try {
     THREE = await import('https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js');
     if (!window.WebGLRenderingContext) throw new Error('WebGL unavailable');
   } catch (e) {
-    host.dataset.status = 'fallback';
-    console.warn('Evin Patronu 3D unavailable; using original scene.', e);
+    show3DUnavailable(e);
     return;
   }
   var scene = new THREE.Scene();
@@ -19,8 +33,7 @@
   try {
     renderer = new THREE.WebGLRenderer({antialias: !mobile,alpha:false,powerPreference: mobile ? 'low-power':'high-performance'});
   } catch (e) {
-    host.dataset.status = 'fallback';
-    console.warn('WebGL renderer unavailable',e);
+    show3DUnavailable(e);
     return;
   }
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1,mobile?1.35:1.8));
@@ -576,9 +589,18 @@
     for(var it of intersections){var o=it.object.userData.owner;if(o&&(o.userData.station||o.userData.person))return o}
     return null
   }
+    var walkingGround=new THREE.Plane(new THREE.Vector3(0,1,0),0);
+  var walkingIntersection=new THREE.Vector3();
+  function walkIn3D(e){
+    normalized(e);raycaster.setFromCamera(pointer,camera);
+    if(!raycaster.ray.intersectPlane(walkingGround,walkingIntersection))return;
+    if(walkingIntersection.x<-6.15||walkingIntersection.x>6.15||walkingIntersection.z<-4.7||walkingIntersection.z>5.3)return;
+    window.EvinKitchenBridge?.walkTo?.(walkingIntersection.x,walkingIntersection.z)
+  }
+
   function activate(e){
     var target=getHit(e);
-    if(!target)return;
+    if(!target){walkIn3D(e);return}
     if(target.userData.person){
       var p=target.userData.person;
       if(window.EvinKitchenBridge&&window.EvinKitchenBridge.selectPerson)window.EvinKitchenBridge.selectPerson(p)
@@ -696,19 +718,21 @@
   }
   window.Evin3D={
     focus:focus,reset:resetCamera,zoom:adjustZoom,select:setTarget,isReady:true,
-    setEnabled:function(on){
-      this.isReady=Boolean(on);
-      host.classList.toggle('is-ready',Boolean(on));
-      document.getElementById('game').classList.toggle('scene-3d-ready',Boolean(on));
-      var button=document.getElementById('visualMode');
-      if(button){button.hidden=false;button.textContent=on?'3D':'2D';button.setAttribute('aria-label',on?'3D scene enabled; switch to 2D':'2D scene enabled; switch to 3D');}
-      try{localStorage.setItem('evin-patronu:scene-mode',on?'3d':'2d')}catch(e){}
-    },
     destroy:function(){living=false;ro.disconnect();renderer.dispose();host.replaceChildren()}
   };
   host.dataset.status='ready';
-  var enable3D=true;
-  try{enable3D=localStorage.getItem('evin-patronu:scene-mode')!=='2d'}catch(e){}
-  window.Evin3D.setEnabled(enable3D);
+  host.classList.add('is-ready');
+  document.getElementById('game')?.classList.add('scene-3d-ready');
+  try{localStorage.removeItem('evin-patronu:scene-mode')}catch(e){}
   animate();
-})().catch(function(err){console.error('Evin Patronu 3D scene failed',err);var host=document.getElementById('kitchen3d');if(host){host.classList.remove('is-ready');host.dataset.status='fallback';}});
+})().catch(function(err){
+  console.error('House Boss 3D world failed',err);
+  var host=document.getElementById('kitchen3d');if(!host)return;
+  host.classList.remove('is-ready');host.dataset.status='unavailable';
+  host.replaceChildren();
+  var panel=document.createElement('section');panel.className='hb-3d-error';panel.setAttribute('role','alert');
+  var h=document.createElement('h2');h.textContent='3D World Unavailable';
+  var p=document.createElement('p');p.textContent='Please enable WebGL / hardware acceleration and reload the game.';
+  var retry=document.createElement('button');retry.textContent='RELOAD 3D WORLD';retry.onclick=function(){location.reload()};
+  panel.append(h,p,retry);host.appendChild(panel);
+});
