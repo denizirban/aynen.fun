@@ -51,16 +51,17 @@ function selectedStyle(cat){let st=state();return st.selected?.[cat]||catalog[ca
 function owned(cat,id){return !!state().unlocked?.[cat]?.includes(id)||id===catalog[cat].options[0][0]}
 function effective(){return Object.fromEntries(Object.keys(catalog).map(k=>[k,preview?.category===k?preview.id:selectedStyle(k)]))}
 function updateScene(){window.Evin3D?.applyDesign?.(effective())}
-function clearPreview(){preview=null;bridge()?.preview?.(null,null);updateScene()}
+function clearPreview(){window.HouseBossFurnitureUI?.clear?.();preview=null;bridge()?.preview?.(null,null);updateScene()}
 function render(){
  let root=document.getElementById('noteBody');
  if(!root)return;
+ if(category==='furniture'){window.HouseBossFurnitureUI?.render?.();return}
  const st=state(),data=catalog[category],active=preview?.category===category?preview.id:selectedStyle(category);
  const section=document.getElementById('notebook');section?.classList.toggle('design-mode',true);
  const title=document.getElementById('noteTitle');if(title)title.textContent='Home Design';
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+Math.floor(st.cash)+' · Property value $'+(st.value||0);
  let html='<div class="hd-lead"><span class="hd-kicker">YOUR HOME, YOUR STYLE</span><p>Change finishes and furniture in your 3D home. Tap to preview before buying.</p></div>';
- html+='<nav class="hd-categories" aria-label="Design categories">'+Object.entries(catalog).map(([k,v])=>'<button type="button" data-hd-category="'+k+'" class="'+(k===category?'active':'')+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>';
+ html+='<nav class="hd-categories" aria-label="Design categories"><button type="button" data-hd-category="furniture"><span>▣</span>Furniture</button>'+Object.entries(catalog).map(([k,v])=>'<button type="button" data-hd-category="'+k+'" class="'+(k===category?'active':'')+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>';
  html+='<div class="hd-collection"><div><h3>'+data.label+'</h3><small>'+data.description+'</small></div><button type="button" data-hd-focus>VIEW IN 3D ↗</button></div>';
  html+='<div class="hd-options">'+data.options.map(opt=>{
   const [id,name,price,color,desc]=opt,isActive=selectedStyle(category)===id,isOwned=owned(category,id),isShowing=active===id;
@@ -111,7 +112,7 @@ function install(){
  oldTabs.forEach(b=>b.addEventListener('click',()=>{
   clearPreview();document.getElementById('notebook')?.classList.remove('design-mode');
  },true));
- window.HouseBossHomeDesign={render,clearPreview,effective,catalog,selectCategory(k){if(catalog[k]){clearPreview();category=k;render()}}};
+ window.HouseBossHomeDesign={render,clearPreview,effective,catalog,selectCategory(k){if(k==='furniture'||catalog[k]){clearPreview();category=k;render()}}};
 }
 install();
 })();
