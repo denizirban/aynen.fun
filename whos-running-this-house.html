@@ -2174,6 +2174,12 @@ function simBegin(who,id){
  var duration=Math.max(8,Math.round(a.duration*(1-Math.min(.32,(skillLevel-1)*.035))*(moodTone==='bad'?1.20:1)*(simTraits[trait].skills.includes(a.skill)? .91:1)));
  simConsumeSupplies(a);
  s.active[who]={id:id,left:duration,total:duration,spot:a.spot,quality:moodTone==='bad'?.85:moodTone==='inspired'?1.12:1,started:simClock()};
+ // A queued interaction remembers the furniture that was clicked.
+ var furnRequests=s.furnitureTargetQueues&&s.furnitureTargetQueues[who];
+ if(furnRequests&&furnRequests.length){
+  var requestIndex=furnRequests.findIndex(function(f){return f.id===id&&ensureHomeFurniture().some(function(o){return o.uid===f.uid})});
+  if(requestIndex>=0)s.active[who].furnitureUid=furnRequests.splice(requestIndex,1)[0].uid
+ }
  if(who==='self'&&points[a.spot])posTarget=points[a.spot].slice();
  if(s.walkTargets)s.walkTargets[who]=null;
  message((who==='self'?'You':who==='partner'?'Partner':who==='kid'?'Kid':'Dog')+' started: '+a.name+'.');
@@ -2707,7 +2713,17 @@ function homeFurnitureInteract(uid){
  if(!meta)return false;
  var who=meta.action==='dognap'?'pet':simState().selected;
  if(who==='pet'&&meta.action!=='dognap')who='self';
- return simQueueAction(meta.action,who)
+ var busyBefore=simBusy(who);
+ var ok=simQueueAction(meta.action,who);
+ if(!ok)return false;
+ var state=simState();
+ if(!busyBefore&&state.active[who]?.id===meta.action)state.active[who].furnitureUid=uid;
+ else{
+  if(!state.furnitureTargetQueues)state.furnitureTargetQueues={self:[],partner:[],kid:[],pet:[]};
+  if(!Array.isArray(state.furnitureTargetQueues[who]))state.furnitureTargetQueues[who]=[];
+  state.furnitureTargetQueues[who].push({id:meta.action,uid:uid})
+ }
+ saveGame();return true
 }
 function homeFurnitureBonus(who,action,p){
  var items=ensureHomeFurniture(),has=function(t){return items.some(function(o){return o.type===t})};
@@ -2741,6 +2757,7 @@ window.EvinKitchenBridge={
    simActions:{self:simState().active.self&&simState().active.self.id||null,partner:simState().active.partner&&simState().active.partner.id||null,kid:simState().active.kid&&simState().active.kid.id||null,pet:simState().active.pet&&simState().active.pet.id||null},
    simSocialTargets:{self:simState().active.self&&simActions[simState().active.self.id]?.socialTarget||null,partner:simState().active.partner&&simActions[simState().active.partner.id]?.socialTarget||null,kid:simState().active.kid&&simActions[simState().active.kid.id]?.socialTarget||null},
    simWalkTargets:simEnsurePro().walkTargets,
+   simFurnitureTargets:{self:simState().active.self?.furnitureUid||null,partner:simState().active.partner?.furnitureUid||null,kid:simState().active.kid?.furnitureUid||null,pet:simState().active.pet?.furnitureUid||null},
    simPetActivity:simState().active.pet&&simState().active.pet.id||null,
    focusSpot:selected&&find(selected)&&find(selected).spot||null
  }},
