@@ -1607,9 +1607,10 @@ function townSkillGain(name,xp){
 function beginOuting(id){
  var a=townActivities.find(x=>x.id===id);
  if(!a||!started||ended)return;
- if(life.shift||life.outing||life.activity||current)return message('Finish your current activity first.');
+ if(life.shift||life.outing||life.activity)return message('Finish your current activity first.');
  if(energy<a.energy+12)return message('You need more energy. Take a rest at home.');
  if(cash<a.cost)return message('Not enough money. Try a paid shift.');
+ if(current){if(!selfQueue.includes(current.id))selfQueue.unshift(current.id);current=null;}
  townResumeIfNeeded();
  cash-=a.cost;life.outing={id:a.id,left:a.minutes,total:a.minutes};
  message('On your way: '+a.name+'.');lifeTownRender(true);saveGame()
@@ -1624,7 +1625,7 @@ function finishOuting(){
  if(a.creative)townSkillGain('creativity',a.creative);
  if(a.id==='coffee')friendship=clamp(friendship+4);
  if(a.id==='walk')petEnergy=clamp(petEnergy+12);
- grantXp(9);message(a.name+' completed. New memories made.');lifeTownRender(true);saveGame()
+ grantXp(9);startSelf();message(a.name+' completed. New memories made.');lifeTownRender(true);saveGame()
 }
 function townStatus(j,who){
  var partner=who==='partner',lvl=partner?life.partnerCareerLevel:life.careerLevel,
@@ -1707,7 +1708,7 @@ function lifeBeginShift(id,who){
 
 function lifeWorkChoice(action){
  var sh=life.shift;if(!sh||!started)return message('Start a shift first.');
- if(time-(sh.lastChoice||-999)<35)return message('You have just made a work decision. Give it some time.');
+ if(day*1440+time-(sh.lastChoiceTick??-99999)<35)return message('You have just made a work decision. Give it some time.');
  if(action==='focus'){
    sh.performance=clamp((sh.performance??50)+12);
    sh.left=Math.max(1,sh.left-16);
@@ -1722,7 +1723,7 @@ function lifeWorkChoice(action){
    sh.left+=9;energy=clamp(energy+11);
    message('Short break · energy restored.');
  }else return;
- sh.lastChoice=time;lifeTownRender(true);saveGame()
+ sh.lastChoiceTick=day*1440+time;lifeTownRender(true);saveGame()
 }
 
 function lifeFinishShift(who){
@@ -1836,7 +1837,7 @@ function lifeTownRender(force){
  if(life.shift){
   var active=lifeJobs.find(function(j){return j.id===life.shift.id});
   html+='<div class="townJob chosen"><div class="jobName"><span>◷</span><b>YOU ARE WORKING · '+(active?active.title:'SHIFT')+'</b></div><small>'+Math.max(0,Math.ceil(life.shift.left))+' game min to payday</small><div class="townBar"><i style="width:'+Math.max(0,Math.min(100,100-100*life.shift.left/life.shift.total))+'%"></i></div></div>';
-  var canAct=time-(life.shift.lastChoice||-999)>=35;
+  var canAct=day*1440+time-(life.shift.lastChoiceTick??-99999)>=35;
   html+='<div class="townJob"><b>WORK PERFORMANCE · '+Math.round(life.shift.performance??50)+'%</b><small>Decisions change your wage, mood and energy.</small><div class="jobBtns" style="grid-template-columns:repeat(3,1fr)"><button data-shift-choice="focus" '+(!canAct?'disabled':'')+'>FOCUS</button><button data-shift-choice="socialize" '+(!canAct?'disabled':'')+'>TALK</button><button data-shift-choice="break" '+(!canAct?'disabled':'')+'>BREAK</button></div></div>';
  }
  if(life.pShift){
@@ -1873,7 +1874,7 @@ function lifeTownRender(force){
   var selected=townActivities.filter(function(a){return place==='all'||a.place===place});
   if(!selected.length)selected=townActivities;
   html+=selected.map(function(a){
-   var busy=!!life.shift||!!life.outing||!!life.activity||!!current;
+   var busy=!!life.shift||!!life.outing||!!life.activity;
    return '<article class="townActivity"><div><b>'+a.name+'</b><small>'+a.desc+' · '+a.minutes+' min · '+(a.cost?'$'+a.cost:'FREE')+'</small></div>'+
      '<button data-town-activity="'+a.id+'" '+(busy||cash<a.cost||energy<a.energy+12?'disabled':'')+'>GO</button></article>'
   }).join('');
