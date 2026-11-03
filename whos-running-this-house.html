@@ -1687,8 +1687,26 @@ upgradeCatalog.push.apply(upgradeCatalog,lifeHomeProjects);
 lifeJobs.push(
  {id:'senior',title:'Senior Designer',where:'Creative Studio',mins:280,pay:760,level:7,energy:32,partner:true},
  {id:'director',title:'Creative Director',where:'Central Office',mins:310,pay:1160,level:9,energy:36,partner:true},
- {id:'founder',title:'Studio Founder',where:'Central Office',mins:350,pay:1880,level:12,energy:42,partner:true}
+ {id:'founder',title:'Studio Founder',where:'Central Office',mins:350,pay:1880,level:12,energy:42,partner:true},
+ {id:'leadbarista',title:'Head Barista',where:'Corner Café',mins:205,pay:285,level:3,energy:24,partner:true},
+ {id:'hospitality',title:'Hospitality Manager',where:'Corner Café',mins:275,pay:610,level:6,energy:30,partner:true},
+ {id:'hoteldirector',title:'Hotel Director',where:'Central Office',mins:315,pay:1410,level:10,energy:36,partner:true},
+ {id:'merchandiser',title:'Merchandising Planner',where:'Market',mins:225,pay:340,level:3,energy:24,partner:true},
+ {id:'operations',title:'Operations Lead',where:'Delivery Depot',mins:285,pay:650,level:6,energy:33,partner:true},
+ {id:'regional',title:'Regional Director',where:'Central Office',mins:325,pay:1490,level:10,energy:38,partner:true}
 );
+var careerTrackIds={creative:['studio','manager','senior','director','founder'],business:['shop','deliver','merchandiser','operations','regional'],hospitality:['walk','cafe','leadbarista','hospitality','hoteldirector']};
+lifeJobs.forEach(function(j){j.track=Object.keys(careerTrackIds).find(function(k){return careerTrackIds[k].includes(j.id)})||'creative'});
+function currentCareerFocus(){return careerTrackIds[life.careerFocus]?life.careerFocus:'creative'}
+function setCareerFocus(focus){
+ if(!started||ended||!careerTrackIds[focus])return false;
+ if(currentCareerFocus()===focus)return true;
+ if(life.focusChangedDay===day){message('Choose a new specialty tomorrow.');return false}
+ life.careerFocus=focus;life.focusChangedDay=day;
+ simMemory('career','New career direction',focus+' specialization selected.');
+ message('Career direction: '+focus.toUpperCase()+' · 12% extra pay and experience in this field.');
+ lifeTownRender(true);saveGame();return true
+}
 function lifeSkill(partner){return Math.min(12,1+Math.floor((partner?life.partnerCareerXp:life.careerXp)/125))}
 function careerRank(v){return v>=12?'FOUNDER':v>=9?'DIRECTOR':v>=7?'SENIOR PROFESSIONAL':v>=5?'MANAGER':v>=3?'SPECIALIST':v>=2?'ASSOCIATE':'ENTRY LEVEL'}
 function careerPromotion(who,previous){
@@ -1759,6 +1777,10 @@ function townStatus(j,who){
      e=partner?partnerEnergy:energy;
  if(partner&&!j.partner)return 'Unavailable';
  if(lvl<j.level)return 'Career LVL '+j.level+' required';
+ if(!partner&&j.level>=5){
+  var key=j.track==='creative'?'creativity':'social',need=j.level>=9?3:2;
+  if(townSkillValue(key)<need)return key.toUpperCase()+' LVL '+need+' required';
+ }
  if(busy)return 'Currently busy';
  if(e<j.energy+10)return 'Rest first';
  return ''
@@ -1798,6 +1820,7 @@ function lifeInstall(){
   if(b.dataset.townHome!==undefined){leaveTown();return}
   if(b.dataset.townPlace){townPickVenue(b.dataset.townPlace);return}
   if(b.dataset.townTab){life.townTab=b.dataset.townTab;lifeTownRender(true);return}
+  if(b.dataset.hbFocus){setCareerFocus(b.dataset.hbFocus);return}
   if(b.dataset.lifeJob){lifeBeginShift(b.dataset.lifeJob,b.dataset.who||'self');return}
   if(b.dataset.shiftChoice){lifeWorkChoice(b.dataset.shiftChoice);return}
   if(b.dataset.townActivity){beginOuting(b.dataset.townActivity);return}
@@ -1860,9 +1883,10 @@ function lifeFinishShift(who){
  var moodTone=simMood(p?'partner':'self').tone;
  var previousCareer=p?life.partnerCareerLevel:life.careerLevel;
  var moodFactor=moodTone==='bad'?.86:moodTone==='tense'?.94:moodTone==='inspired'?1.09:moodTone==='happy'?1.05:1;
- var pay=Math.round(j.pay*factor*moodFactor*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;simCollectWages(pay);simWishProgress('work');simMemory('career','Payday',j.title+' · +$'+pay);
- if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2);startPartner()}
- else {energy=clamp(energy-j.energy);life.careerXp+=48;life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25);townSkillGain(j.id==='studio'||j.id==='manager'?'creativity':j.id==='walk'||j.id==='deliver'?'fitness':'social',12);startSelf()}
+ var specialty=j.track===currentCareerFocus(),bonus=specialty?1.12:1;
+ var pay=Math.round(j.pay*factor*moodFactor*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1)*bonus);cash+=pay;simCollectWages(pay);simWishProgress('work');simMemory('career','Payday',j.title+' · +$'+pay);
+ if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45+(specialty?12:0);life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2);startPartner()}
+ else {energy=clamp(energy-j.energy);life.careerXp+=48+(specialty?12:0);life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25);townSkillGain(j.id==='studio'||j.id==='manager'?'creativity':j.id==='walk'||j.id==='deliver'?'fitness':'social',12);startSelf()}
  if(!careerPromotion(p?'partner':'self',previousCareer)){floatReward('PAYDAY +$'+pay);message((p?'Partner':'You')+' earned $'+pay+'.')}saveGame()
 }
 function lifeBeginActivity(kind){
@@ -2408,7 +2432,7 @@ function lifeTownRender(force){
  $('#player').style.opacity=(life.shift||life.outing)?'.12':'1';$('#partnerActor').style.opacity=life.pShift?'.12':'1';
  $('#kidActor').style.opacity=kidAtSchool()?'.12':'1';
  if(!started||!visible)return;
- var key=[Math.floor(time/5),paused,life.townTab,life.selectedPlace,life.careerLevel,life.partnerCareerLevel,life.shift&&life.shift.id,life.pShift&&life.pShift.id,life.outing&&life.outing.id,
+ var key=[Math.floor(time/5),paused,life.townTab,life.selectedPlace,currentCareerFocus(),life.careerLevel,life.partnerCareerLevel,life.shift&&life.shift.id,life.pShift&&life.pShift.id,life.outing&&life.outing.id,
           Math.floor(energy/5),Math.floor(partnerEnergy/5),Math.floor(life.hunger/5),Math.floor(life.fun/5),Math.floor(cash),life.contacts||0].join('|');
  if(!force&&key===townLastKey)return;townLastKey=key;
  layer.querySelectorAll('[data-town-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.townTab===(life.townTab||'work'))});
@@ -2416,7 +2440,8 @@ function lifeTownRender(force){
  var nextCareerXp=125,progressXp=(life.careerXp||0)%125;
  html+='<section class="hb-career-track"><div class="hb-career-heading"><div><small>CAREER PATH</small><strong>'+careerRank(life.careerLevel)+'</strong></div><span>LVL '+life.careerLevel+' / 12</span></div>'+
   '<div class="hb-career-bar"><i style="width:'+(life.careerLevel>=12?100:Math.min(100,Math.round(100*progressXp/nextCareerXp)))+'%"></i></div>'+
-  '<p>'+(life.careerLevel>=12?'You reached the top of the career ladder.':'Earn '+Math.max(0,nextCareerXp-progressXp)+' more career XP to your next promotion.')+' Better jobs will fund your dream home.</p></section>';
+  '<p>'+(life.careerLevel>=12?'You reached the top of the career ladder.':'Earn '+Math.max(0,nextCareerXp-progressXp)+' more career XP to your next promotion.')+' Specialize to earn more.</p></section>';
+ html+='<div class="hb-career-choices"><span>YOUR CAREER DIRECTION</span><div>'+Object.entries({creative:'DESIGN & TECH',business:'BUSINESS',hospitality:'HOSPITALITY'}).map(function(e){return '<button type="button" data-hb-focus="'+e[0]+'" class="'+(currentCareerFocus()===e[0]?'active':'')+'" '+(life.focusChangedDay===day&&currentCareerFocus()!==e[0]?'disabled':'')+'>'+e[1]+'</button>'}).join('')+'</div><small>Selected field · +12% pay · +12 career XP on matching shifts. Change once per day.</small></div>';
  if(life.shift){
   var active=lifeJobs.find(function(j){return j.id===life.shift.id});
   html+='<div class="townJob chosen"><div class="jobName"><span>◷</span><b>YOU ARE WORKING · '+(active?active.title:'SHIFT')+'</b></div><small>'+Math.max(0,Math.ceil(life.shift.left))+' game min to payday</small><div class="townBar"><i style="width:'+Math.max(0,Math.min(100,100-100*life.shift.left/life.shift.total))+'%"></i></div></div>';
@@ -2436,17 +2461,17 @@ function lifeTownRender(force){
   html+='<div class="townSectionLabel">CHOOSE YOUR SHIFT</div>';
   var display=lifeJobs.filter(function(j){
    if(place==='all')return true;
-   var map={park:['walk'],cafe:['cafe'],market:['shop'],delivery:['deliver'],studio:['studio','senior'],office:['manager','director','founder']};
+   var map={park:['walk'],cafe:['cafe','leadbarista','hospitality'],market:['shop','merchandiser'],delivery:['deliver','operations'],studio:['studio','senior'],office:['manager','director','founder','hoteldirector','regional']};
    return !map[place]||map[place].includes(j.id)
   });
   if(!display.length)display=lifeJobs;
   html+=display.map(function(j){
    var selfErr=townStatus(j,'self'),pErr=townStatus(j,'partner');
-   var icon={walk:'🐕',cafe:'☕',shop:'▦',deliver:'▣',studio:'✦',manager:'◆',senior:'✧',director:'♛',founder:'✪'}[j.id];
+   var icon={walk:'🐕',cafe:'☕',shop:'▦',deliver:'▣',studio:'✦',manager:'◆',senior:'✧',director:'♛',founder:'✪',leadbarista:'☕',hospitality:'◇',hoteldirector:'✧',merchandiser:'▦',operations:'◈',regional:'◆'}[j.id];
    var selfLabel=life.careerLevel<j.level?'LVL '+j.level+' NEEDED':selfErr==='Currently busy'?'BUSY':selfErr==='Rest first'?'REST FIRST':'WORK';
    var partnerLabel=life.partnerCareerLevel<j.level?'LVL '+j.level:pErr?'BUSY':'PARTNER';
    return '<article class="townJob '+(life.careerLevel<j.level?'hb-job-locked':'hb-job-unlocked')+'"><div class="jobName"><span>'+icon+'</span><b>'+j.title+'</b><em>'+(life.careerLevel<j.level?'◆ LEVEL '+j.level:'OPEN')+'</em></div>'+
-     '<small>'+j.where+' · '+j.mins+' min · $'+j.pay+'+ per shift</small><div class="jobBtns">'+
+     '<small>'+j.where+' · '+j.mins+' min · $'+j.pay+'+ per shift · '+j.track.toUpperCase()+(j.track===currentCareerFocus()?' · +12% SPECIALTY':'')+'</small>'+(selfErr&&selfErr!=='Currently busy'&&selfErr!=='Rest first'?'<small class="hb-job-requirement">'+selfErr+'</small>':'')+'<div class="jobBtns">'+
      '<button data-life-job="'+j.id+'" data-who="self" '+(selfErr?'disabled title="'+selfErr+'"':'')+'>'+selfLabel+'</button>'+
      (j.partner?'<button data-life-job="'+j.id+'" data-who="partner" '+(pErr?'disabled title="'+pErr+'"':'')+'>'+partnerLabel+'</button>':'')+
      '</div></article>';
