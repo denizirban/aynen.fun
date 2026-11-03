@@ -447,6 +447,11 @@
     var key=JSON.stringify(chosen);if(key===designLastKey)return;
     designLastKey=key;
     Object.entries(sofaVariants).forEach(function(entry){entry[1].visible=entry[0]===chosen.sofa});
+    // All sofas use the same selected upholstery, including the newly built
+    // living room; a fabric purchase must never change only the kitchen sofa.
+    var sofaColors={starter:'#bdb49c',sage:'#8ca796',rust:'#be7c67',navy:'#667f9b',boucle:'#f1e9d9'};
+    mat('livingRoomSofa').color.set(sofaColors[chosen.sofa]||sofaColors.starter);
+    mat('livingCushion').color.set(chosen.sofa==='navy'?'#a9bed0':chosen.sofa==='rust'?'#e7b4a2':chosen.sofa==='boucle'?'#e5d9c7':'#c5d4bf');
     var wall=designTexture('wallpaper',chosen.wallpaper);
     plaster.map=wall;plaster.color.set('#ffffff');plaster.needsUpdate=true;
     floorMat.map=designTexture('flooring',chosen.flooring);floorMat.color.set('#ffffff');floorMat.needsUpdate=true;
@@ -456,7 +461,10 @@
     var trim=new THREE.Color(color).multiplyScalar(1.055);
     mat('cabinetPanel').color.copy(trim);
     linen.map=designTexture('rug',chosen.rug);linen.color.set('#ffffff');linen.needsUpdate=true;
-    mat('rug').color.set({linen:'#8c9d68',rose:'#bd9391',forest:'#659278',blue:'#91aeb7'}[chosen.rug]||'#8c9d68');
+    var rugColors={linen:'#c9be9c',rose:'#bd9391',forest:'#659278',blue:'#91aeb7'};
+    mat('rug').color.set(rugColors[chosen.rug]||rugColors.linen);
+    mat('livingCarpet').color.set(rugColors[chosen.rug]||rugColors.linen);
+    mat('bedRug').color.set(rugColors[chosen.rug]||rugColors.linen);
     if(homeCurtainMaterial){homeCurtainMaterial.map=designTexture('curtains',chosen.curtains);homeCurtainMaterial.needsUpdate=true}
   }
 
