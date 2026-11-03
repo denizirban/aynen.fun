@@ -471,6 +471,116 @@ button,a{font:inherit;touch-action:manipulation}button{cursor:pointer}button:foc
 body:has(#game) .brand .back{display:none!important}
 #splash .paper h1{letter-spacing:-.052em}
 @media(max-width:650px){#splash .paper h1{font-size:clamp(38px,11vw,66px)}}
+
+/* House Boss game menu v2: retro original kitchen identity, actual game affordances. */
+#splash{padding:14px;background:rgba(18,29,24,.33);backdrop-filter:blur(2.5px);-webkit-backdrop-filter:blur(2.5px)}
+#splash .game-menu{width:min(860px,calc(100vw - 28px));max-height:calc(100dvh - 26px);
+  padding:22px 26px 20px;overflow:auto;overscroll-behavior:contain;border:1px solid #36483d;
+  background:#fbf9ef;border-radius:22px;box-shadow:0 22px 0 #253e3061,0 35px 110px #111c1877}
+#splash .menu-top{display:flex;justify-content:space-between;gap:8px;align-items:center;color:#56645a;
+  font:700 10px 'DM Mono',monospace;letter-spacing:.09em;padding-bottom:16px;border-bottom:1px solid #ddd8c9}
+#splash .menu-top em{font-style:normal;color:#c58061}.status-light,.preview-live,.challenge-dot{display:inline-block;
+  width:7px;height:7px;border-radius:50%;background:#7da76d;box-shadow:0 0 0 3px #7da76d24;margin-right:6px}
+#splash .menu-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.09fr);gap:25px;padding-top:19px}
+#splash .menu-eyebrow{color:#6f7b65;font:700 9px 'DM Mono',monospace;letter-spacing:.075em;line-height:1.7}
+#splash .game-menu h1{font-size:clamp(53px,6vw,81px);line-height:.84;letter-spacing:-.087em;
+  margin:21px 0 17px;color:#202c23}
+#splash .game-menu h1 span{color:#cf8160}
+#splash .menu-tagline{font-size:14px;line-height:1.48;font-weight:600;letter-spacing:-.025em;color:#404c42;margin:0 0 18px}
+#splash .menu-microcopy{font:10px/1.6 'DM Mono',monospace;color:#77766a;margin-top:12px}
+#splash .menu-preview{overflow:hidden;border:2px solid #384b40;border-radius:14px;background:#e4d8bd;
+  box-shadow:5px 5px 0 #334d3526;transform:rotate(-.5deg)}
+#splash .preview-hud{background:#233b32;color:#f4f3df;display:flex;justify-content:space-between;gap:6px;
+  font:700 9px 'DM Mono',monospace;letter-spacing:.025em;padding:10px}
+#splash .preview-hud b{color:#f0d777}
+#splash .preview-kitchen{position:relative;height:181px;overflow:hidden;
+  background:linear-gradient(180deg,#d0dece 0 55%,#c1a587 55% 63%,#cda881 63% 100%)}
+#splash .preview-kitchen:after{content:"";position:absolute;bottom:0;left:0;right:0;height:22%;
+  background:repeating-linear-gradient(90deg,transparent 0 25px,#c19c7d 26px 27px)}
+#splash .preview-upper{display:flex;gap:8px;position:absolute;top:13px;left:11px;right:11px;height:47px}
+#splash .preview-cabinet{width:57px;background:#ecd6ad;border:3px solid #b98f70;border-radius:6px;
+  box-shadow:2px 3px 0 #9d775d}
+#splash .preview-window{margin-left:auto;width:72px;background:#8bbccc;border:5px solid #f4e3be;border-radius:5px;text-align:center;color:#fff2a8}
+#splash .preview-window span{font-size:23px}
+#splash .preview-counter{position:absolute;left:0;right:0;top:103px;height:15px;background:#fff0c5;border:2px solid #b88e66}
+#splash .preview-stove{position:absolute;top:121px;left:23px;background:#779088;border:2px solid #354b48;width:70px;height:47px;border-radius:2px}
+#splash .preview-pot{position:absolute;top:-39px;left:19px;font-size:35px}
+#splash .preview-person{position:absolute;bottom:18px;width:24px;height:48px;
+  border-radius:13px 13px 5px 5px;z-index:1;text-align:center;color:#f7c39b;font-size:18px;
+  padding-top:0;border:2px solid #3a483c;animation:menuBop 1.9s ease-in-out infinite alternate}
+#splash .person-one{left:41%;background:#b85d4e}#splash .person-two{left:59%;background:#628a73;animation-delay:-.8s}
+#splash .preview-pet{position:absolute;right:15px;bottom:23px;z-index:2;font-size:24px}
+#splash .task-bubble{position:absolute;z-index:3;font:700 9px 'DM Mono',monospace;border-radius:9px;
+ padding:6px 7px;box-shadow:2px 3px 0 #2d342f30;border:1px solid #38463e;animation:menuFloat 2.3s ease-in-out infinite alternate}
+#splash .bubble-dinner{top:74px;left:5%;background:#f4b9a8}
+#splash .bubble-school{top:11px;left:44%;background:#ffebb0;animation-delay:-.8s}
+#splash .bubble-dog{top:94px;right:4%;background:#d2e7b7;animation-delay:-1.4s}
+#splash .preview-bottom{display:flex;gap:5px;justify-content:space-between;padding:10px;background:#fbf5e5;
+  font:700 9px 'DM Mono',monospace;color:#4e604a}
+@keyframes menuBop{to{transform:translateY(-4px)}}@keyframes menuFloat{to{transform:translateY(-5px)}}
+#splash .menu-section-title{display:flex;justify-content:space-between;align-items:center;gap:5px;
+  margin-bottom:8px;color:#35483c;font:700 10px 'DM Mono',monospace;letter-spacing:.04em}
+#splash .menu-section-title span{font-weight:400;color:#899288;font-size:9px}
+#splash .mode-picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#splash .mode-option{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:10px 8px 9px;
+  margin:0;min-height:86px;border:1px solid #a6b1a2;border-radius:11px;
+  background:#f6f5ed;text-align:left;color:#37483e;box-shadow:none}
+#splash .mode-option.selected{background:#dce7cd;border:2px solid #486d54;padding:9px 7px 8px;
+  box-shadow:0 3px 0 #4667483b}
+#splash .mode-option b{font-size:12px;letter-spacing:-.025em}
+#splash .mode-option small{display:block;color:#6a7469;font-size:9px;line-height:1.3;font-weight:500}
+#splash .mode-symbol{font-size:21px;line-height:1;color:#ba6c52}
+#splash .menu-challenge{margin:12px 0 13px;background:#283f34;border-radius:12px;padding:12px 13px;color:#faf5d9}
+#splash .challenge-label{display:flex;align-items:center;justify-content:space-between;
+  font:700 9px 'DM Mono',monospace;letter-spacing:.065em;color:#ecf3ce}
+#splash .challenge-label>span:last-child{color:#ffe098}
+#splash .challenge-description{font-size:11px;line-height:1.45;color:#dbe7ce;margin:7px 0 9px}
+#splash .challenge-goals{display:grid;gap:5px}
+#splash .challenge-goals>div{display:flex;gap:9px;align-items:center;font:10px 'DM Mono',monospace}
+#splash .challenge-goals>div>span:first-child{color:#a8ca91}
+#splash .game-menu .profile-select{border:0;background:none;margin:0 0 9px;padding:0}
+#splash .game-menu .profile-row{margin-top:5px;gap:7px}
+#splash .game-menu .profile-row>span{font:700 10px 'DM Mono',monospace}
+#splash .game-menu .profile-options{display:flex;gap:3px}
+#splash .game-menu .profile-options button{width:auto;min-width:48px;font:700 10px 'DM Mono',monospace;
+  border-radius:8px;padding:7px 6px;margin:0}
+#splash .game-menu .menu-play{margin:8px 0 0;display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 16px;border-radius:11px;background:#f5c66d;border:2px solid #424d38;color:#20291f;
+  box-shadow:0 4px 0 #40563d;font-size:15px;letter-spacing:-.025em}
+#splash .game-menu .menu-play:hover{background:#ffda89;transform:translateY(-1px)}
+#splash .game-menu .menu-play:active{transform:translateY(3px);box-shadow:0 1px 0 #40563d}
+#splash .game-menu .menu-continue{margin:9px 0 0;padding:9px;color:#345e41;border:1px solid #adc0a9;
+  background:#e6eee0;font-size:11px;font-weight:700;box-shadow:none}
+#splash .game-menu .save-preview{margin:7px 0;padding:7px 9px;font-size:10px}
+#splash .menu-footer{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;
+  margin-top:11px;color:#7b8177;font:9px 'DM Mono',monospace}
+@media(max-width:700px){
+ #splash{padding:8px;align-items:start}
+ #splash .game-menu{width:100%;max-height:calc(100dvh - 16px);padding:16px 15px;border-radius:16px}
+ #splash .menu-top{padding-bottom:10px;font-size:9px}
+ #splash .menu-grid{grid-template-columns:1fr;gap:14px;padding-top:12px}
+ #splash .game-menu h1{font-size:clamp(43px,12vw,62px);margin:7px 0}
+ #splash .menu-eyebrow{font-size:8px}
+ #splash .menu-tagline{font-size:12px;margin:0 0 10px}
+ #splash .preview-kitchen{height:108px}
+ #splash .preview-person{height:36px}
+ #splash .preview-counter{top:60px}
+ #splash .preview-stove{top:80px;height:25px}
+ #splash .preview-upper{height:30px}
+ #splash .preview-pot{top:-28px;font-size:24px}
+ #splash .bubble-dinner{top:42px}
+ #splash .bubble-dog{top:60px}
+ #splash .menu-microcopy{display:none}
+ #splash .mode-option{min-height:70px}
+}
+@media(max-height:650px) and (min-width:701px){
+ #splash .game-menu{padding:14px 20px}
+ #splash .game-menu h1{font-size:55px}
+ #splash .preview-kitchen{height:126px}
+ #splash .menu-preview{margin-top:0}
+ #splash .mode-option{min-height:70px}
+}
+@media(prefers-reduced-motion:reduce){#splash .task-bubble,#splash .preview-person{animation:none}}
 </style>
 </head>
 <body>
@@ -756,7 +866,65 @@ body:has(#game) .brand .back{display:none!important}
 <div id="rewardBubble" aria-live="polite"></div>
 <section id="notebook" class="hidden" role="dialog" aria-modal="true" aria-label="Ev gelişim defteri"><div id="noteShade" class="note-shade"></div><div class="note-sheet"><div class="note-heading"><div><small>EVİN PATRONU / GELİŞİM DEFTERİ</small><h2 id="noteTitle">Evi geliştir</h2></div><button id="closeNotebook" aria-label="Kapat">×</button></div><div class="note-tabs"><button class="active" data-tab="upgrades">EVİ GELİŞTİR</button><button data-tab="goals">HEDEFLER</button><button data-tab="roadmap">YOL HARİTASI</button><button data-tab="family">EV HALKI</button><button data-tab="memories">ANILAR</button></div><div id="noteBody"></div><div class="note-footer"><b id="noteBudget">$160</b><span>Gerçek para yok. Zaman baskılı satın alma yok.</span></div></div></section>
 <div id="avatarModal" class="hidden" role="dialog" aria-modal="true" aria-label="Karakterleri düzenle"><div class="avatar-shade" id="avatarShade"></div><section class="avatar-sheet"><div class="avatar-head"><h2>Ev halkını düzenle</h2><button id="closeAvatars" aria-label="Kapat">×</button></div><p>Görünüm seçimi görevleri ve ilerlemeyi değiştirmez.</p><div id="avatarModalContent"></div><button id="avatarDone">TAMAM</button></section></div><div id="toast" role="status" aria-live="polite"></div>
-<div id="splash"><div class="paper"><div class="mark">HOUSE BOSS / THE EVENING</div><h1>HOUSE<br>BOSS.</h1><p>One kitchen. Endless chores. A family with minds of their own.</p><p>Tap <strong>FIND</strong> on a chore to locate it in the kitchen. Then do it yourself or delegate it to your family. Keep the house peaceful until 10 PM.</p><div class="quote">Complete chores → earn XP → unlock upgrades → survive another evening.</div><div id="profileSelect" class="profile-select"><b>CHOOSE YOUR FAMILY</b><small>İstediğin zaman değiştirebilirsin.</small><div class="profile-row"><span>Sen</span><div class="profile-options"><button data-avatar="self:m">Erkek</button><button data-avatar="self:f">Kadın</button><button data-avatar="self:n">Nötr</button></div></div><div class="profile-row"><span>Eşin</span><div class="profile-options"><button data-avatar="partner:m">Erkek</button><button data-avatar="partner:f">Kadın</button><button data-avatar="partner:n">Nötr</button></div></div></div><div id="savedStats" class="save-preview" hidden></div><button id="resume" hidden>↳ CONTINUE</button><button id="start">NEW GAME →</button><small id="splashNote" style="display:block;margin-top:10px;color:#6d665e;font:10px 'DM Mono',monospace">Bu cihazda otomatik kaydedilir.</small></div></div>
+<div id="splash">
+  <div class="paper game-menu" role="dialog" aria-modal="true" aria-label="House Boss game menu">
+    <div class="menu-top">
+      <span><i class="status-light"></i> HOUSE BOSS <em>/</em> EVENING SHIFT</span>
+      <span>01 — SINGLE PLAYER</span>
+    </div>
+    <div class="menu-grid">
+      <section class="menu-story">
+        <div class="menu-eyebrow">ONE HOME. FOUR PERSONALITIES. ENDLESS CHORES.</div>
+        <h1>HOUSE<br>BOSS<span>.</span></h1>
+        <p class="menu-tagline">Run the kitchen. Keep the peace.<br>Survive another evening.</p>
+        <div class="menu-preview" aria-label="Household chaos preview">
+          <div class="preview-hud"><span><i class="preview-live"></i> 5:00 PM · SHIFT START</span><span>PEACE <b>75%</b></span></div>
+          <div class="preview-kitchen" aria-hidden="true">
+            <div class="preview-upper">
+              <div class="preview-cabinet"></div><div class="preview-cabinet"></div><div class="preview-window"><span>☀</span></div>
+            </div>
+            <div class="preview-counter"></div>
+            <div class="preview-stove"><span class="preview-pot">♨</span></div>
+            <div class="preview-person person-one"><span>◉</span></div>
+            <div class="preview-person person-two"><span>◉</span></div>
+            <div class="preview-pet">🐕</div>
+            <span class="task-bubble bubble-dinner">🍝 DINNER!</span>
+            <span class="task-bubble bubble-school">✏️ HOMEWORK?</span>
+            <span class="task-bubble bubble-dog">🐾 FEED ME</span>
+          </div>
+          <div class="preview-bottom"><span>3 NEW REQUESTS</span><span>YOU'RE IN CHARGE. SORT OF.</span></div>
+        </div>
+        <div class="menu-microcopy">Assign chores · Manage moods · Upgrade your home</div>
+      </section>
+      <section class="menu-controls">
+        <div class="menu-section-title"><b>01 / CHOOSE YOUR SHIFT</b><span>GAME MODE</span></div>
+        <div class="mode-picks" role="group" aria-label="Game mode">
+          <button type="button" class="mode-option selected" data-runmode="classic" aria-pressed="true"><span class="mode-symbol">◷</span><span><b>CLASSIC</b><small>The original evening</small></span></button>
+          <button type="button" class="mode-option" data-runmode="chaos" aria-pressed="false"><span class="mode-symbol">↯</span><span><b>CHAOS</b><small>More trouble, faster</small></span></button>
+          <button type="button" class="mode-option" data-runmode="cozy" aria-pressed="false"><span class="mode-symbol">☕</span><span><b>COZY</b><small>Take your time</small></span></button>
+        </div>
+        <div class="menu-challenge" aria-live="polite">
+          <div class="challenge-label"><span><i class="challenge-dot"></i> TONIGHT'S CHALLENGE</span><span id="modeDifficulty">NORMAL</span></div>
+          <div id="modeDescription" class="challenge-description">Keep the kitchen moving without losing your cool.</div>
+          <div class="challenge-goals">
+            <div><span>✓</span><span id="goalOne">Finish 3 chores</span></div>
+            <div><span>✓</span><span id="goalTwo">Delegate 1 task</span></div>
+            <div><span>✓</span><span id="goalThree">Keep peace above 65%</span></div>
+          </div>
+        </div>
+        <div id="profileSelect" class="profile-select">
+          <div class="menu-section-title"><b>02 / YOUR HOUSEHOLD</b><span>CHARACTERS</span></div>
+          <div class="profile-row"><span>YOU</span><div class="profile-options"><button type="button" data-avatar="self:m">Male</button><button type="button" data-avatar="self:f">Female</button><button type="button" data-avatar="self:n">Neutral</button></div></div>
+          <div class="profile-row"><span>PARTNER</span><div class="profile-options"><button type="button" data-avatar="partner:m">Male</button><button type="button" data-avatar="partner:f">Female</button><button type="button" data-avatar="partner:n">Neutral</button></div></div>
+        </div>
+        <div id="savedStats" class="save-preview" hidden></div>
+        <button type="button" id="start" class="menu-play">START EVENING <span>→</span></button>
+        <button type="button" id="resume" class="menu-continue" hidden>↳ CONTINUE SAVED GAME</button>
+        <div class="menu-footer"><span id="splashNote">AUTOSAVE ENABLED</span><span>3D / 2D · PLAY IN BROWSER</span></div>
+      </section>
+    </div>
+  </div>
+</div>
 <div id="ending" class="hidden"><div class="paper"><div class="mark">AYNEN.FUN / AKŞAM RAPORU</div><h1 id="endTitle">EVİN PATRONU.</h1><p id="endDesc"></p><div id="endProgress" class="end-progress"></div><div id="endScore" class="end-score"></div><div class="result-grid"><div><small>YAPILAN</small><b id="endDone">0</b></div><div><small>DEVREDİLEN</small><b id="endShared">0</b></div><div><small>HUZUR</small><b id="endPeace">0%</b></div></div><button id="again">ERTESİ AKŞAMA GEÇ →</button><button class="secondary" id="newFromStart">YENİDEN BAŞLA</button><button class="secondary" id="share">SONUCU PAYLAŞ ↗</button><button class="secondary" id="shareX">X</button><button class="secondary" id="shareWhatsapp">WHATSAPP</button></div></div>
 </div>
 <script>
