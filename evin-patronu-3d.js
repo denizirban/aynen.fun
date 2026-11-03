@@ -991,7 +991,14 @@
   function getHit(e){
     normalized(e);raycaster.setFromCamera(pointer,camera);
     var intersections=raycaster.intersectObjects(pickables,false);
-    for(var it of intersections){var o=it.object.userData.owner;if(o&&o.visible&&it.object.visible&&(o.userData.station||o.userData.person||o.userData.furnitureId||o.userData.roomAction))return o}
+    function visibleInWorld(obj){
+      while(obj){if(!obj.visible)return false;obj=obj.parent}
+      return true
+    }
+    for(var it of intersections){
+      var o=it.object.userData.owner;
+      if(o&&visibleInWorld(it.object)&&visibleInWorld(o)&&(o.userData.station||o.userData.person||o.userData.furnitureId||o.userData.roomAction))return o
+    }
     return null
   }
     var walkingGround=new THREE.Plane(new THREE.Vector3(0,1,0),0);
