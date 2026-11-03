@@ -47,6 +47,17 @@
   walnutdesk:'tables',chaise:'seating',daybed:'seating',pendant:'lighting',statementsofa:'seating',hifi:'objects',grandbookcase:'storage'
  };
  Object.entries(coreCategories).forEach(([id,cat])=>{if(t[id]){t[id].category=cat;t[id].style=t[id].style||'modern';t[id].layer=t[id].layer||'solid'}});
- Object.entries(items).forEach(([id,v])=>{v.layer=v.layer||'solid';v.style=v.style||'modern';v.collection='EDITIONS';t[id]=v});
+ const palettes={
+  pop:['#e984a7','#a89bd1','#8eb9cc','#fac57c','#eab3a5'],
+  soft:['#e9d9cd','#c5b8db','#bbd1bf','#f0c1bb','#9ab4ce'],
+  retro:['#edb54b','#df8b68','#9bb6aa','#a0a7d4','#c48f8b'],
+  organic:['#c6b49f','#97b19c','#bfa5a6','#e2c39f','#a1bed0'],
+  modern:['#c8cacc','#a7b8c3','#bea5ac','#e1c7aa','#91aca5']
+ };
+ Object.entries(items).forEach(([id,v])=>{
+  v.layer=v.layer||'solid';v.style=v.style||'modern';v.collection='EDITIONS';
+  v.variants=[v.color].concat((palettes[v.style]||palettes.modern).filter(x=>x!==v.color)).slice(0,5);
+  t[id]=v
+ });
  window.HouseBossDesignerCollection=Object.freeze({ids:Object.keys(items),categories:{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART & SCULPTURE',objects:'SMALL OBJECTS',plants:'GREENERY',storage:'STORAGE'}});
 })();
