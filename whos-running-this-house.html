@@ -728,7 +728,7 @@ body:has(#game) .brand .back{display:none!important}
 <body>
 <div id="game">
 <div id="kitchen3d" aria-label="Three-dimensional isometric kitchen scene" data-status="loading"></div>
-<svg id="room" viewBox="0 0 1400 900" role="img" aria-label="Isometric kitchen, family members, and household tasks">
+<svg id="room" viewBox="0 0 1400 900" aria-hidden="true" focusable="false">
 <defs>
 <linearGradient id="retroWall" x1="0" y1="0" x2="1" y2=".65"><stop stop-color="#b7bd88"/><stop offset=".5" stop-color="#a2ac76"/><stop offset="1" stop-color="#8d9a6b"/></linearGradient>
 <linearGradient id="retroSide" x1="0" y1="0" x2=".9" y2=".8"><stop stop-color="#879669"/><stop offset="1" stop-color="#b6bc86"/></linearGradient>
@@ -2485,19 +2485,12 @@ function reset(mode){
  time=7*60;dayInitiatives={partner:0,kid:0};nextFamilyDecision=15*60+15;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):shiftOptions[runMode].initialPeace;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=9*60+22;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:"Make tea for the guest",detail:"Another cup of tea. Another story.",icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:"Organize the fridge",detail:"Time to face the half lemons.",icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});if(day>=5)add({key:'guest',name:"Getting ready for guests",detail:"One guest is coming. Everyone is on duty.",icon:'🫖',spot:'table',dur:25,due:20*60+10,weight:14});syncAvatars();$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message('Day '+day+' · 7:00 AM. Time to live, work, and build.');say("When's dinner ready?")
 }
 
+/* House Boss 3D-only game loop: no hidden SVG character animations per frame. */
 function frame(now){
  var dt=Math.min(140,now-last);last=now;
  if(!paused&&!ended&&started){
-  var k=Math.min(1,dt/300);
-  pos[0]+=(posTarget[0]-pos[0])*k;pos[1]+=(posTarget[1]-pos[1])*k;
-  $('#player').setAttribute('transform','translate('+pos[0].toFixed(1)+' '+pos[1].toFixed(1)+')');
-  var workPoints={stove:[1035,395],sink:[1210,465],table:[610,480],kid:[710,625],floor:[480,730],laundry:[1150,675],desk:[870,355],pet:[360,745]};
-  var p=helper&&workPoints[helper.spot]||simState().active.partner&&workPoints[simState().active.partner.spot]||[885,351],c=childTask&&workPoints[childTask.spot]||simState().active.kid&&workPoints[simState().active.kid.spot]||[746,714];
-  partnerPos[0]+=(p[0]-partnerPos[0])*k*.7;partnerPos[1]+=(p[1]-partnerPos[1])*k*.7;
-  kidPos[0]+=(c[0]-kidPos[0])*k*.8;kidPos[1]+=(c[1]-kidPos[1])*k*.8;
-  $('#partnerActor').setAttribute('transform','translate('+partnerPos[0].toFixed(1)+' '+partnerPos[1].toFixed(1)+')');
-  $('#kidActor').setAttribute('transform','translate('+kidPos[0].toFixed(1)+' '+kidPos[1].toFixed(1)+')');
-  tickBudget+=dt;if(tickBudget>=175){advance(tickBudget);tickBudget=0}
+  tickBudget+=dt;
+  if(tickBudget>=175){advance(tickBudget);tickBudget=0}
  }
  requestAnimationFrame(frame)
 }
