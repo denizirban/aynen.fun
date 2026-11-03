@@ -112,7 +112,7 @@ function install(){
  oldTabs.forEach(b=>b.addEventListener('click',()=>{
   clearPreview();document.getElementById('notebook')?.classList.remove('design-mode');
  },true));
- window.HouseBossHomeDesign={render,clearPreview,effective,catalog,selectCategory(k){if(k==='furniture'||catalog[k]){clearPreview();category=k;render()}}};
+ window.HouseBossHomeDesign={render,clearPreview,effective,catalog,isFurnitureView(){return category==='furniture'&&document.getElementById('notebook')?.classList.contains('design-mode')},selectCategory(k){if(k==='furniture'||catalog[k]){clearPreview();category=k;render()}}};
 }
 install();
 })();
