@@ -38,7 +38,7 @@
 #simDock .sd-track i{display:block;height:100%;background:linear-gradient(90deg,#6ea86b,#9cc48b);transition:width .4s}
 #simDock .sd-need.low .sd-track i{background:#d8a25e}
 #simDock .sd-need.critical .sd-track i{background:#d77465}
-#simDock .sd-buttons{flex:0 0 174px;border-left:1px solid #d6dbd1;padding:6px 2px 6px 10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,1fr);gap:6px}
+#simDock .sd-buttons{flex:0 0 174px;border-left:1px solid #d6dbd1;padding:6px 2px 6px 10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(4,1fr);gap:6px}
 #simDock .sd-buttons button{min-width:0;border:1px solid #d4ddcf;border-radius:10px;background:#ecf0e6;color:#536a52;font:850 10px 'DM Mono',monospace;padding:7px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 #simDock .sd-buttons button:hover,#simDock .sd-buttons button.active{background:#dcebd8;border-color:#9dbb9d;color:#2d5435}
 #simDock .sd-buttons button span{font-size:16px;line-height:1}
