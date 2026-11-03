@@ -685,6 +685,30 @@ body:has(#game) .brand .back{display:none!important}
  #townLayer .townStatus{margin-bottom:6px}
 }
 
+
+/* HOUSE BOSS OPENING WORLD — original village set; gameplay layout unchanged */
+#splash{background:linear-gradient(180deg,#b4cbd5,#81a780);backdrop-filter:none;-webkit-backdrop-filter:none;isolation:isolate;overflow:hidden}
+#splash .hb-opening-bg{position:absolute;inset:-3%;pointer-events:none;overflow:hidden;z-index:0}
+#splash .hb-opening-bg svg{width:100%;height:100%;object-fit:cover;filter:saturate(1.13) contrast(.98)}
+#splash .hb-opening-town{transform-origin:center 65%;animation:hbOpeningFloat 20s ease-in-out infinite alternate}
+@keyframes hbOpeningFloat{0%{transform:translateX(-12px) scale(1.012)}100%{transform:translateX(12px) scale(1.03)}}
+#splash:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background:linear-gradient(100deg,#18382929,#ffffff00 55%,#152e2829),linear-gradient(180deg,#f7f8f533,#152f271e)}
+#splash .game-menu{position:relative;z-index:2;width:min(970px,calc(100vw - 32px));background:linear-gradient(155deg,#fffcf2ed,#f5f5eaf2);border:1px solid #e2e6d7;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 18px 70px #17362866,0 2px 0 #fff inset;border-radius:24px}
+#splash .game-menu h1{font-size:clamp(59px,6vw,91px);color:#244c39;text-shadow:0 1px #fffcf5}
+#splash .menu-tagline{color:#3f604a}
+#splash .menu-top{border-bottom-color:#cad9c8}
+#splash .menu-eyebrow{color:#5d8463;letter-spacing:.14em}
+#splash .menu-preview{border-color:#87a98a;box-shadow:0 8px 23px #42694833;transform:none}
+#splash .menu-challenge{background:linear-gradient(135deg,#355a45,#1b4131);border:1px solid #678e6b;box-shadow:0 6px 16px #284a2b18}
+#splash .game-menu .menu-play{border-radius:14px;border-color:#53704d;background:linear-gradient(180deg,#ffd77d,#f1ba65);box-shadow:0 5px 0 #466b48,0 8px 17px #1f472c33;font-size:16px;min-height:51px}
+#splash .game-menu .menu-continue{border-radius:12px;background:linear-gradient(#edf8e7,#d7ead2)}
+@media(max-width:700px){
+ #splash .game-menu{width:100%;max-height:calc(100dvh - 13px);border-radius:16px;padding:16px}
+ #splash .game-menu h1{font-size:clamp(47px,11vw,71px)}
+ #splash .hb-opening-bg{inset:0;filter:blur(1px)}
+}
+@media(prefers-reduced-motion:reduce){#splash .hb-opening-town{animation:none}}
+
 </style>
 <link rel="stylesheet" href="./house-boss-sims-ui.css?v=4">
 </head>
@@ -1000,6 +1024,68 @@ body:has(#game) .brand .back{display:none!important}
 <div id="avatarModal" class="hidden" role="dialog" aria-modal="true" aria-label="Customize characters"><div class="avatar-shade" id="avatarShade"></div><section class="avatar-sheet"><div class="avatar-head"><h2>Customize your family</h2><button id="closeAvatars" aria-label="Close">×</button></div><p>Appearance does not affect skills or progress.</p><div id="avatarModalContent"></div><button id="avatarDone">DONE</button></section></div><div id="comboHud" aria-live="polite" hidden>STREAK <b id="comboValue">×2</b></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="splash">
+
+<!-- HOUSE_BOSS_OPENING_WORLD_V6 — animated original neighborhood illustration. -->
+<div class="hb-opening-bg" aria-hidden="true">
+ <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+ <defs>
+  <linearGradient id="hbsky" x2="0" y2="1"><stop stop-color="#a9c9e8"/><stop offset=".57" stop-color="#e9e2ce"/><stop offset="1" stop-color="#f2e1bd"/></linearGradient>
+  <linearGradient id="hbland" x2="0" y2="1"><stop stop-color="#92b77a"/><stop offset="1" stop-color="#5f985e"/></linearGradient>
+  <linearGradient id="hbwater" x2="0" y2="1"><stop stop-color="#84bec7"/><stop offset="1" stop-color="#568fad"/></linearGradient>
+ </defs>
+ <rect width="1600" height="900" fill="url(#hbsky)"/>
+ <g opacity=".52" fill="#fffdf6">
+  <ellipse cx="240" cy="100" rx="145" ry="30"/><ellipse cx="325" cy="111" rx="93" ry="26"/>
+  <ellipse cx="1120" cy="137" rx="164" ry="36"/><ellipse cx="1220" cy="124" rx="128" ry="28"/>
+  <ellipse cx="680" cy="175" rx="116" ry="23"/>
+ </g>
+ <g class="hb-opening-town">
+  <path d="M0 445Q230 360 425 426T830 405T1240 419T1600 376V900H0Z" fill="#789e7f"/>
+  <path d="M0 520Q270 438 520 507T1010 500T1600 460V900H0Z" fill="url(#hbland)"/>
+  <path d="M-30 615Q280 574 548 636T1092 602T1640 653" stroke="#d6cab2" stroke-width="116" fill="none"/>
+  <path d="M-30 615Q280 574 548 636T1092 602T1640 653" stroke="#f4ebd8" stroke-width="4" stroke-dasharray="22 19" fill="none"/>
+  <path d="M0 725Q190 688 347 748T690 740T1000 770Q1290 815 1600 760V900H0Z" fill="url(#hbwater)" opacity=".88"/>
+  <path d="M0 711Q190 674 347 734T690 726T1000 756Q1290 801 1600 746" stroke="#c2cbb1" stroke-width="16" fill="none"/>
+  <g transform="translate(85 420)">
+   <rect x="0" y="85" width="210" height="172" rx="2" fill="#e4ba8b" stroke="#7a6e57" stroke-width="7"/>
+   <path d="M-19 89L103 -12L231 89" fill="#896b63" stroke="#72594f" stroke-width="7"/>
+   <rect x="52" y="140" width="46" height="56" fill="#b4d4d5" stroke="#71786d" stroke-width="6"/>
+   <rect x="134" y="140" width="44" height="56" fill="#b4d4d5" stroke="#71786d" stroke-width="6"/>
+   <rect x="93" y="193" width="48" height="64" fill="#9d8876"/>
+  </g>
+  <g transform="translate(430 386)">
+   <rect y="90" width="220" height="214" fill="#b5c8b5" stroke="#69766c" stroke-width="7"/>
+   <path d="M-15 93L110 -13L235 93" fill="#788a80" stroke="#58685e" stroke-width="7"/>
+   <rect x="45" y="150" width="49" height="61" fill="#d3e1dc" stroke="#748e8c" stroke-width="5"/>
+   <rect x="134" y="150" width="49" height="61" fill="#d3e1dc" stroke="#748e8c" stroke-width="5"/>
+   <rect x="92" y="237" width="43" height="67" fill="#826b58"/>
+  </g>
+  <g transform="translate(775 354)">
+   <rect y="100" width="286" height="260" fill="#dba586" stroke="#816c5f" stroke-width="8"/>
+   <path d="M-20 105L143 -19L310 105" fill="#955e55" stroke="#675c56" stroke-width="8"/>
+   <rect x="55" y="175" width="64" height="85" fill="#b6d1cf" stroke="#766f69" stroke-width="6"/>
+   <rect x="174" y="175" width="64" height="85" fill="#b6d1cf" stroke="#766f69" stroke-width="6"/>
+   <rect x="127" y="272" width="52" height="88" fill="#8a6958"/>
+   <rect x="127" y="128" width="98" height="32" rx="8" fill="#f7e9bc"/><text x="176" y="149" font-size="19" font-weight="900" text-anchor="middle" fill="#626454">CAFÉ</text>
+  </g>
+  <g transform="translate(1240 395)">
+   <rect y="95" width="250" height="220" fill="#c7bcba" stroke="#7d7874" stroke-width="8"/>
+   <path d="M-18 99L125 0L268 99" fill="#7c8188" stroke="#686e72" stroke-width="8"/>
+   <rect x="49" y="148" width="64" height="82" fill="#d8d4ce" stroke="#6f7f83" stroke-width="6"/>
+   <rect x="145" y="148" width="64" height="82" fill="#d8d4ce" stroke="#6f7f83" stroke-width="6"/>
+  </g>
+  <g fill="#4b7950">
+   <circle cx="40" cy="505" r="75"/><circle cx="350" cy="481" r="56"/>
+   <circle cx="708" cy="455" r="63"/><circle cx="1120" cy="460" r="70"/>
+   <circle cx="1542" cy="445" r="81"/>
+  </g>
+  <g fill="#6fa06a"><circle cx="32" cy="490" r="45"/><circle cx="360" cy="467" r="36"/><circle cx="1112" cy="449" r="44"/><circle cx="1530" cy="427" r="55"/></g>
+  <g fill="#fff6e6"><ellipse cx="140" cy="811" rx="24" ry="14"/><ellipse cx="213" cy="791" rx="15" ry="11"/><ellipse cx="1183" cy="810" rx="19" ry="11"/><ellipse cx="1274" cy="790" rx="22" ry="12"/></g>
+  <g fill="#50634a"><circle cx="505" cy="700" r="13"/><path d="M497 708l-6 25h29l-7-25z"/><circle cx="545" cy="704" r="12"/><path d="M538 710l-4 22h24l-5-22z"/></g>
+  <g stroke="#567f59" stroke-width="7" fill="none"><path d="M1135 570V613m-10-29l10-13 10 13"/><path d="M1200 582v29m-12-19l12-14 11 14"/></g>
+ </g>
+ </svg>
+</div>
   <div class="paper game-menu" role="dialog" aria-modal="true" aria-label="House Boss game menu">
     <div class="menu-top">
       <span><i class="status-light"></i> HOUSE BOSS <em>/</em> LIFE SIMULATION</span>
