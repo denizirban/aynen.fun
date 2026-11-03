@@ -350,11 +350,11 @@
   /* HOME_DESIGN_3D_V10 — real 3D furniture variants and materials, not UI-only color changes. */
   var sofaVariants={},designLastKey='',designTextureCache={};
   function makeSofa(id,color){
-    var g=new THREE.Group(),rounded=(id==='rust'||id==='boucle');
+    var g=new THREE.Group(),rounded=['rust','boucle','cloud','atelier'].includes(id);
     g.position.set(-6.20,0,.10);scene.add(g);
-    var fabric=new THREE.MeshStandardMaterial({color:color,roughness:id==='rust'?.68:.97,metalness:0,flatShading:!rounded});
+    var fabric=new THREE.MeshStandardMaterial({color:color,roughness:id==='leather'?.57:.90,metalness:0,flatShading:false});
     var seams=mat('sofaSeams','#9d8d77'),cushion=mat('sofaCushion'+id,id==='starter'?'#e5d7c0':id==='navy'?'#8ea4b9':id==='rust'?'#e8b69d':id==='boucle'?'#d9c6a9':'#cddac8');
-    var width=id==='boucle'?2.35:id==='navy'?2.32:2.14,height=id==='boucle'?.47:.43;
+    var width=['boucle','cloud','atelier'].includes(id)?2.40:id==='navy'?2.32:2.14,height=['boucle','cloud','atelier'].includes(id)?.50:.43;
     box(g,width,height,1.05,fabric,0,.43,0);
     box(g,width,.89,.27,fabric,0,.89,-.40);
     for(var sx of [-1,1]){
@@ -373,12 +373,20 @@
       box(g,.38,.32,.16,cushion,.42,1.0,-.16).rotation.z=.15;
       box(g,.38,.32,.16,cushion,-.43,1.0,-.16).rotation.z=-.18;
     }
-    if(id==='boucle'){for(var z of [-.05,.34])for(var x of [-.62,0,.62])ball(g,.28,.09,.23,fabric,x,.88,z)}
+    if(['boucle','cloud','atelier'].includes(id)){
+       for(var z of [-.05,.34])for(var x of [-.62,0,.62])ball(g,.30,.11,.27,fabric,x,.88,z);
+       for(var x of [-.65,0,.65])ball(g,.27,.24,.18,cushion,x,1.03,-.27);
+     }
+     if(id==='leather'){for(var x of [-.44,.44])for(var y of [.93,1.12])ball(g,.025,.025,.015,seams,x,y,-.248);
+       for(var x of [-.8,.8])box(g,.09,.20,.66,mat('sofaWalnut','#795236'),x,.14,.05);}
+     if(id==='atelier'){for(var x of [-.92,.92])ball(g,.23,.40,.49,fabric,x,.68,.03);
+       for(var x of [-.75,.75])box(g,.20,.10,.40,mat('sofaBronze','#b59a71'),x,.08,0);}
     g.visible=id==='starter';sofaVariants[id]=g;
   }
   [
    ['starter','#bdb49c'],['sage','#8ca796'],['rust','#be7c67'],
-   ['navy','#667f9b'],['boucle','#f1e9d9']
+   ['navy','#667f9b'],['boucle','#f1e9d9'],
+    ['leather','#86674f'],['cloud','#e3ddd2'],['atelier','#b4a696']
   ].forEach(function(p){makeSofa(p[0],p[1])});
   function designTexture(kind,variant){
    var key=kind+':'+variant;if(designTextureCache[key])return designTextureCache[key];
@@ -449,9 +457,9 @@
     Object.entries(sofaVariants).forEach(function(entry){entry[1].visible=entry[0]===chosen.sofa});
     // All sofas use the same selected upholstery, including the newly built
     // living room; a fabric purchase must never change only the kitchen sofa.
-    var sofaColors={starter:'#bdb49c',sage:'#8ca796',rust:'#be7c67',navy:'#667f9b',boucle:'#f1e9d9'};
+    var sofaColors={starter:'#bdb49c',sage:'#8ca796',rust:'#be7c67',navy:'#667f9b',boucle:'#f1e9d9',leather:'#86674f',cloud:'#e3ddd2',atelier:'#b4a696'};
     mat('livingRoomSofa').color.set(sofaColors[chosen.sofa]||sofaColors.starter);
-    mat('livingCushion').color.set(chosen.sofa==='navy'?'#a9bed0':chosen.sofa==='rust'?'#e7b4a2':chosen.sofa==='boucle'?'#e5d9c7':'#c5d4bf');
+    mat('livingCushion').color.set(chosen.sofa==='navy'?'#a9bed0':chosen.sofa==='rust'?'#e7b4a2':['boucle','cloud','atelier'].includes(chosen.sofa)?'#e5d9c7':chosen.sofa==='leather'?'#a9886b':'#c5d4bf');
     var wall=designTexture('wallpaper',chosen.wallpaper);
     plaster.map=wall;plaster.color.set('#ffffff');plaster.needsUpdate=true;
     floorMat.map=designTexture('flooring',chosen.flooring);floorMat.color.set('#ffffff');floorMat.needsUpdate=true;
@@ -852,7 +860,54 @@
       }
       cylinder(g,.06,.06,.04,mat('buildKnob','#d7be92'),0,.83,.36);
       for(var xx of [-.41,.41])box(g,.09,.20,.08,dark,xx,.10,0);
-    }else{
+    }else if(['loungechair','loveseat','recliner','chaise','statementsofa'].includes(type)){
+       var meta=window.HouseBossFurnitureTypes?.[type]||{w:1.2,d:1.1,color:'#b5a596'};
+       var w=meta.w-.08,d=meta.d-.10,one=['loungechair','recliner'].includes(type);
+       var premium=['chaise','statementsofa','recliner'].includes(type);
+       var fabric=new THREE.MeshStandardMaterial({color:meta.color,roughness:type==='recliner'?.58:.88,metalness:0});
+       var trim=mat('furnPiping','#dfd7c7'),frame=mat('furnFrame','#9c7d61');
+       for(var xx of [-w*.37,w*.37])for(var zz of [-d*.29,d*.29])box(g,.085,.23,.085,frame,xx,.13,zz);
+       box(g,w,.27,d,fabric,0,.48,0);
+       box(g,w,.73,.22,fabric,0,.90,-d*.42).rotation.x=type==='chaise'?-.25:-.09;
+       for(var xx of [-w*.47,w*.47])ball(g,.17,.30,d*.46,fabric,xx,.66,0);
+       var count=one?1:type==='statementsofa'?3:2;
+       for(var i=0;i<count;i++){
+         var x=-w*.5+w*(i+.5)/count;
+         ball(g,w/(count*2)-.035,.13,d*.36,fabric,x,.70,.10);
+         box(g,w/count-.07,.30,.18,fabric,x,1.00,-d*.31).rotation.x=-.08;
+         if(premium){ball(g,.027,.027,.015,trim,x,.70,d*.40);box(g,w/count-.09,.02,.025,trim,x,.58,d*.42);}
+       }
+       if(type==='recliner')box(g,w*.78,.16,.43,fabric,0,.28,d*.59).rotation.x=-.22;
+       if(type==='statementsofa'){box(g,.74,.30,d*.70,fabric,-w*.29,.45,d*.40);ball(g,.32,.14,.38,fabric,-w*.29,.70,d*.42);}
+     }else if(type==='walnutdesk'){
+       var wood=mat('walnutDesk','#8e6449'),gold=mat('deskBrass','#bca176'),darktop=mat('deskMat','#453f3b');
+       box(g,1.50,.12,.76,wood,0,.85,0);
+       for(var x of [-.64,.64])for(var z of [-.26,.26])box(g,.085,.78,.085,wood,x,.42,z);
+       box(g,.50,.29,.69,wood,.45,.65,0);
+       for(var y of [.59,.72])box(g,.38,.018,.018,gold,.46,y,.36);
+       box(g,.48,.027,.33,darktop,-.30,.95,-.06);
+       capsule(g,[-.63,.94,-.26],[-.63,1.39,-.26],.03,gold);
+       ball(g,.24,.035,.18,mat('deskLight','#e6d4b1'),-.63,1.39,-.26);
+     }else if(type==='pendant'){
+       var gold=mat('sculptBrass','#bba071'),shade=mat('sculptLinen','#e9ddc7');
+       cylinder(g,.27,.31,.065,gold,0,.04,0);
+       capsule(g,[0,.06,0],[0,1.68,0],.03,gold);
+       capsule(g,[0,1.67,0],[.21,2.12,0],.03,gold);
+       addMesh(g,new THREE.CylinderGeometry(.31,.46,.39,24),shade,.21,2.06,0);
+       cylinder(g,.22,.22,.035,mat('sculptBulb','#fff4cf'),.21,1.84,0);
+     }else if(type==='hifi'){
+       var wood=mat('hifiWood','#7c6151'),metal=mat('hifiMetal','#555c55'),gold=mat('hifiGold','#d1b895');
+       box(g,1.16,.76,.62,wood,0,.49,0);box(g,1.08,.60,.03,metal,0,.55,.33);
+       for(var x of [-.34,.34])torus(g,.21,.032,gold,x,.53,.36);
+       cylinder(g,.16,.16,.028,gold,0,.98,-.12);
+       for(var x of [-.47,.47])box(g,.09,.18,.10,wood,x,.10,0);
+     }else if(type==='grandbookcase'){
+       var wood=mat('galleryOak','#9b7757'),back=mat('galleryCream','#e2d6c5');
+       box(g,1.44,2.58,.54,wood,0,1.3,0);box(g,1.27,2.36,.45,back,0,1.32,.03);
+       for(var i=0;i<5;i++){var y=.30+i*.48;box(g,1.36,.085,.57,wood,0,y,0);
+         for(var j=0;j<5;j++)box(g,.14,.24+((j+i)%3)*.045,.30,mat('galleryBook'+i+'_'+j,['#84968d','#a88b70','#c8b29b','#778a93','#786f68'][j]),-.50+j*.24,y+.17,.11);}
+       for(var x of [-.68,.68])capsule(g,[x,.16,.13],[x,2.46,.13],.07,wood);
+     }else{
       scene.remove(g);return null
     }
     g.userData.furnitureId=uid;
