@@ -787,7 +787,7 @@
   /* Original collectible design library — rendered as real Three.js geometry. */
   var createDecorMesh=null;
   try{
-   var editions=await import('./house-boss-decor-meshes.js?v=1');
+   var editions=await import('./house-boss-decor-meshes.js?v=2');
    createDecorMesh=editions.createDecorMesh;
   }catch(error){console.error('Designer object models could not be loaded',error)}
   /* HOUSE_BOSS_FREE_FURNITURE_3D_V11 — native movable 3D furniture with ghost placement. */
@@ -935,7 +935,7 @@
     group.traverse(function(obj){if(!obj.isMesh)return;
       var index=pickables.indexOf(obj);if(index>=0)pickables.splice(index,1);
       if(obj.geometry)obj.geometry.dispose();
-      if(disposeMaterials&&obj.material)obj.material.dispose()
+      if((disposeMaterials||group.userData.decorCategory)&&obj.material)obj.material.dispose()
     });
     scene.remove(group)
   }
@@ -951,7 +951,14 @@
         var group=furnitureMesh(o.type,o.uid,false);if(!group)continue;
         entry={type:o.type,group:group};furnitureObjects.set(o.uid,entry)
       }
-      entry.group.position.set(o.x,window.HouseBossBuildBridge?.height?.(o)||0,o.z);
+      if(entry.tint!==o.tint&&entry.group.userData.decorCategory){
+        var newTone=o.tint||window.HouseBossFurnitureTypes?.[o.type]?.color;
+        if(newTone)entry.group.traverse(function(mesh){
+         if(mesh.isMesh&&mesh.material?.userData?.houseBossEdition)mesh.material.color.set(newTone)
+        });
+        entry.tint=o.tint
+       }
+       entry.group.position.set(o.x,window.HouseBossBuildBridge?.height?.(o)||0,o.z);
       entry.group.rotation.y=(o.rot||0)*Math.PI/2;
       entry.group.visible=!(pendingFurniture&&pendingFurniture.uid===o.uid)
     }
