@@ -784,6 +784,12 @@
   makePerson('kid',{pos:[-1.45,0,3.07],skin:'#9d624c',hair:'#322927',shirt:'#d48150',pants:'#9c9b72',hairLong:true},true);
   makePerson('elder',{pos:[-4.9,0,1.8],skin:'#714a37',hair:'#b6b3a3',shirt:'#908286',pants:'#6d7762',hairLong:false},.92);
 
+  /* Original collectible design library — rendered as real Three.js geometry. */
+  var createDecorMesh=null;
+  try{
+   var editions=await import('./house-boss-decor-meshes.js?v=1');
+   createDecorMesh=editions.createDecorMesh;
+  }catch(error){console.error('Designer object models could not be loaded',error)}
   /* HOUSE_BOSS_FREE_FURNITURE_3D_V11 — native movable 3D furniture with ghost placement. */
   var furnitureObjects=new Map(),furnitureStamp='',pendingFurniture=null,ghostFurniture=null;
   var buildGrid=new THREE.GridHelper(17,34,'#669565','#b3cbb0');
@@ -907,7 +913,9 @@
        for(var i=0;i<5;i++){var y=.30+i*.48;box(g,1.36,.085,.57,wood,0,y,0);
          for(var j=0;j<5;j++)box(g,.14,.24+((j+i)%3)*.045,.30,mat('galleryBook'+i+'_'+j,['#84968d','#a88b70','#c8b29b','#778a93','#786f68'][j]),-.50+j*.24,y+.17,.11);}
        for(var x of [-.68,.68])capsule(g,[x,.16,.13],[x,2.46,.13],.07,wood);
-     }else{
+      }else if(createDecorMesh&&createDecorMesh(type,g,{THREE:THREE,box:box,ball:ball,cylinder:cylinder,torus:torus,capsule:capsule,addMesh:addMesh})){
+      // Designer editions produced distinctive geometry above.
+    }else{
       scene.remove(g);return null
     }
     g.userData.furnitureId=uid;
@@ -943,7 +951,7 @@
         var group=furnitureMesh(o.type,o.uid,false);if(!group)continue;
         entry={type:o.type,group:group};furnitureObjects.set(o.uid,entry)
       }
-      entry.group.position.set(o.x,0,o.z);
+      entry.group.position.set(o.x,window.HouseBossBuildBridge?.height?.(o)||0,o.z);
       entry.group.rotation.y=(o.rot||0)*Math.PI/2;
       entry.group.visible=!(pendingFurniture&&pendingFurniture.uid===o.uid)
     }
@@ -961,7 +969,7 @@
     if(patch.rot!==undefined)pendingFurniture.rot=((Math.round(patch.rot)%4)+4)%4;
     const result=window.HouseBossBuildBridge?.validate?.(pendingFurniture)||{ok:false,reason:'Waiting for build grid'};
     pendingFurniture.valid=!!result.ok;pendingFurniture.reason=result.reason||'';
-    ghostFurniture.position.set(pendingFurniture.x,.055,pendingFurniture.z);
+    ghostFurniture.position.set(pendingFurniture.x,(window.HouseBossBuildBridge?.height?.(pendingFurniture)||0)+.055,pendingFurniture.z);
     ghostFurniture.rotation.y=pendingFurniture.rot*Math.PI/2;
     ghostFurniture.traverse(function(obj){
       if(obj.isMesh)obj.material.color.set(pendingFurniture.valid?'#71c58b':'#e77267')
