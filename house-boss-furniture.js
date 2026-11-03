@@ -88,7 +88,7 @@ function sell(uid){
  clear();
  if(bridge()?.sell?.(uid)){window.Evin3D?.syncFurnitureNow?.();render()}
 }
-function confirmSale(item){return window.confirm('Sell '+types[item.type].name+' for $'+Math.floor(types[item.type].price/2)+'? This removes the item from your home.')}
+function confirmSale(item){return window.confirm('Sell '+types[item.type].name+' for $'+Math.floor(types[item.type].price*(.20+.30*(item.condition||100)/100))+'? This removes the item from your home.')}
 function placeBar(){
  const p=sceneCandidate(),type=types[p?.type];
  if(!p||!type)return '';
@@ -112,6 +112,7 @@ function render(){
  const homeLevel=Math.max(1,st.level||1),comfort=st.comfort||0;
  const nextUnlock=all.find(([,item])=>item.level>homeLevel);
  const available=all.filter(([,item])=>item.level<=homeLevel).length;
+ const wishlist=st.wishlist||[];
  const pieces=st.furniture||[];
  let quality=st.quality||{score:0,tier:'First Place',furniture:pieces.length};
  let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Furniture</button>'+
@@ -133,14 +134,14 @@ function render(){
     (room.available?'BUILD · $'+room.price:'UNLOCK · LVL '+room.level+' · $'+room.price)+'</button>')+'</article>'
  }).join('')+'</div>';
  html+='<div class="hbf-section-title"><strong>FURNITURE COLLECTIONS</strong><small>'+available+'/'+all.length+' unlocked</small></div>'+
- '<div class="hbf-filters"><button data-hbf-filter="all" class="'+(filter==='all'?'active':'')+'">ALL</button><button data-hbf-filter="available" class="'+(filter==='available'?'active':'')+'">UNLOCKED</button><button data-hbf-filter="locked" class="'+(filter==='locked'?'active':'')+'">COMING SOON</button></div>'+
- '<div class="hbf-market">'+all.filter(([,item])=>filter==='all'||(filter==='available'?item.level<=homeLevel:item.level>homeLevel)).map(([id,item])=>{
+ '<div class="hbf-filters"><button data-hbf-filter="all" class="'+(filter==='all'?'active':'')+'">ALL</button><button data-hbf-filter="available" class="'+(filter==='available'?'active':'')+'">SHOP NOW</button><button data-hbf-filter="locked" class="'+(filter==='locked'?'active':'')+'">FUTURE LEVELS</button><button data-hbf-filter="wishlist" class="'+(filter==='wishlist'?'active':'')+'">♡ SAVED · '+wishlist.length+'</button></div>'+
+ '<div class="hbf-market">'+all.filter(([id,item])=>filter==='all'||(filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel)).map(([id,item])=>{
   const locked=homeLevel<item.level,poor=st.cash<item.price,editing=!!sceneCandidate();
   const rank=collections[item.tier]||'EVERYDAY';
   return '<article class="hbf-card '+(locked?'is-locked':'is-unlocked')+' hbf-tier-'+item.tier+'">'+
-   '<div class="hbf-visual" style="--tone:'+item.color+'"><div class="hbf-visual-glow"></div><div class="hbf-silhouette '+item.shape+'"><i></i><i></i><i></i></div>'+
+   '<div class="hbf-visual" style="--tone:'+item.color+'"><button type="button" class="hbf-heart '+(wishlist.includes(id)?'is-saved':'')+'" data-hbf-wish="'+id+'" title="'+(wishlist.includes(id)?'Remove from wishlist':'Save to wishlist')+'">'+(wishlist.includes(id)?'♥':'♡')+'</button><div class="hbf-visual-glow"></div><div class="hbf-silhouette '+item.shape+'"><i></i><i></i><i></i></div>'+
    (locked?'<span class="hbf-padlock">LOCKED · LVL '+item.level+'</span>':'<span class="hbf-available">AVAILABLE</span>')+'</div>'+
-   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+rank+' · LVL '+item.level+'</div><strong>'+item.name+'</strong><small>'+item.desc+'</small>'+
+   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+rank+' · LVL '+item.level+' · $'+item.price+'</div><strong>'+item.name+'</strong><small>'+item.desc+'</small>'+
    '<div class="hbf-bonus">✧ +'+item.comfort+' COMFORT <span>· '+item.action.toUpperCase()+'</span></div></div>'+
    '<button data-hbf-buy="'+id+'" '+(locked||poor||editing?'disabled':'')+'>'+
    (locked?'UNLOCK AT LVL '+item.level:poor?'SAVE $'+(item.price-st.cash)+' MORE':'BUY & PLACE · $'+item.price)+'</button></article>'
@@ -149,8 +150,8 @@ function render(){
  html+='<div class="hbf-installed">'+(pieces.length?pieces.map((o,i)=>{
   const info=types[o.type];if(!info)return '';
   return '<div class="hbf-row"><span class="hbf-small-icon" style="--tone:'+info.color+'">'+info.icon+'</span>'+
-    '<div><b>'+info.name+'</b><small>+'+info.comfort+' COMFORT · '+o.x.toFixed(1)+', '+o.z.toFixed(1)+' · '+(o.rot||0)*90+'°</small></div>'+
-    '<button type="button" data-hbf-move="'+o.uid+'" '+(sceneCandidate()?'disabled':'')+'>MOVE</button>'+
+    '<div><b>'+info.name+'</b><small>+'+info.comfort+' COMFORT · CONDITION '+Math.round(o.condition||100)+'%</small><span class="hbf-wear-meter"><i style="width:'+(o.condition||100)+'%"></i></span></div>'+
+    '<button type="button" data-hbf-move="'+o.uid+'" '+(sceneCandidate()?'disabled':'')+'>MOVE</button>'+(o.condition<98?'<button type="button" class="hbf-repair" data-hbf-repair="'+o.uid+'" '+(st.cash<bridge().repairCost(o.uid)?'disabled':'')+'>FIX $'+bridge().repairCost(o.uid)+'</button>':'')+
     '<button type="button" class="hbf-sell" data-hbf-sell="'+o.uid+'" '+(sceneCandidate()?'disabled':'')+'>SELL</button></div>';
  }).join(''):'<p class="hbf-empty">Your house has room for new stories. Pick your first piece above.</p>')+'</div>';
  html+='<p class="hbf-note">Tip: Tap a placed object in 3D to move it. Outside Build Mode, tap functional furniture to use it.</p>';
@@ -160,6 +161,8 @@ function render(){
 function install(){
  const body=view();if(!body)return;
  body.addEventListener('click',e=>{
+  const wish=e.target.closest('[data-hbf-wish]');if(wish){bridge()?.toggleWishlist?.(wish.dataset.hbfWish);render();return}
+  const repair=e.target.closest('[data-hbf-repair]');if(repair){if(bridge()?.repair?.(repair.dataset.hbfRepair))render();return}
   const choice=e.target.closest('[data-hbf-filter]');if(choice){filter=choice.dataset.hbfFilter;render();return}
   let room=e.target.closest('[data-hbf-room]');if(room){clear();window.Evin3D?.focusRoom?.(room.dataset.hbfRoom);render();return}
   room=e.target.closest('[data-hbf-room-buy]');if(room){
