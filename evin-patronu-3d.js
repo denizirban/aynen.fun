@@ -651,38 +651,161 @@
 
   // Render sync is read-only: game logic and save files remain the authoritative source.
   var lastStateTime=0,clock=new THREE.Clock(),oldSnapshot=null,previousAvatar='';
+  /* HOUSE_BOSS_WALK_ANIM_V8 — walk around kitchen counters, no 2D movement.
+     Animations are procedural and synchronized with the saved activity timeline. */
+  var workerPositions={
+    stove:[5,0,-3.6],sink:[5,0,-.9],table:[.35,0,2.35],
+    desk:[3.1,0,-2.4],kid:[-1.2,0,2.55],floor:[-4.1,0,3.1],
+    laundry:[5.2,0,2.2],pet:[-4.8,0,3.8]
+  };
+  function isBlocked(a,b){
+    // Raised central kitchen island is not walkable; allow space on all four sides.
+    for(var i=1;i<=24;i++){
+      var t=i/25,x=a.x+(b.x-a.x)*t,z=a.z+(b.z-a.z)*t;
+      if(x>-4.33&&x<4.60&&z>-1.72&&z<1.68)return true
+    }
+    return false
+  }
+  function routeTo(from,to){
+    if(!isBlocked(from,to))return [to.clone()];
+    var sideX=[-5.05,5.30],sideZ=[-2.35,2.35],choices=[];
+    for(var x of sideX)choices.push([
+      new THREE.Vector3(x,0,from.z),new THREE.Vector3(x,0,to.z),to.clone()
+    ]);
+    for(var z of sideZ)choices.push([
+      new THREE.Vector3(from.x,0,z),new THREE.Vector3(to.x,0,z),to.clone()
+    ]);
+    var valid=choices.filter(function(points){
+      var prev=from;
+      for(var p of points){if(isBlocked(prev,p))return false;prev=p}
+      return true
+    });
+    if(!valid.length)return [to.clone()];
+    valid.sort(function(a,b){
+      function len(steps){var d=0,p=from;for(var next of steps){d+=p.distanceTo(next);p=next}return d}
+      return len(a)-len(b)
+    });
+    return valid[0]
+  }
+  var thoughtCache={};
+  function thoughtIcon(id){
+    if(!id)return '';
+    if(id.startsWith('bond_')||id==='talk')return '♡';
+    var map={cook:'◈',snack:'◈',shower:'◉',toilet:'◌',sleep:'☾',nap:'☾',
+      tv:'▷',read:'▤',study:'✎',paint:'✿',exercise:'↗',dance:'♫',
+      clean:'✦',laundry:'▧',computer:'⌘',homework:'✎',
+      playdog:'♡',feedpet:'◈',dogfood:'◈',dognap:'☾',dogplay:'♧',groom:'✧'};
+    return map[id]||'✦'
+  }
+  function thoughtTexture(icon){
+    if(thoughtCache[icon])return thoughtCache[icon];
+    var canvas=document.createElement('canvas');canvas.width=128;canvas.height=128;
+    var ctx=canvas.getContext('2d');
+    ctx.fillStyle='rgba(36,62,42,.23)';ctx.beginPath();ctx.arc(66,68,51,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fffef3';ctx.beginPath();ctx.arc(64,58,49,0,Math.PI*2);ctx.fill();
+    ctx.lineWidth=5;ctx.strokeStyle='#9bbd8e';ctx.stroke();
+    ctx.fillStyle='#3d7049';ctx.font='700 66px sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(icon,64,60);
+    var tx=new THREE.CanvasTexture(canvas);tx.colorSpace=THREE.SRGBColorSpace;
+    thoughtCache[icon]=tx;return tx
+  }
+  function createThought(root,small){
+    var sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:thoughtTexture('✦'),transparent:true,depthWrite:false,opacity:.9}));
+    sprite.position.set(.17,small?2.95:3.05,0);
+    sprite.scale.set(.71,.71,1);sprite.visible=false;root.add(sprite);
+    return sprite
+  }
+  Object.keys(actors).forEach(function(id){actors[id].thought=createThought(actors[id].root,id==='kid')});
+  var petThought=createThought(dogRoot,true);
+  petThought.position.set(-.72,1.28,0);
+  var petDestination=dogRoot.position.clone(),petNav=[],petLastAction='';
+  function setThought(sprite,id){
+    var icon=thoughtIcon(id);if(!sprite)return;
+    sprite.visible=!!icon;
+    if(icon&&sprite.userData.icon!==icon){
+      sprite.material.map=thoughtTexture(icon);sprite.material.needsUpdate=true;sprite.userData.icon=icon
+    }
+  }
+  function targetAt(spot,who){
+    var p=workerPositions[spot];if(!p)return null;
+    var side=who==='partner'?.58:who==='kid'?-.55:0;
+    return new THREE.Vector3(p[0]+side,0,p[2]+(who==='partner'?.12:0))
+  }
   function updateActors(state,dt,elapsed){
-    var workerPositions={
-      stove:[5.0,0,-3.6],sink:[5.0,0,-.9],table:[.35,0,2.35],
-      desk:[3.1,0,-2.4],kid:[-1.2,0,2.55],floor:[-4.1,0,3.1],
-      laundry:[5.2,0,2.2],pet:[-4.8,0,3.8]
-    };
-    function safeWorkPosition(spot,person){
-      var p=workerPositions[spot];if(!p)return null;
-      var side=person==='partner'?.58:person==='kid'?-.55:0;
-      return new THREE.Vector3(p[0]+side,0,p[2]+(person==='partner'?.12:0));
+    var act=state.simActions||{},social=state.simSocialTargets||{},walk=state.simWalkTargets||{};
+    var tasks={self:state.currentSpot,partner:state.partnerSpot,kid:state.kidSpot};
+    var inConversation={};
+    for(var who of ['self','partner','kid']){
+      var other=social[who];
+      if(other&&!tasks[other]&&!inConversation[other])inConversation[other]=who
     }
-    var targets={
-      self:safeWorkPosition(state.currentSpot,'self')||new THREE.Vector3(3.4,0,1.8),
-      partner:safeWorkPosition(state.partnerSpot,'partner')||new THREE.Vector3(2.2,0,-2.45),
-      kid:safeWorkPosition(state.kidSpot,'kid')||new THREE.Vector3(-1.1,0,2.35)
+    var destinations={
+      self:new THREE.Vector3(3.4,0,1.8),
+      partner:new THREE.Vector3(2.2,0,-2.45),
+      kid:new THREE.Vector3(-1.1,0,2.35)
     };
-    for(var k in actors){
-      var data=actors[k],root=data.root;
-      root.visible=!(k==='self'&&state.selfAway||k==='partner'&&state.partnerAway||k==='kid'&&state.kidAway);
-      var tar=targets[k]||new THREE.Vector3(...data.initial);
-      var goal=new THREE.Vector3(tar.x,0,tar.z);
-      root.position.lerp(goal,Math.min(1,dt*2.25));
-      var moving=root.position.distanceToSquared(goal)>.07;
-      var bob=moving?Math.sin(elapsed*11)*.036:Math.sin(elapsed*1.5+k.length)*.012;
-      data.body.position.y=bob;
-      var working=k==='self'&&state.currentSpot||k==='partner'&&state.partnerSpot||k==='kid'&&state.kidSpot;
-      var motion=working?Math.sin(elapsed*5+k.length)*.35:Math.sin(elapsed*1.3+k.length)*.035;
-      data.leftArm.rotation.x+=((working?-.48:0)+motion-data.leftArm.rotation.x)*Math.min(1,dt*7);
-      data.rightArm.rotation.x+=((working?-.48:0)-motion-data.rightArm.rotation.x)*Math.min(1,dt*7);
-      if(moving)root.rotation.y=Math.atan2(goal.x-root.position.x,goal.z-root.position.z);
-      else root.rotation.y+=(-.15-root.rotation.y)*Math.min(1,dt*.8);
+    var waypoints={self:0,partner:0,kid:0},count=0;
+    for(var key of ['self','partner','kid']){
+      if(tasks[key])destinations[key]=targetAt(tasks[key],key)||destinations[key];
+      else if(inConversation[key])destinations[key]=targetAt('table',key)||destinations[key];
+      else if(walk[key]&&Number.isFinite(walk[key].x)&&Number.isFinite(walk[key].z))
+        destinations[key]=new THREE.Vector3(walk[key].x,0,walk[key].z);
     }
+    for(var key of ['self','partner','kid']){
+      var data=actors[key],root=data.root,dest=destinations[key],activity=act[key]||'';
+      root.visible=!(key==='self'&&state.selfAway||key==='partner'&&state.partnerAway||key==='kid'&&state.kidAway);
+      if(!root.visible){data.thought.visible=false;continue}
+      if(!data.lastDest||data.lastDest.distanceToSquared(dest)>.10){
+        data.lastDest=dest.clone();data.nav=routeTo(root.position,dest)
+      }
+      if(!data.nav)data.nav=[];
+      while(data.nav.length&&root.position.distanceToSquared(data.nav[0])<.045)data.nav.shift();
+      var goal=data.nav[0]||dest;
+      var dx=goal.x-root.position.x,dz=goal.z-root.position.z;
+      var distance=Math.hypot(dx,dz),moving=distance>.08,step=(state.paused?0:dt)*2.65;
+      if(moving&&step>0){
+        var amount=Math.min(distance,step);
+        root.position.x+=dx/distance*amount;root.position.z+=dz/distance*amount;
+        var facing=Math.atan2(dx,dz);
+        var delta=Math.atan2(Math.sin(facing-root.rotation.y),Math.cos(facing-root.rotation.y));
+        root.rotation.y+=delta*Math.min(1,dt*8)
+      }
+      var active=!!(activity||tasks[key]||inConversation[key]);
+      var sleeping=/sleep|nap/.test(activity),talking=/bond_|talk/.test(activity)||!!inConversation[key];
+      var rhythmic=Math.sin(elapsed*(moving?9:active?4.4:1.5)+key.length);
+      data.body.position.y=moving?rhythmic*.045:Math.sin(elapsed*1.5+key.length)*.012;
+      var arm=active?(talking?Math.sin(elapsed*5)*.28:Math.sin(elapsed*7)*.36):.032;
+      var pose=sleeping?-.08:active?-.43:0;
+      data.leftArm.rotation.x+=(pose+(moving?rhythmic*.45:arm)-data.leftArm.rotation.x)*Math.min(1,dt*8);
+      data.rightArm.rotation.x+=(pose-(moving?rhythmic*.45:arm)-data.rightArm.rotation.x)*Math.min(1,dt*8);
+      var tilt=sleeping?.31:activity==='exercise'?.18:0;
+      data.body.rotation.z+=(tilt-data.body.rotation.z)*Math.min(1,dt*5);
+      if(!moving&&!active)root.rotation.y+=(-.15-root.rotation.y)*Math.min(1,dt*.55);
+      setThought(data.thought,activity);
+      if(data.thought.visible)data.thought.position.y=(key==='kid'?2.9:3.06)+Math.sin(elapsed*2.2+key.length)*.07;
+    }
+    // The dog has its own movement and activity indicator.
+    var dogTarget=new THREE.Vector3(-5.25,0,3.55);
+    if(walk.pet&&Number.isFinite(walk.pet.x)&&Number.isFinite(walk.pet.z))
+      dogTarget.set(walk.pet.x,0,walk.pet.z);
+    if(state.simPetActivity==='dogplay')dogTarget.set(-3.85,0,3.25);
+    if(!petDestination||petDestination.distanceToSquared(dogTarget)>.1){
+      petDestination=dogTarget.clone();petNav=routeTo(dogRoot.position,dogTarget)
+    }
+    while(petNav.length&&dogRoot.position.distanceToSquared(petNav[0])<.06)petNav.shift();
+    var nextPet=petNav[0]||dogTarget;
+    var px=nextPet.x-dogRoot.position.x,pz=nextPet.z-dogRoot.position.z,pdist=Math.hypot(px,pz);
+    if(pdist>.07&&!state.paused){
+      var petStep=Math.min(pdist,dt*2.0);
+      dogRoot.position.x+=px/pdist*petStep;dogRoot.position.z+=pz/pdist*petStep;
+      dogRoot.rotation.y=Math.atan2(px,pz);
+    }
+    petThought.visible=!!state.simPetActivity;
+    if(petThought.visible){
+      setThought(petThought,state.simPetActivity);
+      petThought.position.y=1.28+Math.sin(elapsed*2.1)*.06
+    }
+    tailRoot.rotation.y=Math.sin(elapsed*(state.simPetActivity?9:5))* (state.simPetActivity?.61:.35);
   }
   function refresh(state){
     for(var id in upgrades)upgrades[id].visible=(state.owned||[]).includes(id);
@@ -690,9 +813,12 @@
       var model=actors[key],kind=key==='self'?state.avatarSelf:state.avatarPartner;
       if(model&&model.sideHair)model.sideHair.forEach(function(o){o.visible=kind==='f'});
     });
-    var lamp=state.time>=21*60;
-    sun.intensity=lamp?1.65:state.time>=19*60?2.45:3.4;
-    fill.intensity=lamp?1.2:.82;
+    var hour=((state.time||0)%1440)/60;
+    var night=hour<6||hour>=21,evening=hour>=18.5&&hour<21;
+    sun.intensity=night?.92:evening?2.05:3.4;
+    fill.intensity=night?1.26:evening?1.05:.82;
+    hemi.intensity=night?1.05:evening?1.55:2.0;
+    scene.background.set(night?'#788397':evening?'#e0d2ba':'#dfe5d7');
   }
   var living=true;
   function animate(){
@@ -712,7 +838,6 @@
     updateActors(oldSnapshot||{},dt,elapsed);
     updateSimMarker(oldSnapshot||{},elapsed);
     syncWorkingDetails(oldSnapshot||{},elapsed);
-    tailRoot.rotation.y=Math.sin(elapsed*5.2)*.42;
     if(selectionRing.visible){selectionRing.children[0].rotation.z=elapsed*.12;attention.material.opacity=.10+.07*Math.sin(elapsed*3)}
     if(host.classList.contains('is-ready'))renderer.render(scene,camera);
   }
