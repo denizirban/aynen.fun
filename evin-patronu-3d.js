@@ -29,7 +29,7 @@
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.38;
-  renderer.domElement.setAttribute('aria-label','Etkileşimli üç boyutlu mutfak. Nesne seçmek için dokun; sahneyi sürükleyerek hareket ettir.');
+  renderer.domElement.setAttribute('aria-label','Interactive 3D kitchen. Tap to select an object, drag to move around the scene.');
   renderer.domElement.style.touchAction='none';
   host.appendChild(renderer.domElement);
   var camera = new THREE.OrthographicCamera(-11,11,7,-7,.1,100);
@@ -183,7 +183,7 @@
     for(var x of [-4.18,4.18])for(var z of [-1.15,1.15])box(g,.19,1.23,.19,woodDark,x,.61,z);
     box(g,8.7,.22,.14,woodDark,0,1.0,1.31);
     box(g,8.7,.22,.14,woodDark,0,1.0,-1.31);
-    interactive(g,'table','Masa · ödev ve yemek');
+    interactive(g,'table','Table · homework and meals');
     return g;
   }
   furnitureTable();
@@ -216,7 +216,7 @@
     capsule(sink,[.38,1.61,-.27],[.38,2.07,-.27],.036,stainless);
     capsule(sink,[.38,2.07,-.27],[.03,2.07,-.25],.038,stainless);
     capsule(sink,[.03,2.07,-.25],[.03,1.86,-.2],.036,stainless);
-    interactive(sink,'sink','Lavabo · bulaşık');
+    interactive(sink,'sink','Sink · dishes');
     var stove=new THREE.Group();stove.position.set(6.65,0,-3.55);scene.add(stove);
     box(stove,1.32,.09,1.35,black,0,1.63,0);
     for(var xx of [-.37,.35])for(var zz of [-.36,.35]){
@@ -228,7 +228,7 @@
     ball(pot,.09,.06,.09,black,0,.23,0);
     capsule(pot,[-.38,0,0],[-.57,.02,0],.04,stainless);
     interactive(stove,'stove','Ocak · yemek');
-    interactive(g,'laundry','Mutfak dolapları');
+    interactive(g,'laundry','Kitchen cupboards');
   }
   cabinetGroup();
   // Side shelf and small art on back wall
@@ -263,19 +263,19 @@
   box(desk,1.35,.045,.91,mat('laptop','#899299',.35,.3),0,1.53,0);
   var screen=box(desk,1.35,.84,.045,mat('laptopback','#606b70',.39,.18),0,2.02,-.48);screen.rotation.x=-.18;
   box(desk,1.13,.63,.015,mat('display','#d1d9d9',.23),0,2.02,-.444);
-  interactive(desk,'desk','Laptop ve şarj');
+  interactive(desk,'desk','Laptop and charger');
   // cable physically visible beside laptop
   var cable=new THREE.Group();scene.add(cable);
   cable.position.set(3.36,1.52,-.53);
   var cordPoints=[[0,0,0],[.12,.04,.16],[.4,.02,.3],[.68,.03,.16],[.77,.02,-.12]];
   for(var c=0;c<cordPoints.length-1;c++)capsule(cable,cordPoints[c],cordPoints[c+1],.022,black);
   box(cable,.31,.12,.19,cream,.8,.065,-.17);
-  interactive(cable,'desk','Şarj aleti');
+  interactive(cable,'desk','Charger');
   // Homework pad and writing props
   var homework=new THREE.Group();scene.add(homework);
   box(homework,.72,.018,.55,mat('paper','#f8f4e7',.9),-.8,1.5,.3);
   capsule(homework,[-.49,1.53,.27],[-.16,1.53,.08],.02,mat('pencil','#7b8baf'));
-  interactive(homework,'kid','Ödev defteri');
+  interactive(homework,'kid','Homework notebook');
   // Kitchen work upgrades are physically shown as you buy them.
   var upgrades={};
   function addUpgrade(name,fn){var g=new THREE.Group();scene.add(g);fn(g);g.visible=false;upgrades[name]=g}
@@ -350,7 +350,7 @@
   var tailRoot=new THREE.Group();tailRoot.position.set(.68,.45,0);dogRoot.add(tailRoot);
   var tail=capsule(tailRoot,[0,0,0],[.5,.28,.08],.09,mat('dogtail','#342a25'));
   var bowl=cylinder(scene,.34,.28,.15,mat('petbowl','#b86274',.45),-6.4,.11,4.2);
-  interactive(dogRoot,'pet','Köpeğin');
+  interactive(dogRoot,'pet','Dog');
   var dogRug=addMesh(scene,new THREE.CircleGeometry(2.5,48),mat('rug','#8c9d68',1),-5.5,.006,3.15,false,true);dogRug.rotation.x=-Math.PI/2;dogRug.scale.set(1.55,.83,1);
 
   // Art-directed detail pass: floor rug fibers, cabinet fronts, seams, curtains,
@@ -638,7 +638,7 @@
       host.classList.toggle('is-ready',Boolean(on));
       document.getElementById('game').classList.toggle('scene-3d-ready',Boolean(on));
       var button=document.getElementById('visualMode');
-      if(button){button.hidden=false;button.textContent=on?'3D':'2D';button.setAttribute('aria-label',on?'3D sahnesi açık, 2D görünümüne geç':'2D sahnesi açık, 3D görünümüne geç');}
+      if(button){button.hidden=false;button.textContent=on?'3D':'2D';button.setAttribute('aria-label',on?'3D scene enabled; switch to 2D':'2D scene enabled; switch to 3D');}
       try{localStorage.setItem('evin-patronu:scene-mode',on?'3d':'2d')}catch(e){}
     },
     destroy:function(){living=false;ro.disconnect();renderer.dispose();host.replaceChildren()}
