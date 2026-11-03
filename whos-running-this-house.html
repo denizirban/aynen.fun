@@ -619,8 +619,8 @@ body:has(#game) .brand .back{display:none!important}
 </head>
 <body>
 <div id="game">
-<div id="kitchen3d" aria-label="Üç boyutlu izometrik mutfak sahnesi" data-status="loading"></div>
-<svg id="room" viewBox="0 0 1400 900" role="img" aria-label="İzometrik mutfak, aile üyeleri ve yapılacak işler">
+<div id="kitchen3d" aria-label="Three-dimensional isometric kitchen scene" data-status="loading"></div>
+<svg id="room" viewBox="0 0 1400 900" role="img" aria-label="Isometric kitchen, family members, and household tasks">
 <defs>
 <linearGradient id="retroWall" x1="0" y1="0" x2="1" y2=".65"><stop stop-color="#b7bd88"/><stop offset=".5" stop-color="#a2ac76"/><stop offset="1" stop-color="#8d9a6b"/></linearGradient>
 <linearGradient id="retroSide" x1="0" y1="0" x2=".9" y2=".8"><stop stop-color="#879669"/><stop offset="1" stop-color="#b6bc86"/></linearGradient>
@@ -764,7 +764,7 @@ body:has(#game) .brand .back{display:none!important}
 <ellipse cx="1016" cy="832" rx="29" ry="12" fill="#d4836b"/><ellipse cx="1016" cy="829" rx="20" ry="6" fill="#745443"/>
 <path d="M92 810L135 795L157 814L116 836Z" fill="#f4ebd5" stroke="#b4ac97" stroke-width="2"/>
 <!-- retro modeled interactive household characters -->
-<g class="person selectable" id="elderActor" data-person="elder" role="button" tabindex="0" aria-label="Aile büyüğü" transform="translate(422 490)">
+<g class="person selectable" id="elderActor" data-person="elder" role="button" tabindex="0" aria-label="Elder family member" transform="translate(422 490)">
 <ellipse cx="2" cy="114" rx="41" ry="13" fill="#3b4634" opacity=".22"/>
 <!-- pressed khaki slacks and leather slippers -->
 <path d="M-24 59L-27 114L-8 114L4 77L13 117L33 118L26 57Z" fill="#787f60" stroke="#677356" stroke-width="2"/>
@@ -878,29 +878,29 @@ body:has(#game) .brand .back{display:none!important}
 <g class="hotspot" data-station="stove" role="button" tabindex="0" aria-label="Ocak"><circle class="halo" cx="1193" cy="280" r="24"/><text class="sym" x="1193" y="283">🍳</text><text class="spot-label" x="1193" y="248">STOVE</text></g>
 <g class="hotspot" data-station="sink" role="button" tabindex="0" aria-label="Lavabo"><circle class="halo" cx="1328" cy="422" r="24"/><text class="sym" x="1328" y="426">🫧</text><text class="spot-label" x="1328" y="388">SINK</text></g>
 <g class="hotspot" data-station="table" role="button" tabindex="0" aria-label="Masa"><circle class="halo" cx="710" cy="487" r="24"/><text class="sym" x="710" y="491">🧽</text><text class="spot-label" x="710" y="453">TABLE</text></g>
-<g class="hotspot" data-station="kid" role="button" tabindex="0" aria-label="Your kid's ödevi"><circle class="halo" cx="666" cy="742" r="24"/><text class="sym" x="666" y="745">✏️</text><text class="spot-label" x="666" y="708">HOMEWORK</text></g>
+<g class="hotspot" data-station="kid" role="button" tabindex="0" aria-label="Your kid's homework"><circle class="halo" cx="666" cy="742" r="24"/><text class="sym" x="666" y="745">✏️</text><text class="spot-label" x="666" y="708">HOMEWORK</text></g>
 <g class="hotspot" data-station="floor" role="button" tabindex="0" aria-label="Yeri topla"><circle class="halo" cx="544" cy="830" r="24"/><text class="sym" x="544" y="834">🧹</text><text class="spot-label" x="544" y="793">FLOOR</text></g>
-<g class="hotspot" data-station="laundry" role="button" tabindex="0" aria-label="Tezgah dolabı"><circle class="halo" cx="1211" cy="703" r="24"/><text class="sym" x="1211" y="707">🧺</text><text class="spot-label" x="1211" y="670">CUPBOARD</text></g>
+<g class="hotspot" data-station="laundry" role="button" tabindex="0" aria-label="Kitchen cupboard"><circle class="halo" cx="1211" cy="703" r="24"/><text class="sym" x="1211" y="707">🧺</text><text class="spot-label" x="1211" y="670">CUPBOARD</text></g>
 <g class="hotspot" data-station="desk" role="button" tabindex="0" aria-label="Laptop"><circle class="halo" cx="920" cy="395" r="24"/><text class="sym" x="920" y="399">📱</text><text class="spot-label" x="920" y="360">DESK</text></g>
-<g class="hotspot" data-station="pet" role="button" tabindex="0" aria-label="Köpeğin maması"><circle class="halo" cx="318" cy="726" r="24"/><text class="sym" x="318" y="730">🐾</text><text class="spot-label" x="318" y="693">PET FOOD</text></g>
+<g class="hotspot" data-station="pet" role="button" tabindex="0" aria-label="Dog food"><circle class="halo" cx="318" cy="726" r="24"/><text class="sym" x="318" y="730">🐾</text><text class="spot-label" x="318" y="693">PET FOOD</text></g>
 <!-- Tappable objects specific to household tasks -->
-<g class="scene-item" data-item="charger" role="button" tabindex="0" aria-label="Şarj kablosu ve adaptör" transform="translate(973 484)">
+<g class="scene-item" data-item="charger" role="button" tabindex="0" aria-label="Charging cable and adapter" transform="translate(973 484)">
 <ellipse cy="22" rx="43" ry="10" fill="#3c3526" opacity=".15"/><path d="M-35 7Q-43-17-20-15Q-7-12-5 9Q1 30 20 10" fill="none" stroke="#39423d" stroke-width="7" stroke-linecap="round"/><path d="M-35 7Q-43-17-20-15Q-7-12-5 9Q1 30 20 10" fill="none" stroke="#a5ae9a" stroke-width="2" stroke-linecap="round"/><rect x="14" y="-27" width="30" height="24" rx="5" fill="#ede8d9" stroke="#546055" stroke-width="3" transform="rotate(-13 25 -15)"/><path d="M43-21l11-3M44-12l10-2" stroke="#6a7769" stroke-width="3"/><rect x="-41" y="3" width="17" height="12" rx="3" fill="#424b45"/></g>
 <g class="scene-item" data-item="lost" role="button" tabindex="0" aria-label="Missing remote" transform="translate(559 601)"><ellipse cy="9" rx="26" ry="7" fill="#353b2c" opacity=".18"/><rect x="-23" y="-9" width="47" height="17" rx="5" fill="#424a41" stroke="#849186" stroke-width="2" transform="rotate(-12)"/><circle cx="-12" cy="-3" r="3" fill="#d16e54"/><circle cx="4" cy="-5" r="2" fill="#d7d9ba"/></g>
-<g class="scene-item" data-item="crumb" role="button" tabindex="0" aria-label="Masaya dökülmüş su" transform="translate(744 556)"><path d="M-34 12Q-43-8-18-8Q-6-20 14-11Q45-10 43 5Q20 22-5 17Q-24 21-34 12Z" fill="#a4c9bc" stroke="#79a6a0" stroke-width="2" opacity=".87"/></g>
-<g class="scene-item" data-item="snack" role="button" tabindex="0" aria-label="Atıştırmalık" transform="translate(539 567)"><ellipse rx="36" ry="15" fill="#f3e5c6" stroke="#a5a187" stroke-width="3"/><path d="M-21-2L0-12L21-5L8 9Z" fill="#da9b58"/><path d="M0-12L11-4" stroke="#7b9e5a" stroke-width="4"/></g>
+<g class="scene-item" data-item="crumb" role="button" tabindex="0" aria-label="Spilled water on the table" transform="translate(744 556)"><path d="M-34 12Q-43-8-18-8Q-6-20 14-11Q45-10 43 5Q20 22-5 17Q-24 21-34 12Z" fill="#a4c9bc" stroke="#79a6a0" stroke-width="2" opacity=".87"/></g>
+<g class="scene-item" data-item="snack" role="button" tabindex="0" aria-label="Snack" transform="translate(539 567)"><ellipse rx="36" ry="15" fill="#f3e5c6" stroke="#a5a187" stroke-width="3"/><path d="M-21-2L0-12L21-5L8 9Z" fill="#da9b58"/><path d="M0-12L11-4" stroke="#7b9e5a" stroke-width="4"/></g>
 <g id="focusTarget" visibility="hidden" pointer-events="none"><circle id="focusOuter" r="53" fill="#f8ffe9" fill-opacity=".18" stroke="#efffca" stroke-width="5" stroke-dasharray="9 6"/><circle r="34" fill="none" stroke="#3e6a46" stroke-width="4"/><path d="M-70 0h23M47 0h23M0-70v23M0 47v23" stroke="#f9ffe2" stroke-width="5"/><rect x="-104" y="-98" width="208" height="31" rx="10" fill="#fffbe6" stroke="#547351" stroke-width="2"/><text id="focusLabel" y="-77" text-anchor="middle" font-size="13" font-family="Arial" font-weight="700" fill="#2f533a">ITEM LOCATION</text></g>
 <rect width="1400" height="900" fill="url(#grain)" pointer-events="none"/>
 </svg>
-<div id="sceneShade"></div><div class="stage-vignette" aria-hidden="true"></div><div class="scene-caption"><span class="scene-dot"></span><span>HOME / KITCHEN</span><span class="scene-sep">·</span><span id="sceneMood">DAYTIME</span></div><div id="cameraTools" aria-label="Kamera kontrolleri"><button type="button" id="cameraOut" aria-label="Uzaklaştır">−</button><button type="button" id="cameraReset" aria-label="Kamerayı sıfırla">⌖</button><button type="button" id="cameraIn" aria-label="Yakınlaştır">+</button><button type="button" id="visualMode" aria-label="3D ve 2D görünüm arasında geçiş" hidden>3D</button></div>
+<div id="sceneShade"></div><div class="stage-vignette" aria-hidden="true"></div><div class="scene-caption"><span class="scene-dot"></span><span>HOME / KITCHEN</span><span class="scene-sep">·</span><span id="sceneMood">DAYTIME</span></div><div id="cameraTools" aria-label="Camera controls"><button type="button" id="cameraOut" aria-label="Zoom out">−</button><button type="button" id="cameraReset" aria-label="Reset camera">⌖</button><button type="button" id="cameraIn" aria-label="Zoom in">+</button><button type="button" id="visualMode" aria-label="Toggle between 3D and 2D views" hidden>3D</button></div>
 <header id="top">
 <div class="brand"><a class="back" href="#" onclick="return false" aria-label="House Boss">←</a><div><b>HOUSE BOSS</b><small>A LIVING HOUSEHOLD SIM</small></div></div>
 <div class="clock"><div><small id="dayLabel">DAY 01 / EVENING</small><strong id="time">17:00</strong></div><div class="controls"><button class="mini" id="pause" aria-label="Duraklat">Ⅱ</button><button class="mini" id="saveNow" aria-label="Kaydet" title="Kaydet">⌑</button><button class="mini on" data-speed="1">1×</button><button class="mini" data-speed="2">2×</button><button class="mini" data-speed="3">3×</button></div></div>
 <div class="stats"><div class="stat"><label>HOUSE PEACE</label><strong id="peace">75%</strong></div><div class="stat"><label>YOUR ENERGY</label><strong id="energy">100%</strong></div><div class="stat"><label>BUDGET</label><strong id="cash">$420</strong></div></div>
 </header>
 <div id="hint">Pick a chore, delegate it, or use FIND to locate it.</div>
-<div id="quickBar" role="region" aria-label="Önerilen sonraki görev">
- <div class="quick-heading"><span class="quick-signal"></span><span id="quickKicker">UP NEXT</span><button type="button" id="quickHelp" aria-label="Nasıl oynanır?">?</button></div>
+<div id="quickBar" role="region" aria-label="Recommended next task">
+ <div class="quick-heading"><span class="quick-signal"></span><span id="quickKicker">UP NEXT</span><button type="button" id="quickHelp" aria-label="How to play">?</button></div>
  <div class="quick-title" id="quickTitle">Chores will appear here.</div>
  <div class="quick-meta" id="quickMeta">Not started yet.</div>
  <div class="quick-actions"><button type="button" id="quickShow">FIND IT</button><button type="button" id="quickAssign">START</button></div>
@@ -910,23 +910,23 @@ body:has(#game) .brand .back{display:none!important}
  <button type="button" id="mobileBuild">UPGRADE</button>
  </nav>
 </div>
-<div id="helpPanel" class="hidden" role="dialog" aria-label="Oynama rehberi"><div class="help-head"><strong>HOW TO PLAY?</strong><button type="button" id="closeHelp" aria-label="Rehberi kapat">×</button></div>
+<div id="helpPanel" class="hidden" role="dialog" aria-label="How to play guide"><div class="help-head"><strong>HOW TO PLAY?</strong><button type="button" id="closeHelp" aria-label="Rehberi kapat">×</button></div>
  <p><b>1.</b> Tap the next chore or open the to-do list.</p>
  <p><b>2.</b> Assign the chore to yourself, your partner or your kid. <b>FIND</b> shows where the item is.</p>
  <p><b>3.</b> Finish chores, earn XP and upgrade your home. Progress saves automatically.</p>
  <button type="button" id="helpOpenTasks">SHOW CHORES →</button>
-</div><div id="findHint" class="hidden" role="status" aria-live="polite"><span id="findHintText">Item location</span><button id="clearFind" aria-label="Vurguyu kapat">×</button></div>
-<section id="tasks" class="collapsed" aria-label="Yapılacak işler"><div class="tasks-head" id="tasksHead" role="button" tabindex="0" aria-label="Görev listesini aç veya kapat"><b>TO-DO LIST <span id="count">0</span></b><span id="fold">OPEN LIST +</span></div><div id="taskFilters" class="task-filters" role="group" aria-label="Görev filtresi"><button type="button" class="active" data-task-filter="all" aria-pressed="true">ALL</button><button type="button" data-task-filter="house" aria-pressed="false">HOME</button><button type="button" data-task-filter="family" aria-pressed="false">FAMILY</button><button type="button" data-task-filter="urgent" aria-pressed="false">URGENT</button></div><div class="task-list" id="taskList"></div><div class="todo-foot"><span class="todo-dot"></span><span>Choose a chore, queue it or hand it to someone else.</span></div></section>
+</div><div id="findHint" class="hidden" role="status" aria-live="polite"><span id="findHintText">Item location</span><button id="clearFind" aria-label="Clear highlight">×</button></div>
+<section id="tasks" class="collapsed" aria-label="Household chores"><div class="tasks-head" id="tasksHead" role="button" tabindex="0" aria-label="Toggle chore list"><b>TO-DO LIST <span id="count">0</span></b><span id="fold">OPEN LIST +</span></div><div id="taskFilters" class="task-filters" role="group" aria-label="Chore filters"><button type="button" class="active" data-task-filter="all" aria-pressed="true">ALL</button><button type="button" data-task-filter="house" aria-pressed="false">HOME</button><button type="button" data-task-filter="family" aria-pressed="false">FAMILY</button><button type="button" data-task-filter="urgent" aria-pressed="false">URGENT</button></div><div class="task-list" id="taskList"></div><div class="todo-foot"><span class="todo-dot"></span><span>Choose a chore, queue it or hand it to someone else.</span></div></section>
 <div id="progress"><strong id="progressName">Working...</strong><small id="progressWho">You</small><div class="bar"><i id="progressFill"></i></div></div>
-<div id="action"><button class="close-action" id="closeAction" aria-label="Kapat">×</button><div class="eyebrow" id="actionMeta">HOUSEHOLD CHORE</div><h2 id="actionTitle"></h2><p id="actionDesc"></p><div id="actionContext" class="action-context" aria-live="polite"></div><div class="action-buttons"><button class="primary" id="doIt">DO IT MYSELF</button><button id="delegate">ASK PARTNER</button><button id="askKid">ASK KID</button></div></div>
-<aside id="family" aria-label="Aile üyeleri"><div class="family-head"><b>FAMILY</b><button type="button" id="familySettings">HABITS</button><button type="button" id="editAvatars">APPEARANCE</button><small id="saveStatus">AUTOSAVE</small></div><div class="portraits"><button class="person-card selected" data-person="self" aria-label="Senin karakterin"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#e4d6c6"/><path d="M5 75Q6 53 23 50L50 50Q68 54 69 75" fill="#dc7654"/><path d="M22 50L31 58L43 58L50 50" fill="#f2eddf"/><rect x="31" y="44" width="12" height="15" rx="5" fill="#c8906b"/><ellipse cx="37" cy="30" rx="19" ry="23" fill="#c9906e"/><path d="M18 26Q18 7 35 7Q58 3 58 28L49 22L43 16L30 22L20 25Z" fill="#3a2c28"/><path d="M26 33h8m7 0h8" stroke="#29292a" stroke-width="3" stroke-linecap="round"/><path d="M34 34h7" stroke="#29292a" stroke-width="2"/><path d="M31 45Q38 48 44 44" fill="none" stroke="#985b46" stroke-width="2" stroke-linecap="round"/></svg></span><b>You</b><span class="meter"><i id="selfMeter"></i></span></button><button class="person-card" data-person="partner" aria-label="Partnerin karakteri"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#dfdcce"/><path d="M7 75Q9 55 22 51L50 51Q64 55 67 75" fill="#aaa0b5"/><path d="M13 35Q11 4 37 4Q64 4 60 37L57 55L14 52Z" fill="#312b29"/><ellipse cx="37" cy="32" rx="18" ry="23" fill="#b87f61"/><path d="M18 31Q17 15 29 13Q40 28 55 24L53 17Q47 5 30 9Z" fill="#302b27"/><path d="M27 34h6m9 0h6" stroke="#3a322e" stroke-width="2.5" stroke-linecap="round"/><path d="M31 45Q37 48 44 44" fill="none" stroke="#804f3e" stroke-width="1.8"/><path d="M21 52L34 62L43 61L53 51" fill="none" stroke="#e5d9c8" stroke-width="3"/></svg></span><b>Partner</b><span class="meter"><i id="partnerMeter"></i></span></button><button class="person-card" data-person="kid" aria-label="Your kid's karakteri"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#efdbc7"/><path d="M4 75Q6 52 24 51H49Q66 56 68 75" fill="#dc894c"/><g fill="#352b29"><circle cx="19" cy="23" r="13"/><circle cx="31" cy="12" r="14"/><circle cx="45" cy="15" r="15"/><circle cx="56" cy="29" r="12"/></g><ellipse cx="37" cy="36" rx="19" ry="22" fill="#a8684b"/><path d="M21 30Q35 22 53 29" fill="none" stroke="#2c2523" stroke-width="8" stroke-linecap="round"/><circle cx="30" cy="37" r="2.6" fill="#221d1b"/><circle cx="44" cy="37" r="2.6" fill="#221d1b"/><path d="M31 47Q37 53 44 47" stroke="#6d352b" stroke-width="2.3" fill="none" stroke-linecap="round"/></svg></span><b>Kid</b><span class="meter"><i id="kidMeter"></i></span></button><button class="person-card" data-person="pet" aria-label="Köpeğin"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#e6d9c6"/><path d="M11 68Q12 40 35 40Q60 40 61 69" fill="#383734"/><path d="M21 18Q3 15 12 50L24 47M52 18Q69 16 62 50L51 46" fill="#282927"/><ellipse cx="36" cy="33" rx="24" ry="25" fill="#42403b"/><path d="M21 40Q18 59 36 59Q55 59 51 40Q44 44 36 43Q29 44 21 40" fill="#a57852"/><circle cx="28" cy="33" r="3.4" fill="#1a1b1a"/><circle cx="45" cy="33" r="3.4" fill="#1a1b1a"/><ellipse cx="36" cy="45" rx="6" ry="4" fill="#171717"/><path d="M36 49Q31 55 27 50M36 49Q41 55 46 50" stroke="#2b2927" stroke-width="1.8" fill="none"/></svg></span><b>Dog</b><span class="meter"><i id="petMeter"></i></span></button></div><div id="relations"><span>RELATIONSHIP <b id="relationPartner">66</b></span><span>TRUST <b id="relationKid">64</b></span><span>MEMORIES <b id="badgeCount">0/7</b></span></div><div id="familyActivity" class="family-activity">Everybody is keeping to themselves. For now.</div></aside>
+<div id="action"><button class="close-action" id="closeAction" aria-label="Close">×</button><div class="eyebrow" id="actionMeta">HOUSEHOLD CHORE</div><h2 id="actionTitle"></h2><p id="actionDesc"></p><div id="actionContext" class="action-context" aria-live="polite"></div><div class="action-buttons"><button class="primary" id="doIt">DO IT MYSELF</button><button id="delegate">ASK PARTNER</button><button id="askKid">ASK KID</button></div></div>
+<aside id="family" aria-label="Family members"><div class="family-head"><b>FAMILY</b><button type="button" id="familySettings">HABITS</button><button type="button" id="editAvatars">APPEARANCE</button><small id="saveStatus">AUTOSAVE</small></div><div class="portraits"><button class="person-card selected" data-person="self" aria-label="Your character"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#e4d6c6"/><path d="M5 75Q6 53 23 50L50 50Q68 54 69 75" fill="#dc7654"/><path d="M22 50L31 58L43 58L50 50" fill="#f2eddf"/><rect x="31" y="44" width="12" height="15" rx="5" fill="#c8906b"/><ellipse cx="37" cy="30" rx="19" ry="23" fill="#c9906e"/><path d="M18 26Q18 7 35 7Q58 3 58 28L49 22L43 16L30 22L20 25Z" fill="#3a2c28"/><path d="M26 33h8m7 0h8" stroke="#29292a" stroke-width="3" stroke-linecap="round"/><path d="M34 34h7" stroke="#29292a" stroke-width="2"/><path d="M31 45Q38 48 44 44" fill="none" stroke="#985b46" stroke-width="2" stroke-linecap="round"/></svg></span><b>You</b><span class="meter"><i id="selfMeter"></i></span></button><button class="person-card" data-person="partner" aria-label="Partner character"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#dfdcce"/><path d="M7 75Q9 55 22 51L50 51Q64 55 67 75" fill="#aaa0b5"/><path d="M13 35Q11 4 37 4Q64 4 60 37L57 55L14 52Z" fill="#312b29"/><ellipse cx="37" cy="32" rx="18" ry="23" fill="#b87f61"/><path d="M18 31Q17 15 29 13Q40 28 55 24L53 17Q47 5 30 9Z" fill="#302b27"/><path d="M27 34h6m9 0h6" stroke="#3a322e" stroke-width="2.5" stroke-linecap="round"/><path d="M31 45Q37 48 44 44" fill="none" stroke="#804f3e" stroke-width="1.8"/><path d="M21 52L34 62L43 61L53 51" fill="none" stroke="#e5d9c8" stroke-width="3"/></svg></span><b>Partner</b><span class="meter"><i id="partnerMeter"></i></span></button><button class="person-card" data-person="kid" aria-label="Kid character"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#efdbc7"/><path d="M4 75Q6 52 24 51H49Q66 56 68 75" fill="#dc894c"/><g fill="#352b29"><circle cx="19" cy="23" r="13"/><circle cx="31" cy="12" r="14"/><circle cx="45" cy="15" r="15"/><circle cx="56" cy="29" r="12"/></g><ellipse cx="37" cy="36" rx="19" ry="22" fill="#a8684b"/><path d="M21 30Q35 22 53 29" fill="none" stroke="#2c2523" stroke-width="8" stroke-linecap="round"/><circle cx="30" cy="37" r="2.6" fill="#221d1b"/><circle cx="44" cy="37" r="2.6" fill="#221d1b"/><path d="M31 47Q37 53 44 47" stroke="#6d352b" stroke-width="2.3" fill="none" stroke-linecap="round"/></svg></span><b>Kid</b><span class="meter"><i id="kidMeter"></i></span></button><button class="person-card" data-person="pet" aria-label="Dog"><span class="avatar"><svg viewBox="0 0 72 76" aria-hidden="true"><rect width="72" height="76" rx="12" fill="#e6d9c6"/><path d="M11 68Q12 40 35 40Q60 40 61 69" fill="#383734"/><path d="M21 18Q3 15 12 50L24 47M52 18Q69 16 62 50L51 46" fill="#282927"/><ellipse cx="36" cy="33" rx="24" ry="25" fill="#42403b"/><path d="M21 40Q18 59 36 59Q55 59 51 40Q44 44 36 43Q29 44 21 40" fill="#a57852"/><circle cx="28" cy="33" r="3.4" fill="#1a1b1a"/><circle cx="45" cy="33" r="3.4" fill="#1a1b1a"/><ellipse cx="36" cy="45" rx="6" ry="4" fill="#171717"/><path d="M36 49Q31 55 27 50M36 49Q41 55 46 50" stroke="#2b2927" stroke-width="1.8" fill="none"/></svg></span><b>Dog</b><span class="meter"><i id="petMeter"></i></span></button></div><div id="relations"><span>RELATIONSHIP <b id="relationPartner">66</b></span><span>TRUST <b id="relationKid">64</b></span><span>MEMORIES <b id="badgeCount">0/7</b></span></div><div id="familyActivity" class="family-activity">Everybody is keeping to themselves. For now.</div></aside>
 <div id="queuePanel" aria-live="polite"><b><span class="queue-signal"></span> IN PROGRESS</b><div class="queue-line" id="selfQueue">YOU / Waiting</div><div class="queue-line" id="partnerQueue">PARTNER / Waiting</div></div>
 <div id="speech" role="status"></div>
-<section id="levelWidget" aria-label="Ev gelişimi"><div class="lvl-top"><span id="levelFlag">01 / LEVEL</span><strong id="homeRank">First evening</strong><button id="openNotebook">UPGRADE HOME ↗</button></div><div class="xp-track"><i id="xpFill"></i></div><div class="xp-caption"><span id="xpText">0/90 XP</span><span>NEXT LEVEL</span></div><button id="storyButton" class="story-button"><b id="storyTitle">HOUSE STORY</b><span id="storyState">1/6</span><small id="storyHint">Finish your first chores</small></button></section>
-<section id="goalCard" aria-label="Günün hedefleri"><div class="goal-head">TODAY'S GOALS <span>BEFORE 10 PM</span></div><div id="goalPreview"></div><button id="goalMore">SEE ALL ↗</button></section>
+<section id="levelWidget" aria-label="Home progression"><div class="lvl-top"><span id="levelFlag">01 / LEVEL</span><strong id="homeRank">First evening</strong><button id="openNotebook">UPGRADE HOME ↗</button></div><div class="xp-track"><i id="xpFill"></i></div><div class="xp-caption"><span id="xpText">0/90 XP</span><span>NEXT LEVEL</span></div><button id="storyButton" class="story-button"><b id="storyTitle">HOUSE STORY</b><span id="storyState">1/6</span><small id="storyHint">Finish your first chores</small></button></section>
+<section id="goalCard" aria-label="Daily goals"><div class="goal-head">TODAY'S GOALS <span>BEFORE 10 PM</span></div><div id="goalPreview"></div><button id="goalMore">SEE ALL ↗</button></section>
 <div id="rewardBubble" aria-live="polite"></div>
-<section id="notebook" class="hidden" role="dialog" aria-modal="true" aria-label="Ev gelişim defteri"><div id="noteShade" class="note-shade"></div><div class="note-sheet"><div class="note-heading"><div><small>HOUSE BOSS / HOME JOURNAL</small><h2 id="noteTitle">Upgrade your home</h2></div><button id="closeNotebook" aria-label="Kapat">×</button></div><div class="note-tabs"><button class="active" data-tab="upgrades">UPGRADES</button><button data-tab="goals">GOALS</button><button data-tab="roadmap">ROADMAP</button><button data-tab="family">FAMILY</button><button data-tab="memories">MEMORIES</button></div><div id="noteBody"></div><div class="note-footer"><b id="noteBudget">$160</b><span>No real-money purchases. No pressure to spend.</span></div></div></section>
-<div id="avatarModal" class="hidden" role="dialog" aria-modal="true" aria-label="Karakterleri düzenle"><div class="avatar-shade" id="avatarShade"></div><section class="avatar-sheet"><div class="avatar-head"><h2>Customize your family</h2><button id="closeAvatars" aria-label="Kapat">×</button></div><p>Appearance does not affect skills or progress.</p><div id="avatarModalContent"></div><button id="avatarDone">DONE</button></section></div><div id="comboHud" aria-live="polite" hidden>STREAK <b id="comboValue">×2</b></div>
+<section id="notebook" class="hidden" role="dialog" aria-modal="true" aria-label="Home progression journal"><div id="noteShade" class="note-shade"></div><div class="note-sheet"><div class="note-heading"><div><small>HOUSE BOSS / HOME JOURNAL</small><h2 id="noteTitle">Upgrade your home</h2></div><button id="closeNotebook" aria-label="Close">×</button></div><div class="note-tabs"><button class="active" data-tab="upgrades">UPGRADES</button><button data-tab="goals">GOALS</button><button data-tab="roadmap">ROADMAP</button><button data-tab="family">FAMILY</button><button data-tab="memories">MEMORIES</button></div><div id="noteBody"></div><div class="note-footer"><b id="noteBudget">$160</b><span>No real-money purchases. No pressure to spend.</span></div></div></section>
+<div id="avatarModal" class="hidden" role="dialog" aria-modal="true" aria-label="Customize characters"><div class="avatar-shade" id="avatarShade"></div><section class="avatar-sheet"><div class="avatar-head"><h2>Customize your family</h2><button id="closeAvatars" aria-label="Close">×</button></div><p>Appearance does not affect skills or progress.</p><div id="avatarModalContent"></div><button id="avatarDone">DONE</button></section></div><div id="comboHud" aria-live="polite" hidden>STREAK <b id="comboValue">×2</b></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="splash">
   <div class="paper game-menu" role="dialog" aria-modal="true" aria-label="House Boss game menu">
@@ -1090,7 +1090,7 @@ function goalValue(g){
  return 0
 }
 function evaluateGoals(){
- goals.forEach(function(g){if(g.claimed||goalValue(g)<g.target)return;g.claimed=true;cash+=g.money;grantXp(g.xp);floatReward('HEDEF! +'+g.xp+' XP · $'+g.money);message("Daily goal complete: "+g.label)});
+ goals.forEach(function(g){if(g.claimed||goalValue(g)<g.target)return;g.claimed=true;cash+=g.money;grantXp(g.xp);floatReward('GOAL COMPLETE! +'+g.xp+' XP · $'+g.money);message("Daily goal complete: "+g.label)});
 }
 function evaluateBadges(){
  var test={first:totalDone>=1,team:totalShared>=3,decor:owned.length>=1,level3:level>=3,ten:totalDone>=10,peace:wellDays>=1,seven:day>=7};
@@ -1106,7 +1106,7 @@ function renderProgression(){
  renderUpgrades();renderChapters()
 }
 function notebookHtml(){if(noteTab==='life'){lifeNotebook();return}
- var title={upgrades:"Upgrade your Home",goals:"Daily goals",roadmap:"House Story",family:"Family",memories:"Memories"};$('#noteTitle').textContent=title[noteTab];$('#noteBudget').textContent='$'+cash+' · Seviye '+level;
+ var title={upgrades:"Upgrade your Home",goals:"Daily goals",roadmap:"House Story",family:"Family",memories:"Memories"};$('#noteTitle').textContent=title[noteTab];$('#noteBudget').textContent='$'+cash+' · Level '+level;
  if(noteTab==='upgrades')$('#noteBody').innerHTML='<div class="upgrade-grid">'+upgradeCatalog.map(function(u){var has=owned.includes(u.id),locked=level<u.level,poor=cash<u.price,disabled=has||locked||poor;return '<article class="upgrade-card'+(has?' owned':'')+'"><div class="upgrade-top"><div class="upgrade-art">'+u.icon+'</div><div><b>'+u.name+'</b><small>'+u.tag+" · LEVEL "+u.level+'</small></div></div><p>'+u.desc+'</p><button class="buy" data-buy="'+u.id+'"'+(disabled?' disabled':'')+'>'+(has?"✓ INSTALLED":locked?"LEVEL "+u.level+" REQUIRED":poor?'$'+u.price+" — NOT ENOUGH MONEY":"BUY · $"+u.price)+'</button></article>'}).join('')+'</div>';
  if(noteTab==='goals')$('#noteBody').innerHTML="<p style=\"font-size:12px;color:#797469;margin:0 0 15px\">Meet goals to earn XP and in-game money.</p>"+goals.map(function(g){var v=goalValue(g);return '<article class="note-goal"><header><strong>'+(g.claimed?'✓ ':'○ ')+g.label+'</strong><span>'+(g.claimed?"COMPLETE":Math.min(v,g.target)+' / '+g.target)+"</span></header><p>Reward: +"+g.xp+' XP · $'+g.money+'</p><div class="track"><i style="width:'+Math.min(100,v/g.target*100)+'%"></i></div></article>'}).join('');
  if(noteTab==='roadmap')$('#noteBody').innerHTML=roadmapHTML();
@@ -1201,12 +1201,12 @@ var habits={
  partner:{
   planner:{name:"Organized",detail:"Faster at dishes and keeping things tidy.",spots:['sink','table','laundry','desk']},
   kitchen:{name:"The Cook",detail:"Prefers cooking, snacks, and dog food.",spots:['stove','table','pet']},
-  fixer:{name:'Pratik',detail:"Handles repairs, floors, and general chaos first.",spots:['desk','floor','laundry']}
+  fixer:{name:'Handy',detail:"Handles repairs, floors, and general chaos first.",spots:['desk','floor','laundry']}
  },
  kid:{
   curious:{name:"Curious",detail:"Takes charge of homework and pets.",spots:['kid','pet']},
   tidy:{name:"Tidy",detail:"Prefers safe chores on tables and floors.",spots:['table','floor','pet']},
-  playful:{name:'Oyuncu',detail:"Looks after the dog and occasionally helps.",spots:['pet','kid']}
+  playful:{name:'Playful',detail:"Looks after the dog and occasionally helps.",spots:['pet','kid']}
  }
 };
 function helperSkill(who){return Math.min(5,1+Math.floor((who==='partner'?partnerPractice:kidPractice)/4))}
@@ -1243,7 +1243,7 @@ function decideFamilyJob(who){if(who==='partner'&&life.pShift)return;if(who==='k
  if(isPartner){helper=result;autonomyCounts.partner++;dayInitiatives.partner++}
  else {childTask=result;autonomyCounts.kid++;dayInitiatives.kid++}
  var whoLabel=isPartner?"Partner":"Kid";
- var response=isPartner?(result.spot==='sink'?"I'll handle the dishes.":result.spot==='stove'?"I'll start dinner.":'Bunu ben hallederim.'):(result.spot==='pet'?"I'll feed the dog.":result.spot==='kid'?"I'll start my homework.":"I'll take this one.");
+ var response=isPartner?(result.spot==='sink'?"I'll handle the dishes.":result.spot==='stove'?"I'll start dinner.":"I'll take care of it."):(result.spot==='pet'?"I'll feed the dog.":result.spot==='kid'?"I'll start my homework.":"I'll take this one.");
  say(response);familyNotice(whoLabel+" started on their own: "+result.name);
  message(whoLabel+" picked up a chore.");
  saveGame();
@@ -1264,7 +1264,7 @@ function familyHtml(){
  list.map(function(c){
   var busy=c.who==='partner'?(helper?helper.name:(partnerEnergy<26?"Taking a break":"Available")):(childTask?childTask.name:(kidEnergy<30?"Taking a break":"Available"));
   var lvl=helperSkill(c.who),progress=c.practice%4;
-  return '<article class="family-setting-card"><div class="family-setting-top"><div><strong>'+c.title+' · Seviye '+lvl+'</strong><p>'+busy+" · Energy "+Math.round(c.energy)+'</p></div><button class="family-mode-btn'+(c.auto?'':' off')+'" data-family-auto="'+c.who+'" aria-pressed="'+c.auto+'">'+(c.auto?"MAKES OWN DECISIONS":"I MAKE THE DECISIONS")+'</button></div>'+
+  return '<article class="family-setting-card"><div class="family-setting-top"><div><strong>'+c.title+' · Level '+lvl+'</strong><p>'+busy+" · Energy "+Math.round(c.energy)+'</p></div><button class="family-mode-btn'+(c.auto?'':' off')+'" data-family-auto="'+c.who+'" aria-pressed="'+c.auto+'">'+(c.auto?"MAKES OWN DECISIONS":"I MAKE THE DECISIONS")+'</button></div>'+
    '<div class="family-traits">'+Object.keys(habits[c.who]).map(function(key){var trait=habits[c.who][key];return '<button type="button" data-family-habit="'+c.who+':'+key+'" class="'+(c.trait===key?'active':'')+'" aria-pressed="'+(c.trait===key?'true':'false')+'">'+trait.name+'</button>'}).join('')+'</div>'+
    '<p style="font-size:11px;color:#6e7765;margin:2px 0 12px">'+habits[c.who][c.trait].detail+'</p>'+
    "<div class=\"family-skillbar\"><span>HOUSEHOLD SKILLS</span><b>LEVEL "+lvl+'/5</b></div>'+
@@ -1281,7 +1281,7 @@ function familySettingsChange(button){
   if(who==='partner')autoPartner=!autoPartner;
   if(who==='kid')autoKid=!autoKid;
   var enabled=who==='partner'?autoPartner:autoKid;
-  familyNotice((who==='partner'?"Partner":"Kid")+(enabled?' kendi karar verebilir.':" will only do assigned chores."));
+  familyNotice((who==='partner'?"Partner":"Kid")+(enabled?' can make their own decisions.':" will only do assigned chores."));
  }else if(habit){
   var pair=habit.dataset.familyHabit.split(':');
   if(!habits[pair[0]]||!habits[pair[0]][pair[1]])return;
@@ -1374,16 +1374,16 @@ function render(){
  if(!ch.hidden)$('#comboValue').textContent='×'+combo;
  $('#time').textContent=format(time);$('#dayLabel').textContent="DAY "+String(day).padStart(2,'0')+" / MORNING";$('#peace').textContent=Math.round(peace)+'%';$('#energy').textContent=Math.round(energy)+'%';$('#cash').textContent='$'+Math.round(cash);
  $('#familyActivity').textContent=familyLog.length?familyLog[0].text:"Everybody is keeping to themselves. For now.";$('#relationPartner').textContent=Math.round(friendship);$('#relationKid').textContent=Math.round(trust);$('#badgeCount').textContent=achievements.length+'/'+badgeCatalog.length;$('#selfMeter').style.width=energy+'%';$('#partnerMeter').style.width=partnerEnergy+'%';$('#kidMeter').style.width=kidEnergy+'%';$('#petMeter').style.width=petEnergy+'%';
- $('#selfQueue').textContent='SEN / '+([current].concat(selfQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||"Waiting");
+ $('#selfQueue').textContent='YOU / '+([current].concat(selfQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||"Waiting");
  $('#partnerQueue').textContent="PARTNER / "+([helper].concat(partnerQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||"Waiting");
- var live=jobs.filter(function(j){return j.remaining>0});$('#count').textContent=live.length+' / '+done+' bitti';
+ var live=jobs.filter(function(j){return j.remaining>0});$('#count').textContent=live.length+' / '+done+' finished';
  live.sort(function(a,b){return a.due-b.due});
  var filtered=live.filter(appliesFilter);
  var visibleJobHtml=filtered.map(function(j){
  var late=time>j.due,active=[current,helper,childTask].some(function(v){return v&&v.id===j.id});
  var owner=j.assigned==='self'?"You're doing it · ":j.assigned==='partner'?"Partner's on it · ":j.assigned==='kid'?"Kid's on it · ":'';
  return '<div class="job-wrap'+(late?' late':'')+(active?' active':'')+'">'+
- '<button type="button" class="job job-open" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+owner+Math.ceil(j.remaining)+' dk</small></span><span class="remaining">'+(late?"LATE "+Math.ceil(time-j.due)+'dk':format(j.due))+'</span></button>'+
+ '<button type="button" class="job job-open" data-job="'+j.id+'"><span class="emoji">'+j.icon+'</span><span class="jobbody"><b>'+j.name+'</b><small>'+owner+Math.ceil(j.remaining)+' dk</small></span><span class="remaining">'+(late?"LATE "+Math.ceil(time-j.due)+' min':format(j.due))+'</span></button>'+
  '<button type="button" class="job-locate" data-locate="'+j.id+'" aria-label="'+j.name+" locate this chore in the scene\">FIND ⌕</button>"+
  (j.assigned?'<span class="job-progress"><i style="width:'+Math.min(100,100*(1-j.remaining/j.dur))+'%"></i></span>':'')+'</div>'
  }).join('')||"<p class=\"no-tasks\">Nothing here right now.</p>";
@@ -1453,7 +1453,7 @@ function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=nu
 
 function hideAction(){closeMobileFamily();var wasFinding=taskBeingFound!==null;$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;clearTaskTarget();placeAction(null);if(wasFinding)resetCameraView()}
 function startSelf(){
- if(life.shift||life.activity||current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('Sen: '+current.name)}}
+ if(life.shift||life.activity||current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('You: '+current.name)}}
 function startPartner(){if(life.pShift||helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message("Partner started: "+helper.name)}}
 function work(kind){
  if(selectedPerson){careAction(kind);return}
@@ -1483,7 +1483,7 @@ function finish(j,kind){
  if(kind==='kid'){kidEnergy=clamp(kidEnergy-j.weight*.9);childTask=null;kidPractice=Math.min(40,kidPractice+1);if(kidPractice%4===0&&kidPractice<=16)familyNotice("Kid's household skill is now level "+helperSkill('kid')+'.');}
  if(j.key==='dinner'){cash=Math.max(0,cash-35);if(owned.includes('herbs'))peace=clamp(peace+3)}if(j.key==='pet'){petEnergy=clamp(petEnergy+12)};grantXp(12+Math.min(8,Math.round(j.dur/5))+(j.expired?0:5));evaluateGoals();evaluateBadges();rewardChapters();
  message((kind==='partner'?"Partner finished: ":kind==='kid'?"Kid finished: ":"Finished: ")+j.name);
- if(j.initiative){if(kind==='partner')friendship=clamp(friendship+1);if(kind==='kid')trust=clamp(trust+1);familyNotice((kind==='partner'?"Partner":"Kid")+' kendi bitirdi: '+j.name)}if(kind==='self')startSelf();if(kind==='partner')startPartner();render();saveGame();
+ if(j.initiative){if(kind==='partner')friendship=clamp(friendship+1);if(kind==='kid')trust=clamp(trust+1);familyNotice((kind==='partner'?"Partner":"Kid")+' completed on their own: '+j.name)}if(kind==='self')startSelf();if(kind==='partner')startPartner();render();saveGame();
 }
 
 
@@ -1670,7 +1670,7 @@ function advance(dt){
  jobs.forEach(function(j){if(j.remaining>0&&time>j.due&&!j.expired){j.expired=true;missed++;combo=0;peace=clamp(peace-shiftOptions[runMode].latePenalty);message('Overdue: '+j.name)}})
  if(time>=eventAt&&time<22*60){
    var available=jobs.filter(function(j){return j.remaining>0});
-   if(available.length<10){var extra=surprise[Math.floor(Math.random()*surprise.length)];add(extra,45+Math.floor(Math.random()*40));var line=['Anneee!',"I have a question.",'Mutfaktan ses geliyor.',"Someone needs something."][Math.floor(Math.random()*4)];message(line);say(line)}
+   if(available.length<10){var extra=surprise[Math.floor(Math.random()*surprise.length)];add(extra,45+Math.floor(Math.random()*40));var line=['Mom!',"I have a question.",'Something is happening in the kitchen.',"Someone needs something."][Math.floor(Math.random()*4)];message(line);say(line)}
    eventAt=time+shiftOptions[runMode].events[0]+Math.random()*shiftOptions[runMode].events[1]
  }
  familyTick();evaluateGoals();if(peace<=0){peace=30;cash=Math.max(0,cash-50);message('Household emergency · $50 repairs. Keep going.');}
