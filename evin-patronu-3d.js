@@ -614,7 +614,7 @@
   function animate(){
     if(!living)return;
     requestAnimationFrame(animate);
-    if(document.hidden||!host.classList.contains('is-ready')){clock.getDelta();return}
+    if(document.hidden||!host.classList.contains('is-ready')||document.getElementById('game')?.classList.contains('town-active')){clock.getDelta();return}
     var dt=Math.min(clock.getDelta(),.07),elapsed=clock.elapsedTime;
     zoom+=(targetZoom-zoom)*Math.min(1,dt*4.5);
     lookAt.lerp(cameraTarget,Math.min(1,dt*3.2));
