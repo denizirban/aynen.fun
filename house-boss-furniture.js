@@ -106,59 +106,103 @@ function placeBar(){
   '<div class="hbf-action-row"><button data-hbf-cancel>CANCEL</button>'+
   '<button data-hbf-confirm '+(!p.valid&&p.mode!=='preview'?'disabled':'')+'>'+(p.mode==='preview'?'CLOSE PREVIEW':p.uid?'SAVE POSITION':'BUY & PLACE · $'+type.price)+'</button></div></div>';
 }
+
 function render(){
  const root=view(),st=bridge()?.getState?.();if(!root||!st)return;
- document.getElementById('noteTitle').textContent='Furnish your Home';
+ document.getElementById('noteTitle').textContent='The Design Shop';
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+st.cash+' · Home Value $'+st.homeValue;
- const all=Object.entries(types).sort((a,b)=>a[1].level-b[1].level||a[1].price-b[1].price);
  const homeLevel=Math.max(1,st.level||1),comfort=st.comfort||0;
- const nextUnlock=all.find(([,item])=>item.level>homeLevel);
+ const all=Object.entries(types).sort((a,b)=>{
+   const left=a[1],right=b[1];
+   return Number(left.level>homeLevel)-Number(right.level>homeLevel)||left.level-right.level||left.price-right.price
+ });
  const available=all.filter(([,item])=>item.level<=homeLevel).length;
- const wishlist=st.wishlist||[];
- const pieces=st.furniture||[];
- let quality=st.quality||{score:0,tier:'First Place',furniture:pieces.length};
- let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Furniture</button>'+
+ const wishlist=st.wishlist||[],pieces=st.furniture||[];
+ const qualities=st.quality||{score:0,tier:'First Apartment',comfort:0};
+ const nextUnlock=all.find(([,item])=>item.level>homeLevel);
+ const categoryDefs=window.HouseBossDesignerCollection?.categories||{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART',objects:'OBJECTS',plants:'PLANTS',storage:'STORAGE'};
+ const active=all.filter(([id,item])=>
+  (filter==='all'||(filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel))&&
+  (category==='all'||item.category===category)&&
+  (styleFilter==='all'||item.style===styleFilter)
+ );
+ const categoryIcons={seating:'▰',tables:'◉',lighting:'☀',rugs:'▦',art:'✷',objects:'◇',plants:'✿',storage:'▤'};
+ let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Design Shop</button>'+
  Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([k,v])=>'<button type="button" data-hd-category="'+k+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>'+
- '<div class="hbf-head"><span>BUILD MODE / FURNITURE</span><strong>HOME LVL '+homeLevel+' · '+pieces.length+' INSTALLED</strong></div>'+
- '<p class="hbf-sub">Buy, move, rotate and arrange real furniture in your 3D home. Work in progress is not charged until you place it.</p>'+
- '<div class="hbf-quality"><div><strong>'+quality.tier+'</strong><b>HOME QUALITY · '+quality.score+'%</b></div><div class="hbf-quality-track"><i style="width:'+quality.score+'%"></i></div>'+
+ '<div class="hbf-shop-hero"><div><span>DESIGN SHOP / EDITIONS</span><h3>Make it yours.</h3><p>Furniture with personality. Sculptural shapes, playful colour and collectible pieces for your 3D home.</p>'+
+ '<div class="hbf-hero-pills"><b>'+all.length+' OBJECTS</b><b>'+available+' UNLOCKED</b><b>3D HOME STYLING</b></div></div><div class="hbf-hero-sculpt"><i></i><i></i><i></i></div></div>'+
+ '<div class="hbf-head"><span>YOUR HOME / DESIGN PROGRESS</span><strong>LVL '+homeLevel+' · '+pieces.length+' PIECES OWNED</strong></div>'+
+ '<div class="hbf-quality"><div><strong>'+esc(qualities.tier)+'</strong><b>HOME QUALITY · '+qualities.score+'%</b></div>'+
+ '<div class="hbf-quality-track"><i style="width:'+qualities.score+'%"></i></div>'+
  '<div class="hbf-lifestyle-stats"><span><b>'+comfort+'</b><small>COMFORT</small></span><span><b>'+available+'/'+all.length+'</b><small>UNLOCKED</small></span><span><b>'+homeLevel+'/20</b><small>HOME LEVEL</small></span></div>'+
- '<small>Quality furniture makes relaxing more rewarding and helps household well-being.</small></div>'+
- '<div class="hbf-next"><div><b>YOUR NEXT UNLOCK</b><strong>'+(nextUnlock?'LVL '+nextUnlock[1].level+' · '+nextUnlock[1].name:'ALL COLLECTIONS UNLOCKED')+'</strong><small>'+(nextUnlock?'Earn Home XP by doing chores, meeting wishes and improving your space.':'The collection is yours to explore.')+'</small></div><span class="hbf-lock-symbol">◆</span></div>';
- if(warning)html+='<div class="hbf-warning" role="status">'+warning+'</div>';
+ '<small>Unique objects boost design variety. Better condition makes every functional object more useful.</small></div>'+
+ '<div class="hbf-next"><div><b>UP NEXT / YOUR NEXT COLLECTION</b><strong>'+(nextUnlock?'LEVEL '+nextUnlock[1].level+' · '+esc(nextUnlock[1].name):'EVERYTHING UNLOCKED')+'</strong>'+
+ '<small>'+(nextUnlock?'Earn Home XP to discover and purchase more collectible objects.':'Every design can now be bought and styled.')+'</small></div><span class="hbf-lock-symbol">✦</span></div>';
+ if(warning)html+='<div class="hbf-warning" role="status">'+esc(warning)+'</div>';
  html+=placeBar();
- html+='<div class="hbf-section-title"><strong>HOUSE ROOMS</strong><small>Build and explore</small></div>'+
+ html+='<div class="hbf-section-title"><strong>YOUR ROOMS</strong><small>Build & explore</small></div>'+
  '<div class="hbf-room-tiles">'+(st.rooms||[]).map(room=>{
-   const status=room.id==='home'?'ALWAYS OPEN':room.installed?'BUILT':'LEVEL '+room.level;
-   return '<article class="hbf-room"><strong>'+room.name+'</strong><small>'+status+'</small>'+
-    (room.installed?'<button data-hbf-room="'+room.id+'">VIEW IN 3D ↗</button>':
-    '<button data-hbf-room-buy="'+room.id+'" '+(!room.available?'disabled':'')+'>'+
-    (room.available?'BUILD · $'+room.price:'UNLOCK · LVL '+room.level+' · $'+room.price)+'</button>')+'</article>'
+  const status=room.id==='home'?'ALWAYS OPEN':room.installed?'BUILT':'LEVEL '+room.level;
+  return '<article class="hbf-room"><strong>'+esc(room.name)+'</strong><small>'+status+'</small>'+
+   (room.installed?'<button type="button" data-hbf-room="'+room.id+'">VIEW IN 3D ↗</button>':
+   '<button type="button" data-hbf-room-buy="'+room.id+'" '+(!room.available?'disabled':'')+'>'+
+   (room.available?'BUILD · $'+room.price:'UNLOCK · LVL '+room.level+' · $'+room.price)+'</button>')+'</article>'
  }).join('')+'</div>';
- html+='<div class="hbf-section-title"><strong>FURNITURE COLLECTIONS</strong><small>'+available+'/'+all.length+' unlocked</small></div>'+
- '<div class="hbf-filters"><button data-hbf-filter="all" class="'+(filter==='all'?'active':'')+'">ALL</button><button data-hbf-filter="available" class="'+(filter==='available'?'active':'')+'">SHOP NOW</button><button data-hbf-filter="locked" class="'+(filter==='locked'?'active':'')+'">FUTURE LEVELS</button><button data-hbf-filter="wishlist" class="'+(filter==='wishlist'?'active':'')+'">♡ SAVED · '+wishlist.length+'</button></div>'+
- '<div class="hbf-market">'+all.filter(([id,item])=>filter==='all'||(filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel)).map(([id,item])=>{
-  const locked=homeLevel<item.level,poor=st.cash<item.price,editing=!!sceneCandidate();
-  const rank=collections[item.tier]||'EVERYDAY';
-  return '<article class="hbf-card '+(locked?'is-locked':'is-unlocked')+' hbf-tier-'+item.tier+'">'+
-   '<div class="hbf-visual" style="--tone:'+item.color+'"><button type="button" class="hbf-heart '+(wishlist.includes(id)?'is-saved':'')+'" data-hbf-wish="'+id+'" title="'+(wishlist.includes(id)?'Remove from wishlist':'Save to wishlist')+'">'+(wishlist.includes(id)?'♥':'♡')+'</button><div class="hbf-visual-glow"></div><div class="hbf-silhouette '+item.shape+'"><i></i><i></i><i></i></div>'+
-   (locked?'<span class="hbf-padlock">LOCKED · LVL '+item.level+'</span>':'<span class="hbf-available">AVAILABLE</span>')+'</div>'+
-   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+rank+' · LVL '+item.level+' · $'+item.price+'</div><strong>'+item.name+'</strong><small>'+item.desc+'</small>'+
-   '<div class="hbf-bonus">✧ +'+item.comfort+' COMFORT <span>· '+item.action.toUpperCase()+'</span></div></div>'+
-   '<button data-hbf-buy="'+id+'" '+(locked||poor||editing?'disabled':'')+'>'+
-   (locked?'UNLOCK AT LVL '+item.level:poor?'SAVE $'+(item.price-st.cash)+' MORE':'BUY & PLACE · $'+item.price)+'</button></article>'
- }).join('')+'</div>';
- html+='<div class="hbf-section-title"><strong>PLACED OBJECTS</strong><small>Tap an item to move it</small></div>';
- html+='<div class="hbf-installed">'+(pieces.length?pieces.map((o,i)=>{
+ html+='<div class="hbf-section-title"><strong>COLLECTOR’S OBJECT CATALOGUE</strong><small>'+all.length+' designer pieces</small></div>'+
+ '<nav class="hbf-category-grid" aria-label="Shop by object type"><button type="button" data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL OBJECTS</b><small>'+all.length+'</small></button>'+
+ Object.entries(categoryDefs).map(([id,label])=>'<button type="button" data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+categoryIcons[id]+'</span><b>'+label+'</b><small>'+all.filter(([,item])=>item.category===id).length+'</small></button>').join('')+'</nav>'+
+ '<div class="hbf-shop-toolbar"><label class="hbf-search"><span>⌕</span><input type="search" id="hbf-search" placeholder="Find something special..." value="'+esc(searchQuery)+'" aria-label="Search objects"></label>'+
+ '<label class="hbf-style-select"><span>STYLE</span><select id="hbf-style" aria-label="Design aesthetic">'+
+ [['all','All aesthetics'],['pop','Colourful / Pop'],['soft','Soft / Bouclé'],['organic','Organic'],['retro','Retro'],['modern','Modern']].map(([id,label])=>'<option value="'+id+'" '+(styleFilter===id?'selected':'')+'>'+label+'</option>').join('')+'</select></label></div>'+
+ '<div class="hbf-filters"><button data-hbf-filter="all" class="'+(filter==='all'?'active':'')+'">ALL PIECES</button>'+
+ '<button data-hbf-filter="available" class="'+(filter==='available'?'active':'')+'">UNLOCKED</button>'+
+ '<button data-hbf-filter="locked" class="'+(filter==='locked'?'active':'')+'">COMING SOON</button>'+
+ '<button data-hbf-filter="wishlist" class="'+(filter==='wishlist'?'active':'')+'">♡ SAVED '+wishlist.length+'</button></div>'+
+ '<div class="hbf-result-caption"><strong id="hbf-result-count">'+active.length+' PIECES</strong><span>Preview in 3D · Buy · Place · Personalise</span></div>'+
+ '<div class="hbf-market">'+active.map(([id,item])=>{
+  const locked=homeLevel<item.level,poor=st.cash<item.price,editing=!!sceneCandidate(),rank=collections[item.tier]||'EVERYDAY';
+  return '<article class="hbf-card '+(locked?'is-locked':'is-unlocked')+' hbf-tier-'+item.tier+'" data-hbf-item="'+id+'" data-hbf-text="'+esc([item.name,item.desc,item.style,item.category].join(' ').toLowerCase())+'">'+
+   '<div class="hbf-visual hbf-preview-'+esc(item.style||'modern')+'" style="--tone:'+item.color+'">'+
+   '<button type="button" class="hbf-heart '+(wishlist.includes(id)?'is-saved':'')+'" data-hbf-wish="'+id+'" aria-label="Save to wishlist">'+(wishlist.includes(id)?'♥':'♡')+'</button>'+
+   '<div class="hbf-visual-glow"></div><div class="hbf-silhouette '+esc(item.shape)+'"><i></i><i></i><i></i><i></i><i></i></div>'+
+   '<button type="button" class="hbf-visual-preview" data-hbf-preview="'+id+'">VIEW IN 3D</button>'+
+   (locked?'<span class="hbf-padlock">LVL '+item.level+' LOCKED</span>':'<span class="hbf-available">UNLOCKED</span>')+'</div>'+
+   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(item.collection?'NEW · ':'')+rank+' · LVL '+item.level+'</div>'+
+   '<strong>'+esc(item.name)+'</strong><small>'+esc(item.desc)+'</small>'+
+   '<div class="hbf-material-tags"><span>'+esc(item.style||'modern')+'</span><span>'+(item.layer==='floor'?'LAYERED RUG':item.layer==='tabletop'?'ON TABLE':esc(item.category||'furniture'))+'</span></div>'+
+   '<div class="hbf-bonus">✧ +'+item.comfort+' COMFORT <span>· '+(item.action||'talk').toUpperCase()+'</span></div></div>'+
+   '<button type="button" data-hbf-buy="'+id+'" '+(locked||poor||editing?'disabled':'')+'>'+
+   (locked?'LEVEL '+item.level+' TO UNLOCK':poor?'NEED $'+(item.price-st.cash)+' MORE':'BUY & PLACE · $'+item.price)+'</button></article>'
+ }).join('')+'</div>'+
+ '<div id="hbf-empty-results" class="hbf-empty-results" hidden>No objects match those filters. Try another category or style.</div>';
+ html+='<div class="hbf-section-title"><strong>YOUR OWN COLLECTION</strong><small>'+pieces.length+' placed objects · personalise anytime</small></div>';
+ html+='<div class="hbf-installed">'+(pieces.length?pieces.map(o=>{
   const info=types[o.type];if(!info)return '';
-  return '<div class="hbf-row"><span class="hbf-small-icon" style="--tone:'+info.color+'">'+info.icon+'</span>'+
-    '<div><b>'+info.name+'</b><small>+'+info.comfort+' COMFORT · CONDITION '+Math.round(o.condition||100)+'%</small><span class="hbf-wear-meter"><i style="width:'+(o.condition||100)+'%"></i></span></div>'+
-    '<button type="button" data-hbf-move="'+o.uid+'" '+(sceneCandidate()?'disabled':'')+'>MOVE</button>'+(o.condition<98?'<button type="button" class="hbf-repair" data-hbf-repair="'+o.uid+'" '+(st.cash<bridge().repairCost(o.uid)?'disabled':'')+'>FIX $'+bridge().repairCost(o.uid)+'</button>':'')+
-    '<button type="button" class="hbf-sell" data-hbf-sell="'+o.uid+'" '+(sceneCandidate()?'disabled':'')+'>SELL</button></div>';
- }).join(''):'<p class="hbf-empty">Your house has room for new stories. Pick your first piece above.</p>')+'</div>';
- html+='<p class="hbf-note">Tip: Tap a placed object in 3D to move it. Outside Build Mode, tap functional furniture to use it.</p>';
+  const colors=info.variants||[],isBusy=!!sceneCandidate();
+  return '<div class="hbf-row"><span class="hbf-small-icon" style="--tone:'+(o.tint||info.color)+'">'+(info.icon||categoryIcons[info.category]||'✦')+'</span>'+
+   '<div><b>'+esc(info.name)+'</b><small>+'+info.comfort+' COMFORT · CONDITION '+Math.round(o.condition||100)+'%</small>'+
+   (colors.length?'<div class="hbf-colorways" aria-label="Choose this item’s colour">'+colors.map(tint=>'<button type="button" data-hbf-color="'+o.uid+','+tint+'" class="'+((o.tint||info.color)===tint?'active':'')+'" style="--swatch:'+tint+'" title="'+tint+'" aria-label="Change to '+tint+'"></button>').join('')+'</div>':'')+
+   '<span class="hbf-wear-meter"><i style="width:'+(o.condition||100)+'%"></i></span></div>'+
+   '<button type="button" data-hbf-move="'+o.uid+'" '+(isBusy?'disabled':'')+'>MOVE</button>'+
+   (o.condition<98?'<button type="button" data-hbf-repair="'+o.uid+'" class="hbf-repair" '+(st.cash<bridge().repairCost(o.uid)?'disabled':'')+'>FIX $'+bridge().repairCost(o.uid)+'</button>':'')+
+   '<button type="button" data-hbf-sell="'+o.uid+'" class="hbf-sell" '+(isBusy?'disabled':'')+'>SELL</button></div>'
+ }).join(''):'<p class="hbf-empty">Your collection is just beginning. Find your first piece above.</p>')+'</div>'+
+ '<p class="hbf-note">Rugs go beneath existing furniture. Small objects can be placed on the dining table and other suitable tables. Tap a 3D item to use it; Build Mode lets you move or recolour it.</p>';
  root.innerHTML=html;
- updateStatus()
+ updateStatus();
+ applySearch()
+}
+function applySearch(){
+ const root=view();if(!root)return;
+ const term=searchQuery.trim().toLowerCase();
+ let shown=0;
+ root.querySelectorAll('[data-hbf-item]').forEach(card=>{
+  const match=!term||(card.dataset.hbfText||'').includes(term);
+  card.hidden=!match;
+  if(match)shown++
+ });
+ const count=root.querySelector('#hbf-result-count');if(count)count.textContent=shown+' PIECES';
+ const empty=root.querySelector('#hbf-empty-results');if(empty)empty.hidden=shown>0
 }
 function install(){
  const body=view();if(!body)return;
