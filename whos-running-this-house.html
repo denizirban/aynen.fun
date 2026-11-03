@@ -1826,7 +1826,7 @@ function lifeTownRender(force){
  $('#game').classList.toggle('town-active',visible);
  $('#dayLabel').textContent='DAY '+String(day).padStart(2,'0')+' · '+weekDay()+' / '+(time<360?'NIGHT':time<720?'MORNING':time<1080?'AFTERNOON':'EVENING');
  $('#game').classList.toggle('night',time>=1260||time<360);
- $('#player').style.opacity=life.shift?'.12':'1';$('#partnerActor').style.opacity=life.pShift?'.12':'1';
+ $('#player').style.opacity=(life.shift||life.outing)?'.12':'1';$('#partnerActor').style.opacity=life.pShift?'.12':'1';
  $('#kidActor').style.opacity=kidAtSchool()?'.12':'1';
  if(!started||!visible)return;
  var key=[Math.floor(time/5),paused,life.townTab,life.selectedPlace,life.careerLevel,life.partnerCareerLevel,life.shift&&life.shift.id,life.pShift&&life.pShift.id,life.outing&&life.outing.id,
@@ -2017,7 +2017,7 @@ window.EvinKitchenBridge={
    time:time,day:day,owned:owned.slice(),started:started,paused:paused,ended:ended,
    currentSpot:current&&current.spot||null,partnerSpot:helper&&helper.spot||null,
    kidSpot:childTask&&childTask.spot||null,
-   selfAway:!!life.shift,partnerAway:!!life.pShift,kidAway:kidAtSchool(),
+   selfAway:!!(life.shift||life.outing),partnerAway:!!life.pShift,kidAway:kidAtSchool(),
    avatarSelf:avatarSelf,avatarPartner:avatarPartner,
    focusSpot:selected&&find(selected)&&find(selected).spot||null
  }},
