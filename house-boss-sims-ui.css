@@ -343,3 +343,19 @@
  #game.sims-ui #simSheet .ss-wish{padding:7px}
 }
 @media(max-height:560px){#game.sims-ui #simSheet .ss-need-card{min-height:48px;padding:6px}}
+
+/* HOUSE_BOSS_FREEWILL_UI_V6 */
+#game.sims-ui #simSheet .ss-freewill{
+ display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;
+ border:1px solid #cfdcc7;border-radius:11px;
+ background:linear-gradient(145deg,#f5f9f0,#e4f0dc);
+ padding:11px;margin:12px 0 8px;
+}
+#game.sims-ui #simSheet .ss-freewill b{display:block;font-size:11px;color:#355441}
+#game.sims-ui #simSheet .ss-freewill small{display:block;font-size:9px;color:#768b75;line-height:1.45;margin-top:3px}
+#game.sims-ui #simSheet .ss-freewill button{
+ min-width:54px;min-height:35px;border-radius:9px;
+ background:#b9dab2;color:#345d3d;border:1px solid #8fb789;
+ font:850 10px 'DM Mono',monospace;box-shadow:0 2px 0 #8cab85
+}
+#game.sims-ui #simSheet .ss-freewill button[aria-pressed="false"]{background:#e8e8df;color:#777d6f;border-color:#c7cbbd}
