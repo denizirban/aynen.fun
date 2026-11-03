@@ -1284,13 +1284,13 @@ function careAction(kind){
  if(tea)cash-=8;
  var minutes=tea?10:12;time+=minutes;
  if(who==='self')energy=clamp(energy+(tea?32:22)*(owned.includes('coffee')?1.5:1));
- if(who==='partner'){friendship=clamp(friendship+(tea?13:9));partnerEnergy=clamp(partnerEnergy+7);familyNotice("Talking to your partner helped.");}
- if(who==='kid'){trust=clamp(trust+(tea?13:10));kidEnergy=clamp(kidEnergy+8);familyNotice("You spent time with your kid.");}
+ if(who==='partner'){simModifyRelationship('self','partner',tea?13:9);partnerEnergy=clamp(partnerEnergy+7);simWishProgress('social');familyNotice("Talking to your partner helped.");}
+ if(who==='kid'){simModifyRelationship('self','kid',tea?13:10);kidEnergy=clamp(kidEnergy+8);simWishProgress('social');familyNotice("You spent time with your kid.");}
  if(who==='pet')petEnergy=clamp(petEnergy+(tea?28:22));
  if(who==='elder')peace=clamp(peace+3);
  peace=clamp(peace+(tea?5:3));careCooldown[who]=time+75;
  selectedPerson=null;hideAction();floatReward(tea?"Time together":"Short break");say("That helped. A little.");render();evaluateGoals();saveGame();
- if(time>=22*60)finishDay();
+ if(time>=1440)lifeNewDay();
 }
 
 var taskFilter='all',cameraScale=1,cameraX=0,cameraY=0,previousTaskHtml='',previousGoalHtml='',lastSceneMood='';
@@ -1313,12 +1313,12 @@ function updateSceneFeedback(){
 }
 
 var chapters=[
- ['start',"First Evening","Finish 3 chores",'jobs',3,60,35],
+ ['start',"First Day","Finish 3 chores",'jobs',3,60,35],
  ['share',"Dividing the Work","Finish 4 chores as a family",'team',4,80,45],
  ['decor',"A Better Home","Buy 2 kitchen upgrades",'decor',2,100,50],
- ['routine',"Make a Routine","Finish 4 evenings",'days',4,120,60],
+ ['routine',"Make a Routine","Live through 4 days",'days',4,120,60],
  ['skill',"Living Together","Complete 25 chores",'jobs',25,150,70],
- ['week',"Seven Evenings","Complete 7 evenings",'days',7,220,100]
+ ['week',"Seven Days","Complete your first week",'days',7,220,100]
 ];
 function chapterValue(c){return c[3]==='jobs'?totalDone:c[3]==='team'?totalShared:c[3]==='decor'?owned.length:careerDays}
 function nextChapter(){return chapters.find(function(c){return !chapterClaimed.includes(c[0])})}
@@ -2234,7 +2234,7 @@ function simTick(dm){
  simAutonomy();simCheckAspiration();simGenerateWishes()
 }
 function simSnapshot(){
- var s=simEnsurePro();
+ var s=simEnsurePro();simGenerateWishes();
  var people={};
  for(var who of ['self','partner','kid','pet']){
   var p=s.people[who];people[who]={
