@@ -1377,7 +1377,7 @@ function familySpeed(who,spot){
  return levelBoost*(liked?1.25:1);
 }
 function decideFamilyJob(who){if(who==='partner'&&(life.pShift||simState().active.partner))return;if(who==='kid'&&(kidAtSchool()||simState().active.kid))return;
- if(!started||paused||ended||time<17*60+28)return null;
+ if(!started||paused||ended||time<7*60+28)return null;
  var isPartner=who==='partner';
  if(isPartner ? !autoPartner : !autoKid)return null;
  if(isPartner?(helper||partnerQueue.length||partnerEnergy<26):(childTask||kidEnergy<30))return null;
@@ -1944,6 +1944,8 @@ function simEnsurePro(){
  if(!Array.isArray(s.memories))s.memories=[];
  if(!Array.isArray(s.wishes))s.wishes=[];
  if(!s.wishDay)s.wishDay=0;
+ if(!s.preference)s.preference={freeWill:true};
+ if(typeof s.preference.freeWill!=='boolean')s.preference.freeWill=true;
  return s
 }
 function simRelationshipKey(a,b){return [a,b].sort().join(':')}
@@ -2180,7 +2182,8 @@ function simTryNext(who){
 function simAutonomy(){
  var s=simState(),now=simClock();
  if(now-(s.lastAutonomy||0)<50)return;s.lastAutonomy=now;
- for(var who of ['partner','kid','pet']){
+ for(var who of ['self','partner','kid','pet']){
+  if(who==='self'&&(s.selected==='self'||!simEnsurePro().preference.freeWill))continue;
   if(who==='partner'&&!autoPartner||who==='kid'&&!autoKid)continue;
   if(simBusy(who)||s.queues[who].length)continue;
   var p=s.people[who],choices=[];
@@ -2248,7 +2251,7 @@ function simSnapshot(){
  return {started:started,paused:paused,ended:ended,day:day,time:time,selected:s.selected,
    people:people,peace:Math.round(peace),money:Math.floor(cash),relationships:{partner:Math.round(friendship),kid:Math.round(trust),matrix:s.relationships},
    aspiration:aspId,aspirations:simAspirations,aspirationStages:s.aspirationStages,
-   wishes:s.wishes,finance:s.finance,memories:s.memories.slice(0,10),aspirationValue:simValue(aspId),careerLevel:life.careerLevel,partnerCareerLevel:life.partnerCareerLevel,careerShifts:life.shifts,
+   wishes:s.wishes,finance:s.finance,freeWill:s.preference.freeWill,memories:s.memories.slice(0,10),aspirationValue:simValue(aspId),careerLevel:life.careerLevel,partnerCareerLevel:life.partnerCareerLevel,careerShifts:life.shifts,
    chores:jobs.filter(function(j){return j.remaining>0}).length,homeLevel:level,owned:owned.length,
    isTown:life.zone==='town',workShift:life.shift,school:kidAtSchool(),autoPartner:autoPartner,autoKid:autoKid}
 }
@@ -2263,6 +2266,7 @@ window.HouseBossSimBridge={
   saveGame()
  },
  chooseAspiration:function(id){if(simAspirations[id]){simState().aspiration=id;simCheckAspiration();saveGame()}},
+ toggleFreeWill:function(){var f=simEnsurePro().preference;f.freeWill=!f.freeWill;saveGame();return f.freeWill},
  goTown:function(){enterTown()},
  goHome:function(){leaveTown()},
  openBuild:function(){openNote('upgrades')},
