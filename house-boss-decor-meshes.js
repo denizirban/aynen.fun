@@ -5,7 +5,8 @@ export function createDecorMesh(type,g,api){
  const data=globalThis.HouseBossFurnitureTypes?.[type];
  if(!data||data.collection!=='EDITIONS')return false;
  const mat=(hex,rough=.79,metal=0)=>new THREE.MeshStandardMaterial({color:hex,roughness:rough,metalness:metal});
- const color=mat(data.color),ivory=mat('#f5ecdc'),dark=mat('#414547',.69,.08),pink=mat('#ed9caf'),
+ const color=mat(data.color);color.userData.houseBossEdition=true;
+ const ivory=mat('#f5ecdc'),dark=mat('#414547',.69,.08),pink=mat('#ed9caf'),
  gold=mat('#c9ac79',.36,.70),wood=mat('#ad8163',.65),glass=mat('#94ced0',.22,.36),
  cream=mat('#e9ddcd'),shadow=mat('#7d7b73'),leaf=mat('#638e71'),orange=mat('#e9a565');
  const ell=(x,y,z,rx,ry,rz,m=color)=>ball(g,rx,ry,rz,m,x,y,z);
