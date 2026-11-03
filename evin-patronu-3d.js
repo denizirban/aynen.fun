@@ -1039,8 +1039,18 @@
     var side=who==='partner'?.58:who==='kid'?-.55:0;
     return new THREE.Vector3(p[0]+side,0,p[2]+(who==='partner'?.12:0))
   }
+  function furnitureUsePosition(item){
+    if(!item)return null;
+    // Approach from a walkable edge, rather than standing inside the furniture mesh.
+    var x=item.x,z=item.z;
+    if(z< -2.7)z+=1.05;
+    else if(z>2.7)z-=1.05;
+    else if(x< -5.0)x+=1.05;
+    return new THREE.Vector3(x,0,z)
+  }
   function updateActors(state,dt,elapsed){
-    var act=state.simActions||{},social=state.simSocialTargets||{},walk=state.simWalkTargets||{};
+    var act=state.simActions||{},social=state.simSocialTargets||{},walk=state.simWalkTargets||{},
+      furnishTargets=state.simFurnitureTargets||{},furnitureList=state.furniture||[];
     var tasks={self:state.currentSpot,partner:state.partnerSpot,kid:state.kidSpot};
     var inConversation={};
     for(var who of ['self','partner','kid']){
@@ -1058,6 +1068,10 @@
       else if(inConversation[key])destinations[key]=targetAt('table',key)||destinations[key];
       else if(walk[key]&&Number.isFinite(walk[key].x)&&Number.isFinite(walk[key].z))
         destinations[key]=new THREE.Vector3(walk[key].x,0,walk[key].z);
+      if(furnishTargets[key]){
+        var activeObject=furnitureList.find(function(o){return o.uid===furnishTargets[key]});
+        if(activeObject)destinations[key]=furnitureUsePosition(activeObject)||destinations[key]
+      }
     }
     for(var key of ['self','partner','kid']){
       var data=actors[key],root=data.root,dest=destinations[key],activity=act[key]||'';
@@ -1097,6 +1111,10 @@
     if(walk.pet&&Number.isFinite(walk.pet.x)&&Number.isFinite(walk.pet.z))
       dogTarget.set(walk.pet.x,0,walk.pet.z);
     if(state.simPetActivity==='dogplay')dogTarget.set(-3.85,0,3.25);
+    if(furnishTargets.pet){
+      var petObject=furnitureList.find(function(o){return o.uid===furnishTargets.pet});
+      if(petObject){var p=furnitureUsePosition(petObject);if(p)dogTarget.copy(p)}
+    }
     if(!petDestination||petDestination.distanceToSquared(dogTarget)>.1){
       petDestination=dogTarget.clone();petNav=routeTo(dogRoot.position,dogTarget)
     }
