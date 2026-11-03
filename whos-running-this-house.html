@@ -1622,10 +1622,11 @@ function finishOuting(){
  energy=clamp(energy-a.energy);life.fun=clamp(life.fun+a.fun);simState().people.self.fun=life.fun;
  life.hunger=clamp(life.hunger+(a.hunger||0));simState().people.self.hunger=life.hunger;peace=clamp(peace+Math.min(8,a.fun*.25));
  if(a.social){life.contacts=(life.contacts||0)+1;townSkillGain('social',a.social)}
- if(a.fitness)townSkillGain('fitness',a.fitness);
- if(a.creative)townSkillGain('creativity',a.creative);
- if(a.id==='coffee')friendship=clamp(friendship+4);
- if(a.id==='walk')petEnergy=clamp(petEnergy+12);
+ if(a.fitness){townSkillGain('fitness',a.fitness);simWishProgress('skill')}
+ if(a.creative){townSkillGain('creativity',a.creative);simWishProgress('skill')}
+ if(a.id==='coffee'){simModifyRelationship('self','partner',4);simWishProgress('social')}
+ if(a.id==='groceries'){simEnsurePro().finance.pantry=Math.min(99,simEnsurePro().finance.pantry+6);simMemory('home','Groceries stocked','6 pantry meals added')}
+ if(a.id==='walk'){petEnergy=clamp(petEnergy+12);simWishProgress('pet')}
  grantXp(9);startSelf();message(a.name+' completed. New memories made.');lifeTownRender(true);saveGame()
 }
 function townStatus(j,who){
@@ -1734,7 +1735,7 @@ function lifeFinishShift(who){
  var performance=Number(job.performance??50);var factor=.75+Math.max(0,Math.min(100,performance))/200;
  var moodTone=simMood(p?'partner':'self').tone;
  var moodFactor=moodTone==='bad'?.86:moodTone==='tense'?.94:moodTone==='inspired'?1.09:moodTone==='happy'?1.05:1;
- var pay=Math.round(j.pay*factor*moodFactor*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;
+ var pay=Math.round(j.pay*factor*moodFactor*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;simCollectWages(pay);simWishProgress('work');simMemory('career','Payday',j.title+' · +$'+pay);
  if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2);startPartner()}
  else {energy=clamp(energy-j.energy);life.careerXp+=48;life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25);townSkillGain(j.id==='studio'||j.id==='manager'?'creativity':j.id==='walk'||j.id==='deliver'?'fitness':'social',12);startSelf()}
  floatReward('PAYDAY +$'+pay);message((p?'Partner':'You')+' earned $'+pay+'.');saveGame()
@@ -1789,7 +1790,7 @@ function lifeNewDay(){
  if(peace>=70)wellDays++;
  careerDays++;lastFinishedDay=day;lastScore=scoreEvening();bestScore=Math.max(bestScore,lastScore);weekScore+=lastScore;
  if(careerDays%7===0){weeklyTitle=weekScore>=3400?'You are in Charge':weekScore>=2200?'Family Coordinator':weekScore>=1300?'Order Maker':'Somehow Managing';weekScore=0}
- time-=1440;day++;life.billsTotal=(life.billsTotal||0)+45;cash=Math.max(0,cash-45);
+ time-=1440;day++;life.billsTotal=(life.billsTotal||0)+45;simChargeBills(45);
  peace=clamp(peace+(owned.includes('garden')?5:1)-Math.min(12,dropped*2));
  energy=clamp(energy+(owned.includes('sleep')?35:24));partnerEnergy=clamp(partnerEnergy+22);kidEnergy=clamp(kidEnergy+22);petEnergy=clamp(petEnergy+20);
  done=0;shared=0;missed=0;combo=0;assistedFinished=0;seq=remaining.reduce(function(n,j){return Math.max(n,j.id+1)},1);jobs=remaining;
@@ -1800,7 +1801,7 @@ function lifeNewDay(){
  selected=null;life.seededDay=0;goals=makeGoals();evaluateBadges();rewardChapters();careCooldown={};dayInitiatives={partner:0,kid:0};
  nextFamilyDecision=15*60+15;eventAt=9*60+20;
  familyNotice('Day '+day+' started with '+remaining.length+' carried-over chores.');
- message('DAY '+day+' · Bills −$45 · '+weekDay());saveGame()
+ simGenerateWishes();message('DAY '+day+' · Living costs $45 · '+weekDay());saveGame()
 }
 
 
@@ -1982,8 +1983,12 @@ function simAllowed(who,id){
 }
 function simBegin(who,id){
  var s=simState(),a=simActions[id];if(!a||!simAllowed(who,id))return false;
- if(cash<a.cost){message('Not enough money for '+a.name+'.');return false}
- cash-=a.cost;s.active[who]={id:id,left:a.duration,total:a.duration,spot:a.spot,started:simClock()};
+ if(cash<simPriceForAction(a)){message('Not enough money for '+a.name+'.');return false}
+ var skillLevel=Number(s.people[who].skills[a.skill]||1);
+ var moodTone=simMood(who).tone;
+ var duration=Math.max(8,Math.round(a.duration*(1-Math.min(.32,(skillLevel-1)*.035))*(moodTone==='bad'?1.20:1)));
+ simConsumeSupplies(a);
+ s.active[who]={id:id,left:duration,total:duration,spot:a.spot,quality:moodTone==='bad'?.85:moodTone==='inspired'?1.12:1,started:simClock()};
  if(who==='self'&&points[a.spot])posTarget=points[a.spot].slice();
  message((who==='self'?'You':who==='partner'?'Partner':who==='kid'?'Kid':'Dog')+' started: '+a.name+'.');
  saveGame();return true
@@ -2015,8 +2020,8 @@ function simFinish(who){
  var s=simState(),task=s.active[who];if(!task)return;var a=simActions[task.id],p=s.people[who];
  s.active[who]=null;if(!a)return;
  for(var name in a.effect){
-  if(name==='energy')simSetEnergy(who,simEnergy(who)+a.effect[name]);
-  else if(typeof p[name]==='number')p[name]=clamp(p[name]+a.effect[name]);
+  if(name==='energy')simSetEnergy(who,simEnergy(who)+a.effect[name]*(task.quality||1));
+  else if(typeof p[name]==='number')p[name]=clamp(p[name]+a.effect[name]*(a.effect[name]>0?(task.quality||1):1));
  }
  if(a.skill)simSkill(who,a.skill,a.xp||8);
  if(a.peace)peace=clamp(peace+a.peace);
@@ -2024,6 +2029,7 @@ function simFinish(who){
  if(a.pet)petEnergy=clamp(petEnergy+a.pet);
  if(a.mood)p.moodlet={label:a.mood,until:simClock()+165};
  p.completed=(p.completed||0)+1;s.completedActions++;
+ simTrackAction(task.id,a);
  if(who==='self'){life.hunger=p.hunger;life.fun=p.fun}
  if(task.id==='homework'&&who==='kid'){trust=clamp(trust+3);life.schoolXp=(life.schoolXp||0)+9}
  if(task.id==='playdog')friendship=clamp(friendship+1);
@@ -2034,7 +2040,7 @@ function simFinish(who){
 }
 function simTryNext(who){
  var s=simState();if(simBusy(who)||!s.queues[who].length)return;
- var next=s.queues[who][0];if(!simActions[next]||cash<simActions[next].cost)return;s.queues[who].shift();simBegin(who,next)
+ var next=s.queues[who][0];if(!simActions[next]||cash<simPriceForAction(simActions[next]))return;s.queues[who].shift();simBegin(who,next)
 }
 function simAutonomy(){
  var s=simState(),now=simClock();
@@ -2090,10 +2096,10 @@ function simTick(dm){
   }else if(s.queues[who].length)simTryNext(who)
  }
  life.hunger=s.people.self.hunger;life.fun=s.people.self.fun;
- simAutonomy();simCheckAspiration()
+ simAutonomy();simCheckAspiration();simGenerateWishes()
 }
 function simSnapshot(){
- var s=simState();
+ var s=simEnsurePro();
  var people={};
  for(var who of ['self','partner','kid','pet']){
   var p=s.people[who];people[who]={
@@ -2105,9 +2111,9 @@ function simSnapshot(){
  }
  var aspId=s.aspiration||'home',asp=simAspirations[aspId];
  return {started:started,paused:paused,ended:ended,day:day,time:time,selected:s.selected,
-   people:people,peace:Math.round(peace),money:Math.floor(cash),relationships:{partner:Math.round(friendship),kid:Math.round(trust)},
+   people:people,peace:Math.round(peace),money:Math.floor(cash),relationships:{partner:Math.round(friendship),kid:Math.round(trust),matrix:s.relationships},
    aspiration:aspId,aspirations:simAspirations,aspirationStages:s.aspirationStages,
-   aspirationValue:simValue(aspId),careerLevel:life.careerLevel,partnerCareerLevel:life.partnerCareerLevel,careerShifts:life.shifts,
+   wishes:s.wishes,finance:s.finance,memories:s.memories.slice(0,10),aspirationValue:simValue(aspId),careerLevel:life.careerLevel,partnerCareerLevel:life.partnerCareerLevel,careerShifts:life.shifts,
    chores:jobs.filter(function(j){return j.remaining>0}).length,homeLevel:level,owned:owned.length,
    isTown:life.zone==='town',workShift:life.shift,school:kidAtSchool(),autoPartner:autoPartner,autoKid:autoKid}
 }
