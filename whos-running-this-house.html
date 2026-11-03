@@ -858,7 +858,7 @@ function notebookHtml(){
  if(noteTab==='memories')$('#noteBody').innerHTML='<p style="font-size:12px;color:#777;margin:0 0 14px">'+totalDone+' iş tamamlandı · '+totalShared+' ailece iş · '+(day-1)+' akşam geride kaldı.</p><div class="badge-grid">'+badgeCatalog.map(function(b){var has=achievements.includes(b.id);return '<div class="badge-tile'+(has?'':' locked')+'"><span class="emblem">'+(has?b.icon:'?')+'</span><div><b>'+b.title+'</b><p>'+b.desc+'</p></div></div>'}).join('')+'</div>';
 }
 function openNote(tab){if(!started)return;window.HouseBossPlatform?.stop();closeMobileFamily();if(innerWidth<=650)setTasksOpen(false);noteTab=tab||'upgrades';wasPausedOnNote=paused;paused=true;$('#pause').textContent='▶';$('#notebook').classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===noteTab)});notebookHtml();saveGame()}
-function closeNote(){if($('#notebook').classList.contains('hidden'))return;window.HouseBossPlatform?.start();$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
+function closeNote(){if($('#notebook').classList.contains('hidden'))return;if(!wasPausedOnNote&&!ended)window.HouseBossPlatform?.start();$('#notebook').classList.add('hidden');if(!ended){paused=wasPausedOnNote;$('#pause').textContent=paused?'▶':'Ⅱ'}saveGame()}
 function buyUpgrade(id){if(!started||ended)return;var u=upgradeCatalog.find(function(a){return a.id===id});if(!u||owned.includes(id)||level<u.level||cash<u.price)return;cash-=u.price;owned.push(id);grantXp(14);evaluateBadges();rewardChapters();render();notebookHtml();saveGame();floatReward(u.icon+' '+u.name+' kuruldu');message('Mutfak geliştirildi: '+u.name)}
 function openCare(who){
  if(!['self','partner','kid','pet','elder'].includes(who))return;selected=null;selectedPerson=who;var names={self:'Biraz dinlen',partner:'Eşinle konuş',kid:'Çocukla ilgilen',pet:'Köpekle ilgilen',elder:'Bir çay sohbeti'};
@@ -1266,7 +1266,7 @@ function frame(now){
  }
  requestAnimationFrame(frame)
 }
-$('#start').onclick=function(){if(getSave()&&!confirm('Kaldığın oyunun kaydı silinecek. Yeni oyuna başlansın mı?'))return;reset('fresh')};$('#resume').onclick=loadSave;$('#again').onclick=function(){reset('next')};$('#newFromStart').onclick=function(){if(confirm('Kaydedilen ilerlemenin üzerine yeni oyun başlasın mı?'))reset('fresh')};$('#mobileTasks').onclick=function(){setTasksOpen($('#tasks').classList.contains('collapsed'))};
+$('#start').onclick=function(){if(getSave()&&!confirm('Start a new game and replace your saved progress?'))return;reset('fresh')};$('#resume').onclick=loadSave;$('#again').onclick=function(){reset('next')};$('#newFromStart').onclick=function(){if(confirm('Replace saved progress with a new game?'))reset('fresh')};$('#mobileTasks').onclick=function(){setTasksOpen($('#tasks').classList.contains('collapsed'))};
 $('#mobileFamily').onclick=toggleMobileFamily;
 $('#mobileBuild').onclick=function(){setTasksOpen(false);closeMobileFamily();openNote('upgrades')};
 $('#quickShow').onclick=function(){var j=find(quickTaskId);if(j)locateJob(j)};
@@ -1287,8 +1287,8 @@ function fold(){setTasksOpen($('#tasks').classList.contains('collapsed'))}
 $('#tasksHead').onclick=fold;$('#tasksHead').onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();fold()}}
 setTasksOpen(innerWidth>850);
 function shareSummary(){
- var week=careerDays&&careerDays%7===0?' · '+weeklyTitle:'';
- return 'Evin Patronu / Gün '+day+' — '+lastScore+' puan. '+done+' iş, '+assistedFinished+' aile desteği, ev huzuru %'+Math.round(peace)+'. '+chapterClaimed.length+'/6 bölüm'+week+'. Senin ev kaç puan alır?';
+ var week=careerDays&&careerDays%7===0?' · weekly milestone':'';
+ return 'House Boss / Day '+day+' — '+lastScore+' points. '+done+' chores, '+assistedFinished+' family assists, '+Math.round(peace)+'% house peace. '+chapterClaimed.length+'/6 chapters'+week+'. Can you do better?';
 }
 function shareLink(){return 'https://aynen.fun/whos-running-this-house.html'}
 function openShare(target){var msg=shareSummary()+' '+shareLink(),url=target==='x'?'https://twitter.com/intent/tweet?text='+encodeURIComponent(msg):'https://api.whatsapp.com/send?text='+encodeURIComponent(msg);window.open(url,'_blank','noopener,noreferrer')}
