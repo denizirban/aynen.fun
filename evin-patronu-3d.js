@@ -192,6 +192,11 @@
     group.traverse(function(obj){if(obj.isMesh){obj.userData.owner=group;pickables.push(obj)}});
     return group;
   }
+  function interactiveRoomObject(group,action,label){
+    group.userData.roomAction=action;group.userData.label=label;
+    group.traverse(function(obj){if(obj.isMesh){obj.userData.owner=group;pickables.push(obj)}});
+    return group
+  }
   var stationPositions={
     stove:new THREE.Vector3(6.9,1.1,-3.45),sink:new THREE.Vector3(7,1.12,-1),
     table:new THREE.Vector3(.25,1.35,-.5),desk:new THREE.Vector3(2.4,1.4,-1.45),
@@ -497,14 +502,16 @@
     box(g,8.55,5.5,.16,plaster,0,2.75,-4.54);
     // Dollhouse cutaway side wall: the player can actually see into the bedroom.
     box(g,.16,1.08,9,plaster,4.30,.54,0);
-    box(g,2.70,.54,3.1,mat('bedframe','#9a765c'),-.65,.42,-1.15);
-    box(g,2.55,.32,2.88,mat('mattress','#ede3d2'),-.65,.84,-1.15);
-    box(g,2.65,1.23,.32,mat('headboard','#768e83'),-.65,1.28,-2.75);
-    box(g,2.40,.19,1.60,mat('duvet','#b3c8b2'),-.65,1.09,-.55);
+    var bedInteract=new THREE.Group();g.add(bedInteract);
+    box(bedInteract,2.70,.54,3.1,mat('bedframe','#9a765c'),-.65,.42,-1.15);
+    box(bedInteract,2.55,.32,2.88,mat('mattress','#ede3d2'),-.65,.84,-1.15);
+    box(bedInteract,2.65,1.23,.32,mat('headboard','#768e83'),-.65,1.28,-2.75);
+    box(bedInteract,2.40,.19,1.60,mat('duvet','#b3c8b2'),-.65,1.09,-.55);
     for(var x of [-1.27,-.03]){
-      var pillow=ball(g,.45,.13,.40,mat('bedPillows','#faf9f2'),x,1.13,-1.95);
+      var pillow=ball(bedInteract,.45,.13,.40,mat('bedPillows','#faf9f2'),x,1.13,-1.95);
       pillow.rotation.z=(x<-.7?-.04:.04)
     }
+    interactiveRoomObject(bedInteract,'sleep','Bed · Sleep');
     for(var xx of [-2.65,1.32]){
       box(g,.80,.73,.80,wood,xx,.38,-2.03);
       box(g,.72,.11,.75,mat('nightstandTop','#d3b995'),xx,.78,-2.03);
@@ -538,8 +545,10 @@
     box(g,1.8,.14,.88,wood,-.6,.66,-.43);
     for(var xx of [-1.32,.12])for(var zz of [-.76,-.12])box(g,.10,.61,.10,woodDark,xx,.31,zz);
     box(g,2.65,.75,.65,mat('mediaConsole','#c6b18a'),1.27,.43,-3.34);
-    box(g,3.25,2.15,.13,black,1.30,2.67,-4.19);
-    box(g,2.94,1.79,.05,mat('television','#344d55',.34,.24),1.30,2.67,-4.10);
+    var tvInteract=new THREE.Group();g.add(tvInteract);
+    box(tvInteract,3.25,2.15,.13,black,1.30,2.67,-4.19);
+    box(tvInteract,2.94,1.79,.05,mat('television','#344d55',.34,.24),1.30,2.67,-4.10);
+    interactiveRoomObject(tvInteract,'tv','Television · Watch');
     box(g,1.05,.68,.25,mat('shelf','#bba17e'),-3.20,1.58,-4.16);
     for(var n=0;n<4;n++)box(g,.16,.5,.22,mat('roomBook'+n,['#d0aa73','#7b9a92','#d2c29e','#b27b6a'][n]),-3.52+n*.21,1.97,-4.02);
     plant(3.17,0,2.9,1.2,g)
@@ -982,7 +991,7 @@
   function getHit(e){
     normalized(e);raycaster.setFromCamera(pointer,camera);
     var intersections=raycaster.intersectObjects(pickables,false);
-    for(var it of intersections){var o=it.object.userData.owner;if(o&&o.visible&&it.object.visible&&(o.userData.station||o.userData.person||o.userData.furnitureId))return o}
+    for(var it of intersections){var o=it.object.userData.owner;if(o&&o.visible&&it.object.visible&&(o.userData.station||o.userData.person||o.userData.furnitureId||o.userData.roomAction))return o}
     return null
   }
     var walkingGround=new THREE.Plane(new THREE.Vector3(0,1,0),0);
@@ -1007,6 +1016,11 @@
     if(!target){walkIn3D(e);return}
     if(target.userData.furnitureId){
       window.HouseBossBuildBridge?.interact?.(target.userData.furnitureId);return
+    }
+    if(target.userData.roomAction){
+      var selected=window.HouseBossSimBridge?.getState?.()?.selected||'self';
+      window.HouseBossSimBridge?.action?.(target.userData.roomAction,selected);
+      return
     }
     if(target.userData.person){
       var p=target.userData.person;
@@ -1185,7 +1199,9 @@
       if(act[key]==='sleep'&&(state.owned||[]).includes('sleep'))
         destinations[key]=new THREE.Vector3(13.2+(key==='partner'?.7:key==='kid'?-.65:0),0,-.45);
       if(['tv','dance'].includes(act[key])&&(state.owned||[]).includes('living'))
-        destinations[key]=new THREE.Vector3(13.15+(key==='partner'?.6:key==='kid'?-.55:0),0,8.55);
+        destinations[key]=act[key]==='tv'
+         ?new THREE.Vector3(13.1+(key==='partner'?.65:key==='kid'?-.6:0),0,9.70)
+         :new THREE.Vector3(13.1+(key==='partner'?.65:key==='kid'?-.6:0),0,7.15);
       if(furnishTargets[key]){
         var activeObject=furnitureList.find(function(o){return o.uid===furnishTargets[key]});
         if(activeObject)destinations[key]=furnitureUsePosition(activeObject)||destinations[key]
@@ -1220,6 +1236,11 @@
       data.rightArm.rotation.x+=(pose-(moving?rhythmic*.45:arm)-data.rightArm.rotation.x)*Math.min(1,dt*8);
       var tilt=sleeping?.31:activity==='exercise'?.18:0;
       data.body.rotation.z+=(tilt-data.body.rotation.z)*Math.min(1,dt*5);
+      // Bed use is a visible activity: lie across the mattress only after arrival.
+      var inRealBed=activity==='sleep'&&(state.owned||[]).includes('sleep')&&!moving;
+      var lieAngle=inRealBed?-Math.PI/2:0;
+      root.rotation.x+=(lieAngle-root.rotation.x)*Math.min(1,dt*4.5);
+      root.position.y+=((inRealBed?.98:0)-root.position.y)*Math.min(1,dt*4.5);
       if(!moving&&!active)root.rotation.y+=(-.15-root.rotation.y)*Math.min(1,dt*.55);
       setThought(data.thought,activity);
       if(data.thought.visible)data.thought.position.y=(key==='kid'?2.9:3.06)+Math.sin(elapsed*2.2+key.length)*.07;
