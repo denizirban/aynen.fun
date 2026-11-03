@@ -87,7 +87,7 @@
  function selectPerson(who){
    if(!['self','partner','kid','pet'].includes(who))return;
    B.selectPerson(who);dismissObject();refreshNow();
-   if(currentPanel)showPanel(currentPanel);
+   if(currentPanel&&!sheet.hidden)renderSheet();
  }
  function showPanel(panel){
    const s=B.getState(),who=s.selected;
