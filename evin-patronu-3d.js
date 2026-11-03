@@ -658,6 +658,180 @@
   makePerson('partner',{pos:[2.2,0,-2.45],skin:'#cb9375',hair:'#533b2c',shirt:'#b76b53',pants:'#6c695b',hairLong:true},false);
   makePerson('kid',{pos:[-1.1,0,2.35],skin:'#9d624c',hair:'#322927',shirt:'#d48150',pants:'#9c9b72',hairLong:true},true);
   makePerson('elder',{pos:[-4.9,0,1.8],skin:'#714a37',hair:'#b6b3a3',shirt:'#908286',pants:'#6d7762',hairLong:false},.92);
+
+  /* HOUSE_BOSS_FREE_FURNITURE_3D_V11 — native movable 3D furniture with ghost placement. */
+  var furnitureObjects=new Map(),furnitureStamp='',pendingFurniture=null,ghostFurniture=null;
+  var buildGrid=new THREE.GridHelper(17,34,'#669565','#b3cbb0');
+  buildGrid.position.set(-.9,.032,0);
+  buildGrid.material.transparent=true;buildGrid.material.opacity=.23;
+  buildGrid.visible=false;scene.add(buildGrid);
+  function furnitureMesh(type,uid,isGhost){
+    var g=new THREE.Group();scene.add(g);
+    var natural=mat('buildNatural','#b48a62',.83),pale=mat('buildPale','#eee7d8',.9);
+    var dark=mat('buildDark','#45504a'),sage=mat('buildSage','#738e7d'),copper=mat('buildCopper','#b07e60');
+    if(type==='plant'){
+      cylinder(g,.27,.19,.38,copper,0,.22,0);
+      cylinder(g,.24,.23,.045,mat('buildEarth','#574b3a'),0,.44,0);
+      for(var i=0;i<9;i++){
+        var t=i*Math.PI*2/9,rad=.25+i%3*.085,y=1.0+i%4*.17;
+        capsule(g,[0,.43,0],[Math.cos(t)*rad,y,Math.sin(t)*rad],.024,dark);
+        var leaf=ball(g,.14,.07,.28,mat('buildLeaves'+i,i%2?'#4c7f54':'#79a66e'),Math.cos(t)*rad,y,Math.sin(t)*rad);
+        leaf.rotation.y=t;
+      }
+    }else if(type==='bookshelf'){
+      box(g,1.20,2.32,.56,natural,0,1.16,0);
+      box(g,1.07,2.15,.48,mat('buildShelfBack','#e6d2ae'),0,1.20,.055);
+      for(var h of [.38,1.0,1.63,2.15])box(g,1.16,.10,.59,natural,0,h,0);
+      for(var row=0;row<3;row++)for(var col=0;col<6;col++){
+        var hues=['#778b77','#a87563','#d1b57b','#587c86','#8e8f83','#bd9472'];
+        box(g,.13,.28+((row+col)%3)*.07,.33,mat('buildBook'+row+'_'+col,hues[(col+row)%6]),-.44+col*.175,.56+row*.63,.02)
+      }
+    }else if(type==='floorlamp'){
+      cylinder(g,.28,.32,.07,dark,0,.06,0);
+      capsule(g,[0,.08,0],[0,1.98,0],.045,dark);
+      capsule(g,[0,1.96,0],[.20,2.17,0],.04,dark);
+      var shade=addMesh(g,new THREE.ConeGeometry(.40,.62,20),mat('buildLampShade','#f0d5a0'),.20,1.94,0);
+      cylinder(g,.17,.17,.025,pale,.20,1.64,0);
+    }else if(type==='armchair'){
+      var fab=mat('buildChair','#b0816c',.96);
+      box(g,1.12,.38,1.01,fab,0,.41,0);
+      box(g,1.12,.88,.20,fab,0,.82,-.43);
+      for(var sx of [-.49,.49])ball(g,.16,.34,.49,fab,sx,.65,0);
+      box(g,.80,.16,.72,mat('buildChairCushion','#c2a090'),0,.71,.11);
+      for(var xx of [-.42,.42])for(var zz of [-.35,.35])box(g,.095,.15,.095,natural,xx,.08,zz);
+    }else if(type==='ottoman'){
+      var cushion=mat('buildOttoman','#8ca8a1',.92);
+      box(g,.82,.42,.73,cushion,0,.35,0);
+      ball(g,.43,.17,.39,cushion,0,.57,0);
+      for(var xx of [-.31,.31])for(var zz of [-.26,.26])box(g,.085,.14,.085,natural,xx,.095,zz);
+    }else if(type==='petbed'){
+      var fabric=mat('buildDogBed','#a88c79',.95);
+      var cushion=mat('buildDogCushion','#d4bca1',.96);
+      ball(g,.56,.11,.45,cushion,0,.16,0);
+      var edge=torus(g,.53,.16,fabric,0,.18,0);edge.scale.z=.84;
+      ball(g,.27,.07,.20,mat('buildPetPillow','#eee3d4'),-.15,.26,.08);
+    }else if(type==='easel'){
+      for(var xx of [-.32,.32])capsule(g,[xx*.55,0,.28],[xx,2.25,-.26],.045,natural);
+      capsule(g,[0,0,-.38],[0,1.78,-.12],.045,natural);
+      box(g,1.07,1.28,.085,pale,0,1.49,-.15);
+      box(g,.88,1.07,.02,mat('buildArtPaper','#ece2d2'),0,1.49,-.083);
+      ball(g,.23,.35,.02,mat('buildPaintOrange','#bd9065'),-.18,1.52,-.065);
+      ball(g,.21,.27,.02,mat('buildPaintGreen','#60877a'),.14,1.25,-.06);
+      box(g,1.10,.06,.20,natural,0,.79,.01)
+    }else if(type==='yogamat'){
+      box(g,1.56,.06,.73,sage,0,.045,0);
+      for(var xx of [-.68,.68])box(g,.03,.068,.72,mat('buildMatTrim','#d5e0ca'),xx,.08,0);
+      for(var i=-2;i<=2;i++)box(g,.07,.008,.46,mat('buildMatDetail','#afc8b9'),i*.24,.083,0)
+    }else if(type==='sidetable'){
+      cylinder(g,.39,.39,.095,natural,0,.71,0);
+      cylinder(g,.08,.10,.62,dark,0,.37,0);
+      cylinder(g,.25,.25,.06,dark,0,.06,0);
+      cylinder(g,.10,.08,.25,mat('buildCup','#bfcfc0'),.13,.91,0)
+    }else if(type==='stereo'){
+      box(g,1.07,.78,.62,mat('buildConsole','#788b88'),0,.51,0);
+      box(g,.94,.57,.055,dark,0,.54,.34);
+      for(var xx of [-.30,.30]){
+        var speaker=torus(g,.17,.023,pale,xx,.51,.375);speaker.rotation.x=0
+      }
+      cylinder(g,.06,.06,.04,mat('buildKnob','#d7be92'),0,.83,.36);
+      for(var xx of [-.41,.41])box(g,.09,.20,.08,dark,xx,.10,0);
+    }else{
+      scene.remove(g);return null
+    }
+    g.userData.furnitureId=uid;
+    if(isGhost){
+      g.traverse(function(o){if(!o.isMesh)return;
+        o.castShadow=false;o.receiveShadow=false;
+        o.material=o.material.clone();o.material.color.set('#75c995');
+        o.material.transparent=true;o.material.opacity=.53;o.material.depthWrite=false
+      });
+    }else{
+      g.traverse(function(o){if(o.isMesh){o.userData.owner=g;pickables.push(o)}});
+    }
+    return g
+  }
+  function removeFurnitureGroup(group,disposeMaterials){
+    if(!group)return;
+    group.traverse(function(obj){if(!obj.isMesh)return;
+      var index=pickables.indexOf(obj);if(index>=0)pickables.splice(index,1);
+      if(obj.geometry)obj.geometry.dispose();
+      if(disposeMaterials&&obj.material)obj.material.dispose()
+    });
+    scene.remove(group)
+  }
+  function syncFurniture(records){
+    records=Array.isArray(records)?records:[];
+    var desired=new Set();
+    for(var o of records){
+      if(!o||typeof o.uid!=='string'||typeof o.type!=='string')continue;
+      desired.add(o.uid);
+      var entry=furnitureObjects.get(o.uid);
+      if(!entry||entry.type!==o.type){
+        if(entry)removeFurnitureGroup(entry.group,false);
+        var group=furnitureMesh(o.type,o.uid,false);if(!group)continue;
+        entry={type:o.type,group:group};furnitureObjects.set(o.uid,entry)
+      }
+      entry.group.position.set(o.x,0,o.z);
+      entry.group.rotation.y=(o.rot||0)*Math.PI/2;
+      entry.group.visible=!(pendingFurniture&&pendingFurniture.uid===o.uid)
+    }
+    for(var [uid,entry] of furnitureObjects){
+      if(!desired.has(uid)){removeFurnitureGroup(entry.group,false);furnitureObjects.delete(uid)}
+    }
+  }
+  function notifyPlacement(){
+    window.HouseBossFurnitureUI?.updateStatus?.()
+  }
+  function updateFurnitureGhost(patch){
+    if(!pendingFurniture||!ghostFurniture)return false;
+    if(patch.x!==undefined)pendingFurniture.x=Math.round(Number(patch.x)*2)/2;
+    if(patch.z!==undefined)pendingFurniture.z=Math.round(Number(patch.z)*2)/2;
+    if(patch.rot!==undefined)pendingFurniture.rot=((Math.round(patch.rot)%4)+4)%4;
+    const result=window.HouseBossBuildBridge?.validate?.(pendingFurniture)||{ok:false,reason:'Waiting for build grid'};
+    pendingFurniture.valid=!!result.ok;pendingFurniture.reason=result.reason||'';
+    ghostFurniture.position.set(pendingFurniture.x,.055,pendingFurniture.z);
+    ghostFurniture.rotation.y=pendingFurniture.rot*Math.PI/2;
+    ghostFurniture.traverse(function(obj){
+      if(obj.isMesh)obj.material.color.set(pendingFurniture.valid?'#71c58b':'#e77267')
+    });
+    notifyPlacement();return pendingFurniture.valid
+  }
+  function beginFurniturePlacement(item){
+    if(!item||!window.HouseBossBuildBridge?.validate||!window.HouseBossFurnitureTypes?.[item.type])return false;
+    cancelFurniturePlacement();
+    pendingFurniture={type:item.type,uid:item.uid||null,mode:item.mode||'buy',x:item.x,z:item.z,rot:item.rot||0};
+    ghostFurniture=furnitureMesh(item.type,'preview',true);
+    if(!ghostFurniture){pendingFurniture=null;return false}
+    buildGrid.visible=true;
+    var moved=furnitureObjects.get(pendingFurniture.uid);if(moved)moved.group.visible=false;
+    updateFurnitureGhost({});renderer.domElement.style.cursor='crosshair';return true
+  }
+  function cancelFurniturePlacement(){
+    if(ghostFurniture){removeFurnitureGroup(ghostFurniture,true);ghostFurniture=null}
+    pendingFurniture=null;buildGrid.visible=false;
+    furnitureObjects.forEach(function(entry){entry.group.visible=true});
+    renderer.domElement.style.cursor='grab'
+  }
+  function getFurniturePlacement(){return pendingFurniture?Object.assign({},pendingFurniture):null}
+  function moveFurnitureBy(dx,dz){
+    if(!pendingFurniture)return false;
+    return updateFurnitureGhost({x:pendingFurniture.x+dx,z:pendingFurniture.z+dz})
+  }
+  function rotateFurniture(){
+    if(!pendingFurniture)return false;
+    return updateFurnitureGhost({rot:(pendingFurniture.rot+1)%4})
+  }
+  function beginFurnitureFromTap(e){
+    if(!pendingFurniture)return false;
+    normalized(e);raycaster.setFromCamera(pointer,camera);
+    if(!raycaster.ray.intersectPlane(walkingGround,walkingIntersection))return false;
+    return updateFurnitureGhost({x:walkingIntersection.x,z:walkingIntersection.z})
+  }
+  function focusFurniture(x,z){
+    cameraTarget.set(Math.max(-5.75,Math.min(3.8,x*.73)),1.13,Math.max(-3.15,Math.min(3.2,z*.73)));
+    targetZoom=1.35
+  }
+
   // Selection rings remain unobtrusive until a task is selected.
   var selectionRing=new THREE.Group();scene.add(selectionRing);selectionRing.visible=false;
   torus(selectionRing,.52,.045,mat('select','#d4ea8f',.55,.1),0,.04,0);
@@ -708,7 +882,7 @@
   function getHit(e){
     normalized(e);raycaster.setFromCamera(pointer,camera);
     var intersections=raycaster.intersectObjects(pickables,false);
-    for(var it of intersections){var o=it.object.userData.owner;if(o&&(o.userData.station||o.userData.person))return o}
+    for(var it of intersections){var o=it.object.userData.owner;if(o&&o.visible&&it.object.visible&&(o.userData.station||o.userData.person||o.userData.furnitureId))return o}
     return null
   }
     var walkingGround=new THREE.Plane(new THREE.Vector3(0,1,0),0);
@@ -721,9 +895,19 @@
   }
 
   function activate(e){
-    if(document.getElementById('notebook')?.classList.contains('design-mode'))return;
+    var inDesigner=document.getElementById('notebook')?.classList.contains('design-mode');
+    var furnitureView=inDesigner&&window.HouseBossHomeDesign?.isFurnitureView?.();
+    if(furnitureView&&pendingFurniture){beginFurnitureFromTap(e);return}
     var target=getHit(e);
+    if(furnitureView){
+      if(target?.userData?.furnitureId)window.HouseBossFurnitureUI?.selectFrom3D?.(target.userData.furnitureId);
+      return
+    }
+    if(inDesigner)return;
     if(!target){walkIn3D(e);return}
+    if(target.userData.furnitureId){
+      window.HouseBossBuildBridge?.interact?.(target.userData.furnitureId);return
+    }
     if(target.userData.person){
       var p=target.userData.person;
       if(window.EvinKitchenBridge&&window.EvinKitchenBridge.selectPerson)window.EvinKitchenBridge.selectPerson(p)
@@ -737,7 +921,8 @@
     if(pressed){
       var dx=e.clientX-lastX,dy=e.clientY-lastY;
       if(Math.abs(e.clientX-pressed.x)+Math.abs(e.clientY-pressed.y)>9)moved=true;
-      if(moved){cameraTarget.x-=dx*.021/targetZoom;cameraTarget.z-=dy*.028/targetZoom;cameraTarget.x=Math.max(-4.5,Math.min(4.5,cameraTarget.x));cameraTarget.z=Math.max(-3.1,Math.min(3.1,cameraTarget.z));}
+      if(moved&&pendingFurniture){beginFurnitureFromTap(e)}
+      else if(moved){cameraTarget.x-=dx*.021/targetZoom;cameraTarget.z-=dy*.028/targetZoom;cameraTarget.x=Math.max(-4.5,Math.min(4.5,cameraTarget.x));cameraTarget.z=Math.max(-3.1,Math.min(3.1,cameraTarget.z));}
       lastX=e.clientX;lastY=e.clientY;
     }else{
       var o=getHit(e);renderer.domElement.style.cursor=o?'pointer':'grab';
@@ -745,7 +930,7 @@
       if(!o){hovered=null;host.title=''}
     }
   });
-  renderer.domElement.addEventListener('pointerup',function(e){if(!pressed)return;if(!moved&&performance.now()-pressed.t<600)activate(e);pressed=null;renderer.domElement.style.cursor='grab'});
+  renderer.domElement.addEventListener('pointerup',function(e){if(!pressed)return;if(pendingFurniture)beginFurnitureFromTap(e);else if(!moved&&performance.now()-pressed.t<600)activate(e);pressed=null;renderer.domElement.style.cursor=pendingFurniture?'crosshair':'grab'});
   renderer.domElement.addEventListener('pointercancel',function(){pressed=null});
   renderer.domElement.addEventListener('wheel',function(e){e.preventDefault();adjustZoom(e.deltaY<0?.12:-.12)},{passive:false});
   var touches=new Map(),prevPinch=0;
@@ -932,6 +1117,7 @@
   }
   function refresh(state){
     for(var id in upgrades)upgrades[id].visible=(state.owned||[]).includes(id);
+    syncFurniture(state.furniture);
     applyHomeDesign(state.homeDesign);
     ['self','partner'].forEach(function(key){
       var model=actors[key],kind=key==='self'?state.avatarSelf:state.avatarPartner;
@@ -966,7 +1152,10 @@
     if(host.classList.contains('is-ready'))renderer.render(scene,camera);
   }
   window.Evin3D={
-    focus:focus,focusDesign:focusDesign,reset:resetCamera,zoom:adjustZoom,select:setTarget,applyDesign:applyHomeDesign,isReady:true,
+    focus:focus,focusDesign:focusDesign,reset:resetCamera,zoom:adjustZoom,select:setTarget,applyDesign:applyHomeDesign,
+    beginFurniturePlacement:beginFurniturePlacement,cancelFurniturePlacement:cancelFurniturePlacement,
+    getFurniturePlacement:getFurniturePlacement,nudgeFurniture:moveFurnitureBy,rotateFurniture:rotateFurniture,
+    focusFurniture:focusFurniture,syncFurnitureNow:function(){syncFurniture(snapshot().furniture)},isReady:true,
     destroy:function(){living=false;ro.disconnect();renderer.dispose();host.replaceChildren()}
   };
   host.dataset.status='ready';
