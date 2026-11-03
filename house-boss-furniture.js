@@ -17,6 +17,7 @@ const types={
   recliner:{name:'Leather Recliner',price:920,color:'#816d5e',w:1.15,d:1.26,icon:'▱',level:5,tier:'premium',comfort:20,desc:'A comfortable reclining seat in rich leather.',action:'nap',shape:'chair'},
   walnutdesk:{name:'Walnut Work Desk',price:1060,color:'#8e6449',w:1.55,d:.79,icon:'▤',level:5,tier:'premium',comfort:10,desc:'Solid walnut, slim brass details, storage.',action:'computer',shape:'desk'},
   chaise:{name:'Velvet Chaise',price:1470,color:'#9e857d',w:2.05,d:.95,icon:'▰',level:7,tier:'premium',comfort:25,desc:'A soft sculptural chaise for slow evenings.',action:'nap',shape:'sofa'},
+  daybed:{name:'Boutique Daybed',price:1760,color:'#b0a8a0',w:1.95,d:.95,icon:'▰',level:8,tier:'premium',comfort:27,desc:'An upholstered daybed with tailored cushions.',action:'nap',shape:'sofa'},
   pendant:{name:'Architectural Floor Lamp',price:980,color:'#d6ba84',w:.68,d:.68,icon:'☼',level:7,tier:'premium',comfort:8,desc:'Brass architecture with a warm linen shade.',action:'read',shape:'lamp'},
   statementsofa:{name:'Cloud Sectional',price:2450,color:'#d9cabb',w:2.38,d:1.24,icon:'▰',level:10,tier:'luxury',comfort:34,desc:'Deep oversized cushions and rounded edges.',action:'nap',shape:'sofa'},
   hifi:{name:'Designer Hi-Fi System',price:1850,color:'#6f766e',w:1.20,d:.67,icon:'♫',level:10,tier:'luxury',comfort:15,desc:'Walnut sound cabinet with analog detailing.',action:'dance',shape:'media'},
