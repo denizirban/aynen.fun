@@ -204,9 +204,9 @@
   font:800 10px 'DM Mono',monospace;
 }
 #game.sims-ui #simSheet .ss-need-card .ss-progress{
-  height:6px;margin:0;border-radius:6px;overflow:hidden;background:#dde3d4;
+  display:block;width:100%;height:6px;margin:0;border-radius:6px;overflow:hidden;background:#dde3d4;
 }
-#game.sims-ui #simSheet .ss-need-card .ss-progress i{background:#7fac73}
+#game.sims-ui #simSheet .ss-need-card .ss-progress i{display:block;height:100%;background:#7fac73}
 #game.sims-ui #simSheet .ss-need-card.low .ss-progress i{background:#d5a160}
 #game.sims-ui #simSheet .ss-need-card.critical .ss-progress i{background:#d47767}
 #game.sims-ui #simSheet .ss-section-heading{
