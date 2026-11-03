@@ -179,6 +179,11 @@
       '<button class="ss-simple" data-sd-manage-family>FAMILY AUTONOMY & HABITS ↗</button>';
    }else if(currentPanel==='skills'){
      body='<p class="ss-muted">Practice activities to level up. Each character grows independently.</p>';
+     body+='<div class="ss-section-heading"><span>PERSONALITY</span><small>Shapes free will and skills</small></div>';
+     body+='<div class="ss-traits">'+Object.entries(s.traits).filter(([id])=>who!=='pet'||id==='playful').map(([id,trait])=>
+       '<button type="button" class="ss-trait '+(p.trait===id?'active':'')+'" '+(who==='pet'?'disabled':'')+' data-sd-trait="'+id+'" data-for="'+who+'" title="'+escapeText(trait.desc)+'">'+escapeText(trait.name)+'</button>'
+     ).join('')+'</div>';
+     body+='<p class="ss-muted">'+escapeText(s.traits[p.trait]?.desc||'')+'</p>';
      for(const [skill,lvl] of Object.entries(p.skills)){
        const current=p.skillXp[skill]||0,need=lvl*35;
        body+='<div class="ss-row"><b>'+escapeText(skill)+'</b><span style="float:right">LEVEL '+lvl+(lvl>=10?' · MAX':'')+'</span>'+
@@ -285,6 +290,7 @@
    const b=e.target.closest('button');if(!b)return;
    if(b.hasAttribute('data-sd-close')){closePanel();return}
    if(b.dataset.sdAsp){B.chooseAspiration(b.dataset.sdAsp);renderSheet();refreshNow();return}
+   if(b.dataset.sdTrait){B.chooseTrait(b.dataset.for,b.dataset.sdTrait);renderSheet();refreshNow();return}
    if(b.dataset.sdRelTarget){socialTarget=b.dataset.sdRelTarget;renderSheet();return}
    if(b.hasAttribute('data-sd-freewill')){B.toggleFreeWill();renderSheet();return}
    if(b.hasAttribute('data-sd-shop')){closePanel();B.goTown();window.HouseBossTownBridge?.selectVenue?.('market');return}
