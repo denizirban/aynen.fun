@@ -25,3 +25,31 @@
 #notebook.design-mode .hd-lead .hd-kicker{letter-spacing:.13em}
 #notebook.design-mode .hd-collection h3{letter-spacing:-.04em}
 @media(max-width:650px){#hbProgressTrack{font-size:7px;gap:3px}#hbProgressTrack span{padding:4px 3px}.hb-career-track{padding:10px}.hb-career-heading strong{font-size:14px}.townJob .jobName em{font-size:7px;padding:4px 5px}}
+
+/* Career choice and furniture ownership lifecycle, mobile-first additions. */
+.hb-career-choices{padding:11px 12px 13px;margin:10px 1px;border-radius:12px;border:1px solid #d4e2d3;background:#f9faf3}
+.hb-career-choices>span{font:800 8px 'DM Mono',monospace;letter-spacing:.08em;color:#78947d}
+.hb-career-choices>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:9px 0}
+.hb-career-choices button{font:800 9px 'DM Mono',monospace;background:#f0f5eb;border:1px solid #cbdac7;border-radius:8px;color:#657e66;cursor:pointer;padding:10px 5px}
+.hb-career-choices button.active{background:#3d8158;border-color:#3d8158;color:#fff}
+.hb-career-choices button:disabled{cursor:default;opacity:.45}
+.hb-career-choices small{font:500 9px 'Space Grotesk',sans-serif;color:#78917b;line-height:1.5}
+.townJob .hb-job-requirement{display:inline-block;margin:6px 0;padding:5px 6px;border-radius:6px;background:#f4ead9;color:#966e4f!important;font:800 9px 'DM Mono',monospace}
+#notebook.design-mode .hbf-card .hbf-visual .hbf-heart{position:absolute;top:6px;left:7px;width:27px;height:27px;border:1px solid #d6dfd1;border-radius:50%;background:#fffef4e6;color:#6e8778;display:grid;place-items:center;z-index:4;font:700 19px 'Space Grotesk',sans-serif;cursor:pointer;line-height:1;padding:0}
+#notebook.design-mode .hbf-card .hbf-visual .hbf-heart.is-saved{color:#c66f6c;border-color:#e0bbb5;background:#fff3ef}
+#notebook.design-mode .hbf-card.is-locked .hbf-heart{opacity:1;filter:none}
+#notebook.design-mode .hbf-wear-meter{display:block;width:100%;height:4px;border-radius:6px;background:#e3e9df;margin:5px 0 0;overflow:hidden}
+#notebook.design-mode .hbf-wear-meter i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#e9a37e,#83b788)}
+#notebook.design-mode .hbf-row button.hbf-repair{color:#557e55;border-color:#b4d0b5;background:#e6f2df;white-space:nowrap}
+#notebook.design-mode .hbf-row button.hbf-repair:disabled{opacity:.4;cursor:default}
+#notebook.design-mode .hbf-filters{gap:4px}
+#notebook.design-mode .hbf-filters button{font-size:8px;letter-spacing:-.03em}
+#notebook.design-mode .hbf-card-content .hbf-card-kicker{font-size:7px}
+@media(max-width:650px){
+ .hb-career-choices{padding:8px}
+ .hb-career-choices button{font-size:7px;padding:9px 3px}
+ #notebook.design-mode .hbf-row{flex-wrap:wrap}
+ #notebook.design-mode .hbf-row>div{flex:1 1 120px}
+ #notebook.design-mode .hbf-row button{min-height:31px}
+ #notebook.design-mode .hbf-filters button{font-size:7px;padding:8px 5px}
+}
