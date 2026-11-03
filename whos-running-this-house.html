@@ -1732,7 +1732,9 @@ function lifeFinishShift(who){
  var p=who==='partner',job=p?life.pShift:life.shift;
  if(!job)return;var j=lifeJobs.find(function(x){return x.id===job.id});if(!j)return;
  var performance=Number(job.performance??50);var factor=.75+Math.max(0,Math.min(100,performance))/200;
- var pay=Math.round(j.pay*factor*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;
+ var moodTone=simMood(p?'partner':'self').tone;
+ var moodFactor=moodTone==='bad'?.86:moodTone==='tense'?.94:moodTone==='inspired'?1.09:moodTone==='happy'?1.05:1;
+ var pay=Math.round(j.pay*factor*moodFactor*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;
  if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2);startPartner()}
  else {energy=clamp(energy-j.energy);life.careerXp+=48;life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25);townSkillGain(j.id==='studio'||j.id==='manager'?'creativity':j.id==='walk'||j.id==='deliver'?'fitness':'social',12);startSelf()}
  floatReward('PAYDAY +$'+pay);message((p?'Partner':'You')+' earned $'+pay+'.');saveGame()
