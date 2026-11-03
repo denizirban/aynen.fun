@@ -277,7 +277,7 @@
   camera.top=span/2;camera.bottom=-span/2;camera.updateProjectionMatrix()
  }
  const ro=new ResizeObserver(resize);ro.observe(mount);resize();
- let stopped=false,prev=0;
+ let stopped=false,prev=0,lastSky='';
  function frame(ms){
   if(stopped)return;
   requestAnimationFrame(frame);
@@ -285,6 +285,15 @@
   if(ms-prev<32)return;prev=ms;
   let state=window.HouseBossTownBridge?.getState?.()||{};
   const hour=(state.time||540)/60,night=hour>=20||hour<6;
+  const sky=night?'night':hour>=17.5?'sunset':'day';
+  if(sky!==lastSky){
+    lastSky=sky;
+    layer.style.background=sky==='night'
+      ?'linear-gradient(180deg,#526079 0%,#727b86 48%,#596f5a 100%)'
+      :sky==='sunset'
+        ?'linear-gradient(180deg,#c9c8d3 0%,#ead2bd 47%,#9cb18b 100%)'
+        :'linear-gradient(180deg,#cbd5e0 0%,#e9e2d2 48%,#9bb788 100%)';
+  }
   sun.intensity+=( (night?.52:hour>17?1.6:2.35)-sun.intensity)*.07;
   hemi.intensity+=( (night?1.05:2.1)-hemi.intensity)*.07;
   zoom+=(targetZoom-zoom)*.12;
