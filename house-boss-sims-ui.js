@@ -148,7 +148,7 @@
           '<div class="ss-need-line"><span class="ss-need-label">'+ico(need)+name+'</span><strong>'+value+'%</strong></div>'+
           '<span class="ss-progress"><i style="width:'+value+'%"></i></span></button>';
       }
-      body+='</div><div class="ss-section-heading"><span>QUICK ACTIONS</span><small>Tap to start or queue</small></div>';
+      body+='</div><div class="ss-pantry">'+ico('basket')+' <b>PANTRY</b><span>'+(s.finance?.pantry??0)+' meals</span><button type="button" data-sd-shop>BUY FOOD</button></div><div class="ss-section-heading"><span>QUICK ACTIONS</span><small>Tap to start or queue</small></div>';
       const priorities=Object.keys(needNames).sort((a,b)=>percent(p[a])-percent(p[b]));
       const shown=[];
       for(const need of priorities){
@@ -196,6 +196,20 @@
          '<small>'+escapeText(a.desc)+'</small><small>'+(isDone?'COMPLETE':('STEP '+(stage+1)+' / '+a.targets.length+' · '+value+' / '+target))+'</small></div>'+
          '<button data-sd-asp="'+id+'">'+(s.aspiration===id?'ACTIVE':'SELECT')+'</button></div>'
      }
+     
+     /* HOUSE_BOSS_WISHES_UI_V6 — visible daily objectives & budget. */
+     body+='<div class="ss-section-heading"><span>'+ico('goals')+' TODAY’S WISHES</span><small>Rewards on completion</small></div>';
+     body+='<div class="ss-wishes">'+(s.wishes||[]).map(w=>
+       '<div class="ss-wish '+(w.complete?'done':'')+'"><span class="ss-wish-check">'+(w.complete?'✓':ico('goals'))+'</span>'+
+       '<div><b>'+escapeText(w.title)+'</b><small>'+(w.complete?'COMPLETED':w.done+' / '+w.goal)+' · +$'+w.bonus+'</small></div></div>'
+     ).join('')+'</div>';
+     body+='<div class="ss-section-heading"><span>'+ico('wallet')+' HOUSEHOLD FINANCES</span></div>';
+     body+='<div class="ss-finance"><div><small>CASH</small><strong>$'+s.money+'</strong></div>'+
+       '<div><small>FOOD STOCK</small><strong>'+(s.finance?.pantry??0)+'</strong></div>'+
+       '<div><small>UNPAID BILLS</small><strong>$'+(s.finance?.debt??0)+'</strong></div></div>';
+     body+='<button class="ss-simple ss-grocery-link" data-sd-shop>'+ico('basket')+' VISIT MARKET TO RESTOCK</button>';
+     body+='<p class="ss-muted">Long-term ambitions unlock milestone rewards. Daily wishes are refreshed each morning.</p>';
+
      body+='<p class="ss-muted">Home level '+s.homeLevel+' · Career level '+s.careerLevel+' · House Peace '+s.peace+'%.</p>';
    }
    sheet.innerHTML=header+body;lastSheetAt=Date.now()
@@ -271,6 +285,7 @@
    if(b.hasAttribute('data-sd-close')){closePanel();return}
    if(b.dataset.sdAsp){B.chooseAspiration(b.dataset.sdAsp);renderSheet();refreshNow();return}
    if(b.dataset.sdRelTarget){socialTarget=b.dataset.sdRelTarget;renderSheet();return}
+   if(b.hasAttribute('data-sd-shop')){closePanel();B.goTown();window.HouseBossTownBridge?.selectVenue?.('market');return}
    if(b.dataset.sdCare){B.action(b.dataset.sdCare,b.dataset.for);refreshNow();renderSheet();return}
    if(b.hasAttribute('data-sd-manage-family')){closePanel();B.openFamily();return}
    if(b.dataset.sdAction){B.action(b.dataset.sdAction,b.dataset.for);refreshNow();renderSheet()}
