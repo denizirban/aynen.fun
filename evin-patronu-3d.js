@@ -548,7 +548,12 @@
       sleep:[14.05,1.65,-.75],living:[14.05,1.75,8.35],garden:[0,1.5,12.2]};
     var point=destinations[room]||destinations.home;
     var required=({sleep:'sleep',living:'living',garden:'garden'})[room];
-    if(required&&!roomSpaces[required]?.visible)return false;
+    if(required&&!roomSpaces[required]?.visible){
+      // Reflect a just-purchased room immediately, before the next 3D refresh tick.
+      var ownedNow=window.EvinKitchenBridge?.getState?.()?.owned||[];
+      if(!ownedNow.includes(required))return false;
+      roomSpaces[required].visible=true
+    }
     cameraTarget.set(point[0],point[1],point[2]);targetZoom=room==='home'||room==='kitchen'?1:1.03;
     selection=null;selectionRing.visible=false;return true
   }
