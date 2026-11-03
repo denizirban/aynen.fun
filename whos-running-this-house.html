@@ -2846,6 +2846,39 @@ function homeFurnitureValidate(raw){
 function homeFurnitureCopy(){
  return ensureHomeFurniture().map(function(o){return {uid:o.uid,type:o.type,x:o.x,z:o.z,rot:o.rot,condition:Math.round(o.condition||100),tint:o.tint||null}})
 }
+/* Designer sets: collecting coherent furniture themes earns one-time prizes. */
+var designerSetCatalog=[
+ {id:'pop',title:'Colour Therapy',desc:'Bold playful forms and surprising colour.',reward:260,xp:45},
+ {id:'soft',title:'Soft Living',desc:'Rounded silhouettes and tactile comfort.',reward:340,xp:55},
+ {id:'organic',title:'Natural Forms',desc:'Earthy textures and sculpted nature.',reward:300,xp:50},
+ {id:'retro',title:'Retro Revival',desc:'Vintage-inspired pieces with a twist.',reward:390,xp:60},
+ {id:'modern',title:'Gallery Modern',desc:'Minimal shapes and collectible art.',reward:440,xp:70}
+];
+function designerSetStatus(){
+ var types=window.HouseBossFurnitureTypes||{},furn=ensureHomeFurniture(),
+     seen={};
+ for(var o of furn){
+  var meta=types[o.type];if(!meta||meta.collection!=='EDITIONS')continue;
+  if(!seen[meta.style])seen[meta.style]=new Set();
+  seen[meta.style].add(o.type)
+ }
+ var d=ensureHomeDesign();
+ if(!Array.isArray(d.claimedCollections))d.claimedCollections=[];
+ return designerSetCatalog.map(function(set){
+  var count=seen[set.id]?.size||0,claimed=d.claimedCollections.includes(set.id);
+  return {id:set.id,title:set.title,desc:set.desc,owned:count,goal:3,ready:count>=3&&!claimed,
+          claimed:claimed,reward:set.reward,xp:set.xp}
+ })
+}
+function designerClaimSet(id){
+ if(!started||ended)return false;
+ var set=designerSetStatus().find(function(item){return item.id===id});
+ if(!set?.ready)return false;
+ ensureHomeDesign().claimedCollections.push(id);
+ cash+=set.reward;grantXp(set.xp);simMemory('design','Collection completed',set.title+' · +$'+set.reward);
+ floatReward(set.title+' · +$'+set.reward);message('DESIGN COLLECTION COMPLETE · '+set.title);
+ render();saveGame();return true
+}
 function homeFurnitureQuality(){
  var furn=ensureHomeFurniture(),style=ensureHomeDesign().selected,base=defaultHomeDesign();
  var changed=Object.keys(base).filter(function(k){return style[k]&&style[k]!==base[k]}).length;
@@ -2858,9 +2891,10 @@ function homeFurnitureQuality(){
   comfort+=Math.round((types[piece.type]?.comfort||0)*(.45+.55*(piece.condition||100)/100)*factor)
  }
  comfort=Math.round(comfort);
- var score=Math.min(100,Math.round(12+uniqueness*3+Math.min(12,furn.length*1.15)+changed*4+owned.length*2.5+Math.min(35,comfort*.38)));
+ var setBonus=designerSetStatus().filter(function(set){return set.owned>=3}).length*3;
+ var score=Math.min(100,Math.round(12+uniqueness*3+Math.min(12,furn.length*1.15)+changed*4+owned.length*2.5+Math.min(35,comfort*.38)+setBonus));
  var tier=score>=85?'Designer Residence':score>=67?'Curated Home':score>=46?'Styled Haven':score>=27?'Cozy Home':'First Apartment';
- return {score:score,tier:tier,furniture:furn.length,styles:changed,comfort:comfort};
+ return {score:score,tier:tier,furniture:furn.length,styles:changed,comfort:comfort,setBonus:setBonus};
 }
 function homeFurnitureRooms(){
  var rooms=[{id:'home',name:'Kitchen',level:1,price:0,installed:true,available:true}];
@@ -2874,7 +2908,7 @@ function homeFurnitureRooms(){
  return rooms
 }
 function homeFurnitureState(){
- return {cash:Math.max(0,Math.floor(cash)),level:level,careerLevel:life.careerLevel,homeValue:Math.max(0,Math.floor(life.homeValue||0)),comfort:homeFurnitureQuality().comfort,quality:homeFurnitureQuality(),furniture:homeFurnitureCopy(),wishlist:ensureHomeDesign().wishlist||[],rooms:homeFurnitureRooms(),max:32}
+ return {cash:Math.max(0,Math.floor(cash)),level:level,careerLevel:life.careerLevel,homeValue:Math.max(0,Math.floor(life.homeValue||0)),comfort:homeFurnitureQuality().comfort,quality:homeFurnitureQuality(),furniture:homeFurnitureCopy(),wishlist:ensureHomeDesign().wishlist||[],sets:designerSetStatus(),rooms:homeFurnitureRooms(),max:32}
 }
 function homeFurnitureBuy(type,x,z,rot,price){
  var meta=window.HouseBossFurnitureTypes?.[type],list=ensureHomeFurniture();
@@ -3009,6 +3043,7 @@ window.HouseBossBuildBridge={
  sell:homeFurnitureSell,
  repair:homeFurnitureRepair,
  recolor:homeFurnitureRecolor,
+ claimSet:designerClaimSet,
  repairCost:function(uid){var o=ensureHomeFurniture().find(function(f){return f.uid===uid});return o?homeFurnitureRepairCost(o):0},
  toggleWishlist:homeFurnitureToggleWishlist,
  interact:homeFurnitureInteract
