@@ -59,3 +59,12 @@
 #notebook.design-mode .hbf-quality-track{height:8px;border-radius:9px;background:#d0dec9;overflow:hidden;margin:9px 0 6px}
 #notebook.design-mode .hbf-quality-track i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#5f9364,#a3c78b);transition:width .3s}
 #notebook.design-mode .hbf-quality small{font-size:9px;color:#819784;line-height:1.45}
+
+/* Room expansion selector — navigable, gated by in-game career and level progress. */
+#notebook.design-mode .hbf-room-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:6px 0 14px}
+#notebook.design-mode .hbf-room{padding:10px;border:1px solid #d1e0cb;border-radius:11px;background:linear-gradient(165deg,#fffdf6,#eef4e9);display:flex;flex-direction:column;gap:5px;min-width:0}
+#notebook.design-mode .hbf-room strong{font-size:12px;line-height:1.1;letter-spacing:-.035em;color:#3f6349}
+#notebook.design-mode .hbf-room small{font:850 8px 'DM Mono',monospace;color:#91a28c;margin-bottom:4px}
+#notebook.design-mode .hbf-room button{font:850 9px 'DM Mono',monospace;color:#416c4a;border:1px solid #aed0a7;background:#ddedd6;border-radius:8px;padding:9px 4px;margin-top:auto;cursor:pointer}
+#notebook.design-mode .hbf-room button:hover:not(:disabled){background:#c8e8bf}
+#notebook.design-mode .hbf-room button:disabled{color:#a1a9a0;border-color:#d6dfd4;background:#f0f2ea;cursor:default}
