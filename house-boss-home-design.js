@@ -44,7 +44,7 @@ const catalog={
   ['navy','Blue Grey',110,'#718b9b','A little more contrast']
  ]}
 };
-let category='sofa',preview=null;
+let category='furniture',preview=null;
 function bridge(){return window.HouseBossDesignBridge}
 function state(){return bridge()?.getState?.()||{cash:0,value:0,selected:{},unlocked:{}}}
 function selectedStyle(cat){let st=state();return st.selected?.[cat]||catalog[cat].options[0][0]}
