@@ -2116,7 +2116,7 @@ function simMood(who){
 }
 function simBusy(who){
  var s=simState();
- return !!s.active[who]||(who==='self'&&!!(life.shift||life.outing||life.activity||current))||
+ return !!s.active[who]||Object.keys(s.active).some(function(k){return k!==who&&s.active[k]&&simActions[s.active[k].id]&&simActions[s.active[k].id].socialTarget===who})||(who==='self'&&!!(life.shift||life.outing||life.activity||current))||
   (who==='partner'&&!!(life.pShift||helper))||
   (who==='kid'&&!!childTask)||who==='kid'&&kidAtSchool()
 }
@@ -2127,8 +2127,13 @@ function simAllowed(who,id){
  if(simActions[id].socialTarget===who)return false;
  return true
 }
+function simSocialTargetBusy(who,id){
+ var a=simActions[id],target=a&&a.socialTarget;
+ return !!(target&&target!==who&&simBusy(target))
+}
+
 function simBegin(who,id){
- var s=simState(),a=simActions[id];if(!a||!simAllowed(who,id))return false;
+ var s=simState(),a=simActions[id];if(!a||!simAllowed(who,id)||simSocialTargetBusy(who,id))return false;
  if(cash<simPriceForAction(a)){message('Not enough money for '+a.name+'.');return false}
  var skillLevel=Number(s.people[who].skills[a.skill]||1);
  var moodTone=simMood(who).tone;
@@ -2146,7 +2151,7 @@ function simQueueAction(id,who){
  if(!simAllowed(who,id)){message('This action is not available for that character.');return false}
  if(paused&&$('#notebook').classList.contains('hidden')&&$('#avatarModal').classList.contains('hidden')){paused=false;$('#pause').textContent='Ⅱ';window.HouseBossPlatform?.start()}
  if(who==='kid'&&kidAtSchool()){message('Kid is at school until 3 PM.');return false}
- var queue=s.queues[who],busy=simBusy(who);
+ var queue=s.queues[who],busy=simBusy(who)||simSocialTargetBusy(who,id);
  if(busy){
   if(queue.length>=3){message('Action queue is full (3).');return false}
   queue.push(id);message('Queued: '+simActions[id].name);saveGame();return true
@@ -2192,7 +2197,7 @@ function simFinish(who){
 }
 function simTryNext(who){
  var s=simState();if(simBusy(who)||!s.queues[who].length)return;
- var next=s.queues[who][0];if(!simActions[next]||cash<simPriceForAction(simActions[next]))return;s.queues[who].shift();simBegin(who,next)
+ var next=s.queues[who][0];if(!simActions[next]||cash<simPriceForAction(simActions[next])||simSocialTargetBusy(who,next))return;s.queues[who].shift();simBegin(who,next)
 }
 function simAutonomy(){
  var s=simState(),now=simClock();
@@ -2518,6 +2523,7 @@ window.EvinKitchenBridge={
    avatarSelf:avatarSelf,avatarPartner:avatarPartner,
    simSelected:simState().selected,simMoodTone:simMood(simState().selected).tone,
    simActions:{self:simState().active.self&&simState().active.self.id||null,partner:simState().active.partner&&simState().active.partner.id||null,kid:simState().active.kid&&simState().active.kid.id||null,pet:simState().active.pet&&simState().active.pet.id||null},
+   simSocialTargets:{self:simState().active.self&&simActions[simState().active.self.id]?.socialTarget||null,partner:simState().active.partner&&simActions[simState().active.partner.id]?.socialTarget||null,kid:simState().active.kid&&simActions[simState().active.kid.id]?.socialTarget||null},
    simWalkTargets:simEnsurePro().walkTargets,
    simPetActivity:simState().active.pet&&simState().active.pet.id||null,
    focusSpot:selected&&find(selected)&&find(selected).spot||null
