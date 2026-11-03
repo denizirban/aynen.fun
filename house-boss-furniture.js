@@ -34,7 +34,8 @@ const defaults=[[-8,-4],[-6.5,-4],[-7.5,-2.5],[-6,-2.5],
  [-2.5,4],[0,4],[1.5,4],[4.5,4],
  [-2.5,-4],[0,-4],[3,-4],[-8,2],[-8,4],[-6,4]];
 const bridge=()=>window.HouseBossBuildBridge;
-let selectedUid=null,warning='',filter='all';
+let selectedUid=null,warning='',filter='all',category='all',styleFilter='all',searchQuery='';
+const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const collections={starter:'EVERYDAY',modern:'CONTEMPORARY',premium:'DESIGN STUDIO',luxury:'SIGNATURE'};
 function floor2(v){return Math.round(Number(v)*2)/2}
 function safeCandidate(type){
@@ -50,13 +51,14 @@ function clear(){
  window.Evin3D?.cancelFurniturePlacement?.();
  selectedUid=null;warning='';
 }
-function begin(type,uid){
+function begin(type,uid,previewOnly=false){
  const st=bridge()?.getState?.();if(!st||!types[type])return;
- if(!uid&&st.level<types[type].level){warning='Reach Home Level '+types[type].level+' to unlock '+types[type].name+'.';render();return}
- if(!uid&&st.cash<types[type].price){warning='You need $'+(types[type].price-st.cash)+' more.';render();return}
+ if(!previewOnly&&!uid&&st.level<types[type].level){warning='Reach Home Level '+types[type].level+' to unlock '+types[type].name+'.';render();return}
+ if(!previewOnly&&!uid&&st.cash<types[type].price){warning='You need $'+(types[type].price-st.cash)+' more.';render();return}
  let item=uid?st.furniture.find(f=>f.uid===uid):null;
  if(uid&&!item)return;
  let p=item?{type,x:item.x,z:item.z,rot:item.rot||0,uid,mode:'move'}:safeCandidate(type);
+ if(p&&previewOnly)p.mode='preview';
  if(!p){warning='There is no free space. Move or sell another object first.';render();return}
  let ok=window.Evin3D?.beginFurniturePlacement?.(p);
  if(!ok){warning='3D world is not ready.';render();return}
@@ -65,7 +67,7 @@ function begin(type,uid){
  render();
 }
 function confirm(){
- const item=sceneCandidate();if(!item||!item.valid){warning=item?.reason||'Choose a free space highlighted in green.';render();return}
+ const item=sceneCandidate();if(item?.mode==='preview'){clear();render();return}if(!item||!item.valid){warning=item?.reason||'Choose a free space highlighted in green.';render();return}
  const ok=item.uid?bridge()?.move?.(item.uid,item.x,item.z,item.rot):
    bridge()?.buy?.(item.type,item.x,item.z,item.rot,types[item.type].price);
  if(!ok){warning='Unable to place furniture. Check space and budget.';render();return}
@@ -93,8 +95,8 @@ function placeBar(){
  const p=sceneCandidate(),type=types[p?.type];
  if(!p||!type)return '';
  return '<div class="hbf-placement">'+
-  '<div class="hbf-place-heading"><span>NOW PLACING</span><b>'+type.name+'</b></div>'+
-  '<p>Drag the object across the 3D floor or use the arrows. Red means the space is blocked.</p>'+
+  '<div class="hbf-place-heading"><span>'+(p.mode==='preview'?'FREE 3D PREVIEW':'NOW PLACING')+'</span><b>'+type.name+'</b></div>'+
+  '<p>'+(p.mode==='preview'?'Explore this designer object in your 3D room. A preview never charges money.':'Drag the object in the room or use the arrows. Green = valid placement.')+'</p>'+
   '<div id="hb-build-position" class="hbf-status" data-valid="'+!!p.valid+'">'+(p.valid?'VALID POSITION':'BLOCKED · '+(p.reason||'Move to an open area'))+'</div>'+
   '<div class="hbf-place-buttons"><button type="button" data-hbf-turn>ROTATE 90° ↻</button>'+
   '<div class="hbf-dpad"><button data-hbf-nudge="0,-.5" aria-label="Move back">↑</button>'+
@@ -102,7 +104,7 @@ function placeBar(){
   '<button data-hbf-nudge="0,.5" aria-label="Move forward">↓</button>'+
   '<button data-hbf-nudge=".5,0" aria-label="Move right">→</button></div></div>'+
   '<div class="hbf-action-row"><button data-hbf-cancel>CANCEL</button>'+
-  '<button data-hbf-confirm '+(!p.valid?'disabled':'')+'>'+(p.uid?'SAVE POSITION':'BUY & PLACE · $'+type.price)+'</button></div></div>';
+  '<button data-hbf-confirm '+(!p.valid&&p.mode!=='preview'?'disabled':'')+'>'+(p.mode==='preview'?'CLOSE PREVIEW':p.uid?'SAVE POSITION':'BUY & PLACE · $'+type.price)+'</button></div></div>';
 }
 function render(){
  const root=view(),st=bridge()?.getState?.();if(!root||!st)return;
