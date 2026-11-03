@@ -1548,7 +1548,8 @@ function render(){
  var ch=$('#comboHud');
  ch.hidden=combo<2||!started||ended;
  if(!ch.hidden)$('#comboValue').textContent='×'+combo;
- $('#time').textContent=format(time);$('#dayLabel').textContent="DAY "+String(day).padStart(2,'0')+" / MORNING";$('#peace').textContent=Math.round(peace)+'%';$('#energy').textContent=Math.round(energy)+'%';$('#cash').textContent='$'+Math.round(cash);
+ $('#time').textContent=format(time);$('#dayLabel').textContent="DAY "+String(day).padStart(2,'0')+" / "+(time<360?'NIGHT':time<720?'MORNING':time<1080?'AFTERNOON':time<1260?'EVENING':'NIGHT');$('#peace').textContent=Math.round(peace)+'%';$('#energy').textContent=Math.round(energy)+'%';$('#cash').textContent='$'+Math.round(cash);
+ var peaceInfo=householdPeaceFactors();$('#peace').title='House Peace '+Math.round(peace)+'% · Based on Needs '+peaceInfo.needs+'%, Relationships '+peaceInfo.relationships+'%, Home Quality '+peaceInfo.home+'%, pending chores '+peaceInfo.remaining+(peaceInfo.debt?' · Bills owed $'+peaceInfo.debt:'');
  $('#familyActivity').textContent=familyLog.length?familyLog[0].text:"Everybody is keeping to themselves. For now.";$('#relationPartner').textContent=Math.round(friendship);$('#relationKid').textContent=Math.round(trust);$('#badgeCount').textContent=achievements.length+'/'+badgeCatalog.length;$('#selfMeter').style.width=energy+'%';$('#partnerMeter').style.width=partnerEnergy+'%';$('#kidMeter').style.width=kidEnergy+'%';$('#petMeter').style.width=petEnergy+'%';
  $('#selfQueue').textContent='YOU / '+([current].concat(selfQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||"Waiting");
  $('#partnerQueue').textContent="PARTNER / "+([helper].concat(partnerQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||"Waiting");
@@ -1896,7 +1897,7 @@ function lifeNewDay(){
  careerDays++;lastFinishedDay=day;lastScore=scoreEvening();bestScore=Math.max(bestScore,lastScore);weekScore+=lastScore;
  if(careerDays%7===0){weeklyTitle=weekScore>=3400?'You are in Charge':weekScore>=2200?'Family Coordinator':weekScore>=1300?'Order Maker':'Somehow Managing';weekScore=0}
  time-=1440;day++;life.billsTotal=(life.billsTotal||0)+45;simChargeBills(45);
- peace=clamp(peace+(owned.includes('garden')?5:1)+Math.min(3,ensureHomeFurniture().filter(function(o){return o.type==='plant'}).length)+Math.floor(homeFurnitureQuality().score/35)-Math.min(12,dropped*2));
+ peace=clamp(peace+(owned.includes('garden')?3:1)+Math.min(2,ensureHomeFurniture().filter(function(o){return o.type==='plant'}).length)+Math.floor(homeFurnitureQuality().score/45)-Math.min(3,dropped*.5));
  // No free reset to full energy each morning: characters must actually sleep or rest.
  energy=clamp(energy+3);partnerEnergy=clamp(partnerEnergy+3);kidEnergy=clamp(kidEnergy+3);petEnergy=clamp(petEnergy+3);
  done=0;shared=0;missed=0;combo=0;assistedFinished=0;seq=remaining.reduce(function(n,j){return Math.max(n,j.id+1)},1);jobs=remaining;
@@ -2016,7 +2017,7 @@ function simWishProgress(kind){
 function simChargeBills(amount){
  var f=simEnsurePro().finance,n=Math.max(0,amount),paid=Math.min(cash,n);
  cash=Math.max(0,cash-paid);f.billsPaid+=paid;
- if(paid<n){f.debt+=n-paid;peace=clamp(peace-7);simMemory('money','Bills overdue','$'+(n-paid)+' added to debt')}
+ if(paid<n){f.debt+=n-paid;peace=clamp(peace-2);simMemory('money','Bills overdue','$'+(n-paid)+' added to debt')}
 }
 function simCollectWages(pay){
  var f=simEnsurePro().finance;f.earned+=pay;
@@ -2463,6 +2464,48 @@ function lifeNotebook(){
  '<p>Work and neighborhood activities grow skills. Household bills are $45/day. Home improvements stay with your save.</p>'
 }
 
+
+/* HOUSE_BOSS_PEACE_BALANCE_V15
+   Peace tracks well-being, relationships, chores and home quality. Needs are the
+   largest influence, so a comfortable household cannot sit at 2% indefinitely. */
+function householdPeaceFactors(){
+ var st=simState(),keys=['self','partner','kid','pet'],total=0,measurements=0;
+ for(var who of keys){
+  var p=st.people[who];if(!p)continue;
+  for(var n of ['hunger','hygiene','bladder','fun','social']){
+   total+=clamp(Number(p[n])||0);measurements++
+  }
+  total+=clamp(simEnergy(who));measurements++
+ }
+ var needs=measurements?total/measurements:75;
+ var relations=clamp((friendship+trust+simRelationship('kid','partner'))/3);
+ var remaining=jobs.filter(function(j){return j.remaining>0});
+ var late=remaining.filter(function(j){return j.expired&&!j.assigned}).length;
+ var chores=clamp(100-Math.max(0,remaining.length-3)*5-late*8);
+ var home=homeFurnitureQuality().score;
+ var debt=simEnsurePro().finance.debt;
+ var penalty=Math.min(16,debt/45);
+ var target=clamp(needs*.60+relations*.20+(50+home*.5)*.10+chores*.10-penalty);
+ return {needs:Math.round(needs),relationships:Math.round(relations),
+  chores:Math.round(chores),home:Math.round(home),debt:Math.round(debt),
+  overdue:late,remaining:remaining.length,target:Math.round(target)}
+}
+function updateHouseholdPeace(dm){
+ var factors=householdPeaceFactors(),target=factors.target;
+ // One-time repair for saved households exhausted by the old uncapped overdue
+ // penalties. Never touches money, tasks, relationships, skills or property.
+ if(!life.peaceModelV15){
+  life.peaceModelV15=true;
+  if(factors.needs>=65&&peace<38&&target>60){
+   peace=clamp(Math.max(peace,Math.min(70,target-12)));
+   message('House Peace recalibrated to reflect your household needs.');
+  }
+ }
+ var delta=(target-peace)*Math.max(0,dm)/155;
+ peace=clamp(peace+Math.max(-dm*.055,Math.min(dm*.09,delta)));
+ return factors
+}
+
 function advance(dt){
  if(paused||ended||!started)return;
  var dm=dt/1000*shiftOptions[runMode].clock*speed;time+=dm;lifeAdvance(dm);
@@ -2479,14 +2522,20 @@ function advance(dt){
  partnerEnergy=clamp(partnerEnergy-dm*energyDrain('partner',.032));
  kidEnergy=clamp(kidEnergy-dm*energyDrain('kid',.028));
  petEnergy=clamp(petEnergy-dm*energyDrain('pet',.025));
- if(petEnergy<20&&Math.random()<.02){peace=clamp(peace-2);say('Hav!')}
- jobs.forEach(function(j){if(j.remaining>0&&time>j.due&&!j.expired){j.expired=true;missed++;combo=0;peace=clamp(peace-shiftOptions[runMode].latePenalty);message('Overdue: '+j.name)}})
- if(time>=eventAt&&time<22*60){
+ if(petEnergy<20&&Math.random()<.002){peace=clamp(peace-.5);say('Hav!')}
+ jobs.forEach(function(j){if(j.remaining>0&&time>j.due&&!j.expired){j.expired=true;missed++;combo=0;if(!j.assigned&&time<21*60)peace=clamp(peace-Math.min(2,shiftOptions[runMode].latePenalty*.23));message('Overdue: '+j.name)}})
+ if(life.surpriseDay!==day){life.surpriseDay=day;life.surprisesToday=0}
+ if(time>=eventAt&&time<21*60){
    var available=jobs.filter(function(j){return j.remaining>0});
-   if(available.length<10){var extra=surprise[Math.floor(Math.random()*surprise.length)];add(extra,45+Math.floor(Math.random()*40));var line=['Mom!',"I have a question.",'Something is happening in the kitchen.',"Someone needs something."][Math.floor(Math.random()*4)];message(line);say(line)}
+   if(available.length<7&&life.surprisesToday<4){
+    var extra=surprise[Math.floor(Math.random()*surprise.length)];
+    add(extra,60+Math.floor(Math.random()*50));life.surprisesToday++;
+    var line=['Another little thing came up.','Someone needs a hand.','An unexpected household request.'][Math.floor(Math.random()*3)];
+    message(line);say(line)
+   }
    eventAt=time+shiftOptions[runMode].events[0]+Math.random()*shiftOptions[runMode].events[1]
  }
- familyTick();evaluateGoals();if(peace<=0){peace=30;cash=Math.max(0,cash-50);message('Household emergency · $50 repairs. Keep going.');}
+ familyTick();evaluateGoals();updateHouseholdPeace(dm);
  render()
 }
 
