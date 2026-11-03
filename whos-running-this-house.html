@@ -2123,7 +2123,7 @@ function simState(){
   if(!s.people[who])s.people[who]=simDefaultPerson(who);
   var p=s.people[who];p.skills=p.skills||simDefaultPerson(who).skills;p.skillXp=p.skillXp||simDefaultPerson(who).skillXp;
   p.moodlet=p.moodlet||{label:'',until:0};
-  simTrait(who);
+  if(!simTraits[p.trait])p.trait=({self:'creative',partner:'neat',kid:'curious',pet:'playful'}[who]);
   if(!Array.isArray(s.queues[who]))s.queues[who]=[];
   if(s.active[who]===undefined)s.active[who]=null;
  }
