@@ -1523,14 +1523,14 @@ function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=nu
 
 function hideAction(){closeMobileFamily();var wasFinding=taskBeingFound!==null;$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;clearTaskTarget();placeAction(null);if(wasFinding)resetCameraView()}
 function startSelf(){
- if(life.shift||life.activity||current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('You: '+current.name)}}
+ if(life.shift||life.activity||life.outing||current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('You: '+current.name)}}
 function startPartner(){if(life.pShift||helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message("Partner started: "+helper.name)}}
 function work(kind){
  if(selectedPerson){careAction(kind);return}
  var j=find(selected);if(!j)return;
  if(j.assigned){message("Someone is already handling that.");return}
  if(kind==='self'){
-   if(life.shift||life.activity){message('You are busy.');return}
+   if(life.shift||life.activity||life.outing){message('You are busy.');return}
    if(current){if(selfQueue.length>=3){message("Your queue is full.");return}selfQueue.push(j.id);j.assigned='self';message("Added to the queue: "+j.name)}
    else{current=j;j.assigned='self';posTarget=points[j.spot].slice();message(j.name+" — you're starting.")}
  }else if(kind==='partner'){
@@ -1628,7 +1628,7 @@ function finishOuting(){
 }
 function townStatus(j,who){
  var partner=who==='partner',lvl=partner?life.partnerCareerLevel:life.careerLevel,
-     busy=partner?(!!life.pShift||!!helper):(!!life.shift||!!life.activity||!!life.outing||!!current),
+     busy=partner?!!life.pShift:(!!life.shift||!!life.activity||!!life.outing),
      e=partner?partnerEnergy:energy;
  if(partner&&!j.partner)return 'Unavailable';
  if(lvl<j.level)return 'Career LVL '+j.level+' required';
@@ -1683,6 +1683,14 @@ function lifeBeginShift(id,who){
  if(!j||!started||ended)return;
  var problem=townStatus(j,who);
  if(problem){message(problem+'.');lifeTownRender(true);return}
+ // Unfinished chores resume automatically after the shift.
+ if(who==='partner'&&helper){
+  if(!partnerQueue.includes(helper.id))partnerQueue.unshift(helper.id);
+  helper=null;
+ }else if(who!=='partner'&&current){
+  if(!selfQueue.includes(current.id))selfQueue.unshift(current.id);
+  current=null;
+ }
  townResumeIfNeeded();
  if(who==='partner'){
   life.pShift={id:id,left:j.mins,total:j.mins};
@@ -1699,7 +1707,7 @@ function lifeFinishShift(who){
  var p=who==='partner',job=p?life.pShift:life.shift;
  if(!job)return;var j=lifeJobs.find(function(x){return x.id===job.id});if(!j)return;
  var pay=Math.round(j.pay*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;
- if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2);townSkillGain('social',4)}
+ if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2);startPartner()}
  else {energy=clamp(energy-j.energy);life.careerXp+=48;life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25);townSkillGain(j.id==='studio'||j.id==='manager'?'creativity':j.id==='walk'||j.id==='deliver'?'fitness':'social',12);startSelf()}
  floatReward('PAYDAY +$'+pay);message((p?'Partner':'You')+' earned $'+pay+'.');saveGame()
 }
@@ -1797,7 +1805,7 @@ function lifeTownRender(force){
  $('#player').style.opacity=life.shift?'.12':'1';$('#partnerActor').style.opacity=life.pShift?'.12':'1';
  $('#kidActor').style.opacity=kidAtSchool()?'.12':'1';
  if(!started||!visible)return;
- var key=[Math.floor(time/2),paused,life.townTab,life.selectedPlace,life.careerLevel,life.partnerCareerLevel,life.shift&&life.shift.id,life.pShift&&life.pShift.id,life.outing&&life.outing.id,
+ var key=[Math.floor(time/5),paused,life.townTab,life.selectedPlace,life.careerLevel,life.partnerCareerLevel,life.shift&&life.shift.id,life.pShift&&life.pShift.id,life.outing&&life.outing.id,
           Math.floor(energy/5),Math.floor(partnerEnergy/5),Math.floor(life.hunger/5),Math.floor(life.fun/5),Math.floor(cash),life.contacts||0].join('|');
  if(!force&&key===townLastKey)return;townLastKey=key;
  layer.querySelectorAll('[data-town-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.townTab===(life.townTab||'work'))});
