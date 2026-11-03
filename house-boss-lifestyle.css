@@ -227,3 +227,17 @@
  .hbl-event-options button{padding:8px}
  .hbl-event-options button strong{font-size:10px}
 }
+
+/* Nine icon actions arranged as a stable 3×3 control deck instead of overflow. */
+#game.sims-ui #simDock .sd-buttons{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));flex-basis:183px;gap:5px;padding:6px 3px 6px 9px}
+#game.sims-ui #simDock .sd-buttons button{font-size:8px;padding:5px 1px;min-width:0;min-height:0;border-radius:9px}
+#game.sims-ui #simDock .sd-buttons .sd-menu-icon .sim-icon{width:17px;height:17px}
+#game.sims-ui #simDock .sd-buttons button[data-sd-go="lifehub"]{background:linear-gradient(145deg,#d3ead0,#eff8e9);border-color:#93bc95;color:#3c7950}
+@media(max-width:1090px){
+ #game.sims-ui #simDock .sd-buttons{flex-basis:153px;gap:3px;padding:3px}
+}
+@media(max-width:650px){
+ #game.sims-ui #simDock .sd-buttons{flex-basis:75px;gap:2px;padding:1px}
+ #game.sims-ui #simDock .sd-buttons button{font-size:0;padding:2px 0;min-height:22px;border-radius:5px}
+ #game.sims-ui #simDock .sd-buttons .sd-menu-icon .sim-icon{width:15px;height:15px}
+}
