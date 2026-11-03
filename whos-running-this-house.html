@@ -686,6 +686,7 @@ body:has(#game) .brand .back{display:none!important}
 }
 
 </style>
+<link rel="stylesheet" href="./house-boss-sims-ui.css?v=1">
 </head>
 <body>
 <div id="game">
@@ -1826,7 +1827,7 @@ var simActions={
  feedpet:{name:'Feed the Dog',icon:'◈',duration:15,cost:7,spot:'pet',effect:{fun:3},pet:30,mood:'Caring'},
  dogfood:{name:'Eat Dog Food',icon:'◈',duration:18,cost:0,spot:'pet',effect:{hunger:59},mood:'Content'},
  dognap:{name:'Curl Up and Nap',icon:'☾',duration:42,cost:0,spot:'pet',effect:{energy:46},mood:'Content'},
- dogplay:{name:'Explore the House',icon:'◌',duration:32,cost:0,spot:'pet',effect:{fun:40,social:12,energy:-8},mood:'Playful'}
+ dogplay:{name:'Explore the House',icon:'◌',duration:32,cost:0,spot:'pet',effect:{fun:40,social:12,bladder:40,energy:-8},mood:'Playful'}
 };
 var simAspirations={
  home:{title:'Dream Home',desc:'Turn this house into a home.',targets:[2,4,7],metric:'upgrades'},
@@ -1896,6 +1897,7 @@ function simQueueAction(id,who){
  var s=simState();who=who||s.selected;
  if(!started||ended){message('Start your life first.');return false}
  if(!simAllowed(who,id)){message('This action is not available for that character.');return false}
+ if(paused&&$('#notebook').classList.contains('hidden')&&$('#avatarModal').classList.contains('hidden')){paused=false;$('#pause').textContent='Ⅱ';window.HouseBossPlatform?.start()}
  if(who==='kid'&&kidAtSchool()){message('Kid is at school until 3 PM.');return false}
  var queue=s.queues[who],busy=simBusy(who);
  if(busy){
@@ -2010,7 +2012,7 @@ function simSnapshot(){
  return {started:started,paused:paused,ended:ended,day:day,time:time,selected:s.selected,
    people:people,peace:Math.round(peace),money:Math.floor(cash),relationships:{partner:Math.round(friendship),kid:Math.round(trust)},
    aspiration:aspId,aspirations:simAspirations,aspirationStages:s.aspirationStages,
-   aspirationValue:simValue(aspId),careerLevel:life.careerLevel,partnerCareerLevel:life.partnerCareerLevel,
+   aspirationValue:simValue(aspId),careerLevel:life.careerLevel,partnerCareerLevel:life.partnerCareerLevel,careerShifts:life.shifts,
    chores:jobs.filter(function(j){return j.remaining>0}).length,homeLevel:level,owned:owned.length,
    isTown:life.zone==='town',workShift:life.shift,school:kidAtSchool(),autoPartner:autoPartner,autoKid:autoKid}
 }
@@ -2267,7 +2269,7 @@ window.EvinKitchenBridge={
  },
  selectPerson:function(who){
    if(!started||ended)return;
-   if(window.HouseBossSimUI){window.HouseBossSimUI.selectPerson(who);return}
+   if(window.HouseBossSimUI&&who!=='elder'){window.HouseBossSimUI.selectPerson(who);return}
    if(who==='elder')who='elder';else if(who==='self')who='self';
    else if(who==='partner')who='partner';else if(who==='kid')who='kid';
    openCare(who)
@@ -2280,5 +2282,6 @@ requestAnimationFrame(frame)
 <script src="./house-boss-en.js?v=2"></script>
 <script type="module" src="./evin-patronu-3d.js?v=4"></script>
 <script type="module" src="./house-boss-town-3d.js?v=3"></script>
+<script src="./house-boss-sims-ui.js?v=1"></script>
 </body>
 </html>
