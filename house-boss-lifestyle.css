@@ -204,3 +204,26 @@
  .hbl-pay-row{flex-direction:column}
 }
 @media(prefers-reduced-motion:reduce){.hbl-app button,.hbl-bar i{transition:none!important}}
+
+/* Dynamic life choice: a recurring, consequential Sims-style decision. */
+.hbl-daily-event{display:grid;grid-template-columns:54px 1fr;gap:14px;border:1px solid #ddcbb6;background:linear-gradient(108deg,#fbf3e5,#f9fbef);padding:18px;border-radius:16px;margin:0 0 18px;box-shadow:0 4px 16px #735c3314}
+.hbl-daily-event.resolved{border-color:#c6d9c3;background:linear-gradient(120deg,#eff7eb,#f9fbf3)}
+.hbl-event-icon{height:48px;width:48px;display:grid;place-items:center;border:1px solid #dcc7aa;border-radius:13px;background:linear-gradient(140deg,#fffaf2,#f0dac0);font-size:24px;color:#9d7853}
+.hbl-daily-event.resolved .hbl-event-icon{border-color:#bad5b7;background:#e4f2e0;color:#568562}
+.hbl-event-content{min-width:0}
+.hbl-event-content h4{font-size:19px;font-weight:800;letter-spacing:-.055em;color:#4f563b;margin:5px 0 5px}
+.hbl-event-content p{font-size:11px;line-height:1.5;color:#8e8c7d;margin:0 0 11px}
+.hbl-event-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.hbl-event-options button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:5px;min-width:0;border:1px solid #d8ddc9;background:#fffcf5;border-radius:9px;padding:11px;color:#40654b}
+.hbl-event-options button:hover:not(:disabled){background:#edf6e9;border-color:#9cbe9c}
+.hbl-event-options button strong{font-size:11px}
+.hbl-event-options button small{font-size:9px;font-weight:500;line-height:1.45;color:#859383}
+.hbl-event-result{border:1px solid #c7dbc4;background:#e9f5e5;border-radius:8px;padding:10px;color:#497854;font-size:11px;font-weight:750}
+@media(max-width:550px){
+ .hbl-daily-event{grid-template-columns:33px 1fr;gap:8px;padding:11px}
+ .hbl-event-icon{height:32px;width:32px;font-size:18px;border-radius:9px}
+ .hbl-event-content h4{font-size:15px}
+ .hbl-event-options{grid-template-columns:1fr}
+ .hbl-event-options button{padding:8px}
+ .hbl-event-options button strong{font-size:10px}
+}
