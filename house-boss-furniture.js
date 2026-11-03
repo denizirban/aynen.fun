@@ -91,7 +91,9 @@ function render(){
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+st.cash+' · Home Value $'+st.homeValue;
  const all=Object.entries(types);
  const pieces=st.furniture||[];
- let html='<div class="hbf-head"><span>BUILD MODE / FURNITURE</span><strong>'+pieces.length+' OBJECT'+(pieces.length===1?'':'S')+' INSTALLED</strong></div>'+
+ let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Furniture</button>'+
+ Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([k,v])=>'<button type="button" data-hd-category="'+k+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>'+
+ '<div class="hbf-head"><span>BUILD MODE / FURNITURE</span><strong>'+pieces.length+' OBJECT'+(pieces.length===1?'':'S')+' INSTALLED</strong></div>'+
  '<p class="hbf-sub">Buy, move, rotate and arrange real furniture in your 3D home. Work in progress is not charged until you place it.</p>';
  if(warning)html+='<div class="hbf-warning" role="status">'+warning+'</div>';
  html+=placeBar();
