@@ -200,11 +200,13 @@
   };
   function furnitureTable(){
     var g=new THREE.Group();scene.add(g);g.position.set(.15,0,-.1);
-    box(g,9.55,.16,3.15,woodDark,0,1.27,0);
-    box(g,9.35,.1,3.1,tableWood,0,1.39,0);
-    for(var x of [-4.18,4.18])for(var z of [-1.15,1.15])box(g,.19,1.23,.19,woodDark,x,.61,z);
-    box(g,8.7,.22,.14,woodDark,0,1.0,1.31);
-    box(g,8.7,.22,.14,woodDark,0,1.0,-1.31);
+    // Dining table: truly household-sized, leaving walkable aisles and proper
+    // separation from the kitchen counter and seated characters.
+    box(g,6.68,.16,2.60,woodDark,0,1.27,0);
+    box(g,6.50,.10,2.48,tableWood,0,1.39,0);
+    for(var x of [-2.85,2.85])for(var z of [-.91,.91])box(g,.19,1.23,.19,woodDark,x,.61,z);
+    box(g,5.95,.16,.12,woodDark,0,1.0,1.06);
+    box(g,5.95,.16,.12,woodDark,0,1.0,-1.06);
     interactive(g,'table','Table · homework and meals');
     return g;
   }
@@ -217,11 +219,12 @@
     box(g,.86,.9,.13,material,0,1.32,-.37);
     return g;
   }
-  chair(-4.7,2.6,.05,'#d0be92');
-  chair(-.7,2.45,.15,'#a3937e');
-  chair(3.2,2.4,-.25,'#7b7665');
-  chair(-4.5,-2.5,Math.PI,'#8d6855');
-  chair(2,-2.65,Math.PI,'#9a4c53');
+  // Clear the sofa and paths: chairs sit outside the actual table footprint.
+  chair(-2.45,2.06,.05,'#d0be92');
+  chair(.35,2.06,.15,'#a3937e');
+  chair(2.60,2.06,-.12,'#7b7665');
+  chair(-2.15,-2.05,Math.PI,'#8d6855');
+  chair(1.85,-2.05,Math.PI,'#9a4c53');
   function cabinetGroup(){
     var g=new THREE.Group();scene.add(g);g.position.set(6.72,0,-1.65);
     // two grounded kitchen runs: right wall counters
@@ -272,7 +275,7 @@
   }
   plate(-2.4,1.48,-.2,.32,'#cb8741');
   plate(.4,1.48,.4,.27,'#d7a347');
-  plate(3.7,1.48,.5,.3,'#c26e4c');
+  plate(2.42,1.48,.5,.3,'#c26e4c');
   function mug(x,z,color){
     var g=new THREE.Group();scene.add(g);
     cylinder(g,.17,.16,.28,mat('mug'+color,color,.35),x,1.63,z);
@@ -288,7 +291,7 @@
   interactive(desk,'desk','Laptop and charger');
   // cable physically visible beside laptop
   var cable=new THREE.Group();scene.add(cable);
-  cable.position.set(3.36,1.52,-.53);
+  cable.position.set(2.62,1.52,-.43);
   var cordPoints=[[0,0,0],[.12,.04,.16],[.4,.02,.3],[.68,.03,.16],[.77,.02,-.12]];
   for(var c=0;c<cordPoints.length-1;c++)capsule(cable,cordPoints[c],cordPoints[c+1],.022,black);
   box(cable,.31,.12,.19,cream,.8,.065,-.17);
@@ -460,15 +463,21 @@
     }
   });
   addUpgrade('floor2',function(g){
-    // Architectural staircase hints at a newly built second floor, in the same style.
-    for(var n=0;n<8;n++){
-      box(g,.87,.20+n*.19,.78,wood,-8.05+n*.41,.11+(n*.19)/2,4.3-n*.46);
+    // Architectural mezzanine with an actual upper landing. The previous stair
+    // crossed the dining area, hit the sofa, and terminated without a floor.
+    var loftWood=mat('loftWood','#aa896a'),loftRail=mat('loftRail','#88958a');
+    box(g,3.45,.20,2.84,loftWood,-6.66,3.10,-3.30);
+    box(g,3.45,.11,.11,loftRail,-6.66,3.25,-1.87);
+    for(var rx of [-8.28,-7.25,-6.20,-5.14])
+      capsule(g,[rx,3.25,-1.86],[rx,4.05,-1.86],.031,loftRail);
+    capsule(g,[-8.33,4.05,-1.86],[-5.10,4.05,-1.86],.045,loftRail);
+    for(var n=0;n<9;n++){
+      var h=.28+n*.345,z=.62-n*.52;
+      box(g,.89,.17,.48,loftWood,-8.14,h,z)
     }
-    capsule(g,[-8.40,.56,4.5],[-5.13,2.64,.83],.045,stainless);
-    for(var a=0;a<5;a++){
-      var t=a/4;
-      capsule(g,[-8.40+3.27*t,.28+t*1.96,4.5-3.67*t],[-8.40+3.27*t,.56+t*2.08,4.5-3.67*t],.026,stainless);
-    }
+    capsule(g,[-7.56,.35,.82],[-7.56,3.25,-3.85],.042,loftRail);
+    cylinder(g,.16,.16,.56,loftWood,-6.6,3.48,-3.3);
+    ball(g,.27,.26,.27,mat('loftLamp','#e9dcb7'),-6.6,3.83,-3.3);
   });
 
 
@@ -741,9 +750,9 @@
     root.position.set(...look.pos);
     return root
   }
-  makePerson('self',{pos:[3.4,0,1.8],skin:'#b97f61',hair:'#48332b',shirt:'#f2eee3',pants:'#665b50',hairLong:false},false);
-  makePerson('partner',{pos:[2.2,0,-2.45],skin:'#cb9375',hair:'#533b2c',shirt:'#b76b53',pants:'#6c695b',hairLong:true},false);
-  makePerson('kid',{pos:[-1.1,0,2.35],skin:'#9d624c',hair:'#322927',shirt:'#d48150',pants:'#9c9b72',hairLong:true},true);
+  makePerson('self',{pos:[4.30,0,2.95],skin:'#b97f61',hair:'#48332b',shirt:'#f2eee3',pants:'#665b50',hairLong:false},false);
+  makePerson('partner',{pos:[4.45,0,-2.80],skin:'#cb9375',hair:'#533b2c',shirt:'#b76b53',pants:'#6c695b',hairLong:true},false);
+  makePerson('kid',{pos:[-1.45,0,3.07],skin:'#9d624c',hair:'#322927',shirt:'#d48150',pants:'#9c9b72',hairLong:true},true);
   makePerson('elder',{pos:[-4.9,0,1.8],skin:'#714a37',hair:'#b6b3a3',shirt:'#908286',pants:'#6d7762',hairLong:false},.92);
 
   /* HOUSE_BOSS_FREE_FURNITURE_3D_V11 — native movable 3D furniture with ghost placement. */
@@ -1049,7 +1058,7 @@
   /* HOUSE_BOSS_WALK_ANIM_V8 — walk around kitchen counters, no 2D movement.
      Animations are procedural and synchronized with the saved activity timeline. */
   var workerPositions={
-    stove:[5,0,-3.6],sink:[5,0,-.9],table:[.35,0,2.35],
+    stove:[5.04,0,-3.6],sink:[5.04,0,-.9],table:[.35,0,2.95],
     desk:[3.1,0,-2.4],kid:[-1.2,0,2.55],floor:[-4.1,0,3.1],
     laundry:[5.2,0,2.2],pet:[-4.8,0,3.8]
   };
@@ -1057,7 +1066,7 @@
     // Raised central kitchen island is not walkable; allow space on all four sides.
     for(var i=1;i<=24;i++){
       var t=i/25,x=a.x+(b.x-a.x)*t,z=a.z+(b.z-a.z)*t;
-      if(x>-4.33&&x<4.60&&z>-1.72&&z<1.68)return true
+      if(x>-3.58&&x<3.84&&z>-1.55&&z<1.55)return true
     }
     return false
   }
@@ -1158,9 +1167,9 @@
       if(other&&!tasks[other]&&!inConversation[other])inConversation[other]=who
     }
     var destinations={
-      self:new THREE.Vector3(3.4,0,1.8),
-      partner:new THREE.Vector3(2.2,0,-2.45),
-      kid:new THREE.Vector3(-1.1,0,2.35)
+      self:new THREE.Vector3(4.30,0,2.95),
+      partner:new THREE.Vector3(4.45,0,-2.80),
+      kid:new THREE.Vector3(-1.45,0,3.07)
     };
     var waypoints={self:0,partner:0,kid:0},count=0;
     for(var key of ['self','partner','kid']){
