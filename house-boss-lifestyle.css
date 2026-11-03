@@ -241,3 +241,89 @@
  #game.sims-ui #simDock .sd-buttons button{font-size:0;padding:2px 0;min-height:22px;border-radius:5px}
  #game.sims-ui #simDock .sd-buttons .sd-menu-icon .sim-icon{width:15px;height:15px}
 }
+
+/* House Boss V3 / Daily Planner — functional household command center. */
+.hbl-person-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:3px 0 16px}
+.hbl-person-tabs button{display:flex;align-items:center;text-align:left;gap:10px;min-width:0;border:1px solid #d2dfcf;border-radius:14px;background:#fffdf7;padding:10px;color:#57715c;box-shadow:0 2px 5px #2850300d}
+.hbl-person-tabs button.active{background:linear-gradient(140deg,#e5f5df,#f5faf0);border-color:#80af88;box-shadow:inset 0 0 0 1px #b7d5b5,0 4px 11px #47774719}
+.hbl-person-tabs button.needs-help{border-color:#d6ad83}
+.hbl-person-tabs button>span:last-child{display:flex;flex-direction:column;gap:3px;min-width:0}
+.hbl-person-tabs button strong{font:800 10px 'Space Grotesk',sans-serif;color:#3e5e48}
+.hbl-person-tabs button small{font:800 8px 'DM Mono',monospace;color:#8c9b8b;white-space:nowrap}
+.hbl-person-avatar{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;flex:none;font:900 20px 'Space Grotesk',sans-serif;background:linear-gradient(145deg,#e6dccf,#faf0e0);color:#9f7661;box-shadow:inset 0 1px 0 #fffc}
+.hbl-person-avatar.partner{background:linear-gradient(145deg,#e9e6ed,#dcd5e2);color:#7c6c8c}
+.hbl-person-avatar.kid{background:linear-gradient(145deg,#f6e4c7,#f9c88d);color:#ab7548}
+.hbl-person-avatar.pet{background:linear-gradient(145deg,#e5d9cb,#c6b5a2);color:#776150}
+.hbl-planner-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;margin-bottom:18px}
+.hbl-planner-grid .hbl-panel{min-width:0}
+.hbl-planner-needs .hbl-panel-title>div>span{font:800 8px 'DM Mono',monospace;letter-spacing:.05em;color:#899c8a}
+.hbl-planner-status{background:#e6f1df;color:#4f825a;font:800 10px 'DM Mono',monospace;border:1px solid #c5d8bd;border-radius:999px;padding:6px 9px;text-transform:uppercase;white-space:nowrap}
+.hbl-person-needs{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin:13px 0 16px}
+.hbl-person-need{padding:10px 11px;background:#f7faf4;border:1px solid #e2e9de;border-radius:10px}
+.hbl-person-need>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.hbl-person-need b{font:800 8px 'DM Mono',monospace;letter-spacing:.04em;color:#758a77}
+.hbl-person-need strong{font:800 11px 'DM Mono',monospace;color:#3f7952}
+.hbl-person-need.urgent{background:#fff0e8;border-color:#ecc7b0}
+.hbl-person-need.urgent strong{color:#a95c3f}
+.hbl-person-need.low{background:#fbf4e9;border-color:#ead6bc}
+.hbl-person-need.low strong{color:#ae804c}
+.hbl-person-need .hbl-bar{height:7px;margin:8px 0 1px}
+.hbl-autonomy{display:flex;gap:12px;align-items:center;justify-content:space-between;border-top:1px solid #e3eadd;padding-top:14px}
+.hbl-autonomy>div{display:flex;flex-direction:column;gap:4px}
+.hbl-autonomy b{font:900 9px 'DM Mono',monospace;color:#4b7356}
+.hbl-autonomy small{font:500 9px 'Space Grotesk',sans-serif;color:#829486;line-height:1.4}
+.hbl-autonomy button{min-width:59px;background:#e2ece0;border:1px solid #c0d4bd;border-radius:20px;padding:8px 14px;color:#4f7255}
+.hbl-autonomy button[aria-pressed="true"]{background:#407b54;border-color:#407b54;color:white}
+.hbl-planner-queue{display:flex;flex-direction:column;gap:6px}
+.hbl-planner-queue .hbl-eyebrow{margin-bottom:0}
+.hbl-planner-queue h4{font-size:19px;margin:2px 0 6px}
+.hbl-active-now{display:flex;align-items:center;gap:12px;padding:12px;background:#eef6eb;border:1px solid #d5e6d0;border-radius:11px}
+.hbl-status-dot{width:11px;height:11px;border-radius:50%;flex:none;background:#b0bdad;box-shadow:0 0 0 4px #e0e6df}
+.hbl-status-dot.busy{background:#69a975;box-shadow:0 0 0 4px #d3e9cf}
+.hbl-active-now>div{min-width:0;flex:1}
+.hbl-active-now small{font:800 8px 'DM Mono',monospace;color:#849f86}
+.hbl-active-now b{font:800 13px 'Space Grotesk',sans-serif;color:#3e6649;display:block;margin:4px 0}
+.hbl-active-now .hbl-bar{height:5px}
+.hbl-queue-steps{display:grid;align-content:start;gap:7px;flex:1;margin:4px 0}
+.hbl-planned-action{display:flex;align-items:center;gap:8px;border:1px solid #e0e9dc;background:#f9faf5;border-radius:10px;padding:8px 9px}
+.hbl-planned-action b{font:800 10px 'Space Grotesk',sans-serif;flex:1;min-width:0;color:#627965}
+.hbl-queue-number{font:800 10px 'DM Mono',monospace;color:#5e986a;width:24px;height:24px;border-radius:7px;background:#e6f1e3;display:grid;place-items:center}
+.hbl-planned-action button{background:#fff5ed;border:1px solid #ead9c9;border-radius:7px;padding:6px 7px;color:#a47857;font-size:8px}
+.hbl-queue-footer{display:flex;justify-content:space-between;gap:7px;flex-wrap:wrap;border-top:1px solid #e5ebe2;padding-top:11px;margin-top:5px;color:#8a9b89;font:800 8px 'DM Mono',monospace}
+.hbl-routines{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 0 14px}
+.hbl-routine-card{display:grid;grid-template-columns:43px minmax(0,1fr) auto;align-items:center;gap:10px;padding:14px 13px;border:1px solid #d6e3d0;background:linear-gradient(135deg,#fffefa,#f2f8ef);border-radius:14px;box-shadow:0 3px 8px #1a39200a}
+.hbl-routine-card:hover{border-color:#abcaab}
+.hbl-routine-symbol{width:41px;height:41px;display:grid;place-items:center;border:1px solid #c9dcc4;border-radius:11px;background:#e6f1e1;color:#6d966c;font-size:21px}
+.hbl-routine-card>div:nth-child(2){min-width:0}
+.hbl-routine-card h4{font:800 13px 'Space Grotesk',sans-serif;letter-spacing:-.028em;margin:0 0 3px;color:#4e6b53}
+.hbl-routine-card p{font:500 9px 'Space Grotesk',sans-serif;line-height:1.4;color:#96a596;margin:0 0 7px}
+.hbl-routine-card small{font:700 8px 'DM Mono',monospace;color:#708b76;line-height:1.6;display:block;overflow-wrap:anywhere}
+.hbl-routine-card>button{padding:10px;border:1px solid #4e8c61;border-radius:9px;background:#4b895d;color:#fff;white-space:nowrap;font-size:9px}
+.hbl-routine-card>button:disabled{background:#dde4d9;border-color:#d0d9ce;color:#8b9e8d}
+.hbl-planner-notice{font:700 10px 'Space Grotesk',sans-serif;color:#426e4a;background:#e8f4e4;border:1px solid #bcd6b7;border-radius:10px;padding:11px 13px;margin:12px 0}
+@media(max-width:760px){
+ .hbl-planner-grid{grid-template-columns:1fr}
+ .hbl-person-tabs{gap:5px}
+ .hbl-person-tabs button{padding:7px 5px;gap:6px}
+ .hbl-person-avatar{width:34px;height:34px;font-size:15px;border-radius:9px}
+ .hbl-person-tabs button strong{font-size:9px}
+ .hbl-person-tabs button small{font-size:7px}
+}
+@media(max-width:550px){
+ .hbl-person-tabs button{flex-direction:column;align-items:center;text-align:center;min-height:68px}
+ .hbl-person-tabs button>span:last-child{align-items:center}
+ .hbl-person-avatar{width:30px;height:30px;font-size:13px}
+ .hbl-person-tabs button strong{font-size:8px}
+ .hbl-person-tabs button small{font-size:6px}
+ .hbl-person-needs{gap:6px;grid-template-columns:1fr 1fr}
+ .hbl-person-need{padding:8px}
+ .hbl-person-need b{font-size:7px}
+ .hbl-person-need strong{font-size:9px}
+ .hbl-routines{grid-template-columns:1fr;gap:7px}
+ .hbl-routine-card{grid-template-columns:33px minmax(0,1fr) auto;padding:10px;gap:8px}
+ .hbl-routine-symbol{width:32px;height:32px;font-size:17px;border-radius:9px}
+ .hbl-routine-card h4{font-size:11px}
+ .hbl-routine-card>button{font-size:8px;padding:8px}
+ .hbl-routine-card small{font-size:7px}
+ .hbl-section-title>small{font-size:9px}
+}
