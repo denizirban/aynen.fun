@@ -1709,6 +1709,7 @@ function lifeBeginShift(id,who){
 function lifeWorkChoice(action){
  var sh=life.shift;if(!sh||!started)return message('Start a shift first.');
  if(day*1440+time-(sh.lastChoiceTick??-99999)<35)return message('You have just made a work decision. Give it some time.');
+ townResumeIfNeeded();
  if(action==='focus'){
    sh.performance=clamp((sh.performance??50)+12);
    sh.left=Math.max(1,sh.left-16);
