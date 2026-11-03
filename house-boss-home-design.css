@@ -58,3 +58,9 @@
  #notebook.design-mode .hd-style-desc{min-height:14px}
 }
 @media(max-height:650px) and (min-width:761px){#notebook.design-mode .note-sheet{top:55px;max-height:calc(100dvh - 65px)}}
+
+/* Focused object inspection while designing. */
+#notebook.design-mode .hd-collection>div{min-width:0}
+#notebook.design-mode .hd-collection>div small{display:block;text-align:left;max-width:190px;margin-top:4px}
+#notebook.design-mode .hd-collection>button{white-space:nowrap;background:#e5f1df;border:1px solid #b4d0ad;border-radius:8px;color:#44724c;padding:8px 9px;font:800 9px 'DM Mono',monospace;cursor:pointer}
+#notebook.design-mode .hd-collection>button:hover{background:#cde8c5;border-color:#8bb88d}
