@@ -588,6 +588,33 @@ body:has(#game) .brand .back{display:none!important}
 #comboHud b{font-size:15px;color:#ad5844}
 #comboHud[hidden]{display:none}
 @media(max-width:700px){#comboHud{top:62px;left:50%;font-size:9px;padding:5px 7px}}
+
+/* HOUSE_BOSS_ORIGINAL_UI_LIFE_SIM: only additive controls, home artwork unchanged */
+.mode-picks{display:none!important}
+#townLayer{display:none;position:absolute;inset:0;z-index:9;background:#c9d2b8;overflow:hidden}
+#game.town-active #townLayer{display:block}
+#game.town-active #room,#game.town-active #kitchen3d,#game.town-active #sceneShade,#game.town-active .stage-vignette,#game.town-active #cameraTools,#game.town-active .scene-caption{visibility:hidden!important}
+#game.town-active #tasks,#game.town-active #quickBar,#game.town-active #family,#game.town-active #queuePanel,#game.town-active #levelWidget,#game.town-active #goalCard,#game.town-active #action,#game.town-active #hint,#game.town-active #progress,#game.town-active #speech{display:none!important}
+#townLayer .townCanvas{width:100%;height:100%;position:absolute;inset:0}
+#townLayer .townPanel{position:absolute;top:140px;right:18px;bottom:20px;width:min(390px,calc(100% - 32px));background:#faf7eeef;border:1px solid #565c50;border-radius:16px;padding:14px;overflow:auto;backdrop-filter:blur(16px);box-shadow:7px 9px 0 #262d262a}
+#townLayer .townPanel h2{font-size:20px;letter-spacing:-.04em;margin:0 0 5px}
+#townLayer .townPanel p{font-size:11px;color:#777265;line-height:1.45}
+.townJob{border:1px solid #d0c7b6;border-radius:11px;margin:7px 0;padding:10px;background:#fffcf5;display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px}
+.townJob b{font-size:12px;display:block}.townJob small{display:block;font-size:10px;line-height:1.45;color:#726d61;margin-top:5px}
+.townJob button,.townBack{font:900 10px system-ui;color:#304a35;background:#cfddb9;border:1px solid #637a5b;border-radius:8px;padding:9px 11px}
+.townJob button:disabled{opacity:.45}
+.townJob .jobBtns{display:grid;gap:4px}
+.townBar{margin-top:7px;height:7px;border-radius:6px;background:#d6d3c7;overflow:hidden}.townBar i{height:100%;background:#71936e;display:block}
+.townMapLabel{position:absolute;top:38%;left:6%;background:#fffaedce;border:1px solid #555b50;border-radius:13px;padding:15px 20px;font-size:27px;line-height:1.04;font-weight:950;letter-spacing:-.07em;color:#496149;box-shadow:6px 7px 0 #25342626}
+#townLayer .townBack{position:absolute;top:15px;left:19px;z-index:2}
+.lifeBookStats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.lifeBookStats div{padding:11px;border-radius:10px;background:#eee9dc;border:1px solid #dcd3c4}.lifeBookStats small{font-size:9px;display:block;color:#756e65}.lifeBookStats b{font-size:17px}
+.lifeBookAction{padding:12px;display:flex;align-items:center;justify-content:space-between;gap:9px;border:1px solid #d8d1c2;border-radius:11px;margin:8px 0;background:#fffaf2}
+.lifeBookAction b{font-size:12px}.lifeBookAction p{font-size:10px;margin:4px 0;color:#7d7768}
+.lifeBookAction button{border:1px solid #637656;background:#cbdcb9;border-radius:8px;font-size:11px;font-weight:900;padding:8px}
+.lifeBookAction button:disabled{opacity:.4}
+@media(max-width:700px){#townLayer .townPanel{top:122px;bottom:8px;right:8px;width:calc(100% - 16px);padding:11px}#townLayer .townMapLabel{display:none}#townLayer .townBack{top:83px;left:10px}}
+@media(max-width:480px){#townLayer .townPanel{top:150px;max-height:calc(100% - 160px)}#townLayer .townBack{top:116px}}
+
 </style>
 </head>
 <body>
@@ -840,7 +867,7 @@ body:has(#game) .brand .back{display:none!important}
 </svg>
 <div id="sceneShade"></div><div class="stage-vignette" aria-hidden="true"></div><div class="scene-caption"><span class="scene-dot"></span><span>HOME / KITCHEN</span><span class="scene-sep">·</span><span id="sceneMood">DAYTIME</span></div><div id="cameraTools" aria-label="Kamera kontrolleri"><button type="button" id="cameraOut" aria-label="Uzaklaştır">−</button><button type="button" id="cameraReset" aria-label="Kamerayı sıfırla">⌖</button><button type="button" id="cameraIn" aria-label="Yakınlaştır">+</button><button type="button" id="visualMode" aria-label="3D ve 2D görünüm arasında geçiş" hidden>3D</button></div>
 <header id="top">
-<div class="brand"><a class="back" href="#" onclick="return false" aria-label="House Boss">←</a><div><b>HOUSE BOSS</b><small>A LIVING KITCHEN SIM</small></div></div>
+<div class="brand"><a class="back" href="#" onclick="return false" aria-label="House Boss">←</a><div><b>HOUSE BOSS</b><small>A LIVING HOUSEHOLD SIM</small></div></div>
 <div class="clock"><div><small id="dayLabel">DAY 01 / EVENING</small><strong id="time">17:00</strong></div><div class="controls"><button class="mini" id="pause" aria-label="Duraklat">Ⅱ</button><button class="mini" id="saveNow" aria-label="Kaydet" title="Kaydet">⌑</button><button class="mini on" data-speed="1">1×</button><button class="mini" data-speed="2">2×</button><button class="mini" data-speed="3">3×</button></div></div>
 <div class="stats"><div class="stat"><label>HOUSE PEACE</label><strong id="peace">75%</strong></div><div class="stat"><label>YOUR ENERGY</label><strong id="energy">100%</strong></div><div class="stat"><label>BUDGET</label><strong id="cash">$420</strong></div></div>
 </header>
@@ -905,14 +932,14 @@ body:has(#game) .brand .back{display:none!important}
         <div class="menu-microcopy">Assign chores · Manage moods · Upgrade your home</div>
       </section>
       <section class="menu-controls">
-        <div class="menu-section-title"><b>01 / CHOOSE YOUR SHIFT</b><span>GAME MODE</span></div>
+        <div class="menu-section-title"><b>01 / YOUR HOUSEHOLD</b><span>ONE LIVING WORLD</span></div>
         <div class="mode-picks" role="group" aria-label="Game mode">
           <button type="button" class="mode-option selected" data-runmode="classic" aria-pressed="true"><span class="mode-symbol">◷</span><span><b>CLASSIC</b><small>The original evening</small></span></button>
           <button type="button" class="mode-option" data-runmode="chaos" aria-pressed="false"><span class="mode-symbol">↯</span><span><b>CHAOS</b><small>More trouble, faster</small></span></button>
           <button type="button" class="mode-option" data-runmode="cozy" aria-pressed="false"><span class="mode-symbol">☕</span><span><b>COZY</b><small>Take your time</small></span></button>
         </div>
         <div class="menu-challenge" aria-live="polite">
-          <div class="challenge-label"><span><i class="challenge-dot"></i> TONIGHT'S CHALLENGE</span><span id="modeDifficulty">NORMAL</span></div>
+          <div class="challenge-label"><span><i class="challenge-dot"></i> TODAY'S GOALS</span><span id="modeDifficulty">NORMAL</span></div>
           <div id="modeDescription" class="challenge-description">Keep the kitchen moving without losing your cool.</div>
           <div class="challenge-goals">
             <div><span>✓</span><span id="goalOne">Finish 3 chores</span></div>
@@ -926,7 +953,7 @@ body:has(#game) .brand .back{display:none!important}
           <div class="profile-row"><span>PARTNER</span><div class="profile-options"><button type="button" data-avatar="partner:m">Male</button><button type="button" data-avatar="partner:f">Female</button><button type="button" data-avatar="partner:n">Neutral</button></div></div>
         </div>
         <div id="savedStats" class="save-preview" hidden></div>
-        <button type="button" id="start" class="menu-play">START EVENING <span>→</span></button>
+        <button type="button" id="start" class="menu-play">START YOUR LIFE <span>→</span></button>
         <button type="button" id="resume" class="menu-continue" hidden>↳ CONTINUE SAVED GAME</button>
         <div class="menu-footer"><span id="splashNote">AUTOSAVE ENABLED</span><span>3D / 2D · PLAY IN BROWSER</span></div>
       </section>
@@ -953,7 +980,7 @@ var shiftOptions={
    goals:['Finish chores at your pace','Take care of the family','Build a better kitchen'],clock:1.10,firstEvent:37,events:[40,23],latePenalty:3,initialPeace:86}
 };
 function setRunMode(value){
- if(!shiftOptions[value])return;
+ if(value!=='classic')return;
  runMode=value;
  document.querySelectorAll('[data-runmode]').forEach(function(button){
   var active=button.dataset.runmode===value;
@@ -1051,7 +1078,7 @@ function renderProgression(){
  var newGoalHtml=goals.map(function(g){var v=goalValue(g);return '<div class="goal-mini"><b>'+(g.claimed?'✓ ':'○ ')+g.label+'</b><small>'+(g.claimed?"DONE":Math.min(v,g.target)+'/'+g.target)+'</small></div>'}).join('');if(newGoalHtml!==previousGoalHtml){$('#goalPreview').innerHTML=newGoalHtml;previousGoalHtml=newGoalHtml}
  renderUpgrades();renderChapters()
 }
-function notebookHtml(){
+function notebookHtml(){if(noteTab==='life'){lifeNotebook();return}
  var title={upgrades:"Upgrade the Kitchen",goals:"Tonight's goals",roadmap:"House Story",family:"Family",memories:"Memories"};$('#noteTitle').textContent=title[noteTab];$('#noteBudget').textContent='$'+cash+' · Seviye '+level;
  if(noteTab==='upgrades')$('#noteBody').innerHTML='<div class="upgrade-grid">'+upgradeCatalog.map(function(u){var has=owned.includes(u.id),locked=level<u.level,poor=cash<u.price,disabled=has||locked||poor;return '<article class="upgrade-card'+(has?' owned':'')+'"><div class="upgrade-top"><div class="upgrade-art">'+u.icon+'</div><div><b>'+u.name+'</b><small>'+u.tag+" · LEVEL "+u.level+'</small></div></div><p>'+u.desc+'</p><button class="buy" data-buy="'+u.id+'"'+(disabled?' disabled':'')+'>'+(has?"✓ INSTALLED":locked?"LEVEL "+u.level+" REQUIRED":poor?'$'+u.price+" — NOT ENOUGH MONEY":"BUY · $"+u.price)+'</button></article>'}).join('')+'</div>';
  if(noteTab==='goals')$('#noteBody').innerHTML="<p style=\"font-size:12px;color:#797469;margin:0 0 15px\">Meet goals to earn XP and in-game money.</p>"+goals.map(function(g){var v=goalValue(g);return '<article class="note-goal"><header><strong>'+(g.claimed?'✓ ':'○ ')+g.label+'</strong><span>'+(g.claimed?"COMPLETE":Math.min(v,g.target)+' / '+g.target)+"</span></header><p>Reward: +"+g.xp+' XP · $'+g.money+'</p><div class="track"><i style="width:'+Math.min(100,v/g.target*100)+'%"></i></div></article>'}).join('');
@@ -1165,7 +1192,7 @@ function familySpeed(who,spot){
  var levelBoost=1+(helperSkill(who)-1)*.065;
  return levelBoost*(liked?1.25:1);
 }
-function decideFamilyJob(who){
+function decideFamilyJob(who){if(who==='partner'&&life.pShift)return;
  if(!started||paused||ended||time<17*60+28)return null;
  var isPartner=who==='partner';
  if(isPartner ? !autoPartner : !autoKid)return null;
@@ -1318,7 +1345,7 @@ function render(){
  var ch=$('#comboHud');
  ch.hidden=combo<2||!started||ended;
  if(!ch.hidden)$('#comboValue').textContent='×'+combo;
- $('#time').textContent=format(time);$('#dayLabel').textContent="DAY "+String(day).padStart(2,'0')+" / EVENING";$('#peace').textContent=Math.round(peace)+'%';$('#energy').textContent=Math.round(energy)+'%';$('#cash').textContent='$'+Math.round(cash);
+ $('#time').textContent=format(time);$('#dayLabel').textContent="DAY "+String(day).padStart(2,'0')+" / MORNING";$('#peace').textContent=Math.round(peace)+'%';$('#energy').textContent=Math.round(energy)+'%';$('#cash').textContent='$'+Math.round(cash);
  $('#familyActivity').textContent=familyLog.length?familyLog[0].text:"Everybody is keeping to themselves. For now.";$('#relationPartner').textContent=Math.round(friendship);$('#relationKid').textContent=Math.round(trust);$('#badgeCount').textContent=achievements.length+'/'+badgeCatalog.length;$('#selfMeter').style.width=energy+'%';$('#partnerMeter').style.width=partnerEnergy+'%';$('#kidMeter').style.width=kidEnergy+'%';$('#petMeter').style.width=petEnergy+'%';
  $('#selfQueue').textContent='SEN / '+([current].concat(selfQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||"Waiting");
  $('#partnerQueue').textContent="PARTNER / "+([helper].concat(partnerQueue.map(find)).filter(Boolean).map(function(j){return j.name}).join(' → ')||"Waiting");
@@ -1337,15 +1364,15 @@ function render(){
  updateSceneFeedback();updateTaskObjects();document.querySelectorAll('[data-station]').forEach(function(el){var spot=el.getAttribute('data-station');var related=live.filter(function(j){return j.spot===spot});el.setAttribute('aria-disabled',related.length?'false':'true');el.classList.toggle('blink',related.some(function(j){return time>j.due-16&&!j.assigned}));});
  $('#game').classList.toggle('evening',time>=19*60&&time<21*60);$('#game').classList.toggle('night',time>=21*60);
  var j=current||helper||childTask;if(j){$('#progress').classList.add('on');$('#progressName').textContent=j.name;$('#progressWho').textContent=current?"You":helper?"Partner":"Kid";$('#progressFill').style.width=Math.min(100,Math.round(100*(1-j.remaining/j.dur)))+'%'}else $('#progress').classList.remove('on');
- renderProgression();updateQuickBar();if(started&&performance.now()-lastSave>4000){saveGame();}
+ renderProgression();updateQuickBar();lifeTownRender(false);if(started&&performance.now()-lastSave>4000){saveGame();}
 }
 function say(t){var e=$('#speech');e.textContent=t;e.classList.add('visible');clearTimeout(speechTimer);speechTimer=setTimeout(function(){e.classList.remove('visible')},3500)}
 function canKid(j){return ['pet','table','floor','kid'].includes(j.spot)}
-function saveGame(){if(!started)return;var snap={v:3,runMode:runMode,day:day,cash:cash,time:time,peace:peace,energy:energy,partnerEnergy:partnerEnergy,kidEnergy:kidEnergy,petEnergy:petEnergy,done:done,shared:shared,missed:missed,speed:speed,started:started,ended:ended,seq:seq,jobs:jobs,current:current&&current.id,helper:helper&&helper.id,childTask:childTask&&childTask.id,selfQueue:selfQueue,partnerQueue:partnerQueue,eventAt:eventAt,combo:combo,pos:pos,posTarget:posTarget,partnerPos:partnerPos,kidPos:kidPos,xp:xp,level:level,owned:owned,achievements:achievements,goals:goals,totalDone:totalDone,assistedFinished:assistedFinished,totalShared:totalShared,wellDays:wellDays,lastFinishedDay:lastFinishedDay,friendship:friendship,trust:trust,careCooldown:careCooldown,partnerHabit:partnerHabit,kidHabit:kidHabit,autoPartner:autoPartner,autoKid:autoKid,partnerPractice:partnerPractice,kidPractice:kidPractice,nextFamilyDecision:nextFamilyDecision,familyLog:familyLog,autonomyCounts:autonomyCounts,dayInitiatives:dayInitiatives,avatarSelf:avatarSelf,avatarPartner:avatarPartner,chapterClaimed:chapterClaimed,careerDays:careerDays,bestScore:bestScore,lastScore:lastScore,weekScore:weekScore,weeklyTitle:weeklyTitle,at:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(snap));lastSave=performance.now();$('#saveStatus').textContent="SAVED ✓"}catch(e){$('#saveStatus').textContent="SAVE UNAVAILABLE"}}
+function saveGame(){if(!started)return;var snap={v:3,life:life,runMode:runMode,day:day,cash:cash,time:time,peace:peace,energy:energy,partnerEnergy:partnerEnergy,kidEnergy:kidEnergy,petEnergy:petEnergy,done:done,shared:shared,missed:missed,speed:speed,started:started,ended:ended,seq:seq,jobs:jobs,current:current&&current.id,helper:helper&&helper.id,childTask:childTask&&childTask.id,selfQueue:selfQueue,partnerQueue:partnerQueue,eventAt:eventAt,combo:combo,pos:pos,posTarget:posTarget,partnerPos:partnerPos,kidPos:kidPos,xp:xp,level:level,owned:owned,achievements:achievements,goals:goals,totalDone:totalDone,assistedFinished:assistedFinished,totalShared:totalShared,wellDays:wellDays,lastFinishedDay:lastFinishedDay,friendship:friendship,trust:trust,careCooldown:careCooldown,partnerHabit:partnerHabit,kidHabit:kidHabit,autoPartner:autoPartner,autoKid:autoKid,partnerPractice:partnerPractice,kidPractice:kidPractice,nextFamilyDecision:nextFamilyDecision,familyLog:familyLog,autonomyCounts:autonomyCounts,dayInitiatives:dayInitiatives,avatarSelf:avatarSelf,avatarPartner:avatarPartner,chapterClaimed:chapterClaimed,careerDays:careerDays,bestScore:bestScore,lastScore:lastScore,weekScore:weekScore,weeklyTitle:weeklyTitle,at:Date.now()};try{localStorage.setItem(SAVE_KEY,JSON.stringify(snap));lastSave=performance.now();$('#saveStatus').textContent="SAVED ✓"}catch(e){$('#saveStatus').textContent="SAVE UNAVAILABLE"}}
 function getSave(){try{var s=JSON.parse(localStorage.getItem(SAVE_KEY));return s&&s.v===3&&Array.isArray(s.jobs)?s:null}catch(e){return null}}
 function loadSave(){
  var s=getSave();if(!s)return false;
- setRunMode(shiftOptions[s.runMode]?s.runMode:'classic');
+ setRunMode('classic');life=Object.assign(life,s.life||{});life.zone='home';
  window.HouseBossPlatform?.start();
  day=Math.max(1,s.day||1);cash=s.cash??420;time=s.time||17*60;avatarSelf=s.avatarSelf||'m';avatarPartner=s.avatarPartner||'f';chapterClaimed=Array.isArray(s.chapterClaimed)?s.chapterClaimed:[];careerDays=s.careerDays||0;bestScore=s.bestScore||0;lastScore=s.lastScore||0;weekScore=s.weekScore||0;weeklyTitle=window.HouseBossEN?.translate?.(s.weeklyTitle||'')||'';syncAvatars();xp=s.xp||0;level=s.level||1;owned=Array.isArray(s.owned)?s.owned:[];achievements=Array.isArray(s.achievements)?s.achievements:[];goals=Array.isArray(s.goals)?s.goals:makeGoals();totalDone=s.totalDone||0;assistedFinished=s.assistedFinished||0;totalShared=s.totalShared||0;wellDays=s.wellDays||0;lastFinishedDay=s.lastFinishedDay||(s.ended?day:0);friendship=s.friendship??66;trust=s.trust??64;careCooldown=s.careCooldown||{};partnerHabit=habits.partner[s.partnerHabit]?s.partnerHabit:'planner';kidHabit=habits.kid[s.kidHabit]?s.kidHabit:'curious';autoPartner=s.autoPartner!==false;autoKid=s.autoKid!==false;partnerPractice=Math.max(0,Math.min(40,s.partnerPractice||0));kidPractice=Math.max(0,Math.min(40,s.kidPractice||0));nextFamilyDecision=s.nextFamilyDecision||time+28;familyLog=Array.isArray(s.familyLog)?s.familyLog.slice(0,6).map(function(entry){return {...entry,text:window.HouseBossEN?.translate?.(entry.text)||entry.text}}):[];autonomyCounts=s.autonomyCounts||{partner:0,kid:0};dayInitiatives=s.dayInitiatives||{partner:0,kid:0};peace=s.peace??75;energy=s.energy??100;partnerEnergy=s.partnerEnergy??88;kidEnergy=s.kidEnergy??83;petEnergy=s.petEnergy??90;done=s.done||0;shared=s.shared||0;missed=s.missed||0;speed=s.speed||1;jobs=s.jobs;
  // Migrate older English-edition saves created before source localization.
@@ -1355,9 +1382,9 @@ function loadSave(){
   if(Array.isArray(s.goals))s.goals.forEach(function(g){if(typeof g.label==='string')g.label=window.HouseBossEN.translate(g.label)});
  }
  seq=s.seq||1;eventAt=s.eventAt||time+35;combo=s.combo||0;pos=Array.isArray(s.pos)?s.pos:[770,460];posTarget=Array.isArray(s.posTarget)?s.posTarget:[770,460];partnerPos=Array.isArray(s.partnerPos)?s.partnerPos:[885,351];kidPos=Array.isArray(s.kidPos)?s.kidPos:[746,714];selfQueue=s.selfQueue||[];partnerQueue=s.partnerQueue||[];
- current=jobs.find(function(j){return j.id===s.current})||null;helper=jobs.find(function(j){return j.id===s.helper})||null;childTask=jobs.find(function(j){return j.id===s.childTask})||null;paused=false;ended=false;started=true;selected=null;$('#splash').classList.add('hidden');$('#ending').classList.add('hidden');$('#player').setAttribute('transform','translate('+pos[0]+' '+pos[1]+')');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',Number(b.dataset.speed)===speed)});$('#pause').textContent='Ⅱ';render();if(s.ended){finishDay();}else{message("Day "+day+', '+format(time)+" — welcome back.");say("Can I ask you something?")}return true
+ current=jobs.find(function(j){return j.id===s.current})||null;helper=jobs.find(function(j){return j.id===s.helper})||null;childTask=jobs.find(function(j){return j.id===s.childTask})||null;paused=false;ended=false;started=true;selected=null;$('#splash').classList.add('hidden');$('#ending').classList.add('hidden');$('#player').setAttribute('transform','translate('+pos[0]+' '+pos[1]+')');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',Number(b.dataset.speed)===speed)});$('#pause').textContent='Ⅱ';render();if(s.ended){message('Previous save continued.');}else{message("Day "+day+', '+format(time)+" — welcome back.");say("Can I ask you something?")}return true
 }
-function showSavePreview(){var s=getSave();if(s){avatarSelf=s.avatarSelf||avatarSelf;avatarPartner=s.avatarPartner||avatarPartner;syncAvatars();if(shiftOptions[s.runMode])setRunMode(s.runMode)}if(!s){$('#resume').hidden=true;$('#savedStats').hidden=true;$('#start').textContent='START EVENING →';return}savedPreview=s;$('#resume').hidden=false;$('#savedStats').hidden=false;$('#savedStats').textContent='DAY '+s.day+' · '+format(s.time)+' · '+Math.round(s.peace)+'% PEACE · '+(s.jobs||[]).filter(function(j){return j.remaining>0}).length+' CHORES'+(s.ended?' · SHIFT FINISHED':'');$('#resume').textContent=s.ended?'LAST SHIFT REPORT →':'↳ CONTINUE SAVED GAME';$('#start').textContent='START NEW EVENING →';
+function showSavePreview(){var s=getSave();if(s){avatarSelf=s.avatarSelf||avatarSelf;avatarPartner=s.avatarPartner||avatarPartner;syncAvatars();setRunMode('classic')}if(!s){$('#resume').hidden=true;$('#savedStats').hidden=true;$('#start').textContent='START EVENING →';return}savedPreview=s;$('#resume').hidden=false;$('#savedStats').hidden=false;$('#savedStats').textContent='DAY '+s.day+' · '+format(s.time)+' · '+Math.round(s.peace)+'% PEACE · '+(s.jobs||[]).filter(function(j){return j.remaining>0}).length+' CHORES'+(s.ended?' · SHIFT FINISHED':'');$('#resume').textContent=s.ended?'LAST SHIFT REPORT →':'↳ CONTINUE SAVED GAME';$('#start').textContent='START NEW EVENING →';
 }
 
 function find(id){return jobs.find(function(j){return j.id===Number(id)&&j.remaining>0})}
@@ -1399,16 +1426,18 @@ function choose(j){if(!j||!started||ended)return;selected=j.id;selectedPerson=nu
 
 function hideAction(){closeMobileFamily();var wasFinding=taskBeingFound!==null;$('#action').classList.remove('visible');selected=null;selectedPerson=null;$('#askKid').hidden=false;clearTaskTarget();placeAction(null);if(wasFinding)resetCameraView()}
 function startSelf(){
- if(current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('Sen: '+current.name)}}
-function startPartner(){if(helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message("Partner started: "+helper.name)}}
+ if(life.shift||life.activity||current||!selfQueue.length)return;current=find(selfQueue.shift());if(current){posTarget=points[current.spot].slice();message('Sen: '+current.name)}}
+function startPartner(){if(life.pShift||helper||!partnerQueue.length)return;helper=find(partnerQueue.shift());if(helper){message("Partner started: "+helper.name)}}
 function work(kind){
  if(selectedPerson){careAction(kind);return}
  var j=find(selected);if(!j)return;
  if(j.assigned){message("Someone is already handling that.");return}
  if(kind==='self'){
+   if(life.shift||life.activity){message('You are busy.');return}
    if(current){if(selfQueue.length>=3){message("Your queue is full.");return}selfQueue.push(j.id);j.assigned='self';message("Added to the queue: "+j.name)}
    else{current=j;j.assigned='self';posTarget=points[j.spot].slice();message(j.name+" — you're starting.")}
  }else if(kind==='partner'){
+   if(life.pShift){message('Partner is at work.');return}
    if(partnerEnergy<12){message("Your partner needs a break.");return}
    if(helper){if(partnerQueue.length>=2){message("Your partner's queue is full.");return}partnerQueue.push(j.id);j.assigned='partner';message("Added to your partner's queue.")}
    else{helper=j;j.assigned='partner';message("Task delegated.")}
@@ -1430,11 +1459,134 @@ function finish(j,kind){
  if(j.initiative){if(kind==='partner')friendship=clamp(friendship+1);if(kind==='kid')trust=clamp(trust+1);familyNotice((kind==='partner'?"Partner":"Kid")+' kendi bitirdi: '+j.name)}if(kind==='self')startSelf();if(kind==='partner')startPartner();render();saveGame();
 }
 
+
+/* HOUSE_BOSS_ORIGINAL_UI_LIFE_SIM — game systems, original room untouched */
+var life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0};
+var lifeJobs=[
+ {id:'walk',title:'Dog Walker',where:'Park',mins:85,pay:70,level:1,energy:12,partner:false},
+ {id:'cafe',title:'Barista',where:'Corner Café',mins:130,pay:125,level:1,energy:18,partner:true},
+ {id:'shop',title:'Shop Assistant',where:'Market',mins:175,pay:175,level:2,energy:22,partner:true},
+ {id:'deliver',title:'City Courier',where:'Delivery Depot',mins:190,pay:220,level:3,energy:24,partner:false},
+ {id:'studio',title:'Designer',where:'Creative Studio',mins:245,pay:335,level:4,energy:27,partner:true},
+ {id:'manager',title:'Studio Manager',where:'Central Office',mins:300,pay:525,level:7,energy:32,partner:true}
+];
+var lifeHomeProjects=[
+ {id:'office',name:'Home Office',icon:'▣',price:350,level:2,tag:'ROOM',desc:'Unlock freelance work from home.'},
+ {id:'sleep',name:'Better Bedroom',icon:'▤',price:580,level:3,tag:'ROOM',desc:'Wake up with extra energy.'},
+ {id:'living',name:'Living Room',icon:'◫',price:880,level:4,tag:'ROOM',desc:'Relax together for more family happiness.'},
+ {id:'garden',name:'Garden',icon:'❀',price:1320,level:6,tag:'EXTENSION',desc:'A larger home with +5 House Peace every day.'},
+ {id:'floor2',name:'Second Floor',icon:'⌂',price:2600,level:9,tag:'EXTENSION',desc:'Expand the household with an additional floor.'}
+];
+upgradeCatalog.push.apply(upgradeCatalog,lifeHomeProjects);
+function lifeSkill(partner){return Math.min(12,1+Math.floor((partner?life.partnerCareerXp:life.careerXp)/125))}
+function lifeInstall(){
+ var btn=document.createElement('button');btn.type='button';btn.id='townButton';btn.textContent='TOWN';$('#quickBar .quick-nav').appendChild(btn);
+ btn.onclick=function(){enterTown()};
+ var tab=document.createElement('button');tab.type='button';tab.dataset.tab='life';tab.textContent='LIFE';$('#notebook .note-tabs').appendChild(tab);
+ var town=document.createElement('div');town.id='townLayer';
+ town.innerHTML='<svg class="townCanvas" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+
+ '<defs><linearGradient id="townSky" x2="0" y2="1"><stop stop-color="#c8d9c2"/><stop offset="1" stop-color="#eee2c8"/></linearGradient></defs><rect width="1200" height="760" fill="url(#townSky)"/>'+
+ '<circle cx="184" cy="106" r="57" fill="#f6dfa8"/><path d="M0 410L420 308L1200 398V760H0Z" fill="#9cb28f"/>'+
+ '<path d="M-100 562L510 450L1300 579" fill="none" stroke="#89948b" stroke-width="135"/><path d="M-100 562L510 450L1300 579" fill="none" stroke="#f5eed7" stroke-width="5" stroke-dasharray="38 30"/>'+
+ '<g transform="translate(95 245)"><rect y="70" width="215" height="200" fill="#d1ab81" stroke="#625e51" stroke-width="7"/><path d="M-14 80L103 -8L229 80" fill="#9b7762" stroke="#6b5f50" stroke-width="7"/><rect x="81" y="177" width="60" height="92" fill="#8ca19d"/><text x="106" y="132" font-size="26" font-weight="900" fill="#5c493d" text-anchor="middle">HOME</text></g>'+
+ '<g transform="translate(430 169)"><rect y="95" width="236" height="285" fill="#cf9c7e" stroke="#655849" stroke-width="8"/><path d="M-12 101H245L219 37H13Z" fill="#916a57"/><rect x="35" y="171" width="62" height="90" fill="#b4cdce" stroke="#5e5f57" stroke-width="5"/><rect x="141" y="171" width="62" height="90" fill="#b4cdce" stroke="#5e5f57" stroke-width="5"/><text x="118" y="144" font-weight="900" font-size="26" fill="#584437" text-anchor="middle">CAFÉ</text></g>'+
+ '<g transform="translate(803 99)"><rect y="105" width="240" height="343" fill="#aebfb1" stroke="#57645b" stroke-width="8"/><path d="M-14 110L120 15L254 110" fill="#8c947b" stroke="#5a6455" stroke-width="8"/><rect x="45" y="185" width="63" height="83" fill="#a6c0b5"/><rect x="136" y="185" width="63" height="83" fill="#a6c0b5"/><rect x="100" y="350" width="67" height="98" fill="#967d6a"/><text x="120" y="310" font-size="25" font-weight="900" fill="#405446" text-anchor="middle">STUDIO</text></g>'+
+ '<g fill="#678268"><circle cx="55" cy="402" r="49"/><circle cx="349" cy="410" r="44"/><circle cx="745" cy="415" r="42"/></g></svg>'+
+ '<button class="townBack" id="backHome">← HOME</button><div class="townMapLabel">THE WORLD<br>OUTSIDE.</div>'+
+ '<div class="townPanel"><h2>Town & Work</h2><p>Earn money, build skills, and invest in your home. Your partner can have a career too.</p><div id="townContent"></div></div>';
+ $('#game').appendChild(town);
+ $('#backHome').onclick=function(){leaveTown()};
+ town.addEventListener('click',function(e){var b=e.target.closest('button[data-life-job]');if(b)lifeBeginShift(b.dataset.lifeJob,b.dataset.who)});
+}
+function enterTown(){if(!started||ended)return;hideAction();closeMobileFamily();setTasksOpen(false);life.zone='town';$('#game').classList.add('town-active');lifeTownRender(true)}
+function leaveTown(){life.zone='home';$('#game').classList.remove('town-active');lifeTownRender(true)}
+function lifeBeginShift(id,who){
+ var j=lifeJobs.find(function(x){return x.id===id});if(!j||!started||ended||paused)return message('Resume time first.');
+ if(who==='partner'){
+  if(!j.partner||life.partnerCareerLevel<j.level||life.pShift||helper||partnerQueue.length||partnerEnergy<j.energy+10)return message('Partner is busy, tired, or needs more experience.');
+  life.pShift={id:id,left:j.mins,total:j.mins};familyNotice('Partner left for work at '+j.where+'.');
+ }else{
+  if(life.careerLevel<j.level||life.shift||life.activity||current||selfQueue.length||energy<j.energy+10)return message('Finish your chore, rest or gain career XP first.');
+  life.shift={id:id,left:j.mins,total:j.mins};posTarget=[770,460];
+ }
+ message((who==='partner'?'Partner':'You')+' started work at '+j.where+'.');lifeTownRender(true);saveGame()
+}
+function lifeFinishShift(who){
+ var p=who==='partner',job=p?life.pShift:life.shift;
+ if(!job)return;var j=lifeJobs.find(function(x){return x.id===job.id});if(!j)return;
+ var pay=Math.round(j.pay*(1+(p?life.partnerCareerLevel-1:life.careerLevel-1)*.12)*(owned.includes('office')?1.15:1));cash+=pay;
+ if(p){partnerEnergy=clamp(partnerEnergy-j.energy);life.partnerCareerXp+=45;life.partnerCareerLevel=lifeSkill(true);life.pShifts++;life.pShift=null;friendship=clamp(friendship+2)}
+ else {energy=clamp(energy-j.energy);life.careerXp+=48;life.careerLevel=lifeSkill(false);life.shifts++;life.earned+=pay;life.shift=null;grantXp(25)}
+ floatReward('PAYDAY +$'+pay);message((p?'Partner':'You')+' earned $'+pay+'.');saveGame()
+}
+function lifeBeginActivity(kind){
+ var a={eat:[25,12],rest:[100,0],relax:[55,0],freelance:[130,0]}[kind];
+ if(!a||!started||ended||life.shift||life.activity||current)return message('You are busy. Finish your current activity first.');
+ if(kind==='freelance'&&!owned.includes('office'))return message('Build a Home Office first.');
+ if(cash<a[1])return message('Not enough money for food.');
+ cash-=a[1];life.activity={kind:kind,left:a[0],total:a[0]};message('Started: '+kind);saveGame()
+}
+function lifeFinishActivity(){
+ var k=life.activity.kind;life.activity=null;
+ if(k==='eat'){life.hunger=clamp(life.hunger+56);peace=clamp(peace+4)}
+ if(k==='rest')energy=clamp(energy+65);
+ if(k==='relax'){life.fun=clamp(life.fun+(owned.includes('living')?57:38));peace=clamp(peace+6);friendship=clamp(friendship+3)}
+ if(k==='freelance'){var pay=Math.round(90*(1+(life.careerLevel-1)*.15));cash+=pay;life.earned+=pay;life.careerXp+=26;life.careerLevel=lifeSkill(false);floatReward('FREELANCE +$'+pay)}
+ grantXp(12);message('Completed: '+k);saveGame()
+}
+function lifeNewDay(){
+ var unfinished=jobs.filter(function(j){return j.remaining>0}).length;
+ time-=1440;day++;cash=Math.max(0,cash-45);peace=clamp(peace+(owned.includes('garden')?5:0)-(unfinished>4?4:0));
+ energy=clamp(energy+(owned.includes('sleep')?36:24));partnerEnergy=clamp(partnerEnergy+23);kidEnergy=clamp(kidEnergy+24);petEnergy=clamp(petEnergy+20);
+ done=0;shared=0;missed=0;combo=0;seq=1;jobs=[];current=helper=childTask=null;selfQueue=[];partnerQueue=[];selected=null;
+ goals=makeGoals();eventAt=9*60+22;nextFamilyDecision=9*60+28;careCooldown={};dayInitiatives={partner:0,kid:0};
+ templates.forEach(function(t){add(t)});message('DAY '+day+' · Daily bills $45 · Life goes on.');saveGame()
+}
+function lifeAdvance(dm){
+ life.hunger=clamp(life.hunger-dm*.058);life.fun=clamp(life.fun-dm*.03);
+ if(life.hunger<20||life.fun<15)peace=clamp(peace-dm*.012);
+ if(time>=22*60||time<6*60)energy=clamp(energy+dm*(owned.includes('sleep')?.18:.12));
+ if(life.shift){life.shift.left-=dm;if(life.shift.left<=0)lifeFinishShift('self')}
+ if(life.pShift){life.pShift.left-=dm;if(life.pShift.left<=0)lifeFinishShift('partner')}
+ if(life.activity){life.activity.left-=dm;if(life.activity.left<=0)lifeFinishActivity()}
+ if(time>=1440)lifeNewDay()
+}
+var townLastKey='';
+function lifeTownRender(force){
+ if(!$('#townLayer'))return;
+ $('#townLayer').style.display=life.zone==='town'?'block':'none';
+ $('#game').classList.toggle('town-active',life.zone==='town');
+ $('#dayLabel').textContent='DAY '+String(day).padStart(2,'0')+' / '+(time<6*60?'NIGHT':time<12*60?'MORNING':time<18*60?'AFTERNOON':'EVENING');
+ $('#game').classList.toggle('night',time>=21*60||time<6*60);
+ $('#player').style.opacity=life.shift?'.12':'1';
+ $('#partnerActor').style.opacity=life.pShift?'.12':'1';
+ if(!started||life.zone!=='town')return;
+ var key=[Math.floor(time/5),life.careerLevel,life.partnerCareerLevel,life.shift&&life.shift.id,life.pShift&&life.pShift.id,Math.floor(energy/5),Math.floor(partnerEnergy/5)].join('|');
+ if(!force&&key===townLastKey)return;townLastKey=key;
+ var html='';
+ if(life.shift)html+='<div class="townJob"><div><b>YOUR SHIFT</b><small>'+Math.ceil(life.shift.left)+' game min left<div class="townBar"><i style="width:'+(100-100*life.shift.left/life.shift.total)+'%"></i></div></small></div></div>';
+ if(life.pShift)html+='<div class="townJob"><div><b>PARTNER WORKING</b><small>'+Math.ceil(life.pShift.left)+' game min left</small></div></div>';
+ html+=lifeJobs.map(function(j){return '<div class="townJob"><div><b>'+j.title+'</b><small>'+j.where+' · '+j.mins+' min · $'+j.pay+'+ · Career LVL '+j.level+'</small></div><div class="jobBtns"><button data-life-job="'+j.id+'" data-who="self" '+(life.careerLevel<j.level||life.shift||life.activity||current||energy<j.energy+10?'disabled':'')+'>'+(life.careerLevel<j.level?'LOCKED':'WORK')+'</button>'+(j.partner?'<button data-life-job="'+j.id+'" data-who="partner" '+(life.partnerCareerLevel<j.level||life.pShift||helper||partnerEnergy<j.energy+10?'disabled':'')+'>PARTNER</button>':'')+'</div></div>'}).join('');
+ $('#townContent').innerHTML=html
+}
+function lifeNotebook(){
+ $('#noteTitle').textContent='Life & Career';
+ $('#noteBudget').textContent='$'+cash+' · Career LVL '+life.careerLevel;
+ var activity=life.activity?'<p>IN PROGRESS · '+life.activity.kind+' · '+Math.ceil(life.activity.left)+' min remaining</p>':'';
+ $('#noteBody').innerHTML='<p>Keep your household alive, work outside, develop careers and make money for home upgrades. Time moves continuously.</p>'+
+ '<div class="lifeBookStats"><div><small>HUNGER</small><b>'+Math.round(life.hunger)+'%</b></div><div><small>HAPPINESS</small><b>'+Math.round(life.fun)+'%</b></div><div><small>CAREER</small><b>LVL '+life.careerLevel+'</b></div></div>'+
+ activity+
+ [['eat','EAT','$12 · 25 min'],['rest','REST','Recover energy · 100 min'],['relax','RELAX','Family time · 55 min'],['freelance','FREELANCE','Requires Home Office · 130 min']].map(function(a){return '<div class="lifeBookAction"><div><b>'+a[1]+'</b><p>'+a[2]+'</p></div><button data-life-act="'+a[0]+'" '+(life.activity||life.shift||current||(a[0]==='freelance'&&!owned.includes('office'))?'disabled':'')+'>START</button></div>'}).join('')+
+ '<div class="lifeBookAction"><div><b>YOUR CAREER</b><p>'+life.shifts+' shifts · $'+life.earned+' earned · '+life.careerXp+' XP</p></div></div>'+
+ '<div class="lifeBookAction"><div><b>PARTNER CAREER</b><p>LVL '+life.partnerCareerLevel+' · '+life.pShifts+' shifts · '+life.partnerCareerXp+' XP</p></div></div>'+
+ '<p>Every new day costs $45 in living expenses. Jobs pay wages. Home expansions appear in UPGRADES.</p>'
+}
+
 function advance(dt){
  if(paused||ended||!started)return;
- var dm=dt/1000*shiftOptions[runMode].clock*speed;time+=dm;
- if(current){current.remaining-=dm*(energy<15?.72:1)*(current.spot==='sink'&&owned.includes('dishwasher')?1.82:1)*(current.spot==='floor'&&owned.includes('robot')?1.82:1)*(current.spot==='stove'&&owned.includes('pot')?1.54:1);if(current.remaining<=0)finish(current,'self')}
- if(helper){helper.remaining-=dm*familySpeed('partner',helper.spot)*(.64+friendship/500)*(owned.includes('board')?1.2:1)*(helper.spot==='sink'&&owned.includes('dishwasher')?1.82:1)*(helper.spot==='floor'&&owned.includes('robot')?1.82:1)*(helper.spot==='stove'&&owned.includes('pot')?1.54:1);if(helper.remaining<=0)finish(helper,'partner')}
+ var dm=dt/1000*shiftOptions[runMode].clock*speed;time+=dm;lifeAdvance(dm);
+ if(current&&!life.shift&&!life.activity){current.remaining-=dm*(energy<15?.72:1)*(current.spot==='sink'&&owned.includes('dishwasher')?1.82:1)*(current.spot==='floor'&&owned.includes('robot')?1.82:1)*(current.spot==='stove'&&owned.includes('pot')?1.54:1);if(current.remaining<=0)finish(current,'self')}
+ if(helper&&!life.pShift){helper.remaining-=dm*familySpeed('partner',helper.spot)*(.64+friendship/500)*(owned.includes('board')?1.2:1)*(helper.spot==='sink'&&owned.includes('dishwasher')?1.82:1)*(helper.spot==='floor'&&owned.includes('robot')?1.82:1)*(helper.spot==='stove'&&owned.includes('pot')?1.54:1);if(helper.remaining<=0)finish(helper,'partner')}
  if(childTask){childTask.remaining-=dm*familySpeed('kid',childTask.spot)*(.46+trust/500)*(childTask.spot==='floor'&&owned.includes('robot')?1.82:1);if(childTask.remaining<=0)finish(childTask,'kid')}
  energy=clamp(energy-dm*.015);partnerEnergy=clamp(partnerEnergy+dm*.017);kidEnergy=clamp(kidEnergy+dm*.018);petEnergy=clamp(petEnergy-dm*.025);
  if(petEnergy<20&&Math.random()<.02){peace=clamp(peace-2);say('Hav!')}
@@ -1444,7 +1596,7 @@ function advance(dt){
    if(available.length<10){var extra=surprise[Math.floor(Math.random()*surprise.length)];add(extra,45+Math.floor(Math.random()*40));var line=['Anneee!',"I have a question.",'Mutfaktan ses geliyor.',"Someone needs something."][Math.floor(Math.random()*4)];message(line);say(line)}
    eventAt=time+shiftOptions[runMode].events[0]+Math.random()*shiftOptions[runMode].events[1]
  }
- familyTick();evaluateGoals();if(peace<=0||time>=22*60){finishDay();return}
+ familyTick();evaluateGoals();if(peace<=0){peace=30;cash=Math.max(0,cash-50);message('Household emergency · $50 repairs. Keep going.');}
  render()
 }
 
@@ -1459,9 +1611,9 @@ function finishDay(){
 }
 function reset(mode){
  window.HouseBossPlatform?.start();
- if(mode==='fresh'){partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
+ if(mode==='fresh'){life={zone:'home',hunger:85,fun:78,careerXp:0,partnerCareerXp:0,careerLevel:1,partnerCareerLevel:1,shift:null,pShift:null,activity:null,shifts:0,pShifts:0,earned:0};partnerHabit='planner';kidHabit='curious';autoPartner=true;autoKid=true;partnerPractice=0;kidPractice=0;familyLog=[];autonomyCounts={partner:0,kid:0};dayInitiatives={partner:0,kid:0};day=1;chapterClaimed=[];careerDays=0;bestScore=0;lastScore=0;weekScore=0;weeklyTitle='';cash=160;partnerEnergy=88;kidEnergy=83;petEnergy=90;xp=0;level=1;owned=[];achievements=[];totalDone=0;totalShared=0;wellDays=0;lastFinishedDay=0;friendship=66;trust=64;}
  if(mode==='next'){day+=1;cash+=110;partnerEnergy=clamp(partnerEnergy+25);kidEnergy=clamp(kidEnergy+30);petEnergy=clamp(petEnergy+25);}
- time=17*60;dayInitiatives={partner:0,kid:0};nextFamilyDecision=time+31;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):shiftOptions[runMode].initialPeace;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=time+shiftOptions[runMode].firstEvent;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:"Make tea for the guest",detail:"Another cup of tea. Another story.",icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:"Organize the fridge",detail:"Time to face the half lemons.",icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});if(day>=5)add({key:'guest',name:"Getting ready for guests",detail:"One guest is coming. Everyone is on duty.",icon:'🫖',spot:'table',dur:25,due:20*60+10,weight:14});syncAvatars();$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message("Day "+day+' — 5:00 PM. The house is counting on you.');say("When's dinner ready?")
+ time=7*60;dayInitiatives={partner:0,kid:0};nextFamilyDecision=time+31;goals=makeGoals();assistedFinished=0;careCooldown={};peace=mode==='next'?clamp(Math.max(45,peace+20+(owned.includes('light')?10:0))):shiftOptions[runMode].initialPeace;energy=mode==='next'?clamp(Math.max(65,energy+35)):100;done=0;shared=0;missed=0;speed=1;paused=false;started=true;ended=false;jobs=[];seq=1;selected=null;current=null;helper=null;childTask=null;selfQueue=[];partnerQueue=[];eventAt=9*60+22;combo=0;pos=[770,460];posTarget=[770,460];partnerPos=[885,351];kidPos=[746,714];$('#player').setAttribute('transform','translate(770 460)');$('#partnerActor').setAttribute('transform','translate(885 351)');$('#kidActor').setAttribute('transform','translate(746 714)');templates.forEach(function(t){add(t)});if(day>=2)add({key:'tea',name:"Make tea for the guest",detail:"Another cup of tea. Another story.",icon:'🍵',spot:'stove',dur:13,due:20*60+30,weight:9});if(day>=4)add({key:'fridge',name:"Organize the fridge",detail:"Time to face the half lemons.",icon:'🧊',spot:'laundry',dur:19,due:21*60+15,weight:10});if(day>=5)add({key:'guest',name:"Getting ready for guests",detail:"One guest is coming. Everyone is on duty.",icon:'🫖',spot:'table',dur:25,due:20*60+10,weight:14});syncAvatars();$('#ending').classList.add('hidden');$('#splash').classList.add('hidden');document.querySelectorAll('[data-speed]').forEach(function(b){b.classList.toggle('on',b.dataset.speed==='1')});$('#pause').textContent='Ⅱ';hideAction();render();saveGame();message("Day "+day+' — 5:00 PM. The house is counting on you.');say("When's dinner ready?")
 }
 
 function frame(now){
@@ -1534,9 +1686,9 @@ $('#openNotebook').onclick=function(){openNote('upgrades')};$('#familySettings')
 $('#goalMore').onclick=function(){openNote('goals')};
 $('#closeNotebook').onclick=closeNote;$('#noteShade').onclick=closeNote;
 document.querySelectorAll('[data-tab]').forEach(function(b){b.addEventListener('click',function(){noteTab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(function(k){k.classList.toggle('active',k===b)});notebookHtml()})});
-$('#noteBody').addEventListener('click',function(e){var b=e.target.closest('[data-buy]');if(b){buyUpgrade(b.dataset.buy);return}familySettingsChange(e.target)});
+$('#noteBody').addEventListener('click',function(e){var action=e.target.closest('[data-life-act]');if(action){lifeBeginActivity(action.dataset.lifeAct);lifeNotebook();return}var b=e.target.closest('[data-buy]');if(b){buyUpgrade(b.dataset.buy);return}familySettingsChange(e.target)});
 window.addEventListener('keydown',function(e){if(e.key==='Escape')closeNote()});
-registerAvatars();syncAvatars();showSavePreview();goals=makeGoals();templates.forEach(function(t){add(t)});render();
+registerAvatars();syncAvatars();lifeInstall();showSavePreview();goals=makeGoals();templates.forEach(function(t){add(t)});render();
 /* 3D scene bridge: authoritative simulation and save state remain here. */
 window.EvinKitchenBridge={
  getState:function(){return {
