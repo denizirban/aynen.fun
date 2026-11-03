@@ -1,0 +1,164 @@
+/* HOUSE BOSS — IMMERSIVE START SCREEN V2. Original game menu, not a web dashboard. */
+#splash{padding:0!important;display:block;isolation:isolate;overflow:hidden;background:#a4bcc7!important}
+#splash .hb-opening-bg{inset:0!important;filter:saturate(1.2) contrast(1.04)}
+#splash .hb-opening-bg svg{transform:scale(1.10);transform-origin:50% 50%}
+#splash:before{background:linear-gradient(90deg,#173c39b8 0%,#24544976 38%,#142c34a1 100%),linear-gradient(0deg,#0e344395 0%,transparent 36%)!important;z-index:1}
+#splash .game-menu{
+ width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;
+ padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+ background:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ overflow:hidden!important;position:relative!important;display:block!important;z-index:2!important
+}
+#splash .hb-menu-legacy{display:none!important}
+#splash .game-menu .menu-top{
+ position:absolute;top:0;left:0;right:0;z-index:5;
+ margin:0;padding:23px clamp(20px,4.8vw,80px);background:linear-gradient(180deg,#142f3366,transparent);
+ color:#ffffffc9;border:0;font:850 10px 'DM Mono',monospace;letter-spacing:.09em
+}
+#splash .game-menu .menu-top em{color:#a8d9b2}
+#splash .game-menu .menu-top .status-light{background:#a8d481}
+#splash .hb-menu-stage{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(328px,395px);
+ gap:clamp(26px,7vw,145px);align-items:center;position:relative;
+ height:100%;max-width:1700px;margin:0 auto;
+ padding:85px clamp(24px,7vw,120px) 56px;box-sizing:border-box
+}
+#splash .hb-screen-atmosphere{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+#splash .hb-sky-glow{position:absolute;top:-25%;left:22%;width:65vw;height:75vh;background:radial-gradient(ellipse,#ffe1a449,transparent 70%);filter:blur(22px)}
+#splash .hb-floating-cloud{position:absolute;background:#fff6;border-radius:100%;width:240px;height:45px;filter:blur(15px)}
+#splash .cloud-one{top:14%;left:5%;animation:hbCloud 24s ease-in-out infinite alternate}
+#splash .cloud-two{top:24%;right:10%;width:185px;animation:hbCloud 33s ease-in-out infinite alternate-reverse}
+@keyframes hbCloud{from{transform:translateX(-70px) scale(.95)}to{transform:translateX(100px) scale(1.16)}}
+#splash .hb-screen-particles i{position:absolute;width:6px;height:6px;border-radius:100%;background:#fff8d3aa;box-shadow:0 0 18px #f8f3c1;animation:hbFirefly 5s ease-in-out infinite alternate}
+#splash .hb-screen-particles i:nth-child(1){top:38%;left:9%}
+#splash .hb-screen-particles i:nth-child(2){top:70%;left:40%;animation-delay:-2s}
+#splash .hb-screen-particles i:nth-child(3){top:58%;left:18%;animation-delay:-4s}
+#splash .hb-screen-particles i:nth-child(4){top:27%;right:19%;animation-delay:-1.5s}
+#splash .hb-screen-particles i:nth-child(5){top:82%;right:50%;animation-delay:-.5s}
+@keyframes hbFirefly{from{opacity:.15;transform:translateY(8px)}to{opacity:.8;transform:translateY(-8px)}}
+#splash .hb-game-intro{z-index:2;position:relative;align-self:center;min-width:0;color:#fafcf2;text-shadow:0 3px 24px #1d302b48}
+#splash .hb-game-label{display:flex;align-items:center;gap:11px;color:#dff2dc;font:850 11px 'DM Mono',monospace;letter-spacing:.14em;margin-bottom:24px}
+#splash .hb-signal,#splash .hb-status-pulse{width:8px;height:8px;border-radius:50%;background:#b4df9e;box-shadow:0 0 0 4px #b4df9e38;display:inline-block;flex:none}
+#splash .hb-game-line{width:36px;height:1px;background:#fff6;display:inline-block}
+#splash .game-menu .hb-logo{
+ font:900 clamp(85px,10vw,162px)/.77 'DM Sans',sans-serif;
+ letter-spacing:-.105em;color:#f7faea!important;margin:0 0 36px!important;
+ text-shadow:0 6px 0 #1e503b38,0 16px 47px #082a3299;
+ max-width:900px
+}
+#splash .game-menu .hb-logo span{color:#f7faea!important}
+#splash .game-menu .hb-logo em{font-style:normal;color:#f5c978;font-size:.82em;letter-spacing:-.12em}
+#splash .hb-manifesto{font-size:clamp(25px,2.9vw,43px);letter-spacing:-.06em;line-height:1.09;font-weight:500;margin:0 0 15px;color:#ffffff}
+#splash .hb-manifesto b{color:#ffdc8f}
+#splash .hb-subline{font-size:clamp(13px,1.2vw,17px);line-height:1.65;max-width:490px;color:#ecf1e7ed;margin:0 0 30px;text-wrap:balance}
+#splash .hb-feature-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:33px}
+#splash .hb-feature-row span{border:1px solid #f8faf46a;border-radius:100px;background:#ecf3e723;backdrop-filter:blur(9px);font:850 9px 'DM Mono',monospace;letter-spacing:.045em;padding:9px 12px;color:#f3f8eb}
+#splash .hb-micro{font:700 10px 'DM Mono',monospace;color:#d7e9d1;line-height:1.7}
+#splash .hb-micro span{display:block;color:#accba5;margin-top:4px}
+#splash .hb-game-menu{
+ position:relative;z-index:3;color:#294233;max-height:calc(100dvh - 120px);
+ overflow-y:auto;scrollbar-width:thin;
+ border:1px solid #edf7e7bd;border-radius:23px;
+ background:linear-gradient(170deg,#fffef7f5,#eff5edf0);
+ box-shadow:0 25px 90px #092b3180,0 1px 0 #fff inset;
+ backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+}
+#splash .hb-aside-head{display:flex;align-items:center;gap:9px;padding:20px 21px 17px;font:850 10px 'DM Mono',monospace;letter-spacing:.065em;border-bottom:1px solid #dfe9da;color:#45684e}
+#splash .hb-aside-head small{font-size:9px;margin-left:auto;color:#95a395}
+#splash .hb-card-label{display:flex;justify-content:space-between;color:#739279;font:800 9px 'DM Mono',monospace;letter-spacing:.09em;margin-bottom:10px}
+#splash .hb-save-block{padding:22px 22px 19px;background:linear-gradient(150deg,#e0eddc,#f0f6e9);border-bottom:1px solid #cee0c9}
+#splash .hb-save-block[hidden]{display:none!important}
+#splash .hb-family-avatars{display:flex;gap:0;margin:0 0 12px}
+#splash .hb-family-avatar{width:46px;height:52px;border:3px solid #f2f7e9;border-radius:12px;overflow:hidden;margin-left:-6px;box-shadow:0 2px 7px #27512b2b;background:#dddfcf}
+#splash .hb-family-avatar:first-child{margin-left:0}
+#splash .hb-family-avatar svg{width:100%;height:100%;display:block}
+#splash .hb-save-block h2,#splash .hb-new-block h2{font-size:25px;line-height:1.04;letter-spacing:-.055em;color:#294b35;margin:4px 0 8px}
+#splash .hb-save-block p,#splash .hb-new-block p{font-size:12px;line-height:1.5;color:#829080;margin:0 0 12px}
+#splash .hb-mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}
+#splash .hb-mini-stats>div{border:1px solid #c8dbc3;border-radius:10px;padding:8px 4px;text-align:center;background:#f6f9f0}
+#splash .hb-mini-stats small{display:block;color:#8c9e89;font:800 8px 'DM Mono',monospace}
+#splash .hb-mini-stats b{display:block;font-size:15px;margin-top:4px}
+#splash #resume{
+ display:block;width:100%;border:1px solid #2a5b40;border-radius:12px;
+ background:linear-gradient(#42765a,#315d47);color:#fffef4;
+ font:900 12px 'DM Sans',sans-serif;letter-spacing:.035em;
+ padding:16px 12px;box-shadow:0 4px 0 #244934,0 7px 12px #1a3f2c24;
+ transition:transform .15s,background .15s
+}
+#splash #resume:hover{background:#477f5f;transform:translateY(-1px)}
+#splash #resume[hidden]{display:none!important}
+#splash .hb-new-block{padding:20px 22px 22px}
+#splash .hb-new-block #start{
+ width:100%;margin:13px 0 8px;display:block;text-align:center;
+ background:linear-gradient(#ffda8d,#f0be6e)!important;border:1px solid #b99045!important;color:#2b4234;
+ font:900 13px 'DM Sans',sans-serif;border-radius:12px;padding:17px 12px;
+ box-shadow:0 4px 0 #9e8b52,0 8px 18px #4a4f2d20
+}
+#splash #start:hover{background:#ffe0a0!important;transform:translateY(-2px)}
+#splash .hb-create-trigger{
+ display:flex;justify-content:space-between;align-items:center;
+ width:100%;border:1px solid #c6d8c3;border-radius:11px;background:#f9fdf6;
+ color:#527156;font:850 10px 'DM Mono',monospace;padding:12px 13px;cursor:pointer
+}
+#splash .hb-create-trigger:hover{background:#e4f1df;border-color:#9fc899}
+#splash .hb-aside-foot{display:flex;justify-content:space-between;gap:8px;padding:13px 20px;border-top:1px solid #d9e6d5;color:#829b84;font:850 9px 'DM Mono',monospace}
+#splash .hb-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#78b679;margin-right:6px}
+#splash .hb-setup{display:none;position:absolute;z-index:7;right:0;top:5%;bottom:5%;
+ width:min(430px,100%);background:linear-gradient(150deg,#fffef9,#edf5e9);color:#2e4e37;
+ border-radius:22px;border:1px solid #f6fff0;box-shadow:0 24px 70px #092c346a;
+ padding:20px;box-sizing:border-box;overflow:auto;scrollbar-width:thin
+}
+#splash .hb-setup:not(.hidden){display:block}
+#splash .hb-setup-head{display:flex;align-items:center;justify-content:space-between;color:#79947c;font:850 10px 'DM Mono',monospace}
+#splash .hb-setup-head button{padding:9px;border:0;background:#e7f0e2;border-radius:9px;color:#56725b;font:800 10px 'DM Mono',monospace}
+#splash .hb-setup-greeting{font:850 10px 'DM Mono',monospace;color:#729475;letter-spacing:.07em;margin:28px 0 7px}
+#splash .hb-setup h2{font-size:37px;line-height:1.06;letter-spacing:-.07em;margin:0 0 10px}
+#splash .hb-setup p{font-size:12px;line-height:1.55;color:#809182}
+#splash .hb-setup #profileSelect{display:block!important;margin:22px 0;padding:16px;background:#f6f9f1;border:1px solid #d9e6d4;border-radius:12px}
+#splash .hb-setup .profile-row{margin:12px 0;display:flex;flex-direction:column;gap:8px}
+#splash .hb-setup .profile-row>span{font:800 10px 'DM Mono',monospace}
+#splash .hb-setup .profile-options{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+#splash .hb-setup .profile-options button{font-size:11px;min-width:0!important;padding:11px 4px!important}
+#splash .hb-setup-message{display:flex;align-items:flex-start;gap:12px;background:#e7f1e0;padding:15px;border-radius:12px;color:#4f7755}
+#splash .hb-setup-message>span{font-size:26px}
+#splash .hb-setup-message b{font-size:11px}
+#splash .hb-setup-message p{font-size:10px;margin:5px 0 0}
+#splash .hb-setup-go{width:100%;display:flex;align-items:center;justify-content:space-between;margin:21px 0 0;padding:17px;border:1px solid #a88443;border-radius:12px;background:linear-gradient(#fbd38c,#eabb64);font:900 12px 'DM Mono',monospace;color:#304838}
+#splash .hb-game-edition{position:absolute;bottom:15px;right:clamp(24px,7vw,120px);font:850 9px 'DM Mono',monospace;letter-spacing:.09em;color:#ffffff9c}
+@media(max-width:960px){
+ #splash .hb-menu-stage{grid-template-columns:minmax(0,1fr) 340px;gap:25px;padding:77px 26px 40px}
+ #splash .game-menu .hb-logo{font-size:clamp(74px,10vw,112px)}
+ #splash .hb-game-menu{max-height:calc(100dvh - 96px)}
+}
+@media(max-width:700px){
+ #splash{overflow-y:auto}
+ #splash .game-menu{height:auto!important;min-height:100dvh!important;overflow:visible!important}
+ #splash .menu-top{position:relative!important;padding:14px 14px 4px!important}
+ #splash .hb-menu-stage{min-height:calc(100dvh - 45px);padding:14px 14px 50px;display:flex;flex-direction:column;gap:18px;justify-content:flex-start}
+ #splash .hb-game-intro{align-self:stretch;margin:4px 0 0}
+ #splash .hb-game-label{font-size:8px;margin-bottom:13px}
+ #splash .game-menu .hb-logo{font-size:clamp(63px,16vw,105px);margin:0 0 14px!important}
+ #splash .hb-manifesto{font-size:23px;margin-bottom:5px}
+ #splash .hb-subline{font-size:11px;line-height:1.45;margin-bottom:15px;max-width:440px}
+ #splash .hb-feature-row{margin-bottom:9px;gap:5px}
+ #splash .hb-feature-row span{font-size:8px;padding:7px 8px}
+ #splash .hb-micro{display:none}
+ #splash .hb-game-menu{width:100%;max-height:none;border-radius:17px}
+ #splash .hb-aside-head{padding:12px 14px}
+ #splash .hb-save-block{padding:14px}
+ #splash .hb-new-block{padding:14px}
+ #splash .hb-new-block h2,#splash .hb-save-block h2{font-size:21px}
+ #splash .hb-family-avatar{height:38px;width:36px}
+ #splash .hb-setup{position:fixed;left:8px;right:8px;top:70px;bottom:10px;width:auto;border-radius:15px}
+ #splash .hb-game-edition{right:15px;bottom:13px;font-size:8px}
+}
+@media(max-height:610px) and (min-width:701px){
+ #splash .hb-menu-stage{padding-top:55px;padding-bottom:20px}
+ #splash .hb-game-intro .hb-logo{font-size:clamp(56px,8vw,100px)!important;margin-bottom:12px!important}
+ #splash .hb-subline{margin-bottom:13px}
+ #splash .hb-feature-row{margin-bottom:10px}
+ #splash .hb-game-menu{max-height:calc(100dvh - 64px)}
+ #splash .hb-save-block,#splash .hb-new-block{padding:12px 16px}
+ #splash .hb-aside-head{padding:12px 16px}
+}
+@media(prefers-reduced-motion:reduce){#splash .hb-floating-cloud,#splash .hb-screen-particles i{animation:none!important}}
