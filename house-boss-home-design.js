@@ -61,7 +61,7 @@ function render(){
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+Math.floor(st.cash)+' · Property value $'+(st.value||0);
  let html='<div class="hd-lead"><span class="hd-kicker">YOUR HOME, YOUR STYLE</span><p>Change finishes and furniture in your 3D home. Tap to preview before buying.</p></div>';
  html+='<nav class="hd-categories" aria-label="Design categories">'+Object.entries(catalog).map(([k,v])=>'<button type="button" data-hd-category="'+k+'" class="'+(k===category?'active':'')+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>';
- html+='<div class="hd-collection"><h3>'+data.label+'</h3><small>'+data.description+'</small></div>';
+ html+='<div class="hd-collection"><div><h3>'+data.label+'</h3><small>'+data.description+'</small></div><button type="button" data-hd-focus>VIEW IN 3D ↗</button></div>';
  html+='<div class="hd-options">'+data.options.map(opt=>{
   const [id,name,price,color,desc]=opt,isActive=selectedStyle(category)===id,isOwned=owned(category,id),isShowing=active===id;
   const poor=st.cash<price&&!isOwned;
@@ -96,6 +96,7 @@ function install(){
  tabs.insertBefore(tab,tabs.firstChild);
  tab.addEventListener('click',()=>{clearPreview();bridge()?.open?.();render()});
  body.addEventListener('click',e=>{
+  if(e.target.closest('[data-hd-focus]')){window.Evin3D?.focusDesign?.(category);return}
   let el=e.target.closest('[data-hd-category]');if(el){clearPreview();category=el.dataset.hdCategory;render();return}
   el=e.target.closest('[data-hd-preview]');if(el){let [c,id]=el.dataset.hdPreview.split(':');showPreview(c,id);return}
   el=e.target.closest('[data-hd-apply]');if(el){let [c,id]=el.dataset.hdApply.split(':');apply(c,id);return}
