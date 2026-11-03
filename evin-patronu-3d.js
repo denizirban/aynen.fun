@@ -510,7 +510,10 @@
     box(g,8.55,.17,8.6,mat('livingFloorBase','#ccc1aa'),0,-.12,0);
     var floor=addMesh(g,new THREE.PlaneGeometry(8.54,8.6),floorMat,0,.006,0,false,true);floor.rotation.x=-Math.PI/2;
     // Warm living room with dedicated seating, TV wall, sideboard, plants and tables.
-    box(g,8.55,5.4,.16,plaster,0,2.7,-4.35);
+    // A real doorway joins the new rooms; it is not a sealed decorative backdrop.
+    box(g,3.25,5.4,.16,plaster,-2.65,2.7,-4.35);
+    box(g,3.25,5.4,.16,plaster,2.65,2.7,-4.35);
+    box(g,2.10,1.12,.16,plaster,0,4.85,-4.35);
     box(g,.16,1.12,8.6,plaster,4.30,.56,0);
     var sofa=mat('livingRoomSofa','#96aa95');
     box(g,3.0,.55,1.26,sofa,-1.0,.50,1.55);
@@ -1054,6 +1057,19 @@
     return false
   }
   function routeTo(from,to){
+    // Continuous path through the cutaway room corridor east of the kitchen.
+    if(to.x>9&&from.x<9){
+      return [new THREE.Vector3(5.28,0,3.75),new THREE.Vector3(9.45,0,3.75),
+        new THREE.Vector3(14.05,0,3.75),new THREE.Vector3(to.x,0,3.75),to.clone()]
+    }
+    if(from.x>9&&to.x<9){
+      var door=new THREE.Vector3(5.28,0,3.75);
+      return [new THREE.Vector3(14.05,0,3.75),new THREE.Vector3(9.45,0,3.75),door].concat(routeTo(door,to))
+    }
+    if(from.x>9&&to.x>9&&(from.z-4.02)*(to.z-4.02)<0){
+      return [new THREE.Vector3(14.05,0,from.z),new THREE.Vector3(14.05,0,4.02),
+         new THREE.Vector3(14.05,0,to.z),to.clone()]
+    }
     if(!isBlocked(from,to))return [to.clone()];
     var sideX=[-5.05,5.30],sideZ=[-2.35,2.35],choices=[];
     for(var x of sideX)choices.push([
@@ -1147,6 +1163,11 @@
       else if(inConversation[key])destinations[key]=targetAt('table',key)||destinations[key];
       else if(walk[key]&&Number.isFinite(walk[key].x)&&Number.isFinite(walk[key].z))
         destinations[key]=new THREE.Vector3(walk[key].x,0,walk[key].z);
+      // Purchased rooms are actual destinations for the household.
+      if(act[key]==='sleep'&&(state.owned||[]).includes('sleep'))
+        destinations[key]=new THREE.Vector3(13.2+(key==='partner'?.7:key==='kid'?-.65:0),0,-.45);
+      if(['tv','dance'].includes(act[key])&&(state.owned||[]).includes('living'))
+        destinations[key]=new THREE.Vector3(13.15+(key==='partner'?.6:key==='kid'?-.55:0),0,8.55);
       if(furnishTargets[key]){
         var activeObject=furnitureList.find(function(o){return o.uid===furnishTargets[key]});
         if(activeObject)destinations[key]=furnitureUsePosition(activeObject)||destinations[key]
