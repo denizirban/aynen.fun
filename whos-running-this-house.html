@@ -612,7 +612,7 @@ body:has(#game) .brand .back{display:none!important}
 .lifeBookAction b{font-size:12px}.lifeBookAction p{font-size:10px;margin:4px 0;color:#7d7768}
 .lifeBookAction button{border:1px solid #637656;background:#cbdcb9;border-radius:8px;font-size:11px;font-weight:900;padding:8px}
 .lifeBookAction button:disabled{opacity:.4}
-@media(max-width:700px){#townLayer .townPanel{top:122px;bottom:8px;right:8px;width:calc(100% - 16px);padding:11px}#townLayer .townMapLabel{display:none}#townLayer .townBack{top:83px;left:10px}}
+@media(max-width:650px){#topTown{display:none!important}.quick-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important}}@media(max-width:700px){#townLayer .townPanel{top:122px;bottom:8px;right:8px;width:calc(100% - 16px);padding:11px}#townLayer .townMapLabel{display:none}#townLayer .townBack{top:83px;left:10px}}
 @media(max-width:480px){#townLayer .townPanel{top:150px;max-height:calc(100% - 160px)}#townLayer .townBack{top:116px}}
 
 </style>
@@ -1481,7 +1481,7 @@ upgradeCatalog.push.apply(upgradeCatalog,lifeHomeProjects);
 function lifeSkill(partner){return Math.min(12,1+Math.floor((partner?life.partnerCareerXp:life.careerXp)/125))}
 function lifeInstall(){
  var btn=document.createElement('button');btn.type='button';btn.id='townButton';btn.textContent='TOWN';$('#quickBar .quick-nav').appendChild(btn);
- btn.onclick=function(){enterTown()};
+ btn.onclick=function(){enterTown()};var desktopTown=document.createElement('button');desktopTown.type='button';desktopTown.id='topTown';desktopTown.className='mini';desktopTown.textContent='TOWN';desktopTown.setAttribute('aria-label','Visit town');$('#top .clock .controls').appendChild(desktopTown);desktopTown.onclick=enterTown;
  var tab=document.createElement('button');tab.type='button';tab.dataset.tab='life';tab.textContent='LIFE';$('#notebook .note-tabs').appendChild(tab);tab.onclick=function(){noteTab='life';document.querySelectorAll('[data-tab]').forEach(function(x){x.classList.toggle('active',x===tab)});notebookHtml()};
  var town=document.createElement('div');town.id='townLayer';
  town.innerHTML='<svg class="townCanvas" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+
