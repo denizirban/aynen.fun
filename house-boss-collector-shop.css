@@ -190,3 +190,70 @@
  #notebook.design-mode .hbf-set-header b{font-size:8px}
  #notebook.design-mode .hbf-set-header span{font-size:9px}
 }
+
+/* V4 — the build catalogue is a side-by-side 3D workspace, not a fullscreen blocker. */
+#game #notebook.design-mode{display:flex;justify-content:flex-start;align-items:stretch;padding:10px;pointer-events:none}
+#game #notebook.design-mode .note-shade{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;pointer-events:none}
+#game #notebook.design-mode .note-sheet{pointer-events:auto;flex:none;width:min(455px,39vw);max-height:calc(100dvh - 20px);height:calc(100dvh - 20px);box-shadow:0 10px 50px #2e29344a;border:1px solid #e0d7d2;border-radius:16px;background:#fcfaf7}
+#game #notebook.design-mode #noteBody{padding:12px 15px 19px;flex:1;overscroll-behavior:contain}
+#game #notebook.design-mode .note-heading{padding:13px 17px 8px}
+#game #notebook.design-mode .note-heading h2{font-size:22px}
+#game #notebook.design-mode .note-tabs{padding:0 13px 9px;overflow-x:auto;scrollbar-width:thin}
+#game #notebook.design-mode .note-tabs button{flex:none;padding:8px;font-size:9px}
+#game #notebook.design-mode .hbf-market{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#game #notebook.design-mode .hbf-visual{height:104px}
+#game #notebook.design-mode .hbf-card-content>strong{min-height:28px;font-size:11px}
+#game #notebook.design-mode .hbf-card-content>small{font-size:9px}
+#game #notebook.design-mode .hbf-category-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#game #notebook.design-mode .hbf-designer-sets{display:flex;gap:7px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;padding-bottom:4px}
+#game #notebook.design-mode .hbf-set-card{flex:0 0 142px;scroll-snap-align:start}
+#game #notebook.design-mode .hbf-shop-hero{padding:13px 15px;min-height:145px;grid-template-columns:1fr 80px}
+#game #notebook.design-mode .hbf-shop-hero h3{font-size:29px}
+#game #notebook.design-mode .hbf-shop-hero p{font-size:10px}
+#game #notebook.design-mode .hbf-hero-sculpt{transform:scale(.64);transform-origin:center right}
+#game #notebook.design-mode .hbf-shop-toolbar{grid-template-columns:minmax(0,1fr) 125px}
+#game #notebook.design-mode .hbf-style-select{padding:0 6px}
+#game #notebook.design-mode .hbf-style-select span{display:none}
+#game #notebook.design-mode .hbf-style-select select{font-size:9px}
+#game #notebook.design-mode .hbf-category-grid button{padding:8px 6px}
+#game #notebook.design-mode .hbf-category-grid button b{font-size:7px}
+#game #notebook.design-mode .hbf-colorways button{min-height:23px}
+#game #notebook.design-mode .hbf-room-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+#game #notebook.design-mode .hbf-preview-space{padding:9px 11px;border:1px solid #d7c1c7;border-radius:10px;background:linear-gradient(120deg,#f7e4e9,#f6f1e9);display:flex;align-items:center;gap:10px;margin:11px 0 9px}
+#game #notebook.design-mode .hbf-preview-space b{font:800 10px 'Space Grotesk',sans-serif;letter-spacing:-.02em;color:#72545e}
+#game #notebook.design-mode .hbf-preview-space small{display:block;font:500 9px 'Space Grotesk',sans-serif;color:#987e88;margin-top:3px;line-height:1.45}
+#game #notebook.design-mode .hbf-preview-space>div{flex:1;min-width:0}
+#game #notebook.design-mode .hbf-preview-space button{padding:10px 8px;flex:none;background:#9f697d;border:0;border-radius:8px;color:white;font:800 9px 'DM Mono',monospace;cursor:pointer}
+#game #notebook.design-mode .hbf-preview-space button:hover{background:#845069}
+#game #notebook.design-mode:after{content:'LIVE 3D ROOM · TAP TO PLACE & ROTATE';position:absolute;pointer-events:none;top:10px;right:19px;color:#5a6558;background:#fffdf5dc;border:1px solid #d4d8ce;border-radius:99px;padding:9px 13px;font:850 9px 'DM Mono',monospace;z-index:2;box-shadow:0 4px 18px #1b39241b}
+#hbDesignerShopButton{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:9px;padding:10px 11px;width:100%;min-height:38px;border-radius:10px;border:1px solid #cb9eb3;background:linear-gradient(125deg,#fff4f1,#f6dbe8);color:#845969;cursor:pointer;box-shadow:0 2px 9px #96657925}
+#hbDesignerShopButton b{font:900 10px 'DM Mono',monospace;letter-spacing:.01em;white-space:nowrap}
+#hbDesignerShopButton small{font:800 8px 'DM Mono',monospace;border-radius:30px;padding:5px;background:#a76c87;color:white;white-space:nowrap}
+#hbDesignerShopButton:hover{background:linear-gradient(125deg,#f8e7e8,#edc6dc)}
+#game:has(#splash:not(.hidden)) #hbDesignerShopButton{display:none}
+@media(max-width:950px){
+ #game #notebook.design-mode .note-sheet{width:min(425px,50vw)}
+ #game #notebook.design-mode:after{font-size:7px}
+}
+@media(max-width:720px){
+ #game #notebook.design-mode{align-items:flex-end;padding:0;justify-content:center}
+ #game #notebook.design-mode .note-sheet{width:100vw;max-width:100vw;height:min(58dvh,550px);max-height:min(58dvh,550px);border-radius:17px 17px 0 0;border-bottom:0}
+ #game #notebook.design-mode .note-heading{padding:9px 12px 5px}
+ #game #notebook.design-mode .note-heading h2{font-size:18px}
+ #game #notebook.design-mode #noteBody{padding:8px 11px 14px}
+ #game #notebook.design-mode .note-tabs{padding:0 8px 5px}
+ #game #notebook.design-mode .note-tabs button{padding:6px;font-size:8px}
+ #game #notebook.design-mode:after{right:10px;top:10px;padding:7px 9px;background:#ffffffe9}
+ #game #notebook.design-mode .hbf-shop-hero{min-height:118px;padding:12px}
+ #game #notebook.design-mode .hbf-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #game #notebook.design-mode .hbf-visual{height:94px}
+ #hbDesignerShopButton{min-height:31px;padding:8px}
+ #hbDesignerShopButton b{font-size:8px}
+ #hbDesignerShopButton small{font-size:7px}
+ #notebook.design-mode:has(.hbf-placement) .note-sheet{height:min(43dvh,420px)!important;max-height:min(43dvh,420px)!important}
+}
+@media(max-width:390px){
+ #game #notebook.design-mode .hbf-shop-toolbar{grid-template-columns:1fr}
+ #game #notebook.design-mode .hbf-shop-hero h3{font-size:24px}
+ #game #notebook.design-mode .hbf-preview-space small{font-size:8px}
+}
