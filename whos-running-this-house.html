@@ -730,6 +730,7 @@ body:has(#game) .brand .back{display:none!important}
 <link rel="stylesheet" href="./house-boss-collector-shop.css?v=3">
 <link rel="stylesheet" href="./house-boss-progression.css?v=2">
 <link rel="stylesheet" href="./house-boss-lifestyle.css?v=3">
+<meta name="house-boss-edition" content="designer-objects-visible-v2">
 </head>
 <body>
 <div id="game">
@@ -3271,13 +3272,980 @@ requestAnimationFrame(frame)
 </script>
 <!-- Standalone CrazyGames build does not load aynen.fun site navigation widgets. -->
 <script src="./house-boss-en.js?v=2"></script>
-<script type="module" src="./evin-patronu-3d.js?v=18"></script>
+<script>
+/* BUNDLED: DESIGNER 3D MODEL LIBRARY */
+(function(){
+/* House Boss EDITIONS / original, deliberately shaped 3D objects. */
+const texCache=new Map();
+function createDecorMesh(type,g,api){
+ const {THREE,box,ball,cylinder,torus,capsule,addMesh}=api;
+ const data=globalThis.HouseBossFurnitureTypes?.[type];
+ if(!data||data.collection!=='EDITIONS')return false;
+ const mat=(hex,rough=.79,metal=0)=>new THREE.MeshStandardMaterial({color:hex,roughness:rough,metalness:metal});
+ const color=mat(data.color);color.userData.houseBossEdition=true;
+ const ivory=mat('#f5ecdc'),dark=mat('#414547',.69,.08),pink=mat('#ed9caf'),
+ gold=mat('#c9ac79',.36,.70),wood=mat('#ad8163',.65),glass=mat('#94ced0',.22,.36),
+ cream=mat('#e9ddcd'),shadow=mat('#7d7b73'),leaf=mat('#638e71'),orange=mat('#e9a565');
+ const ell=(x,y,z,rx,ry,rz,m=color)=>ball(g,rx,ry,rz,m,x,y,z);
+ const tube=(a,b,r,m=color)=>capsule(g,a,b,r,m);
+ const circ=(x,y,z,r,thickness,m=color)=>torus(g,r,thickness,m,x,y,z);
+ function base(radius=.36,material=gold){cylinder(g,radius*.95,radius,.065,material,0,.05,0)}
+ function onStand(height=1.2,m=dark){cylinder(g,.22,.28,.07,m,0,.06,0);tube([0,.08,0],[0,height,0],.034,m)}
+ function flower(y,petals=7,scale=1,petal=color){
+  ell(0,y,0,.12*scale,.12*scale,.10*scale,orange);
+  for(let i=0;i<petals;i++){
+   const a=i*2*Math.PI/petals;
+   const p=ell(Math.cos(a)*.24*scale,y+Math.sin(a)*.23*scale,0,.13*scale,.28*scale,.06*scale,petal);
+   p.rotation.z=-a;
+  }
+ }
+ function artPanel(x,w,h,number){
+  box(g,w+.10,h+.10,.07,wood,x,1.20,-.06);
+  box(g,w,h,.012,ivory,x,1.20,-.015);
+  const palettes=['#e9a474','#7ea6b0','#e3c479','#c29ab1','#92ae94'];
+  const a=mat(palettes[number%palettes.length]),b=mat(palettes[(number+2)%palettes.length]);
+  ell(x-w*.17,1.17+h*.12,0,w*.24,h*.25,.015,a);
+  const stripe=box(g,w*.36,h*.11,.019,b,x+w*.16,1.05,0);stripe.rotation.z=.45;
+ }
+ function rugPattern(kind){
+  if(texCache.has(kind))return texCache.get(kind);
+  const canvas=document.createElement('canvas');canvas.width=256;canvas.height=192;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle=kind==='checker'?'#fae6db':'#e9e5d1';ctx.fillRect(0,0,256,192);
+  if(kind==='checker'){
+   for(let x=0;x<8;x++)for(let z=0;z<6;z++){
+    if((x+z)%2===0){ctx.fillStyle='#de8ea3';ctx.fillRect(x*32,z*32,32,32)}
+   }
+  }else{
+   for(let j=0;j<7;j++){
+    ctx.beginPath();ctx.lineWidth=10+3*j;
+    ctx.strokeStyle=['#7b9c79','#c7b692','#d49b84','#89ad9a'][j%4];
+    for(let x=-25;x<280;x+=3){let y=j*30+15+Math.sin(x*.024+j*.52)*24;x===-25?ctx.moveTo(x,y):ctx.lineTo(x,y)}
+    ctx.stroke()
+   }
+  }
+  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+  texCache.set(kind,texture);return texture
+ }
+ if(type==='ceramicvase'||type==='spherevase'){
+  const m=type==='spherevase'?glass:color;
+  ell(0,.24,0,.16,.20,.15,m);cylinder(g,.082,.09,.18,m,0,.47,0);circ(0,.57,0,.073,.018,m);
+  if(type==='spherevase'){ell(-.10,.16,.03,.12,.12,.12,m);ell(.10,.26,-.02,.10,.15,.12,m)}
+  for(let i=0;i<3;i++){const x=(i-1)*.065;tube([x,.54,0],[x*2,.91+(i%2)*.13,.03],.009,leaf);ell(x*2,.93+(i%2)*.13,.03,.055,.067,.026,i===1?pink:orange)}
+ }else if(type==='lemonbowl'){
+  ell(0,.15,0,.19,.07,.18,color);circ(0,.18,0,.18,.02,color);
+  for(const [x,z] of [[-.08,0],[.05,-.07],[.07,.06]])ell(x,.24,z,.075,.052,.044,mat('#f5d467'))
+ }else if(type==='knotpillow'){
+  ell(0,.12,0,.19,.12,.19,color);
+  for(let i=0;i<3;i++){const r=circ(0,.16+i*.055,0,.16,.06,color);r.rotation.x=Math.PI*(i/3+.2);r.rotation.y=i*.78}
+ }else if(type==='petalstool'||type==='spoolstool'){
+  if(type==='spoolstool'){
+   cylinder(g,.24,.23,.38,color,0,.32,0);
+   cylinder(g,.38,.30,.12,color,0,.53,0);
+   cylinder(g,.32,.38,.13,color,0,.10,0)
+  }else{
+   cylinder(g,.095,.18,.39,wood,0,.25,0);
+   for(let i=0;i<6;i++){let a=i*Math.PI/3;ell(Math.cos(a)*.21,.57,Math.sin(a)*.21,.21,.09,.19,color)}
+   ell(0,.58,0,.17,.10,.17,orange)
+  }
+ }else if(type==='terracottatotem'){
+  base(.26,ivory);
+  cylinder(g,.12,.19,.30,color,0,.27,0);
+  ell(0,.54,0,.20,.16,.20,color);
+  const ring=circ(0,.76,0,.23,.067,color);ring.rotation.x=.35;
+  ell(0,.93,0,.11,.23,.11,color)
+ }else if(type==='bouclepouf'||type==='checkerottoman'||type==='cloudstool'){
+  ell(0,.24,0,data.w*.47,.23,data.d*.47,color);
+  ell(0,.43,0,data.w*.45,.15,data.d*.42,color);
+  if(type==='cloudstool')for(let i=0;i<8;i++){const a=i*Math.PI/4;ell(Math.cos(a)*.31,.37,Math.sin(a)*.28,.20,.17,.23,color)}
+  if(type==='checkerottoman')for(let x=0;x<4;x++)for(let z=0;z<4;z++)if((x+z)%2===0){
+   box(g,.21,.009,.19,ivory,(x-1.5)*.22,.564,(z-1.5)*.19)
+  }
+ }else if(type==='cactusplanter'){
+  cylinder(g,.25,.20,.36,color,0,.20,0);
+  cylinder(g,.25,.25,.055,ivory,0,.40,0);
+  const green=mat('#6c9981');
+  ell(0,.82,0,.16,.42,.16,green);
+  ell(-.18,.64,0,.083,.20,.10,green);tube([-.18,.64,0],[-.18,.84,0],.06,green);
+  ell(.16,.69,0,.08,.18,.08,green);tube([.16,.67,0],[.16,.89,0],.05,green);
+  ell(0,1.25,0,.075,.065,.08,pink)
+ }else if(type==='mushroomlamp'){
+  base(.25,color);
+  cylinder(g,.13,.21,.56,cream,0,.43,0);
+  ell(0,.88,0,.40,.22,.38,color);
+  ell(0,.84,0,.31,.08,.30,mat('#fff3dc',.37))
+ }else if(type==='candychecker'||type==='coilmatt'){
+  const m=new THREE.MeshStandardMaterial({map:rugPattern(type==='candychecker'?'checker':'wave'),roughness:.94});
+  const carpet=addMesh(g,new THREE.PlaneGeometry(data.w,data.d),m,0,.036,0,false,true);carpet.rotation.x=-Math.PI/2;
+  box(g,data.w,.017,data.d,mat(type==='candychecker'?'#d2879e':'#86a18b'),0,.017,0).castShadow=false
+ }else if(type==='galleryprint'||type==='galleryframe'){
+  const panels=type==='galleryframe'?3:1;
+  for(let i=0;i<panels;i++){const x=panels===3?(i-1)*.45:0;artPanel(x,panels===3?.37:.72,1.20,i+2)}
+  tube([-.35,.04,.16],[-.29,1.85,-.19],.032,dark);
+  tube([.35,.04,.16],[.29,1.85,-.19],.032,dark);
+  tube([0,.04,-.25],[0,1.5,-.18],.026,dark);
+  box(g,.76,.055,.19,wood,0,.55,-.06)
+ }else if(type==='bobbinlamp'){
+  base(.23,color);
+  for(let i=0;i<5;i++)ell(0,.25+i*.23,0,.18+(i%2)*.055,.17,.18+(i%2)*.055,color);
+  cylinder(g,.28,.43,.32,ivory,0,1.46,0);
+  cylinder(g,.18,.18,.025,mat('#ffe7bc',.38),0,1.27,0)
+ }else if(type==='squigglemirror'){
+  for(let j=0;j<14;j++){let t=j*2*Math.PI/14;ell(Math.sin(t)*.34,.98+Math.cos(t)*.80,0,.12,.16,.12,color)}
+  ell(0,.98,-.03,.33,.77,.025,mat('#b7c7d5',.13,.82));
+  tube([-.31,.07,-.1],[-.26,1.20,-.10],.035,dark);
+  tube([.31,.07,-.1],[.26,1.20,-.10],.035,dark)
+ }else if(type==='pebblecoffee'||type==='travertinetable'||type==='chrometable'){
+  const m=type==='chrometable'?mat('#c7ccd4',.21,.86):color;
+  if(type==='travertinetable'){
+   for(const x of [-.30,.30])cylinder(g,.21,.26,.56,m,x,.32,0);
+   ell(0,.69,0,.59,.085,.42,m);
+  }else if(type==='chrometable'){
+   for(const x of [-.29,.27])ell(x,.36,0,.25,.35,.26,m);
+   ell(0,.72,0,.63,.095,.43,m);
+  }else{
+   for(const x of [-.30,.30])cylinder(g,.10,.10,.45,wood,x,.28,0);
+   ell(0,.55,0,.62,.085,.40,m);
+   ell(.19,.58,-.03,.39,.07,.36,m)
+  }
+ }else if(type==='scallopshelf'||type==='wavebookcase'){
+  const tall=type==='wavebookcase',h=tall?2.30:1.65,w=data.w;
+  box(g,w,h,.44,color,0,h/2,0);
+  box(g,w-.16,h-.16,.39,ivory,0,h/2,.04);
+  for(let i=0;i<(tall?5:4);i++){
+   const y=.28+i*.43;
+   box(g,w-.03,.07,.47,color,0,y,0);
+   for(let j=0;j<3;j++){
+    let x=-w*.35+j*w*.35;
+    ell(x,y+.15,.06,.12,.15,.12,[cream,orange,leaf][(i+j)%3])
+   }
+  }
+  for(const x of [-w*.48,w*.48])for(let i=0;i<5;i++)ell(x,.28+i*(h-.42)/4,0,.07,.12,.12,color)
+ }else if(type==='roombloom'||type==='giantflower'){
+  base(.21,dark);
+  tube([0,.08,0],[0,type==='giantflower'?1.45:1.12,0],.065,leaf);
+  const y=type==='giantflower'?1.65:1.30;
+  flower(y,type==='giantflower'?9:7,type==='giantflower'?1.45:1.06,color);
+  for(let i=0;i<2;i++){const lf=ell((i?-.23:.20),.62+i*.16,0,.26,.10,.10,leaf);lf.rotation.z=i?-.5:.6}
+ }else if(type==='ribbonchair'||type==='collectiblechair'||type==='tulipchair'||type==='haloarmchair'){
+  const rx=data.w*.48,rz=data.d*.43;
+  cylinder(g,.22,.31,.29,dark,0,.19,0);
+  ell(0,.60,.04,rx,.20,rz,color);
+  if(type==='ribbonchair'){
+   const ring=circ(0,.98,-.25,.46,.155,color);ring.rotation.x=.25;ring.scale.x=1.13;
+   ell(0,.84,-.27,.45,.33,.13,color)
+  }else if(type==='tulipchair'){
+   for(let i=-2;i<=2;i++){
+    const a=i*.46;
+    const petal=ell(Math.sin(a)*.35,1.02+Math.cos(a)*.09,-.35,.22,.42,.15,color);petal.rotation.z=-a*.5
+   }
+  }else if(type==='haloarmchair'){
+   const ring=circ(0,1.12,-.31,.54,.20,color);ring.rotation.x=.12;
+   ell(0,1.11,-.37,.46,.47,.18,color);
+   for(const x of [-.43,.43])ell(x,.70,.04,.19,.26,.36,color)
+  }else{
+   const ring=circ(0,1.0,-.22,.46,.18,color);ring.rotation.x=.34;ring.scale.x=1.22;
+   for(const x of [-.45,.45])tube([x,.41,.16],[x,1.0,-.26],.15,color);
+   ell(0,.94,-.33,.45,.30,.16,color)
+  }
+  ell(0,.74,.18,rx*.82,.10,rz*.67,ivory)
+ }else if(type==='sunsetlamp'){
+  base(.25,dark);tube([0,.08,0],[0,1.38,0],.035,gold);
+  const glow=mat('#efad61',.42);
+  const disk=ell(0,1.48,0,.38,.38,.08,glow);
+  circ(0,1.48,0,.37,.024,gold).rotation.x=Math.PI/2;
+ }else if(type==='glassgarden'){
+  cylinder(g,.29,.33,.06,wood,0,.08,0);
+  const m=mat('#a2c5b4',.22,.14);m.transparent=true;m.opacity=.42;m.depthWrite=false;
+  ell(0,.49,0,.33,.46,.29,m);
+  for(let i=0;i<5;i++){const a=i*Math.PI*2/5;
+   const stalk=ell(Math.cos(a)*.16,.30,Math.sin(a)*.13,.08,.22,.06,leaf);stalk.rotation.z=a
+  }
+  ell(0,.38,0,.10,.24,.09,mat('#7baf7d'))
+ }else if(type==='croissantsofa'||type==='limitedsofa'){
+  const n=type==='limitedsofa'?6:5,w=data.w;
+  for(let i=0;i<n;i++){
+   const x=-w*.38+i*(w*.76/(n-1)),curve=Math.abs((i-(n-1)/2)/((n-1)/2));
+   ell(x,.44,.08+curve*.13,w/n*.72,.35,.54,color);
+   ell(x,.89,-.40+curve*.11,w/n*.72,.49,.28,color)
+  }
+  for(const x of [-w*.46,w*.46])ell(x,.62,.06,.20,.44,.53,color);
+  for(let i=0;i<n;i++){let x=-w*.38+i*(w*.76/(n-1));ell(x,.73,.25,.17,.08,.28,ivory)}
+  for(const x of [-w*.38,w*.38])box(g,.15,.10,.14,wood,x,.07,0)
+ }else if(type==='galleryplinth'){
+  box(g,.56,1.10,.56,ivory,0,.56,0);
+  box(g,.62,.08,.62,cream,0,1.14,0);
+  const ring=circ(0,1.53,0,.26,.095,color);ring.rotation.y=.66;
+  ell(-.15,1.45,.02,.20,.09,.16,color);
+ }else if(type==='orbitlamp'){
+  base(.28,dark);tube([0,.06,0],[0,1.25,0],.03,gold);
+  ell(0,1.45,0,.22,.22,.22,mat('#fff1d6',.23));
+  for(let i=0;i<3;i++){const ring=circ(0,1.45,0,.41,.023,gold);ring.rotation.x=.25+i*.6;ring.rotation.y=i*.9}
+ }else if(type==='mirrorball'){
+  cylinder(g,.24,.31,.75,dark,0,.42,0);
+  ell(0,1.05,0,.34,.34,.34,mat('#d9dee1',.18,.92));
+  const silver=mat('#f3f6f8',.18,.95);
+  for(let a=0;a<8;a++)for(let j=0;j<4;j++){
+    const th=a*Math.PI/4,phi=.35+j*.79;
+    const x=Math.sin(phi)*Math.cos(th)*.342,y=1.05+Math.cos(phi)*.342,z=Math.sin(phi)*Math.sin(th)*.342;
+    const face=box(g,.105,.10,.018,silver,x,y,z);
+    face.rotation.y=-th;face.rotation.x=phi-Math.PI/2
+  }
+ }else if(type==='formscreens'){
+  for(let i=-1;i<=1;i++){
+   const x=i*.53;
+   box(g,.50,1.45,.13,color,x,.78,0);
+   const arch=ell(x,1.53,0,.25,.26,.07,color);
+   ell(x,1.39,.08,.145,.32,.008,ivory)
+  }
+  for(let x of [-.68,.68])box(g,.06,.17,.40,dark,x,.08,0)
+ }else{
+  return false
+ }
+ // Light grounding and carefully bounded shadows preserve pick/placement interactions.
+ g.userData.decorCategory=data.category;
+ return true
+}
+
+window.HouseBossCreateDecorMesh=createDecorMesh;
+})();
+</script>
+<script type="module" src="./evin-patronu-3d.js?v=19"></script>
 <script type="module" src="./house-boss-town-3d.js?v=3"></script>
 <script src="./house-boss-sims-ui.js?v=9"></script>
-<script src="./house-boss-furniture.js?v=8"></script>
-<script src="./house-boss-designer-collection.js?v=2"></script>
-<script src="./house-boss-home-design.js?v=7"></script>
-<script src="./house-boss-lifestyle.js?v=3"></script>
+<script>
+/* BUNDLED: DESIGN SHOP — resilient against missing CDN/static asset */
+/* HOUSE BOSS FURNITURE V1 — real saved 3D furnishing, drag/place, rotate, move, sell. */
+(function(){
+'use strict';
+const types={
+  plant:{name:'Fiddle Leaf Plant',price:65,color:'#648d60',w:.70,d:.70,icon:'✿',desc:'Greenery for a calmer home.',benefit:'Home peace +1 each morning',action:'clean'},
+  bookshelf:{name:'Oak Bookshelf',price:240,color:'#af8158',w:1.25,d:.58,icon:'▤',desc:'Books and a place to think.',benefit:'Reading develops Logic faster',action:'read'},
+  floorlamp:{name:'Arc Floor Lamp',price:135,color:'#e2c386',w:.65,d:.65,icon:'☼',desc:'A warm little reading corner.',benefit:'A brighter household',action:'read'},
+  armchair:{name:'Accent Armchair',price:225,color:'#a8786b',w:1.25,d:1.15,icon:'▱',desc:'Your own place to unwind.',benefit:'Rest and fun bonus',action:'nap'},
+  ottoman:{name:'Velvet Ottoman',price:105,color:'#8ca8a1',w:.85,d:.75,icon:'▱',desc:'Put your feet up.',benefit:'Extra comfort on breaks',action:'nap'},
+  petbed:{name:'Dog Bed',price:155,color:'#9c8675',w:1.2,d:1.0,icon:'♡',desc:'A good place for a good dog.',benefit:'Dog recovers extra energy',action:'dognap'},
+  easel:{name:'Artist Easel',price:285,color:'#c18b5b',w:1.10,d:.95,icon:'✎',desc:'Space for creative practice.',benefit:'Painting raises Creativity faster',action:'paint'},
+  yogamat:{name:'Yoga Mat',price:115,color:'#769d88',w:1.65,d:.75,icon:'⌁',desc:'A moment to move.',benefit:'Exercise raises Fitness faster',action:'exercise'},
+  sidetable:{name:'Round Side Table',price:110,color:'#ae9375',w:.75,d:.75,icon:'◯',desc:'Somewhere to put your cup.',benefit:'More enjoyable conversations',action:'talk'},
+  stereo:{name:'Music Console',price:305,color:'#5c7f87',w:1.1,d:.66,icon:'♫',desc:'Put a little music on.',benefit:'Dancing is more fun',action:'dance'},
+  loungechair:{name:'Soft Lounge Chair',price:390,color:'#b8a98f',w:1.28,d:1.23,icon:'▱',level:2,tier:'modern',comfort:10,desc:'Sculpted curves and supportive cushions.',action:'nap',shape:'chair'},
+  loveseat:{name:'Modular Loveseat',price:620,color:'#b6978d',w:2.05,d:1.13,icon:'▰',level:3,tier:'modern',comfort:14,desc:'Two deep cushions and tailored upholstery.',action:'nap',shape:'sofa'},
+  recliner:{name:'Leather Recliner',price:920,color:'#816d5e',w:1.15,d:1.26,icon:'▱',level:5,tier:'premium',comfort:20,desc:'A comfortable reclining seat in rich leather.',action:'nap',shape:'chair'},
+  walnutdesk:{name:'Walnut Work Desk',price:1060,color:'#8e6449',w:1.55,d:.79,icon:'▤',level:5,tier:'premium',comfort:10,desc:'Solid walnut, slim brass details, storage.',action:'computer',shape:'desk'},
+  chaise:{name:'Velvet Chaise',price:1470,color:'#9e857d',w:2.05,d:.95,icon:'▰',level:7,tier:'premium',comfort:25,desc:'A soft sculptural chaise for slow evenings.',action:'nap',shape:'sofa'},
+  daybed:{name:'Boutique Daybed',price:1760,color:'#b0a8a0',w:1.95,d:.95,icon:'▰',level:8,tier:'premium',comfort:27,desc:'An upholstered daybed with tailored cushions.',action:'nap',shape:'sofa'},
+  pendant:{name:'Architectural Floor Lamp',price:980,color:'#d6ba84',w:.68,d:.68,icon:'☼',level:7,tier:'premium',comfort:8,desc:'Brass architecture with a warm linen shade.',action:'read',shape:'lamp'},
+  statementsofa:{name:'Cloud Sectional',price:2450,color:'#d9cabb',w:2.38,d:1.24,icon:'▰',level:10,tier:'luxury',comfort:34,desc:'Deep oversized cushions and rounded edges.',action:'nap',shape:'sofa'},
+  hifi:{name:'Designer Hi-Fi System',price:1850,color:'#6f766e',w:1.20,d:.67,icon:'♫',level:10,tier:'luxury',comfort:15,desc:'Walnut sound cabinet with analog detailing.',action:'dance',shape:'media'},
+  grandbookcase:{name:'Gallery Bookcase',price:2200,color:'#9b7757',w:1.48,d:.58,icon:'▤',level:12,tier:'luxury',comfort:16,desc:'Tall crafted oak shelving with curved edges.',action:'read',shape:'shelf'}
+};
+const firstLevels={plant:1,bookshelf:2,floorlamp:1,armchair:2,ottoman:1,petbed:1,easel:2,yogamat:1,sidetable:1,stereo:3};
+const firstComfort={plant:1,bookshelf:3,floorlamp:2,armchair:7,ottoman:3,petbed:4,easel:2,yogamat:2,sidetable:2,stereo:5};
+Object.entries(types).forEach(([id,t])=>{
+ t.level=t.level||firstLevels[id]||1;t.tier=t.tier||(t.level>=5?'premium':t.level>=2?'modern':'starter');
+ t.comfort=t.comfort??firstComfort[id]??2;
+ t.shape=t.shape||({armchair:'chair',ottoman:'chair',floorlamp:'lamp',bookshelf:'shelf',sidetable:'desk',stereo:'media'}[id]||id)
+});
+const defaults=[[3.5,3.5],[3,3.5],[4,-3.5],[2.5,-3.5],
+ [2,0],[1,0],[0,0],[-1,0],
+ [2.5,4],[1.5,4],[0,4],[-2.5,4],
+ [3,-4],[0,-4],[-2.5,-4],[-6,-2.5],[-8,-4],[-8,4]];
+const bridge=()=>window.HouseBossBuildBridge;
+let selectedUid=null,warning='',filter='all',category='all',styleFilter='all',searchQuery='';
+const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const collections={starter:'EVERYDAY',modern:'CONTEMPORARY',premium:'DESIGN STUDIO',luxury:'SIGNATURE'};
+function floor2(v){return Math.round(Number(v)*2)/2}
+function safeCandidate(type){
+ for(const [x,z] of defaults){const p={type,x,z,rot:0};if(bridge()?.validate?.(p)?.ok)return p}
+ for(let z=-4.0;z<=4;z+=.5)for(let x=-8;x<=5;x+=.5){
+  let p={type,x,z,rot:0};if(bridge()?.validate?.(p)?.ok)return p
+ }
+ return null
+}
+function sceneCandidate(){return window.Evin3D?.getFurniturePlacement?.()||null}
+function view(){return document.getElementById('noteBody')}
+function clear(){
+ window.Evin3D?.cancelFurniturePlacement?.();
+ selectedUid=null;warning='';
+}
+function begin(type,uid,previewOnly=false){
+ const st=bridge()?.getState?.();if(!st||!types[type])return;
+ if(!previewOnly&&!uid&&st.level<types[type].level){warning='Reach Home Level '+types[type].level+' to unlock '+types[type].name+'.';render();return}
+ if(!previewOnly&&!uid&&st.cash<types[type].price){warning='You need $'+(types[type].price-st.cash)+' more.';render();return}
+ let item=uid?st.furniture.find(f=>f.uid===uid):null;
+ if(uid&&!item)return;
+ let p=item?{type,x:item.x,z:item.z,rot:item.rot||0,uid,mode:'move'}:safeCandidate(type);
+ if(p&&previewOnly)p.mode='preview';
+ if(!p){warning='There is no free space. Move or sell another object first.';render();return}
+ let ok=window.Evin3D?.beginFurniturePlacement?.(p);
+ if(!ok){warning='3D world is not ready.';render();return}
+ selectedUid=uid||null;warning='';
+ window.Evin3D?.focusFurniture?.(p.x,p.z);
+ render();
+}
+function confirm(){
+ const item=sceneCandidate();if(item?.mode==='preview'){clear();render();return}if(!item||!item.valid){warning=item?.reason||'Choose a free space highlighted in green.';render();return}
+ const ok=item.uid?bridge()?.move?.(item.uid,item.x,item.z,item.rot):
+   bridge()?.buy?.(item.type,item.x,item.z,item.rot,types[item.type].price);
+ if(!ok){warning='Unable to place furniture. Check space and budget.';render();return}
+ clear();window.Evin3D?.syncFurnitureNow?.();render()
+}
+function rotate(){window.Evin3D?.rotateFurniture?.();updateStatus()}
+function nudge(dx,dz){window.Evin3D?.nudgeFurniture?.(dx,dz);updateStatus()}
+function updateStatus(){
+ let p=sceneCandidate(),el=document.getElementById('hb-build-position');
+ if(el){
+  el.textContent=p?(p.valid?'VALID POSITION':'BLOCKED · '+(p.reason||'Move to a clear tile')):'';
+  el.dataset.valid=String(!!p?.valid)
+ }
+ const save=document.querySelector('[data-hbf-confirm]');if(save)save.disabled=!p?.valid
+}
+function sell(uid){
+ const st=bridge()?.getState?.(),item=st?.furniture?.find(o=>o.uid===uid);
+ if(!item)return;
+ if(!confirmSale(item))return;
+ clear();
+ if(bridge()?.sell?.(uid)){window.Evin3D?.syncFurnitureNow?.();render()}
+}
+function confirmSale(item){return window.confirm('Sell '+types[item.type].name+' for $'+Math.floor(types[item.type].price*(.20+.30*(item.condition||100)/100))+'? This removes the item from your home.')}
+function placeBar(){
+ const p=sceneCandidate(),type=types[p?.type];
+ if(!p||!type)return '';
+ return '<div class="hbf-placement">'+
+  '<div class="hbf-place-heading"><span>'+(p.mode==='preview'?'FREE 3D PREVIEW':'NOW PLACING')+'</span><b>'+type.name+'</b></div>'+
+  '<p>'+(p.mode==='preview'?'Explore this designer object in your 3D room. A preview never charges money.':'Drag the object in the room or use the arrows. Green = valid placement.')+'</p>'+
+  '<div id="hb-build-position" class="hbf-status" data-valid="'+!!p.valid+'">'+(p.valid?'VALID POSITION':'BLOCKED · '+(p.reason||'Move to an open area'))+'</div>'+
+  '<div class="hbf-place-buttons"><button type="button" data-hbf-turn>ROTATE 90° ↻</button>'+
+  '<div class="hbf-dpad"><button data-hbf-nudge="0,-.5" aria-label="Move back">↑</button>'+
+  '<button data-hbf-nudge="-.5,0" aria-label="Move left">←</button>'+
+  '<button data-hbf-nudge="0,.5" aria-label="Move forward">↓</button>'+
+  '<button data-hbf-nudge=".5,0" aria-label="Move right">→</button></div></div>'+
+  '<div class="hbf-action-row"><button data-hbf-cancel>CANCEL</button>'+
+  '<button data-hbf-confirm '+(!p.valid&&p.mode!=='preview'?'disabled':'')+'>'+(p.mode==='preview'?'CLOSE PREVIEW':p.uid?'SAVE POSITION':'BUY & PLACE · $'+type.price)+'</button></div></div>';
+}
+
+function render(){
+ const root=view(),st=bridge()?.getState?.();if(!root||!st)return;
+ document.getElementById('noteTitle').textContent='The Design Shop';
+ const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+st.cash+' · Home Value $'+st.homeValue;
+ const homeLevel=Math.max(1,st.level||1),comfort=st.comfort||0;
+ const all=Object.entries(types).sort((a,b)=>{
+   const left=a[1],right=b[1];
+   return Number(left.level>homeLevel)-Number(right.level>homeLevel)||left.level-right.level||left.price-right.price
+ });
+ const available=all.filter(([,item])=>item.level<=homeLevel).length;
+ const wishlist=st.wishlist||[],pieces=st.furniture||[];
+ const qualities=st.quality||{score:0,tier:'First Apartment',comfort:0};
+ const nextUnlock=all.find(([,item])=>item.level>homeLevel);
+ const categoryDefs=window.HouseBossDesignerCollection?.categories||{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART',objects:'OBJECTS',plants:'PLANTS',storage:'STORAGE'};
+ const active=all.filter(([id,item])=>
+  (filter==='all'||(filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel))&&
+  (category==='all'||item.category===category)&&
+  (styleFilter==='all'||item.style===styleFilter)
+ );
+ const categoryIcons={seating:'▰',tables:'◉',lighting:'☀',rugs:'▦',art:'✷',objects:'◇',plants:'✿',storage:'▤'};
+ let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Design Shop</button>'+
+ Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([k,v])=>'<button type="button" data-hd-category="'+k+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>'+
+ '<div class="hbf-shop-hero"><div><span>DESIGN SHOP / EDITIONS</span><h3>Make it yours.</h3><p>Furniture with personality. Sculptural shapes, playful colour and collectible pieces for your 3D home.</p>'+
+ '<div class="hbf-hero-pills"><b>'+all.length+' OBJECTS</b><b>'+available+' UNLOCKED</b><b>3D HOME STYLING</b></div></div><div class="hbf-hero-sculpt"><i></i><i></i><i></i></div></div>'+
+ '<div class="hbf-preview-space"><div><b>SEE THE OBJECTS IN YOUR ROOM</b><small>Try the new mushroom lamp in real 3D before buying. The catalogue stays open while you explore.</small></div>'+
+ '<button type="button" data-hbf-preview="mushroomlamp">TRY IN 3D ↗</button></div>'+
+ '<div class="hbf-head"><span>YOUR HOME / DESIGN PROGRESS</span><strong>LVL '+homeLevel+' · '+pieces.length+' PIECES OWNED</strong></div>'+
+ '<div class="hbf-quality"><div><strong>'+esc(qualities.tier)+'</strong><b>HOME QUALITY · '+qualities.score+'%</b></div>'+
+ '<div class="hbf-quality-track"><i style="width:'+qualities.score+'%"></i></div>'+
+ '<div class="hbf-lifestyle-stats"><span><b>'+comfort+'</b><small>COMFORT</small></span><span><b>'+available+'/'+all.length+'</b><small>UNLOCKED</small></span><span><b>'+homeLevel+'/20</b><small>HOME LEVEL</small></span></div>'+
+ '<small>Unique objects boost design variety. Completed designer themes add +'+(qualities.setBonus||0)+' home quality.</small></div>'+
+ '<div class="hbf-set-header"><b>CURATED COLLECTIONS</b><span>Collect 3 different designs in each style to earn bonus XP, money and home quality.</span></div>'+
+ '<div class="hbf-designer-sets">'+(st.sets||[]).map(set=>
+  '<article class="hbf-set-card '+(set.claimed?'claimed':set.ready?'ready':'')+'"><div class="hbf-set-top"><span class="hbf-set-symbol '+set.id+'">✦</span>'+
+  '<div><b>'+esc(set.title)+'</b><small>'+esc(set.desc)+'</small></div><strong>'+set.owned+'/'+set.goal+'</strong></div>'+
+  '<div class="hbf-set-progress"><i style="width:'+Math.min(100,100*set.owned/set.goal)+'%"></i></div>'+
+  (set.claimed?'<span class="hbf-set-completed">✓ COLLECTION COMPLETE</span>':set.ready?
+   '<button type="button" data-hbf-claim-set="'+set.id+'">CLAIM $'+set.reward+' +'+set.xp+' XP</button>':
+   '<button type="button" data-hbf-set="'+set.id+'">EXPLORE '+set.id.toUpperCase()+' PIECES</button>')+
+  '</article>').join('')+'</div>'+
+ '<div class="hbf-next"><div><b>UP NEXT / YOUR NEXT COLLECTION</b><strong>'+(nextUnlock?'LEVEL '+nextUnlock[1].level+' · '+esc(nextUnlock[1].name):'EVERYTHING UNLOCKED')+'</strong>'+
+ '<small>'+(nextUnlock?'Earn Home XP to discover and purchase more collectible objects.':'Every design can now be bought and styled.')+'</small></div><span class="hbf-lock-symbol">✦</span></div>';
+ if(warning)html+='<div class="hbf-warning" role="status">'+esc(warning)+'</div>';
+ html+=placeBar();
+ html+='<div class="hbf-section-title"><strong>YOUR ROOMS</strong><small>Build & explore</small></div>'+
+ '<div class="hbf-room-tiles">'+(st.rooms||[]).map(room=>{
+  const status=room.id==='home'?'ALWAYS OPEN':room.installed?'BUILT':'LEVEL '+room.level;
+  return '<article class="hbf-room"><strong>'+esc(room.name)+'</strong><small>'+status+'</small>'+
+   (room.installed?'<button type="button" data-hbf-room="'+room.id+'">VIEW IN 3D ↗</button>':
+   '<button type="button" data-hbf-room-buy="'+room.id+'" '+(!room.available?'disabled':'')+'>'+
+   (room.available?'BUILD · $'+room.price:'UNLOCK · LVL '+room.level+' · $'+room.price)+'</button>')+'</article>'
+ }).join('')+'</div>';
+ html+='<div class="hbf-section-title"><strong>COLLECTOR’S OBJECT CATALOGUE</strong><small>'+all.length+' designer pieces</small></div>'+
+ '<nav class="hbf-category-grid" aria-label="Shop by object type"><button type="button" data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL OBJECTS</b><small>'+all.length+'</small></button>'+
+ Object.entries(categoryDefs).map(([id,label])=>'<button type="button" data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+categoryIcons[id]+'</span><b>'+label+'</b><small>'+all.filter(([,item])=>item.category===id).length+'</small></button>').join('')+'</nav>'+
+ '<div class="hbf-shop-toolbar"><label class="hbf-search"><span>⌕</span><input type="search" id="hbf-search" placeholder="Find something special..." value="'+esc(searchQuery)+'" aria-label="Search objects"></label>'+
+ '<label class="hbf-style-select"><span>STYLE</span><select id="hbf-style" aria-label="Design aesthetic">'+
+ [['all','All aesthetics'],['pop','Colourful / Pop'],['soft','Soft / Bouclé'],['organic','Organic'],['retro','Retro'],['modern','Modern']].map(([id,label])=>'<option value="'+id+'" '+(styleFilter===id?'selected':'')+'>'+label+'</option>').join('')+'</select></label></div>'+
+ '<div class="hbf-filters"><button data-hbf-filter="all" class="'+(filter==='all'?'active':'')+'">ALL PIECES</button>'+
+ '<button data-hbf-filter="available" class="'+(filter==='available'?'active':'')+'">UNLOCKED</button>'+
+ '<button data-hbf-filter="locked" class="'+(filter==='locked'?'active':'')+'">COMING SOON</button>'+
+ '<button data-hbf-filter="wishlist" class="'+(filter==='wishlist'?'active':'')+'">♡ SAVED '+wishlist.length+'</button></div>'+
+ '<div class="hbf-result-caption"><strong id="hbf-result-count">'+active.length+' PIECES</strong><span>Preview in 3D · Buy · Place · Personalise</span></div>'+
+ '<div class="hbf-market">'+active.map(([id,item])=>{
+  const locked=homeLevel<item.level,poor=st.cash<item.price,editing=!!sceneCandidate(),rank=collections[item.tier]||'EVERYDAY';
+  return '<article class="hbf-card '+(locked?'is-locked':'is-unlocked')+' hbf-tier-'+item.tier+'" data-hbf-item="'+id+'" data-hbf-text="'+esc([item.name,item.desc,item.style,item.category].join(' ').toLowerCase())+'">'+
+   '<div class="hbf-visual hbf-preview-'+esc(item.style||'modern')+'" style="--tone:'+item.color+'">'+
+   '<button type="button" class="hbf-heart '+(wishlist.includes(id)?'is-saved':'')+'" data-hbf-wish="'+id+'" aria-label="Save to wishlist">'+(wishlist.includes(id)?'♥':'♡')+'</button>'+
+   '<div class="hbf-visual-glow"></div><div class="hbf-silhouette '+esc(item.shape)+'"><i></i><i></i><i></i><i></i><i></i></div>'+
+   '<button type="button" class="hbf-visual-preview" data-hbf-preview="'+id+'">VIEW IN 3D</button>'+
+   (locked?'<span class="hbf-padlock">LVL '+item.level+' LOCKED</span>':'<span class="hbf-available">UNLOCKED</span>')+'</div>'+
+   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(item.collection?'NEW · ':'')+rank+' · LVL '+item.level+'</div>'+
+   '<strong>'+esc(item.name)+'</strong><small>'+esc(item.desc)+'</small>'+
+   '<div class="hbf-material-tags"><span>'+esc(item.style||'modern')+'</span><span>'+(item.layer==='floor'?'LAYERED RUG':item.layer==='tabletop'?'ON TABLE':esc(item.category||'furniture'))+'</span></div>'+
+   '<div class="hbf-bonus">✧ +'+item.comfort+' COMFORT <span>· '+(item.action||'talk').toUpperCase()+'</span></div></div>'+
+   '<button type="button" data-hbf-buy="'+id+'" '+(locked||poor||editing?'disabled':'')+'>'+
+   (locked?'LEVEL '+item.level+' TO UNLOCK':poor?'NEED $'+(item.price-st.cash)+' MORE':'BUY & PLACE · $'+item.price)+'</button></article>'
+ }).join('')+'</div>'+
+ '<div id="hbf-empty-results" class="hbf-empty-results" hidden>No objects match those filters. Try another category or style.</div>';
+ html+='<div class="hbf-section-title"><strong>YOUR OWN COLLECTION</strong><small>'+pieces.length+' placed objects · personalise anytime</small></div>';
+ html+='<div class="hbf-installed">'+(pieces.length?pieces.map(o=>{
+  const info=types[o.type];if(!info)return '';
+  const colors=info.variants||[],isBusy=!!sceneCandidate();
+  return '<div class="hbf-row"><span class="hbf-small-icon" style="--tone:'+(o.tint||info.color)+'">'+(info.icon||categoryIcons[info.category]||'✦')+'</span>'+
+   '<div><b>'+esc(info.name)+'</b><small>+'+info.comfort+' COMFORT · CONDITION '+Math.round(o.condition||100)+'%</small>'+
+   (colors.length?'<div class="hbf-colorways" aria-label="Choose this item’s colour">'+colors.map(tint=>'<button type="button" data-hbf-color="'+o.uid+','+tint+'" class="'+((o.tint||info.color)===tint?'active':'')+'" style="--swatch:'+tint+'" title="'+tint+'" aria-label="Change to '+tint+'"></button>').join('')+'</div>':'')+
+   '<span class="hbf-wear-meter"><i style="width:'+(o.condition||100)+'%"></i></span></div>'+
+   '<button type="button" data-hbf-move="'+o.uid+'" '+(isBusy?'disabled':'')+'>MOVE</button>'+
+   (o.condition<98?'<button type="button" data-hbf-repair="'+o.uid+'" class="hbf-repair" '+(st.cash<bridge().repairCost(o.uid)?'disabled':'')+'>FIX $'+bridge().repairCost(o.uid)+'</button>':'')+
+   '<button type="button" data-hbf-sell="'+o.uid+'" class="hbf-sell" '+(isBusy?'disabled':'')+'>SELL</button></div>'
+ }).join(''):'<p class="hbf-empty">Your collection is just beginning. Find your first piece above.</p>')+'</div>'+
+ '<p class="hbf-note">Rugs go beneath existing furniture. Small objects can be placed on the dining table and other suitable tables. Tap a 3D item to use it; Build Mode lets you move or recolour it.</p>';
+ root.innerHTML=html;
+ updateStatus();
+ applySearch()
+}
+function applySearch(){
+ const root=view();if(!root)return;
+ const term=searchQuery.trim().toLowerCase();
+ let shown=0;
+ root.querySelectorAll('[data-hbf-item]').forEach(card=>{
+  const match=!term||(card.dataset.hbfText||'').includes(term);
+  card.hidden=!match;
+  if(match)shown++
+ });
+ const count=root.querySelector('#hbf-result-count');if(count)count.textContent=shown+' PIECES';
+ const empty=root.querySelector('#hbf-empty-results');if(empty)empty.hidden=shown>0
+}
+function install(){
+ const body=view();if(!body)return;
+ body.addEventListener('input',e=>{
+  if(e.target.id==='hbf-search'){searchQuery=e.target.value||'';applySearch()}
+ });
+ body.addEventListener('change',e=>{
+  if(e.target.id==='hbf-style'){styleFilter=e.target.value||'all';render()}
+ });
+ body.addEventListener('click',e=>{
+  const claim=e.target.closest('[data-hbf-claim-set]');if(claim){if(bridge()?.claimSet?.(claim.dataset.hbfClaimSet))render();return}
+  const collection=e.target.closest('[data-hbf-set]');if(collection){styleFilter=collection.dataset.hbfSet;filter='all';category='all';render();return}
+  const wish=e.target.closest('[data-hbf-wish]');if(wish){bridge()?.toggleWishlist?.(wish.dataset.hbfWish);render();return}
+  const repair=e.target.closest('[data-hbf-repair]');if(repair){if(bridge()?.repair?.(repair.dataset.hbfRepair))render();return}
+  const preview=e.target.closest('[data-hbf-preview]');if(preview){begin(preview.dataset.hbfPreview,null,true);return}
+  const recolor=e.target.closest('[data-hbf-color]');if(recolor){
+   const [uid,color]=recolor.dataset.hbfColor.split(',');
+   if(bridge()?.recolor?.(uid,color))render();
+   return
+  }
+  const cat=e.target.closest('[data-hbf-category]');if(cat){category=cat.dataset.hbfCategory;render();return}
+  const choice=e.target.closest('[data-hbf-filter]');if(choice){filter=choice.dataset.hbfFilter;render();return}
+  let room=e.target.closest('[data-hbf-room]');if(room){clear();window.Evin3D?.focusRoom?.(room.dataset.hbfRoom);render();return}
+  room=e.target.closest('[data-hbf-room-buy]');if(room){
+   const installed=bridge()?.buyRoom?.(room.dataset.hbfRoom);
+   if(installed){clear();window.Evin3D?.focusRoom?.(room.dataset.hbfRoom);render()}
+   return
+  }
+  let t=e.target.closest('[data-hbf-buy]');if(t){begin(t.dataset.hbfBuy);return}
+  t=e.target.closest('[data-hbf-move]');if(t){const f=bridge()?.getState?.()?.furniture?.find(x=>x.uid===t.dataset.hbfMove);if(f)begin(f.type,f.uid);return}
+  t=e.target.closest('[data-hbf-sell]');if(t){sell(t.dataset.hbfSell);return}
+  if(e.target.closest('[data-hbf-turn]')){rotate();return}
+  t=e.target.closest('[data-hbf-nudge]');if(t){const [dx,dz]=t.dataset.hbfNudge.split(',').map(Number);nudge(dx,dz);return}
+  if(e.target.closest('[data-hbf-confirm]')){confirm();return}
+  if(e.target.closest('[data-hbf-cancel]')){clear();render()}
+ });
+ window.HouseBossFurnitureTypes=types;
+ window.HouseBossFurnitureUI={
+  render,clear,types,
+  selectFrom3D:function(uid){
+   if(!document.getElementById('notebook')?.classList.contains('design-mode'))return;
+   const f=bridge()?.getState?.()?.furniture?.find(o=>o.uid===uid);
+   if(f)begin(f.type,uid)
+  },
+  updateStatus
+ };
+}
+install();
+})();
+</script>
+<script>
+/* BUNDLED: ALL 37 COLLECTIBLE OBJECTS */
+/* HOUSE BOSS · EDITIONS / collectible interiors. All objects have real 3D counterparts. */
+(function(){
+ 'use strict';
+ const t=window.HouseBossFurnitureTypes;if(!t)return;
+ const items={
+  ceramicvase:{name:'Pebble Ceramic Vase',category:'objects',style:'organic',price:85,level:1,tier:'starter',w:.32,d:.32,shape:'vase',layer:'tabletop',comfort:2,color:'#d99786',action:'talk',desc:'Hand-thrown ceramic in warm coral.'},
+  lemonbowl:{name:'Citrus Studio Bowl',category:'objects',style:'pop',price:100,level:1,tier:'starter',w:.38,d:.38,shape:'bowl',layer:'tabletop',comfort:2,color:'#f4bf48',action:'talk',desc:'A glazed bowl with tiny sculpted fruit.'},
+  petalstool:{name:'Petal Pop Stool',category:'seating',style:'pop',price:165,level:1,tier:'starter',w:.78,d:.78,shape:'stool',comfort:5,color:'#ed9ca8',action:'nap',desc:'Soft, oversized petals on a bright stem.'},
+  terracottatotem:{name:'Terracotta Totem',category:'objects',style:'organic',price:210,level:2,tier:'modern',w:.56,d:.56,shape:'sculpture',comfort:3,color:'#d07854',action:'talk',desc:'Stacked hand-built forms with imperfect charm.'},
+  bouclepouf:{name:'Marshmallow Pouf',category:'seating',style:'soft',price:230,level:2,tier:'modern',w:.84,d:.84,shape:'pouf',comfort:7,color:'#e7d8c6',action:'nap',desc:'A cloud-like seat with an exaggerated silhouette.'},
+  cactusplanter:{name:'Blue Cactus Garden',category:'plants',style:'pop',price:185,level:2,tier:'modern',w:.65,d:.65,shape:'plant',comfort:3,color:'#5c9fa2',action:'clean',desc:'Playful ceramic pot and sculpted desert greenery.'},
+  mushroomlamp:{name:'Milk-Glass Mushroom',category:'lighting',style:'retro',price:290,level:2,tier:'modern',w:.52,d:.52,shape:'mushroom',comfort:5,color:'#f8c1a7',action:'read',desc:'A glowing retro mushroom silhouette.'},
+  candychecker:{name:'Candy Checker Rug',category:'rugs',style:'pop',price:295,level:2,tier:'modern',w:2.25,d:1.65,shape:'rug',layer:'floor',comfort:5,color:'#edafbd',action:'nap',desc:'A graphic pink-and-cream checkerboard.'},
+  galleryprint:{name:'Gallery Print on Easel',category:'art',style:'modern',price:355,level:3,tier:'modern',w:.80,d:.49,shape:'art',comfort:4,color:'#789a97',action:'paint',desc:'An abstract framed print on a slim gallery stand.'},
+  spoolstool:{name:'Ribbon Spool Stool',category:'seating',style:'retro',price:390,level:3,tier:'modern',w:.76,d:.76,shape:'stool',comfort:6,color:'#edb34d',action:'nap',desc:'A rounded lacquered hourglass in butter yellow.'},
+  checkerottoman:{name:'Chess Club Ottoman',category:'seating',style:'pop',price:395,level:3,tier:'modern',w:.96,d:.82,shape:'pouf',comfort:9,color:'#a1b9d6',action:'nap',desc:'Soft blue-and-cream check upholstery.'},
+  knotpillow:{name:'Oversized Knot Cushion',category:'objects',style:'soft',price:265,level:3,tier:'modern',w:.42,d:.42,shape:'knot',layer:'tabletop',comfort:3,color:'#b899d4',action:'talk',desc:'A playful sculpted twist in lilac velvet.'},
+  bobbinlamp:{name:'Wavy Bobbin Lamp',category:'lighting',style:'pop',price:450,level:4,tier:'modern',w:.56,d:.56,shape:'lamp',comfort:5,color:'#b4b7e8',action:'read',desc:'A lilac bobbin base with a warm linen shade.'},
+  squigglemirror:{name:'Squiggle Full Mirror',category:'art',style:'pop',price:560,level:4,tier:'modern',w:.88,d:.32,shape:'mirror',comfort:4,color:'#e98ca8',action:'talk',desc:'Wavy pink frame, oversized and unapologetic.'},
+  cloudstool:{name:'Cloud Nine Stool',category:'seating',style:'soft',price:510,level:4,tier:'modern',w:.96,d:.86,shape:'pouf',comfort:9,color:'#ebdad5',action:'nap',desc:'Rounded cloud modules with no sharp edges.'},
+  pebblecoffee:{name:'Pebble Coffee Table',category:'tables',style:'organic',price:630,level:4,tier:'modern',w:1.20,d:.82,shape:'table',comfort:7,color:'#a7c0a7',action:'talk',desc:'An asymmetric organic pebble-shaped tabletop.'},
+  scallopshelf:{name:'Scalloped Display Shelf',category:'storage',style:'retro',price:690,level:5,tier:'premium',w:1.10,d:.48,shape:'shelf',comfort:8,color:'#edb0a0',action:'read',desc:'Wavy lacquered edges and collectible niches.'},
+  coilmatt:{name:'Ribbon Wave Rug',category:'rugs',style:'organic',price:590,level:5,tier:'premium',w:2.40,d:1.65,shape:'rug',layer:'floor',comfort:7,color:'#a5bca5',action:'nap',desc:'Freeform sage-and-cream waves, thick tufting.'},
+  roombloom:{name:'Giant Paper Flower',category:'plants',style:'pop',price:680,level:5,tier:'premium',w:.70,d:.70,shape:'flower',comfort:6,color:'#f3b6d0',action:'talk',desc:'A floor-standing sculptural flower.'},
+  ribbonchair:{name:'Ribbon Lounge Chair',category:'seating',style:'pop',price:1120,level:6,tier:'premium',w:1.22,d:1.18,shape:'chair',comfort:19,color:'#c77cba',action:'nap',desc:'One continuous velvet loop becomes a chair.'},
+  travertinetable:{name:'Travertine Totem Table',category:'tables',style:'organic',price:840,level:6,tier:'premium',w:1.12,d:.82,shape:'table',comfort:9,color:'#d5bfaa',action:'talk',desc:'Hand-finished stone with stacked cylindrical feet.'},
+  spherevase:{name:'Glass Bubble Bud Vase',category:'objects',style:'modern',price:430,level:6,tier:'premium',w:.34,d:.34,shape:'vase',layer:'tabletop',comfort:4,color:'#7ec6c1',action:'talk',desc:'Translucent cyan glass bubbles with one stem.'},
+  galleryframe:{name:'Colour Field Triptych',category:'art',style:'pop',price:750,level:6,tier:'premium',w:1.40,d:.50,shape:'art',comfort:8,color:'#f29d6f',action:'paint',desc:'Three oversized colourful modern panels.'},
+  sunsetlamp:{name:'Sunset Disc Light',category:'lighting',style:'retro',price:790,level:7,tier:'premium',w:.66,d:.66,shape:'lamp',comfort:8,color:'#ffb763',action:'read',desc:'A luminous amber disc on a thin sculptural frame.'},
+  glassgarden:{name:'Glasshouse Terrarium',category:'plants',style:'organic',price:1180,level:7,tier:'premium',w:.70,d:.66,shape:'plant',comfort:8,color:'#83b99d',action:'clean',desc:'A tiny indoor garden beneath a glass bell.'},
+  croissantsofa:{name:'Croissant Velvet Sofa',category:'seating',style:'soft',price:2110,level:8,tier:'premium',w:2.25,d:1.22,shape:'sofa',comfort:31,color:'#d88e6c',action:'nap',desc:'One plump continuous crescent in burnt orange.'},
+  galleryplinth:{name:'Gallery Sculpture Plinth',category:'art',style:'modern',price:1050,level:8,tier:'premium',w:.65,d:.65,shape:'sculpture',comfort:7,color:'#e6ddd0',action:'paint',desc:'A museum pedestal holding a folded abstract form.'},
+  orbitlamp:{name:'Orbit Ring Lamp',category:'lighting',style:'modern',price:1520,level:9,tier:'luxury',w:.80,d:.72,shape:'lamp',comfort:11,color:'#d5ad70',action:'read',desc:'Gold orbital rings around a glowing glass sphere.'},
+  wavebookcase:{name:'Ribbon Gallery Shelf',category:'storage',style:'retro',price:2280,level:9,tier:'luxury',w:1.52,d:.50,shape:'shelf',comfort:14,color:'#90b1cf',action:'read',desc:'An undulating pastel blue display bookcase.'},
+  tulipchair:{name:'Tulip Swivel Chair',category:'seating',style:'retro',price:1900,level:10,tier:'luxury',w:1.22,d:1.14,shape:'chair',comfort:24,color:'#edb8a4',action:'nap',desc:'A scalloped petal back on a sculpted pedestal.'},
+  mirrorball:{name:'Disco Cloud Sculpture',category:'art',style:'pop',price:1330,level:10,tier:'luxury',w:.78,d:.78,shape:'sculpture',comfort:11,color:'#bfcbd3',action:'dance',desc:'A mirrored sphere mounted on a black pedestal.'},
+  giantflower:{name:'Statement Bloom Lamp',category:'lighting',style:'pop',price:1580,level:11,tier:'luxury',w:1.12,d:.86,shape:'flower',comfort:12,color:'#f1c78d',action:'read',desc:'An enormous luminous petal flower.'},
+  formscreens:{name:'Wave Room Divider',category:'storage',style:'organic',price:2390,level:11,tier:'luxury',w:1.70,d:.40,shape:'screen',comfort:12,color:'#9ac1aa',action:'talk',desc:'Three sculpted arches define a new living zone.'},
+  chrometable:{name:'Liquid Chrome Table',category:'tables',style:'modern',price:2050,level:12,tier:'luxury',w:1.25,d:.90,shape:'table',comfort:13,color:'#c4cad5',action:'talk',desc:'Fluid polished metal that looks poured into shape.'},
+  collectiblechair:{name:'Collector’s Loop Chair',category:'seating',style:'pop',price:2950,level:13,tier:'luxury',w:1.33,d:1.27,shape:'chair',comfort:34,color:'#e69776',action:'nap',desc:'An iconic looped seat, hand-finished terracotta.'},
+  haloarmchair:{name:'Halo Bouclé Throne',category:'seating',style:'soft',price:3350,level:14,tier:'luxury',w:1.45,d:1.35,shape:'chair',comfort:38,color:'#e5c5d8',action:'nap',desc:'A broad enveloping circular back with cloud cushions.'},
+  limitedsofa:{name:'One-of-One Cloud Sofa',category:'seating',style:'soft',price:4800,level:16,tier:'luxury',w:2.45,d:1.34,shape:'sofa',comfort:45,color:'#d7c5e9',action:'nap',desc:'Gallery-grade modular seating, a dreamy statement piece.'}
+ };
+ const coreCategories={
+  plant:'plants',bookshelf:'storage',floorlamp:'lighting',armchair:'seating',ottoman:'seating',petbed:'seating',easel:'art',
+  yogamat:'objects',sidetable:'tables',stereo:'objects',loungechair:'seating',loveseat:'seating',recliner:'seating',
+  walnutdesk:'tables',chaise:'seating',daybed:'seating',pendant:'lighting',statementsofa:'seating',hifi:'objects',grandbookcase:'storage'
+ };
+ Object.entries(coreCategories).forEach(([id,cat])=>{if(t[id]){t[id].category=cat;t[id].style=t[id].style||'modern';t[id].layer=t[id].layer||'solid'}});
+ const palettes={
+  pop:['#e984a7','#a89bd1','#8eb9cc','#fac57c','#eab3a5'],
+  soft:['#e9d9cd','#c5b8db','#bbd1bf','#f0c1bb','#9ab4ce'],
+  retro:['#edb54b','#df8b68','#9bb6aa','#a0a7d4','#c48f8b'],
+  organic:['#c6b49f','#97b19c','#bfa5a6','#e2c39f','#a1bed0'],
+  modern:['#c8cacc','#a7b8c3','#bea5ac','#e1c7aa','#91aca5']
+ };
+ Object.entries(items).forEach(([id,v])=>{
+  v.layer=v.layer||'solid';v.style=v.style||'modern';v.collection='EDITIONS';
+  v.variants=[v.color].concat((palettes[v.style]||palettes.modern).filter(x=>x!==v.color)).slice(0,5);
+  t[id]=v
+ });
+ window.HouseBossDesignerCollection=Object.freeze({ids:Object.keys(items),categories:{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART & SCULPTURE',objects:'SMALL OBJECTS',plants:'GREENERY',storage:'STORAGE'}});
+})();
+
+</script>
+<script>
+/* BUNDLED: DESIGN UI CONTROLLER */
+/* HOUSE BOSS / HOME DESIGN STUDIO V1
+   Original design controls, six rooms/finishes, live 3D previews and persistent owned styles.
+   Works with the existing game bridge; no separate game/save state. */
+(function(){
+'use strict';
+const catalog={
+ sofa:{label:'Sofas',icon:'▱',description:'A sofa changes how your home feels.',options:[
+  ['starter','Everyday Linen',0,'#bdb49c','Simple and comfortable'],
+  ['sage','Modern Sage',175,'#8ca796','Clean, soft and inviting'],
+  ['rust','Rust Velvet',215,'#be7c67','A statement curved sofa'],
+  ['navy','Midnight Blue',260,'#667f9b','Deep, dramatic cushions'],
+  ['boucle','Cloud Bouclé',480,'#f1e9d9','A premium rounded silhouette'],
+  ['leather','Heritage Leather',980,'#86674f','Tailored caramel leather and solid timber'],
+  ['cloud','Cloud Modular',1950,'#e3ddd2','Generous deep modular cushions'],
+  ['atelier','Atelier Signature',3600,'#b4a696','Sculptural collectible-design seating']
+ ]},
+ wallpaper:{label:'Wallpaper',icon:'▧',description:'A new wall finish can completely change the room.',options:[
+  ['ivory','Warm Plaster',0,'#f6f1e6','Original cream'],
+  ['sage','Sage Stripes',90,'#acc2aa','Quiet vertical stripes'],
+  ['botanical','Botanical Print',155,'#83aa83','A subtle green leaf motif'],
+  ['clay','Clay Wash',125,'#d3a294','Warm, earthy and textural'],
+  ['blue','Misty Blue',115,'#b2c9da','A soft coastal look']
+ ]},
+ flooring:{label:'Flooring',icon:'▦',description:'Replace the flooring of the entire living space.',options:[
+  ['hex','Classic Hex',0,'#d6d8d0','Original ceramic tile'],
+  ['oak','Natural Oak',165,'#bf9b74','Wood planks'],
+  ['terrazzo','Soft Terrazzo',195,'#dfd4c6','Stone flecks in a warm base'],
+  ['checker','Sage Checker',175,'#9cae9c','A retro checkerboard']
+ ]},
+ cabinets:{label:'Cabinets',icon:'▤',description:'Repaint the kitchen cabinetry.',options:[
+  ['sage','Original Sage',0,'#a5b8a4','Natural muted green'],
+  ['cream','Oat Cream',120,'#e2d4b8','Bright and cozy'],
+  ['forest','Deep Forest',190,'#526c5c','A sophisticated green'],
+  ['blue','Dusty Blue',150,'#8daebc','Soft blue-grey'],
+  ['clay','Warm Clay',145,'#c28d7b','Terracotta-toned cabinets']
+ ]},
+ rug:{label:'Rugs',icon:'▩',description:'Add a layer of color and softness.',options:[
+  ['linen','Natural Linen',0,'#c9be9c','Neutral woven fibers'],
+  ['rose','Vintage Rose',105,'#b98786','A faded floral palette'],
+  ['forest','Fern Green',105,'#6c946f','Earthy botanical'],
+  ['blue','Sky Weave',95,'#8db6c1','Cool tones and texture']
+ ]},
+ curtains:{label:'Curtains',icon:'║',description:'Change the light and mood around the window.',options:[
+  ['terracotta','Copper Linen',0,'#bb7954','Warm café curtains'],
+  ['ivory','Sheer Ivory',90,'#eee7d9','Bright and breezy'],
+  ['sage','Muted Sage',105,'#94ab92','Soft natural green'],
+  ['navy','Blue Grey',110,'#718b9b','A little more contrast']
+ ]}
+};
+const sofaLevels={starter:1,sage:2,rust:3,navy:5,boucle:7,leather:9,cloud:12,atelier:15};
+Object.entries(catalog).forEach(([cat,data])=>data.options.forEach((o,i)=>{o[5]=cat==='sofa'?sofaLevels[o[0]]:(i===0?1:Math.max(1,Math.ceil((i+1)/1.5)))}));
+let category='furniture',preview=null;
+function bridge(){return window.HouseBossDesignBridge}
+function state(){return bridge()?.getState?.()||{cash:0,value:0,selected:{},unlocked:{}}}
+function selectedStyle(cat){let st=state();return st.selected?.[cat]||catalog[cat].options[0][0]}
+function owned(cat,id){return !!state().unlocked?.[cat]?.includes(id)||id===catalog[cat].options[0][0]}
+function effective(){return Object.fromEntries(Object.keys(catalog).map(k=>[k,preview?.category===k?preview.id:selectedStyle(k)]))}
+function updateScene(){window.Evin3D?.applyDesign?.(effective())}
+function clearPreview(){window.HouseBossFurnitureUI?.clear?.();preview=null;bridge()?.preview?.(null,null);updateScene()}
+function openShop(){clearPreview();category='furniture';bridge()?.open?.();render()}
+function render(){
+ let root=document.getElementById('noteBody');
+ if(!root)return;
+ if(category==='furniture'){
+  try{
+   if(window.HouseBossFurnitureUI?.render){
+    window.HouseBossFurnitureUI.render();
+    if(root.querySelector('.hbf-market'))return;
+   }
+  }catch(err){console.error('House Boss designer shop render error',err)}
+  const title=document.getElementById('noteTitle');if(title)title.textContent='Design Shop';
+  const types=window.HouseBossFurnitureTypes||{},items=Object.entries(types);
+  root.innerHTML='<div class="hbf-recovery"><h3>Design Shop · '+items.length+' objects</h3>'+
+   '<p>The shop view failed to load. The object index is available below.</p>'+
+   items.map(function(entry){return '<div class="hbf-recover-item"><b>'+entry[1].name+'</b><small> · $'+entry[1].price+'</small></div>'}).join('')+
+   '</div>';
+  return
+ }
+ const st=state(),data=catalog[category],active=preview?.category===category?preview.id:selectedStyle(category);
+ const section=document.getElementById('notebook');section?.classList.toggle('design-mode',true);
+ const title=document.getElementById('noteTitle');if(title)title.textContent='Home Design';
+ const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+Math.floor(st.cash)+' · Property value $'+(st.value||0)+' · HOME LVL '+(st.level||1);
+ let html='<div class="hd-lead"><span class="hd-kicker">INTERIOR DESIGN STUDIO · HOME LVL '+(st.level||1)+'</span><p>Make your first apartment a designer home. Premium styles unlock as your Home Level rises. Preview a future look any time.</p></div>';
+ html+='<nav class="hd-categories" aria-label="Design categories"><button type="button" data-hd-category="furniture"><span>▣</span>Furniture</button>'+Object.entries(catalog).map(([k,v])=>'<button type="button" data-hd-category="'+k+'" class="'+(k===category?'active':'')+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>';
+ html+='<div class="hd-collection"><div><h3>'+data.label+'</h3><small>'+data.description+'</small></div><button type="button" data-hd-focus>VIEW IN 3D ↗</button></div>';
+ html+='<div class="hd-options">'+data.options.map(opt=>{
+  const [id,name,price,color,desc,needLevel]=opt,isActive=selectedStyle(category)===id,isOwned=owned(category,id),isShowing=active===id;
+  const locked=(st.level||1)<needLevel&&!isOwned;
+  const poor=st.cash<price&&!isOwned;
+  return '<article class="hd-style '+(isShowing?'hd-current ':'')+(isActive?'hd-applied':'')+(locked?' hd-locked':'')+'">'+
+   '<button class="hd-preview" type="button" data-hd-preview="'+category+':'+id+'" aria-label="Preview '+name+'">'+
+    '<span class="hd-swatch" style="--sample:'+color+'"><i></i></span>'+
+    '<span class="hd-style-name">'+name+'</span><span class="hd-style-desc">'+desc+'</span><span class="hd-tier">'+(locked?'◆ LEVEL '+needLevel+' TO UNLOCK':'LVL '+needLevel+' COLLECTION')+'</span>'+
+    '<span class="hd-style-tag">'+(isActive?'IN ROOM':isOwned?'OWNED':locked?'LOCKED':'$'+price)+'</span></button>'+
+   '<button type="button" class="hd-purchase" data-hd-apply="'+category+':'+id+'" '+(isActive||poor||locked?'disabled':'')+'>'+
+    (isActive?'✓ INSTALLED':isOwned?'APPLY':locked?'UNLOCK LVL '+needLevel:poor?'NEED $'+(price-st.cash):'BUY · $'+price)+'</button></article>'
+ }).join('')+'</div>';
+ html+='<div class="hd-foot"><span>HOME VALUE · $'+(st.value||0)+'</span>'+
+ (preview?'<button type="button" data-hd-revert>REVERT PREVIEW</button>':'<span>DESIGNS ARE SAVED</span>')+
+ '</div><p class="hd-tip">Changes are visualized in the existing 3D house. Bought styles are yours permanently; switch back for free.</p>';
+ root.innerHTML=html;
+}
+function apply(cat,id){
+ let option=catalog[cat]?.options.find(o=>o[0]===id);
+ if(!option)return;
+ let ok=bridge()?.apply?.(cat,id,option[2]);
+ if(!ok)return;
+ preview=null;updateScene();render()
+}
+function showPreview(cat,id){
+ if(!catalog[cat]?.options.some(o=>o[0]===id))return;
+ category=cat;preview={category:cat,id};bridge()?.preview?.(cat,id);updateScene();render()
+}
+function install(){
+ const tabs=document.querySelector('#notebook .note-tabs'),body=document.getElementById('noteBody');
+ if(!tabs||!body)return;
+ const tab=document.createElement('button');tab.type='button';tab.dataset.tab='design';tab.textContent='DESIGN';
+ tabs.insertBefore(tab,tabs.firstChild);
+ tab.addEventListener('click',()=>{clearPreview();bridge()?.open?.();render()});
+ body.addEventListener('click',e=>{
+  if(e.target.closest('[data-hd-focus]')){window.Evin3D?.focusDesign?.(category);return}
+  let el=e.target.closest('[data-hd-category]');if(el){clearPreview();category=el.dataset.hdCategory;render();return}
+  el=e.target.closest('[data-hd-preview]');if(el){let [c,id]=el.dataset.hdPreview.split(':');showPreview(c,id);return}
+  el=e.target.closest('[data-hd-apply]');if(el){let [c,id]=el.dataset.hdApply.split(':');apply(c,id);return}
+  if(e.target.closest('[data-hd-revert]')){clearPreview();render()}
+ });
+ const close=document.getElementById('closeNotebook');
+ close?.addEventListener('click',clearPreview);
+ document.getElementById('noteShade')?.addEventListener('click',clearPreview);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')clearPreview()});
+ // The original Upgrades tab remains available for structural home expansions.
+ const oldTabs=Array.from(tabs.querySelectorAll('button:not([data-tab="design"])'));
+ oldTabs.forEach(b=>b.addEventListener('click',()=>{
+  clearPreview();document.getElementById('notebook')?.classList.remove('design-mode');
+ },true));
+ window.HouseBossHomeDesign={render,clearPreview,openShop,effective,catalog,isFurnitureView(){return category==='furniture'&&document.getElementById('notebook')?.classList.contains('design-mode')},selectCategory(k){if(k==='furniture'||catalog[k]){clearPreview();category=k;render()}}};
+}
+install();
+const widget=document.getElementById('levelWidget');
+if(widget&&!document.getElementById('hbDesignerShopButton')){
+ const shop=document.createElement('button');
+ shop.type='button';shop.id='hbDesignerShopButton';
+ shop.setAttribute('aria-label','Open the Design Shop with 57 furniture and decorative objects');
+ shop.innerHTML='<b>✦ DESIGN SHOP</b><small>37 NEW OBJECTS</small>';
+ shop.addEventListener('click',openShop);
+ widget.appendChild(shop);
+}
+})();
+</script>
+<script>
+/* BUNDLED: LIFE HUB */
+
+/* House Boss Life Hub V2 — persistent, actionable, read-only until player clicks. */
+(function(){
+'use strict';
+const B=window.HouseBossLifestyleBridge,build=()=>window.HouseBossBuildBridge;
+const book=document.getElementById('notebook'),body=document.getElementById('noteBody'),level=document.getElementById('levelWidget');
+if(!B||!book||!body||!level)return;
+let section='overview',plannerPerson='self',plannerNotice='';
+const sections=[['overview','OVERVIEW'],['planner','DAILY PLANNER'],['career','CAREER'],['home','HOME & DESIGN'],['finance','FINANCES']];
+const fmt=n=>'$'+Math.round(Number(n)||0).toLocaleString('en-US');
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=n=>Math.max(0,Math.min(100,Math.round(Number(n)||0)));
+const bar=(v,tone='green')=>'<div class="hbl-bar '+tone+'"><i style="width:'+pct(v)+'%"></i></div>';
+const nextMilestone=s=>s.milestones.find(m=>!m.claimed);
+function progress(m,s){return Math.round((Math.min(1,s.homeLevel/m.level)+Math.min(1,s.quality.score/m.quality)+Math.min(1,s.careerLevel/m.career))/3*100)}
+function metric(label,value,sub){return '<div class="hbl-metric"><span>'+label+'</span><strong>'+value+'</strong><small>'+sub+'</small></div>'}
+function pageTabs(){
+ return '<nav class="hbl-tabs">'+sections.map(([id,label])=>'<button type="button" data-hbl-tab="'+id+'" class="'+(section===id?'active':'')+'">'+label+'</button>').join('')+'</nav>'
+}
+function needsBrief(s){
+ const p=s.needs.self||{};
+ const keys=['hunger','hygiene','bladder','fun','social','energy'];
+ const worst=keys.sort((a,b)=>Number(p[a]||0)-Number(p[b]||0))[0];
+ const label={hunger:'Hunger',hygiene:'Hygiene',bladder:'Bathroom',fun:'Fun',social:'Social',energy:'Energy'}[worst];
+ return {label,value:pct(p[worst]),action:worst==='energy'?'Take a rest':'Care for '+label.toLowerCase()}
+}
+function priority(s){
+ const f=s.peaceFactors,n=needsBrief(s);
+ if(s.debt>=45)return {tag:'BUDGET ALERT',title:'Get the bills under control',copy:'Debt reduces household peace. Paying it down helps the home recover.',action:'finance',text:'VIEW FINANCES'};
+ if(n.value<38)return {tag:'YOUR NEXT MOVE',title:n.action,copy:'Your lowest personal need is '+n.value+'%. Restoring daily needs supports mood and peace.',action:'planner',text:'PLAN DAILY CARE'};
+ if(f.chores<65)return {tag:'HOUSEHOLD PRIORITY',title:'Share the chores',copy:'Overdue and unfinished work is putting pressure on your home.',action:'chores',text:'OPEN CHORES'};
+ if(s.quality.score<42)return {tag:'INTERIOR GOAL',title:'Upgrade your space',copy:'Better furniture increases comfort and makes everyday activities more rewarding.',action:'build',text:'DESIGN YOUR HOME'};
+ return {tag:'YOUR NEXT MOVE',title:'Build the next chapter',copy:'Your home is becoming a place to thrive. Work, design and collect new experiences.',action:'career',text:'EXPLORE CAREERS'}
+}
+function milestoneList(s,compact){
+ const arr=compact?s.milestones.filter(m=>!m.claimed).slice(0,2):s.milestones;
+ if(!arr.length)return '<div class="hbl-complete">Every chapter completed. Your home is a legacy.</div>';
+ return '<div class="hbl-milestones">'+arr.map((m,i)=>{
+  const amount=progress(m,s);
+  return '<article class="hbl-milestone '+(m.claimed?'completed ':m.ready?'ready ':'locked')+'">'+
+   '<div class="hbl-medal">'+(m.claimed?'✓':m.ready?'✦':String(i+1).padStart(2,'0'))+'</div>'+
+   '<div class="hbl-milestone-copy"><div class="hbl-caption">'+(m.claimed?'COLLECTED':m.ready?'REWARD READY':'UPCOMING CHAPTER')+'</div>'+
+   '<strong>'+esc(m.title)+'</strong><small>'+esc(m.desc)+'</small>'+
+   '<div class="hbl-milestone-req"><span>HOME '+s.homeLevel+'/'+m.level+'</span><span>QUALITY '+s.quality.score+'/'+m.quality+'</span><span>CAREER '+s.careerLevel+'/'+m.career+'</span></div>'+
+   bar(amount)+'</div>'+
+   '<div class="hbl-milestone-reward"><b>'+fmt(m.reward)+'</b><small>+ '+m.xp+' XP</small>'+
+   (m.claimed?'<span class="hbl-done">CLAIMED</span>':m.ready?'<button type="button" data-hbl-claim="'+m.id+'">CLAIM</button>':'<span class="hbl-notyet">LOCKED</span>')+
+   '</div></article>'
+ }).join('')+'</div>'
+}
+function decisionCard(s){
+ const ev=s.event;if(!ev)return '';
+ const chosen=ev.options.find(o=>o.id===ev.selected);
+ return '<section class="hbl-daily-event '+(ev.selected?'resolved':'')+'">'+
+ '<div class="hbl-event-icon">✧</div><div class="hbl-event-content"><span class="hbl-eyebrow">LIFE MOMENT / DAY '+s.day+(ev.selected?' · RESOLVED':' · YOUR DECISION')+'</span>'+
+ '<h4>'+esc(ev.title)+'</h4><p>'+esc(ev.desc)+'</p>'+
+ (ev.selected?'<div class="hbl-event-result">✓ '+esc(chosen?.label||'Choice made')+' · Tomorrow brings a new situation.</div>':
+ '<div class="hbl-event-options">'+ev.options.map(o=>'<button type="button" data-hbl-decide="'+esc(o.id)+'" '+(!o.available?'disabled':'')+'>'+
+ '<strong>'+esc(o.label)+'</strong><small>'+esc(o.desc)+'</small></button>').join('')+'</div>')+
+ '</div></section>'
+}
+function overview(s){
+ const f=s.peaceFactors,p=priority(s),m=nextMilestone(s);
+ const factors=[['NEEDS',f.needs,'The people in this home'],['RELATIONSHIPS',f.relationships,'Family connections'],['HOME QUALITY',f.home,'Furniture and design'],['CHORES',f.chores,'Work left unfinished']];
+ return '<div class="hbl-hero"><div><span class="hbl-eyebrow">YOUR LIFE / DAY '+s.day+'</span><h3>Build the life you want.</h3><p>Your home changes with every choice — what you buy, how you work, and how you live.</p>'+
+ '<div class="hbl-hero-actions"><button data-hbl-go="build">DESIGN HOME</button><button class="hbl-outline" data-hbl-go="career">CAREER PATH</button><button class="hbl-outline" data-hbl-go="planner">DAILY PLANNER</button></div></div>'+
+ '<div class="hbl-house-emblem"><span>⌂</span><b>LVL '+s.homeLevel+'</b><small>'+esc(s.quality.tier)+'</small></div></div>'+
+ '<div class="hbl-metrics">'+metric('HOME LEVEL',s.homeLevel+' / 20',s.homeXP+' / '+s.homeNext+' XP')+
+ metric('CAREER',s.careerLevel+' / 12',esc(s.careerRank))+
+ metric('COMFORT',s.quality.comfort,'From your furnishings')+
+ metric('NET WORTH',fmt(s.netWorth),'Home + cash − debt')+'</div>'+decisionCard(s)+
+ '<div class="hbl-dual"><section class="hbl-panel"><div class="hbl-panel-title"><div><span>HOUSEHOLD WELL-BEING</span><h4>Why is House Peace at '+s.peace+'%?</h4></div><b class="hbl-peace-num">'+s.peace+'%</b></div>'+
+ '<p class="hbl-muted">Current balance target: '+f.target+'%. Peace moves gradually toward this value as daily conditions improve.</p>'+
+ factors.map(([label,value,ex])=>'<div class="hbl-factor"><div><b>'+label+'</b><strong>'+pct(value)+'%</strong></div>'+bar(value,value<42?'warm':'green')+'<small>'+ex+'</small></div>').join('')+
+ (s.debt?'<p class="hbl-warning">Unpaid bills: '+fmt(s.debt)+' · reduces peace</p>':'')+
+ '<button class="hbl-link" data-hbl-go="needs">IMPROVE DAILY NEEDS →</button></section>'+
+ '<section class="hbl-panel hbl-next-action"><span class="hbl-eyebrow">'+p.tag+'</span><h4>'+p.title+'</h4><p>'+p.copy+'</p>'+
+ '<button class="hbl-primary" data-hbl-go="'+p.action+'">'+p.text+'</button>'+
+ '<div class="hbl-nextline"><span>YOUR NEXT MILESTONE</span><b>'+(m?esc(m.title):'All milestones achieved')+'</b>'+
+ (m?bar(progress(m,s)):'')+'</div></section></div>'+
+ '<div class="hbl-section-title"><div><span>LONG-TERM PROGRESSION</span><h4>Your next chapters</h4></div><button data-hbl-tab="home">SEE ALL →</button></div>'+
+ milestoneList(s,true)
+}
+function careers(s){
+ const tracks=[['creative','DESIGN & TECH','Studio jobs, creativity and leadership'],['business','BUSINESS','Retail, operations and management'],['hospitality','HOSPITALITY','Service, people and guest experiences']];
+ const xpLeft=s.careerLevel>=12?0:125-(s.careerXP%125);
+ const jobs=s.careerJobs.slice().sort((a,b)=>a.level-b.level||b.pay-a.pay);
+ return '<div class="hbl-section-lead"><span>YOUR WORKING LIFE</span><h3>Make a career, not just a paycheck.</h3><p>Build work experience and personal skills to unlock higher-level jobs, earn more and furnish the home you imagine.</p></div>'+
+ '<div class="hbl-career-spotlight"><div><small>YOUR CURRENT ROLE</small><h4>'+esc(s.careerRank)+'</h4><span>CAREER LVL '+s.careerLevel+' · PARTNER LVL '+s.partnerCareerLevel+'</span>'+
+ bar(s.careerLevel>=12?100:(s.careerXP%125)/125*100)+
+ '<p>'+(s.careerLevel>=12?'Highest career level achieved.':'Next promotion in '+xpLeft+' career XP.')+'</p></div>'+
+ '<div><b>'+fmt(s.earned)+'</b><small>TOTAL HOUSEHOLD WAGES EARNED</small></div></div>'+
+ '<div class="hbl-section-title"><div><span>CHOOSE YOUR SPECIALIZATION</span><h4>Three ways to make it</h4></div></div>'+
+ '<div class="hbl-track-grid">'+tracks.map(([id,title,desc])=>'<button type="button" class="hbl-track '+(s.focus===id?'active':'')+'" data-hbl-focus="'+id+'" '+(s.focusChangedDay===s.day&&s.focus!==id?'disabled':'')+'>'+
+ '<span>'+(s.focus===id?'YOUR PATH':'SPECIALIZE')+'</span><strong>'+title+'</strong><small>'+desc+'</small><b>'+ (s.focus===id?'✓ ACTIVE':'+12% PAY / XP')+'</b></button>').join('')+'</div>'+
+ '<p class="hbl-muted">Matching shifts pay 12% more and earn extra career XP. You can change your direction once each game day.</p>'+
+ '<div class="hbl-section-title"><div><span>CAREER LADDER</span><h4>What becomes possible</h4></div><button data-hbl-go="town">GO TO WORK →</button></div>'+
+ '<div class="hbl-job-list">'+jobs.filter(j=>j.track===s.focus).map(j=>
+ '<div class="hbl-job '+(s.careerLevel<j.level?'locked':'available')+'"><span class="hbl-job-level">LVL '+j.level+'</span><div><b>'+esc(j.title)+'</b><small>'+esc(j.track.toUpperCase())+' · '+j.mins+' in-game min</small></div><strong>'+fmt(j.pay)+'</strong><span class="hbl-job-lock">'+(s.careerLevel>=j.level?'UNLOCKED':'LOCKED')+'</span></div>').join('')+'</div>'
+}
+function home(s){
+ const t=window.HouseBossFurnitureTypes||{},future=Object.entries(t).filter(([id,x])=>x.level>s.homeLevel).sort((a,b)=>a[1].level-b[1].level);
+ const next=future[0];
+ const wishlist=s.wishlist.map(id=>[id,t[id]]).filter(x=>x[1]);
+ const repair=s.furniture.filter(x=>x.condition<98).sort((a,b)=>a.condition-b.condition);
+ const ownedItems=s.furniture.slice().sort((a,b)=>a.condition-b.condition);
+ return '<div class="hbl-section-lead"><span>YOUR INTERIOR JOURNEY</span><h3>From first apartment to dream home.</h3><p>Every object has a story and a purpose. Comfort grows with your design choices, while favorite pieces last longer when maintained.</p></div>'+
+ '<div class="hbl-metrics">'+metric('HOME QUALITY',s.quality.score+'%',esc(s.quality.tier))+
+ metric('TOTAL COMFORT',s.quality.comfort,'Improves rest and mood')+
+ metric('FURNITURE',s.furniture.length,'Placed in 3D')+
+ metric('SAVED FOR LATER',wishlist.length,'Future purchases')+'</div>'+
+ '<div class="hbl-dual"><section class="hbl-panel"><span class="hbl-eyebrow">NEXT COLLECTION</span><h4>'+(next?esc(next[1].name):'Everything unlocked')+'</h4>'+
+ '<p>'+(next?'Unlock at Home Level '+next[1].level+' · '+fmt(next[1].price)+' · +'+next[1].comfort+' comfort.':'You have unlocked the entire furniture collection.')+'</p>'+
+ '<div class="hbl-lock-track">'+(future.length?future.slice(0,4).map(([id,m])=>'<span>LVL '+m.level+' · '+esc(m.name)+'</span>').join(''):'All collections available')+'</div>'+
+ '<button class="hbl-primary" data-hbl-go="build">OPEN FURNITURE CATALOG</button></section>'+
+ '<section class="hbl-panel"><span class="hbl-eyebrow">YOUR DESIGN SAVES</span><h4>Wishlist</h4>'+
+ (wishlist.length?'<div class="hbl-wishlist">'+wishlist.slice(0,6).map(([id,m])=>'<div><i style="background:'+m.color+'"></i><span>'+esc(m.name)+'</span><strong>'+fmt(m.price)+'</strong><small>LVL '+m.level+'</small></div>').join('')+'</div>':'<p>Save pieces in Build Mode to collect furniture ideas for later levels.</p>')+
+ '<button class="hbl-link" data-hbl-go="build">BROWSE COLLECTIONS →</button></section></div>'+
+ '<div class="hbl-section-title"><div><span>HOME MAINTENANCE</span><h4>Your installed furniture</h4></div><small>'+repair.length+' need care</small></div>'+
+ (ownedItems.length?'<div class="hbl-item-list">'+ownedItems.map(o=>{let m=t[o.type]||{name:o.type,color:'#9da5a2'};return '<div class="hbl-item"><i style="background:'+m.color+'"></i><div><b>'+esc(m.name)+'</b><small>CONDITION '+Math.round(o.condition)+'% · +'+(m.comfort||0)+' COMFORT</small>'+
+ bar(o.condition,o.condition<55?'warm':'green')+'</div>'+
+ (o.condition<98?'<button type="button" data-hbl-repair="'+esc(o.uid)+'" '+(s.cash<B.repairCost(o.uid)?'disabled':'')+'>REPAIR '+fmt(B.repairCost(o.uid))+'</button>':'<span class="hbl-maintained">GOOD</span>')+
+ '</div>'}).join('')+'</div>':'<div class="hbl-empty">No movable furniture yet. Design your first room to begin.</div>')+
+ '<div class="hbl-section-title"><div><span>HOME ACHIEVEMENTS</span><h4>Milestones</h4></div></div>'+milestoneList(s,false)
+}
+
+/* The planner uses the authoritative action queue: it does not simulate imaginary actions. */
+const familyLabels={self:'YOU',partner:'PARTNER',kid:'KID',pet:'DOG'};
+const needLabels={hunger:'HUNGER',hygiene:'HYGIENE',bladder:'BATHROOM',energy:'ENERGY',fun:'FUN',social:'SOCIAL'};
+const actionLabels={toilet:'Use Bathroom',shower:'Take a Shower',snack:'Have a Snack',nap:'Take a Nap',
+ read:'Read & Relax',tv:'Watch TV',talk:'Talk Together',playdog:'Play with Dog',
+ dogplay:'Play & Explore',groom:'Get Groomed',dogfood:'Eat Dog Food',dognap:'Dog Nap'};
+function routinePreview(s,who,id){
+ let steps=[];
+ if(id==='care')steps=s.carePlans?.[who]||[];
+ else steps=({morning:{self:['toilet','shower','snack'],partner:['toilet','shower','snack'],kid:['toilet','shower','snack'],pet:['dogplay','groom','dogfood']},
+ unwind:{self:['nap','snack','read'],partner:['nap','snack','read'],kid:['nap','snack','tv'],pet:['dognap','dogfood','dogplay']},
+ connect:{self:['talk','playdog','tv'],partner:['talk','playdog','tv'],kid:['talk','playdog','tv'],pet:['dogplay','groom','dognap']}})[id]?.[who]||[];
+ return steps.map(a=>actionLabels[a]||a).join(' → ');
+}
+function planner(s){
+ const who=plannerPerson,p=s.needs[who]||{},current=p.active,queue=p.queue||[];
+ const needs=Object.entries(needLabels).map(([id,name])=>{
+  const val=pct(p[id]),tone=val<30?'urgent':val<50?'low':'fine';
+  return '<div class="hbl-person-need '+tone+'"><div><b>'+name+'</b><strong>'+val+'%</strong></div>'+
+   bar(val,val<50?'warm':'green')+'</div>'
+ }).join('');
+ const canPlan=!(who==='kid'&&s.school);
+ const activeName=current?(actionLabels[current.id]||current.id):p.busy?'BUSY WITH OTHER TASKS':'AVAILABLE';
+ const list=(queue||[]).map((id,i)=>'<div class="hbl-planned-action"><span class="hbl-queue-number">'+(i+1)+'</span>'+
+  '<b>'+esc(actionLabels[id]||id)+'</b><button data-hbl-cancel="'+i+'" aria-label="Remove planned action">REMOVE</button></div>').join('');
+ const plans=[{id:'care',title:'Smart Care',desc:'Start with the needs that matter most.',icon:'✚'},
+  {id:'morning',title:'Morning Reset',desc:'Get clean, fed and ready for the day.',icon:'◌'},
+  {id:'unwind',title:'Unwind & Rest',desc:'Recover energy without rushing.',icon:'☾'},
+  {id:'connect',title:'Quality Time',desc:'Relationships and play matter too.',icon:'♡'}];
+ return '<div class="hbl-section-lead"><span>HOUSEHOLD / DAY '+s.day+'</span><h3>Small routines. A better everyday.</h3>'+
+ '<p>Make plans for each household member. Actions use real game time, household resources and the existing action queue.</p></div>'+
+ '<nav class="hbl-person-tabs" aria-label="Select household member">'+Object.keys(familyLabels).map(key=>{
+ const m=s.needs[key]||{},av=Math.round(Object.values(needLabels).reduce((sum,n,i)=>sum+pct(m[Object.keys(needLabels)[i]]),0)/6);
+ return '<button type="button" class="'+(who===key?'active ':'')+(av<45?'needs-help':'')+'" data-hbl-person="'+key+'">'+
+ '<span class="hbl-person-avatar '+key+'">'+familyLabels[key].slice(0,1)+'</span>'+
+ '<span><strong>'+familyLabels[key]+'</strong><small>'+av+'% WELL-BEING</small></span></button>'
+ }).join('')+'</nav>'+
+ '<div class="hbl-planner-grid"><section class="hbl-panel hbl-planner-needs"><div class="hbl-panel-title"><div><span>DAILY NEEDS</span><h4>'+familyLabels[who]+' · How are things?</h4></div><b class="hbl-planner-status">'+esc(p.mood?.label||'Fine')+'</b></div>'+
+ '<div class="hbl-person-needs">'+needs+'</div>'+
+ '<div class="hbl-autonomy"><div><b>FREE WILL</b><small>'+(who==='pet'?'The dog always follows its own needs.':who==='self'?'Your Sim can act autonomously when not selected.':'Let this character make their own choices.')+'</small></div>'+
+ '<button type="button" data-hbl-autonomy="'+who+'" '+(who==='pet'?'disabled':'')+' aria-pressed="'+Boolean(s.autonomy?.[who])+'">'+(s.autonomy?.[who]?'ON':'OFF')+'</button></div></section>'+
+ '<section class="hbl-panel hbl-planner-queue"><span class="hbl-eyebrow">ACTION QUEUE</span><h4>Now & Next</h4>'+
+ '<div class="hbl-active-now"><span class="hbl-status-dot '+(current?'busy':'')+'"></span><div><small>RIGHT NOW</small><b>'+esc(activeName)+'</b>'+(current?bar(100*(1-(current.left||0)/Math.max(1,current.total||1))):'')+'</div></div>'+
+ '<div class="hbl-queue-steps">'+(list||'<p class="hbl-muted">Nothing queued. Pick a routine below to make a plan.</p>')+'</div>'+
+ '<div class="hbl-queue-footer"><span>'+queue.length+' / 3 queued</span><span>'+(s.autonomy?.[who]?'AUTONOMY ENABLED':'MANUAL CONTROL')+'</span></div></section></div>'+
+ '<div class="hbl-section-title"><div><span>ONE-TAP ACTIVITY PLANNING</span><h4>Choose a routine</h4></div><small>3 actions max per queue</small></div>'+
+ '<div class="hbl-routines">'+plans.map(plan=>{
+ const preview=routinePreview(s,who,plan.id);
+ return '<article class="hbl-routine-card"><div class="hbl-routine-symbol">'+plan.icon+'</div><div><h4>'+plan.title+'</h4><p>'+plan.desc+'</p>'+
+ '<small>'+esc(preview)+'</small></div><button type="button" data-hbl-routine="'+plan.id+'" '+(!canPlan||queue.length>=3?'disabled':'')+'>PLAN →</button></article>'
+ }).join('')+'</div>'+
+ (plannerNotice?'<div class="hbl-planner-notice" role="status">'+esc(plannerNotice)+'</div>':'')+
+ '<p class="hbl-muted">Scheduled actions are charged when they begin, and can be removed individually. If a character is busy, new actions wait their turn. School and full queues prevent scheduling.</p>'
+}
+function finances(s){
+ const daily=s.dailyBills,months=7*daily;
+ const saving=s.debt>0?Math.min(s.debt,s.cash):0;
+ return '<div class="hbl-section-lead"><span>YOUR HOUSEHOLD ECONOMY</span><h3>Build a beautiful life, within your means.</h3><p>Jobs fund furniture, renovations and daily living. Income, home value and unpaid bills follow your saved game.</p></div>'+
+ '<div class="hbl-metrics">'+metric('AVAILABLE CASH',fmt(s.cash),'Ready to spend')+
+ metric('PROPERTY VALUE',fmt(s.propertyValue),'Improvements purchased')+
+ metric('UNPAID BILLS',fmt(s.debt),'Outstanding')+
+ metric('NET WORTH',fmt(s.netWorth),'Cash + home − bills')+'</div>'+
+ '<div class="hbl-dual"><section class="hbl-panel"><span class="hbl-eyebrow">HOUSEHOLD BUDGET</span><h4>Keep the lights on</h4>'+
+ '<div class="hbl-ledger"><div><span>Daily household bills</span><b>'+fmt(daily)+'</b></div><div><span>Seven game days</span><b>'+fmt(months)+'</b></div><div><span>Total career earnings</span><b>'+fmt(s.earned)+'</b></div><div><span>Bills paid so far</span><b>'+fmt(s.paidBills)+'</b></div><div><span>Pantry meals remaining</span><b>'+s.pantry+'</b></div></div>'+
+ (s.debt?'<div class="hbl-pay-row"><button data-hbl-pay="'+Math.min(45,s.debt,s.cash)+'" '+(s.cash<=0?'disabled':'')+'>PAY UP TO $45</button><button data-hbl-pay="'+s.debt+'" '+(s.cash<=0?'disabled':'')+'>PAY AS MUCH AS POSSIBLE</button></div>':
+ '<p class="hbl-positive">All household bills are up to date.</p>')+'</section>'+
+ '<section class="hbl-panel hbl-finance-advice"><span class="hbl-eyebrow">YOUR NEXT SMART MOVE</span><h4>'+(s.debt?'Clear unpaid bills first':'Plan your next upgrade')+'</h4>'+
+ '<p>'+(s.debt?'Debt can lower House Peace. Paying it back helps your household recover.':'Keep enough money for daily expenses, then invest in comfort and home value.')+'</p>'+
+ '<div class="hbl-saving-line"><span>7-DAY LIVING BUFFER</span><b>'+fmt(Math.max(0,s.cash))+' / '+fmt(months)+'</b>'+bar(months?Math.round(s.cash/months*100):100)+'</div>'+
+ '<button class="hbl-primary" data-hbl-go="'+(s.debt?'career':'build')+'">'+(s.debt?'EARN MORE AT WORK':'BROWSE HOME UPGRADES')+'</button></section></div>'
+}
+function render(){
+ if(book.classList.contains('hidden')||!B.getState().started)return;
+ const s=B.getState();book.classList.add('lifehub-mode');book.classList.remove('design-mode');
+ document.getElementById('noteTitle').textContent='Life Hub';
+ document.getElementById('noteBudget').textContent=fmt(s.cash)+' · DAY '+s.day+' · '+s.quality.tier;
+ body.innerHTML='<div class="hbl-app">'+pageTabs()+(section==='overview'?overview(s):section==='planner'?planner(s):section==='career'?careers(s):section==='home'?home(s):finances(s))+'</div>';
+}
+const mainTab=document.createElement('button');mainTab.type='button';mainTab.dataset.tab='lifestyle';mainTab.textContent='LIFE HUB';
+const tabs=book.querySelector('.note-tabs');tabs?.insertBefore(mainTab,tabs.firstChild);
+mainTab.addEventListener('click',()=>B.open('lifestyle'));
+const trigger=document.createElement('button');trigger.type='button';trigger.id='hbLifeHubTrigger';trigger.innerHTML='<span>YOUR LIFE AT A GLANCE</span><b>OPEN LIFE HUB ↗</b>';trigger.onclick=()=>B.open('lifestyle');
+level.appendChild(trigger);
+body.addEventListener('click',e=>{
+ const btn=e.target.closest('button');if(!btn||!book.classList.contains('lifehub-mode'))return;
+ if(btn.dataset.hblTab){section=btn.dataset.hblTab;plannerNotice='';render();return}
+ if(btn.dataset.hblPerson){plannerPerson=btn.dataset.hblPerson;plannerNotice='';render();return}
+ if(btn.dataset.hblRoutine){
+  const out=B.routine(plannerPerson,btn.dataset.hblRoutine);
+  plannerNotice=out.ok?'Scheduled '+out.added.length+' action(s) for '+familyLabels[plannerPerson]+'.'+(out.skipped?.length?' Some steps were skipped.':''):out.reason||'Unable to schedule.';
+  render();return
+ }
+ if(btn.dataset.hblCancel!==undefined){B.cancelPlanned(plannerPerson,Number(btn.dataset.hblCancel));plannerNotice='Removed a queued action.';render();return}
+ if(btn.dataset.hblAutonomy){B.toggleAutonomy(btn.dataset.hblAutonomy);render();return}
+ if(btn.dataset.hblDecide){if(B.decide(btn.dataset.hblDecide))render();return}
+ if(btn.dataset.hblClaim){if(B.claim(btn.dataset.hblClaim))render();return}
+ if(btn.dataset.hblRepair){if(B.repair(btn.dataset.hblRepair))render();return}
+ if(btn.dataset.hblPay!==undefined){if(B.payDebt(Number(btn.dataset.hblPay)))render();return}
+ if(btn.dataset.hblFocus){B.focus(btn.dataset.hblFocus);render();return}
+ if(btn.dataset.hblGo){
+  const go=btn.dataset.hblGo;
+  if(go==='planner'){section='planner';plannerNotice='';render()}
+  else if(go==='career'){section='career';render()}
+  else if(go==='finance'){section='finance';render()}
+  else if(go==='build')B.openBuild();
+  else if(go==='town')B.goTown();
+  else if(go==='needs')B.goNeeds();
+  else if(go==='chores'){B.goChores()}
+ }
+});
+const observer=new MutationObserver(()=>{
+ if(book.classList.contains('hidden'))book.classList.remove('lifehub-mode');
+});
+observer.observe(book,{attributes:true,attributeFilter:['class']});
+window.HouseBossLifestyle={render,open:()=>B.open('lifestyle')};
+})();
+
+</script>
 <script src="./house-boss-start.js?v=1"></script>
 </body>
 </html>
