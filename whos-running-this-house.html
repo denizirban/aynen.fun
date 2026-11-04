@@ -3357,6 +3357,10 @@ function gardenPlaceValidate(p){
   return {ok:false,reason:'Build the garden plot expansion to plant farther away'};
  if(gardenIsPlant(p.type)&&a.minX<1.35&&a.maxX>-5.2&&a.minZ<.78&&a.maxZ>-2.75)
   return {ok:false,reason:'Roots need soil, not the timber deck'};
+ if(gardenHas('greenhouse')&&a.minX<7.4&&a.maxX>4.30&&a.minZ<4.65&&a.maxZ>1.80)
+  return {ok:false,reason:'Leave the greenhouse walkway clear'};
+ if(gardenHas('patio')&&gardenIsPlant(p.type)&&a.minX<6.5&&a.maxX>1.6&&a.minZ<3.35&&a.maxZ>.42)
+  return {ok:false,reason:'This is a paved patio. Plant in grass instead'};
  for(const q of [[1.3,4,-2.4,-1.25],[5.4,6.9,-2.1,-.5]]){
   if(a.minX<q[1]&&a.maxX>q[0]&&a.minZ<q[3]&&a.maxZ>q[2])return {ok:false,reason:'Keep fixed garden furniture accessible'}
  }
@@ -3639,7 +3643,9 @@ window.HouseBossLifestyleBridge={
 /* 3D scene bridge: authoritative simulation and save state remain here. */
 window.EvinKitchenBridge={
  getState:function(){return {
-   homeDesign:effectiveHomeDesign(),furniture:homeFurnitureCopy(),time:time,day:day,owned:owned.slice(),started:started,paused:paused,ended:ended,
+   homeDesign:effectiveHomeDesign(),furniture:homeFurnitureCopy(),time:time,day:day,
+   owned:owned.slice().concat(gardenHas('studio')?['studio']:[]),gardenExpansions:gardenExpansions().slice(),
+   started:started,paused:paused,ended:ended,
    currentSpot:current&&current.spot||simState().active.self&&simState().active.self.spot||null,partnerSpot:helper&&helper.spot||simState().active.partner&&simState().active.partner.spot||null,
    kidSpot:childTask&&childTask.spot||simState().active.kid&&simState().active.kid.spot||null,
    selfAway:!!(life.shift||life.outing),partnerAway:!!life.pShift,kidAway:kidAtSchool(),
