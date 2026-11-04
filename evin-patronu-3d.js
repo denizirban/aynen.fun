@@ -648,11 +648,54 @@
     cylinder(g,.7,.65,.27,mat('gardenPot','#c7a382'),6.1,.16,-1.25);
     plant(6.1,.35,-1.25,2.2,g)
   });
+  /* Actual expandable 3D rooms, not cosmetic upgrade labels. */
+  const gardenFeatures={};
+  const gardenGroup=roomSpaces.garden;
+  const patio=new THREE.Group();gardenGroup.add(patio);gardenFeatures.patio=patio;patio.visible=false;
+  box(patio,4.6,.14,2.75,mat('expandedPatio','#c3aa8b'),3.9,.09,1.9);
+  for(let i=0;i<7;i++)box(patio,.035,.018,2.7,mat('patioPlanks','#967e63'),1.7+i*.65,.17,1.9);
+  for(const x of [2.65,5.1]){
+   box(patio,.85,.13,.70,wood,x,.50,2.15);
+   box(patio,.85,.66,.12,wood,x,.88,1.84)
+  }
+  cylinder(patio,.50,.52,.09,mat('patioTable','#e2cba8'),3.84,.65,2.10);
+  cylinder(patio,.08,.12,.56,wood,3.84,.33,2.10);
+
+  const greenHouse=new THREE.Group();gardenGroup.add(greenHouse);
+  gardenFeatures.greenhouse=greenHouse;greenHouse.visible=false;
+  const greenhouseFrame=mat('greenhouseFrame','#e5e4d4'),greenhouseGlass=new THREE.MeshStandardMaterial({
+   color:'#aed8d0',transparent:true,opacity:.22,roughness:.16,metalness:.15,depthWrite:false,side:THREE.DoubleSide
+  });
+  for(const x of [4.45,7.25])for(const z of [2.0,4.4])box(greenHouse,.075,2.5,.085,greenhouseFrame,x,1.34,z);
+  for(const z of [2,4.4])for(const y of [.18,2.50])box(greenHouse,2.92,.08,.075,greenhouseFrame,5.85,y,z);
+  for(const x of [4.45,7.25])box(greenHouse,.08,2.10,2.35,greenhouseGlass,x,1.30,3.2);
+  box(greenHouse,2.75,2.18,.04,greenhouseGlass,5.85,1.35,4.41);
+  box(greenHouse,3.02,.07,2.6,greenhouseFrame,5.85,2.57,3.20);
+  for(const x of [5.0,6.35]){
+   box(greenHouse,.92,.34,1.34,wood,x,.27,3.35);
+   for(let i=0;i<4;i++)plant(x-.30+i*.19,.46,3.35,.32,greenHouse)
+  }
+  // The Studio is a new architectural room joined visually to the expanded house.
+  addRoomWorld('studio',14.05,17.55,function(g){
+   box(g,8.55,.18,8.75,mat('studioBase','#d0c2ac'),0,-.13,0);
+   const floor=addMesh(g,new THREE.PlaneGeometry(8.5,8.70),floorMat,0,.016,0,false,true);floor.rotation.x=-Math.PI/2;
+   box(g,8.5,5.2,.14,plaster,0,2.6,-4.4);
+   box(g,.14,5.2,8.7,plaster,-4.31,2.6,0);
+   box(g,2.35,1.4,.72,mat('studioDesk','#a77f65'),.65,.77,-1.25);
+   for(const x of [-.3,1.6])box(g,.11,.71,.13,wood,x,.35,-1.25);
+   box(g,1.58,.82,.21,mat('studioSofa','#a0bbad'),-2.5,.57,1.90);
+   box(g,1.58,.67,.19,mat('studioSofaBack','#85a897'),-2.5,.99,1.62);
+   const rug=addMesh(g,new THREE.PlaneGeometry(4,3.15),mat('studioRug','#e0c2ba'),-.62,.025,1.10,false,true);
+   rug.rotation.x=-Math.PI/2;
+   box(g,1.9,1.2,.08,mat('studioArtFrame','#bfad90'),-1.9,2.95,-4.27);
+   box(g,1.77,1.1,.03,mat('studioArtwork','#f2c8b6'),-1.9,2.95,-4.21);
+   plant(3.0,0,2.7,1.2,g);plant(-3.1,0,-2.9,.95,g)
+  });
   function focusRoom(room){
     var destinations={home:[0,1.8,-.25],kitchen:[0,1.8,-.25],
-      sleep:[14.05,1.65,-.75],living:[14.05,1.75,8.35],garden:[0,1.5,12.2]};
+      sleep:[14.05,1.65,-.75],living:[14.05,1.75,8.35],garden:[0,1.5,12.2],studio:[14.05,1.75,17.55]};
     var point=destinations[room]||destinations.home;
-    var required=({sleep:'sleep',living:'living',garden:'garden'})[room];
+    var required=({sleep:'sleep',living:'living',garden:'garden',studio:'studio'})[room];
     if(required&&!roomSpaces[required]?.visible){
       // Reflect a just-purchased room immediately, before the next 3D refresh tick.
       var ownedNow=window.EvinKitchenBridge?.getState?.()?.owned||[];
@@ -861,11 +904,13 @@
   }
   /* HOUSE_BOSS_FREE_FURNITURE_3D_V11 — native movable 3D furniture with ghost placement. */
   var furnitureObjects=new Map(),furnitureStamp='',pendingFurniture=null,ghostFurniture=null;
+  const gardenMesh=window.HouseBossGardenMesh||null;
+  const gardenWorldZ=12.2;
   var buildGrid=new THREE.GridHelper(17,34,'#669565','#b3cbb0');
   buildGrid.position.set(-.9,.032,0);
   buildGrid.material.transparent=true;buildGrid.material.opacity=.23;
   buildGrid.visible=false;scene.add(buildGrid);
-  function furnitureMesh(type,uid,isGhost,showOriginalPreview){
+  function furnitureMesh(type,uid,isGhost,showOriginalPreview,stage){
     var g=new THREE.Group();scene.add(g);
     var natural=mat('buildNatural','#b48a62',.83),pale=mat('buildPale','#eee7d8',.9);
     var dark=mat('buildDark','#45504a'),sage=mat('buildSage','#738e7d'),copper=mat('buildCopper','#b07e60');
@@ -982,7 +1027,9 @@
        for(var i=0;i<5;i++){var y=.30+i*.48;box(g,1.36,.085,.57,wood,0,y,0);
          for(var j=0;j<5;j++)box(g,.14,.24+((j+i)%3)*.045,.30,mat('galleryBook'+i+'_'+j,['#84968d','#a88b70','#c8b29b','#778a93','#786f68'][j]),-.50+j*.24,y+.17,.11);}
        for(var x of [-.68,.68])capsule(g,[x,.16,.13],[x,2.46,.13],.07,wood);
-      }else if(createDecorMesh&&createDecorMesh(type,g,{THREE:THREE,box:box,ball:ball,cylinder:cylinder,torus:torus,capsule:capsule,addMesh:addMesh})){
+       }else if(gardenMesh&&gardenMesh(type,g,{THREE,box,ball,cylinder,torus,capsule,addMesh},stage)){
+      // Plant growth is rebuilt when the authoritative day changes.
+    }else if(createDecorMesh&&createDecorMesh(type,g,{THREE:THREE,box:box,ball:ball,cylinder:cylinder,torus:torus,capsule:capsule,addMesh:addMesh})){
       // Designer editions produced distinctive geometry above.
     }else{
       scene.remove(g);return null
@@ -1015,10 +1062,10 @@
       if(!o||typeof o.uid!=='string'||typeof o.type!=='string')continue;
       desired.add(o.uid);
       var entry=furnitureObjects.get(o.uid);
-      if(!entry||entry.type!==o.type){
+      if(!entry||entry.type!==o.type||entry.stage!==o.growthStage){
         if(entry)removeFurnitureGroup(entry.group,false);
-        var group=furnitureMesh(o.type,o.uid,false);if(!group)continue;
-        entry={type:o.type,group:group};furnitureObjects.set(o.uid,entry)
+        var group=furnitureMesh(o.type,o.uid,false,false,o.growthStage);if(!group)continue;
+        entry={type:o.type,stage:o.growthStage,group:group};furnitureObjects.set(o.uid,entry)
       }
       if(entry.tint!==o.tint&&entry.group.userData.decorCategory){
         var newTone=o.tint||window.HouseBossFurnitureTypes?.[o.type]?.color;
@@ -1027,7 +1074,7 @@
         });
         entry.tint=o.tint
        }
-       entry.group.position.set(o.x,window.HouseBossBuildBridge?.height?.(o)||0,o.z);
+       entry.group.position.set(o.x,window.HouseBossBuildBridge?.height?.(o)||0,o.z+(o.zone==='garden'?gardenWorldZ:0));
       entry.group.rotation.y=(o.rot||0)*Math.PI/2;
       entry.group.visible=!(pendingFurniture&&pendingFurniture.uid===o.uid)
     }
@@ -1045,7 +1092,7 @@
     if(patch.rot!==undefined)pendingFurniture.rot=((Math.round(patch.rot)%4)+4)%4;
     const result=window.HouseBossBuildBridge?.validate?.(pendingFurniture)||{ok:false,reason:'Waiting for build grid'};
     pendingFurniture.valid=!!result.ok;pendingFurniture.reason=result.reason||'';
-    ghostFurniture.position.set(pendingFurniture.x,(window.HouseBossBuildBridge?.height?.(pendingFurniture)||0)+.055,pendingFurniture.z);
+    ghostFurniture.position.set(pendingFurniture.x,(window.HouseBossBuildBridge?.height?.(pendingFurniture)||0)+.055,pendingFurniture.z+(pendingFurniture.zone==='garden'?gardenWorldZ:0));
     ghostFurniture.rotation.y=pendingFurniture.rot*Math.PI/2;
     ghostFurniture.traverse(function(obj){
       if(obj.isMesh&&pendingFurniture.mode!=='preview')obj.material.color.set(pendingFurniture.valid?'#71c58b':'#e77267')
@@ -1055,9 +1102,11 @@
   function beginFurniturePlacement(item){
     if(!item||!window.HouseBossBuildBridge?.validate||!window.HouseBossFurnitureTypes?.[item.type])return false;
     cancelFurniturePlacement();
-    pendingFurniture={type:item.type,uid:item.uid||null,mode:item.mode||'buy',x:item.x,z:item.z,rot:item.rot||0};
-    ghostFurniture=furnitureMesh(item.type,'preview',true,pendingFurniture.mode==='preview');
+    pendingFurniture={type:item.type,uid:item.uid||null,mode:item.mode||'buy',x:item.x,z:item.z,rot:item.rot||0,
+      zone:window.HouseBossFurnitureTypes[item.type].zone||'indoor'};
+    ghostFurniture=furnitureMesh(item.type,'preview',true,pendingFurniture.mode==='preview',2);
     if(!ghostFurniture){pendingFurniture=null;return false}
+    buildGrid.position.z=pendingFurniture.zone==='garden'?gardenWorldZ:0;
     buildGrid.visible=true;
     var moved=furnitureObjects.get(pendingFurniture.uid);if(moved)moved.group.visible=false;
     updateFurnitureGhost({});renderer.domElement.style.cursor='crosshair';return true
@@ -1081,9 +1130,10 @@
     if(!pendingFurniture)return false;
     normalized(e);raycaster.setFromCamera(pointer,camera);
     if(!raycaster.ray.intersectPlane(walkingGround,walkingIntersection))return false;
-    return updateFurnitureGhost({x:walkingIntersection.x,z:walkingIntersection.z})
+    return updateFurnitureGhost({x:walkingIntersection.x,z:walkingIntersection.z-(pendingFurniture.zone==='garden'?gardenWorldZ:0)})
   }
   function focusFurniture(x,z){
+    if(pendingFurniture?.zone==='garden'){cameraTarget.set(x*.35,1.55,gardenWorldZ+z*.40);targetZoom=1.12;return}
     cameraTarget.set(Math.max(-5.75,Math.min(3.8,x*.73)),1.13,Math.max(-3.15,Math.min(3.2,z*.73)));
     targetZoom=1.35
   }
@@ -1429,6 +1479,7 @@
   function refresh(state){
     for(var id in upgrades)upgrades[id].visible=(state.owned||[]).includes(id);
     for(var name in roomSpaces)roomSpaces[name].visible=(state.owned||[]).includes(name);
+    for(const id of ['patio','greenhouse'])if(gardenFeatures[id])gardenFeatures[id].visible=(state.gardenExpansions||[]).includes(id);
     syncFurniture(state.furniture);
     applyHomeDesign(state.homeDesign);
     ['self','partner'].forEach(function(key){
