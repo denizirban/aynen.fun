@@ -62,18 +62,35 @@ function render(){
  let root=document.getElementById('noteBody');
  if(!root)return;
  if(category==='furniture'){
-  try{
-   if(window.HouseBossFurnitureUI?.render){
-    window.HouseBossFurnitureUI.render();
+  // Always restore the correct DESIGN state when this shop is shown.
+  const notebook=document.getElementById('notebook');
+  notebook?.classList.add('design-mode');
+  document.querySelectorAll('#notebook .note-tabs [data-tab]').forEach(function(button){
+   button.classList.toggle('active',button.dataset.tab==='design')
+  });
+  const ui=window.HouseBossFurnitureUI;
+  if(ui?.render){
+   try{
+    ui.render();
     if(root.querySelector('.hbf-market'))return;
+   }catch(error){
+    console.error('Designer shop failed to open',error);
+    if(ui.renderSafe){ui.renderSafe(error);return}
    }
-  }catch(err){console.error('House Boss designer shop render error',err)}
-  const title=document.getElementById('noteTitle');if(title)title.textContent='Design Shop';
-  const types=window.HouseBossFurnitureTypes||{},items=Object.entries(types);
-  root.innerHTML='<div class="hbf-recovery"><h3>Design Shop · '+items.length+' objects</h3>'+
-   '<p>The shop view failed to load. The object index is available below.</p>'+
-   items.map(function(entry){return '<div class="hbf-recover-item"><b>'+entry[1].name+'</b><small> · $'+entry[1].price+'</small></div>'}).join('')+
-   '</div>';
+   if(ui.renderSafe){ui.renderSafe(new Error('Empty furniture catalog'));return}
+  }
+  // Last-resort card showroom if the independent shop controller fails to initialize.
+  const types=Object.entries(window.HouseBossFurnitureTypes||{});
+  document.getElementById('noteTitle').textContent='Design Shop';
+  root.innerHTML='<section class="hbf-shop-hero"><div><span>HOUSE BOSS / DESIGNER COLLECTION</span>'+
+   '<h3>The Design Shop</h3><p>Explore the original 3D object collection.</p></div></section>'+
+   '<div class="hbf-market">'+types.map(function(entry){
+    const id=entry[0],o=entry[1];
+    return '<article class="hbf-card"><div class="hbf-visual" style="--tone:'+o.color+'">'+
+     '<div class="hbf-silhouette '+(o.shape||'chair')+'"><i></i><i></i><i></i></div></div>'+
+     '<div class="hbf-card-content"><strong>'+o.name+'</strong><small>$'+o.price+'</small></div>'+
+     '<button data-hbf-preview="'+id+'">VIEW IN 3D</button></article>'
+   }).join('')+'</div>';
   return
  }
  const st=state(),data=catalog[category],active=preview?.category===category?preview.id:selectedStyle(category);
