@@ -3291,6 +3291,17 @@ function homeFurnitureToggleWishlist(type){
 }
 window.HouseBossBuildBridge={
  getState:homeFurnitureState,
+ getQuickState:function(){
+  // Minimal independent snapshot for reliable Build/Design UI.
+  var d=ensureHomeDesign(),arr=Array.isArray(d.furniture)?d.furniture:[];
+  return {
+   cash:Math.max(0,Math.floor(Number(cash)||0)),level:Math.max(1,Number(level)||1),
+   homeValue:Math.max(0,Math.floor(Number(life.homeValue)||0)),
+   furniture:arr.filter(function(o){return o&&typeof o.uid==='string'&&typeof o.type==='string'}).map(function(o){
+    return {uid:o.uid,type:o.type,x:o.x,z:o.z,rot:o.rot||0,condition:o.condition||100,tint:o.tint||null}
+   }),wishlist:Array.isArray(d.wishlist)?d.wishlist.slice():[]
+  }
+ },
  height:homeFurnitureHeight,
  rooms:homeFurnitureRooms,
  buyRoom:function(id){
