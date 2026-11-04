@@ -57,6 +57,7 @@ function owned(cat,id){return !!state().unlocked?.[cat]?.includes(id)||id===cata
 function effective(){return Object.fromEntries(Object.keys(catalog).map(k=>[k,preview?.category===k?preview.id:selectedStyle(k)]))}
 function updateScene(){window.Evin3D?.applyDesign?.(effective())}
 function clearPreview(){window.HouseBossFurnitureUI?.clear?.();preview=null;bridge()?.preview?.(null,null);updateScene()}
+function openShop(){clearPreview();category='furniture';bridge()?.open?.();render()}
 function render(){
  let root=document.getElementById('noteBody');
  if(!root)return;
@@ -118,7 +119,16 @@ function install(){
  oldTabs.forEach(b=>b.addEventListener('click',()=>{
   clearPreview();document.getElementById('notebook')?.classList.remove('design-mode');
  },true));
- window.HouseBossHomeDesign={render,clearPreview,effective,catalog,isFurnitureView(){return category==='furniture'&&document.getElementById('notebook')?.classList.contains('design-mode')},selectCategory(k){if(k==='furniture'||catalog[k]){clearPreview();category=k;render()}}};
+ window.HouseBossHomeDesign={render,clearPreview,openShop,effective,catalog,isFurnitureView(){return category==='furniture'&&document.getElementById('notebook')?.classList.contains('design-mode')},selectCategory(k){if(k==='furniture'||catalog[k]){clearPreview();category=k;render()}}};
 }
 install();
+const widget=document.getElementById('levelWidget');
+if(widget&&!document.getElementById('hbDesignerShopButton')){
+ const shop=document.createElement('button');
+ shop.type='button';shop.id='hbDesignerShopButton';
+ shop.setAttribute('aria-label','Open the Design Shop with 57 furniture and decorative objects');
+ shop.innerHTML='<b>✦ DESIGN SHOP</b><small>37 NEW OBJECTS</small>';
+ shop.addEventListener('click',openShop);
+ widget.appendChild(shop);
+}
 })();
