@@ -785,11 +785,13 @@
   makePerson('elder',{pos:[-4.9,0,1.8],skin:'#714a37',hair:'#b6b3a3',shirt:'#908286',pants:'#6d7762',hairLong:false},.92);
 
   /* Original collectible design library — rendered as real Three.js geometry. */
-  var createDecorMesh=null;
-  try{
-   var editions=await import('./house-boss-decor-meshes.js?v=2');
-   createDecorMesh=editions.createDecorMesh;
-  }catch(error){console.error('Designer object models could not be loaded',error)}
+  var createDecorMesh=window.HouseBossCreateDecorMesh||null;
+  if(!createDecorMesh){
+   try{
+    var editions=await import('./house-boss-decor-meshes.js?v=2');
+    createDecorMesh=editions.createDecorMesh;
+   }catch(error){console.error('Designer object models could not be loaded',error)}
+  }
   /* HOUSE_BOSS_FREE_FURNITURE_3D_V11 — native movable 3D furniture with ghost placement. */
   var furnitureObjects=new Map(),furnitureStamp='',pendingFurniture=null,ghostFurniture=null;
   var buildGrid=new THREE.GridHelper(17,34,'#669565','#b3cbb0');
