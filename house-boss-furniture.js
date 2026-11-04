@@ -131,6 +131,8 @@ function render(){
  Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([k,v])=>'<button type="button" data-hd-category="'+k+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>'+
  '<div class="hbf-shop-hero"><div><span>DESIGN SHOP / EDITIONS</span><h3>Make it yours.</h3><p>Furniture with personality. Sculptural shapes, playful colour and collectible pieces for your 3D home.</p>'+
  '<div class="hbf-hero-pills"><b>'+all.length+' OBJECTS</b><b>'+available+' UNLOCKED</b><b>3D HOME STYLING</b></div></div><div class="hbf-hero-sculpt"><i></i><i></i><i></i></div></div>'+
+ '<div class="hbf-preview-space"><div><b>SEE THE OBJECTS IN YOUR ROOM</b><small>Try the new mushroom lamp in real 3D before buying. The catalogue stays open while you explore.</small></div>'+
+ '<button type="button" data-hbf-preview="mushroomlamp">TRY IN 3D ↗</button></div>'+
  '<div class="hbf-head"><span>YOUR HOME / DESIGN PROGRESS</span><strong>LVL '+homeLevel+' · '+pieces.length+' PIECES OWNED</strong></div>'+
  '<div class="hbf-quality"><div><strong>'+esc(qualities.tier)+'</strong><b>HOME QUALITY · '+qualities.score+'%</b></div>'+
  '<div class="hbf-quality-track"><i style="width:'+qualities.score+'%"></i></div>'+
