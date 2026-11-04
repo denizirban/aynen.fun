@@ -257,3 +257,34 @@
  #game #notebook.design-mode .hbf-shop-hero h3{font-size:24px}
  #game #notebook.design-mode .hbf-preview-space small{font-size:8px}
 }
+
+/* STUDIO STARTERS — rug thumbnails reflect each actual patterned 3D rug. */
+#game #notebook.design-mode .hbf-wallpaper-category{background:linear-gradient(135deg,#f7e5e5,#f0e7f7);border-color:#d9b0c7}
+#game #notebook.design-mode .hbf-wallpaper-category span{color:#b17b9e}
+#game #notebook.design-mode .hbf-wallpaper-category:hover{border-color:#ba7d9e;background:#f5dbe5}
+#game #notebook.design-mode .hbf-card[data-hbf-item="softgridrug"] .hbf-silhouette.rug i:first-child{background-color:#f3e7da;background-image:linear-gradient(90deg,#d8b1ad 3px,transparent 3px),linear-gradient(#d8b1ad 3px,transparent 3px);background-size:23px 23px}
+#game #notebook.design-mode .hbf-card[data-hbf-item="warmjute"] .hbf-silhouette.rug i:first-child{background:repeating-linear-gradient(0deg,#d7bb91 0 4px,#bea078 4px 6px,#ead1af 6px 8px)}
+#game #notebook.design-mode .hbf-card[data-hbf-item="peachloop"] .hbf-silhouette.rug i:first-child{background-color:#f4e9dd;background-image:repeating-radial-gradient(ellipse at 25% 33%,transparent 0 9px,#e7a194 10px 14px,transparent 15px 29px)}
+#game #notebook.design-mode .hbf-card[data-hbf-item="daisyrug"] .hbf-silhouette.rug i:first-child{background-color:#e9aebc;background-image:radial-gradient(circle at 50% 50%,#e6b563 0 4px,transparent 5px),radial-gradient(ellipse at 50% 29%,#fff5e8 0 8px,transparent 9px),radial-gradient(ellipse at 29% 49%,#fff5e8 0 7px,transparent 8px),radial-gradient(ellipse at 71% 49%,#fff5e8 0 7px,transparent 8px);background-size:49px 49px}
+#game #notebook.design-mode .hbf-card[data-hbf-item="sunburstmat"] .hbf-silhouette.rug i:first-child{background:repeating-conic-gradient(from -5deg at 45% 50%,#e9ab68 0deg 14deg,#f8e7ca 15deg 28deg)}
+#game #notebook.design-mode .hbf-card[data-hbf-item="lilacchecker"] .hbf-silhouette.rug i:first-child{background-color:#f0e9ec;background-image:repeating-conic-gradient(#b1a0d6 0% 25%,#f2e8ed 0% 50%);background-size:36px 36px}
+#game #notebook.design-mode .hbf-card[data-hbf-item="corduroypouf"] .hbf-silhouette.pouf i:first-child{background:repeating-linear-gradient(90deg,#d49a7d 0 11px,#c6876d 12px 14px);border-radius:48%}
+#game #notebook.design-mode .hbf-card[data-hbf-item="bubblechair"] .hbf-silhouette.chair i:first-child{border-radius:48%;height:70%;bottom:5px}
+#game #notebook.design-mode .hbf-card[data-hbf-item="compactboucle"] .hbf-silhouette.sofa i:first-child,
+#game #notebook.design-mode .hbf-card[data-hbf-item="cloudloveseat"] .hbf-silhouette.sofa i:first-child{border-radius:40% 40% 25% 25%}
+#game #notebook.design-mode .hbf-card[data-hbf-item="tinygallery"] .hbf-silhouette.art i:first-child{background:linear-gradient(140deg,#e9aa93 0 32%,#a2c8b4 33% 64%,#eac887 65% 100%)}
+
+/* Wallpaper swatches are actual design previews rather than flat color squares. */
+#notebook.design-mode .hd-swatch-wallpaper-warmivory{background:repeating-linear-gradient(90deg,#f0ebe1 0 16px,#d4c4b6 17px 19px,#f0ebe1 20px 34px)}
+#notebook.design-mode .hd-swatch-wallpaper-tinyfloral{background-color:#f9eae4;background-image:radial-gradient(circle,#d89bb0 0 3px,transparent 4px),radial-gradient(circle,#aabfa4 0 2px,transparent 3px);background-size:23px 25px;background-position:4px 6px,12px 15px}
+#notebook.design-mode .hd-swatch-wallpaper-pastelgingham{background-color:#fae6dd;background-image:linear-gradient(90deg,#e8baa84a 50%,transparent 50%),linear-gradient(#e8baa84a 50%,transparent 50%);background-size:26px 26px}
+#notebook.design-mode .hd-swatch-wallpaper-sagepinstripe{background:repeating-linear-gradient(90deg,#e4eadf 0 18px,#9eb6a0 19px 21px,#f2f4ee 22px 24px)}
+#notebook.design-mode .hd-swatch-wallpaper-rosepetals{background-color:#f8e7e9;background-image:radial-gradient(ellipse,#c690a6 0 5px,transparent 6px),radial-gradient(ellipse,#e3b8c4 0 5px,transparent 6px);background-size:30px 35px;background-position:0 0,13px 14px}
+#notebook.design-mode .hd-swatch-wallpaper-terracottagrid{background-color:#edd9cd;background-image:linear-gradient(90deg,#bc937c 4px,transparent 4px),linear-gradient(#bc937c 4px,transparent 4px);background-size:25px 25px}
+#notebook.design-mode .hd-swatch-wallpaper-lilacarches{background-color:#eee7f5;background-image:radial-gradient(ellipse at 50% 100%,transparent 55%,#c8afe0 57% 67%,transparent 70%);background-size:38px 45px}
+#notebook.design-mode .hd-swatch-wallpaper-sunnydaisy{background-color:#fff0d6;background-image:radial-gradient(circle,#e6b668 0 4px,transparent 5px),radial-gradient(circle,#fff 0 10px,transparent 11px);background-size:33px 33px}
+#notebook.design-mode .hd-swatch-wallpaper-bluewave{background:repeating-radial-gradient(ellipse at 35% 140%,#e8f0ed 0 12px,#a9cbd0 13px 16px,#d7e8e7 17px 30px)}
+#notebook.design-mode .hd-swatch-wallpaper-abstractpop{background:radial-gradient(ellipse at 20% 40%,#d89588 0 20%,transparent 22%),radial-gradient(ellipse at 75% 75%,#a9c5ae 0 27%,transparent 29%),linear-gradient(60deg,#eee1d9 55%,#b0a5cb 56%)}
+@media(min-width:720px){
+ #game #notebook.design-mode .hbf-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
