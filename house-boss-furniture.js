@@ -35,6 +35,26 @@ const defaults=[[3.5,3.5],[3,3.5],[4,-3.5],[2.5,-3.5],
  [2.5,4],[1.5,4],[0,4],[-2.5,4],
  [3,-4],[0,-4],[-2.5,-4],[-6,-2.5],[-8,-4],[-8,4]];
 const bridge=()=>window.HouseBossBuildBridge;
+/* Always use the simulation's authoritative cash and level, not an empty
+   zero-balance fallback when optional home-quality calculations are unavailable. */
+function shopState(){
+ const api=bridge();
+ if(!api)return null;
+ let fast=null,detailed=null;
+ try{fast=api.getQuickState?.()||null}catch(err){console.error('Shop wallet read',err)}
+ try{detailed=api.getState?.()||null}catch(err){console.error('Shop detail read',err)}
+ if(!fast&&!detailed)return null;
+ const state=Object.assign({},detailed||{},fast||{});
+ state.quality=detailed?.quality||{score:0,tier:'Your Home',comfort:0};
+ state.rooms=Array.isArray(detailed?.rooms)?detailed.rooms:[];
+ state.sets=Array.isArray(detailed?.sets)?detailed.sets:[];
+ state.comfort=Number.isFinite(detailed?.comfort)?detailed.comfort:0;
+ state.furniture=Array.isArray(state.furniture)?state.furniture:[];
+ state.wishlist=Array.isArray(state.wishlist)?state.wishlist:[];
+ state.cash=Number.isFinite(Number(state.cash))?Number(state.cash):null;
+ state.level=Number.isFinite(Number(state.level))?Number(state.level):1;
+ return state
+}
 let selectedUid=null,warning='',filter='new',category='all',styleFilter='all',searchQuery='';
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const collections={starter:'EVERYDAY',modern:'CONTEMPORARY',premium:'DESIGN STUDIO',luxury:'SIGNATURE'};
@@ -53,10 +73,10 @@ function clear(){
  selectedUid=null;warning='';
 }
 function begin(type,uid,previewOnly=false){
- let st=null;try{st=bridge()?.getState?.()}catch(e){st=bridge()?.getQuickState?.()||null}
- if(!st||!types[type])return;
+ const st=shopState();
+ if(!st||!types[type]){warning='Store is reconnecting to the household budget. Close and reopen Design.';render();return}
  if(!previewOnly&&!uid&&st.level<types[type].level){warning='Reach Home Level '+types[type].level+' to unlock '+types[type].name+'.';render();return}
- if(!previewOnly&&!uid&&st.cash<types[type].price){warning='You need $'+(types[type].price-st.cash)+' more.';render();return}
+ if(!previewOnly&&!uid&&(st.cash===null||st.cash<types[type].price)){warning='You need $'+(types[type].price-st.cash)+' more.';render();return}
  let item=uid?st.furniture.find(f=>f.uid===uid):null;
  if(uid&&!item)return;
  let p=item?{type,x:item.x,z:item.z,rot:item.rot||0,uid,mode:'move'}:safeCandidate(type);
@@ -86,7 +106,7 @@ function updateStatus(){
  const save=document.querySelector('[data-hbf-confirm]');if(save)save.disabled=!p?.valid
 }
 function sell(uid){
- const st=bridge()?.getState?.(),item=st?.furniture?.find(o=>o.uid===uid);
+ const st=shopState(),item=st?.furniture?.find(o=>o.uid===uid);
  if(!item)return;
  if(!confirmSale(item))return;
  clear();
@@ -110,7 +130,7 @@ function placeBar(){
 }
 
 function renderRich(){
- const root=view(),st=bridge()?.getState?.();if(!root||!st)return;
+ const root=view(),st=shopState();if(!root||!st)throw new Error('Household budget is not ready');
  document.getElementById('noteTitle').textContent='The Design Shop';
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+st.cash+' · Home Value $'+st.homeValue;
  const homeLevel=Math.max(1,st.level||1),comfort=st.comfort||0;
@@ -212,15 +232,15 @@ function renderSafe(err){
  const root=view();if(!root)return;
  const noteTitle=document.getElementById('noteTitle');
  if(noteTitle)noteTitle.textContent='The Design Shop';
- let st=null;
- try{st=bridge()?.getState?.()||null}catch(inner){console.error('Shop state recovery:',inner)}
- if(!st){try{st=bridge()?.getQuickState?.()||null}catch(inner){console.error('Quick inventory recovery:',inner)}}
- const lvl=Number(st?.level)||1,wallet=Number(st?.cash)||0;
+ const st=shopState();
+ const lvl=Number(st?.level)||1;
+ const wallet=st?.cash===null||st?.cash===undefined?null:Number(st.cash);
+ const hasWallet=Number.isFinite(wallet);
  const items=Object.entries(types),wishlist=Array.isArray(st?.wishlist)?st.wishlist:[];
  const saved=Array.isArray(st?.furniture)?st.furniture:[];
  const categories=window.HouseBossDesignerCollection?.categories||{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART',objects:'OBJECTS',plants:'PLANTS',storage:'STORAGE'};
  const budget=document.getElementById('noteBudget');
- if(budget)budget.textContent='$'+wallet+' · HOME LEVEL '+lvl;
+ if(budget)budget.textContent=(hasWallet?'$'+wallet:'BALANCE UNAVAILABLE')+' · HOME LEVEL '+lvl;
  const filtered=items.filter(([id,t])=>
    (category==='all'||t.category===category)&&
    (styleFilter==='all'||t.style===styleFilter)&&
@@ -246,7 +266,7 @@ function renderSafe(err){
   '<div class="hbf-result-caption"><strong id="hbf-result-count">'+filtered.length+' PIECES</strong><span>Real 3D placement · Free preview</span></div>'+
   '<div class="hbf-market">';
  for(const [id,t] of filtered){
-  const locked=t.level>lvl,unaffordable=t.price>wallet;
+  const locked=t.level>lvl,unaffordable=!hasWallet||t.price>wallet;
   html+='<article class="hbf-card '+(locked?'is-locked':'is-unlocked')+' hbf-tier-'+(t.tier||'starter')+'" data-hbf-item="'+id+'" data-hbf-text="'+esc([t.name,t.desc,t.style,t.category].join(' ').toLowerCase())+'">'+
    '<div class="hbf-visual hbf-preview-'+(t.style||'modern')+'" style="--tone:'+t.color+'">'+
    '<button class="hbf-heart '+(wishlist.includes(id)?'is-saved':'')+'" data-hbf-wish="'+id+'">'+(wishlist.includes(id)?'♥':'♡')+'</button>'+
@@ -258,7 +278,7 @@ function renderSafe(err){
    '<div class="hbf-material-tags"><span>'+esc(t.style||'modern')+'</span><span>'+esc(t.category||'furniture')+'</span></div>'+
    '<div class="hbf-bonus">✧ +'+(t.comfort||0)+' COMFORT</div></div>'+
    '<button data-hbf-buy="'+id+'" '+(locked||unaffordable?'disabled':'')+'>'+
-   (locked?'UNLOCK AT LVL '+t.level:unaffordable?'NEED $'+(t.price-wallet)+' MORE':'BUY & PLACE · $'+t.price)+'</button></article>';
+   (locked?'UNLOCK AT LVL '+t.level:unaffordable?(hasWallet?'NEED $'+(t.price-wallet)+' MORE':'CHECKING WALLET…'):'BUY & PLACE · $'+t.price)+'</button></article>';
  }
  html+='</div><div id="hbf-empty-results" class="hbf-empty-results" hidden>No matching designs. Try another style.</div>';
  html+='<div class="hbf-section-title"><strong>YOUR OWN COLLECTION</strong><small>'+saved.length+' PLACED</small></div>';
@@ -326,7 +346,7 @@ function install(){
    return
   }
   let t=e.target.closest('[data-hbf-buy]');if(t){begin(t.dataset.hbfBuy);return}
-  t=e.target.closest('[data-hbf-move]');if(t){const f=bridge()?.getState?.()?.furniture?.find(x=>x.uid===t.dataset.hbfMove);if(f)begin(f.type,f.uid);return}
+  t=e.target.closest('[data-hbf-move]');if(t){const f=shopState()?.furniture?.find(x=>x.uid===t.dataset.hbfMove);if(f)begin(f.type,f.uid);return}
   t=e.target.closest('[data-hbf-sell]');if(t){sell(t.dataset.hbfSell);return}
   if(e.target.closest('[data-hbf-turn]')){rotate();return}
   t=e.target.closest('[data-hbf-nudge]');if(t){const [dx,dz]=t.dataset.hbfNudge.split(',').map(Number);nudge(dx,dz);return}
@@ -338,7 +358,7 @@ function install(){
   render,renderSafe,clear,types,
   selectFrom3D:function(uid){
    if(!document.getElementById('notebook')?.classList.contains('design-mode'))return;
-   const f=bridge()?.getState?.()?.furniture?.find(o=>o.uid===uid);
+   const f=shopState()?.furniture?.find(o=>o.uid===uid);
    if(f)begin(f.type,uid)
   },
   updateStatus
