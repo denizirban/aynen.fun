@@ -193,7 +193,7 @@ function renderRich(){
  '<button data-hbf-filter="wishlist" class="'+(filter==='wishlist'?'active':'')+'">♡ SAVED '+wishlist.length+'</button></div>'+
  '<div class="hbf-result-caption"><strong id="hbf-result-count">'+active.length+' PIECES</strong><span>Preview in 3D · Buy · Place · Personalise</span></div>'+
  '<div class="hbf-market">'+active.map(([id,item])=>{
-  const locked=homeLevel<item.level,poor=st.cash<item.price,editing=!!sceneCandidate(),rank=collections[item.tier]||'EVERYDAY';
+  const locked=homeLevel<item.level,poor=st.cash===null||st.cash<item.price,editing=!!sceneCandidate(),rank=collections[item.tier]||'EVERYDAY';
   return '<article class="hbf-card '+(locked?'is-locked':'is-unlocked')+' hbf-tier-'+item.tier+'" data-hbf-item="'+id+'" data-hbf-text="'+esc([item.name,item.desc,item.style,item.category].join(' ').toLowerCase())+'">'+
    '<div class="hbf-visual hbf-preview-'+esc(item.style||'modern')+'" style="--tone:'+item.color+'">'+
    '<button type="button" class="hbf-heart '+(wishlist.includes(id)?'is-saved':'')+'" data-hbf-wish="'+id+'" aria-label="Save to wishlist">'+(wishlist.includes(id)?'♥':'♡')+'</button>'+
@@ -205,7 +205,7 @@ function renderRich(){
    '<div class="hbf-material-tags"><span>'+esc(item.style||'modern')+'</span><span>'+(item.layer==='floor'?'LAYERED RUG':item.layer==='tabletop'?'ON TABLE':esc(item.category||'furniture'))+'</span></div>'+
    '<div class="hbf-bonus">✧ +'+item.comfort+' COMFORT <span>· '+(item.action||'talk').toUpperCase()+'</span></div></div>'+
    '<button type="button" data-hbf-buy="'+id+'" '+(locked||poor||editing?'disabled':'')+'>'+
-   (locked?'LEVEL '+item.level+' TO UNLOCK':poor?'NEED $'+(item.price-st.cash)+' MORE':'BUY & PLACE · $'+item.price)+'</button></article>'
+   (locked?'LEVEL '+item.level+' TO UNLOCK':poor?(st.cash===null?'CHECKING WALLET…':'NEED $'+(item.price-st.cash)+' MORE'):'BUY & PLACE · $'+item.price)+'</button></article>'
  }).join('')+'</div>'+
  '<div id="hbf-empty-results" class="hbf-empty-results" hidden>No objects match those filters. Try another category or style.</div>';
  html+='<div class="hbf-section-title"><strong>YOUR OWN COLLECTION</strong><small>'+pieces.length+' placed objects · personalise anytime</small></div>';
