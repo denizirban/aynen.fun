@@ -21,6 +21,8 @@
 
 .hero-mode .app{grid-template-columns:0 minmax(0,1fr) 0!important}.hero-mode .left,.hero-mode .specs{display:none!important}.hero-mode .stage{grid-column:2!important}.hero-picked{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 14px}.hero-picked small{font-size:9px;color:#b8d2bd;width:100%;overflow:hidden;max-height:2.8em}.hero-picked button{font-size:9px;border:1px solid #678d71;background:#2b4436;color:#d5e6d8;border-radius:7px;padding:7px 9px;cursor:pointer}.hero-picked button.is-on{background:#c7eaa7;color:#243426}
 
+.hero-error-panel[hidden]{display:none!important}.hero-error-panel{position:absolute;z-index:5;left:43%;top:51%;transform:translate(-50%,-50%);width:min(390px,calc(100% - 330px));padding:25px 24px;background:#fffdf2ef;box-shadow:0 16px 55px #0b241e17;border:1px solid #fbfdf7;border-radius:17px;backdrop-filter:blur(12px)}.hero-error-symbol{display:block;font-size:25px;color:#557764;line-height:1;margin-bottom:9px}.hero-error-panel strong{display:block;font-size:19px;letter-spacing:-.04em}.hero-error-panel p{font-size:12px;color:#657d71;line-height:1.5}.hero-error-panel div{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.hero-error-panel button{border:1px solid #b7cbbb;background:#2a463a;color:#fff;padding:10px 12px;border-radius:8px;font-size:11px;font-weight:750;cursor:pointer}.hero-error-panel button+button{background:transparent;color:#2e4a3e}@media(max-width:700px){.hero-error-panel{width:calc(100% - 32px);left:50%;top:45%;padding:18px}.hero-error-panel strong{font-size:16px}.hero-error-panel p{font-size:11px}}
+
 </style><style>
 /* CHROMA / PRO ASSET STUDIO — integrated with native parametric Concept Lab */
 .mode-switch{position:absolute;top:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:3px;padding:5px;background:#19241de8;border:1px solid #809c80a8;border-radius:13px;z-index:8;box-shadow:0 6px 25px #17241a3d;backdrop-filter:blur(14px)}
@@ -826,6 +828,7 @@ const trigger=document.createElement('button');trigger.id='heroMode';trigger.typ
 const overlay=document.createElement('section'); overlay.className='hero-studio';overlay.id='heroStudio';overlay.hidden=true;
 overlay.setAttribute('aria-label','Professional 3D automotive showroom');
 overlay.innerHTML=`<div class="hero-viewport" id="heroViewport" aria-label="Interactive physically based 3D scene">
+  <div class="hero-error-panel" id="heroFailure" hidden><span class="hero-error-symbol">◇</span><strong>The 3D asset couldn't load.</strong><p>Hero Studio needs a network connection for its rendering library and high-detail car model. Your original concept workshop is still available.</p><div><button id="heroRetry">Retry Hero Studio</button><button id="heroBack">Open Concept Sculpt</button></div></div>
   <div class="hero-status" id="heroStatus" role="status"><span class="hero-status-dot"></span> CHOOSE HERO STUDIO</div>
   <div class="hero-topline"><span class="hero-kicker">CHROMA / HIGH-FIDELITY SHOWROOM</span><strong>THE HERO CAR</strong><small>REAL 3D ASSET · PHYSICAL MATERIALS · MODULAR AERO</small></div>
   <div class="hero-camera" role="group" aria-label="Camera views"><button data-hero-view="hero" class="active">3/4</button><button data-hero-view="front">FRONT</button><button data-hero-view="side">SIDE</button><button data-hero-view="rear">REAR</button><button data-hero-view="top">TOP</button><button data-hero-view="inside">CABIN</button></div>
@@ -865,7 +868,7 @@ let config;
 try{config={...DEFAULT,...JSON.parse(localStorage.getItem('chroma-hero-v12')||'null'),colors:{...DEFAULT.colors,...(JSON.parse(localStorage.getItem('chroma-hero-v12')||'null')?.colors||{})}};}catch(_){config=structuredClone(DEFAULT);}
 let THREE=null,loader=null,exporter=null,OrbitControls=null,RoomEnvironment=null,scene=null,camera=null,renderer=null,controls=null,car=null,extras=null,envTexture=null,lights=[],floor=null;
 let ready=false,booting=false,active=false,animating=false,stopFrame=0,uploadedUrl=null,doorNodes=[],doorTarget=0,doorCurrent=0,raycaster=null,pointer=null,materials=[],originalTransforms=new WeakMap(),pickedName=null,frameLast=0,objectLength=5,frontAxis='x',frontSign=-1;
-function report(msg,error=false){const status=$('heroStatus');status.classList.toggle('is-error',error);status.innerHTML='<span class="hero-status-dot"></span> '+String(msg).replace(/[<>]/g,'');}
+function report(msg,error=false){const status=$('heroStatus');status.classList.toggle('is-error',error);if($('heroFailure'))$('heroFailure').hidden=!(error&&!car);status.innerHTML='<span class="hero-status-dot"></span> '+String(msg).replace(/[<>]/g,'');}
 function remember(){try{localStorage.setItem('chroma-hero-v12',JSON.stringify(config));}catch(_){}}
 function sync(){const group=$('heroMaterial').value=config.group;const input=$('heroColor');input.value=(config.isolatePaint&&pickedName?config.materialOverrides[pickedName]:null)||config.colors[group]||'#bce5d4';$('heroMaterialName').textContent=group.toUpperCase();
 for(const e of document.querySelectorAll('[data-hero-finish]'))e.classList.toggle('active',e.dataset.heroFinish===config.finish);
@@ -952,6 +955,7 @@ function download(name,blob){const u=URL.createObjectURL(blob);const a=document.
 function screenshot(){if(!renderer||!ready){report('Load the professional model before capturing.',true);return;}renderer.render(scene,camera);renderer.domElement.toBlob(blob=>{if(blob)download('chroma-hero-studio.png',blob);else report('Photo export unavailable on this device.',true);},'image/png');}
 async function exportGLB(){if(!car||!exporter)return report('Load the professional model before exporting.',true);try{report('Preparing GLB export…');const exportedScene=new THREE.Scene();exportedScene.add(car.clone(true));if(extras)exportedScene.add(extras.clone(true));const glb=await exporter.parseAsync(exportedScene,{binary:true,onlyVisible:true,maxTextureSize:2048});download('chroma-hero-assembly.glb',new Blob([glb],{type:'model/gltf-binary'}));report('GLB exported.');}catch(e){report('Export failed: '+e.message,true);}}
 function repaint(){sync();applyMaterials();if(config.kit!=='original')rebuildExtras();}
+$('heroRetry').onclick=()=>{booting=false;boot();};$('heroBack').onclick=()=>$('nativeMode').click();
 $('heroMaterial').onchange=e=>{config.group=e.target.value;config.isolatePaint=false;sync();remember();};
 function changeColor(value){if(config.isolatePaint&&pickedName)config.materialOverrides[pickedName]=value;else config.colors[config.group]=value;repaint();}
 $('heroColor').oninput=e=>changeColor(e.target.value);
