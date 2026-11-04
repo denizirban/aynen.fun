@@ -727,6 +727,115 @@ body:has(#game) .brand .back{display:none!important}
 <link rel="stylesheet" href="./house-boss-home-design.css?v=3">
 <link rel="stylesheet" href="./house-boss-start.css?v=1">
 <link rel="stylesheet" href="./house-boss-furniture.css?v=4">
+<style id="house-boss-garden-styles">
+/* House Boss / Garden Studio — compact dollhouse design system, responsive. */
+#notebook.design-mode .hbg-app{color:#3d5141;font-family:'Space Grotesk',sans-serif;display:flex;flex-direction:column;gap:10px;padding-bottom:20px}
+#notebook.design-mode .hbg-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:2px 0 6px}
+#notebook.design-mode .hbg-tabs button{border:1px solid #d9dfd3;background:#fffef8;border-radius:9px;padding:11px 4px;color:#6b826d;font:850 9px 'DM Mono',monospace;cursor:pointer}
+#notebook.design-mode .hbg-tabs button.active{color:#fff;background:#407654;border-color:#407654}
+#notebook.design-mode .hbg-hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 88px;gap:8px;background:linear-gradient(130deg,#e6eddc,#f5eee1 56%,#f0dacf);border:1px solid #d6e0d0;border-radius:15px;padding:17px;overflow:hidden;min-height:157px}
+#notebook.design-mode .hbg-hero>div:first-child{z-index:1}
+#notebook.design-mode .hbg-hero span{font:850 8px 'DM Mono',monospace;letter-spacing:.05em;color:#7f9978}
+#notebook.design-mode .hbg-hero h3{font:780 31px 'Space Grotesk',sans-serif;letter-spacing:-.06em;color:#3a6447;margin:8px 0 6px}
+#notebook.design-mode .hbg-hero p{font-size:10px;line-height:1.5;color:#6c816f;margin:0 0 12px}
+#notebook.design-mode .hbg-hero-pills{display:flex;gap:5px;flex-wrap:wrap}
+#notebook.design-mode .hbg-hero-pills b{border-radius:30px;background:#fffdedab;color:#6d896b;border:1px solid #d6e2cf;font:800 7px 'DM Mono',monospace;padding:6px 7px}
+#notebook.design-mode .hbg-hero-art{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:75px;color:#d08f9e;text-shadow:9px 10px 0 #c5d5ab80;line-height:1}
+#notebook.design-mode .hbg-hero-art small{font:800 7px 'DM Mono',monospace;letter-spacing:.02em;color:#9a977d;text-shadow:none;white-space:nowrap}
+#notebook.design-mode .hbg-build-hero{background:linear-gradient(135deg,#e8e8de,#f3e6d9,#e1ded3)}
+#notebook.design-mode .hbg-build-hero .hbg-hero-art{color:#af907d}
+#notebook.design-mode .hbg-unlock,#notebook.design-mode .hbg-callout{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:11px 12px;border:1px solid #c6dac6;background:#eff8ea;border-radius:11px}
+#notebook.design-mode .hbg-unlock{background:#fff5e7;border-color:#ebd5b8}
+#notebook.design-mode .hbg-unlock>div,#notebook.design-mode .hbg-callout>div{min-width:0}
+#notebook.design-mode .hbg-unlock b,#notebook.design-mode .hbg-callout b{font:900 10px 'Space Grotesk',sans-serif;color:#507655}
+#notebook.design-mode .hbg-unlock p,#notebook.design-mode .hbg-callout small{display:block;font-size:9px;line-height:1.4;color:#829184;margin:5px 0}
+#notebook.design-mode .hbg-unlock small{font:800 8px 'DM Mono',monospace;color:#bb9266}
+#notebook.design-mode .hbg-unlock button,#notebook.design-mode .hbg-callout button{flex:none;min-height:36px;max-width:150px;padding:8px 11px;background:#4e815a;border:0;border-radius:8px;color:white;font:850 8px 'DM Mono',monospace}
+#notebook.design-mode .hbg-unlock button:disabled{background:#e5ded2;color:#a49681}
+#notebook.design-mode .hbg-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:14px;color:#55665c}
+#notebook.design-mode .hbg-section-title strong{font:900 10px 'DM Mono',monospace;letter-spacing:.05em}
+#notebook.design-mode .hbg-section-title small{font:750 8px 'DM Mono',monospace;color:#9ca69a}
+#notebook.design-mode .hbg-filters{display:flex;flex-wrap:wrap;gap:5px}
+#notebook.design-mode .hbg-filters button{padding:8px 9px;border:1px solid #d9e0d3;border-radius:999px;background:#fffefa;font:850 8px 'DM Mono',monospace;color:#799076;cursor:pointer}
+#notebook.design-mode .hbg-filters button.active{background:#4e7d57;color:#fff;border-color:#4e7d57}
+#notebook.design-mode .hbg-catalogue{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#notebook.design-mode .hbg-card{min-width:0;display:flex;flex-direction:column;background:#fffefa;border:1px solid #dce0d6;border-radius:13px;overflow:hidden}
+#notebook.design-mode .hbg-card.locked{opacity:.75}
+#notebook.design-mode .hbg-model{height:111px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 43% 35%,#f0f7ea,#dce8d7 66%,#c7dbc8 100%);display:grid;place-items:center}
+#notebook.design-mode .hbg-model-trees{background:radial-gradient(ellipse at 45% 35%,#e6ebd8,#c1d7b9 72%,#aec89f)}
+#notebook.design-mode .hbg-model-flowers{background:radial-gradient(ellipse at 45% 35%,#fbf0e7,#e6e7d3 72%,#c5d8b7)}
+#notebook.design-mode .hbg-model-outdoor-seating{background:radial-gradient(ellipse at 45% 35%,#f7ebdf,#e3dac6 72%,#d3c5b3)}
+#notebook.design-mode .hbg-model-icon{font-size:74px;line-height:1;color:var(--hbg-color);filter:drop-shadow(7px 9px 4px #30422c33);transform:rotate(-8deg)}
+#notebook.design-mode .hbg-card-ready,#notebook.design-mode .hbg-card-locked{position:absolute;top:7px;right:7px;background:#fbfff0e8;color:#66966a;font:850 8px 'DM Mono',monospace;border-radius:30px;padding:6px}
+#notebook.design-mode .hbg-card-locked{color:#a18b80;background:#f2ece3e8}
+#notebook.design-mode .hbg-growth-chip{position:absolute;left:7px;bottom:7px;font:850 7px 'DM Mono',monospace;color:#567659;background:#f3f9edcf;border-radius:8px;padding:5px}
+#notebook.design-mode .hbg-card-copy{padding:12px;flex:1}
+#notebook.design-mode .hbg-card-copy>span{font:850 8px 'DM Mono',monospace;color:#98a18d}
+#notebook.design-mode .hbg-card h4{font:850 13px 'Space Grotesk',sans-serif;letter-spacing:-.035em;margin:6px 0;color:#3c5642}
+#notebook.design-mode .hbg-card-copy p{font:500 10px 'Space Grotesk',sans-serif;line-height:1.45;color:#929a8f;min-height:43px;margin:0 0 9px}
+#notebook.design-mode .hbg-card-copy small{font:850 8px 'DM Mono',monospace;color:#668d69;display:block;background:#ebf4e9;border-radius:7px;padding:7px}
+#notebook.design-mode .hbg-card-actions{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #dce7d6}
+#notebook.design-mode .hbg-card-actions button{padding:11px 5px;border:0;background:#f7f6ee;color:#7d8177;cursor:pointer;font:850 8px 'DM Mono',monospace}
+#notebook.design-mode .hbg-card-actions button+button{background:#def0dc;color:#45794d;border-left:1px solid #ccdec5}
+#notebook.design-mode .hbg-card-actions button:disabled{background:#f3f1eb;color:#b4ad9c;cursor:not-allowed}
+#notebook.design-mode .hbg-inventory{display:flex;flex-direction:column;gap:7px}
+#notebook.design-mode .hbg-item{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid #dce6d9;border-radius:11px;background:#fffcf7}
+#notebook.design-mode .hbg-item-icon{display:grid;place-items:center;width:36px;height:36px;flex:none;border-radius:11px;background:#f0f5e8;color:var(--hbg-color);font-size:23px}
+#notebook.design-mode .hbg-item-info{flex:1;min-width:70px}
+#notebook.design-mode .hbg-item-info b{display:block;font:850 11px 'Space Grotesk',sans-serif;color:#55715a}
+#notebook.design-mode .hbg-item-info small{display:block;font:800 8px 'DM Mono',monospace;color:#9aa695;margin-top:5px}
+#notebook.design-mode .hbg-item-actions{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}
+#notebook.design-mode .hbg-item-actions button{border-radius:7px;padding:8px 7px;background:#e6f2e3;color:#53865a;border:1px solid #cce0c9;font:850 7px 'DM Mono',monospace}
+#notebook.design-mode .hbg-item-actions button:disabled{color:#a0aba1;background:#f3f4ee;border-color:#e0e6db}
+#notebook.design-mode .hbg-item-actions button.hbg-item-sell{background:#fff1e8;color:#b58b6b;border-color:#ecdbce}
+#notebook.design-mode .hbg-plant-meter{height:5px;margin-top:5px;background:#e5ece0;border-radius:6px;overflow:hidden}
+#notebook.design-mode .hbg-plant-meter i{height:100%;display:block;background:#78a77b;border-radius:6px}
+#notebook.design-mode .hbg-expansion{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:10px;border-radius:13px;border:1px solid #e2dfd5;background:#fffefa;padding:13px 10px;margin:0 0 7px}
+#notebook.design-mode .hbg-expansion.built{border-color:#bdd7bd;background:#f1f7ed}
+#notebook.design-mode .hbg-expansion-icon{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:#f0e8d6;color:#ac977c;font-size:29px}
+#notebook.design-mode .hbg-expansion>div:nth-child(2){min-width:0}
+#notebook.design-mode .hbg-expansion span{display:block;font:850 7px 'DM Mono',monospace;color:#b8a39a}
+#notebook.design-mode .hbg-expansion h4{font:850 14px 'Space Grotesk',sans-serif;color:#526e58;margin:5px 0;letter-spacing:-.03em}
+#notebook.design-mode .hbg-expansion p{font:500 9px 'Space Grotesk',sans-serif;color:#9ba29a;line-height:1.5;margin:0 0 4px}
+#notebook.design-mode .hbg-expansion small{font:800 8px 'DM Mono',monospace;color:#92a28d}
+#notebook.design-mode .hbg-expansion button{background:#477d54;color:#fff;border:0;border-radius:9px;min-width:83px;max-width:105px;min-height:40px;padding:7px;font:850 8px 'DM Mono',monospace}
+#notebook.design-mode .hbg-expansion button:disabled{background:#e7e9df;color:#8fa18f}
+#notebook.design-mode .hbg-placement{border:1px solid #9cbd9f;border-radius:12px;background:#eff8ed;padding:12px;display:grid;gap:9px}
+#notebook.design-mode .hbg-placement>div:first-child{display:flex;align-items:baseline;justify-content:space-between;gap:7px}
+#notebook.design-mode .hbg-placement span{font:900 8px 'DM Mono',monospace;color:#95a38e}
+#notebook.design-mode .hbg-placement strong{font:850 12px 'Space Grotesk',sans-serif;color:#42694b}
+#notebook.design-mode .hbg-placement p{font:850 9px 'DM Mono',monospace;color:#b56d66;margin:0}
+#notebook.design-mode .hbg-placement p[data-valid="true"]{color:#427e4d}
+#notebook.design-mode .hbg-place-controls,#notebook.design-mode .hbg-place-final{display:flex;gap:5px;flex-wrap:wrap}
+#notebook.design-mode .hbg-place-controls button,#notebook.design-mode .hbg-place-final button{flex:1;min-height:32px;border:1px solid #c5dcc6;border-radius:8px;background:#fff;color:#5a815c;font:850 9px 'DM Mono',monospace;padding:7px}
+#notebook.design-mode .hbg-place-final button:last-child{flex:2;background:#477a52;color:#fff;border-color:#477a52}
+#notebook.design-mode .hbg-place-final button:disabled{background:#c9d8c9;border-color:#becfbd;color:#f6faf4}
+#notebook.design-mode .hbg-message{border-radius:9px;background:#e9f3e4;color:#547757;border:1px solid #c8dfc6;padding:10px;font:800 10px 'Space Grotesk',sans-serif}
+#notebook.design-mode .hbg-view-studio{width:100%;padding:12px;border:1px solid #c9dbcb;border-radius:10px;background:#e9f4e6;color:#477b50;font:850 9px 'DM Mono',monospace}
+#notebook.design-mode .hbg-empty{margin:0;border:1px dashed #cad6c7;padding:14px;border-radius:10px;background:#fbfcf7;color:#93a393;font-size:10px}
+@media(max-width:760px){
+ #notebook.design-mode .hbg-expansion{grid-template-columns:34px 1fr auto;gap:7px;padding:9px 7px}
+ #notebook.design-mode .hbg-expansion-icon{width:32px;height:32px;font-size:23px}
+ #notebook.design-mode .hbg-expansion h4{font-size:12px}
+ #notebook.design-mode .hbg-expansion p{font-size:8px}
+ #notebook.design-mode .hbg-expansion button{font-size:7px;min-width:65px}
+ #notebook.design-mode .hbg-card h4{font-size:11px}
+ #notebook.design-mode .hbg-card-copy p{font-size:9px;min-height:50px}
+ #notebook.design-mode .hbg-card-copy{padding:9px}
+ #notebook.design-mode .hbg-model{height:90px}
+ #notebook.design-mode .hbg-model-icon{font-size:63px}
+ #notebook.design-mode .hbg-hero{min-height:132px;padding:12px;grid-template-columns:1fr 60px}
+ #notebook.design-mode .hbg-hero h3{font-size:26px}
+ #notebook.design-mode .hbg-hero p{font-size:9px}
+ #notebook.design-mode .hbg-hero-art{font-size:53px}
+ #notebook.design-mode .hbg-hero-art small{font-size:5px}
+ #notebook.design-mode .hbg-filters button{font-size:7px;padding:6px 8px}
+ #notebook.design-mode .hbg-item{flex-wrap:wrap}
+ #notebook.design-mode .hbg-item-actions{width:100%;justify-content:stretch}
+ #notebook.design-mode .hbg-item-actions button{flex:1}
+}
+
+</style>
 <style id="house-boss-collector-styles">
 /* House Boss / Editions: collectible furniture showroom, responsive editorial UI. */
 #notebook.design-mode .note-sheet{width:min(1020px,calc(100vw - 20px));max-height:95dvh;border-color:#dddfd4;background:#fafaf4;box-shadow:0 25px 95px #1b30276b}
@@ -1022,7 +1131,7 @@ body:has(#game) .brand .back{display:none!important}
 </style>
 <link rel="stylesheet" href="./house-boss-progression.css?v=2">
 <link rel="stylesheet" href="./house-boss-lifestyle.css?v=3">
-<meta name="house-boss-edition" content="wallet-authority-fix-20261104">
+<meta name="house-boss-edition" content="living-garden-build-20261104">
 </head>
 <body>
 <div id="game">
@@ -4143,7 +4252,161 @@ function createDecorMesh(type,g,api){
 window.HouseBossCreateDecorMesh=createDecorMesh;
 })();
 </script>
-<script type="module" src="./evin-patronu-3d.js?v=20"></script>
+<script>
+/* BUNDLED: GARDEN 3D MESH LIBRARY */
+/* Original low-poly garden objects for House Boss; no external model downloads. */
+(function(){
+ 'use strict';
+ window.HouseBossGardenMesh=function(type,g,a,stage){
+  const data=window.HouseBossFurnitureTypes?.[type];
+  if(data?.zone!=='garden')return false;
+  const {THREE,box,ball,cylinder,torus,capsule,addMesh}=a;
+  const mat=(c,r=.77,metal=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:metal});
+  const stem=mat('#6b936d'),deep=mat('#466c50'),soil=mat('#6d5541'),
+    clay=mat('#bf8261'),wood=mat('#a7815b'),ivory=mat('#e9e5d5'),
+    yellow=mat('#f3d16c'),pink=mat('#e9a1b4'),stone=mat('#c7c5b7'),
+    color=mat(data.color),glass=mat('#b3d6d4',.18,.2),night=mat('#50535a');
+  color.userData.houseBossEdition=true;
+  const el=(x,y,z,rx,ry,rz,m=color)=>ball(g,rx,ry,rz,m,x,y,z);
+  const rod=(x,y,z,x2,y2,z2,r,m)=>capsule(g,[x,y,z],[x2,y2,z2],r,m);
+  const ground=()=>{cylinder(g,.28,.35,.07,soil,0,.038,0)};
+  const growth=Math.max(.18,Math.min(1,(Number(stage)||0)/3));
+  function bloom(x,y,z,r=.22,m=color){
+    for(let i=0;i<6;i++){
+     const th=i*Math.PI/3;
+     el(x+Math.cos(th)*r*.62,y+Math.sin(th)*r*.62,z,r*.44,r*.48,r*.22,m)
+    }
+    el(x,y,z,.085,.085,.09,yellow)
+  }
+  if(data.category==='flowers'){
+   if(type==='rosemary'){
+    box(g,1.02,.27,.66,wood,0,.17,0);
+    box(g,.89,.035,.54,soil,0,.32,0)
+   }else ground();
+   const count=type==='sunflowers'?5:type==='rosebush'?11:13;
+   const h=(type==='sunflowers'?1.42:type==='rosebush'?.85:.64)*growth;
+   for(let i=0;i<count;i++){
+    const angle=i*2.399,rad=(.13+.16*(i%4))*(type==='rosebush'?1.6:1);
+    const x=Math.cos(angle)*rad,z=Math.sin(angle)*rad,y=h*(.66+(i%5)*.07);
+    rod(x*.45,.04,z*.45,x,y,z,.018,stem);
+    for(let j=0;j<2;j++){
+     const xx=x*(.45+j*.28),zz=z*(.45+j*.28),yy=y*(.30+j*.20);
+     const leaf=el(xx,yy,zz,.13,.045,.10,deep);leaf.rotation.y=angle
+    }
+    if(growth>.35){
+     if(type==='lavender')el(x,y,z,.078,.19,.077,color);
+     else if(type==='rosemary')el(x,y,z,.075,.11,.062,stem);
+     else bloom(x,y,z,type==='sunflowers'?.31:.14,type==='daisypatch'?ivory:color)
+    }
+   }
+  }else if(data.category==='trees'){
+   ground();const h=(type==='blossomtree'?2.4:2.15)*growth,leafColor=type==='blossomtree'?pink:color;
+   const trunk=mat('#8e775e');
+   cylinder(g,.11*growth,.18*growth,h*.65,trunk,0,h*.33,0);
+   for(let i=0;i<6;i++){
+    const t=i*Math.PI/3,rad=.45*growth;
+    rod(0,h*.56,0,Math.cos(t)*rad,h*(.70+i%3*.07),Math.sin(t)*rad,.035*growth,trunk);
+    el(Math.cos(t)*rad,h*(.73+i%3*.065),Math.sin(t)*rad,.38*growth,.30*growth,.32*growth,leafColor)
+   }
+   el(0,h*.89,0,.47*growth,.35*growth,.44*growth,leafColor);
+   if(type==='lemontree'&&growth>.78)for(let i=0;i<6;i++){
+    const th=i*Math.PI/3;
+    el(Math.cos(th)*.54,h*(.75+i%3*.06),Math.sin(th)*.42,.083,.10,.08,yellow)
+   }
+   if(type==='olivetree'&&growth>.8)for(let i=0;i<8;i++){
+    const th=i*Math.PI/4;
+    el(Math.cos(th)*.40,h*(.84+i%2*.035),Math.sin(th)*.37,.035,.045,.035,mat('#596071'))
+   }
+  }else if(data.category==='planters'){
+   if(type==='claypot'){
+    cylinder(g,.24,.18,.38,color,0,.23,0);
+    cylinder(g,.25,.25,.045,clay,0,.44,0);
+    for(let i=0;i<8;i++){
+     const a=i*Math.PI/4;
+     rod(0,.42,0,Math.cos(a)*.25,.76+i%3*.07,Math.sin(a)*.25,.018,deep);
+     el(Math.cos(a)*.25,.76+i%3*.07,Math.sin(a)*.25,.11,.07,.15,stem)
+    }
+   }else{
+    box(g,1.25,.42,.60,wood,0,.25,0);box(g,1.08,.05,.48,soil,0,.48,0);
+    for(let i=0;i<7;i++){
+     let x=-.46+i*.15;
+     rod(x,.49,0,x,.80+i%3*.11,0,.016,deep);
+     el(x,.80+i%3*.11,0,.09,.12,.08,stem)
+    }
+   }
+  }else if(data.category==='outdoor-seating'){
+   if(type==='gardenbench'){
+    box(g,1.55,.14,.58,wood,0,.54,0);box(g,1.55,.48,.10,wood,0,.98,-.23);
+    for(const x of [-.63,.63])for(const z of [-.19,.19])box(g,.08,.51,.08,night,x,.28,z)
+   }else if(type==='bistroset'){
+    cylinder(g,.16,.25,.65,night,0,.38,0);
+    cylinder(g,.66,.65,.10,color,0,.77,0);
+    for(const x of [-.78,.78]){
+     cylinder(g,.09,.15,.43,night,x,.27,0);
+     cylinder(g,.29,.28,.08,color,x,.50,0);
+     el(x,.80,-.23,.28,.36,.09,color)
+    }
+   }else{
+    for(const x of [-1.06,1.06]){
+     cylinder(g,.06,.09,1.24,wood,x,.67,0);
+     rod(x,1.27,0,x,.17,-.58,.055,wood)
+    }
+    el(0,.80,0,1.13,.14,.48,color);
+    for(let i=0;i<8;i++)box(g,2.10,.015,.025,ivory,0,.94-i*.028,-.36+i*.10)
+   }
+  }else if(data.category==='paths'){
+   const n=type==='pebblepath'?3:11;
+   for(let i=0;i<n;i++){
+    const x=type==='pebblepath'?(i-1)*.30:(i%4-1.5)*.22;
+    const z=type==='pebblepath'?(i%2)*.10:(Math.floor(i/4)-1)*.24;
+    el(x,.025,z,type==='pebblepath'?.19:.14,.021,type==='pebblepath'?.22:.12,i%3===0?ivory:stone)
+   }
+  }else if(data.category==='outdoor-lighting'){
+   if(type==='gardenlantern'){
+    cylinder(g,.18,.22,.07,night,0,.035,0);
+    rod(0,.08,0,0,.88,0,.04,night);
+    box(g,.26,.35,.26,mat('#ffe8b7',.22),0,.99,0);
+    box(g,.34,.06,.34,night,0,1.20,0)
+   }else{
+    for(const x of [-.95,.95]){
+     rod(x,.04,0,x,2.4,0,.043,wood);
+     el(x,2.43,0,.085,.08,.08,night)
+    }
+    rod(-.95,2.27,0,.95,2.27,0,.014,night);
+    for(let i=0;i<9;i++){
+     const x=-.88+i*.22,y=2.24-(i%2)*.11;
+     el(x,y,0,.085,.11,.085,mat('#ffe3ae',.24))
+    }
+   }
+  }else if(data.category==='outdoor-decor'){
+   if(type==='birdbath'){
+    cylinder(g,.25,.35,.09,stone,0,.06,0);
+    cylinder(g,.10,.13,.91,stone,0,.55,0);
+    cylinder(g,.46,.21,.13,color,0,1.08,0);
+    el(0,1.13,0,.34,.025,.33,glass)
+   }else if(type==='woodarch'){
+    for(const x of [-.78,.78]){
+     rod(x,.05,0,x,2.15,0,.09,wood);
+     for(let y=.3;y<2.0;y+=.4){
+      const p=el(x,y,0,.15,.08,.15,stem);p.rotation.z=.25
+     }
+    }
+    const arch=torus(g,.80,.075,wood,0,2.14,0);arch.rotation.x=Math.PI/2;
+    for(let i=0;i<5;i++)bloom((i-2)*.26,2.35+Math.sin(i)*.12,.02,.12,pink)
+   }else{
+    cylinder(g,.62,.60,.12,stone,0,.10,0);
+    cylinder(g,.40,.25,.51,color,0,.42,0);
+    el(0,.73,0,.49,.11,.48,glass);
+    rod(0,.71,0,0,1.24,0,.026,glass);
+    el(0,1.26,0,.14,.14,.14,glass)
+   }
+  }
+  g.userData.decorCategory='garden';
+  return true
+ };
+})();
+</script>
+<script type="module" src="./evin-patronu-3d.js?v=21"></script>
 <script type="module" src="./house-boss-town-3d.js?v=3"></script>
 <script src="./house-boss-sims-ui.js?v=9"></script>
 <script>
@@ -4299,7 +4562,7 @@ function renderRich(){
   (styleFilter==='all'||item.style===styleFilter)
  );
  const categoryIcons={seating:'▰',tables:'◉',lighting:'☀',rugs:'▦',art:'✷',objects:'◇',plants:'✿',storage:'▤'};
- let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Design Shop</button>'+
+ let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Design Shop</button><button type="button" data-hd-category="garden"><span>✿</span>Garden</button><button type="button" data-hd-category="build"><span>⌂</span>Build</button>'+
  Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([k,v])=>'<button type="button" data-hd-category="'+k+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>'+
  '<div class="hbf-shop-hero"><div><span>DESIGN SHOP / EDITIONS</span><h3>Make it yours.</h3><p>Furniture with personality. Sculptural shapes, playful colour and collectible pieces for your 3D home.</p>'+
  '<div class="hbf-hero-pills"><b>'+all.length+' OBJECTS</b><b>'+available+' UNLOCKED</b><b>3D HOME STYLING</b></div></div><div class="hbf-hero-sculpt"><i></i><i></i><i></i></div></div>'+
@@ -4399,7 +4662,7 @@ function renderSafe(err){
  const categoryButtons='<nav class="hbf-category-grid" aria-label="Furniture categories">'+
   '<button data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL</b><small>'+items.length+'</small></button>'+
   '<button data-hd-category="wallpaper" class="hbf-wallpaper-category"><span>▧</span><b>WALLPAPERS</b><small>15 designs ↗</small></button>'+Object.entries(categories).map(([id,name])=>'<button data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+(palette[id]||'✦')+'</span><b>'+name+'</b><small>'+items.filter(([,t])=>t.category===id).length+'</small></button>').join('')+'</nav>';
- let html='<nav class="hd-categories"><button class="active" data-hd-category="furniture">▣ Design Shop</button>'+
+ let html='<nav class="hd-categories"><button class="active" data-hd-category="furniture">▣ Design Shop</button><button data-hd-category="garden">✿ Garden</button><button data-hd-category="build">⌂ Build</button>'+
   Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([id,v])=>'<button data-hd-category="'+id+'">'+v.icon+' '+v.label+'</button>').join('')+'</nav>'+
   '<div class="hbf-shop-hero"><div><span>COLLECTIBLE INTERIORS / HOUSE BOSS</span><h3>Make it yours.</h3><p>37 original design editions, saved colourways, decorative accents and layered rugs. See each object in 3D before buying.</p>'+
   '<div class="hbf-hero-pills"><b>'+items.length+' FURNITURE & OBJECTS</b><b>HOME LVL '+lvl+'</b></div></div><div class="hbf-hero-sculpt"><i></i><i></i><i></i></div></div>'+
@@ -4625,6 +4888,239 @@ install();
 
 </script>
 <script>
+/* BUNDLED: GARDEN PRODUCTS */
+/* House Boss / Garden & Build — garden objects are actual placeable 3D entities. */
+(function(){
+ 'use strict';
+ const t=window.HouseBossFurnitureTypes;
+ if(!t)return;
+ const garden={
+  daisypatch:{name:'Daisy Meadow',category:'flowers',price:45,level:1,w:.82,d:.78,color:'#f6e1b9',shape:'flower',growthDays:2,beauty:6,comfort:3,action:'talk',desc:'Plant tiny white daisies and watch them bloom.'},
+  lavender:{name:'Lavender Bush',category:'flowers',price:90,level:1,w:.75,d:.75,color:'#9a8cc5',shape:'flower',growthDays:3,beauty:7,comfort:4,action:'talk',desc:'Purple lavender sways over fragrant foliage.'},
+  wildflowers:{name:'Wildflower Patch',category:'flowers',price:70,level:1,w:1.10,d:.83,color:'#f5b5ba',shape:'flower',growthDays:2,beauty:6,comfort:3,action:'talk',desc:'A bright field of miniature wildflowers.'},
+  rosemary:{name:'Rosemary Herb Bed',category:'flowers',price:130,level:1,w:1.05,d:.75,color:'#86a57c',shape:'planter',growthDays:3,harvest:25,beauty:5,comfort:4,action:'talk',desc:'An aromatic herb patch with a harvest bonus.'},
+  sunflowers:{name:'Sunflower Cluster',category:'flowers',price:155,level:2,w:.82,d:.85,color:'#f2ca62',shape:'flower',growthDays:4,beauty:9,comfort:5,action:'talk',desc:'Sunflowers climb above the garden grass.'},
+  rosebush:{name:'Peach Rose Bush',category:'flowers',price:195,level:3,w:1.0,d:1.0,color:'#eaa0a5',shape:'flower',growthDays:4,beauty:11,comfort:6,action:'talk',desc:'A flowering shrub in warm peach-pink.'},
+  lemontree:{name:'Meyer Lemon Tree',category:'trees',price:295,level:2,w:1.45,d:1.44,color:'#a5b779',shape:'tree',growthDays:5,harvest:55,beauty:13,comfort:7,action:'talk',desc:'Grow lemons for a small recurring harvest.'},
+  olivetree:{name:'Mediterranean Olive',category:'trees',price:375,level:3,w:1.65,d:1.62,color:'#849a7d',shape:'tree',growthDays:7,harvest:70,beauty:17,comfort:8,action:'talk',desc:'A twisting silver-leaf olive tree.'},
+  blossomtree:{name:'Pink Blossom Tree',category:'trees',price:460,level:4,w:1.75,d:1.75,color:'#e7a3bb',shape:'tree',growthDays:7,beauty:21,comfort:10,action:'talk',desc:'A delicate flowering tree with pink canopies.'},
+  minipine:{name:'Miniature Cypress',category:'trees',price:225,level:2,w:1.15,d:1.16,color:'#567f61',shape:'tree',growthDays:5,beauty:9,comfort:6,action:'talk',desc:'A dark green Mediterranean evergreen.'},
+  claypot:{name:'Round Clay Pot',category:'planters',price:50,level:1,w:.55,d:.55,color:'#c8845e',shape:'pot',comfort:2,action:'talk',desc:'Terracotta pot with sculptural green foliage.'},
+  planterbox:{name:'Timber Planter Box',category:'planters',price:125,level:1,w:1.30,d:.63,color:'#b88c69',shape:'planter',comfort:3,action:'talk',desc:'A hand-crafted planter with trailing greenery.'},
+  gardenbench:{name:'Garden Slat Bench',category:'outdoor-seating',price:190,level:1,w:1.62,d:.78,color:'#aa8765',shape:'bench',comfort:8,action:'talk',desc:'Rest among the plants on a wooden bench.'},
+  bistroset:{name:'Pastel Bistro Set',category:'outdoor-seating',price:470,level:2,w:1.95,d:1.55,color:'#a1bfbd',shape:'bistro',comfort:12,action:'talk',desc:'A round cafe table with two colourful chairs.'},
+  hammock:{name:'Canvas Hammock',category:'outdoor-seating',price:540,level:3,w:2.40,d:1.45,color:'#e4c9b1',shape:'hammock',comfort:15,action:'nap',desc:'An outdoor swing for a well-earned afternoon rest.'},
+  pebblepath:{name:'Stepping Stone Path',category:'paths',price:38,level:1,w:1.0,d:.55,color:'#d4cab5',shape:'path',layer:'floor',comfort:1,action:'talk',desc:'Connect your garden with stone stepping paths.'},
+  gravelpath:{name:'Pea Gravel Tile',category:'paths',price:55,level:1,w:1.0,d:1.0,color:'#c6bbaa',shape:'path',layer:'floor',comfort:1,action:'talk',desc:'A clean pale pebble courtyard tile.'},
+  gardenlantern:{name:'Little Garden Lantern',category:'outdoor-lighting',price:75,level:1,w:.41,d:.41,color:'#f1c77e',shape:'lantern',comfort:2,action:'talk',desc:'A warm illuminated path lantern.'},
+  globelights:{name:'Garden Globe Lights',category:'outdoor-lighting',price:255,level:2,w:2.15,d:.43,color:'#f2d8b3',shape:'string',comfort:6,action:'talk',desc:'Twinkling globe lights on a freestanding frame.'},
+  birdbath:{name:'Bird Bath',category:'outdoor-decor',price:140,level:2,w:.81,d:.81,color:'#c8c9b8',shape:'bath',comfort:5,action:'talk',desc:'A stone basin that welcomes garden visitors.'},
+  woodarch:{name:'Garden Arch',category:'outdoor-decor',price:360,level:3,w:1.75,d:.70,color:'#a97d60',shape:'arch',comfort:8,action:'talk',desc:'A climbing rose arch over the garden path.'},
+  waterfountain:{name:'Pebble Fountain',category:'outdoor-decor',price:980,level:5,w:1.55,d:1.55,color:'#a8c7c7',shape:'fountain',comfort:16,action:'talk',desc:'A quiet ceramic fountain for your garden sanctuary.'}
+ };
+ for(const [id,obj]of Object.entries(garden)){
+  obj.zone='garden';obj.collection='GARDEN';obj.style='organic';
+  obj.tier=obj.level<=2?'starter':obj.level<=4?'modern':'premium';
+  t[id]=obj;
+ }
+ window.HouseBossGardenCatalog=Object.freeze({
+  ids:Object.keys(garden),
+  categories:{flowers:'FLOWERS',trees:'TREES',planters:'PLANTERS','outdoor-seating':'SEATING',paths:'PATHS','outdoor-lighting':'LIGHTING','outdoor-decor':'DECOR'},
+  expansions:[
+   {id:'garden_patch',name:'Garden Plot Expansion',price:360,level:1,desc:'Expand your plantable garden from a compact patch to the full lawn.',benefit:'Larger planting area'},
+   {id:'patio',name:'Outdoor Patio',price:980,level:2,desc:'Add a landscaped patio with benches and a dining area.',benefit:'Outdoor social space'},
+   {id:'greenhouse',name:'Glass Greenhouse',price:2250,level:4,desc:'Build a miniature glasshouse with raised growing beds.',benefit:'Extra growth for all plants'},
+   {id:'studio',name:'Garden Studio Extension',price:3250,level:5,desc:'Extend the home with a bright, furnished creative studio.',benefit:'New architectural room'}
+  ]
+ });
+})();
+
+</script>
+<script>
+/* BUNDLED: GARDEN SHOP INTERFACE */
+/* House Boss / Garden & Build UI — controls the real saved game through bridges. */
+(function(){
+ 'use strict';
+ const $=s=>document.querySelector(s),root=()=>$('#noteBody'),bridge=()=>window.HouseBossGardenBridge,
+  build=()=>window.HouseBossBuildBridge,three=()=>window.Evin3D,types=()=>window.HouseBossFurnitureTypes||{};
+ let view='garden',filter='all',note='',selection=null;
+ const icons={flowers:'✿',trees:'♣',planters:'▤','outdoor-seating':'▰',paths:'▦','outdoor-lighting':'☀','outdoor-decor':'◇'};
+ const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const itemState=()=>three()?.getFurniturePlacement?.()||null;
+ const itemDesc=t=>t.growthDays?'GROWS IN '+t.growthDays+' DAYS · +'+(t.beauty||0)+' BEAUTY':
+  '✧ +'+(t.comfort||0)+' COMFORT';
+ const tabBar=current=>'<nav class="hbg-tabs" aria-label="Home design mode">'+
+  [['furniture','INDOOR'],['garden','GARDEN'],['build','BUILD / EXPAND']].map(([id,label])=>
+   '<button type="button" class="'+(id===current?'active':'')+'" data-hd-category="'+id+'">'+label+'</button>').join('')+'</nav>';
+ function picker(){
+  const p=itemState();
+  if(!p||types()[p.type]?.zone!=='garden')return '';
+  const t=types()[p.type],name=esc(t.name),preview=p.mode==='preview';
+  return '<div class="hbg-placement" role="group" aria-label="Garden placement controls">'+
+   '<div><span>'+ (preview?'FREE 3D PREVIEW':p.uid?'MOVE OBJECT':'PLACE IN THE GARDEN')+'</span><strong>'+name+'</strong></div>'+
+   '<p id="hbg-place-status" data-valid="'+Boolean(p.valid)+'">'+(p.valid?'GOOD SPOT':esc(p.reason||'Move to an open tile'))+'</p>'+
+   '<div class="hbg-place-controls"><button data-hbg-turn>ROTATE ↻</button>'+
+   '<button data-hbg-nudge="-0.5,0">←</button><button data-hbg-nudge="0,-0.5">↑</button>'+
+   '<button data-hbg-nudge="0,0.5">↓</button><button data-hbg-nudge="0.5,0">→</button></div>'+
+   '<div class="hbg-place-final"><button data-hbg-cancel>CANCEL</button>'+
+   '<button data-hbg-confirm '+(!p.valid&&!preview?'disabled':'')+'>'+
+   (preview?'CLOSE PREVIEW':p.uid?'SAVE LOCATION':'BUY & PLANT · $'+t.price)+'</button></div></div>'
+ }
+ function garden(s){
+  const catalog=window.HouseBossGardenCatalog,items=(catalog?.ids||[]).map(id=>[id,types()[id]]).filter(([id,t])=>t&&
+   (filter==='all'||filter==='new'&&t.level<=s.level||filter===t.category));
+  const count=s.objects?.length||0,zoneIsLocked=!s.unlocked;
+  const room=s.room||{level:1,price:0,available:false};
+  const roomNote=zoneIsLocked?'<div class="hbg-unlock"><div><b>OPEN YOUR GARDEN</b>'+
+   '<p>The outdoor room is not built yet. Unlock it once to start planting, collecting and decorating.</p>'+
+   '<small>HOME LVL '+room.level+' · $'+room.price+'</small></div>'+
+   '<button data-hbg-build="garden" '+(!room.available?'disabled':'')+'>'+
+   (s.level<room.level?'LEVEL '+room.level+' REQUIRED':'BUILD GARDEN · $'+room.price)+'</button></div>':'';
+  const overview='<div class="hbg-hero"><div><span>HOUSE BOSS / YOUR LITTLE OUTDOOR WORLD</span>'+
+   '<h3>Let it grow.</h3><p>Plant a tree. Arrange the terrace. Collect unusual garden objects. A little fresh air changes everything.</p>'+
+   '<div class="hbg-hero-pills"><b>'+s.plants+' PLANTS</b><b>'+s.beauty+' GARDEN BEAUTY</b><b>'+count+' OBJECTS</b></div></div>'+
+   '<div class="hbg-hero-art">✿<small>GARDEN STUDIO</small></div></div>';
+  let html=overview+roomNote;
+  if(!zoneIsLocked)html+='<div class="hbg-callout"><div><b>YOUR LIVE 3D GARDEN IS READY</b><small>Place plants directly in the garden. Water to speed up growth; collect fruit when trees mature.</small></div><button data-hbg-focus>VIEW GARDEN ↗</button></div>';
+  html+=picker();
+  html+='<div class="hbg-section-title"><strong>GARDEN MARKET</strong><small>'+catalog.ids.length+' REAL 3D OBJECTS</small></div>'+
+   '<div class="hbg-filters">'+[['all','ALL'],['new','UNLOCKED'],['flowers','FLOWERS'],['trees','TREES'],['planters','POTS'],['outdoor-seating','SEATING'],['paths','PATHS'],['outdoor-lighting','LIGHTS'],['outdoor-decor','DECOR']].map(([k,label])=>
+    '<button class="'+(filter===k?'active':'')+'" data-hbg-filter="'+k+'">'+label+'</button>').join('')+'</div>';
+  html+='<div class="hbg-catalogue">'+items.map(([id,t])=>{
+   const locked=s.level<t.level,poor=s.cash<t.price;
+   return '<article class="hbg-card '+(locked?'locked':'')+'">'+
+    '<div class="hbg-model hbg-model-'+t.category+'" style="--hbg-color:'+t.color+'"><div class="hbg-model-icon">'+(icons[t.category]||'✦')+'</div>'+
+     (t.growthDays?'<span class="hbg-growth-chip">'+t.growthDays+' GAME DAYS TO GROW</span>':'')+
+     (locked?'<b class="hbg-card-locked">LEVEL '+t.level+'</b>':'<b class="hbg-card-ready">UNLOCKED</b>')+'</div>'+
+    '<div class="hbg-card-copy"><span>'+esc(t.category).toUpperCase()+' · LVL '+t.level+'</span><h4>'+esc(t.name)+'</h4>'+
+     '<p>'+esc(t.desc)+'</p><small>'+itemDesc(t)+'</small></div>'+
+    '<div class="hbg-card-actions"><button data-hbg-preview="'+id+'" '+(zoneIsLocked?'disabled':'')+'>VIEW 3D</button>'+
+     '<button data-hbg-buy="'+id+'" '+(zoneIsLocked||locked||poor?'disabled':'')+'>'+
+      (zoneIsLocked?'BUILD GARDEN FIRST':locked?'LEVEL '+t.level:poor?'NEED $'+(t.price-s.cash):'BUY · $'+t.price)+'</button></div>'+
+    '</article>'
+  }).join('')+'</div>';
+  html+='<div class="hbg-section-title"><strong>MY GARDEN</strong><small>WATER · HARVEST · REARRANGE</small></div>';
+  html+='<div class="hbg-inventory">'+(count?s.objects.map(o=>{
+   const t=types()[o.type],grow=!!t?.growthDays,stage=['SEEDLING','SPROUT','GROWING','MATURE'][o.stage]||'MATURE';
+   return '<div class="hbg-item"><div class="hbg-item-icon" style="--hbg-color:'+t.color+'">'+(icons[t.category]||'✦')+'</div>'+
+    '<div class="hbg-item-info"><b>'+esc(t.name)+'</b><small>'+(grow?stage+' · '+(o.stage/3*100).toFixed(0)+'% GROWN':'OUTDOOR OBJECT')+'</small>'+
+     (grow?'<div class="hbg-plant-meter"><i style="width:'+(o.stage/3*100)+'%"></i></div>':'')+'</div>'+
+    '<div class="hbg-item-actions">'+(grow?'<button data-hbg-water="'+o.uid+'" '+(o.wateredToday?'disabled':'')+'>'+(o.wateredToday?'WATERED':'WATER')+'</button>':'<button data-hbg-use="'+o.uid+'">USE</button>')+
+     (o.harvest?'<button data-hbg-harvest="'+o.uid+'" '+(!o.canHarvest?'disabled':'')+'>HARVEST +$'+o.harvest+'</button>':'')+
+     '<button data-hbg-move="'+o.uid+'">MOVE</button><button data-hbg-sell="'+o.uid+'" class="hbg-item-sell">SELL</button></div></div>'
+  }).join(''):'<p class="hbg-empty">Your garden begins with one seed. Choose a flower or a little outdoor bench above.</p>')+'</div>';
+  return html
+ }
+ function buildPanel(s){
+  const opts=s.expansions||[];
+  let html='<div class="hbg-hero hbg-build-hero"><div><span>HOUSE BOSS / ARCHITECTURE & EXPANSIONS</span>'+
+   '<h3>More room to live.</h3><p>Build real new spaces in your 3D home — not just invisible upgrades. Each extension changes the world around you.</p>'+
+   '<div class="hbg-hero-pills"><b>4 EXPANSIONS</b><b>'+(opts.filter(o=>o.owned).length)+' BUILT</b><b>HOME LVL '+s.level+'</b></div></div>'+
+   '<div class="hbg-hero-art">⌂<small>BUILD MODE</small></div></div>'+
+   '<div class="hbg-section-title"><strong>ARCHITECTURAL PROJECTS</strong><small>NEW SPACES · PROPERTY VALUE</small></div>';
+  const room=s.room;
+  if(room)html+='<article class="hbg-expansion '+(s.unlocked?'built':'')+'"><div class="hbg-expansion-icon">❀</div>'+
+   '<div><span>FOUNDATION / OUTDOORS</span><h4>Garden Room</h4><p>A separate outdoor world for plants, paths, chairs and landscaping.</p>'+
+   '<small>HOME LVL '+room.level+' · $'+room.price+'</small></div>'+
+   '<button data-hbg-build="garden" '+(s.unlocked||!room.available?'disabled':'')+'>'+
+    (s.unlocked?'✓ BUILT':s.level<room.level?'LEVEL '+room.level:'BUILD · $'+room.price)+'</button></article>';
+  html+=opts.map(e=>'<article class="hbg-expansion '+(e.owned?'built':'')+'">'+
+   '<div class="hbg-expansion-icon">'+({garden_patch:'✿',patio:'▤',greenhouse:'▱',studio:'⌂'}[e.id])+'</div>'+
+   '<div><span>'+(e.id==='studio'?'HOME EXTENSION':'GARDEN EXPANSION')+' / LEVEL '+e.level+'</span>'+
+    '<h4>'+esc(e.name)+'</h4><p>'+esc(e.desc)+'</p><small>'+esc(e.benefit)+'</small></div>'+
+   '<button data-hbg-build="'+e.id+'" '+(e.owned||!e.available?'disabled':'')+'>'+
+    (e.owned?'✓ BUILT':s.level<e.level?'LEVEL '+e.level:s.cash<e.price?'NEED $'+(e.price-s.cash):'BUILD · $'+e.price)+'</button></article>').join('');
+  if(opts.some(e=>e.id==='studio'&&e.owned))html+='<button class="hbg-view-studio" data-hbg-studio>VIEW NEW GARDEN STUDIO IN 3D ↗</button>';
+  return html
+ }
+ function render(kind){
+  if(kind)view=kind;
+  const B=bridge(),rootNode=root();if(!rootNode||!B)return;
+  const s=B.getState(),heading=$('#noteTitle'),budget=$('#noteBudget');
+  if(heading)heading.textContent=view==='build'?'Build & Expand':'The Garden Shop';
+  if(budget)budget.textContent='$'+s.cash+' · HOME LVL '+s.level+' · DAY '+s.day;
+  rootNode.innerHTML='<div class="hbg-app">'+tabBar(view)+(view==='build'?buildPanel(s):garden(s))+
+   (note?'<p class="hbg-message" role="status">'+esc(note)+'</p>':'')+'</div>';
+  updateStatus()
+ }
+ function findSpot(type){
+  // Outdoor local coordinates: 3D renderer shifts to the garden room at z + 12.2.
+  const xs=[-3.5,3.5,3,-3,2,-2,0,4,-4,1,-1,6,-6],zs=[2.5,3,1.5,-3,-1,0,-4,4];
+  for(const z of zs)for(const x of xs){
+   const p={type,x,z,rot:0,zone:'garden'};
+   if(build()?.validate?.(p)?.ok)return p
+  }
+  return null
+ }
+ function start(type,uid,preview){
+  const B=bridge(),api=build(),T=three(),s=B?.getState(),t=types()[type];
+  if(!s?.unlocked){note='Unlock the Garden room in BUILD first.';render();return}
+  if(!t||!T?.isReady){note='The 3D garden is not ready.';render();return}
+  if(!preview&&!uid&&(s.level<t.level||s.cash<t.price)){note='This item is locked or cannot be afforded yet.';render();return}
+  const owned=s.objects.find(o=>o.uid===uid);
+  const pos=uid?{type:owned?.type,x:owned?.x,z:owned?.z,rot:owned?.rot,uid,mode:'move',zone:'garden'}:findSpot(type);
+  if(!pos?.type){note='No free garden tiles. Move or sell another object.';render();return}
+  if(preview)pos.mode='preview';
+  T.focusRoom?.('garden');
+  if(!T.beginFurniturePlacement?.(pos)){note='Unable to start garden placement.';render();return}
+  T.focusFurniture?.(pos.x,pos.z);note='';render()
+ }
+ function stop(){three()?.cancelFurniturePlacement?.();note='';render()}
+ function updateStatus(){
+  const p=itemState(),node=$('#hbg-place-status');
+  if(node&&p?.zone==='garden'){
+   node.textContent=p.valid?'GOOD SPOT':p.reason||'Choose another tile';
+   node.dataset.valid=String(!!p.valid)
+  }
+  const confirm=$('[data-hbg-confirm]');if(confirm)confirm.disabled=!p?.valid&&p?.mode!=='preview'
+ }
+ function finish(){
+  const p=itemState(),api=build(),t=types()[p?.type];
+  if(!p||p.zone!=='garden')return;
+  if(p.mode==='preview'){stop();return}
+  if(!p.valid){note=p.reason||'Choose a valid garden tile.';render();return}
+  const success=p.uid?api.move?.(p.uid,p.x,p.z,p.rot):api.buy?.(p.type,p.x,p.z,p.rot,t.price);
+  if(!success){note='Could not save this placement. Check your space and funds.';render();return}
+  three()?.cancelFurniturePlacement?.();three()?.syncFurnitureNow?.();note='';render()
+ }
+ function install(){
+  const body=root();if(!body)return;
+  body.addEventListener('click',e=>{
+   const b=e.target.closest('[data-hbg-buy]');if(b){start(b.dataset.hbgBuy);return}
+   const p=e.target.closest('[data-hbg-preview]');if(p){start(p.dataset.hbgPreview,null,true);return}
+   const sel=e.target.closest('[data-hbg-filter]');if(sel){filter=sel.dataset.hbgFilter;render();return}
+   const focus=e.target.closest('[data-hbg-focus]');if(focus){bridge()?.focus?.();return}
+   const studio=e.target.closest('[data-hbg-studio]');if(studio){bridge()?.focusStudio?.();return}
+   const exp=e.target.closest('[data-hbg-build]');if(exp){
+    const id=exp.dataset.hbgBuild;
+    if(bridge()?.build?.(id)){note='Construction complete. Your new space is ready in 3D.';three()?.syncFurnitureNow?.();if(id==='studio')bridge()?.focusStudio?.();else bridge()?.focus?.()}
+    else note='Not available yet. Check your funds, level and Garden room.';
+    render();return
+   }
+   const water=e.target.closest('[data-hbg-water]');if(water){note=bridge()?.water?.(water.dataset.hbgWater)?'Watered. Check again tomorrow.':'Already watered today.';render();return}
+   const harvest=e.target.closest('[data-hbg-harvest]');if(harvest){note=bridge()?.harvest?.(harvest.dataset.hbgHarvest)?'Fresh harvest collected.':'Not ready for harvest.';render();return}
+   const use=e.target.closest('[data-hbg-use]');if(use){note=bridge()?.use?.(use.dataset.hbgUse)?'A good moment outdoors.':'Action unavailable.';render();return}
+   const move=e.target.closest('[data-hbg-move]');if(move){const o=bridge()?.getState()?.objects.find(x=>x.uid===move.dataset.hbgMove);if(o)start(o.type,o.uid);return}
+   const sell=e.target.closest('[data-hbg-sell]');if(sell){
+    const o=bridge()?.getState()?.objects.find(x=>x.uid===sell.dataset.hbgSell);
+    if(o&&window.confirm('Sell '+o.name+'?')){build()?.sell?.(o.uid);three()?.syncFurnitureNow?.();render()}
+    return
+   }
+   if(e.target.closest('[data-hbg-cancel]')){stop();return}
+   if(e.target.closest('[data-hbg-confirm]')){finish();return}
+   if(e.target.closest('[data-hbg-turn]')){three()?.rotateFurniture?.();updateStatus();return}
+   const n=e.target.closest('[data-hbg-nudge]');if(n){const [x,z]=n.dataset.hbgNudge.split(',').map(Number);three()?.nudgeFurniture?.(x,z);updateStatus();return}
+  })
+ }
+ install();
+ window.HouseBossGardenUI={render,stop,updateStatus,selectFrom3D(uid){
+  const s=bridge()?.getState(),obj=s?.objects?.find(o=>o.uid===uid);
+  if(obj){window.HouseBossHomeDesign?.selectCategory?.('garden');start(obj.type,uid)}
+ }};
+})();
+
+</script>
+<script>
 /* BUNDLED: DESIGN UI CONTROLLER */
 /* HOUSE BOSS / HOME DESIGN STUDIO V1
    Original design controls, six rooms/finishes, live 3D previews and persistent owned styles.
@@ -4708,6 +5204,9 @@ function openShop(){clearPreview();category='furniture';bridge()?.open?.();rende
 function render(){
  let root=document.getElementById('noteBody');
  if(!root)return;
+ if(category==='garden'||category==='build'){
+  window.HouseBossGardenUI?.render?.(category);return
+ }
  if(category==='furniture'){
   // Always restore the correct DESIGN state when this shop is shown.
   const notebook=document.getElementById('notebook');
@@ -4745,7 +5244,7 @@ function render(){
  const title=document.getElementById('noteTitle');if(title)title.textContent='Home Design';
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+Math.floor(st.cash)+' · Property value $'+(st.value||0)+' · HOME LVL '+(st.level||1);
  let html='<div class="hd-lead"><span class="hd-kicker">INTERIOR DESIGN STUDIO · HOME LVL '+(st.level||1)+'</span><p>Make your first apartment a designer home. Premium styles unlock as your Home Level rises. Preview a future look any time.</p></div>';
- html+='<nav class="hd-categories" aria-label="Design categories"><button type="button" data-hd-category="furniture"><span>▣</span>Furniture</button>'+Object.entries(catalog).map(([k,v])=>'<button type="button" data-hd-category="'+k+'" class="'+(k===category?'active':'')+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>';
+ html+='<nav class="hd-categories" aria-label="Design categories"><button type="button" data-hd-category="furniture"><span>▣</span>Furniture</button><button type="button" data-hd-category="garden"><span>✿</span>Garden</button><button type="button" data-hd-category="build"><span>⌂</span>Build</button>'+Object.entries(catalog).map(([k,v])=>'<button type="button" data-hd-category="'+k+'" class="'+(k===category?'active':'')+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>';
  html+='<div class="hd-collection"><div><h3>'+data.label+'</h3><small>'+data.description+'</small></div><button type="button" data-hd-focus>VIEW IN 3D ↗</button></div>';
  html+='<div class="hd-options">'+data.options.map(opt=>{
   const [id,name,price,color,desc,needLevel]=opt,isActive=selectedStyle(category)===id,isOwned=owned(category,id),isShowing=active===id;
@@ -4753,7 +5252,7 @@ function render(){
   const poor=st.cash<price&&!isOwned;
   return '<article class="hd-style '+(isShowing?'hd-current ':'')+(isActive?'hd-applied':'')+(locked?' hd-locked':'')+'">'+
    '<button class="hd-preview" type="button" data-hd-preview="'+category+':'+id+'" aria-label="Preview '+name+'">'+
-    '<span class="hd-swatch hd-swatch-'+cat+'-'+id+'" style="--sample:'+color+'"><i></i></span>'+
+    '<span class="hd-swatch hd-swatch-'+category+'-'+id+'" style="--sample:'+color+'"><i></i></span>'+
     '<span class="hd-style-name">'+name+'</span><span class="hd-style-desc">'+desc+'</span><span class="hd-tier">'+(locked?'◆ LEVEL '+needLevel+' TO UNLOCK':'LVL '+needLevel+' COLLECTION')+'</span>'+
     '<span class="hd-style-tag">'+(isActive?'IN ROOM':isOwned?'OWNED':locked?'LOCKED':'$'+price)+'</span></button>'+
    '<button type="button" class="hd-purchase" data-hd-apply="'+category+':'+id+'" '+(isActive||poor||locked?'disabled':'')+'>'+
@@ -4797,7 +5296,7 @@ function install(){
  oldTabs.forEach(b=>b.addEventListener('click',()=>{
   clearPreview();document.getElementById('notebook')?.classList.remove('design-mode');
  },true));
- window.HouseBossHomeDesign={render,clearPreview,openShop,effective,catalog,isFurnitureView(){return category==='furniture'&&document.getElementById('notebook')?.classList.contains('design-mode')},selectCategory(k){if(k==='furniture'||catalog[k]){clearPreview();category=k;render()}}};
+ window.HouseBossHomeDesign={render,clearPreview,openShop,effective,catalog,isFurnitureView(){return category==='furniture'&&document.getElementById('notebook')?.classList.contains('design-mode')},selectCategory(k){if(k==='furniture'||k==='garden'||k==='build'||catalog[k]){clearPreview();category=k;render()}}};
 }
 install();
 const widget=document.getElementById('levelWidget');
