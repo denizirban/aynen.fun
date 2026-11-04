@@ -80,6 +80,9 @@ function openShop(){clearPreview();category='furniture';bridge()?.open?.();rende
 function render(){
  let root=document.getElementById('noteBody');
  if(!root)return;
+ if(category==='garden'||category==='build'){
+  window.HouseBossGardenUI?.render?.(category);return
+ }
  if(category==='furniture'){
   // Always restore the correct DESIGN state when this shop is shown.
   const notebook=document.getElementById('notebook');
@@ -117,7 +120,7 @@ function render(){
  const title=document.getElementById('noteTitle');if(title)title.textContent='Home Design';
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+Math.floor(st.cash)+' · Property value $'+(st.value||0)+' · HOME LVL '+(st.level||1);
  let html='<div class="hd-lead"><span class="hd-kicker">INTERIOR DESIGN STUDIO · HOME LVL '+(st.level||1)+'</span><p>Make your first apartment a designer home. Premium styles unlock as your Home Level rises. Preview a future look any time.</p></div>';
- html+='<nav class="hd-categories" aria-label="Design categories"><button type="button" data-hd-category="furniture"><span>▣</span>Furniture</button>'+Object.entries(catalog).map(([k,v])=>'<button type="button" data-hd-category="'+k+'" class="'+(k===category?'active':'')+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>';
+ html+='<nav class="hd-categories" aria-label="Design categories"><button type="button" data-hd-category="furniture"><span>▣</span>Furniture</button><button type="button" data-hd-category="garden"><span>✿</span>Garden</button><button type="button" data-hd-category="build"><span>⌂</span>Build</button>'+Object.entries(catalog).map(([k,v])=>'<button type="button" data-hd-category="'+k+'" class="'+(k===category?'active':'')+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>';
  html+='<div class="hd-collection"><div><h3>'+data.label+'</h3><small>'+data.description+'</small></div><button type="button" data-hd-focus>VIEW IN 3D ↗</button></div>';
  html+='<div class="hd-options">'+data.options.map(opt=>{
   const [id,name,price,color,desc,needLevel]=opt,isActive=selectedStyle(category)===id,isOwned=owned(category,id),isShowing=active===id;
@@ -125,7 +128,7 @@ function render(){
   const poor=st.cash<price&&!isOwned;
   return '<article class="hd-style '+(isShowing?'hd-current ':'')+(isActive?'hd-applied':'')+(locked?' hd-locked':'')+'">'+
    '<button class="hd-preview" type="button" data-hd-preview="'+category+':'+id+'" aria-label="Preview '+name+'">'+
-    '<span class="hd-swatch hd-swatch-'+cat+'-'+id+'" style="--sample:'+color+'"><i></i></span>'+
+    '<span class="hd-swatch hd-swatch-'+category+'-'+id+'" style="--sample:'+color+'"><i></i></span>'+
     '<span class="hd-style-name">'+name+'</span><span class="hd-style-desc">'+desc+'</span><span class="hd-tier">'+(locked?'◆ LEVEL '+needLevel+' TO UNLOCK':'LVL '+needLevel+' COLLECTION')+'</span>'+
     '<span class="hd-style-tag">'+(isActive?'IN ROOM':isOwned?'OWNED':locked?'LOCKED':'$'+price)+'</span></button>'+
    '<button type="button" class="hd-purchase" data-hd-apply="'+category+':'+id+'" '+(isActive||poor||locked?'disabled':'')+'>'+
@@ -169,7 +172,7 @@ function install(){
  oldTabs.forEach(b=>b.addEventListener('click',()=>{
   clearPreview();document.getElementById('notebook')?.classList.remove('design-mode');
  },true));
- window.HouseBossHomeDesign={render,clearPreview,openShop,effective,catalog,isFurnitureView(){return category==='furniture'&&document.getElementById('notebook')?.classList.contains('design-mode')},selectCategory(k){if(k==='furniture'||catalog[k]){clearPreview();category=k;render()}}};
+ window.HouseBossHomeDesign={render,clearPreview,openShop,effective,catalog,isFurnitureView(){return category==='furniture'&&document.getElementById('notebook')?.classList.contains('design-mode')},selectCategory(k){if(k==='furniture'||k==='garden'||k==='build'||catalog[k]){clearPreview();category=k;render()}}};
 }
 install();
 const widget=document.getElementById('levelWidget');
