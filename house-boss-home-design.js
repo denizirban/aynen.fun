@@ -7,6 +7,11 @@ const catalog={
  sofa:{label:'Sofas',icon:'▱',description:'A sofa changes how your home feels.',options:[
   ['starter','Everyday Linen',0,'#bdb49c','Simple and comfortable'],
   ['sage','Modern Sage',175,'#8ca796','Clean, soft and inviting'],
+  ['mint','Mint Candy',120,'#a2cbb4','Refreshing pastel upholstery',1],
+  ['creamstripe','Striped Buttercream',150,'#e9d2a7','A warm sunny striped sofa',1],
+  ['peach','Peach Velvet',165,'#eca998','Soft peach with vintage attitude',2],
+  ['sky','Sky Blue Linen',175,'#a8c5db','Airy pale blue upholstery',2],
+  ['berry','Berry Bouclé',320,'#b988ad','A bolder berry-toned statement',3],
   ['rust','Rust Velvet',215,'#be7c67','A statement curved sofa'],
   ['navy','Midnight Blue',260,'#667f9b','Deep, dramatic cushions'],
   ['boucle','Cloud Bouclé',480,'#f1e9d9','A premium rounded silhouette'],
@@ -19,7 +24,17 @@ const catalog={
   ['sage','Sage Stripes',90,'#acc2aa','Quiet vertical stripes'],
   ['botanical','Botanical Print',155,'#83aa83','A subtle green leaf motif'],
   ['clay','Clay Wash',125,'#d3a294','Warm, earthy and textural'],
-  ['blue','Misty Blue',115,'#b2c9da','A soft coastal look']
+  ['blue','Misty Blue',115,'#b2c9da','A soft coastal look'],
+  ['warmivory','Warm Ivory Panel',95,'#eee6db','Subtle architectural panels',1],
+  ['tinyfloral','Tiny Floral',120,'#f5dfde','Little meadow flowers on ivory',1],
+  ['pastelgingham','Pastel Gingham',130,'#ebd9cb','Soft peach checks with fine lines',1],
+  ['sagepinstripe','Sage Pinstripe',145,'#c0cbb5','Thin sage lines and gentle structure',1],
+  ['rosepetals','Rose Petal Print',165,'#e8cbd3','Hand-drawn rosy flowers',2],
+  ['terracottagrid','Terracotta Grid',175,'#dfae9b','A graphic retro grid',2],
+  ['lilacarches','Lilac Arches',195,'#d8cee8','Playful curved arch motifs',2],
+  ['sunnydaisy','Sunny Daisy',225,'#f2dfba','Golden daisies on vanilla',3],
+  ['bluewave','Coastal Wave',235,'#c4dce0','Waves drawn in faded blue',3],
+  ['abstractpop','Colour Block Mural',320,'#e4b8b2','Bold modern composition',4]
  ]},
  flooring:{label:'Flooring',icon:'▦',description:'Replace the flooring of the entire living space.',options:[
   ['hex','Classic Hex',0,'#d6d8d0','Original ceramic tile'],
@@ -48,7 +63,11 @@ const catalog={
  ]}
 };
 const sofaLevels={starter:1,sage:2,rust:3,navy:5,boucle:7,leather:9,cloud:12,atelier:15};
-Object.entries(catalog).forEach(([cat,data])=>data.options.forEach((o,i)=>{o[5]=cat==='sofa'?sofaLevels[o[0]]:(i===0?1:Math.max(1,Math.ceil((i+1)/1.5)))}));
+Object.entries(catalog).forEach(([cat,data])=>data.options.forEach((o,i)=>{
+ if(!Number.isFinite(o[5]))o[5]=cat==='sofa'?(sofaLevels[o[0]]||Math.max(1,Math.ceil((i+1)/2))):(i===0?1:Math.max(1,Math.ceil((i+1)/1.5)));
+}));
+/* Starter wallpaper should be achievable immediately, regardless of prior saves. */
+catalog.wallpaper.options.find(o=>o[0]==='sage')[5]=1;
 let category='furniture',preview=null;
 function bridge(){return window.HouseBossDesignBridge}
 function state(){return bridge()?.getState?.()||{cash:0,value:0,selected:{},unlocked:{}}}
@@ -106,7 +125,7 @@ function render(){
   const poor=st.cash<price&&!isOwned;
   return '<article class="hd-style '+(isShowing?'hd-current ':'')+(isActive?'hd-applied':'')+(locked?' hd-locked':'')+'">'+
    '<button class="hd-preview" type="button" data-hd-preview="'+category+':'+id+'" aria-label="Preview '+name+'">'+
-    '<span class="hd-swatch" style="--sample:'+color+'"><i></i></span>'+
+    '<span class="hd-swatch hd-swatch-'+cat+'-'+id+'" style="--sample:'+color+'"><i></i></span>'+
     '<span class="hd-style-name">'+name+'</span><span class="hd-style-desc">'+desc+'</span><span class="hd-tier">'+(locked?'◆ LEVEL '+needLevel+' TO UNLOCK':'LVL '+needLevel+' COLLECTION')+'</span>'+
     '<span class="hd-style-tag">'+(isActive?'IN ROOM':isOwned?'OWNED':locked?'LOCKED':'$'+price)+'</span></button>'+
    '<button type="button" class="hd-purchase" data-hd-apply="'+category+':'+id+'" '+(isActive||poor||locked?'disabled':'')+'>'+
