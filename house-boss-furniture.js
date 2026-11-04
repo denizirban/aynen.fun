@@ -108,7 +108,7 @@ function placeBar(){
   '<button data-hbf-confirm '+(!p.valid&&p.mode!=='preview'?'disabled':'')+'>'+(p.mode==='preview'?'CLOSE PREVIEW':p.uid?'SAVE POSITION':'BUY & PLACE · $'+type.price)+'</button></div></div>';
 }
 
-function render(){
+function renderRich(){
  const root=view(),st=bridge()?.getState?.();if(!root||!st)return;
  document.getElementById('noteTitle').textContent='The Design Shop';
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+st.cash+' · Home Value $'+st.homeValue;
@@ -204,6 +204,86 @@ function render(){
  updateStatus();
  applySearch()
 }
+
+/* Reliable Design Shop: never replace a working shop with a text-only index.
+   Render all cards even if a saved game's optional state has an unexpected shape. */
+function renderSafe(err){
+ const root=view();if(!root)return;
+ const noteTitle=document.getElementById('noteTitle');
+ if(noteTitle)noteTitle.textContent='The Design Shop';
+ let st=null;
+ try{st=bridge()?.getState?.()||null}catch(inner){console.error('Shop state recovery:',inner)}
+ const lvl=Number(st?.level)||1,wallet=Number(st?.cash)||0;
+ const items=Object.entries(types),wishlist=Array.isArray(st?.wishlist)?st.wishlist:[];
+ const saved=Array.isArray(st?.furniture)?st.furniture:[];
+ const categories=window.HouseBossDesignerCollection?.categories||{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART',objects:'OBJECTS',plants:'PLANTS',storage:'STORAGE'};
+ const budget=document.getElementById('noteBudget');
+ if(budget)budget.textContent='$'+wallet+' · HOME LEVEL '+lvl;
+ const filtered=items.filter(([id,t])=>
+   (category==='all'||t.category===category)&&
+   (styleFilter==='all'||t.style===styleFilter)&&
+   (filter==='all'||filter==='available'&&t.level<=lvl||filter==='locked'&&t.level>lvl||filter==='wishlist'&&wishlist.includes(id)));
+ const palette={seating:'▰',tables:'◉',lighting:'☀',rugs:'▦',art:'✷',objects:'◇',plants:'✿',storage:'▤'};
+ const categoryButtons='<nav class="hbf-category-grid" aria-label="Furniture categories">'+
+  '<button data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL</b><small>'+items.length+'</small></button>'+
+  Object.entries(categories).map(([id,name])=>'<button data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+(palette[id]||'✦')+'</span><b>'+name+'</b><small>'+items.filter(([,t])=>t.category===id).length+'</small></button>').join('')+'</nav>';
+ let html='<nav class="hd-categories"><button class="active" data-hd-category="furniture">▣ Design Shop</button>'+
+  Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([id,v])=>'<button data-hd-category="'+id+'">'+v.icon+' '+v.label+'</button>').join('')+'</nav>'+
+  '<div class="hbf-shop-hero"><div><span>COLLECTIBLE INTERIORS / HOUSE BOSS</span><h3>Make it yours.</h3><p>37 original design editions, saved colourways, decorative accents and layered rugs. See each object in 3D before buying.</p>'+
+  '<div class="hbf-hero-pills"><b>'+items.length+' FURNITURE & OBJECTS</b><b>HOME LVL '+lvl+'</b></div></div><div class="hbf-hero-sculpt"><i></i><i></i><i></i></div></div>'+
+  '<div class="hbf-preview-space"><div><b>LOOK AROUND YOUR 3D HOUSE</b><small>Preview a colourful mushroom lamp at no cost, then place furniture with the buy button.</small></div>'+
+  '<button data-hbf-preview="mushroomlamp">TRY IN 3D ↗</button></div>'+
+  '<div class="hbf-section-title"><strong>DESIGN COLLECTION</strong><small>'+items.length+' objects · '+items.filter(([,t])=>t.level<=lvl).length+' unlocked</small></div>'+
+  categoryButtons+
+  '<div class="hbf-shop-toolbar"><label class="hbf-search"><span>⌕</span><input id="hbf-search" type="search" placeholder="Search for a piece..." value="'+esc(searchQuery)+'"></label>'+
+  '<label class="hbf-style-select"><span>STYLE</span><select id="hbf-style">'+
+  [['all','All styles'],['pop','Pop colour'],['retro','Retro'],['soft','Soft'],['modern','Modern'],['organic','Organic']].map(([id,name])=>
+    '<option value="'+id+'" '+(styleFilter===id?'selected':'')+'>'+name+'</option>').join('')+'</select></label></div>'+
+  '<div class="hbf-filters">'+[['all','ALL PIECES'],['available','SHOP NOW'],['locked','COMING SOON'],['wishlist','♡ SAVED']].map(([id,name])=>
+    '<button data-hbf-filter="'+id+'" class="'+(filter===id?'active':'')+'">'+name+'</button>').join('')+'</div>'+
+  '<div class="hbf-result-caption"><strong id="hbf-result-count">'+filtered.length+' PIECES</strong><span>Real 3D placement · Free preview</span></div>'+
+  '<div class="hbf-market">';
+ for(const [id,t] of filtered){
+  const locked=t.level>lvl,unaffordable=t.price>wallet;
+  html+='<article class="hbf-card '+(locked?'is-locked':'is-unlocked')+' hbf-tier-'+(t.tier||'starter')+'" data-hbf-item="'+id+'" data-hbf-text="'+esc([t.name,t.desc,t.style,t.category].join(' ').toLowerCase())+'">'+
+   '<div class="hbf-visual hbf-preview-'+(t.style||'modern')+'" style="--tone:'+t.color+'">'+
+   '<button class="hbf-heart '+(wishlist.includes(id)?'is-saved':'')+'" data-hbf-wish="'+id+'">'+(wishlist.includes(id)?'♥':'♡')+'</button>'+
+   '<div class="hbf-visual-glow"></div><div class="hbf-silhouette '+(t.shape||'sculpture')+'"><i></i><i></i><i></i><i></i><i></i></div>'+
+   '<button class="hbf-visual-preview" data-hbf-preview="'+id+'">VIEW IN 3D</button>'+
+   (locked?'<span class="hbf-padlock">LVL '+t.level+'</span>':'<span class="hbf-available">UNLOCKED</span>')+'</div>'+
+   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(t.collection?'EDITIONS · ':'')+'LVL '+t.level+'</div>'+
+   '<strong>'+esc(t.name)+'</strong><small>'+esc(t.desc||'A statement piece for your home.')+'</small>'+
+   '<div class="hbf-material-tags"><span>'+esc(t.style||'modern')+'</span><span>'+esc(t.category||'furniture')+'</span></div>'+
+   '<div class="hbf-bonus">✧ +'+(t.comfort||0)+' COMFORT</div></div>'+
+   '<button data-hbf-buy="'+id+'" '+(locked||unaffordable?'disabled':'')+'>'+
+   (locked?'UNLOCK AT LVL '+t.level:unaffordable?'NEED $'+(t.price-wallet)+' MORE':'BUY & PLACE · $'+t.price)+'</button></article>';
+ }
+ html+='</div><div id="hbf-empty-results" class="hbf-empty-results" hidden>No matching designs. Try another style.</div>';
+ html+='<div class="hbf-section-title"><strong>YOUR OWN COLLECTION</strong><small>'+saved.length+' PLACED</small></div>';
+ html+='<div class="hbf-installed">'+(saved.length?saved.map(o=>{
+   const info=types[o.type];if(!info)return '';
+   return '<div class="hbf-row"><span class="hbf-small-icon" style="--tone:'+(o.tint||info.color)+'">'+(info.icon||'✦')+'</span>'+
+    '<div><b>'+esc(info.name)+'</b><small>Condition '+(o.condition||100)+'%</small>'+
+    (info.variants?'<div class="hbf-colorways">'+info.variants.map(tint=>
+      '<button style="--swatch:'+tint+'" class="'+((o.tint||info.color)===tint?'active':'')+'" data-hbf-color="'+o.uid+','+tint+'" title="Change colour"></button>').join('')+'</div>':'')+'</div>'+
+    '<button data-hbf-move="'+o.uid+'">MOVE</button><button data-hbf-sell="'+o.uid+'">SELL</button></div>'
+  }).join(''):'<p class="hbf-empty">Your collection starts here. Choose something from the shop.</p>')+'</div>';
+ root.innerHTML=html;
+ if(err){
+  root.dataset.shopRecovery='true';
+  root.dataset.shopFailure=String(err?.message||err).slice(0,240);
+  console.error('House Boss: full catalogue recovered from',err)
+ }else{delete root.dataset.shopRecovery;delete root.dataset.shopFailure}
+ applySearch()
+}
+function render(){
+ try{
+  renderRich();
+  if(view()?.querySelector('.hbf-market'))return;
+  renderSafe(new Error('Catalogue view did not render'))
+ }catch(err){renderSafe(err)}
+}
+
 function applySearch(){
  const root=view();if(!root)return;
  const term=searchQuery.trim().toLowerCase();
@@ -253,7 +333,7 @@ function install(){
  });
  window.HouseBossFurnitureTypes=types;
  window.HouseBossFurnitureUI={
-  render,clear,types,
+  render,renderSafe,clear,types,
   selectFrom3D:function(uid){
    if(!document.getElementById('notebook')?.classList.contains('design-mode'))return;
    const f=bridge()?.getState?.()?.furniture?.find(o=>o.uid===uid);
