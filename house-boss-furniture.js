@@ -35,7 +35,7 @@ const defaults=[[3.5,3.5],[3,3.5],[4,-3.5],[2.5,-3.5],
  [2.5,4],[1.5,4],[0,4],[-2.5,4],
  [3,-4],[0,-4],[-2.5,-4],[-6,-2.5],[-8,-4],[-8,4]];
 const bridge=()=>window.HouseBossBuildBridge;
-let selectedUid=null,warning='',filter='all',category='all',styleFilter='all',searchQuery='';
+let selectedUid=null,warning='',filter='new',category='all',styleFilter='all',searchQuery='';
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const collections={starter:'EVERYDAY',modern:'CONTEMPORARY',premium:'DESIGN STUDIO',luxury:'SIGNATURE'};
 function floor2(v){return Math.round(Number(v)*2)/2}
@@ -53,7 +53,8 @@ function clear(){
  selectedUid=null;warning='';
 }
 function begin(type,uid,previewOnly=false){
- const st=bridge()?.getState?.();if(!st||!types[type])return;
+ let st=null;try{st=bridge()?.getState?.()}catch(e){st=bridge()?.getQuickState?.()||null}
+ if(!st||!types[type])return;
  if(!previewOnly&&!uid&&st.level<types[type].level){warning='Reach Home Level '+types[type].level+' to unlock '+types[type].name+'.';render();return}
  if(!previewOnly&&!uid&&st.cash<types[type].price){warning='You need $'+(types[type].price-st.cash)+' more.';render();return}
  let item=uid?st.furniture.find(f=>f.uid===uid):null;
@@ -123,7 +124,7 @@ function renderRich(){
  const nextUnlock=all.find(([,item])=>item.level>homeLevel);
  const categoryDefs=window.HouseBossDesignerCollection?.categories||{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART',objects:'OBJECTS',plants:'PLANTS',storage:'STORAGE'};
  const active=all.filter(([id,item])=>
-  (filter==='all'||(filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel))&&
+  (filter==='all'||(filter==='new'?item.series==='STUDIO STARTERS':filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel))&&
   (category==='all'||item.category===category)&&
   (styleFilter==='all'||item.style===styleFilter)
  );
@@ -161,12 +162,12 @@ function renderRich(){
    (room.available?'BUILD · $'+room.price:'UNLOCK · LVL '+room.level+' · $'+room.price)+'</button>')+'</article>'
  }).join('')+'</div>';
  html+='<div class="hbf-section-title"><strong>COLLECTOR’S OBJECT CATALOGUE</strong><small>'+all.length+' designer pieces</small></div>'+
- '<nav class="hbf-category-grid" aria-label="Shop by object type"><button type="button" data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL OBJECTS</b><small>'+all.length+'</small></button>'+
+ '<nav class="hbf-category-grid" aria-label="Shop by object type"><button type="button" data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL OBJECTS</b><small>'+all.length+'</small></button>'+'<button type="button" data-hd-category="wallpaper" class="hbf-wallpaper-category"><span>▧</span><b>WALLPAPERS</b><small>15 designs ↗</small></button>'+
  Object.entries(categoryDefs).map(([id,label])=>'<button type="button" data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+categoryIcons[id]+'</span><b>'+label+'</b><small>'+all.filter(([,item])=>item.category===id).length+'</small></button>').join('')+'</nav>'+
  '<div class="hbf-shop-toolbar"><label class="hbf-search"><span>⌕</span><input type="search" id="hbf-search" placeholder="Find something special..." value="'+esc(searchQuery)+'" aria-label="Search objects"></label>'+
  '<label class="hbf-style-select"><span>STYLE</span><select id="hbf-style" aria-label="Design aesthetic">'+
  [['all','All aesthetics'],['pop','Colourful / Pop'],['soft','Soft / Bouclé'],['organic','Organic'],['retro','Retro'],['modern','Modern']].map(([id,label])=>'<option value="'+id+'" '+(styleFilter===id?'selected':'')+'>'+label+'</option>').join('')+'</select></label></div>'+
- '<div class="hbf-filters"><button data-hbf-filter="all" class="'+(filter==='all'?'active':'')+'">ALL PIECES</button>'+
+ '<div class="hbf-filters"><button data-hbf-filter="new" class="'+(filter==='new'?'active':'')+'">✦ NEW & UNLOCKED</button><button data-hbf-filter="all" class="'+(filter==='all'?'active':'')+'">ALL PIECES</button>'+
  '<button data-hbf-filter="available" class="'+(filter==='available'?'active':'')+'">UNLOCKED</button>'+
  '<button data-hbf-filter="locked" class="'+(filter==='locked'?'active':'')+'">COMING SOON</button>'+
  '<button data-hbf-filter="wishlist" class="'+(filter==='wishlist'?'active':'')+'">♡ SAVED '+wishlist.length+'</button></div>'+
@@ -179,7 +180,7 @@ function renderRich(){
    '<div class="hbf-visual-glow"></div><div class="hbf-silhouette '+esc(item.shape)+'"><i></i><i></i><i></i><i></i><i></i></div>'+
    '<button type="button" class="hbf-visual-preview" data-hbf-preview="'+id+'">VIEW IN 3D</button>'+
    (locked?'<span class="hbf-padlock">LVL '+item.level+' LOCKED</span>':'<span class="hbf-available">UNLOCKED</span>')+'</div>'+
-   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(item.collection?'NEW · ':'')+rank+' · LVL '+item.level+'</div>'+
+   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(item.series==='STUDIO STARTERS'?'NEW DROP · ':item.collection?'EDITIONS · ':'')+rank+' · LVL '+item.level+'</div>'+
    '<strong>'+esc(item.name)+'</strong><small>'+esc(item.desc)+'</small>'+
    '<div class="hbf-material-tags"><span>'+esc(item.style||'modern')+'</span><span>'+(item.layer==='floor'?'LAYERED RUG':item.layer==='tabletop'?'ON TABLE':esc(item.category||'furniture'))+'</span></div>'+
    '<div class="hbf-bonus">✧ +'+item.comfort+' COMFORT <span>· '+(item.action||'talk').toUpperCase()+'</span></div></div>'+
@@ -223,11 +224,11 @@ function renderSafe(err){
  const filtered=items.filter(([id,t])=>
    (category==='all'||t.category===category)&&
    (styleFilter==='all'||t.style===styleFilter)&&
-   (filter==='all'||filter==='available'&&t.level<=lvl||filter==='locked'&&t.level>lvl||filter==='wishlist'&&wishlist.includes(id)));
+   (filter==='all'||filter==='new'&&t.series==='STUDIO STARTERS'||filter==='available'&&t.level<=lvl||filter==='locked'&&t.level>lvl||filter==='wishlist'&&wishlist.includes(id)));
  const palette={seating:'▰',tables:'◉',lighting:'☀',rugs:'▦',art:'✷',objects:'◇',plants:'✿',storage:'▤'};
  const categoryButtons='<nav class="hbf-category-grid" aria-label="Furniture categories">'+
   '<button data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL</b><small>'+items.length+'</small></button>'+
-  Object.entries(categories).map(([id,name])=>'<button data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+(palette[id]||'✦')+'</span><b>'+name+'</b><small>'+items.filter(([,t])=>t.category===id).length+'</small></button>').join('')+'</nav>';
+  '<button data-hd-category="wallpaper" class="hbf-wallpaper-category"><span>▧</span><b>WALLPAPERS</b><small>15 designs ↗</small></button>'+Object.entries(categories).map(([id,name])=>'<button data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+(palette[id]||'✦')+'</span><b>'+name+'</b><small>'+items.filter(([,t])=>t.category===id).length+'</small></button>').join('')+'</nav>';
  let html='<nav class="hd-categories"><button class="active" data-hd-category="furniture">▣ Design Shop</button>'+
   Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([id,v])=>'<button data-hd-category="'+id+'">'+v.icon+' '+v.label+'</button>').join('')+'</nav>'+
   '<div class="hbf-shop-hero"><div><span>COLLECTIBLE INTERIORS / HOUSE BOSS</span><h3>Make it yours.</h3><p>37 original design editions, saved colourways, decorative accents and layered rugs. See each object in 3D before buying.</p>'+
@@ -240,7 +241,7 @@ function renderSafe(err){
   '<label class="hbf-style-select"><span>STYLE</span><select id="hbf-style">'+
   [['all','All styles'],['pop','Pop colour'],['retro','Retro'],['soft','Soft'],['modern','Modern'],['organic','Organic']].map(([id,name])=>
     '<option value="'+id+'" '+(styleFilter===id?'selected':'')+'>'+name+'</option>').join('')+'</select></label></div>'+
-  '<div class="hbf-filters">'+[['all','ALL PIECES'],['available','SHOP NOW'],['locked','COMING SOON'],['wishlist','♡ SAVED']].map(([id,name])=>
+  '<div class="hbf-filters">'+[['new','✦ NEW DROPS'],['all','ALL PIECES'],['available','SHOP NOW'],['locked','COMING SOON'],['wishlist','♡ SAVED']].map(([id,name])=>
     '<button data-hbf-filter="'+id+'" class="'+(filter===id?'active':'')+'">'+name+'</button>').join('')+'</div>'+
   '<div class="hbf-result-caption"><strong id="hbf-result-count">'+filtered.length+' PIECES</strong><span>Real 3D placement · Free preview</span></div>'+
   '<div class="hbf-market">';
@@ -252,7 +253,7 @@ function renderSafe(err){
    '<div class="hbf-visual-glow"></div><div class="hbf-silhouette '+(t.shape||'sculpture')+'"><i></i><i></i><i></i><i></i><i></i></div>'+
    '<button class="hbf-visual-preview" data-hbf-preview="'+id+'">VIEW IN 3D</button>'+
    (locked?'<span class="hbf-padlock">LVL '+t.level+'</span>':'<span class="hbf-available">UNLOCKED</span>')+'</div>'+
-   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(t.collection?'EDITIONS · ':'')+'LVL '+t.level+'</div>'+
+   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(t.series==='STUDIO STARTERS'?'NEW DROP · ':t.collection?'EDITIONS · ':'')+'LVL '+t.level+'</div>'+
    '<strong>'+esc(t.name)+'</strong><small>'+esc(t.desc||'A statement piece for your home.')+'</small>'+
    '<div class="hbf-material-tags"><span>'+esc(t.style||'modern')+'</span><span>'+esc(t.category||'furniture')+'</span></div>'+
    '<div class="hbf-bonus">✧ +'+(t.comfort||0)+' COMFORT</div></div>'+
