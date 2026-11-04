@@ -4002,6 +4002,7 @@ function renderSafe(err){
  if(noteTitle)noteTitle.textContent='The Design Shop';
  let st=null;
  try{st=bridge()?.getState?.()||null}catch(inner){console.error('Shop state recovery:',inner)}
+ if(!st){try{st=bridge()?.getQuickState?.()||null}catch(inner){console.error('Quick inventory recovery:',inner)}}
  const lvl=Number(st?.level)||1,wallet=Number(st?.cash)||0;
  const items=Object.entries(types),wishlist=Array.isArray(st?.wishlist)?st.wishlist:[];
  const saved=Array.isArray(st?.furniture)?st.furniture:[];
