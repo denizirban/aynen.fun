@@ -988,10 +988,41 @@ body:has(#game) .brand .back{display:none!important}
  #game #notebook.design-mode .hbf-preview-space small{font-size:8px}
 }
 
+/* STUDIO STARTERS — rug thumbnails reflect each actual patterned 3D rug. */
+#game #notebook.design-mode .hbf-wallpaper-category{background:linear-gradient(135deg,#f7e5e5,#f0e7f7);border-color:#d9b0c7}
+#game #notebook.design-mode .hbf-wallpaper-category span{color:#b17b9e}
+#game #notebook.design-mode .hbf-wallpaper-category:hover{border-color:#ba7d9e;background:#f5dbe5}
+#game #notebook.design-mode .hbf-card[data-hbf-item="softgridrug"] .hbf-silhouette.rug i:first-child{background-color:#f3e7da;background-image:linear-gradient(90deg,#d8b1ad 3px,transparent 3px),linear-gradient(#d8b1ad 3px,transparent 3px);background-size:23px 23px}
+#game #notebook.design-mode .hbf-card[data-hbf-item="warmjute"] .hbf-silhouette.rug i:first-child{background:repeating-linear-gradient(0deg,#d7bb91 0 4px,#bea078 4px 6px,#ead1af 6px 8px)}
+#game #notebook.design-mode .hbf-card[data-hbf-item="peachloop"] .hbf-silhouette.rug i:first-child{background-color:#f4e9dd;background-image:repeating-radial-gradient(ellipse at 25% 33%,transparent 0 9px,#e7a194 10px 14px,transparent 15px 29px)}
+#game #notebook.design-mode .hbf-card[data-hbf-item="daisyrug"] .hbf-silhouette.rug i:first-child{background-color:#e9aebc;background-image:radial-gradient(circle at 50% 50%,#e6b563 0 4px,transparent 5px),radial-gradient(ellipse at 50% 29%,#fff5e8 0 8px,transparent 9px),radial-gradient(ellipse at 29% 49%,#fff5e8 0 7px,transparent 8px),radial-gradient(ellipse at 71% 49%,#fff5e8 0 7px,transparent 8px);background-size:49px 49px}
+#game #notebook.design-mode .hbf-card[data-hbf-item="sunburstmat"] .hbf-silhouette.rug i:first-child{background:repeating-conic-gradient(from -5deg at 45% 50%,#e9ab68 0deg 14deg,#f8e7ca 15deg 28deg)}
+#game #notebook.design-mode .hbf-card[data-hbf-item="lilacchecker"] .hbf-silhouette.rug i:first-child{background-color:#f0e9ec;background-image:repeating-conic-gradient(#b1a0d6 0% 25%,#f2e8ed 0% 50%);background-size:36px 36px}
+#game #notebook.design-mode .hbf-card[data-hbf-item="corduroypouf"] .hbf-silhouette.pouf i:first-child{background:repeating-linear-gradient(90deg,#d49a7d 0 11px,#c6876d 12px 14px);border-radius:48%}
+#game #notebook.design-mode .hbf-card[data-hbf-item="bubblechair"] .hbf-silhouette.chair i:first-child{border-radius:48%;height:70%;bottom:5px}
+#game #notebook.design-mode .hbf-card[data-hbf-item="compactboucle"] .hbf-silhouette.sofa i:first-child,
+#game #notebook.design-mode .hbf-card[data-hbf-item="cloudloveseat"] .hbf-silhouette.sofa i:first-child{border-radius:40% 40% 25% 25%}
+#game #notebook.design-mode .hbf-card[data-hbf-item="tinygallery"] .hbf-silhouette.art i:first-child{background:linear-gradient(140deg,#e9aa93 0 32%,#a2c8b4 33% 64%,#eac887 65% 100%)}
+
+/* Wallpaper swatches are actual design previews rather than flat color squares. */
+#notebook.design-mode .hd-swatch-wallpaper-warmivory{background:repeating-linear-gradient(90deg,#f0ebe1 0 16px,#d4c4b6 17px 19px,#f0ebe1 20px 34px)}
+#notebook.design-mode .hd-swatch-wallpaper-tinyfloral{background-color:#f9eae4;background-image:radial-gradient(circle,#d89bb0 0 3px,transparent 4px),radial-gradient(circle,#aabfa4 0 2px,transparent 3px);background-size:23px 25px;background-position:4px 6px,12px 15px}
+#notebook.design-mode .hd-swatch-wallpaper-pastelgingham{background-color:#fae6dd;background-image:linear-gradient(90deg,#e8baa84a 50%,transparent 50%),linear-gradient(#e8baa84a 50%,transparent 50%);background-size:26px 26px}
+#notebook.design-mode .hd-swatch-wallpaper-sagepinstripe{background:repeating-linear-gradient(90deg,#e4eadf 0 18px,#9eb6a0 19px 21px,#f2f4ee 22px 24px)}
+#notebook.design-mode .hd-swatch-wallpaper-rosepetals{background-color:#f8e7e9;background-image:radial-gradient(ellipse,#c690a6 0 5px,transparent 6px),radial-gradient(ellipse,#e3b8c4 0 5px,transparent 6px);background-size:30px 35px;background-position:0 0,13px 14px}
+#notebook.design-mode .hd-swatch-wallpaper-terracottagrid{background-color:#edd9cd;background-image:linear-gradient(90deg,#bc937c 4px,transparent 4px),linear-gradient(#bc937c 4px,transparent 4px);background-size:25px 25px}
+#notebook.design-mode .hd-swatch-wallpaper-lilacarches{background-color:#eee7f5;background-image:radial-gradient(ellipse at 50% 100%,transparent 55%,#c8afe0 57% 67%,transparent 70%);background-size:38px 45px}
+#notebook.design-mode .hd-swatch-wallpaper-sunnydaisy{background-color:#fff0d6;background-image:radial-gradient(circle,#e6b668 0 4px,transparent 5px),radial-gradient(circle,#fff 0 10px,transparent 11px);background-size:33px 33px}
+#notebook.design-mode .hd-swatch-wallpaper-bluewave{background:repeating-radial-gradient(ellipse at 35% 140%,#e8f0ed 0 12px,#a9cbd0 13px 16px,#d7e8e7 17px 30px)}
+#notebook.design-mode .hd-swatch-wallpaper-abstractpop{background:radial-gradient(ellipse at 20% 40%,#d89588 0 20%,transparent 22%),radial-gradient(ellipse at 75% 75%,#a9c5ae 0 27%,transparent 29%),linear-gradient(60deg,#eee1d9 55%,#b0a5cb 56%)}
+@media(min-width:720px){
+ #game #notebook.design-mode .hbf-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
 </style>
 <link rel="stylesheet" href="./house-boss-progression.css?v=2">
 <link rel="stylesheet" href="./house-boss-lifestyle.css?v=3">
-<meta name="house-boss-edition" content="interactive-designer-cards-v4">
+<meta name="house-boss-edition" content="studio-starters-20261104">
 </head>
 <body>
 <div id="game">
@@ -3579,26 +3610,80 @@ function createDecorMesh(type,g,api){
   ell(x-w*.17,1.17+h*.12,0,w*.24,h*.25,.015,a);
   const stripe=box(g,w*.36,h*.11,.019,b,x+w*.16,1.05,0);stripe.rotation.z=.45;
  }
+
  function rugPattern(kind){
   if(texCache.has(kind))return texCache.get(kind);
-  const canvas=document.createElement('canvas');canvas.width=256;canvas.height=192;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle=kind==='checker'?'#fae6db':'#e9e5d1';ctx.fillRect(0,0,256,192);
-  if(kind==='checker'){
-   for(let x=0;x<8;x++)for(let z=0;z<6;z++){
-    if((x+z)%2===0){ctx.fillStyle='#de8ea3';ctx.fillRect(x*32,z*32,32,32)}
+  const canvas=document.createElement('canvas');canvas.width=384;canvas.height=272;
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  const fill=v=>{ctx.fillStyle=v;ctx.fillRect(0,0,W,H)};
+  const ellipse=(x,y,rx,ry,shade,stroke=null)=>{
+   ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);
+   if(shade){ctx.fillStyle=shade;ctx.fill()}
+   if(stroke){ctx.strokeStyle=stroke;ctx.stroke()}
+  };
+  if(kind==='checker'||kind==='lilac'){
+   fill(kind==='lilac'?'#eee4f0':'#f6e4dc');
+   for(let x=0;x<8;x++)for(let y=0;y<6;y++)if((x+y)%2===0){
+    ctx.fillStyle=kind==='lilac'?'#b7a4da':'#df98aa';
+    ctx.fillRect(x*48,y*(H/6),48,H/6)
    }
+  }else if(kind==='grid'){
+   fill('#f1e7da');ctx.strokeStyle='#d4ada9';ctx.lineWidth=4;
+   for(let x=20;x<W;x+=49){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+9,H);ctx.stroke()}
+   for(let y=19;y<H;y+=49){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y+6);ctx.stroke()}
+  }else if(kind==='jute'){
+   fill('#d3b893');
+   for(let y=0;y<H;y+=4){ctx.fillStyle=(y%12===0?'#bd9a75':'#e3cbab');ctx.fillRect(0,y,W,1)}
+   for(let x=0;x<W;x+=18){ctx.strokeStyle='#aa8764';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+   for(let y=0;y<H;y+=70){ctx.strokeStyle='#f9e4c5';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  }else if(kind==='loops'){
+   fill('#f6e8dc');
+   for(let i=0;i<7;i++){
+    ctx.beginPath();ctx.lineWidth=17;ctx.strokeStyle=i%2?'#d88d84':'#f0b9a6';
+    for(let x=-30;x<W+25;x+=4){
+     const y=30+i*36+Math.sin((x/45)+i*1.1)*16;
+     if(x===-30)ctx.moveTo(x,y);else ctx.lineTo(x,y)
+    }
+    ctx.stroke()
+   }
+  }else if(kind==='daisy'){
+   fill('#ebafbc');
+   for(let y=32;y<H;y+=68)for(let x=35;x<W;x+=80){
+    for(let n=0;n<6;n++){const a=n*Math.PI/3;ellipse(x+Math.cos(a)*13,y+Math.sin(a)*13,10,7,'#fff1e5')}
+    ellipse(x,y,7,7,'#e7bc62')
+   }
+  }else if(kind==='sunburst'){
+   fill('#f6e6d0');
+   const x=W*.47,y=H*.50;
+   for(let i=0;i<30;i++){
+    const a=i*2*Math.PI/30;
+    ctx.beginPath();ctx.moveTo(x,y);
+    ctx.lineTo(x+Math.cos(a-.045)*W,y+Math.sin(a-.045)*W);
+    ctx.lineTo(x+Math.cos(a+.045)*W,y+Math.sin(a+.045)*W);
+    ctx.closePath();ctx.fillStyle=i%2?'#e5ac65':'#efc38c';ctx.fill()
+   }
+   ellipse(x,y,55,55,'#f5d9a6')
   }else{
+   fill('#e9e5d1');
    for(let j=0;j<7;j++){
     ctx.beginPath();ctx.lineWidth=10+3*j;
     ctx.strokeStyle=['#7b9c79','#c7b692','#d49b84','#89ad9a'][j%4];
-    for(let x=-25;x<280;x+=3){let y=j*30+15+Math.sin(x*.024+j*.52)*24;x===-25?ctx.moveTo(x,y):ctx.lineTo(x,y)}
+    for(let x=-25;x<W+20;x+=3){
+     const y=j*42+15+Math.sin(x*.024+j*.52)*24;
+     if(x===-25)ctx.moveTo(x,y);else ctx.lineTo(x,y)
+    }
     ctx.stroke()
    }
+  }
+  // Subtle material grain makes a patterned rug feel woven, not printed.
+  for(let i=0;i<700;i++){
+   let x=(i*73.17)%W,y=(i*109.31)%H;
+   ctx.fillStyle=i%2?'#ffffff1e':'#382b2710';ctx.fillRect(x,y,2,2)
   }
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
   texCache.set(kind,texture);return texture
  }
+
  if(type==='ceramicvase'||type==='spherevase'){
   const m=type==='spherevase'?glass:color;
   ell(0,.24,0,.16,.20,.15,m);cylinder(g,.082,.09,.18,m,0,.47,0);circ(0,.57,0,.073,.018,m);
@@ -3646,10 +3731,18 @@ function createDecorMesh(type,g,api){
   cylinder(g,.13,.21,.56,cream,0,.43,0);
   ell(0,.88,0,.40,.22,.38,color);
   ell(0,.84,0,.31,.08,.30,mat('#fff3dc',.37))
- }else if(type==='candychecker'||type==='coilmatt'){
-  const m=new THREE.MeshStandardMaterial({map:rugPattern(type==='candychecker'?'checker':'wave'),roughness:.94});
-  const carpet=addMesh(g,new THREE.PlaneGeometry(data.w,data.d),m,0,.036,0,false,true);carpet.rotation.x=-Math.PI/2;
-  box(g,data.w,.017,data.d,mat(type==='candychecker'?'#d2879e':'#86a18b'),0,.017,0).castShadow=false
+ }else if(data.category==='rugs'){
+  const pattern=data.pattern||(type==='candychecker'?'checker':'wave');
+  const m=new THREE.MeshStandardMaterial({map:rugPattern(pattern),roughness:.98,side:THREE.DoubleSide});
+  m.userData.houseBossEdition=true;
+  const carpet=addMesh(g,new THREE.PlaneGeometry(data.w,data.d),m,0,.038,0,false,true);
+  carpet.rotation.x=-Math.PI/2;carpet.castShadow=false;
+  box(g,data.w,.018,data.d,mat(data.color),0,.018,0).castShadow=false;
+  if(pattern==='jute')for(let i=-11;i<=11;i++){
+   const x=i*data.w/23;
+   for(const z of [-data.d*.53,data.d*.53])
+    tube([x,.036,z],[x,.035,z+(z>0?.13:-.13)],.008,mat('#dfccac'))
+  }
  }else if(type==='galleryprint'||type==='galleryframe'){
   const panels=type==='galleryframe'?3:1;
   for(let i=0;i<panels;i++){const x=panels===3?(i-1)*.45:0;artPanel(x,panels===3?.37:.72,1.20,i+2)}
@@ -3771,6 +3864,146 @@ function createDecorMesh(type,g,api){
    ell(x,1.39,.08,.145,.32,.008,ivory)
   }
   for(let x of [-.68,.68])box(g,.06,.17,.40,dark,x,.08,0)
+ }else if(data.series==='STUDIO STARTERS'){
+  if(data.category==='seating'){
+   const w=data.w,d=data.d;
+   if(data.shape==='sofa'){
+    // Three distinct living-room silhouettes. Cushions are real 3D volumes.
+    const n=type==='compactboucle'?3:type==='cloudloveseat'?4:4;
+    if(type==='compactboucle'){
+     ell(0,.47,0,w*.48,.33,d*.43,color);
+     ell(0,.94,-d*.34,w*.48,.47,d*.17,color);
+     for(const x of [-w*.45,w*.45])ell(x,.64,.03,.18,.40,d*.40,color);
+     for(let i=0;i<n;i++){
+      const x=(i-(n-1)/2)*w*.29;
+      ell(x,.73,.17,w*.17,.11,d*.30,ivory)
+     }
+    }else if(type==='softcorner'){
+     for(let i=0;i<n;i++){
+      const x=(i-(n-1)/2)*w*.245,z=i===0?.24:0;
+      ell(x,.47,z,w*.18,.33,d*.37,color);
+      ell(x,.92,-.37,w*.18,.41,.20,color)
+     }
+     ell(-w*.35,.48,.27,.31,.33,.54,color);
+     ell(-w*.48,.68,.04,.18,.30,.47,color);
+    }else{
+     for(let i=0;i<n;i++){
+      let x=(i-(n-1)/2)*w*.25;
+      ell(x,.44,.06,w*.20,.36,d*.42,color);
+      ell(x,.85,-.38,w*.20,.42,.28,color);
+      ell(x,.71,.14,.17,.11,.29,pink)
+     }
+     for(const x of [-w*.46,w*.46])ell(x,.54,0,.19,.35,.46,color)
+    }
+    for(const x of [-w*.33,w*.33])box(g,.14,.12,.14,wood,x,.085,-.26);
+   }else if(type==='bubblechair'){
+    ell(0,.51,0,.49,.37,.47,color);
+    ell(0,1.06,-.31,.46,.51,.25,color);
+    for(const x of [-.40,.40])ell(x,.70,.04,.14,.23,.34,color);
+    ell(0,.79,.17,.34,.09,.33,ivory);
+    cylinder(g,.18,.28,.22,dark,0,.20,0)
+   }else if(type==='sunrisebench'){
+    ell(0,.55,0,w*.49,.20,d*.46,color);
+    for(const x of [-w*.37,w*.37])for(const z of [-d*.25,d*.25]){
+     const leg=box(g,.09,.39,.10,wood,x,.24,z);leg.rotation.z=x*.06
+    }
+    ell(0,.69,0,w*.40,.09,d*.35,ivory)
+   }else if(type==='corduroypouf'){
+    ell(0,.33,0,.40,.32,.40,color);
+    for(let i=0;i<12;i++){
+     const a=i*Math.PI/6;
+     const x=Math.cos(a)*.30,z=Math.sin(a)*.30;
+     ell(x,.36,z,.10,.28,.075,color)
+    }
+    ell(0,.59,0,.20,.04,.20,ivory);
+    ell(0,.12,0,.28,.07,.28,wood)
+   }else if(type==='archchair'){
+    ell(0,.51,.15,.51,.21,.46,color);
+    ell(0,1.03,-.28,.48,.47,.17,color);
+    const arch=circ(0,1.16,-.34,.48,.105,color);arch.rotation.x=.25;arch.scale.y=1.0;
+    for(const x of [-.43,.43])ell(x,.70,.07,.14,.24,.35,color);
+    ell(0,.67,.13,.38,.10,.34,ivory);
+    cylinder(g,.20,.29,.22,wood,0,.19,0)
+   }
+  }else if(data.category==='tables'){
+   if(type==='pebblesidetable'){
+    ell(0,.61,0,.34,.08,.32,color);
+    cylinder(g,.11,.18,.49,wood,0,.31,0);
+    cylinder(g,.24,.27,.06,color,0,.08,0)
+   }else if(type==='pilltable'){
+    ell(0,.61,0,.45,.12,.34,color);
+    for(const x of [-.26,.26])cylinder(g,.09,.10,.49,gold,x,.32,0);
+    for(const x of [-.33,.33])ell(x,.61,0,.21,.10,.30,color)
+   }else{
+    ell(0,.61,0,.43,.095,.34,ivory);
+    for(let i=0;i<18;i++){
+     const a=i*2*Math.PI/18;
+     ell(Math.cos(a)*.25,.705,Math.sin(a)*.23,.025,.010,.04,i%3?color:pink)
+    }
+    cylinder(g,.18,.22,.48,color,0,.33,0);
+    ell(0,.09,0,.30,.05,.29,color)
+   }
+  }else if(data.category==='lighting'){
+   if(type==='butterlamp'){
+    cylinder(g,.14,.21,.31,color,0,.21,0);
+    ell(0,.51,0,.28,.16,.27,color);
+    ell(0,.52,0,.19,.055,.19,mat('#ffe8b6',.35))
+   }else if(type==='petallamp'){
+    base(.23,wood);tube([0,.05,0],[0,1.48,0],.05,leaf);
+    flower(1.67,8,1.18,color);
+    ell(0,1.68,.03,.13,.14,.11,mat('#ffe9b8',.28))
+   }else{
+    base(.20,dark);
+    tube([0,.06,0],[0,1.28,0],.027,dark);
+    ell(0,1.45,0,.27,.28,.27,mat('#fff3df',.22));
+    ell(0,1.45,0,.31,.31,.31,color)
+   }
+  }else if(data.category==='art'){
+   if(type==='scallopmirror'){
+    const mirror=mat('#b6cbd5',.13,.75);
+    ell(0,.95,-.035,.33,.71,.035,mirror);
+    for(let i=0;i<12;i++){
+     const a=i*2*Math.PI/12;
+     ell(Math.sin(a)*.33,.96+Math.cos(a)*.73,0,.12,.16,.09,color)
+    }
+    tube([-.32,.06,-.12],[-.23,1.12,-.14],.028,wood);
+    tube([.32,.06,-.12],[.23,1.12,-.14],.028,wood)
+   }else{
+    artPanel(0,.69,1.00,type==='tinygallery'?1:3);
+    for(const x of [-.34,.34])tube([x,.06,.19],[x*.72,1.78,-.16],.035,wood);
+    tube([0,.08,-.22],[0,1.5,-.15],.028,wood);
+    box(g,.70,.05,.15,wood,0,.42,-.06)
+   }
+  }else if(data.category==='plants'){
+   cylinder(g,.22,.18,.39,color,0,.23,0);
+   cylinder(g,.22,.22,.05,ivory,0,.44,0);
+   for(let i=0;i<13;i++){
+    let angle=i*Math.PI*2/13,r=(.23+i%3*.05);
+    const tip=[Math.cos(angle)*r,.89+(i%4)*.075,Math.sin(angle)*r];
+    tube([0,.43,0],tip,.015,leaf);
+    const leafMesh=ell(tip[0],tip[1],tip[2],.095,.042,.17,leaf);
+    leafMesh.rotation.y=angle
+   }
+  }else if(data.category==='objects'){
+   if(type==='candlecluster'){
+    const palette=[color,pink,ivory];
+    for(let i=0;i<3;i++){
+     const x=(i-1)*.10,h=.24+i*.08;
+     cylinder(g,.05,.058,h,palette[i],x,h*.5,0);
+     ell(x,h+.025,0,.019,.035,.018,gold)
+    }
+    ell(0,.045,0,.19,.022,.16,wood)
+   }else{
+    ell(-.10,.22,0,.09,.23,.09,color);
+    ell(.10,.24,0,.10,.24,.09,color);
+    for(const x of [-.1,.10])for(let i=0;i<3;i++){
+     const a=i*.65;
+     const arc=circ(x,.27,0,.10+i*.043,.028,i%2?pink:gold);
+     arc.rotation.y=a
+    }
+    box(g,.40,.06,.27,wood,0,.055,0)
+   }
+  }
  }else{
   return false
  }
@@ -3782,7 +4015,7 @@ function createDecorMesh(type,g,api){
 window.HouseBossCreateDecorMesh=createDecorMesh;
 })();
 </script>
-<script type="module" src="./evin-patronu-3d.js?v=19"></script>
+<script type="module" src="./evin-patronu-3d.js?v=20"></script>
 <script type="module" src="./house-boss-town-3d.js?v=3"></script>
 <script src="./house-boss-sims-ui.js?v=9"></script>
 <script>
@@ -3824,7 +4057,7 @@ const defaults=[[3.5,3.5],[3,3.5],[4,-3.5],[2.5,-3.5],
  [2.5,4],[1.5,4],[0,4],[-2.5,4],
  [3,-4],[0,-4],[-2.5,-4],[-6,-2.5],[-8,-4],[-8,4]];
 const bridge=()=>window.HouseBossBuildBridge;
-let selectedUid=null,warning='',filter='all',category='all',styleFilter='all',searchQuery='';
+let selectedUid=null,warning='',filter='new',category='all',styleFilter='all',searchQuery='';
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const collections={starter:'EVERYDAY',modern:'CONTEMPORARY',premium:'DESIGN STUDIO',luxury:'SIGNATURE'};
 function floor2(v){return Math.round(Number(v)*2)/2}
@@ -3842,7 +4075,8 @@ function clear(){
  selectedUid=null;warning='';
 }
 function begin(type,uid,previewOnly=false){
- const st=bridge()?.getState?.();if(!st||!types[type])return;
+ let st=null;try{st=bridge()?.getState?.()}catch(e){st=bridge()?.getQuickState?.()||null}
+ if(!st||!types[type])return;
  if(!previewOnly&&!uid&&st.level<types[type].level){warning='Reach Home Level '+types[type].level+' to unlock '+types[type].name+'.';render();return}
  if(!previewOnly&&!uid&&st.cash<types[type].price){warning='You need $'+(types[type].price-st.cash)+' more.';render();return}
  let item=uid?st.furniture.find(f=>f.uid===uid):null;
@@ -3912,7 +4146,7 @@ function renderRich(){
  const nextUnlock=all.find(([,item])=>item.level>homeLevel);
  const categoryDefs=window.HouseBossDesignerCollection?.categories||{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART',objects:'OBJECTS',plants:'PLANTS',storage:'STORAGE'};
  const active=all.filter(([id,item])=>
-  (filter==='all'||(filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel))&&
+  (filter==='all'||(filter==='new'?(item.series==='STUDIO STARTERS'&&item.level<=homeLevel):filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel))&&
   (category==='all'||item.category===category)&&
   (styleFilter==='all'||item.style===styleFilter)
  );
@@ -3950,12 +4184,12 @@ function renderRich(){
    (room.available?'BUILD · $'+room.price:'UNLOCK · LVL '+room.level+' · $'+room.price)+'</button>')+'</article>'
  }).join('')+'</div>';
  html+='<div class="hbf-section-title"><strong>COLLECTOR’S OBJECT CATALOGUE</strong><small>'+all.length+' designer pieces</small></div>'+
- '<nav class="hbf-category-grid" aria-label="Shop by object type"><button type="button" data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL OBJECTS</b><small>'+all.length+'</small></button>'+
+ '<nav class="hbf-category-grid" aria-label="Shop by object type"><button type="button" data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL OBJECTS</b><small>'+all.length+'</small></button>'+'<button type="button" data-hd-category="wallpaper" class="hbf-wallpaper-category"><span>▧</span><b>WALLPAPERS</b><small>15 designs ↗</small></button>'+
  Object.entries(categoryDefs).map(([id,label])=>'<button type="button" data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+categoryIcons[id]+'</span><b>'+label+'</b><small>'+all.filter(([,item])=>item.category===id).length+'</small></button>').join('')+'</nav>'+
  '<div class="hbf-shop-toolbar"><label class="hbf-search"><span>⌕</span><input type="search" id="hbf-search" placeholder="Find something special..." value="'+esc(searchQuery)+'" aria-label="Search objects"></label>'+
  '<label class="hbf-style-select"><span>STYLE</span><select id="hbf-style" aria-label="Design aesthetic">'+
  [['all','All aesthetics'],['pop','Colourful / Pop'],['soft','Soft / Bouclé'],['organic','Organic'],['retro','Retro'],['modern','Modern']].map(([id,label])=>'<option value="'+id+'" '+(styleFilter===id?'selected':'')+'>'+label+'</option>').join('')+'</select></label></div>'+
- '<div class="hbf-filters"><button data-hbf-filter="all" class="'+(filter==='all'?'active':'')+'">ALL PIECES</button>'+
+ '<div class="hbf-filters"><button data-hbf-filter="new" class="'+(filter==='new'?'active':'')+'">✦ NEW & UNLOCKED</button><button data-hbf-filter="all" class="'+(filter==='all'?'active':'')+'">ALL PIECES</button>'+
  '<button data-hbf-filter="available" class="'+(filter==='available'?'active':'')+'">UNLOCKED</button>'+
  '<button data-hbf-filter="locked" class="'+(filter==='locked'?'active':'')+'">COMING SOON</button>'+
  '<button data-hbf-filter="wishlist" class="'+(filter==='wishlist'?'active':'')+'">♡ SAVED '+wishlist.length+'</button></div>'+
@@ -3968,7 +4202,7 @@ function renderRich(){
    '<div class="hbf-visual-glow"></div><div class="hbf-silhouette '+esc(item.shape)+'"><i></i><i></i><i></i><i></i><i></i></div>'+
    '<button type="button" class="hbf-visual-preview" data-hbf-preview="'+id+'">VIEW IN 3D</button>'+
    (locked?'<span class="hbf-padlock">LVL '+item.level+' LOCKED</span>':'<span class="hbf-available">UNLOCKED</span>')+'</div>'+
-   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(item.collection?'NEW · ':'')+rank+' · LVL '+item.level+'</div>'+
+   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(item.series==='STUDIO STARTERS'?'NEW DROP · ':item.collection?'EDITIONS · ':'')+rank+' · LVL '+item.level+'</div>'+
    '<strong>'+esc(item.name)+'</strong><small>'+esc(item.desc)+'</small>'+
    '<div class="hbf-material-tags"><span>'+esc(item.style||'modern')+'</span><span>'+(item.layer==='floor'?'LAYERED RUG':item.layer==='tabletop'?'ON TABLE':esc(item.category||'furniture'))+'</span></div>'+
    '<div class="hbf-bonus">✧ +'+item.comfort+' COMFORT <span>· '+(item.action||'talk').toUpperCase()+'</span></div></div>'+
@@ -4012,11 +4246,11 @@ function renderSafe(err){
  const filtered=items.filter(([id,t])=>
    (category==='all'||t.category===category)&&
    (styleFilter==='all'||t.style===styleFilter)&&
-   (filter==='all'||filter==='available'&&t.level<=lvl||filter==='locked'&&t.level>lvl||filter==='wishlist'&&wishlist.includes(id)));
+   (filter==='all'||filter==='new'&&t.series==='STUDIO STARTERS'&&t.level<=lvl||filter==='available'&&t.level<=lvl||filter==='locked'&&t.level>lvl||filter==='wishlist'&&wishlist.includes(id)));
  const palette={seating:'▰',tables:'◉',lighting:'☀',rugs:'▦',art:'✷',objects:'◇',plants:'✿',storage:'▤'};
  const categoryButtons='<nav class="hbf-category-grid" aria-label="Furniture categories">'+
   '<button data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL</b><small>'+items.length+'</small></button>'+
-  Object.entries(categories).map(([id,name])=>'<button data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+(palette[id]||'✦')+'</span><b>'+name+'</b><small>'+items.filter(([,t])=>t.category===id).length+'</small></button>').join('')+'</nav>';
+  '<button data-hd-category="wallpaper" class="hbf-wallpaper-category"><span>▧</span><b>WALLPAPERS</b><small>15 designs ↗</small></button>'+Object.entries(categories).map(([id,name])=>'<button data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+(palette[id]||'✦')+'</span><b>'+name+'</b><small>'+items.filter(([,t])=>t.category===id).length+'</small></button>').join('')+'</nav>';
  let html='<nav class="hd-categories"><button class="active" data-hd-category="furniture">▣ Design Shop</button>'+
   Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([id,v])=>'<button data-hd-category="'+id+'">'+v.icon+' '+v.label+'</button>').join('')+'</nav>'+
   '<div class="hbf-shop-hero"><div><span>COLLECTIBLE INTERIORS / HOUSE BOSS</span><h3>Make it yours.</h3><p>37 original design editions, saved colourways, decorative accents and layered rugs. See each object in 3D before buying.</p>'+
@@ -4029,7 +4263,7 @@ function renderSafe(err){
   '<label class="hbf-style-select"><span>STYLE</span><select id="hbf-style">'+
   [['all','All styles'],['pop','Pop colour'],['retro','Retro'],['soft','Soft'],['modern','Modern'],['organic','Organic']].map(([id,name])=>
     '<option value="'+id+'" '+(styleFilter===id?'selected':'')+'>'+name+'</option>').join('')+'</select></label></div>'+
-  '<div class="hbf-filters">'+[['all','ALL PIECES'],['available','SHOP NOW'],['locked','COMING SOON'],['wishlist','♡ SAVED']].map(([id,name])=>
+  '<div class="hbf-filters">'+[['new','✦ NEW DROPS'],['all','ALL PIECES'],['available','SHOP NOW'],['locked','COMING SOON'],['wishlist','♡ SAVED']].map(([id,name])=>
     '<button data-hbf-filter="'+id+'" class="'+(filter===id?'active':'')+'">'+name+'</button>').join('')+'</div>'+
   '<div class="hbf-result-caption"><strong id="hbf-result-count">'+filtered.length+' PIECES</strong><span>Real 3D placement · Free preview</span></div>'+
   '<div class="hbf-market">';
@@ -4041,7 +4275,7 @@ function renderSafe(err){
    '<div class="hbf-visual-glow"></div><div class="hbf-silhouette '+(t.shape||'sculpture')+'"><i></i><i></i><i></i><i></i><i></i></div>'+
    '<button class="hbf-visual-preview" data-hbf-preview="'+id+'">VIEW IN 3D</button>'+
    (locked?'<span class="hbf-padlock">LVL '+t.level+'</span>':'<span class="hbf-available">UNLOCKED</span>')+'</div>'+
-   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(t.collection?'EDITIONS · ':'')+'LVL '+t.level+'</div>'+
+   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(t.series==='STUDIO STARTERS'?'NEW DROP · ':t.collection?'EDITIONS · ':'')+'LVL '+t.level+'</div>'+
    '<strong>'+esc(t.name)+'</strong><small>'+esc(t.desc||'A statement piece for your home.')+'</small>'+
    '<div class="hbf-material-tags"><span>'+esc(t.style||'modern')+'</span><span>'+esc(t.category||'furniture')+'</span></div>'+
    '<div class="hbf-bonus">✧ +'+(t.comfort||0)+' COMFORT</div></div>'+
@@ -4180,6 +4414,46 @@ install();
   haloarmchair:{name:'Halo Bouclé Throne',category:'seating',style:'soft',price:3350,level:14,tier:'luxury',w:1.45,d:1.35,shape:'chair',comfort:38,color:'#e5c5d8',action:'nap',desc:'A broad enveloping circular back with cloud cushions.'},
   limitedsofa:{name:'One-of-One Cloud Sofa',category:'seating',style:'soft',price:4800,level:16,tier:'luxury',w:2.45,d:1.34,shape:'sofa',comfort:45,color:'#d7c5e9',action:'nap',desc:'Gallery-grade modular seating, a dreamy statement piece.'}
  };
+
+ /* Studio Starters — delightful, playable interior design from level one.
+    Shapes and patterns are rendered natively in the 3D household. */
+ const starterEditions={
+  softgridrug:{name:'Soft Grid Rug',category:'rugs',style:'soft',price:150,level:1,tier:'starter',w:2.10,d:1.55,shape:'rug',layer:'floor',pattern:'grid',comfort:5,color:'#ded5c7',action:'nap',desc:'An ivory rug with a soft blush hand-drawn grid.'},
+  warmjute:{name:'Warm Jute Rug',category:'rugs',style:'organic',price:165,level:1,tier:'starter',w:2.30,d:1.65,shape:'rug',layer:'floor',pattern:'jute',comfort:5,color:'#c3a47d',action:'nap',desc:'Natural woven stripes with tactile fringe.'},
+  peachloop:{name:'Peach Loop Rug',category:'rugs',style:'pop',price:190,level:1,tier:'starter',w:2.25,d:1.75,shape:'rug',layer:'floor',pattern:'loops',comfort:5,color:'#e8a797',action:'nap',desc:'Curving coral loops on a cream tufted base.'},
+  daisyrug:{name:'Daisy Days Rug',category:'rugs',style:'pop',price:235,level:2,tier:'modern',w:2.10,d:1.75,shape:'rug',layer:'floor',pattern:'daisy',comfort:6,color:'#f0cbb9',action:'nap',desc:'Small daisies sprinkled across a pink field.'},
+  sunburstmat:{name:'Golden Hour Rug',category:'rugs',style:'retro',price:265,level:2,tier:'modern',w:2.45,d:1.72,shape:'rug',layer:'floor',pattern:'sunburst',comfort:6,color:'#e6b667',action:'nap',desc:'A sunburst of apricot, cream and honey.'},
+  lilacchecker:{name:'Lilac Checker Rug',category:'rugs',style:'soft',price:290,level:3,tier:'modern',w:2.22,d:1.62,shape:'rug',layer:'floor',pattern:'lilac',comfort:7,color:'#b6a3d6',action:'nap',desc:'Chunky lilac-and-oat checkerboard.'},
+  compactboucle:{name:'Compact Bouclé Sofa',category:'seating',style:'soft',price:470,level:1,tier:'starter',w:1.86,d:1.08,shape:'sofa',comfort:14,color:'#e4dac9',action:'nap',desc:'The small, softly curved sofa that belongs everywhere.'},
+  softcorner:{name:'Soft Corner Sofa',category:'seating',style:'organic',price:620,level:1,tier:'starter',w:2.14,d:1.38,shape:'sofa',comfort:17,color:'#a6c1ae',action:'nap',desc:'A tiny sectional with a generous rounded corner.'},
+  cloudloveseat:{name:'Cloudlet Loveseat',category:'seating',style:'soft',price:760,level:2,tier:'modern',w:1.95,d:1.14,shape:'sofa',comfort:19,color:'#e7cbd8',action:'nap',desc:'Pillow-like curves in powder pink upholstery.'},
+  bubblechair:{name:'Bubble Pop Chair',category:'seating',style:'pop',price:330,level:1,tier:'starter',w:1.07,d:1.10,shape:'chair',comfort:9,color:'#94bad6',action:'nap',desc:'A playful oversized seat, sculpted like a bubble.'},
+  sunrisebench:{name:'Sunrise Bench',category:'seating',style:'retro',price:390,level:2,tier:'modern',w:1.50,d:.76,shape:'stool',comfort:7,color:'#f0bc6a',action:'nap',desc:'A curved upholstered bench on solid timber legs.'},
+  corduroypouf:{name:'Corduroy Pumpkin Pouf',category:'seating',style:'organic',price:195,level:1,tier:'starter',w:.85,d:.86,shape:'pouf',comfort:6,color:'#d39275',action:'nap',desc:'Ridged velvet upholstery with friendly pumpkin curves.'},
+  archchair:{name:'Arch Studio Chair',category:'seating',style:'modern',price:595,level:3,tier:'modern',w:1.18,d:1.04,shape:'chair',comfort:14,color:'#b9b1e2',action:'nap',desc:'A sculptural arched chair with a deep upholstered seat.'},
+  pebblesidetable:{name:'Pebble Side Table',category:'tables',style:'organic',price:180,level:1,tier:'starter',w:.66,d:.64,shape:'table',comfort:3,color:'#cfbfa7',action:'talk',desc:'An organic little companion for your sofa.'},
+  pilltable:{name:'Pastel Pill Table',category:'tables',style:'pop',price:260,level:2,tier:'modern',w:.92,d:.70,shape:'table',comfort:4,color:'#a7c6d4',action:'talk',desc:'A capsule-shaped coffee table in lacquered blue.'},
+  terrazzoaccent:{name:'Terrazzo Accent Table',category:'tables',style:'retro',price:335,level:3,tier:'modern',w:.92,d:.71,shape:'table',comfort:5,color:'#dec4ab',action:'talk',desc:'A gallery-inspired table with colourful stone flecks.'},
+  butterlamp:{name:'Butter Yellow Table Lamp',category:'lighting',style:'retro',price:130,level:1,tier:'starter',w:.47,d:.47,shape:'mushroom',layer:'tabletop',comfort:3,color:'#f5ca60',action:'read',desc:'A cheerful little lamp that warms the whole room.'},
+  petallamp:{name:'Peony Floor Lamp',category:'lighting',style:'pop',price:310,level:2,tier:'modern',w:.62,d:.62,shape:'flower',comfort:6,color:'#ea9bb1',action:'read',desc:'A giant pink flower lamp with a warm glowing center.'},
+  opalglobe:{name:'Opal Globe Light',category:'lighting',style:'modern',price:275,level:2,tier:'modern',w:.53,d:.53,shape:'lamp',comfort:5,color:'#e3d2b8',action:'read',desc:'Milk-glass globe balanced on a slim dark stand.'},
+  tinygallery:{name:'Mini Colour Gallery',category:'art',style:'pop',price:225,level:1,tier:'starter',w:.79,d:.38,shape:'art',comfort:4,color:'#de9d87',action:'paint',desc:'A tiny display of colour-block artworks.'},
+  coastalprint:{name:'Coastal Abstract Print',category:'art',style:'modern',price:265,level:2,tier:'modern',w:.81,d:.42,shape:'art',comfort:5,color:'#9fc8c4',action:'paint',desc:'A calm composition of arches and sea-blue shapes.'},
+  scallopmirror:{name:'Scallop Mirror',category:'art',style:'soft',price:355,level:3,tier:'modern',w:.79,d:.35,shape:'mirror',comfort:6,color:'#e2a9bb',action:'talk',desc:'A freestanding mirror framed by soft scallops.'},
+  terracottafern:{name:'Happy Fern Planter',category:'plants',style:'organic',price:125,level:1,tier:'starter',w:.53,d:.53,shape:'plant',comfort:3,color:'#cc906f',action:'clean',desc:'A lush fern in a wavy coral planter.'},
+  candlecluster:{name:'Pastel Candle Trio',category:'objects',style:'soft',price:65,level:1,tier:'starter',w:.34,d:.35,shape:'sculpture',layer:'tabletop',comfort:2,color:'#edb9b3',action:'talk',desc:'Three sculpted candles in soft pastel shades.'},
+  rainbowbookends:{name:'Rainbow Bookends',category:'objects',style:'pop',price:105,level:2,tier:'modern',w:.43,d:.34,shape:'sculpture',layer:'tabletop',comfort:3,color:'#d5a5be',action:'read',desc:'A pair of cheerful sculpted rainbow arches.'}
+ };
+ Object.entries(starterEditions).forEach(([id,v])=>{v.series='STUDIO STARTERS';items[id]=v});
+ /* Previously premium-only categories now have starter alternatives; the
+    signature collector pieces still reward long-term home progression. */
+ Object.entries({
+  mushroomlamp:1,candychecker:1,bouclepouf:1,terracottatotem:1,
+  checkerottoman:2,coilmatt:2,pebblecoffee:2,galleryprint:2,
+  squigglemirror:3,croissantsofa:4,scallopshelf:4,roombloom:3,
+  bobbinlamp:3,ribbonchair:5,cloudstool:2
+ }).forEach(([id,lvl])=>{if(items[id])items[id].level=lvl});
+
  const coreCategories={
   plant:'plants',bookshelf:'storage',floorlamp:'lighting',armchair:'seating',ottoman:'seating',petbed:'seating',easel:'art',
   yogamat:'objects',sidetable:'tables',stereo:'objects',loungechair:'seating',loveseat:'seating',recliner:'seating',
@@ -4213,6 +4487,11 @@ const catalog={
  sofa:{label:'Sofas',icon:'▱',description:'A sofa changes how your home feels.',options:[
   ['starter','Everyday Linen',0,'#bdb49c','Simple and comfortable'],
   ['sage','Modern Sage',175,'#8ca796','Clean, soft and inviting'],
+  ['mint','Mint Candy',120,'#a2cbb4','Refreshing pastel upholstery',1],
+  ['creamstripe','Striped Buttercream',150,'#e9d2a7','A warm sunny striped sofa',1],
+  ['peach','Peach Velvet',165,'#eca998','Soft peach with vintage attitude',2],
+  ['sky','Sky Blue Linen',175,'#a8c5db','Airy pale blue upholstery',2],
+  ['berry','Berry Bouclé',320,'#b988ad','A bolder berry-toned statement',3],
   ['rust','Rust Velvet',215,'#be7c67','A statement curved sofa'],
   ['navy','Midnight Blue',260,'#667f9b','Deep, dramatic cushions'],
   ['boucle','Cloud Bouclé',480,'#f1e9d9','A premium rounded silhouette'],
@@ -4225,7 +4504,17 @@ const catalog={
   ['sage','Sage Stripes',90,'#acc2aa','Quiet vertical stripes'],
   ['botanical','Botanical Print',155,'#83aa83','A subtle green leaf motif'],
   ['clay','Clay Wash',125,'#d3a294','Warm, earthy and textural'],
-  ['blue','Misty Blue',115,'#b2c9da','A soft coastal look']
+  ['blue','Misty Blue',115,'#b2c9da','A soft coastal look'],
+  ['warmivory','Warm Ivory Panel',95,'#eee6db','Subtle architectural panels',1],
+  ['tinyfloral','Tiny Floral',120,'#f5dfde','Little meadow flowers on ivory',1],
+  ['pastelgingham','Pastel Gingham',130,'#ebd9cb','Soft peach checks with fine lines',1],
+  ['sagepinstripe','Sage Pinstripe',145,'#c0cbb5','Thin sage lines and gentle structure',1],
+  ['rosepetals','Rose Petal Print',165,'#e8cbd3','Hand-drawn rosy flowers',2],
+  ['terracottagrid','Terracotta Grid',175,'#dfae9b','A graphic retro grid',2],
+  ['lilacarches','Lilac Arches',195,'#d8cee8','Playful curved arch motifs',2],
+  ['sunnydaisy','Sunny Daisy',225,'#f2dfba','Golden daisies on vanilla',3],
+  ['bluewave','Coastal Wave',235,'#c4dce0','Waves drawn in faded blue',3],
+  ['abstractpop','Colour Block Mural',320,'#e4b8b2','Bold modern composition',4]
  ]},
  flooring:{label:'Flooring',icon:'▦',description:'Replace the flooring of the entire living space.',options:[
   ['hex','Classic Hex',0,'#d6d8d0','Original ceramic tile'],
@@ -4254,7 +4543,11 @@ const catalog={
  ]}
 };
 const sofaLevels={starter:1,sage:2,rust:3,navy:5,boucle:7,leather:9,cloud:12,atelier:15};
-Object.entries(catalog).forEach(([cat,data])=>data.options.forEach((o,i)=>{o[5]=cat==='sofa'?sofaLevels[o[0]]:(i===0?1:Math.max(1,Math.ceil((i+1)/1.5)))}));
+Object.entries(catalog).forEach(([cat,data])=>data.options.forEach((o,i)=>{
+ if(!Number.isFinite(o[5]))o[5]=cat==='sofa'?(sofaLevels[o[0]]||Math.max(1,Math.ceil((i+1)/2))):(i===0?1:Math.max(1,Math.ceil((i+1)/1.5)));
+}));
+/* Starter wallpaper should be achievable immediately, regardless of prior saves. */
+catalog.wallpaper.options.find(o=>o[0]==='sage')[5]=1;
 let category='furniture',preview=null;
 function bridge(){return window.HouseBossDesignBridge}
 function state(){return bridge()?.getState?.()||{cash:0,value:0,selected:{},unlocked:{}}}
@@ -4312,7 +4605,7 @@ function render(){
   const poor=st.cash<price&&!isOwned;
   return '<article class="hd-style '+(isShowing?'hd-current ':'')+(isActive?'hd-applied':'')+(locked?' hd-locked':'')+'">'+
    '<button class="hd-preview" type="button" data-hd-preview="'+category+':'+id+'" aria-label="Preview '+name+'">'+
-    '<span class="hd-swatch" style="--sample:'+color+'"><i></i></span>'+
+    '<span class="hd-swatch hd-swatch-'+cat+'-'+id+'" style="--sample:'+color+'"><i></i></span>'+
     '<span class="hd-style-name">'+name+'</span><span class="hd-style-desc">'+desc+'</span><span class="hd-tier">'+(locked?'◆ LEVEL '+needLevel+' TO UNLOCK':'LVL '+needLevel+' COLLECTION')+'</span>'+
     '<span class="hd-style-tag">'+(isActive?'IN ROOM':isOwned?'OWNED':locked?'LOCKED':'$'+price)+'</span></button>'+
    '<button type="button" class="hd-purchase" data-hd-apply="'+category+':'+id+'" '+(isActive||poor||locked?'disabled':'')+'>'+
