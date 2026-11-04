@@ -30,26 +30,80 @@ export function createDecorMesh(type,g,api){
   ell(x-w*.17,1.17+h*.12,0,w*.24,h*.25,.015,a);
   const stripe=box(g,w*.36,h*.11,.019,b,x+w*.16,1.05,0);stripe.rotation.z=.45;
  }
+
  function rugPattern(kind){
   if(texCache.has(kind))return texCache.get(kind);
-  const canvas=document.createElement('canvas');canvas.width=256;canvas.height=192;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle=kind==='checker'?'#fae6db':'#e9e5d1';ctx.fillRect(0,0,256,192);
-  if(kind==='checker'){
-   for(let x=0;x<8;x++)for(let z=0;z<6;z++){
-    if((x+z)%2===0){ctx.fillStyle='#de8ea3';ctx.fillRect(x*32,z*32,32,32)}
+  const canvas=document.createElement('canvas');canvas.width=384;canvas.height=272;
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  const fill=v=>{ctx.fillStyle=v;ctx.fillRect(0,0,W,H)};
+  const ellipse=(x,y,rx,ry,shade,stroke=null)=>{
+   ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);
+   if(shade){ctx.fillStyle=shade;ctx.fill()}
+   if(stroke){ctx.strokeStyle=stroke;ctx.stroke()}
+  };
+  if(kind==='checker'||kind==='lilac'){
+   fill(kind==='lilac'?'#eee4f0':'#f6e4dc');
+   for(let x=0;x<8;x++)for(let y=0;y<6;y++)if((x+y)%2===0){
+    ctx.fillStyle=kind==='lilac'?'#b7a4da':'#df98aa';
+    ctx.fillRect(x*48,y*(H/6),48,H/6)
    }
+  }else if(kind==='grid'){
+   fill('#f1e7da');ctx.strokeStyle='#d4ada9';ctx.lineWidth=4;
+   for(let x=20;x<W;x+=49){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+9,H);ctx.stroke()}
+   for(let y=19;y<H;y+=49){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y+6);ctx.stroke()}
+  }else if(kind==='jute'){
+   fill('#d3b893');
+   for(let y=0;y<H;y+=4){ctx.fillStyle=(y%12===0?'#bd9a75':'#e3cbab');ctx.fillRect(0,y,W,1)}
+   for(let x=0;x<W;x+=18){ctx.strokeStyle='#aa8764';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+   for(let y=0;y<H;y+=70){ctx.strokeStyle='#f9e4c5';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  }else if(kind==='loops'){
+   fill('#f6e8dc');
+   for(let i=0;i<7;i++){
+    ctx.beginPath();ctx.lineWidth=17;ctx.strokeStyle=i%2?'#d88d84':'#f0b9a6';
+    for(let x=-30;x<W+25;x+=4){
+     const y=30+i*36+Math.sin((x/45)+i*1.1)*16;
+     if(x===-30)ctx.moveTo(x,y);else ctx.lineTo(x,y)
+    }
+    ctx.stroke()
+   }
+  }else if(kind==='daisy'){
+   fill('#ebafbc');
+   for(let y=32;y<H;y+=68)for(let x=35;x<W;x+=80){
+    for(let n=0;n<6;n++){const a=n*Math.PI/3;ellipse(x+Math.cos(a)*13,y+Math.sin(a)*13,10,7,'#fff1e5')}
+    ellipse(x,y,7,7,'#e7bc62')
+   }
+  }else if(kind==='sunburst'){
+   fill('#f6e6d0');
+   const x=W*.47,y=H*.50;
+   for(let i=0;i<30;i++){
+    const a=i*2*Math.PI/30;
+    ctx.beginPath();ctx.moveTo(x,y);
+    ctx.lineTo(x+Math.cos(a-.045)*W,y+Math.sin(a-.045)*W);
+    ctx.lineTo(x+Math.cos(a+.045)*W,y+Math.sin(a+.045)*W);
+    ctx.closePath();ctx.fillStyle=i%2?'#e5ac65':'#efc38c';ctx.fill()
+   }
+   ellipse(x,y,55,55,'#f5d9a6')
   }else{
+   fill('#e9e5d1');
    for(let j=0;j<7;j++){
     ctx.beginPath();ctx.lineWidth=10+3*j;
     ctx.strokeStyle=['#7b9c79','#c7b692','#d49b84','#89ad9a'][j%4];
-    for(let x=-25;x<280;x+=3){let y=j*30+15+Math.sin(x*.024+j*.52)*24;x===-25?ctx.moveTo(x,y):ctx.lineTo(x,y)}
+    for(let x=-25;x<W+20;x+=3){
+     const y=j*42+15+Math.sin(x*.024+j*.52)*24;
+     if(x===-25)ctx.moveTo(x,y);else ctx.lineTo(x,y)
+    }
     ctx.stroke()
    }
+  }
+  // Subtle material grain makes a patterned rug feel woven, not printed.
+  for(let i=0;i<700;i++){
+   let x=(i*73.17)%W,y=(i*109.31)%H;
+   ctx.fillStyle=i%2?'#ffffff1e':'#382b2710';ctx.fillRect(x,y,2,2)
   }
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
   texCache.set(kind,texture);return texture
  }
+
  if(type==='ceramicvase'||type==='spherevase'){
   const m=type==='spherevase'?glass:color;
   ell(0,.24,0,.16,.20,.15,m);cylinder(g,.082,.09,.18,m,0,.47,0);circ(0,.57,0,.073,.018,m);
@@ -97,10 +151,18 @@ export function createDecorMesh(type,g,api){
   cylinder(g,.13,.21,.56,cream,0,.43,0);
   ell(0,.88,0,.40,.22,.38,color);
   ell(0,.84,0,.31,.08,.30,mat('#fff3dc',.37))
- }else if(type==='candychecker'||type==='coilmatt'){
-  const m=new THREE.MeshStandardMaterial({map:rugPattern(type==='candychecker'?'checker':'wave'),roughness:.94});
-  const carpet=addMesh(g,new THREE.PlaneGeometry(data.w,data.d),m,0,.036,0,false,true);carpet.rotation.x=-Math.PI/2;
-  box(g,data.w,.017,data.d,mat(type==='candychecker'?'#d2879e':'#86a18b'),0,.017,0).castShadow=false
+ }else if(data.category==='rugs'){
+  const pattern=data.pattern||(type==='candychecker'?'checker':'wave');
+  const m=new THREE.MeshStandardMaterial({map:rugPattern(pattern),roughness:.98,side:THREE.DoubleSide});
+  m.userData.houseBossEdition=true;
+  const carpet=addMesh(g,new THREE.PlaneGeometry(data.w,data.d),m,0,.038,0,false,true);
+  carpet.rotation.x=-Math.PI/2;carpet.castShadow=false;
+  box(g,data.w,.018,data.d,mat(data.color),0,.018,0).castShadow=false;
+  if(pattern==='jute')for(let i=-11;i<=11;i++){
+   const x=i*data.w/23;
+   for(const z of [-data.d*.53,data.d*.53])
+    tube([x,.036,z],[x,.035,z+(z>0?.13:-.13)],.008,mat('#dfccac'))
+  }
  }else if(type==='galleryprint'||type==='galleryframe'){
   const panels=type==='galleryframe'?3:1;
   for(let i=0;i<panels;i++){const x=panels===3?(i-1)*.45:0;artPanel(x,panels===3?.37:.72,1.20,i+2)}
