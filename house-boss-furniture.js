@@ -149,7 +149,7 @@ function renderRich(){
   (styleFilter==='all'||item.style===styleFilter)
  );
  const categoryIcons={seating:'▰',tables:'◉',lighting:'☀',rugs:'▦',art:'✷',objects:'◇',plants:'✿',storage:'▤'};
- let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Design Shop</button>'+
+ let html='<nav class="hd-categories" aria-label="Home design categories"><button class="active" type="button" data-hd-category="furniture"><span>▣</span>Design Shop</button><button type="button" data-hd-category="garden"><span>✿</span>Garden</button><button type="button" data-hd-category="build"><span>⌂</span>Build</button>'+
  Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([k,v])=>'<button type="button" data-hd-category="'+k+'"><span>'+v.icon+'</span>'+v.label+'</button>').join('')+'</nav>'+
  '<div class="hbf-shop-hero"><div><span>DESIGN SHOP / EDITIONS</span><h3>Make it yours.</h3><p>Furniture with personality. Sculptural shapes, playful colour and collectible pieces for your 3D home.</p>'+
  '<div class="hbf-hero-pills"><b>'+all.length+' OBJECTS</b><b>'+available+' UNLOCKED</b><b>3D HOME STYLING</b></div></div><div class="hbf-hero-sculpt"><i></i><i></i><i></i></div></div>'+
@@ -249,7 +249,7 @@ function renderSafe(err){
  const categoryButtons='<nav class="hbf-category-grid" aria-label="Furniture categories">'+
   '<button data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL</b><small>'+items.length+'</small></button>'+
   '<button data-hd-category="wallpaper" class="hbf-wallpaper-category"><span>▧</span><b>WALLPAPERS</b><small>15 designs ↗</small></button>'+Object.entries(categories).map(([id,name])=>'<button data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+(palette[id]||'✦')+'</span><b>'+name+'</b><small>'+items.filter(([,t])=>t.category===id).length+'</small></button>').join('')+'</nav>';
- let html='<nav class="hd-categories"><button class="active" data-hd-category="furniture">▣ Design Shop</button>'+
+ let html='<nav class="hd-categories"><button class="active" data-hd-category="furniture">▣ Design Shop</button><button data-hd-category="garden">✿ Garden</button><button data-hd-category="build">⌂ Build</button>'+
   Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([id,v])=>'<button data-hd-category="'+id+'">'+v.icon+' '+v.label+'</button>').join('')+'</nav>'+
   '<div class="hbf-shop-hero"><div><span>COLLECTIBLE INTERIORS / HOUSE BOSS</span><h3>Make it yours.</h3><p>37 original design editions, saved colourways, decorative accents and layered rugs. See each object in 3D before buying.</p>'+
   '<div class="hbf-hero-pills"><b>'+items.length+' FURNITURE & OBJECTS</b><b>HOME LVL '+lvl+'</b></div></div><div class="hbf-hero-sculpt"><i></i><i></i><i></i></div></div>'+
