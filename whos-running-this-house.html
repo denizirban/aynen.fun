@@ -727,10 +727,271 @@ body:has(#game) .brand .back{display:none!important}
 <link rel="stylesheet" href="./house-boss-home-design.css?v=3">
 <link rel="stylesheet" href="./house-boss-start.css?v=1">
 <link rel="stylesheet" href="./house-boss-furniture.css?v=4">
-<link rel="stylesheet" href="./house-boss-collector-shop.css?v=3">
+<style id="house-boss-collector-styles">
+/* House Boss / Editions: collectible furniture showroom, responsive editorial UI. */
+#notebook.design-mode .note-sheet{width:min(1020px,calc(100vw - 20px));max-height:95dvh;border-color:#dddfd4;background:#fafaf4;box-shadow:0 25px 95px #1b30276b}
+#notebook.design-mode #noteBody{scrollbar-color:#d2d7ca transparent}
+#notebook.design-mode .hbf-shop-hero{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:10px;overflow:hidden;position:relative;margin:3px 0 18px;min-height:192px;padding:23px 25px;background:linear-gradient(121deg,#eee6dd 3%,#f9f1eb 45%,#e6dce9 100%);border-radius:18px;border:1px solid #e1d7d6}
+#notebook.design-mode .hbf-shop-hero>div:first-child{position:relative;z-index:2}
+#notebook.design-mode .hbf-shop-hero span{font:900 9px 'DM Mono',monospace;letter-spacing:.11em;color:#a47c7f}
+#notebook.design-mode .hbf-shop-hero h3{font:750 clamp(26px,4vw,41px) 'Space Grotesk',sans-serif;letter-spacing:-.075em;line-height:1.08;margin:9px 0;color:#3c3942}
+#notebook.design-mode .hbf-shop-hero p{font:450 12px 'Space Grotesk',sans-serif;line-height:1.55;color:#776e73;max-width:430px;margin:0 0 15px}
+#notebook.design-mode .hbf-hero-pills{display:flex;gap:6px;flex-wrap:wrap}
+#notebook.design-mode .hbf-hero-pills b{font:850 8px 'DM Mono',monospace;letter-spacing:.03em;background:#ffffffaf;color:#9d7779;border:1px solid #e2cfd2;padding:7px 9px;border-radius:30px}
+#notebook.design-mode .hbf-hero-sculpt{position:relative;isolation:isolate;display:grid;place-items:center;filter:drop-shadow(11px 17px 12px #66515e38)}
+#notebook.design-mode .hbf-hero-sculpt i{position:absolute;display:block}
+#notebook.design-mode .hbf-hero-sculpt i:nth-child(1){width:100px;height:100px;bottom:20px;left:15px;border-radius:45% 45% 20px 20px;background:linear-gradient(145deg,#a4bfd9,#7795bb);transform:rotate(-18deg);box-shadow:inset -14px -8px 21px #514d6736}
+#notebook.design-mode .hbf-hero-sculpt i:nth-child(2){width:120px;height:51px;bottom:30px;left:53px;border-radius:40px 50px 26px 23px;background:linear-gradient(140deg,#f2b6ab,#d98590);transform:rotate(10deg);box-shadow:inset -8px -9px 16px #a35b6939}
+#notebook.design-mode .hbf-hero-sculpt i:nth-child(3){width:63px;height:63px;top:5px;right:4px;border:12px solid #f1d29a;border-radius:50%;box-shadow:6px 7px 3px #976c7830;transform:rotateX(32deg)}
+#notebook.design-mode .hbf-head{padding-top:3px}
+#notebook.design-mode .hbf-category-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:9px 0 13px}
+#notebook.design-mode .hbf-category-grid button{display:grid;grid-template-columns:28px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;gap:2px 6px;min-height:49px;text-align:left;padding:9px 10px;border:1px solid #e0dfda;border-radius:11px;background:linear-gradient(#fffefa,#f6f6ee);color:#747a6f;cursor:pointer}
+#notebook.design-mode .hbf-category-grid button:hover{border-color:#c7c1c6;background:#fbf1f1}
+#notebook.design-mode .hbf-category-grid button.active{background:linear-gradient(135deg,#f8e3e5,#f8f3eb);border-color:#d7a9b0;color:#7d4c5a;box-shadow:0 2px 0 #e0b8bf inset}
+#notebook.design-mode .hbf-category-grid button span{font-size:23px;line-height:1;grid-row:1 / 3;color:#b8919e}
+#notebook.design-mode .hbf-category-grid button b{font:850 8px 'DM Mono',monospace;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#notebook.design-mode .hbf-category-grid button small{font:700 9px 'DM Mono',monospace;color:#b5aba7}
+#notebook.design-mode .hbf-shop-toolbar{display:grid;grid-template-columns:1fr 185px;gap:8px;margin:6px 0 8px}
+#notebook.design-mode .hbf-search{display:flex;align-items:center;gap:9px;min-width:0;border:1px solid #dcded5;border-radius:11px;background:#fffefa;padding:0 13px}
+#notebook.design-mode .hbf-search span{font-size:24px;color:#ab9e98;line-height:1}
+#notebook.design-mode .hbf-search input{font:500 11px 'Space Grotesk',sans-serif;min-width:0;width:100%;height:43px;background:transparent;color:#4c5450;border:0;outline:0}
+#notebook.design-mode .hbf-search:focus-within{border-color:#b77c91;box-shadow:0 0 0 3px #debecb66}
+#notebook.design-mode .hbf-style-select{display:flex;align-items:center;gap:8px;border:1px solid #dcded5;border-radius:11px;background:#fffefa;padding:0 11px}
+#notebook.design-mode .hbf-style-select span{font:800 8px 'DM Mono',monospace;color:#9b9f96}
+#notebook.design-mode .hbf-style-select select{flex:1;min-width:0;height:43px;font:700 11px 'Space Grotesk',sans-serif;color:#616d67;background:transparent;border:0;outline:0;cursor:pointer}
+#notebook.design-mode .hbf-result-caption{display:flex;justify-content:space-between;align-items:center;gap:9px;margin:0 0 9px}
+#notebook.design-mode .hbf-result-caption strong{font:900 10px 'DM Mono',monospace;color:#666b62;letter-spacing:.08em}
+#notebook.design-mode .hbf-result-caption span{font:600 9px 'Space Grotesk',sans-serif;color:#aaa6a0}
+#notebook.design-mode .hbf-market{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#notebook.design-mode .hbf-card{border-radius:14px;border-color:#deddd5;background:#fffefb;min-width:0}
+#notebook.design-mode .hbf-card:hover{box-shadow:0 7px 21px #56434a1c;border-color:#d8c4c2}
+#notebook.design-mode .hbf-card[hidden],#notebook.design-mode .hbf-empty-results[hidden]{display:none!important}
+#notebook.design-mode .hbf-visual{height:145px;overflow:hidden;background:radial-gradient(ellipse at 54% 42%,#faf9f5 0%,#ebe7df 76%,#d8d9d0 100%)}
+#notebook.design-mode .hbf-preview-pop.hbf-visual{background:radial-gradient(ellipse at 45% 45%,#fff2ec,#f2dfdc 70%,#e2d0d5)}
+#notebook.design-mode .hbf-preview-soft.hbf-visual{background:radial-gradient(ellipse at 45% 45%,#faf5f0,#e9e6e0 72%,#dad8d0)}
+#notebook.design-mode .hbf-preview-organic.hbf-visual{background:radial-gradient(ellipse at 45% 45%,#f8f8ed,#e7e9df 70%,#d1d8c5)}
+#notebook.design-mode .hbf-preview-retro.hbf-visual{background:radial-gradient(ellipse at 45% 45%,#fff6ec,#ede6d4 69%,#e2cfc1)}
+#notebook.design-mode .hbf-visual::before{content:'';position:absolute;left:0;right:0;bottom:21px;height:1px;background:#aea79f3d}
+#notebook.design-mode .hbf-visual:after{bottom:27px;left:24%;right:24%;height:13px;filter:blur(7px);background:#382b343b}
+#notebook.design-mode .hbf-silhouette{width:108px;height:80px;transform:perspective(230px) rotateX(5deg) rotateY(-10deg) scale(1.12)}
+#notebook.design-mode .hbf-silhouette i{box-shadow:inset -8px -8px 13px #0000001d,inset 6px 5px 9px #fff8}
+#notebook.design-mode .hbf-silhouette i:nth-child(n+4){display:none}
+#notebook.design-mode .hbf-visual-preview{position:absolute;left:8px;bottom:8px;z-index:5;border:1px solid #ffffffa6;border-radius:30px;background:#fffdf7dd;color:#6d6571;padding:6px 9px;font:850 8px 'DM Mono',monospace;backdrop-filter:blur(9px);cursor:pointer}
+#notebook.design-mode .hbf-visual-preview:hover{background:#fffefa;color:#905b75}
+#notebook.design-mode .hbf-heart{left:8px;top:8px;background:#fffef9f0;z-index:6}
+#notebook.design-mode .hbf-card .hbf-padlock,#notebook.design-mode .hbf-card .hbf-available{top:8px;right:8px;z-index:4;line-height:1.1}
+#notebook.design-mode .hbf-available{background:#f7fff2e9;color:#47784f}
+#notebook.design-mode .hbf-padlock{background:#706269e3;color:#fff}
+#notebook.design-mode .hbf-card-content{padding:11px 11px 9px;gap:5px}
+#notebook.design-mode .hbf-card-content>strong{font:800 13px 'Space Grotesk',sans-serif;letter-spacing:-.03em;min-height:30px;color:#393d3b}
+#notebook.design-mode .hbf-card-content>small{font-size:10px;line-height:1.45;min-height:30px;color:#8a9189}
+#notebook.design-mode .hbf-card-kicker{font:850 8px 'DM Mono',monospace;color:#b08695!important}
+#notebook.design-mode .hbf-material-tags{display:flex;gap:5px;flex-wrap:wrap;margin:3px 0 8px}
+#notebook.design-mode .hbf-material-tags span{font:750 7px 'DM Mono',monospace;letter-spacing:.04em;color:#8c8e85;background:#f3f1ed;border:1px solid #e9e6df;border-radius:999px;padding:4px 6px;text-transform:uppercase}
+#notebook.design-mode .hbf-card-content .hbf-bonus{border-radius:8px;background:#edf4eb;color:#4d765c;font-size:8px;padding:7px 8px}
+#notebook.design-mode .hbf-card>button[data-hbf-buy]{padding:12px 8px;min-height:42px;font-size:9px;background:#e7f0e6;color:#4e7558}
+#notebook.design-mode .hbf-card>button[data-hbf-buy]:hover:not(:disabled){background:#d1e7cd}
+#notebook.design-mode .hbf-card>button[data-hbf-buy]:disabled{background:#f2f0ec;color:#afa9a3}
+#notebook.design-mode .hbf-empty-results{padding:25px 12px;text-align:center;border:1px dashed #d7d2c8;background:#fffefa;border-radius:13px;font-size:11px;color:#9a958b;margin:8px 0 18px}
+#notebook.design-mode .hbf-colorways{display:flex;gap:7px;margin:9px 0 7px;flex-wrap:wrap}
+#notebook.design-mode .hbf-colorways button{width:23px;height:23px;border-radius:50%;background:var(--swatch);border:3px solid #fff;box-shadow:0 0 0 1px #c7cbc4;cursor:pointer;padding:0}
+#notebook.design-mode .hbf-colorways button.active{box-shadow:0 0 0 2px #546f61,0 0 0 4px #fff}
+#notebook.design-mode .hbf-colorways button:focus-visible{outline:2px solid #536f62;outline-offset:3px}
+#notebook.design-mode .hbf-row{padding:11px;background:#fffefa;border-color:#e0dfd7}
+#notebook.design-mode .hbf-small-icon{width:36px;height:36px;font-size:20px;flex:none;box-shadow:inset -8px -6px 9px #0002}
+#notebook.design-mode .hbf-row b{font-size:11px;color:#4f5a51}
+#notebook.design-mode .hbf-row small{font-size:8px}
+
+/* Object silhouettes: styled miniatures, each family has a distinct recognizable profile. */
+#notebook.design-mode .hbf-silhouette.vase i:first-child{left:35%;right:35%;bottom:12px;height:40px;border-radius:45% 45% 34% 34%}
+#notebook.design-mode .hbf-silhouette.vase i:nth-child(2){left:43%;right:43%;top:6px;height:26px;border-radius:5px;background:var(--tone)}
+#notebook.design-mode .hbf-silhouette.vase i:nth-child(3){left:49%;right:49%;top:-2px;height:31px;border-radius:1px;background:#648e78;transform:rotate(12deg)}
+#notebook.design-mode .hbf-silhouette.bowl i:first-child{left:29%;right:29%;bottom:16px;height:27px;border-radius:0 0 60% 60%;background:var(--tone)}
+#notebook.design-mode .hbf-silhouette.bowl i:nth-child(2){left:36%;right:36%;bottom:36px;top:auto;height:16px;border-radius:50%;background:#f5d270}
+#notebook.design-mode .hbf-silhouette.bowl i:nth-child(3){display:none}
+#notebook.design-mode .hbf-silhouette.stool i:first-child{left:29%;right:29%;bottom:24px;height:29px;border-radius:35% 35% 20% 20%;background:var(--tone)}
+#notebook.design-mode .hbf-silhouette.stool i:nth-child(2){left:35%;right:35%;top:auto;bottom:11px;height:20px;border-radius:8px;background:#b58d71}
+#notebook.design-mode .hbf-silhouette.stool i:nth-child(3){display:none}
+#notebook.design-mode .hbf-silhouette.pouf i:first-child{left:18%;right:18%;bottom:15px;height:44px;border-radius:48% 48% 42% 42%;background:var(--tone)}
+#notebook.design-mode .hbf-silhouette.pouf i:nth-child(2){left:27%;right:27%;top:17px;height:13px;border-radius:50%;background:#fff4e4a6}
+#notebook.design-mode .hbf-silhouette.pouf i:nth-child(3){display:none}
+#notebook.design-mode .hbf-silhouette.mushroom i:first-child{left:26%;right:26%;top:6px;height:29px;border-radius:85% 85% 15% 15%;background:var(--tone)}
+#notebook.design-mode .hbf-silhouette.mushroom i:nth-child(2){left:43%;right:43%;top:32px;height:31px;border-radius:7px;background:#f6eadd}
+#notebook.design-mode .hbf-silhouette.mushroom i:nth-child(3){left:30%;right:30%;bottom:12px;height:7px;border-radius:12px;background:#d2b49d}
+#notebook.design-mode .hbf-silhouette.rug{transform:perspective(150px) rotateX(57deg) rotateZ(-9deg) scale(1.2)}
+#notebook.design-mode .hbf-silhouette.rug i:first-child{left:4%;right:4%;bottom:15px;height:55px;border-radius:12px;background:repeating-conic-gradient(#fff1e1 0 25%,var(--tone) 0 50%) 0/33% 50%;box-shadow:0 6px 9px #0002}
+#notebook.design-mode .hbf-silhouette.rug i:nth-child(2),#notebook.design-mode .hbf-silhouette.rug i:nth-child(3){display:none}
+#notebook.design-mode .hbf-silhouette.art i:first-child{left:23%;right:23%;bottom:11px;height:64px;border:7px solid #b68b70;background:linear-gradient(140deg,#f7d4a6 40%,#9ba6a2 40% 72%,#e89b9c 72%);border-radius:3px}
+#notebook.design-mode .hbf-silhouette.art i:nth-child(2){left:48%;right:48%;top:auto;bottom:4px;height:13px;background:#b68b70;border-radius:0}
+#notebook.design-mode .hbf-silhouette.art i:nth-child(3){display:none}
+#notebook.design-mode .hbf-silhouette.mirror i:first-child{left:31%;right:31%;height:66px;bottom:7px;border:9px solid var(--tone);background:linear-gradient(120deg,#e6f7fb,#b0c7d4 55%,#eef2f4);border-radius:48% 48% 40% 40%}
+#notebook.design-mode .hbf-silhouette.mirror i:nth-child(2),#notebook.design-mode .hbf-silhouette.mirror i:nth-child(3){display:none}
+#notebook.design-mode .hbf-silhouette.knot i:first-child{left:27%;right:27%;bottom:20px;height:40px;border:12px solid var(--tone);border-radius:50%;background:transparent;transform:rotate(26deg)}
+#notebook.design-mode .hbf-silhouette.knot i:nth-child(2){left:35%;right:35%;bottom:18px;top:auto;height:42px;border:10px solid var(--tone);border-radius:50%;background:transparent;transform:rotate(-50deg)}
+#notebook.design-mode .hbf-silhouette.knot i:nth-child(3){display:none}
+#notebook.design-mode .hbf-silhouette.table i:first-child{left:12%;right:12%;bottom:29px;height:19px;border-radius:50%;background:var(--tone)}
+#notebook.design-mode .hbf-silhouette.table i:nth-child(2){left:40%;right:40%;top:auto;bottom:8px;height:30px;border-radius:15px;background:#947c72}
+#notebook.design-mode .hbf-silhouette.table i:nth-child(3){display:none}
+#notebook.design-mode .hbf-silhouette.sculpture i:first-child{left:38%;right:38%;bottom:8px;height:22px;border-radius:2px;background:#d9d3c8}
+#notebook.design-mode .hbf-silhouette.sculpture i:nth-child(2){left:34%;right:34%;top:20px;height:31px;border-radius:50%;background:var(--tone)}
+#notebook.design-mode .hbf-silhouette.sculpture i:nth-child(3){left:44%;right:44%;bottom:38px;height:19px;border-radius:45%;background:#f1e8db}
+#notebook.design-mode .hbf-silhouette.flower i:first-child{left:39%;right:39%;bottom:11px;height:15px;border-radius:40%;background:#8aa38c}
+#notebook.design-mode .hbf-silhouette.flower i:nth-child(2){left:48%;right:48%;top:25px;height:39px;border-radius:2px;background:#7b947b}
+#notebook.design-mode .hbf-silhouette.flower i:nth-child(3){left:30%;right:30%;top:2px;height:32px;border-radius:45%;background:radial-gradient(circle at center,#e6bd64 0 18%,var(--tone) 19% 100%)}
+#notebook.design-mode .hbf-silhouette.screen i:first-child{left:7%;right:60%;height:62px;bottom:9px;border-radius:40% 40% 2px 2px}
+#notebook.design-mode .hbf-silhouette.screen i:nth-child(2){left:39%;right:32%;height:62px;top:auto;bottom:9px;border-radius:40% 40% 2px 2px}
+#notebook.design-mode .hbf-silhouette.screen i:nth-child(3){left:70%;right:2%;height:62px;bottom:9px;border-radius:40% 40% 2px 2px;background:var(--tone)}
+#notebook.design-mode .hbf-silhouette.lamp i:nth-child(4){display:block;left:46%;right:46%;top:4px;height:10px;border-radius:60%;background:#f7d7a0}
+@media(max-width:830px){
+ #notebook.design-mode .hbf-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #notebook.design-mode .hbf-market{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #notebook.design-mode .hbf-shop-hero{grid-template-columns:1fr 125px}
+}
+@media(max-width:550px){
+ #notebook.design-mode .note-sheet{width:calc(100vw - 8px);max-height:97dvh}
+ #notebook.design-mode .hbf-shop-hero{padding:14px;min-height:145px;grid-template-columns:1fr 85px;border-radius:14px}
+ #notebook.design-mode .hbf-shop-hero h3{font-size:27px}
+ #notebook.design-mode .hbf-shop-hero p{font-size:10px;line-height:1.35}
+ #notebook.design-mode .hbf-shop-hero span{font-size:7px}
+ #notebook.design-mode .hbf-hero-pills{gap:4px}
+ #notebook.design-mode .hbf-hero-pills b{font-size:6px;padding:4px}
+ #notebook.design-mode .hbf-hero-sculpt{transform:scale(.65);transform-origin:center right}
+ #notebook.design-mode .hbf-category-grid{gap:4px}
+ #notebook.design-mode .hbf-category-grid button{min-height:46px;grid-template-columns:19px 1fr;padding:6px;gap:2px}
+ #notebook.design-mode .hbf-category-grid button span{font-size:19px}
+ #notebook.design-mode .hbf-category-grid button b{font-size:6px;letter-spacing:-.02em}
+ #notebook.design-mode .hbf-category-grid button small{font-size:7px}
+ #notebook.design-mode .hbf-shop-toolbar{grid-template-columns:1fr 116px;gap:4px}
+ #notebook.design-mode .hbf-style-select{padding:0 5px;gap:3px}
+ #notebook.design-mode .hbf-style-select span{font-size:6px}
+ #notebook.design-mode .hbf-style-select select{font-size:9px}
+ #notebook.design-mode .hbf-search{padding:0 7px}
+ #notebook.design-mode .hbf-search input{font-size:10px}
+ #notebook.design-mode .hbf-market{gap:6px}
+ #notebook.design-mode .hbf-visual{height:110px}
+ #notebook.design-mode .hbf-silhouette{transform:perspective(230px) rotateY(-10deg) scale(.9)}
+ #notebook.design-mode .hbf-card-content{padding:8px}
+ #notebook.design-mode .hbf-card-content>strong{font-size:11px;min-height:26px}
+ #notebook.design-mode .hbf-card-content>small{font-size:9px;min-height:32px}
+ #notebook.design-mode .hbf-visual-preview{font-size:6px;padding:5px 6px}
+ #notebook.design-mode .hbf-visual .hbf-padlock,#notebook.design-mode .hbf-visual .hbf-available{font-size:6px}
+ #notebook.design-mode .hbf-card-content .hbf-bonus{font-size:7px}
+ #notebook.design-mode .hbf-material-tags span{font-size:6px;padding:3px 4px}
+ #notebook.design-mode .hbf-card>button[data-hbf-buy]{font-size:7px;min-height:37px;padding:8px 3px}
+ #notebook.design-mode .hbf-row{flex-wrap:wrap}
+ #notebook.design-mode .hbf-row>div{flex:1 1 calc(100% - 48px)}
+ #notebook.design-mode .hbf-row>button{min-height:31px;flex:1}
+}
+@media(prefers-reduced-motion:reduce){
+ #notebook.design-mode .hbf-card{transition:none}
+}
+
+/* Curated collection unlocks: designer sets, real in-game rewards. */
+#notebook.design-mode .hbf-set-header{display:flex;align-items:baseline;justify-content:space-between;gap:9px;padding:6px 1px 9px}
+#notebook.design-mode .hbf-set-header b{font:850 9px 'DM Mono',monospace;color:#826f77;letter-spacing:.065em;white-space:nowrap}
+#notebook.design-mode .hbf-set-header span{font:500 10px 'Space Grotesk',sans-serif;color:#988e8d;line-height:1.45}
+#notebook.design-mode .hbf-designer-sets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:14px}
+#notebook.design-mode .hbf-set-card{border:1px solid #e4ddd8;border-radius:12px;background:linear-gradient(160deg,#fffefa,#f8f4f0);padding:9px;display:flex;flex-direction:column;gap:8px;min-width:0}
+#notebook.design-mode .hbf-set-card.ready{border-color:#96be9a;background:#f3faf0}
+#notebook.design-mode .hbf-set-card.claimed{border-color:#b9d0c0;background:#f0f5ed}
+#notebook.design-mode .hbf-set-top{display:flex;align-items:flex-start;gap:6px;min-width:0}
+#notebook.design-mode .hbf-set-symbol{display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:8px;background:#e8a2b6;color:#fff;font-size:14px}
+#notebook.design-mode .hbf-set-symbol.soft{background:#c2add0}
+#notebook.design-mode .hbf-set-symbol.organic{background:#9cb99b}
+#notebook.design-mode .hbf-set-symbol.retro{background:#d9a56c}
+#notebook.design-mode .hbf-set-symbol.modern{background:#a9b5c5}
+#notebook.design-mode .hbf-set-top>div{flex:1;min-width:0}
+#notebook.design-mode .hbf-set-top b{display:block;font:800 9px 'Space Grotesk',sans-serif;color:#5d5458;line-height:1.2}
+#notebook.design-mode .hbf-set-top small{display:block;font:500 8px 'Space Grotesk',sans-serif;color:#a19b96;margin-top:4px;line-height:1.3}
+#notebook.design-mode .hbf-set-top strong{font:900 9px 'DM Mono',monospace;color:#8c827d;white-space:nowrap}
+#notebook.design-mode .hbf-set-progress{height:6px;background:#e9e6e0;border-radius:8px;overflow:hidden}
+#notebook.design-mode .hbf-set-progress i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#c8a5aa,#aaabbc)}
+#notebook.design-mode .hbf-set-card button{margin-top:auto;min-height:30px;width:100%;padding:6px 3px;border:1px solid #d9d1ce;border-radius:7px;background:#fffbf6;color:#8b6e79;font:800 7px 'DM Mono',monospace;cursor:pointer}
+#notebook.design-mode .hbf-set-card button:hover{background:#f5e7e7;border-color:#cca6ac}
+#notebook.design-mode .hbf-set-card.ready button{background:#dcefd8;color:#4d7e56;border-color:#a8c6a6}
+#notebook.design-mode .hbf-set-completed{font:850 7px 'DM Mono',monospace;text-align:center;color:#508b62;margin:auto 0 2px}
+@media(max-width:840px){
+ #notebook.design-mode .hbf-designer-sets{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #notebook.design-mode .hbf-set-header{flex-wrap:wrap}
+}
+@media(max-width:550px){
+ #notebook.design-mode .hbf-designer-sets{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;gap:6px;padding-bottom:4px}
+ #notebook.design-mode .hbf-set-card{min-width:148px;max-width:148px;scroll-snap-align:start}
+ #notebook.design-mode .hbf-set-header b{font-size:8px}
+ #notebook.design-mode .hbf-set-header span{font-size:9px}
+}
+
+/* V4 — the build catalogue is a side-by-side 3D workspace, not a fullscreen blocker. */
+#game #notebook.design-mode{display:flex;justify-content:flex-start;align-items:stretch;padding:10px;pointer-events:none}
+#game #notebook.design-mode .note-shade{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;pointer-events:none}
+#game #notebook.design-mode .note-sheet{pointer-events:auto;flex:none;width:min(455px,39vw);max-height:calc(100dvh - 20px);height:calc(100dvh - 20px);box-shadow:0 10px 50px #2e29344a;border:1px solid #e0d7d2;border-radius:16px;background:#fcfaf7}
+#game #notebook.design-mode #noteBody{padding:12px 15px 19px;flex:1;overscroll-behavior:contain}
+#game #notebook.design-mode .note-heading{padding:13px 17px 8px}
+#game #notebook.design-mode .note-heading h2{font-size:22px}
+#game #notebook.design-mode .note-tabs{padding:0 13px 9px;overflow-x:auto;scrollbar-width:thin}
+#game #notebook.design-mode .note-tabs button{flex:none;padding:8px;font-size:9px}
+#game #notebook.design-mode .hbf-market{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#game #notebook.design-mode .hbf-visual{height:104px}
+#game #notebook.design-mode .hbf-card-content>strong{min-height:28px;font-size:11px}
+#game #notebook.design-mode .hbf-card-content>small{font-size:9px}
+#game #notebook.design-mode .hbf-category-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#game #notebook.design-mode .hbf-designer-sets{display:flex;gap:7px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;padding-bottom:4px}
+#game #notebook.design-mode .hbf-set-card{flex:0 0 142px;scroll-snap-align:start}
+#game #notebook.design-mode .hbf-shop-hero{padding:13px 15px;min-height:145px;grid-template-columns:1fr 80px}
+#game #notebook.design-mode .hbf-shop-hero h3{font-size:29px}
+#game #notebook.design-mode .hbf-shop-hero p{font-size:10px}
+#game #notebook.design-mode .hbf-hero-sculpt{transform:scale(.64);transform-origin:center right}
+#game #notebook.design-mode .hbf-shop-toolbar{grid-template-columns:minmax(0,1fr) 125px}
+#game #notebook.design-mode .hbf-style-select{padding:0 6px}
+#game #notebook.design-mode .hbf-style-select span{display:none}
+#game #notebook.design-mode .hbf-style-select select{font-size:9px}
+#game #notebook.design-mode .hbf-category-grid button{padding:8px 6px}
+#game #notebook.design-mode .hbf-category-grid button b{font-size:7px}
+#game #notebook.design-mode .hbf-colorways button{min-height:23px}
+#game #notebook.design-mode .hbf-room-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+#game #notebook.design-mode .hbf-preview-space{padding:9px 11px;border:1px solid #d7c1c7;border-radius:10px;background:linear-gradient(120deg,#f7e4e9,#f6f1e9);display:flex;align-items:center;gap:10px;margin:11px 0 9px}
+#game #notebook.design-mode .hbf-preview-space b{font:800 10px 'Space Grotesk',sans-serif;letter-spacing:-.02em;color:#72545e}
+#game #notebook.design-mode .hbf-preview-space small{display:block;font:500 9px 'Space Grotesk',sans-serif;color:#987e88;margin-top:3px;line-height:1.45}
+#game #notebook.design-mode .hbf-preview-space>div{flex:1;min-width:0}
+#game #notebook.design-mode .hbf-preview-space button{padding:10px 8px;flex:none;background:#9f697d;border:0;border-radius:8px;color:white;font:800 9px 'DM Mono',monospace;cursor:pointer}
+#game #notebook.design-mode .hbf-preview-space button:hover{background:#845069}
+#game #notebook.design-mode:after{content:'LIVE 3D ROOM · TAP TO PLACE & ROTATE';position:absolute;pointer-events:none;top:10px;right:19px;color:#5a6558;background:#fffdf5dc;border:1px solid #d4d8ce;border-radius:99px;padding:9px 13px;font:850 9px 'DM Mono',monospace;z-index:2;box-shadow:0 4px 18px #1b39241b}
+#hbDesignerShopButton{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:9px;padding:10px 11px;width:100%;min-height:38px;border-radius:10px;border:1px solid #cb9eb3;background:linear-gradient(125deg,#fff4f1,#f6dbe8);color:#845969;cursor:pointer;box-shadow:0 2px 9px #96657925}
+#hbDesignerShopButton b{font:900 10px 'DM Mono',monospace;letter-spacing:.01em;white-space:nowrap}
+#hbDesignerShopButton small{font:800 8px 'DM Mono',monospace;border-radius:30px;padding:5px;background:#a76c87;color:white;white-space:nowrap}
+#hbDesignerShopButton:hover{background:linear-gradient(125deg,#f8e7e8,#edc6dc)}
+#game:has(#splash:not(.hidden)) #hbDesignerShopButton{display:none}
+@media(max-width:950px){
+ #game #notebook.design-mode .note-sheet{width:min(425px,50vw)}
+ #game #notebook.design-mode:after{font-size:7px}
+}
+@media(max-width:720px){
+ #game #notebook.design-mode{align-items:flex-end;padding:0;justify-content:center}
+ #game #notebook.design-mode .note-sheet{width:100vw;max-width:100vw;height:min(58dvh,550px);max-height:min(58dvh,550px);border-radius:17px 17px 0 0;border-bottom:0}
+ #game #notebook.design-mode .note-heading{padding:9px 12px 5px}
+ #game #notebook.design-mode .note-heading h2{font-size:18px}
+ #game #notebook.design-mode #noteBody{padding:8px 11px 14px}
+ #game #notebook.design-mode .note-tabs{padding:0 8px 5px}
+ #game #notebook.design-mode .note-tabs button{padding:6px;font-size:8px}
+ #game #notebook.design-mode:after{right:10px;top:10px;padding:7px 9px;background:#ffffffe9}
+ #game #notebook.design-mode .hbf-shop-hero{min-height:118px;padding:12px}
+ #game #notebook.design-mode .hbf-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #game #notebook.design-mode .hbf-visual{height:94px}
+ #hbDesignerShopButton{min-height:31px;padding:8px}
+ #hbDesignerShopButton b{font-size:8px}
+ #hbDesignerShopButton small{font-size:7px}
+ #notebook.design-mode:has(.hbf-placement) .note-sheet{height:min(43dvh,420px)!important;max-height:min(43dvh,420px)!important}
+}
+@media(max-width:390px){
+ #game #notebook.design-mode .hbf-shop-toolbar{grid-template-columns:1fr}
+ #game #notebook.design-mode .hbf-shop-hero h3{font-size:24px}
+ #game #notebook.design-mode .hbf-preview-space small{font-size:8px}
+}
+
+</style>
 <link rel="stylesheet" href="./house-boss-progression.css?v=2">
 <link rel="stylesheet" href="./house-boss-lifestyle.css?v=3">
-<meta name="house-boss-edition" content="designer-objects-visible-v2">
+<meta name="house-boss-edition" content="interactive-designer-cards-v4">
 </head>
 <body>
 <div id="game">
@@ -3625,7 +3886,7 @@ function placeBar(){
   '<button data-hbf-confirm '+(!p.valid&&p.mode!=='preview'?'disabled':'')+'>'+(p.mode==='preview'?'CLOSE PREVIEW':p.uid?'SAVE POSITION':'BUY & PLACE · $'+type.price)+'</button></div></div>';
 }
 
-function render(){
+function renderRich(){
  const root=view(),st=bridge()?.getState?.();if(!root||!st)return;
  document.getElementById('noteTitle').textContent='The Design Shop';
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+st.cash+' · Home Value $'+st.homeValue;
@@ -3721,6 +3982,86 @@ function render(){
  updateStatus();
  applySearch()
 }
+
+/* Reliable Design Shop: never replace a working shop with a text-only index.
+   Render all cards even if a saved game's optional state has an unexpected shape. */
+function renderSafe(err){
+ const root=view();if(!root)return;
+ const noteTitle=document.getElementById('noteTitle');
+ if(noteTitle)noteTitle.textContent='The Design Shop';
+ let st=null;
+ try{st=bridge()?.getState?.()||null}catch(inner){console.error('Shop state recovery:',inner)}
+ const lvl=Number(st?.level)||1,wallet=Number(st?.cash)||0;
+ const items=Object.entries(types),wishlist=Array.isArray(st?.wishlist)?st.wishlist:[];
+ const saved=Array.isArray(st?.furniture)?st.furniture:[];
+ const categories=window.HouseBossDesignerCollection?.categories||{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART',objects:'OBJECTS',plants:'PLANTS',storage:'STORAGE'};
+ const budget=document.getElementById('noteBudget');
+ if(budget)budget.textContent='$'+wallet+' · HOME LEVEL '+lvl;
+ const filtered=items.filter(([id,t])=>
+   (category==='all'||t.category===category)&&
+   (styleFilter==='all'||t.style===styleFilter)&&
+   (filter==='all'||filter==='available'&&t.level<=lvl||filter==='locked'&&t.level>lvl||filter==='wishlist'&&wishlist.includes(id)));
+ const palette={seating:'▰',tables:'◉',lighting:'☀',rugs:'▦',art:'✷',objects:'◇',plants:'✿',storage:'▤'};
+ const categoryButtons='<nav class="hbf-category-grid" aria-label="Furniture categories">'+
+  '<button data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL</b><small>'+items.length+'</small></button>'+
+  Object.entries(categories).map(([id,name])=>'<button data-hbf-category="'+id+'" class="'+(category===id?'active':'')+'"><span>'+(palette[id]||'✦')+'</span><b>'+name+'</b><small>'+items.filter(([,t])=>t.category===id).length+'</small></button>').join('')+'</nav>';
+ let html='<nav class="hd-categories"><button class="active" data-hd-category="furniture">▣ Design Shop</button>'+
+  Object.entries(window.HouseBossHomeDesign?.catalog||{}).map(([id,v])=>'<button data-hd-category="'+id+'">'+v.icon+' '+v.label+'</button>').join('')+'</nav>'+
+  '<div class="hbf-shop-hero"><div><span>COLLECTIBLE INTERIORS / HOUSE BOSS</span><h3>Make it yours.</h3><p>37 original design editions, saved colourways, decorative accents and layered rugs. See each object in 3D before buying.</p>'+
+  '<div class="hbf-hero-pills"><b>'+items.length+' FURNITURE & OBJECTS</b><b>HOME LVL '+lvl+'</b></div></div><div class="hbf-hero-sculpt"><i></i><i></i><i></i></div></div>'+
+  '<div class="hbf-preview-space"><div><b>LOOK AROUND YOUR 3D HOUSE</b><small>Preview a colourful mushroom lamp at no cost, then place furniture with the buy button.</small></div>'+
+  '<button data-hbf-preview="mushroomlamp">TRY IN 3D ↗</button></div>'+
+  '<div class="hbf-section-title"><strong>DESIGN COLLECTION</strong><small>'+items.length+' objects · '+items.filter(([,t])=>t.level<=lvl).length+' unlocked</small></div>'+
+  categoryButtons+
+  '<div class="hbf-shop-toolbar"><label class="hbf-search"><span>⌕</span><input id="hbf-search" type="search" placeholder="Search for a piece..." value="'+esc(searchQuery)+'"></label>'+
+  '<label class="hbf-style-select"><span>STYLE</span><select id="hbf-style">'+
+  [['all','All styles'],['pop','Pop colour'],['retro','Retro'],['soft','Soft'],['modern','Modern'],['organic','Organic']].map(([id,name])=>
+    '<option value="'+id+'" '+(styleFilter===id?'selected':'')+'>'+name+'</option>').join('')+'</select></label></div>'+
+  '<div class="hbf-filters">'+[['all','ALL PIECES'],['available','SHOP NOW'],['locked','COMING SOON'],['wishlist','♡ SAVED']].map(([id,name])=>
+    '<button data-hbf-filter="'+id+'" class="'+(filter===id?'active':'')+'">'+name+'</button>').join('')+'</div>'+
+  '<div class="hbf-result-caption"><strong id="hbf-result-count">'+filtered.length+' PIECES</strong><span>Real 3D placement · Free preview</span></div>'+
+  '<div class="hbf-market">';
+ for(const [id,t] of filtered){
+  const locked=t.level>lvl,unaffordable=t.price>wallet;
+  html+='<article class="hbf-card '+(locked?'is-locked':'is-unlocked')+' hbf-tier-'+(t.tier||'starter')+'" data-hbf-item="'+id+'" data-hbf-text="'+esc([t.name,t.desc,t.style,t.category].join(' ').toLowerCase())+'">'+
+   '<div class="hbf-visual hbf-preview-'+(t.style||'modern')+'" style="--tone:'+t.color+'">'+
+   '<button class="hbf-heart '+(wishlist.includes(id)?'is-saved':'')+'" data-hbf-wish="'+id+'">'+(wishlist.includes(id)?'♥':'♡')+'</button>'+
+   '<div class="hbf-visual-glow"></div><div class="hbf-silhouette '+(t.shape||'sculpture')+'"><i></i><i></i><i></i><i></i><i></i></div>'+
+   '<button class="hbf-visual-preview" data-hbf-preview="'+id+'">VIEW IN 3D</button>'+
+   (locked?'<span class="hbf-padlock">LVL '+t.level+'</span>':'<span class="hbf-available">UNLOCKED</span>')+'</div>'+
+   '<div class="hbf-card-content"><div class="hbf-card-kicker">'+(t.collection?'EDITIONS · ':'')+'LVL '+t.level+'</div>'+
+   '<strong>'+esc(t.name)+'</strong><small>'+esc(t.desc||'A statement piece for your home.')+'</small>'+
+   '<div class="hbf-material-tags"><span>'+esc(t.style||'modern')+'</span><span>'+esc(t.category||'furniture')+'</span></div>'+
+   '<div class="hbf-bonus">✧ +'+(t.comfort||0)+' COMFORT</div></div>'+
+   '<button data-hbf-buy="'+id+'" '+(locked||unaffordable?'disabled':'')+'>'+
+   (locked?'UNLOCK AT LVL '+t.level:unaffordable?'NEED $'+(t.price-wallet)+' MORE':'BUY & PLACE · $'+t.price)+'</button></article>';
+ }
+ html+='</div><div id="hbf-empty-results" class="hbf-empty-results" hidden>No matching designs. Try another style.</div>';
+ html+='<div class="hbf-section-title"><strong>YOUR OWN COLLECTION</strong><small>'+saved.length+' PLACED</small></div>';
+ html+='<div class="hbf-installed">'+(saved.length?saved.map(o=>{
+   const info=types[o.type];if(!info)return '';
+   return '<div class="hbf-row"><span class="hbf-small-icon" style="--tone:'+(o.tint||info.color)+'">'+(info.icon||'✦')+'</span>'+
+    '<div><b>'+esc(info.name)+'</b><small>Condition '+(o.condition||100)+'%</small>'+
+    (info.variants?'<div class="hbf-colorways">'+info.variants.map(tint=>
+      '<button style="--swatch:'+tint+'" class="'+((o.tint||info.color)===tint?'active':'')+'" data-hbf-color="'+o.uid+','+tint+'" title="Change colour"></button>').join('')+'</div>':'')+'</div>'+
+    '<button data-hbf-move="'+o.uid+'">MOVE</button><button data-hbf-sell="'+o.uid+'">SELL</button></div>'
+  }).join(''):'<p class="hbf-empty">Your collection starts here. Choose something from the shop.</p>')+'</div>';
+ root.innerHTML=html;
+ if(err){
+  root.dataset.shopRecovery='true';
+  root.dataset.shopFailure=String(err?.message||err).slice(0,240);
+  console.error('House Boss: full catalogue recovered from',err)
+ }else{delete root.dataset.shopRecovery;delete root.dataset.shopFailure}
+ applySearch()
+}
+function render(){
+ try{
+  renderRich();
+  if(view()?.querySelector('.hbf-market'))return;
+  renderSafe(new Error('Catalogue view did not render'))
+ }catch(err){renderSafe(err)}
+}
+
 function applySearch(){
  const root=view();if(!root)return;
  const term=searchQuery.trim().toLowerCase();
@@ -3770,7 +4111,7 @@ function install(){
  });
  window.HouseBossFurnitureTypes=types;
  window.HouseBossFurnitureUI={
-  render,clear,types,
+  render,renderSafe,clear,types,
   selectFrom3D:function(uid){
    if(!document.getElementById('notebook')?.classList.contains('design-mode'))return;
    const f=bridge()?.getState?.()?.furniture?.find(o=>o.uid===uid);
@@ -3915,18 +4256,35 @@ function render(){
  let root=document.getElementById('noteBody');
  if(!root)return;
  if(category==='furniture'){
-  try{
-   if(window.HouseBossFurnitureUI?.render){
-    window.HouseBossFurnitureUI.render();
+  // Always restore the correct DESIGN state when this shop is shown.
+  const notebook=document.getElementById('notebook');
+  notebook?.classList.add('design-mode');
+  document.querySelectorAll('#notebook .note-tabs [data-tab]').forEach(function(button){
+   button.classList.toggle('active',button.dataset.tab==='design')
+  });
+  const ui=window.HouseBossFurnitureUI;
+  if(ui?.render){
+   try{
+    ui.render();
     if(root.querySelector('.hbf-market'))return;
+   }catch(error){
+    console.error('Designer shop failed to open',error);
+    if(ui.renderSafe){ui.renderSafe(error);return}
    }
-  }catch(err){console.error('House Boss designer shop render error',err)}
-  const title=document.getElementById('noteTitle');if(title)title.textContent='Design Shop';
-  const types=window.HouseBossFurnitureTypes||{},items=Object.entries(types);
-  root.innerHTML='<div class="hbf-recovery"><h3>Design Shop · '+items.length+' objects</h3>'+
-   '<p>The shop view failed to load. The object index is available below.</p>'+
-   items.map(function(entry){return '<div class="hbf-recover-item"><b>'+entry[1].name+'</b><small> · $'+entry[1].price+'</small></div>'}).join('')+
-   '</div>';
+   if(ui.renderSafe){ui.renderSafe(new Error('Empty furniture catalog'));return}
+  }
+  // Last-resort card showroom if the independent shop controller fails to initialize.
+  const types=Object.entries(window.HouseBossFurnitureTypes||{});
+  document.getElementById('noteTitle').textContent='Design Shop';
+  root.innerHTML='<section class="hbf-shop-hero"><div><span>HOUSE BOSS / DESIGNER COLLECTION</span>'+
+   '<h3>The Design Shop</h3><p>Explore the original 3D object collection.</p></div></section>'+
+   '<div class="hbf-market">'+types.map(function(entry){
+    const id=entry[0],o=entry[1];
+    return '<article class="hbf-card"><div class="hbf-visual" style="--tone:'+o.color+'">'+
+     '<div class="hbf-silhouette '+(o.shape||'chair')+'"><i></i><i></i><i></i></div></div>'+
+     '<div class="hbf-card-content"><strong>'+o.name+'</strong><small>$'+o.price+'</small></div>'+
+     '<button data-hbf-preview="'+id+'">VIEW IN 3D</button></article>'
+   }).join('')+'</div>';
   return
  }
  const st=state(),data=catalog[category],active=preview?.category===category?preview.id:selectedStyle(category);
