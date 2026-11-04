@@ -134,7 +134,7 @@ function renderRich(){
  document.getElementById('noteTitle').textContent='The Design Shop';
  const budget=document.getElementById('noteBudget');if(budget)budget.textContent='$'+st.cash+' · Home Value $'+st.homeValue;
  const homeLevel=Math.max(1,st.level||1),comfort=st.comfort||0;
- const all=Object.entries(types).sort((a,b)=>{
+ const all=Object.entries(types).filter(([,item])=>item.zone!=='garden').sort((a,b)=>{
    const left=a[1],right=b[1];
    return Number(left.level>homeLevel)-Number(right.level>homeLevel)||left.level-right.level||left.price-right.price
  });
@@ -236,7 +236,7 @@ function renderSafe(err){
  const lvl=Number(st?.level)||1;
  const wallet=st?.cash===null||st?.cash===undefined?null:Number(st.cash);
  const hasWallet=Number.isFinite(wallet);
- const items=Object.entries(types),wishlist=Array.isArray(st?.wishlist)?st.wishlist:[];
+ const items=Object.entries(types).filter(([,item])=>item.zone!=='garden'),wishlist=Array.isArray(st?.wishlist)?st.wishlist:[];
  const saved=Array.isArray(st?.furniture)?st.furniture:[];
  const categories=window.HouseBossDesignerCollection?.categories||{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART',objects:'OBJECTS',plants:'PLANTS',storage:'STORAGE'};
  const budget=document.getElementById('noteBudget');
