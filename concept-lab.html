@@ -23,6 +23,20 @@
 
 .hero-error-panel[hidden]{display:none!important}.hero-error-panel{position:absolute;z-index:5;left:43%;top:51%;transform:translate(-50%,-50%);width:min(390px,calc(100% - 330px));padding:25px 24px;background:#fffdf2ef;box-shadow:0 16px 55px #0b241e17;border:1px solid #fbfdf7;border-radius:17px;backdrop-filter:blur(12px)}.hero-error-symbol{display:block;font-size:25px;color:#557764;line-height:1;margin-bottom:9px}.hero-error-panel strong{display:block;font-size:19px;letter-spacing:-.04em}.hero-error-panel p{font-size:12px;color:#657d71;line-height:1.5}.hero-error-panel div{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.hero-error-panel button{border:1px solid #b7cbbb;background:#2a463a;color:#fff;padding:10px 12px;border-radius:8px;font-size:11px;font-weight:750;cursor:pointer}.hero-error-panel button+button{background:transparent;color:#2e4a3e}@media(max-width:700px){.hero-error-panel{width:calc(100% - 32px);left:50%;top:45%;padding:18px}.hero-error-panel strong{font-size:16px}.hero-error-panel p{font-size:11px}}
 
+
+.hero-mode .pro-mobile-toggle,.hero-mode .mobile-actions{display:none!important}
+.pro-mobile-toggle[hidden]{display:none!important}
+/* CHROMA 14 — compact built-in modular parts catalog */
+.hero-inspector .assembly-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:9px 0 15px}
+.hero-inspector .assembly-presets button{min-width:0;min-height:63px;padding:10px 9px;border-radius:10px;border:1px solid #617d70;background:#20362f;color:#eaf5e8;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:5px;text-align:left;cursor:pointer;transition:background .15s,border .15s}
+.hero-inspector .assembly-presets button:hover{background:#304b3e;border-color:#c3dda7}
+.hero-inspector .assembly-presets button.is-active{background:#405b49;border-color:#d3ecab;box-shadow:inset 0 0 0 1px #d3ecab}
+.hero-inspector .assembly-presets button:disabled{opacity:.43;cursor:not-allowed}
+.hero-inspector .assembly-presets button strong{font-size:10px;line-height:1.15;font-weight:800}
+.hero-inspector .assembly-presets button small{font-size:9px;line-height:1.3;color:#b8cfb9}
+.hero-inspector .assembly-presets .preset-outline{font-size:15px;line-height:1;color:#d9efae}
+.hero-error-panel button#heroLoadLocal{background:#405849;color:#eef8e6;border-color:#7e9b79}
+@media(max-width:700px){.hero-inspector .assembly-presets button{min-height:56px}.hero-inspector .assembly-presets{gap:6px}}
 </style><style>
 /* CHROMA / PRO ASSET STUDIO — integrated with native parametric Concept Lab */
 .mode-switch{position:absolute;top:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:3px;padding:5px;background:#19241de8;border:1px solid #809c80a8;border-radius:13px;z-index:8;box-shadow:0 6px 25px #17241a3d;backdrop-filter:blur(14px)}
@@ -56,7 +70,7 @@
 .stage-buttons button.active#cutawayBtn{border-color:#b7e4a1;background:#c6edb4;color:#203222;}
 
 
-/* CHROMA 13 — actual assembly inspection + swappable external GLB attachment workshop */
+/* CHROMA 14 — actual assembly inspection + swappable external GLB attachment workshop */
 .hero-inspector .assembly-part-picker{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
 .hero-inspector .assembly-part-picker button,.hero-inspector .assembly-part-picker select{min-width:0;border-radius:7px;border:1px solid #638274;background:#243b34;color:#edf7eb;font-size:10px;padding:9px;cursor:pointer}
 .hero-inspector .assembly-part-picker button:disabled{opacity:.4;cursor:not-allowed}
@@ -79,7 +93,7 @@
 <body>
 <div class="app">
 <header class="header">
- <div class="brand"><div class="brand-symbol"><b></b><b></b><b></b><b></b></div><div><strong>CHROMA<span>®</span></strong><small>CONCEPT LAB <em> / 13</em></small></div></div>
+ <div class="brand"><div class="brand-symbol"><b></b><b></b><b></b><b></b></div><div><strong>CHROMA<span>®</span></strong><small>CONCEPT LAB <em> / 14</em></small></div></div>
  <span class="header-divider"></span><div class="project"><small>PROJECT / <span id="buildId">CL—001</span></small><input id="projectName" aria-label="Project name" maxlength="45" spellcheck="false" value="THE FUTURE WAS CURVED"></div>
  <div class="header-tools"><button class="btn icon-button" id="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button><button class="btn icon-button" id="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button><button class="btn secondary" id="saveButton">Save build</button><button class="btn primary" id="exportButton">Export <span>↗</span></button></div>
 </header>
@@ -839,7 +853,7 @@ updateControls();
 })();
 
 </script><script type="module">
-// CHROMA 13 — Automotive Assembly Studio. Progressive enhancement over the offline sculptor.
+// CHROMA 14 — Automotive Assembly Studio. Progressive enhancement over the offline sculptor.
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
 const stage=$('stage'), mode=$('stage').querySelector('.mode-switch');
@@ -848,14 +862,14 @@ const trigger=document.createElement('button');trigger.id='heroMode';trigger.typ
 const overlay=document.createElement('section'); overlay.className='hero-studio';overlay.id='heroStudio';overlay.hidden=true;
 overlay.setAttribute('aria-label','Professional 3D automotive showroom');
 overlay.innerHTML=`<div class="hero-viewport" id="heroViewport" aria-label="Interactive physically based 3D scene">
-  <div class="hero-error-panel" id="heroFailure" hidden><span class="hero-error-symbol">◇</span><strong>The 3D asset couldn't load.</strong><p>Hero Studio needs a network connection for its rendering library and high-detail car model. Your original concept workshop is still available.</p><div><button id="heroRetry">Retry Hero Studio</button><button id="heroBack">Open Concept Sculpt</button></div></div>
+  <div class="hero-error-panel" id="heroFailure" hidden><span class="hero-error-symbol">◇</span><strong>The 3D asset couldn't load.</strong><p>Hero Studio needs a network connection for its rendering library and high-detail car model. Your original concept workshop is still available.</p><div><button id="heroRetry">Retry Hero Studio</button><button id="heroLoadLocal">Use my own .GLB</button><button id="heroBack">Open Concept Sculpt</button></div></div>
   <div class="hero-status" id="heroStatus" role="status"><span class="hero-status-dot"></span> CHOOSE HERO STUDIO</div>
-  <div class="hero-topline"><span class="hero-kicker">CHROMA / 3D ASSEMBLY ATELIER</span><strong>THE HERO CAR</strong><small>GLTF MATERIAL VARIANTS · REAL COMPONENTS · PARTS DOCK</small></div>
+  <div class="hero-topline"><span class="hero-kicker">CHROMA / 3D ASSEMBLY ATELIER</span><strong>THE HERO CAR</strong><small>PBR MATERIALS · SWAPPABLE 3D KIT · ASSEMBLY DOCK</small></div>
   <div class="hero-camera" role="group" aria-label="Camera views"><button data-hero-view="hero" class="active">3/4</button><button data-hero-view="front">FRONT</button><button data-hero-view="side">SIDE</button><button data-hero-view="rear">REAR</button><button data-hero-view="top">TOP</button><button data-hero-view="inside">CABIN</button></div>
   <div class="hero-hint">DRAG TO ORBIT <b>·</b> PINCH TO ZOOM <b>·</b> TAP ANY SURFACE TO INSPECT</div>
 </div>
 <button class="hero-mobile-toggle" id="heroMobileToggle" type="button">CUSTOMIZE HERO CAR <span>⌃</span></button>
-<div class="hero-inspector" id="heroInspector"><header><span>PRO / 13.0</span><h3>Material & body lab<span>.</span></h3><p>Real glTF geometry, accurate lighting and editable surface materials.</p></header>
+<div class="hero-inspector" id="heroInspector"><header><span>PRO / 14.0</span><h3>Material & body lab<span>.</span></h3><p>Real glTF geometry, accurate lighting and editable surface materials.</p></header>
 <div class="hero-inspector-scroll">
   <label class="hero-label" for="heroMaterial">SURFACE GROUP <small id="heroMaterialName">AUTOMOTIVE PAINT</small></label>
   <select id="heroMaterial"><option value="paint">Body paint</option><option value="secondary">Contrast panels</option><option value="glass">Glazing</option><option value="interior">Upholstery</option><option value="rims">Alloys</option><option value="trim">Metal / trim</option></select>
@@ -876,16 +890,22 @@ overlay.innerHTML=`<div class="hero-viewport" id="heroViewport" aria-label="Inte
   <div class="assembly-part-picker"><button id="heroFocusPart" type="button">Focus selected</button><button id="heroHidePart" type="button">Hide selected</button><button id="heroShowParts" type="button">Restore parts</button><button id="heroComponentList" type="button">Select from list</button></div>
   <select id="heroComponentSelect" class="assembly-select" aria-label="Model component list"><option value="">Choose a real 3D component...</option></select>
   <p class="assembly-desc">Inspect real imported meshes, isolate the cabin or reveal the chassis. Parts without compatible hinges remain fixed.</p>
-  <div class="assembly-section-head">PARTS DOCK / IMPORT REAL .GLB</div>
+  <div class="assembly-section-head">PARTS LIBRARY / BUILT-IN 3D</div>
+  <p class="assembly-desc">Select a mounting slot and a geometry preset. Built-in kits are original parametric parts, not scanned OEM components.</p>
   <label for="heroPartSlot" class="assembly-label">Mounting slot</label>
   <select id="heroPartSlot" class="assembly-select"><option value="front">Front fascia</option><option value="rear">Rear fascia</option><option value="roof">Roof module</option><option value="sideleft">Left side / sill</option><option value="sideright">Right side / sill</option></select>
+  <div class="assembly-presets" id="heroPresets" role="group" aria-label="Built-in modular 3D parts"></div>
+  <div class="assembly-section-head">PARTS DOCK / IMPORT REAL .GLB</div>
   <label class="assembly-file" for="heroPartImport">＋ ATTACH A REAL .GLB PART<input id="heroPartImport" type="file" accept=".glb,model/gltf-binary"></label>
   <div id="heroPartStatus" class="assembly-status">No custom part attached to this slot.</div>
   <label class="assembly-range">Part size <output id="heroPartScaleVal">100%</output><input id="heroPartScale" type="range" min="40" max="200" step="5" value="100"></label>
-  <label class="assembly-range">Mount height <output id="heroPartHeightVal">0.00 m</output><input id="heroPartHeight" type="range" min="-1" max="1" step="0.05" value="0"></label>
+  <label class="assembly-range">Mount height <output id="heroPartHeightVal">0.00 m</output><input id="heroPartHeight" type="range" min="-1" max="1" step="0.01" value="0"></label>
+  <label class="assembly-range">Longitudinal offset <output id="heroPartOffsetVal">0.00 m</output><input id="heroPartOffset" type="range" min="-1" max="1" step="0.01" value="0"></label>
+  <label class="assembly-range">Lateral offset <output id="heroPartLateralVal">0.00 m</output><input id="heroPartLateral" type="range" min="-1" max="1" step="0.01" value="0"></label>
   <label class="assembly-range">Part rotation <output id="heroPartRotateVal">0°</output><input id="heroPartRotate" type="range" min="0" max="360" step="5" value="0"></label>
+  <label class="assembly-range">Exploded view <output id="heroExplodeVal">0%</output><input id="heroExplode" type="range" min="0" max="100" step="5" value="0"></label>
   <div class="assembly-image-actions"><button id="heroRemovePart" type="button">Remove slot part</button><button id="heroAllParts" type="button">Show all mounts</button></div>
-  <p class="assembly-hint">Each slot accepts a genuine 3D asset from your own collection. Imported files are held in this session; export the complete GLB to keep the assembled model. Fit and licenses are the creator's responsibility.</p>
+  <p class="assembly-hint">Slots accept the included 3D kits or your own GLB assets. Imported files remain in this browser session; export MODEL / GLB to retain the assembly. Inspect physical fit and licensing before reuse.</p>
   <div class="hero-label">STUDIO LIGHTING</div>
   <div class="hero-chipset" id="heroLights"><button data-hero-light="gallery" class="active">Gallery</button><button data-hero-light="sunset">Golden hour</button><button data-hero-light="night">Night</button><button data-hero-light="ice">Cool lab</button></div>
   <div class="hero-label">QUALITY & ASSETS</div>
@@ -899,20 +919,24 @@ stage.appendChild(overlay);
 const PBR_URL='https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/CarConcept/GLB/CarConcept.glb';
 const PBR_BACKUP='https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Assets@main/Models/CarConcept/GLB/CarConcept.glb';
 const PALETTE=['#bce5d4','#e6e4da','#86bdd4','#f08c61','#dc6381','#a4a3d6','#eec46b','#1b2d33','#353f4c','#dce9e2','#79c6b1','#aebc9a'];
-const DEFAULT={factoryVariant:'',layer:'all',photoScale:1,group:'paint',finish:'gloss',kit:'original',light:'gallery',quality:'balanced',coat:.9,metal:.62,rough:.19,spin:false,doors:false,colors:{paint:'#bce5d4',secondary:'#81aab8',glass:'#bed7d5',interior:'#cdb69d',rims:'#c5cfd0',trim:'#cfd5d3'},materialOverrides:{},isolatePaint:false};
+const DEFAULT={factoryVariant:'',layer:'all',photoScale:1,group:'paint',finish:'gloss',kit:'original',light:'gallery',quality:'balanced',coat:.9,metal:.62,rough:.19,spin:false,doors:false,colors:{paint:'#bce5d4',secondary:'#81aab8',glass:'#bed7d5',interior:'#cdb69d',rims:'#c5cfd0',trim:'#cfd5d3'},materialOverrides:{},isolatePaint:false,explode:0,libraryParts:{}};
 let config;
-try{config={...DEFAULT,...JSON.parse(localStorage.getItem('chroma-hero-v13')||localStorage.getItem('chroma-hero-v12')||'null'),colors:{...DEFAULT.colors,...(JSON.parse(localStorage.getItem('chroma-hero-v13')||localStorage.getItem('chroma-hero-v12')||'null')?.colors||{})}};}catch(_){config=structuredClone(DEFAULT);}
+try{config={...DEFAULT,...JSON.parse(localStorage.getItem('chroma-hero-v14')||localStorage.getItem('chroma-hero-v13')||localStorage.getItem('chroma-hero-v12')||'null'),colors:{...DEFAULT.colors,...(JSON.parse(localStorage.getItem('chroma-hero-v14')||localStorage.getItem('chroma-hero-v13')||localStorage.getItem('chroma-hero-v12')||'null')?.colors||{})}};}catch(_){config=structuredClone(DEFAULT);}
 let THREE=null,loader=null,exporter=null,OrbitControls=null,RoomEnvironment=null,scene=null,camera=null,renderer=null,controls=null,car=null,extras=null,envTexture=null,lights=[],floor=null;
+let assemblyRoot=null,baseBounds=null;
 let ready=false,booting=false,active=false,animating=false,stopFrame=0,uploadedUrl=null,doorNodes=[],doorTarget=0,doorCurrent=0,raycaster=null,pointer=null,materials=[],originalTransforms=new WeakMap(),pickedName=null,pickedMesh=null,frameLast=0,objectLength=5,frontAxis='x',frontSign=-1;
 let currentGLTF=null,variantBindings=[],availableVariants=[],variantSwitchId=0,hiddenParts=new Set();
+config.libraryParts={...(config.libraryParts||{})};
 const dock=new Map();let dockSerial=0;
+const SLOT_LIBRARY={front:[['sculpted','Sculpted chin','Smooth nose trim'],['jet','Twin air tunnels','Circular jet intakes'],['split','Split-wing fascia','Two floating wings']],rear:[['blade','Light blade','Continuous rear light'],['jets','Turbine pair','Twin exhaust apertures'],['fin','Aero fins','Retro deck blades']],roof:[['halo','Chrome halo','Polished arc'],['pods','Double bubbles','Twin roof blisters'],['spine','Aero spine','Sculpted roof ridge']],sideleft:[['spear','Coachline spear','Tapered metal stripe'],['skirt','Aero sill','Deep lower rocker'],['vent','Side intake','Sculpted opening']],sideright:[['spear','Coachline spear','Tapered metal stripe'],['skirt','Aero sill','Deep lower rocker'],['vent','Side intake','Sculpted opening']]};
 function report(msg,error=false){const status=$('heroStatus');status.classList.toggle('is-error',error);if($('heroFailure'))$('heroFailure').hidden=!(error&&!car);status.innerHTML='<span class="hero-status-dot"></span> '+String(msg).replace(/[<>]/g,'');}
-function remember(){try{localStorage.setItem('chroma-hero-v13',JSON.stringify(config));}catch(_){}}
+function remember(){try{localStorage.setItem('chroma-hero-v14',JSON.stringify(config));}catch(_){}}
 function sync(){const group=$('heroMaterial').value=config.group;const input=$('heroColor');input.value=(config.isolatePaint&&pickedName?config.materialOverrides[pickedName]:null)||config.colors[group]||'#bce5d4';$('heroMaterialName').textContent=group.toUpperCase();
 for(const e of document.querySelectorAll('[data-hero-finish]'))e.classList.toggle('active',e.dataset.heroFinish===config.finish);
 for(const e of document.querySelectorAll('[data-hero-kit]'))e.classList.toggle('active',e.dataset.heroKit===config.kit);
 for(const e of document.querySelectorAll('[data-hero-light]'))e.classList.toggle('active',e.dataset.heroLight===config.light);
 for(const e of document.querySelectorAll('[data-hero-quality]'))e.classList.toggle('active',e.dataset.heroQuality===config.quality);
+$('heroExplode').value=String(config.explode||0);$('heroExplodeVal').textContent=(config.explode||0)+'%';
 for(const name of ['coat','metal','rough']){$('hero'+name[0].toUpperCase()+name.slice(1)).value=config[name];$('hero'+name[0].toUpperCase()+name.slice(1)+'Val').textContent=Math.round(config[name]*100)+'%';}
 $('heroPickedText').textContent=pickedMesh?('Selected: '+(pickedMesh.name||pickedName||'3D component')):'Tap a surface on the car to inspect it.';
 $('heroAssemblyView').value=config.layer||'all';$('heroPhotoQuality').value=String(config.photoScale||1);$('heroFactoryVariant').value=config.factoryVariant||'';$('heroPickedOnly').setAttribute('aria-pressed',String(!!config.isolatePaint));$('heroPickedOnly').classList.toggle('is-on',!!config.isolatePaint);$('heroDoors').textContent=config.doors?'Close doors':'Open doors';$('heroDoors').classList.toggle('is-on',config.doors);$('heroSpin').classList.toggle('is-on',config.spin);
@@ -925,13 +949,13 @@ $('nativeMode').addEventListener('click',hideHero,true);
 $('proMode').addEventListener('click',hideHero,true);
 $('heroMobileToggle').addEventListener('click',()=>{$('heroInspector').classList.toggle('is-open');$('heroMobileToggle').innerHTML=$('heroInspector').classList.contains('is-open')?'CLOSE DESIGN PANEL <span>⌄</span>':'CUSTOMIZE HERO CAR <span>⌃</span>';});
 async function boot(){if(booting)return;booting=true;report('Initializing physical renderer…');try{
- const core=await import('three'); const [loaderModule,orbitModule,roomModule,exportModule]=await Promise.all([
+ const core=await import('three');core.Cache.enabled=true; const [loaderModule,orbitModule,roomModule,exportModule]=await Promise.all([
   import('three/addons/loaders/GLTFLoader.js'),import('three/addons/controls/OrbitControls.js'),import('three/addons/environments/RoomEnvironment.js'),import('three/addons/exporters/GLTFExporter.js')]);
  THREE=core;OrbitControls=orbitModule.OrbitControls;RoomEnvironment=roomModule.RoomEnvironment;loader=new loaderModule.GLTFLoader();exporter=new exportModule.GLTFExporter();setup();await loadCar(PBR_URL);ready=true;report('REAL 3D MODEL READY · CLICK TO SELECT');runLoop();
 }catch(e){console.warn('CHROMA Hero renderer',e);report('Hero asset unavailable: '+(e?.message||'connection failed')+'. The offline concept sculptor remains available.',true);ready=false;}finally{booting=false;}}
 function setup(){if(renderer)return;
  const el=$('heroViewport');renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance',alpha:true});renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.domElement.id='heroCanvas';renderer.domElement.setAttribute('aria-label','Interactive 3D car model');el.insertBefore(renderer.domElement,el.firstChild);
- scene=new THREE.Scene();scene.background=new THREE.Color('#e4ebe7');camera=new THREE.PerspectiveCamera(37,1,.04,150);camera.position.set(5,2.8,6.5);controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.065;controls.enablePan=false;controls.maxPolarAngle=Math.PI*.89;controls.minDistance=2.1;controls.maxDistance=18;controls.target.set(0,.8,0);
+ scene=new THREE.Scene();scene.background=new THREE.Color('#e4ebe7');assemblyRoot=new THREE.Group();assemblyRoot.name='CHROMA COMPLETE ASSEMBLY';scene.add(assemblyRoot);camera=new THREE.PerspectiveCamera(37,1,.04,150);camera.position.set(5,2.8,6.5);controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.065;controls.enablePan=false;controls.maxPolarAngle=Math.PI*.89;controls.minDistance=2.1;controls.maxDistance=18;controls.target.set(0,.8,0);
  const gen=new THREE.PMREMGenerator(renderer);const room=new RoomEnvironment();envTexture=gen.fromScene(room,.04).texture;room.dispose();gen.dispose();scene.environment=envTexture;scene.environmentIntensity=1.05;
  const ambient=new THREE.HemisphereLight('#e4f5ff','#c1b8a9',1.65);scene.add(ambient);lights.push(ambient);
  const key=new THREE.DirectionalLight('#ffffff',4.3);key.position.set(-4,8,4);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-9;key.shadow.camera.right=9;key.shadow.camera.top=9;key.shadow.camera.bottom=-9;key.shadow.camera.near=.1;key.shadow.camera.far=35;key.shadow.bias=-.00008;key.shadow.normalBias=.014;scene.add(key);lights.push(key);
@@ -950,11 +974,11 @@ function populateComponents(){const el=$('heroComponentSelect');el.replaceChildr
 function resize(){if(!renderer||!active)return;const rect=$('heroViewport').getBoundingClientRect();if(rect.width<4||rect.height<4)return;const pixel=Math.min(devicePixelRatio,config.quality==='ultra'?2:1.35);renderer.setPixelRatio(pixel);renderer.setSize(rect.width,rect.height,false);camera.aspect=rect.width/rect.height;camera.updateProjectionMatrix();}
 function clearMaterials(){materials=[];doorNodes=[];variantBindings=[];availableVariants=[];pickedName=null;pickedMesh=null;hiddenParts.clear();}
 function loadCar(url){return new Promise((resolve,reject)=>{report('Downloading high-detail glTF · roughly 9.8 MB…');const begin=performance.now();loader.load(url,async gltf=>{try{
-  if(car){scene.remove(car);car.traverse(o=>{if(o.isMesh){o.geometry?.dispose();const m=Array.isArray(o.material)?o.material:[o.material];m.forEach(x=>x?.dispose?.());}});}
-  clearMaterials();car=new THREE.Group();car.name='CHROMA HERO ASSEMBLY';car.add(gltf.scene);const raw=new THREE.Box3().setFromObject(gltf.scene);const dims=raw.getSize(new THREE.Vector3());const long=Math.max(dims.x,dims.z)||1;const scale=5.2/long;gltf.scene.scale.setScalar(scale);raw.setFromObject(gltf.scene);const center=raw.getCenter(new THREE.Vector3());const bottom=raw.min.y;gltf.scene.position.set(-center.x,-bottom,-center.z);scene.add(car);
+  if(car){assemblyRoot.remove(car);car.traverse(o=>{if(o.isMesh){o.geometry?.dispose();const m=Array.isArray(o.material)?o.material:[o.material];m.forEach(x=>x?.dispose?.());}});}
+  clearMaterials();car=new THREE.Group();car.name='CHROMA HERO ASSEMBLY';car.add(gltf.scene);const raw=new THREE.Box3().setFromObject(gltf.scene);const dims=raw.getSize(new THREE.Vector3());const long=Math.max(dims.x,dims.z)||1;const scale=5.2/long;gltf.scene.scale.setScalar(scale);raw.setFromObject(gltf.scene);const center=raw.getCenter(new THREE.Vector3());const bottom=raw.min.y;gltf.scene.position.set(-center.x,-bottom,-center.z);assemblyRoot.rotation.y=0;assemblyRoot.add(car);baseBounds=new THREE.Box3().setFromObject(car);
   car.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(o.material){let arr=Array.isArray(o.material)?o.material:[o.material];let copies=arr.map(m=>{let clone=m.isMeshPhysicalMaterial?m.clone():new THREE.MeshPhysicalMaterial().copy(m);clone.name=m.name||o.name;clone.userData.baseColor=m.color?.clone?.();clone.userData.baseRoughness=m.roughness;clone.userData.baseMetalness=m.metalness;clone.userData.chromaPartId=(o.name||'Mesh')+'::'+(m.name||'Material');materials.push(clone);o.userData.chromaPartId=(o.name||'Mesh')+'::'+(m.name||'Material');return clone;});o.material=Array.isArray(o.material)?copies:copies[0];}}
   const nm=o.name.toLowerCase();if((o.isGroup||o.type==='Object3D') && /door/.test(nm) && !/handle|card|trim|window|seal/.test(nm)){doorNodes.push({node:o,baseRot:o.rotation.y,side:1});}});
-  const bounds=new THREE.Box3().setFromObject(car);const bbox=bounds.getSize(new THREE.Vector3());frontAxis=bbox.x>bbox.z?'x':'z';objectLength=Math.max(bbox.x,bbox.z);frontSign=-1;
+  const bounds=baseBounds.clone();const bbox=bounds.getSize(new THREE.Vector3());frontAxis=bbox.x>bbox.z?'x':'z';objectLength=Math.max(bbox.x,bbox.z);frontSign=-1;
   car.updateMatrixWorld(true);for(const d of doorNodes){let v=new THREE.Vector3();d.node.getWorldPosition(v);d.side=(v[frontAxis==='x'?'z':'x']>=bounds.getCenter(new THREE.Vector3())[frontAxis==='x'?'z':'x'])?1:-1;}
   currentGLTF=gltf;
   const meta=gltf.parser?.json?.extensions?.KHR_materials_variants?.variants||[];
@@ -965,7 +989,7 @@ function loadCar(url){return new Promise((resolve,reject)=>{report('Downloading 
   if(availableVariants.length){gltf.scene.traverse(o=>{if(!o.isMesh)return;const assoc=gltf.parser.associations?.get(o);const meshInfo=gltf.parser.json.meshes?.[assoc?.meshes];const primitive=meshInfo?.primitives?.[assoc?.primitives||0];const maps=primitive?.extensions?.KHR_materials_variants?.mappings||[];if(maps.length)variantBindings.push({mesh:o,maps,original:o.material});});}
   if(config.factoryVariant!=='')await applyFactoryVariant(config.factoryVariant,true);
   controls.target.set(0,Math.min(1.08,bbox.y*.46),0);camera.position.set(5.1,2.5,6.7);controls.update();
-  populateComponents();applyVisibility();updateDockMounts();sync();
+  populateComponents();applyVisibility();restoreLibraryParts();updateDockMounts();sync();
   rebuildExtras();applyMaterials();updateLighting();resize();report('High-detail car ready · '+(performance.now()-begin>1000?'3D loaded':'materials ready')+' · '+materials.length+' surfaces');resolve();
  }catch(e){reject(e);}},xhr=>{if(xhr.total){const pct=Math.min(99,Math.round(xhr.loaded/xhr.total*100));report('Loading professional car model · '+pct+'%');}},err=>{if(url!==PBR_BACKUP&&url===PBR_URL){report('Trying backup 3D asset source…');loadCar(PBR_BACKUP).then(resolve,reject);}else reject(err instanceof Error?err:new Error('Model download failed'));});});}
 function finishSpec(){const styles={gloss:[.66,.16,.95],pearl:[.45,.19,1],satin:[.42,.43,.42],matte:[.18,.72,.04]};const [metal,rough,coat]=styles[config.finish]||styles.gloss;return {metal:config.metal,rough:config.rough,coat:config.coat,styleMetal:metal,styleRough:rough,styleCoat:coat};}
@@ -1000,26 +1024,149 @@ function selectComponent(id){if(!car||!id)return;let found=null;car.traverse(o=>
 function focusComponent(){if(!pickedMesh||!camera)return report('Choose a real 3D component first.',true);const b=new THREE.Box3().setFromObject(pickedMesh);if(b.isEmpty())return;const center=b.getCenter(new THREE.Vector3()),size=b.getSize(new THREE.Vector3());const distance=Math.max(1.0,size.length()*2.1);const direction=camera.position.clone().sub(controls.target).normalize();controls.target.copy(center);camera.position.copy(center).addScaledVector(direction,distance);controls.update();report('Focused on '+(pickedMesh.name||'selected component'));}
 function toggleComponentHidden(){if(!pickedMesh)return report('Select a component first.',true);const id=pickedMesh.userData.chromaPartId;if(hiddenParts.has(id))hiddenParts.delete(id);else hiddenParts.add(id);applyVisibility();$('heroHidePart').textContent=hiddenParts.has(id)?'Show selected':'Hide selected';}
 // Real imported parts are kept as separate glTF hierarchies. They remain fully exportable.
-function updateDockMounts(){if(!car||!THREE)return;const bb=new THREE.Box3().setFromObject(car),center=bb.getCenter(new THREE.Vector3()),dim=bb.getSize(new THREE.Vector3());const long=frontAxis,short=frontAxis==='x'?'z':'x',L=dim[long],W=dim[short];
+
+// Procedurally authored, exportable 3D accessories (not external OEM model assets).
+function buildLibraryPart(slot,style){
+ if(!THREE)return null;
+ const root=new THREE.Group();root.name=`CHROMA LIBRARY / ${slot} / ${style}`;
+ const paint=new THREE.MeshPhysicalMaterial({color:config.colors.secondary,metalness:.58,roughness:.19,clearcoat:1,clearcoatRoughness:.075,envMapIntensity:1.5});
+ const chrome=new THREE.MeshPhysicalMaterial({color:'#ccd9d5',metalness:.94,roughness:.16,clearcoat:.55,envMapIntensity:1.5});
+ const dark=new THREE.MeshPhysicalMaterial({color:'#172525',metalness:.28,roughness:.37,envMapIntensity:.9});
+ const lamp=new THREE.MeshPhysicalMaterial({color:'#c1ffec',metalness:.1,roughness:.1,emissive:'#8ba99e',emissiveIntensity:.52,clearcoat:1});
+ function add(name,geometry,material,pos=[0,0,0],rot=[0,0,0]){const m=new THREE.Mesh(geometry,material.clone());m.name=name;m.position.set(...pos);m.rotation.set(...rot);m.castShadow=true;m.receiveShadow=true;root.add(m);return m;}
+ function roundBox(name,size,radius,material,pos,rot){
+  const sh=new THREE.Shape(),[w,h]=[size[0],size[1]],r=Math.min(radius,w/2,h/2);
+  sh.moveTo(-w/2+r,-h/2);sh.lineTo(w/2-r,-h/2);sh.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);sh.lineTo(w/2,h/2-r);sh.quadraticCurveTo(w/2,h/2,w/2-r,h/2);sh.lineTo(-w/2+r,h/2);sh.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);sh.lineTo(-w/2,-h/2+r);sh.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
+  const g=new THREE.ExtrudeGeometry(sh,{depth:size[2],steps:1,bevelEnabled:true,bevelSize:.025,bevelThickness:.022,bevelSegments:4,curveSegments:12});g.center();return add(name,g,material,pos,rot);
+ }
+ function tube(name,pts,r,mat){const cv=new THREE.CatmullRomCurve3(pts.map(v=>new THREE.Vector3(...v)));return add(name,new THREE.TubeGeometry(cv,36,r,10,false),mat);}
+ const side=slot==='sideleft'?-1:1;
+ if(slot==='front'){
+  if(style==='sculpted'){
+   roundBox('Smooth fascia lip',[.22,.16,1.75],.075,paint,[-.10,-.08,0]);
+   tube('Polished perimeter',[[-.10,.02,-.82],[-.16,.08,0],[-.10,.02,.82]],.023,chrome);
+   roundBox('Lower intake',[.08,.085,1.22],.035,dark,[-.21,-.15,0]);
+  }else if(style==='jet'){
+   for(const z of [-.50,.50]){
+    add('Intake shroud',new THREE.TorusGeometry(.22,.052,12,44),chrome,[-.10,0,z],[0,Math.PI/2,0]);
+    add('Dark duct',new THREE.CylinderGeometry(.18,.14,.15,40),dark,[-.10,0,z],[0,0,Math.PI/2]);
+    add('Turbine hub',new THREE.SphereGeometry(.055,20,12),chrome,[-.21,0,z]);
+   }
+  }else{
+   for(const z of [-.42,.42]){
+    const sh=new THREE.Shape();sh.moveTo(-.65,-.09);sh.quadraticCurveTo(0,-.13,.70,.02);sh.lineTo(.70,.15);sh.quadraticCurveTo(0,.02,-.65,.06);sh.closePath();
+    const g=new THREE.ExtrudeGeometry(sh,{depth:.13,bevelEnabled:true,bevelSegments:3,bevelSize:.025,bevelThickness:.027});g.center();add('Split-wing nose blade',g,paint,[-.10,.0,z],[0,Math.PI/2,0]);
+   }
+  }
+ } else if(slot==='rear'){
+  if(style==='blade'){
+   roundBox('Rear lamp bar',[1.72,.12,.14],.05,lamp,[0,.03,0],[0,Math.PI/2,0]);
+   tube('Rear chrome surround',[[.03,.12,-.92],[.07,.14,0],[.03,.12,.92]],.018,chrome);
+  }else if(style==='jets'){
+   for(const z of [-.48,.48]){
+    add('Rear turbine ring',new THREE.TorusGeometry(.225,.055,14,48),chrome,[.06,.03,z],[0,Math.PI/2,0]);
+    add('Recessed exhaust',new THREE.CylinderGeometry(.17,.16,.19,40),dark,[.10,.03,z],[0,0,Math.PI/2]);
+   }
+  }else{
+   for(const z of [-.62,.62]){
+    const sh=new THREE.Shape();sh.moveTo(-.40,-.18);sh.lineTo(.40,-.18);sh.lineTo(.31,.30);sh.quadraticCurveTo(-.06,.39,-.40,-.18);
+    const g=new THREE.ExtrudeGeometry(sh,{depth:.07,steps:1,bevelEnabled:true,bevelSize:.018,bevelThickness:.016,bevelSegments:3});g.center();add('Tailfin module',g,paint,[0,.06,z]);
+   }
+   roundBox('Tail finishing plate',[1.26,.075,.12],.028,chrome,[.09,-.12,0],[0,Math.PI/2,0]);
+  }
+ } else if(slot==='roof'){
+  if(style==='halo'){
+   const points=[];for(let i=0;i<=36;i++){const a=i/36*Math.PI;points.push([.55*Math.cos(a),.12+.55*Math.sin(a),0]);}
+   tube('Floating roof halo',points,.032,chrome);
+   for(const x of [-.53,.53])add('Halo mount',new THREE.CylinderGeometry(.07,.085,.10,20),chrome,[x,.06,0]);
+  }else if(style==='pods'){
+   for(const z of [-.31,.31]){
+    add('Bubble roof shell',new THREE.SphereGeometry(1,36,24),paint,[0,.12,z]).scale.set(.55,.20,.33);
+    tube('Bubble seam',[[-.52,.11,z],[0,.30,z],[.52,.11,z]],.012,chrome);
+   }
+  }else{
+   const cv=new THREE.CatmullRomCurve3([new THREE.Vector3(-.65,0,0),new THREE.Vector3(-.28,.14,0),new THREE.Vector3(.24,.20,0),new THREE.Vector3(.7,0,0)]);
+   add('Roof aero ridge',new THREE.TubeGeometry(cv,40,.065,12,false),paint);
+   tube('Roof ridge highlight',[[-.55,.065,.09],[0,.24,.09],[.60,.06,.09]],.011,chrome);
+  }
+ }else {
+  if(style==='spear'){
+    tube('Coachline spear',[[-1,.10,0],[-.2,.17,side*.025],[.9,.11,0]],.031,chrome);
+    tube('Inlaid colour line',[[-.88,.13,-side*.028],[-.12,.18,0],[.77,.12,-side*.028]],.014,paint);
+  }else if(style==='skirt'){
+   const sh=new THREE.Shape();sh.moveTo(-1,-.16);sh.lineTo(1,-.16);sh.lineTo(.85,.11);sh.quadraticCurveTo(-.2,.06,-1,.0);sh.closePath();
+   const g=new THREE.ExtrudeGeometry(sh,{depth:.1,bevelEnabled:true,bevelSize:.017,bevelThickness:.025,bevelSegments:4});g.center();add('Sculpted side skirt',g,paint,[0,-.01,0]);
+   tube('Lower sill brightwork',[[-.95,-.14,.07],[-.08,-.15,.07],[.90,-.12,.07]],.016,chrome);
+  }else{
+   roundBox('Vent housing',[1.35,.27,.16],.065,paint,[0,.04,0]);
+   roundBox('Air aperture',[1.04,.14,.18],.035,dark,[.04,.03,.04]);
+   for(let x of [-.30,-.04,.22])add('Vent blade',new THREE.BoxGeometry(.045,.13,.02),chrome,[x,.03,.15]);
+  }
+ }
+ // Orient a side accessory so the sculpted face points outward.
+ if(slot==='sideleft')root.rotation.y=Math.PI;
+ return root;
+}
+function rememberLibraryParts(){
+ config.libraryParts=Object.fromEntries([...dock.entries()].filter(([,v])=>v.kind==='library').map(([slot,v])=>[slot,{style:v.style,scale:v.scale,height:v.height,offset:v.offset,lateral:v.lateral,rotate:v.rotate}]));
+ remember();
+}
+function restoreLibraryParts(){
+ const list=Object.entries(config.libraryParts||{});if(!car||!THREE||!list.length)return;
+ const originalSlot=$('heroPartSlot').value;
+ for(const [slot,recipe] of list){if(dock.has(slot)||!SLOT_LIBRARY[slot]?.some(([id])=>id===recipe.style))continue;
+  $('heroPartSlot').value=slot;attachLibraryPart(recipe.style);
+  const item=dock.get(slot);if(item)for(const field of ['scale','height','offset','lateral','rotate']){
+   if(Number.isFinite(Number(recipe[field])))item[field]=Number(recipe[field]);
+  }
+ }
+ $('heroPartSlot').value=originalSlot;updateDockMounts();updateDockPanel();rememberLibraryParts();
+}
+function updateLibraryButtons(){
+ const slot=$('heroPartSlot').value,definitions=SLOT_LIBRARY[slot]||[];const current=dock.get(slot);
+ $('heroPresets').innerHTML=definitions.map(([id,label,desc])=>`<button type="button" data-library-part="${id}" class="${current?.kind==='library'&&current.style===id?'is-active':''}" aria-pressed="${current?.kind==='library'&&current.style===id}"><span class="preset-outline">◈</span><strong>${label}</strong><small>${desc}</small></button>`).join('');
+}
+function attachLibraryPart(style){
+ if(!THREE||!car||!assemblyRoot)return report('Load a car before adding modular parts.',true);
+ const slot=$('heroPartSlot').value;
+ const model=buildLibraryPart(slot,style);if(!model)return;
+ const root=new THREE.Group();root.name='CHROMA / BUILT-IN / '+slot;root.add(model);
+ const bb=new THREE.Box3().setFromObject(model),sz=bb.getSize(new THREE.Vector3());const center=bb.getCenter(new THREE.Vector3());model.position.sub(center);
+ const rawSize=Math.max(sz.x,sz.y,sz.z)||1;
+ const before=dock.get(slot);if(before){assemblyRoot.remove(before.container);disposeAsset(before.container);}
+ assemblyRoot.add(root);
+ dock.set(slot,{container:root,filename:'CHROMA '+style,kind:'library',style,rawSize,scale:100,height:0,offset:0,lateral:0,rotate:0});
+ updateDockMounts();updateDockPanel();rememberLibraryParts();report('Mounted '+style+' to '+slot+' · original 3D geometry.');
+}
+function disposeAsset(obj){if(!obj)return;obj.traverse(o=>{if(o.isMesh){o.geometry?.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m?.dispose?.());}});}
+function updateDockMounts(){if(!car||!THREE)return;const bb=baseBounds.clone(),center=bb.getCenter(new THREE.Vector3()),dim=bb.getSize(new THREE.Vector3());const long=frontAxis,short=frontAxis==='x'?'z':'x',L=dim[long],W=dim[short];
  for(const [slot,item] of dock){const g=item.container,loc=center.clone(),height=Number(item.height)||0;const zBase=bb.min.y;
   const coords={front:[-L*.50,0,zBase+.48],rear:[L*.50,0,zBase+.5],roof:[0,0,bb.max.y+.08],sideleft:[0,-W*.52,zBase+.45],sideright:[0,W*.52,zBase+.45]};
   const [f,s,y]=coords[slot]||coords.front;loc[long]=center[long]+f;loc[short]=center[short]+s;loc.y=y+height;
-  g.position.copy(loc);g.rotation.set(0,(Number(item.rotate)||0)*Math.PI/180,0);
+  // All offsets are in the car's own longitudinal/lateral coordinate system.
+  const explode=(Number(config.explode)||0)/100;
+  loc[long]+=(Number(item.offset)||0)+(slot==='front'?-1:slot==='rear'?1:0)*explode*.85;
+  loc[short]+=(Number(item.lateral)||0)+(slot==='sideleft'?-1:slot==='sideright'?1:0)*explode*.65;
+  if(slot==='roof')loc.y+=explode*.85;
+  g.position.copy(loc);
+  g.rotation.set(0,(Number(item.rotate)||0)*Math.PI/180+(frontAxis==='z'?Math.PI/2:0),0);
   const want=slot==='roof'?W*.56:slot==='front'||slot==='rear'?W*.72:L*.43;
   const raw=item.rawSize||1;g.scale.setScalar(want/raw*(Number(item.scale)||100)/100);
  }
 }
 async function attachPart(file){if(!loader||!car)return report('Load the Hero Car before attaching a part.',true);if(!/\.glb$/i.test(file.name)||file.size>40*1024*1024)return report('Select a .glb part under 40 MB.',true);
  const slot=$('heroPartSlot').value;const url=URL.createObjectURL(file);report('Importing real 3D component '+file.name+'…');
- try{const gltf=await loader.loadAsync(url);const root=new THREE.Group();root.name='CHROMA MODULAR PART / '+slot;const model=gltf.scene;root.add(model);const bb=new THREE.Box3().setFromObject(model),sz=bb.getSize(new THREE.Vector3());const center=bb.getCenter(new THREE.Vector3());model.position.sub(center);const rawSize=Math.max(sz.x,sz.y,sz.z)||1;const existing=dock.get(slot);if(existing){scene.remove(existing.container);existing.container.traverse(o=>{if(o.isMesh){o.geometry?.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m?.dispose?.());}});}
-  scene.add(root);dock.set(slot,{container:root,filename:file.name,rawSize,scale:100,height:0,rotate:0});updateDockMounts();updateDockPanel();remember();report('Attached '+file.name+' to '+slot+'. Export GLB to keep the assembly.');
+ try{const gltf=await loader.loadAsync(url);const root=new THREE.Group();root.name='CHROMA MODULAR PART / '+slot;const model=gltf.scene;root.add(model);const bb=new THREE.Box3().setFromObject(model),sz=bb.getSize(new THREE.Vector3());const center=bb.getCenter(new THREE.Vector3());model.position.sub(center);const rawSize=Math.max(sz.x,sz.y,sz.z)||1;const existing=dock.get(slot);if(existing){assemblyRoot.remove(existing.container);disposeAsset(existing.container);}
+  assemblyRoot.add(root);dock.set(slot,{container:root,filename:file.name,kind:'imported',rawSize,scale:100,height:0,offset:0,lateral:0,rotate:0});updateDockMounts();updateDockPanel();rememberLibraryParts();report('Attached '+file.name+' to '+slot+'. Export GLB to keep the assembly.');
  }catch(e){report('Imported part failed: '+(e?.message||'invalid GLB'),true);}finally{URL.revokeObjectURL(url);$('heroPartImport').value='';}
 }
-function updateDockPanel(){const x=dock.get($('heroPartSlot').value);$('heroPartStatus').textContent=x?('Loaded: '+x.filename):'No custom part attached to this slot.';for(const [k,id] of [['scale','heroPartScale'],['height','heroPartHeight'],['rotate','heroPartRotate']]){$(id).value=String(x?.[k]??(k==='scale'?100:0));} $('heroPartScaleVal').textContent=(x?.scale??100)+'%';$('heroPartHeightVal').textContent=Number(x?.height??0).toFixed(2)+' m';$('heroPartRotateVal').textContent=(x?.rotate??0)+'°';$('heroRemovePart').disabled=!x;}
-function clearDock(){for(const item of dock.values()){scene.remove(item.container);item.container.traverse(o=>{if(o.isMesh){o.geometry?.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m?.dispose?.());}});}dock.clear();updateDockPanel();}
-function disposeExtras(){if(!extras)return;scene.remove(extras);extras.traverse(obj=>{if(obj.isMesh){obj.geometry?.dispose();const m=Array.isArray(obj.material)?obj.material:[obj.material];m.forEach(v=>v?.dispose?.());}});extras=null;}
-function rebuildExtras(){disposeExtras();if(!car||config.kit==='original')return;extras=new THREE.Group();extras.name='CHROMA CUSTOM AERO PARTS';scene.add(extras);
- const bounds=new THREE.Box3().setFromObject(car),sz=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());const L=Math.max(sz.x,sz.z),W=Math.min(sz.x,sz.z),yLow=bounds.min.y,yHigh=bounds.max.y;
+function updateDockPanel(){const x=dock.get($('heroPartSlot').value);$('heroPartStatus').textContent=x?('Mounted: '+x.filename+(x.kind==='library'?' · native kit':' · imported GLB')):'Select a built-in part or import your own GLB.';
+for(const [k,id] of [['scale','heroPartScale'],['height','heroPartHeight'],['offset','heroPartOffset'],['lateral','heroPartLateral'],['rotate','heroPartRotate']]){$(id).value=String(x?.[k]??(k==='scale'?100:0));$(id).disabled=!x;}
+$('heroPartScaleVal').textContent=(x?.scale??100)+'%';$('heroPartHeightVal').textContent=Number(x?.height??0).toFixed(2)+' m';$('heroPartOffsetVal').textContent=Number(x?.offset??0).toFixed(2)+' m';$('heroPartLateralVal').textContent=Number(x?.lateral??0).toFixed(2)+' m';$('heroPartRotateVal').textContent=(x?.rotate??0)+'°';$('heroRemovePart').disabled=!x;updateLibraryButtons();}
+function clearDock(){for(const item of dock.values()){assemblyRoot.remove(item.container);item.container.traverse(o=>{if(o.isMesh){o.geometry?.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m?.dispose?.());}});}dock.clear();updateDockPanel();}
+function disposeExtras(){if(!extras)return;assemblyRoot.remove(extras);extras.traverse(obj=>{if(obj.isMesh){obj.geometry?.dispose();const m=Array.isArray(obj.material)?obj.material:[obj.material];m.forEach(v=>v?.dispose?.());}});extras=null;}
+function rebuildExtras(){disposeExtras();if(!car||config.kit==='original')return;extras=new THREE.Group();extras.name='CHROMA CUSTOM AERO PARTS';assemblyRoot.add(extras);
+ const bounds=baseBounds.clone(),sz=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());const L=Math.max(sz.x,sz.z),W=Math.min(sz.x,sz.z),yLow=bounds.min.y,yHigh=bounds.max.y;
  const long=frontAxis==='x'?'x':'z',short=frontAxis==='x'?'z':'x';const makePos=(l,s,y)=>{const v=new THREE.Vector3(0,y,0);v[long]=center[long]+l;v[short]=center[short]+s;return v;};
  const chrome=new THREE.MeshPhysicalMaterial({color:'#cbd6d2',metalness:1,roughness:.13,clearcoat:.65,envMapIntensity:1.7});const paint=new THREE.MeshPhysicalMaterial({color:config.colors.secondary,metalness:.62,roughness:.18,clearcoat:1,envMapIntensity:1.5});
  const addTube=(name,pts,thick,mat)=>{const curve=new THREE.CatmullRomCurve3(pts.map(p=>makePos(...p)));const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,60,thick,8,false),mat.clone());mesh.name=name;mesh.castShadow=true;extras.add(mesh);};
@@ -1041,7 +1188,7 @@ function setQuality(){if(!renderer)return;renderer.shadowMap.enabled=true;if(lig
 function runLoop(){if(animating||!renderer)return;animating=true;const frame=()=>{if(!active){animating=false;return;}stopFrame=requestAnimationFrame(frame);const now=performance.now();if(now-frameLast<13)return;frameLast=now;
   doorTarget=config.doors?1:0;doorCurrent+=Math.min(1,(now-(frame.last||now))/160)*(.0+doorTarget-doorCurrent);frame.last=now;
   doorNodes.forEach(d=>{d.node.rotation.y=d.baseRot+d.side*doorCurrent*.52;});
-  if(config.spin&&car)car.rotation.y+=.0035;controls.update();renderer.render(scene,camera);
+  if(config.spin&&assemblyRoot)assemblyRoot.rotation.y+=.0035;controls.update();renderer.render(scene,camera);
  };frame();}
 function setView(id){if(!camera||!car)return;const direction=frontAxis==='x'?new THREE.Vector3(-1,0,0):new THREE.Vector3(0,0,-1);const sizes={hero:[5,2.8,6.5],front:direction.clone().multiplyScalar(6.3).add(new THREE.Vector3(0,1.9,0)),rear:direction.clone().multiplyScalar(-6.3).add(new THREE.Vector3(0,2,0)),side:frontAxis==='x'?[0,2.15,7]:[7,2.15,0],top:[0,8.8,.12],inside:frontAxis==='x'?[.2,1.35,.28]:[.28,1.35,.2]};const val=sizes[id]||sizes.hero;const vec=Array.isArray(val)?new THREE.Vector3(...val):val;camera.position.copy(vec);if(id==='inside'){controls.target.set(0,1.20,0);}else{controls.target.set(0,.82,0);}controls.update();document.querySelectorAll('[data-hero-view]').forEach(b=>b.classList.toggle('active',b.dataset.heroView===id));}
 function download(name,blob){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.download=name;a.href=u;a.click();setTimeout(()=>URL.revokeObjectURL(u),5000);}
@@ -1054,9 +1201,9 @@ async function screenshot(){if(!renderer||!ready){report('Load the professional 
   }catch(e){report('Screenshot error: '+e.message,true);}
   finally{renderer.setPixelRatio(pixel);renderer.setSize(previous.x,previous.y,false);camera.updateProjectionMatrix();}
 }
-async function exportGLB(){if(!car||!exporter)return report('Load the professional model before exporting.',true);try{report('Preparing GLB export…');const exportedScene=new THREE.Scene();exportedScene.add(car.clone(true));if(extras)exportedScene.add(extras.clone(true));for(const item of dock.values())exportedScene.add(item.container.clone(true));const glb=await exporter.parseAsync(exportedScene,{binary:true,onlyVisible:true,maxTextureSize:2048});download('chroma-hero-assembly.glb',new Blob([glb],{type:'model/gltf-binary'}));report('GLB exported.');}catch(e){report('Export failed: '+e.message,true);}}
+async function exportGLB(){if(!car||!exporter)return report('Load the professional model before exporting.',true);try{report('Preparing GLB export…');const exportedScene=new THREE.Scene();exportedScene.add(car.clone(true));if(extras)exportedScene.add(extras.clone(true));for(const item of dock.values())exportedScene.add(item.container.clone(true));const glb=await exporter.parseAsync(exportedScene,{binary:true,onlyVisible:false,maxTextureSize:2048});download('chroma-hero-assembly.glb',new Blob([glb],{type:'model/gltf-binary'}));report('GLB exported.');}catch(e){report('Export failed: '+e.message,true);}}
 function repaint(){sync();applyMaterials();if(config.kit!=='original')rebuildExtras();}
-$('heroRetry').onclick=()=>{booting=false;boot();};$('heroBack').onclick=()=>$('nativeMode').click();
+$('heroRetry').onclick=()=>{booting=false;boot();};$('heroLoadLocal').onclick=()=>{$('heroImport').click();};$('heroBack').onclick=()=>$('nativeMode').click();
 $('heroMaterial').onchange=e=>{config.group=e.target.value;config.isolatePaint=false;sync();remember();};
 function changeColor(value){if(config.isolatePaint&&pickedName)config.materialOverrides[pickedName]=value;else config.colors[config.group]=value;repaint();}
 $('heroColor').oninput=e=>changeColor(e.target.value);
@@ -1070,8 +1217,8 @@ $('heroLights').onclick=e=>{let b=e.target.closest('[data-hero-light]');if(!b)re
 $('heroQuality').onclick=e=>{let b=e.target.closest('[data-hero-quality]');if(!b)return;config.quality=b.dataset.heroQuality;setQuality();sync();};
 $('heroDoors').onclick=()=>{config.doors=!config.doors;sync();remember();if(!doorNodes.length)report('This asset has no discoverable door hinges. Door animation is not supported for this model.',true);};
 $('heroSpin').onclick=()=>{config.spin=!config.spin;sync();remember();};
-$('heroReset').onclick=async()=>{config=structuredClone(DEFAULT);$('heroMaterial').value='paint';pickedMesh=null;pickedName=null;hiddenParts.clear();clearDock();await applyFactoryVariant('',true);applyVisibility();repaint();updateLighting();rebuildExtras();setQuality();remember();report('Hero studio settings reset.');};
-$('heroSave').onclick=()=>{remember();download('chroma-hero-recipe.json',new Blob([JSON.stringify({product:'CHROMA HERO STUDIO',version:13,config,attachedParts:[...dock].map(([slot,x])=>({slot,filename:x.filename,scale:x.scale,height:x.height,rotation:x.rotate})),note:'Imported GLB geometry is embedded only in full MODEL / GLB export.',license:'CC BY 4.0 / Khronos Car Concept source'},null,2)],{type:'application/json'}));report('Hero design recipe saved.');};
+$('heroReset').onclick=async()=>{config=structuredClone(DEFAULT);$('heroMaterial').value='paint';pickedMesh=null;pickedName=null;hiddenParts.clear();clearDock();updateDockMounts();await applyFactoryVariant('',true);applyVisibility();repaint();updateLighting();rebuildExtras();setQuality();remember();report('Hero studio settings reset.');};
+$('heroSave').onclick=()=>{remember();download('chroma-hero-recipe.json',new Blob([JSON.stringify({product:'CHROMA HERO STUDIO',version:14,config,attachedParts:[...dock].map(([slot,x])=>({slot,filename:x.filename,scale:x.scale,height:x.height,rotation:x.rotate,offset:x.offset,lateral:x.lateral,origin:x.kind||'imported'})),note:'Built-in kits restore in the browser; imported GLB part geometry is retained only by MODEL / GLB export.',license:'CC BY 4.0 / Khronos Car Concept source'},null,2)],{type:'application/json'}));report('Hero design recipe saved.');};
 $('heroPNG').onclick=screenshot;$('heroGLB').onclick=exportGLB;
 $('heroFactoryVariant').onchange=async e=>{config.factoryVariant=e.target.value;await applyFactoryVariant(config.factoryVariant);remember();sync();};
 $('heroAssemblyView').onchange=e=>{config.layer=e.target.value;hiddenParts.clear();applyVisibility();remember();};
@@ -1082,9 +1229,11 @@ $('heroShowParts').onclick=()=>{hiddenParts.clear();config.layer='all';applyVisi
 $('heroComponentList').onclick=()=>{$('heroComponentSelect').focus();$('heroComponentSelect').click();};
 $('heroComponentSelect').onchange=e=>selectComponent(e.target.value);
 $('heroPartSlot').onchange=updateDockPanel;
+$('heroPresets').onclick=e=>{const b=e.target.closest('[data-library-part]');if(b)attachLibraryPart(b.dataset.libraryPart);};
 $('heroPartImport').onchange=e=>{const file=e.target.files?.[0];if(file)attachPart(file);};
-for(const [input,key] of [['heroPartScale','scale'],['heroPartHeight','height'],['heroPartRotate','rotate']])$(input).oninput=e=>{const x=dock.get($('heroPartSlot').value);if(!x)return;x[key]=Number(e.target.value);updateDockMounts();updateDockPanel();};
-$('heroRemovePart').onclick=()=>{const id=$('heroPartSlot').value,item=dock.get(id);if(!item)return;scene.remove(item.container);dock.delete(id);updateDockPanel();report('Part removed from '+id+'.');};
+for(const [input,key] of [['heroPartScale','scale'],['heroPartHeight','height'],['heroPartOffset','offset'],['heroPartLateral','lateral'],['heroPartRotate','rotate']])$(input).oninput=e=>{const x=dock.get($('heroPartSlot').value);if(!x)return;x[key]=Number(e.target.value);updateDockMounts();updateDockPanel();rememberLibraryParts();};
+$('heroExplode').oninput=e=>{config.explode=Number(e.target.value)||0;$('heroExplodeVal').textContent=config.explode+'%';updateDockMounts();remember();};
+$('heroRemovePart').onclick=()=>{const id=$('heroPartSlot').value,item=dock.get(id);if(!item)return;assemblyRoot.remove(item.container);dock.delete(id);updateDockPanel();report('Part removed from '+id+'.');};
 $('heroAllParts').onclick=()=>{const n=dock.size;report(n?n+' real external part'+(n>1?'s':'')+' mounted.':'No additional part mounted.');};
 updateDockPanel();
 $('heroImport').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;if(!/\.glb$/i.test(file.name)||file.size>100*1024*1024){report('Choose a .glb model under 100 MB.',true);return;}if(uploadedUrl)URL.revokeObjectURL(uploadedUrl);uploadedUrl=URL.createObjectURL(file);try{await loadCar(uploadedUrl);ready=true;report('Imported '+file.name+' · materials detected');}catch(err){report('Could not load GLB: '+err.message,true);}};
