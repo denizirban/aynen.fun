@@ -61,7 +61,21 @@ function openShop(){clearPreview();category='furniture';bridge()?.open?.();rende
 function render(){
  let root=document.getElementById('noteBody');
  if(!root)return;
- if(category==='furniture'){window.HouseBossFurnitureUI?.render?.();return}
+ if(category==='furniture'){
+  try{
+   if(window.HouseBossFurnitureUI?.render){
+    window.HouseBossFurnitureUI.render();
+    if(root.querySelector('.hbf-market'))return;
+   }
+  }catch(err){console.error('House Boss designer shop render error',err)}
+  const title=document.getElementById('noteTitle');if(title)title.textContent='Design Shop';
+  const types=window.HouseBossFurnitureTypes||{},items=Object.entries(types);
+  root.innerHTML='<div class="hbf-recovery"><h3>Design Shop · '+items.length+' objects</h3>'+
+   '<p>The shop view failed to load. The object index is available below.</p>'+
+   items.map(function(entry){return '<div class="hbf-recover-item"><b>'+entry[1].name+'</b><small> · $'+entry[1].price+'</small></div>'}).join('')+
+   '</div>';
+  return
+ }
  const st=state(),data=catalog[category],active=preview?.category===category?preview.id:selectedStyle(category);
  const section=document.getElementById('notebook');section?.classList.toggle('design-mode',true);
  const title=document.getElementById('noteTitle');if(title)title.textContent='Home Design';
