@@ -124,7 +124,7 @@ function renderRich(){
  const nextUnlock=all.find(([,item])=>item.level>homeLevel);
  const categoryDefs=window.HouseBossDesignerCollection?.categories||{seating:'SEATING',tables:'TABLES',lighting:'LIGHTING',rugs:'RUGS',art:'ART',objects:'OBJECTS',plants:'PLANTS',storage:'STORAGE'};
  const active=all.filter(([id,item])=>
-  (filter==='all'||(filter==='new'?item.series==='STUDIO STARTERS':filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel))&&
+  (filter==='all'||(filter==='new'?(item.series==='STUDIO STARTERS'&&item.level<=homeLevel):filter==='available'?item.level<=homeLevel:filter==='wishlist'?wishlist.includes(id):item.level>homeLevel))&&
   (category==='all'||item.category===category)&&
   (styleFilter==='all'||item.style===styleFilter)
  );
@@ -224,7 +224,7 @@ function renderSafe(err){
  const filtered=items.filter(([id,t])=>
    (category==='all'||t.category===category)&&
    (styleFilter==='all'||t.style===styleFilter)&&
-   (filter==='all'||filter==='new'&&t.series==='STUDIO STARTERS'||filter==='available'&&t.level<=lvl||filter==='locked'&&t.level>lvl||filter==='wishlist'&&wishlist.includes(id)));
+   (filter==='all'||filter==='new'&&t.series==='STUDIO STARTERS'&&t.level<=lvl||filter==='available'&&t.level<=lvl||filter==='locked'&&t.level>lvl||filter==='wishlist'&&wishlist.includes(id)));
  const palette={seating:'▰',tables:'◉',lighting:'☀',rugs:'▦',art:'✷',objects:'◇',plants:'✿',storage:'▤'};
  const categoryButtons='<nav class="hbf-category-grid" aria-label="Furniture categories">'+
   '<button data-hbf-category="all" class="'+(category==='all'?'active':'')+'"><span>◆</span><b>ALL</b><small>'+items.length+'</small></button>'+
