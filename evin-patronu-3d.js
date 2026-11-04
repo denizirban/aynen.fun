@@ -855,7 +855,7 @@
   var createDecorMesh=window.HouseBossCreateDecorMesh||null;
   if(!createDecorMesh){
    try{
-    var editions=await import('./house-boss-decor-meshes.js?v=2');
+    var editions=await import('./house-boss-decor-meshes.js?v=3');
     createDecorMesh=editions.createDecorMesh;
    }catch(error){console.error('Designer object models could not be loaded',error)}
   }
