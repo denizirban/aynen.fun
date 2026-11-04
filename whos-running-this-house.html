@@ -2982,7 +2982,9 @@ $('#closeNotebook').onclick=closeNote;$('#noteShade').onclick=closeNote;
 document.querySelectorAll('[data-tab]').forEach(function(b){b.addEventListener('click',function(){noteTab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(function(k){k.classList.toggle('active',k===b)});notebookHtml()})});
 $('#noteBody').addEventListener('click',function(e){var action=e.target.closest('[data-life-act]');if(action){lifeBeginActivity(action.dataset.lifeAct);lifeNotebook();return}var b=e.target.closest('[data-buy]');if(b){buyUpgrade(b.dataset.buy);return}familySettingsChange(e.target)});
 window.addEventListener('keydown',function(e){if(e.key==='Escape')closeNote()});
-registerAvatars();syncAvatars();lifeInstall();showSavePreview();goals=makeGoals();templates.forEach(function(t){add(t)});render();
+/* Startup is intentionally delayed: home design collections, finance and bridges
+   are declared below. Starting earlier used to abort on designerSetCatalog.map
+   before the bridge could expose the authoritative wallet. */
 
 /* HOUSE_BOSS_HOME_DESIGN_BRIDGE_V10 — uses the SAME save and budget as household gameplay. */
 var homeDesignPreview=null;
@@ -3570,6 +3572,20 @@ window.EvinKitchenBridge={
    openCare(who)
  }
 };
+/* Initialize only AFTER all collection tables, game bridges and finance systems exist.
+   Individual bootstrap steps are isolated so optional UI errors cannot disable purchasing. */
+var houseBossBootTasks=[
+ ['avatars',function(){registerAvatars()}],
+ ['avatar sync',function(){syncAvatars()}],
+ ['life interactions',function(){lifeInstall()}],
+ ['save preview',function(){showSavePreview()}],
+ ['daily goals',function(){goals=makeGoals()}],
+ ['household templates',function(){templates.forEach(function(t){add(t)})}],
+ ['initial HUD',function(){render()}]
+];
+houseBossBootTasks.forEach(function(step){
+ try{step[1]()}catch(error){console.error('House Boss boot / '+step[0],error)}
+});
 requestAnimationFrame(frame)
 })();
 </script>
