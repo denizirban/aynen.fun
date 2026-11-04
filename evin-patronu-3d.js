@@ -350,7 +350,7 @@
   /* HOME_DESIGN_3D_V10 — real 3D furniture variants and materials, not UI-only color changes. */
   var sofaVariants={},designLastKey='',designTextureCache={};
   function makeSofa(id,color){
-    var g=new THREE.Group(),rounded=['rust','boucle','cloud','atelier'].includes(id);
+    var g=new THREE.Group(),rounded=['rust','boucle','cloud','atelier','mint','peach','berry'].includes(id);
     g.position.set(-6.20,0,.10);scene.add(g);
     var fabric=new THREE.MeshStandardMaterial({color:color,roughness:id==='leather'?.57:.90,metalness:0,flatShading:false});
     var seams=mat('sofaSeams','#9d8d77'),cushion=mat('sofaCushion'+id,id==='starter'?'#e5d7c0':id==='navy'?'#8ea4b9':id==='rust'?'#e8b69d':id==='boucle'?'#d9c6a9':'#cddac8');
@@ -386,6 +386,8 @@
   [
    ['starter','#bdb49c'],['sage','#8ca796'],['rust','#be7c67'],
    ['navy','#667f9b'],['boucle','#f1e9d9'],
+   ['mint','#a2cbb4'],['creamstripe','#e9d2a7'],['peach','#eca998'],
+   ['sky','#a8c5db'],['berry','#b988ad'],
     ['leather','#86674f'],['cloud','#e3ddd2'],['atelier','#b4a696']
   ].forEach(function(p){makeSofa(p[0],p[1])});
   function designTexture(kind,variant){
@@ -393,7 +395,13 @@
    var map;
    if(kind==='flooring'&&variant==='hex')return tile;
    if(kind==='wallpaper'){
-     var palette={ivory:['#f6f1e6','#f3eee4'],sage:['#a9c0a7','#d1dcc7'],botanical:['#b7c7b1','#608964'],clay:['#ddbbab','#c88f7c'],blue:['#c5d6df','#9dbccb']};
+     var palette={
+      ivory:['#f6f1e6','#f3eee4'],sage:['#a9c0a7','#d1dcc7'],botanical:['#b7c7b1','#608964'],clay:['#ddbbab','#c88f7c'],blue:['#c5d6df','#9dbccb'],
+      warmivory:['#f0ebe0','#cdbdac'],tinyfloral:['#f9eae4','#d494aa'],pastelgingham:['#f0ded4','#d6b6ab'],
+      sagepinstripe:['#e2e6d8','#90ab93'],rosepetals:['#f6e6e5','#be8299'],terracottagrid:['#ebd3c3','#b98771'],
+      lilacarches:['#eee7f4','#bfa7d4'],sunnydaisy:['#f9efdc','#daa75d'],bluewave:['#e8f0ed','#8cb7c4'],
+      abstractpop:['#f6e9df','#d79686']
+     };
      var colors=palette[variant]||palette.ivory;
      map=makeTexture(512,512,function(ctx,W,H){
        ctx.fillStyle=colors[0];ctx.fillRect(0,0,W,H);
@@ -407,6 +415,65 @@
          }
        }else if(variant==='clay'){for(var i=0;i<550;i++){var x=(i*79.13)%W,y=(i*39.71)%H;ctx.fillStyle=i%2?'#efdfce22':'#97674e12';ctx.fillRect(x,y,20+i%21,2+i%6)}}
        else if(variant==='blue'){ctx.strokeStyle='#ffffff55';for(var y=0;y<H;y+=48){ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}}
+       else if(variant==='warmivory'){
+        ctx.strokeStyle=colors[1];ctx.lineWidth=4;
+        for(var x=20;x<W;x+=128){
+         ctx.strokeRect(x,22,105,H-44);ctx.strokeRect(x+7,29,91,H-58)
+        }
+       }else if(variant==='tinyfloral'||variant==='rosepetals'||variant==='sunnydaisy'){
+        const petals=variant==='sunnydaisy'?6:variant==='rosepetals'?7:5;
+        const petalsColor=variant==='sunnydaisy'?'#fafaf1':colors[1],center=variant==='sunnydaisy'?'#dbab52':'#e4c095';
+        for(let y=35;y<H;y+=73)for(let x=33;x<W;x+=75){
+         let xx=x+(Math.floor(y/73)%2)*24,yy=y;
+         for(let j=0;j<petals;j++){
+          const a=j*2*Math.PI/petals;
+          ctx.beginPath();ctx.ellipse(xx+Math.cos(a)*9,yy+Math.sin(a)*9,8,5,a,0,Math.PI*2);
+          ctx.fillStyle=petalsColor;ctx.fill()
+         }
+         ctx.beginPath();ctx.arc(xx,yy,5,0,Math.PI*2);ctx.fillStyle=center;ctx.fill();
+         if(variant==='tinyfloral'){
+          ctx.strokeStyle='#91ae87';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xx+1,yy+8);ctx.lineTo(xx+4,yy+23);ctx.stroke()
+         }
+        }
+       }else if(variant==='pastelgingham'){
+        ctx.fillStyle='#e9c7bd77';for(let x=0;x<W;x+=56)ctx.fillRect(x,0,25,H);
+        ctx.fillStyle='#fff6ed80';for(let y=0;y<H;y+=56)ctx.fillRect(0,y,W,25);
+        ctx.strokeStyle='#dbb5a9';ctx.lineWidth=2;
+        for(let x=0;x<W;x+=56){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+       }else if(variant==='sagepinstripe'){
+        ctx.strokeStyle=colors[1];ctx.lineWidth=3;
+        for(let x=14;x<W;x+=37){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+        ctx.strokeStyle='#f6f6ef';ctx.lineWidth=2;
+        for(let x=18;x<W;x+=37){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+       }else if(variant==='terracottagrid'){
+        ctx.strokeStyle=colors[1];ctx.lineWidth=5;
+        for(let x=0;x<W;x+=66){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+        for(let y=0;y<H;y+=66){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+        ctx.fillStyle='#f8e7d9';
+        for(let x=0;x<W;x+=66)for(let y=0;y<H;y+=66)ctx.fillRect(x-3,y-3,6,6)
+       }else if(variant==='lilacarches'){
+        ctx.lineWidth=10;ctx.strokeStyle=colors[1];
+        for(let y=20;y<H;y+=115)for(let x=25;x<W;x+=105){
+         ctx.beginPath();ctx.arc(x+42,y+40,35,Math.PI,Math.PI*2);ctx.stroke();
+         ctx.beginPath();ctx.moveTo(x+7,y+40);ctx.lineTo(x+7,y+100);ctx.moveTo(x+77,y+40);ctx.lineTo(x+77,y+100);ctx.stroke()
+        }
+       }else if(variant==='bluewave'){
+        for(let n=0;n<13;n++){
+         ctx.strokeStyle=n%3===0?'#719dac':'#bbd4d5';ctx.lineWidth=n%3===0?6:3;
+         ctx.beginPath();
+         for(let x=0;x<=W;x+=5){const y=n*41+Math.sin(x*.028+n*.7)*13;
+          if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
+         ctx.stroke()
+        }
+       }else if(variant==='abstractpop'){
+        const hues=['#d79586','#a4c4ad','#dec395','#aa9bc8'];
+        for(let n=0;n<19;n++){
+         let x=(n*137)%W,y=(n*91)%H,r=24+n%4*9;
+         ctx.beginPath();ctx.fillStyle=hues[n%hues.length];
+         ctx.ellipse(x,y,r,r*.7,n*.4,0,Math.PI*2);ctx.fill()
+        }
+       }
+
        else{ctx.fillStyle='#fff8';for(var y=0;y<H;y+=73)ctx.fillRect(0,y,W,2)}
      });
    }else if(kind==='flooring'){
@@ -457,7 +524,7 @@
     Object.entries(sofaVariants).forEach(function(entry){entry[1].visible=entry[0]===chosen.sofa});
     // All sofas use the same selected upholstery, including the newly built
     // living room; a fabric purchase must never change only the kitchen sofa.
-    var sofaColors={starter:'#bdb49c',sage:'#8ca796',rust:'#be7c67',navy:'#667f9b',boucle:'#f1e9d9',leather:'#86674f',cloud:'#e3ddd2',atelier:'#b4a696'};
+    var sofaColors={starter:'#bdb49c',sage:'#8ca796',rust:'#be7c67',navy:'#667f9b',boucle:'#f1e9d9',mint:'#a2cbb4',creamstripe:'#e9d2a7',peach:'#eca998',sky:'#a8c5db',berry:'#b988ad',leather:'#86674f',cloud:'#e3ddd2',atelier:'#b4a696'};
     mat('livingRoomSofa').color.set(sofaColors[chosen.sofa]||sofaColors.starter);
     mat('livingCushion').color.set(chosen.sofa==='navy'?'#a9bed0':chosen.sofa==='rust'?'#e7b4a2':['boucle','cloud','atelier'].includes(chosen.sofa)?'#e5d9c7':chosen.sofa==='leather'?'#a9886b':'#c5d4bf');
     var wall=designTexture('wallpaper',chosen.wallpaper);
