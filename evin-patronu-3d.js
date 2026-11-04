@@ -651,6 +651,12 @@
   /* Actual expandable 3D rooms, not cosmetic upgrade labels. */
   const gardenFeatures={};
   const gardenGroup=roomSpaces.garden;
+  const plot=new THREE.Group();gardenGroup.add(plot);plot.visible=false;gardenFeatures.garden_patch=plot;
+  for(const [x,z] of [[-6.9,-3.5],[-6.9,2.2],[6.4,-3.8],[6.1,3.9]]){
+   box(plot,2.2,.13,1.35,mat('extendedSoil','#91785d'),x,.07,z);
+   box(plot,2.32,.17,.11,wood,x,.14,z-.70);
+   box(plot,2.32,.17,.11,wood,x,.14,z+.70);
+  }
   const patio=new THREE.Group();gardenGroup.add(patio);gardenFeatures.patio=patio;patio.visible=false;
   box(patio,4.6,.14,2.75,mat('expandedPatio','#c3aa8b'),3.9,.09,1.9);
   for(let i=0;i<7;i++)box(patio,.035,.018,2.7,mat('patioPlanks','#967e63'),1.7+i*.65,.17,1.9);
@@ -1083,7 +1089,8 @@
     }
   }
   function notifyPlacement(){
-    window.HouseBossFurnitureUI?.updateStatus?.()
+    window.HouseBossFurnitureUI?.updateStatus?.();
+    window.HouseBossGardenUI?.updateStatus?.()
   }
   function updateFurnitureGhost(patch){
     if(!pendingFurniture||!ghostFurniture)return false;
@@ -1210,13 +1217,17 @@
   function activate(e){
     var inDesigner=document.getElementById('notebook')?.classList.contains('design-mode');
     var furnitureView=inDesigner&&window.HouseBossHomeDesign?.isFurnitureView?.();
-    if(furnitureView&&pendingFurniture){beginFurnitureFromTap(e);return}
+    if(pendingFurniture&&(furnitureView||pendingFurniture.zone==='garden')){beginFurnitureFromTap(e);return}
     var target=getHit(e);
     if(furnitureView){
       if(target?.userData?.furnitureId)window.HouseBossFurnitureUI?.selectFrom3D?.(target.userData.furnitureId);
       return
     }
-    if(inDesigner)return;
+    if(inDesigner){
+      if(target?.userData?.furnitureId&&window.HouseBossGardenBridge?.getState?.()?.objects.some(o=>o.uid===target.userData.furnitureId))
+        window.HouseBossGardenUI?.selectFrom3D?.(target.userData.furnitureId);
+      return
+    }
     if(!target){walkIn3D(e);return}
     if(target.userData.furnitureId){
       window.HouseBossBuildBridge?.interact?.(target.userData.furnitureId);return
@@ -1479,7 +1490,7 @@
   function refresh(state){
     for(var id in upgrades)upgrades[id].visible=(state.owned||[]).includes(id);
     for(var name in roomSpaces)roomSpaces[name].visible=(state.owned||[]).includes(name);
-    for(const id of ['patio','greenhouse'])if(gardenFeatures[id])gardenFeatures[id].visible=(state.gardenExpansions||[]).includes(id);
+    for(const id of ['garden_patch','patio','greenhouse'])if(gardenFeatures[id])gardenFeatures[id].visible=(state.gardenExpansions||[]).includes(id);
     syncFurniture(state.furniture);
     applyHomeDesign(state.homeDesign);
     ['self','partner'].forEach(function(key){
