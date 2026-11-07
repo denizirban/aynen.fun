@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f8f8f7">
+<meta name="description" content="Mahalle 1920: tarihî İstanbul'da yaşayan bir mahallede kendi hikâyeni kur. aynen.fun'da oyna.">
+<title>Mahalle 1920 — aynen.fun</title>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#171717;background:#f8f8f7}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{display:flex;flex-direction:column;min-height:100dvh}
+header{height:54px;flex-shrink:0;display:flex;align-items:center;gap:16px;padding:0 max(14px,env(safe-area-inset-left));background:#f8f8f7;border-bottom:1px solid #dddcd6;position:relative;z-index:2}
+.brand{text-decoration:none;color:#171717;font-size:16px;letter-spacing:-.06em;font-weight:900;white-space:nowrap}
+.title{font-size:13px;font-weight:700;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.beta{font:10px/1.1 ui-monospace,monospace;letter-spacing:.08em;color:#65594e;white-space:nowrap}
+.actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.action{font-size:12px;font-weight:650;color:#171717;text-decoration:none;border:1px solid #c8c8c2;border-radius:10px;padding:8px 10px;background:white;white-space:nowrap}
+.action:focus-visible,.brand:focus-visible{outline:3px solid #ffa7b0;outline-offset:3px}
+.action.primary{background:#f4e5b6;border-color:#b5a57b}
+main{position:relative;flex:1;min-height:0}
+iframe{display:block;width:100%;height:100%;border:0;background:#d8d6cf}
+.footer{position:absolute;bottom:max(13px,env(safe-area-inset-bottom));right:max(13px,env(safe-area-inset-right));z-index:1;border-radius:999px;padding:10px 13px;background:rgba(248,248,247,.95);box-shadow:0 3px 14px #0002;color:#444;font-size:11px;max-width:min(320px,85vw)}
+.footer a{color:#26221c;text-underline-offset:2px;font-weight:700}
+@media(max-width:540px){header{gap:9px;padding-inline:10px}.title{font-size:12px}.beta{display:none}.action{padding:7px 8px;font-size:11px}.footer{font-size:10px;max-width:250px}}
+</style>
+</head>
+<body>
+<header>
+ <a class="brand" href="/" aria-label="aynen.fun ana sayfaya dön">aynen.fun</a>
+ <span class="title">Mahalle 1920</span>
+ <span class="beta">BETA / 3D</span>
+ <nav class="actions" aria-label="Oyun bağlantıları">
+  <a class="action" href="/" aria-label="Diğer oyunlara dön">← Oyunlar</a>
+  <a class="action primary" href="https://mahalle-beta.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Mahalle oyununu ayrı sekmede aç">Tam ekran ↗</a>
+ </nav>
+</header>
+<main>
+ <iframe title="Mahalle 1920, İstanbul yaşam simülasyonu" src="https://mahalle-beta.vercel.app/" allow="fullscreen; gamepad; autoplay" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+ <div class="footer">Oyun yüklenmezse <a href="https://mahalle-beta.vercel.app/" target="_blank" rel="noopener noreferrer">ayrı sekmede aç</a>. İlerleme kaydı oyunun çalıştığı tarayıcıya ve hesaba bağlı olabilir.</div>
+</main>
+</body>
+</html>
