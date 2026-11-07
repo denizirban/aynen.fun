@@ -1,3 +1,2 @@
-/* Insert your GA4 Web data stream Measurement ID (G-XXXXXXXXXX).
-   Tracking remains disabled until set; consent is requested on first visit. */
-window.AYNEN_ANALYTICS = { measurementId: '' };
+/* GA4 web stream for aynen.fun. Analytics loads only after consent. */
+window.AYNEN_ANALYTICS = { measurementId: 'G-6W9LQRVFG3' };
