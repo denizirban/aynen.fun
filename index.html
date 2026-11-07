@@ -258,6 +258,12 @@ body{background:#f8f8f7;color:#101010}
 }
 @media(prefers-reduced-motion:reduce){.desktop-scene .game-tile{transition:none!important}}
 
+
+/* Mahalle featured sticker: existing hand-drawn wall aesthetic retained. */
+.game-tile.is-featured .tile-illustration{filter:drop-shadow(2px 4px 0 rgba(87,63,50,.14))}
+.game-tile.is-featured .game-index{color:#8a3930!important;font-weight:900!important}
+.game-tile.is-featured .game-name{font-weight:800!important;letter-spacing:-.03em!important}
+.game-tile.is-featured:focus-visible{outline-color:#c15b46}
 </style>
 </head>
 <body>
@@ -266,7 +272,26 @@ body{background:#f8f8f7;color:#101010}
 <section class="landing-hub" aria-label="Site maskotu">
 <img class="hub-cat" src="./cat.webp" alt="Kedi maskotu" width="230" height="198" fetchpriority="high">
 </section>
-<div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye"><button class="game-tile" type="button" data-game="nothing" style="--x:4%;--y:58px;--angle:-2deg" aria-label="Hiçbir Şey Yapma oyununu aç">
+<div class="orbit-cards" aria-label="Oyunlar — eskiden yeniye">
+<a class="game-tile is-color is-featured" href="/mahalle.html" style="--angle:-2deg" aria-label="Mahalle 1920, tarihi İstanbul yaşam simülasyonunu aç">
+<span class="game-thumb"><span class="game-index" aria-hidden="true">OYNA</span>
+<svg class="tile-illustration editorial-cover" viewBox="0 0 160 112" role="img" aria-label="Galata sokakları, dönem tramvayı ve taş binalar" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="mah-sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b9d8d9"/><stop offset="1" stop-color="#f5e0bb"/></linearGradient>
+<linearGradient id="mah-house" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e9bc92"/><stop offset="1" stop-color="#bb805d"/></linearGradient>
+</defs>
+<rect x="3" y="3" width="154" height="106" rx="3" fill="url(#mah-sky)" stroke="#31312e" stroke-width="2"/>
+<path d="M3 70L157 74V109H3Z" fill="#c8ba9d"/><path d="M57 109L75 72M103 109L85 72" stroke="#716b63" stroke-width="1.3"/>
+<path d="M1 38L14 13L56 8L66 29V81L3 86Z" fill="url(#mah-house)" stroke="#36332d" stroke-width="1.7"/>
+<path d="M1 39L66 29M14 13L66 29" stroke="#774f3e" stroke-width="2.2"/>
+<path d="M12 46h12v19H12zm26-3h12v19H38z" fill="#496a71" stroke="#383530" stroke-width="1.4"/><path d="M8 72h53v15H8Z" fill="#63745c"/><path d="M8 72h53M15 72v15M27 72v15M39 72v15M51 72v15" stroke="#f0dcaa" stroke-width="3"/>
+<path d="M98 31L115 11L151 19L157 41V86H98Z" fill="#e9c9a1" stroke="#3c3730" stroke-width="1.8"/><path d="M99 31L157 41" stroke="#88634c" stroke-width="2"/>
+<path d="M111 42h10v14h-10zm22 2h10v14h-10zm-21 23h10v13h-10zm22 0h10v13h-10z" fill="#6b8583" stroke="#514536" stroke-width="1.4"/>
+<path d="M60 28L75 8L89 29V58H60Z" fill="#aaa79a" stroke="#4a4740" stroke-width="1.4"/><path d="M75 2V9M67 29h16" stroke="#4a4740" stroke-width="2"/><path d="M70 36h10v14H70Z" fill="#efe3bb" stroke="#4a4740"/>
+<g transform="translate(62 69)"><rect x="0" y="0" width="43" height="22" rx="3" fill="#a52b25" stroke="#422c29" stroke-width="2"/><path d="M7 4h12v9H7zm16 0h12v9H23z" fill="#f9df9f"/><path d="M21 0v22" stroke="#f8c88e" stroke-width="2"/><path d="M5 22v5m34-5v5" stroke="#302c2c" stroke-width="2.4"/><circle cx="8" cy="22" r="3" fill="#292a2b"/><circle cx="35" cy="22" r="3" fill="#292a2b"/></g>
+<path d="M4 106h152" stroke="#464440" stroke-width="2"/>
+</svg></span><span class="game-name">Mahalle 1920</span></a>
+<button class="game-tile" type="button" data-game="nothing" style="--x:4%;--y:58px;--angle:-2deg" aria-label="Hiçbir Şey Yapma oyununu aç">
 <span class="game-thumb"><span class="game-index" aria-hidden="true">01</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="tile-illustration"><path d="M35 23C25 41 20 79 44 88C71 101 126 93 132 75C138 57 125 29 120 18C94 5 55 13 35 23Z" fill="#ff6714" stroke="none" stroke-width="0" stroke-linejoin="round" stroke-linecap="round" /><ellipse cx="80" cy="30" rx="45" ry="15" fill="none" stroke="#101010" stroke-width="4.7"/><ellipse cx="80" cy="54" rx="45" ry="15" fill="none" stroke="#101010" stroke-width="4.7"/><ellipse cx="80" cy="77" rx="45" ry="15" fill="none" stroke="#101010" stroke-width="4.7"/></svg></span>
 <span class="game-name">Hiçbir Şey Yapma</span>
 </button>
@@ -352,45 +377,11 @@ body{background:#f8f8f7;color:#101010}
 <span class="game-name">Evin Patronu</span>
 </a>
 
-<a class="game-tile is-color" href="/kaldirim.html" style="--x:85%;--y:850px;--angle:-2deg;--orbit-x:92.2%;--orbit-y:85.4%;--orbit-size:1.02" aria-label="Kaldırım kaykay oyununu aç">
-<span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span><svg viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" class="tile-illustration editorial-cover" aria-hidden="true">
-<rect x="9" y="8" width="142" height="99" rx="2" fill="#db9d8f"/>
-<path d="M9 30H151M9 52H151M9 74H151" stroke="#f0d6bb" stroke-width="2"/><path d="M36 8V30M76 8V30M116 8V30M22 30V52M62 30V52M102 30V52M143 30V52M36 52V74M76 52V74M116 52V74" stroke="#f0d6bb" stroke-width="2"/>
-<rect x="16" y="19" width="53" height="27" rx="2" fill="#345b50" stroke="#342d29" stroke-width="2"/><path d="M17 20H69V29H17Z" fill="#ecda9b"/><text x="43" y="26" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#2a241d">SİMİT</text>
-<path d="M0 75H160V112H0Z" fill="#6b7374"/><path d="M0 75H160" stroke="#efeadc" stroke-width="4"/><path d="M117 92H150" stroke="#e9dfcc" stroke-width="3"/>
-<path d="M114 90L137 90L127 57L122 57Z" fill="#d56c3e" stroke="#6e4436" stroke-width="2"/><path d="M120 70H130" stroke="#f4e7d4" stroke-width="4"/><rect x="111" y="89" width="28" height="5" rx="2" fill="#a75b39"/>
-<ellipse cx="63" cy="96" rx="30" ry="4" fill="#3337"/>
-<g transform="translate(62 2) rotate(-12 0 61)">
-<path d="M-24 86Q-2 90 27 86" fill="none" stroke="#302d2c" stroke-width="5" stroke-linecap="round"/><circle cx="-16" cy="90" r="5" fill="#252626"/><circle cx="20" cy="90" r="5" fill="#252626"/>
-<path d="M-5 52L-14 72L-17 84M8 52L19 70L17 83" stroke="#264556" stroke-linecap="round" stroke-linejoin="round" stroke-width="9" fill="none"/>
-<path d="M-16 19L13 17L18 56L-13 56Z" fill="#c64944" stroke="#513b31" stroke-width="2"/><path d="M-15 27L14 26M-14 38L17 37M-13 48L17 47" stroke="#f4e5d1" stroke-width="4"/>
-<path d="M-15 25L-29 50M15 24L29 42" stroke="#d0a087" stroke-width="7" stroke-linecap="round"/>
-<ellipse cx="0" cy="7" rx="15" ry="17" fill="#d4a28a"/><path d="M-15 4Q-15 -13 2 -13Q18 -11 16 2Z" fill="#e9dcca" stroke="#69574b" stroke-width="2"/><path d="M10 -2L26 2L11 5" fill="#e9dcca"/><circle cx="8" cy="7" r="1.8" fill="#201d1b"/>
-</g></svg></span>
-<span class="game-name">Kaldırım</span>
-</a>
+
 <a class="game-tile is-color" href="/turkiyenin-baliklari.html" style="--x:8%;--y:1040px;--angle:2deg" aria-label="Türkiye'nin Balıkları atlasını aç"><span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span><img class="tile-illustration editorial-cover" src="/cover-turkiyenin-baliklari.svg?v=1" alt="Türkiye'nin Balıkları çizimi" loading="lazy" width="400" height="275" style="width:100%;height:100%;object-fit:contain"></span><span class="game-name">Türkiye'nin Balıkları</span></a>
 
 
-<a class="game-tile is-color" href="/bio-robot.html" style="--x:92%;--y:86px;--angle:1deg;--orbit-x:92%;--orbit-y:11.7%;--orbit-size:.97" aria-label="BIO ROBOT canlı robot tasarım oyununu aç">
-<span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span>
-<svg class="tile-illustration editorial-cover" viewBox="0 0 160 112" role="img" aria-label="Açık mavi laboratuvarda saydam mavi, mercan, turkuaz hücrelerden oluşan robot" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<radialGradient id="bioV3bg" cx=".48" cy=".38" r=".8"><stop stop-color="#fcfefd"/><stop offset=".7" stop-color="#e5eef0"/><stop offset="1" stop-color="#d5e1e9"/></radialGradient>
-<linearGradient id="bioV3b" x1="0" x2="1" y2="1"><stop stop-color="#dce5ff"/><stop offset=".42" stop-color="#899ed8"/><stop offset="1" stop-color="#4359a9"/></linearGradient>
-<linearGradient id="bioV3c" x1="0" x2="1" y2="1"><stop stop-color="#ffe7cf"/><stop offset=".42" stop-color="#efab8e"/><stop offset="1" stop-color="#bf6f63"/></linearGradient>
-<linearGradient id="bioV3t" x1="0" x2="1" y2="1"><stop stop-color="#e1fff5"/><stop offset=".42" stop-color="#93d9d2"/><stop offset="1" stop-color="#4e9b9d"/></linearGradient>
-</defs>
-<rect x="4" y="4" width="152" height="104" rx="9" fill="url(#bioV3bg)" stroke="#bbcdd2"/>
-<ellipse cx="82" cy="87" rx="53" ry="15" stroke="#a4becb" fill="#fff" opacity=".55"/>
-<path d="m28 86 54-22 53 22-53 21Z" fill="#e7eef2" stroke="#a1bcc9"/>
-<path d="m45 58 18-8 18 8v25l-18 8-18-8Z" fill="url(#bioV3c)" stroke="#d2806e"/><path d="m45 58 18 9 18-9M63 67v24" fill="none" stroke="#fff3e8" stroke-width="1.6"/>
-<path d="m66 29 20-11 21 11v44L86 85 66 74Z" fill="url(#bioV3b)" stroke="#697fb9"/><path d="m66 29 20 11 21-11M86 40v45" stroke="#eff4ff" stroke-width="2" fill="none"/>
-<path d="m88 55 20-10 19 10v27l-19 10-20-10Z" fill="url(#bioV3t)" stroke="#4f9b9c"/><path d="m88 55 20 11 19-11m-19 11v26" stroke="#eafff9" stroke-width="1.6" fill="none"/>
-<path d="m73 43 13 7v21l-13-7Z" fill="#f9fbff" opacity=".5"/><circle cx="108" cy="74" r="5" fill="#e1fff4" stroke="#5d9e9c"/>
-<circle cx="30" cy="32" r="9" fill="#fefefe" stroke="#a8bcc8"/><path d="M26 32h8m-4-4v8" stroke="#5e83a4" stroke-width="1.4"/>
-<circle cx="133" cy="27" r="4" fill="#e7bd72"/><circle cx="27" cy="86" r="2" fill="#729bb3"/>
-</svg></span><span class="game-name">BIO ROBOT</span></a>
+
 
 <a class="game-tile is-color" href="/iceridekiler.html" style="--x:80%;--y:1220px;--angle:-2deg" aria-label="İçeridekiler biyolojik simülasyonunu aç">
 <span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span><svg class="tile-illustration editorial-cover" viewBox="0 0 160 112" role="img" aria-label="Siyah fonda altın, turkuaz, mavi, pembe ve mor ışıldayan hücre karakterleri" xmlns="http://www.w3.org/2000/svg">
@@ -415,25 +406,7 @@ body{background:#f8f8f7;color:#101010}
 <text x="7" y="12" font-family="monospace" font-size="7" fill="#d3bad4" letter-spacing="1">IMMUNE / 001</text>
 </svg></span><span class="game-name">İçeridekiler</span></a>
 
-<a class="game-tile is-color" href="/yanlis-kapi.html" style="--angle:-2deg" aria-label="Yanlış Kapı, sürreal üç boyutlu keşif oyununu aç">
-<span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span>
-<svg class="tile-illustration editorial-cover" viewBox="0 0 160 112" role="img" aria-label="Sonsuz bir koridorda parlayan üç sürreal kapı" xmlns="http://www.w3.org/2000/svg">
-<defs><linearGradient id="ykbg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#acbfd0"/><stop offset=".62" stop-color="#e7c8bc"/><stop offset="1" stop-color="#d2a18c"/></linearGradient>
-<linearGradient id="ykleft" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ecc9ff"/><stop offset="1" stop-color="#5656a9"/></linearGradient>
-<linearGradient id="ykmid" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#bffaff"/><stop offset=".55" stop-color="#328c9e"/><stop offset="1" stop-color="#04374c"/></linearGradient>
-<linearGradient id="ykright" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3b0"/><stop offset="1" stop-color="#b94c55"/></linearGradient></defs>
-<rect x="4" y="4" width="152" height="104" fill="url(#ykbg)" stroke="#27222d" stroke-width="1.5"/>
-<path d="M4 4 39 25 39 81 4 108ZM156 4 121 25 121 81 156 108Z" fill="#b6bbcb" stroke="#404150" stroke-width=".9"/>
-<path d="M4 4 39 25H121L156 4M39 81H121L156 108H4Z" fill="#e7d0bf" stroke="#404150" stroke-width=".9"/>
-<path d="M12 10 45 29M20 16 52 33M148 10 115 29M140 16 108 33M4 28 39 39M4 55 39 55M156 28 121 39M156 55 121 55M20 108 53 82M44 108 66 82M68 108 76 82M92 108 84 82M116 108 94 82M140 108 106 82" stroke="#4d424b" stroke-width=".8" opacity=".75"/>
-<path d="M45 33H64V79H45Z" fill="url(#ykleft)" stroke="#171b29" stroke-width="2"/>
-<path d="M69 28H91V81H69Z" fill="url(#ykmid)" stroke="#171b29" stroke-width="2"/>
-<path d="M96 33H115V79H96Z" fill="url(#ykright)" stroke="#171b29" stroke-width="2"/>
-<path d="M45 33H64M69 28H91M96 33H115" stroke="#fff" stroke-width="2"/>
-<path d="M69 81 59 108H101L91 81Z" fill="#e7e1cf" opacity=".8"/>
-<g fill="#bef5ff" stroke="#dafaff" stroke-width=".5"><path d="M24 38q-5 11 0 12 5-1 0-12ZM134 51q-6 10 0 12 6-2 0-12ZM81 13q-5 12 0 13 5-1 0-13Z"/></g>
-<path d="M4 108H156" stroke="#28212b" stroke-width="1.5"/>
-</svg></span><span class="game-name">Yanlış Kapı</span></a>
+
 <a class="game-tile is-color" href="/hukuk-sehri.html" aria-label="Yatarı Kaç? şehir oyununu aç" style="--angle:-2deg">
 <span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span>
 <svg class="tile-illustration editorial-cover" viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kırmızı damga ve ceza sürelerinin gösterildiği minimalist kapak">
@@ -460,21 +433,7 @@ body{background:#f8f8f7;color:#101010}
 <rect x="21" y="53" width="10" height="3" fill="#fff"/><rect x="129" y="60" width="7" height="3" fill="#fff"/>
 </svg>
 </span><span class="game-name">Düğün Konvoyu GP</span></a>
-<a class="game-tile" href="/concept-lab.html" style="--x:36%;--y:440px;--angle:-1.2deg" aria-label="Chroma Concept Lab 3D araba tasarım oyununu aç">
-<span class="game-thumb"><span class="game-index" aria-hidden="true">NEW</span>
-<svg class="tile-illustration editorial-cover" viewBox="0 0 160 112" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mint yeşili retrofütüristik konsept otomobil">
-<defs><linearGradient id="chroma-car-paint" x1="0" y1="0" x2="0.9" y2="1"><stop stop-color="#d9ffdf"/><stop offset=".45" stop-color="#75d8bc"/><stop offset="1" stop-color="#357a78"/></linearGradient><linearGradient id="chroma-car-glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edf9ff"/><stop offset="1" stop-color="#a0b9cd"/></linearGradient></defs>
-<ellipse cx="79" cy="94" rx="65" ry="7" fill="#405c5b" opacity=".15"/>
-<path d="M12 75 Q16 58 42 55 L57 30 Q75 18 102 30 Q117 38 122 58 L143 67 Q149 76 144 84 L12 85Z" fill="url(#chroma-car-paint)" stroke="#233c42" stroke-width="2"/>
-<path d="M56 53 Q66 29 81 27 Q102 29 115 54Z" fill="url(#chroma-car-glass)" stroke="#284e57" stroke-width="2"/>
-<path d="M60 52 L111 53" stroke="#d3f9ef" stroke-width="2"/>
-<path d="M13 75 Q52 73 95 75 Q124 77 144 70" fill="none" stroke="#e6ffd9" stroke-width="2.5" opacity=".75"/>
-<path d="M124 56 Q141 49 145 55 L145 62 L125 61Z" fill="#aee9d4" stroke="#284e57" stroke-width="2"/>
-<circle cx="43" cy="83" r="13" fill="#25343a"/><circle cx="117" cy="83" r="13" fill="#25343a"/>
-<circle cx="43" cy="83" r="8" fill="#c7d6d5"/><circle cx="117" cy="83" r="8" fill="#c7d6d5"/>
-<circle cx="43" cy="83" r="4" fill="#7fa19b"/><circle cx="117" cy="83" r="4" fill="#7fa19b"/>
-<path d="M15 67 L27 65 M133 68 L144 66" stroke="#fff3c2" stroke-width="3" stroke-linecap="round"/>
-</svg></span><span class="game-name">Chroma Concept Lab</span></a>
+
 </div>
 </main>
 
@@ -552,6 +511,9 @@ let requested=new URLSearchParams(location.search).get('game');if(requested==='p
     // Distribute newer and older games across the wall, rather than grouping.
     const rng=random(87942);
     for(let k=slots.length-1;k>0;k--){const j=Math.floor(rng()*(k+1));[slots[k],slots[j]]=[slots[j],slots[k]];}
+     // Keep Mahalle visible near the top on mobile; retain the shuffled wall around it.
+     const mahSlot=slots.findIndex(s=>s.row===0&&s.col===2);
+     if(mahSlot>=0)[slots[0],slots[mahSlot]]=[slots[mahSlot],slots[0]];
     tiles.forEach((tile,i)=>{
       const {row,col}=slots[i];
       const tweak=(random(i*71+19)()-.5);
@@ -599,8 +561,8 @@ let requested=new URLSearchParams(location.search).get('game');if(requested==='p
      const quadrant=(i*7+Math.floor(i/4))%4;
      for(let n=0;n<240;n++){
        const biased=n<165;
-       const xf=biased?(quadrant%2)*.5+rng()*.5:rng();
-       const yf=biased?(quadrant<2?0:.5)+rng()*.5:rng();
+       const xf=i===0 ? .31+rng()*.38 : (biased?(quadrant%2)*.5+rng()*.5:rng());
+       const yf=i===0 ? .04+rng()*.23 : (biased?(quadrant<2?0:.5)+rng()*.5:rng());
        const b={x:insetX+xf*(maxX-insetX),y:insetY+yf*(maxY-insetY),w,h};
        if(overlap(b,mascot,gap+7)||boxes.some(other=>overlap(b,other,gap)))continue;
        const mx=b.x+b.w/2,my=b.y+b.h/2;
