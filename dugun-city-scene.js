@@ -1192,11 +1192,11 @@ export class CityScene3D{
    fx.mesh.scale.setScalar(.5+fx.age*3.2);
    fx.mesh.material.opacity=Math.max(0,(1-fx.age/1.35)*.30);
   }
-  if(state.mission){
-   const m=state.mission,where=m.phase==="pickup"?m.pickup:m.dropoff;
+  if(state.mission||state.freeTarget){
+   const m=state.mission,where=m?(m.phase==="pickup"?m.pickup:m.dropoff):state.freeTarget;
    this.position(this.marker,where,.18);this.ring.rotation.z=now*.0003;
    this.marker.scale.setScalar(1+Math.sin(now*.003)*.07);
-   const targetColor=m.phase==="pickup"?0xffd35c:0x99f5a7;
+   const targetColor=!m?0xffe37b:m.phase==="pickup"?0xffd35c:0x99f5a7;
    this.marker.children.forEach(child=>{if(child.material?.color)child.material.color.setHex(targetColor)});
   }
   if(state.mission){
@@ -1219,7 +1219,7 @@ export class CityScene3D{
     this.guest.visible=false;this.position(this.dropoffGate,target,.14);
     this.dropoffGate.userData.label.quaternion.copy(this.camera.quaternion);
    }
-  }else{this.guest.visible=false;this.dropoffGate.visible=false;this.marker.visible=false;}
+  }else{this.guest.visible=false;this.dropoffGate.visible=false;if(!state.freeTarget)this.marker.visible=false;}
   // Proper physical 3D chase camera behind the car, not a zoomed overhead GIS camera.
   // The chase camera follows the same filtered car pose as the renderer.
   const cx=this.visualPose.x,cy=this.visualPose.y;
