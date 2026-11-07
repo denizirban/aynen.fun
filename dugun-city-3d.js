@@ -19,6 +19,8 @@ const CHALLENGES=[
 const keys={gas:false,brake:false,left:false,right:false,handbrake:false,padSteer:0,padGas:false,padBrake:false,padHandbrake:false};
 let area="istanbul",kind="sahin",city=null,render3D=null,ready=false,pending=false,playing=false,paused=true,muted=false,free=false;
 const navigation=new StableNavigation();let lastNavState=null;
+// Optional street navigation, even when players choose free-roam mode.
+let freeTarget=null;
 let timer=180,earnings=0,deliveries=0,stolen=0,convoy=1,mission=null,car=null,rival=null,traffic=[],route=[],toastEnd=0,resetRide=0,roadRefresh=0,routeRefresh=0,camRefresh=0,hitCooldown=0;
 let last=performance.now(),frame=0,hornCooldown=0,nearMissCooldown=0,deliveryStreak=0,personalBest=0,rescueCooldown=0;
 let driveMode="easy",brakeHold=0,stillTime=0,assistedPickupTimer=0,tripElapsed=0,initialRoadWait=false;
@@ -253,7 +255,7 @@ function startGame(unlimited){
  // Default easy mode is intentionally playable with just left/right steering.
  brakeHold=0;stillTime=0;assistedPickupTimer=0;tripElapsed=0;
  playing=true;paused=false;timer=180;earnings=0;deliveries=0;stolen=0;convoy=1;mission=null;
- navigation.clear();lastNavState=null;
+ navigation.clear();lastNavState=null;freeTarget=null;
  hornCooldown=0;nearMissCooldown=0;deliveryStreak=0;hitCooldown=0;rescueCooldown=0;
  try{personalBest=Number(localStorage.getItem("dugun-3d-best-v3"))||0}catch(e){personalBest=0}
  car={pos:[...spawn.pos],speed:0,heading:spawn.heading,steering:0,yawRate:0,slip:0,
@@ -276,7 +278,7 @@ function startGame(unlimited){
  catch(error){console.warn("Harita görünümü güncellenemedi:",error)}
  $("overlay").hidden=true;hud(true);$("pause").textContent="DURAKLAT";
  resetRide=0;last=performance.now();
- if(!free)spawnMission();seedTraffic();initEngine();syncEngine();
+ if(free)chooseFreeTarget();else spawnMission();seedTraffic();initEngine();syncEngine();
  toast(city.fallbackLock?"GEÇİCİ SÜRÜŞ ALANI · GERÇEK HARİTA BEKLENİYOR":
    free?"İSTANBUL · BOĞAZ KIYISINDA SERBEST SÜRÜŞ":
    driveMode==="easy"?"OKLARLA DÖN · BOĞAZ'A İLERLE":"W GAZ · A / D DÖN",3);
@@ -326,11 +328,28 @@ function spawnMission(){
  rival.speed=Math.min(15.5,9+Math.random()*2+deliveries*.42);rival.cooldown=1.1;
  refreshRivalRoute();refreshRoute();updateMissionText();
 }
+function chooseFreeTarget(){
+ if(!free||!car||!city?.roads?.length)return false;
+ let candidate=null,backup=null;
+ for(let i=0;i<18;i++){
+  const p=city.sample(car.pos,i<12?115:65,i<12?330:440);
+  if(!p)continue;
+  if(!backup)backup=p;
+  const path=city.route(car.pos,p);
+  if(path?.length>=3){candidate=p;break}
+ }
+ // If the real street network has not loaded yet, show a bearing only:
+ // do not pretend that the straight-line fallback crosses drivable roads.
+ freeTarget=candidate||backup;
+ if(!freeTarget){navigation.clear();route=[];city.setRoute([]);return false}
+ refreshRoute(true);
+ return true;
+}
 function refreshRoute(force=true){
- if(!mission||!city||!car)return;
+ if(!city||!car||(!mission&&!freeTarget))return;
  // Never replace the planned turn every two seconds while the vehicle is on the route.
- if(!force&&!lastNavState?.offroad&&!(mission.owner==="rival"&&rival?.pos&&route?.length&&distance(route.at(-1),rival.pos)>55))return;
- const target=mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff;
+ if(!force&&!lastNavState?.offroad&&navigation.ready&&!(mission?.owner==="rival"&&rival?.pos&&route?.length&&distance(route.at(-1),rival.pos)>55))return;
+ const target=free&&freeTarget?freeTarget:mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff;
  const candidate=city.route(car.pos,target);
  if(!candidate||candidate.length<2)return;
  route=candidate;
@@ -571,9 +590,31 @@ function updateHUD(){
  $("rescue").disabled=Math.abs(car.speed)>2.3||rescueCooldown>0;
  $("convoy").textContent=convoy;$("trips").textContent=deliveries;
  if(!mission){
-  $("mission-state").textContent="YENİ GÖREV";
-  $("mission-name").textContent=city.roads.length?"Sıradaki misafir geliyor":"Gerçek sokaklar yükleniyor...";
-  $("mission-distance").textContent="—";$("mission-timer").textContent="";
+  if(free){
+   const target=freeTarget;
+   let step;
+   if(target){
+    const d=distance(car.pos,target);
+    step=navigation.instruction(car.pos,target,"SERBEST SÜRÜŞ · KEŞİF");
+    if(!navigation.ready&&d>=20){
+     const bearing=turn(angle(car.pos,target),car.heading);
+     const arrow=Math.abs(bearing)<.45?"↑":Math.abs(bearing)>2.65?"↓":bearing>0?"↗":"↖";
+     step={kind:"search",arrow,text:"HEDEFİN YÖNÜ",detail:"YOL ROTASI BEKLENİYOR · "+Math.round(d)+" M"};
+    }else step={...step,detail:step.detail+" · "+Math.round(d)+" M"};
+   }else step={kind:"search",arrow:"↑",text:"YENİ ROTA ARANIYOR",detail:"SOKAK VERİSİ BEKLENİYOR"};
+   $("turn-arrow").textContent=step.arrow;
+   $("turn-hint").textContent=step.text;
+   $("turn-sub").textContent=step.detail;
+   $("directions").dataset.direction=step.kind;
+  }else{
+   $("mission-state").textContent="YENİ GÖREV";
+   $("mission-name").textContent=city.roads.length?"Sıradaki misafir geliyor":"Gerçek sokaklar yükleniyor...";
+   $("mission-distance").textContent="—";$("mission-timer").textContent="";
+   $("turn-arrow").textContent="↑";
+   $("turn-hint").textContent="YENİ GÖREV";
+   $("turn-sub").textContent="HEDEF BEKLENİYOR";
+   $("directions").dataset.direction="search";
+  }
   return;
  }
  const goal=mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff,d=distance(car.pos,goal);
@@ -606,10 +647,12 @@ function drawMini(){
   ctx.strokeStyle="#ffdf80";ctx.lineWidth=4;ctx.beginPath();
   route.forEach((p,i)=>{const q=toPx(p);i?ctx.lineTo(...q):ctx.moveTo(...q)});ctx.stroke();
  }
- if(mission){
-  const target=mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff;
+ if(mission||freeTarget){
+  const target=free&&freeTarget?freeTarget:mission.owner==="rival"&&rival?.pos?rival.pos:mission.phase==="pickup"?mission.pickup:mission.dropoff;
   const m=toPx(target);
-  ctx.fillStyle=mission.owner==="rival"?"#ff8294":mission.phase==="pickup"?"#ffcf65":"#9de6b7";ctx.beginPath();ctx.arc(m[0],m[1],7,0,2*Math.PI);ctx.fill();
+  ctx.fillStyle=free?"#fbe77f":mission.owner==="rival"?"#ff8294":mission.phase==="pickup"?"#ffcf65":"#9de6b7";
+  ctx.beginPath();ctx.arc(m[0],m[1],7,0,2*Math.PI);ctx.fill();
+  ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();
  }
  if(rival.pos){
   const p=toPx(rival.pos);ctx.fillStyle="#ff7c85";ctx.strokeStyle="#ffffff";ctx.lineWidth=2;
@@ -672,15 +715,22 @@ function frameLoop(now){
       else setTimeout(update,55);
      }
     }
-    if(routeRefresh>3){routeRefresh=0;refreshRoute(false)}
+    if(routeRefresh>3){
+     routeRefresh=0;
+     if(free&&!freeTarget)chooseFreeTarget();
+     else refreshRoute(false);
+    }
+    if(free&&freeTarget&&distance(car.pos,freeTarget)<20){
+     if(chooseFreeTarget())toast("KEŞİF NOKTASINA VARDIN · YENİ ROTA",1.6);
+    }
     if(camRefresh>.16){city.chase(car.pos,car.heading,camRefresh,hitCooldown>0?1.1:0,car.speed);camRefresh=0}
     lastNavState=navigation.update(car.pos,dt);
-    render3D?.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,navValid:navigation.ready,convoy},dt,now);if(frame%8===0)syncEngine();
+    render3D?.update({car,rival,mission,freeTarget:free?freeTarget:null,traffic,controls:keys,route,navProgress:navigation.progress,navValid:navigation.ready,convoy},dt,now);if(frame%8===0)syncEngine();
     if(frame++%3===0){updateHUD();drawMini()}
    }
   }
  }
- if(ready&&!playing&&render3D&&car)render3D.update({car,rival,mission,traffic,controls:keys,route,navProgress:navigation.progress,navValid:navigation.ready,convoy},dt,now);
+ if(ready&&!playing&&render3D&&car)render3D.update({car,rival,mission,freeTarget:free?freeTarget:null,traffic,controls:keys,route,navProgress:navigation.progress,navValid:navigation.ready,convoy},dt,now);
  if(ready&&!playing&&render3D&&!car)render3D.update({car:{pos:AREAS[area].center,speed:0,heading:0,steering:0},rival:null,mission:null,traffic:[],route:[],convoy:1},dt,now);
  if(now>toastEnd)$("toast").classList.remove("show");
  }catch(error){
