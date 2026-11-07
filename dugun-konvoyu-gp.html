@@ -409,7 +409,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-
 /* Exploration should feel like an open-world drive, not a dashboard covering the city. */
 body[data-game-mode="free"] #mission,
 body[data-game-mode="free"] #rival-tracker,
-body[data-game-mode="free"] #directions,
 body[data-game-mode="free"] #time-box,
 body[data-game-mode="free"] #convoy-pill{display:none!important}
 body[data-game-mode="free"] #mini{width:166px;height:166px;opacity:.94}
@@ -417,6 +416,23 @@ body[data-game-mode="free"] #drive-hint{font-size:11px;font-weight:800;letter-sp
 @media(max-width:700px){
  body[data-game-mode="free"] #mini{width:128px;height:128px}
  body[data-game-mode="free"] #speed-panel{transform:scale(.85);transform-origin:bottom right}
+}
+/* Navigation should be unmistakable in both the race and the exploration mode. */
+#directions{z-index:7;pointer-events:none}
+#turn-arrow{display:inline-flex;align-items:center;justify-content:center;min-width:56px;
+ font-size:clamp(44px,4.1vw,60px)!important;font-family:system-ui,sans-serif;
+ font-weight:1000;line-height:1!important;color:#ffde54!important;
+ text-shadow:0 3px 0 #7f5726,0 0 18px #ffcf5768}
+#directions[data-direction="arrive"] #turn-arrow{color:#b7ffce!important}
+body[data-game-mode="free"] #directions{display:flex!important;top:64px;bottom:auto;left:50%;right:auto;
+ transform:translateX(-50%);min-width:260px;max-width:min(380px,94vw);border-color:#ffde54;
+ background:linear-gradient(110deg,rgba(13,34,48,.97),rgba(33,47,55,.94))}
+@media(max-width:700px){
+ #turn-arrow{min-width:36px;font-size:40px!important}
+ body[data-game-mode="free"] #directions{top:44px;right:7px;left:auto;transform:none;
+  min-width:0;max-width:min(230px,59vw);padding:7px 8px;gap:7px}
+ #directions .nav-copy #turn-hint{font-size:clamp(11px,2.8vw,14px)}
+ #directions .nav-copy #turn-sub{white-space:normal;line-height:1.2}
 }
 </style>
 </head>
@@ -462,11 +478,12 @@ body[data-game-mode="free"] #drive-hint{font-size:11px;font-weight:800;letter-sp
    <div class="panel-label">DÜĞÜN ARABASI</div>
    <div class="options" id="cars"><button class="option selected" data-car="sahin">ŞAHİN<small>Dengeli sürüş</small></button><button class="option" data-car="toros">TOROS<small>Yüksek yol tutuş</small></button><button class="option" data-car="doblo">DOBLO<small>Geniş araç</small></button></div>
    <button type="button" id="freeroam">İSTANBUL’DA SÜR · SINIRSIZ</button><button type="button" id="start">DÜĞÜN YARIŞI · 3 DAKİKA</button>
+    <p style="margin:9px 0;color:#67736a;font-size:11px">Serbest sürüşte de sarı yön oklarıyla keşif rotasını takip edebilirsin.</p>
    <div id="loadstate">Harita hazırlanıyor…</div>
    <div id="help">Kolay sürüş: ← → veya A D ile yönlendir; W hızlan, S fren, Space korna. Oyun koluyla analog direksiyon ve tetikler de desteklenir. C kamera, M manuel sürüş, P duraklat.</div>
   </div>
  </div>
 </div>
-<script type="module" src="/dugun-city-3d.js?v=20261102-cta-v15"></script>
+<script type="module" src="/dugun-city-3d.js?v=20261107-navigation-v16"></script>
 </body>
 </html>
